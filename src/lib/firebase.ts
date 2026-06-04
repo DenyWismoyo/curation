@@ -16,7 +16,9 @@ const firebaseConfig = {
 // Initialize Firebase only if it hasn't been initialized yet
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
-const db = getFirestore(app);
+// PERUBAHAN DI SINI: Tambahkan "curation" sebagai parameter kedua
+const db = getFirestore(app, "curation"); 
+
 const storage = getStorage(app);
 const functions = getFunctions(app);
 

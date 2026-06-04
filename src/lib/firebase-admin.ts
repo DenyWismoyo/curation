@@ -1,4 +1,5 @@
 import * as admin from 'firebase-admin';
+import { getFirestore } from 'firebase-admin/firestore';
 
 if (!admin.apps.length) {
   try {
@@ -15,5 +16,7 @@ if (!admin.apps.length) {
   }
 }
 
-const db = admin.firestore();
+// Menghubungkan ke spesifik database bernama "curation"
+const db = getFirestore(admin.app(), "curation");
+
 export { db };
