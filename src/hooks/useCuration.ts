@@ -1,18 +1,66 @@
 import { useState, useEffect } from 'react';
-import { ViewState, CurationFormData, AIResult, CurationHistory } from '@/types/curation';
+import { ViewState, CurationFormData, AIResult, CurationHistory, FormTemplate } from '@/types/curation';
 import { processAIAssessment } from '@/services/ai.service';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, getDocs, setDoc, doc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '@/lib/firebase';
+import { defaultTemplates } from '@/data/defaultTemplates';
 
 export function useCuration() {
   const [viewState, setViewState] = useState<ViewState>('landing');
-  const [trackType, setTrackType] = useState<string>('');
+  
+  // State Baru untuk Form Dinamis
+  const [templates, setTemplates] = useState<FormTemplate[]>([]);
+  const [selectedTemplate, setSelectedTemplate] = useState<FormTemplate | null>(null);
+  const [isLoadingTemplates, setIsLoadingTemplates] = useState(true);
+
+  // State Lama
   const [formData, setFormData] = useState<CurationFormData>({});
   const [aiResult, setAiResult] = useState<AIResult | null>(null);
   const [history, setHistory] = useState<CurationHistory[]>([]);
 
-  // --- FUNGSI HISTORY & NAVIGATION ---
+  const fetchTemplates = async () => {
+    setIsLoadingTemplates(true);
+    try {
+      const querySnapshot = await getDocs(collection(db, 'form_templates'));
+      
+      // Jika koleksi kosong, lakukan SEEDING (Pengisian Data Awal)
+      if (querySnapshot.empty) {
+        console.log("Seeding default templates to Firestore...");
+        for (const tpl of defaultTemplates) {
+          await setDoc(doc(db, 'form_templates', tpl.id), tpl);
+        }
+        setTemplates(defaultTemplates);
+      } else {
+        // Jika sudah ada, load dari database
+        const loadedTemplates: FormTemplate[] = [];
+        querySnapshot.forEach((doc) => {
+          loadedTemplates.push(doc.data() as FormTemplate);
+        });
+        setTemplates(loadedTemplates);
+      }
+    } catch (error) {
+      console.error("Gagal mengambil Form Templates:", error);
+      // Fallback lokal jika Firebase error
+      setTemplates(defaultTemplates);
+    } finally {
+      setIsLoadingTemplates(false);
+    }
+  };
+
+  const loadHistoryData = () => {
+    if (typeof window !== 'undefined') {
+      const savedHistory = localStorage.getItem('curationHistory');
+      if (savedHistory) {
+        try { setHistory(JSON.parse(savedHistory)); } catch (e) { console.error(e); }
+      }
+    }
+  };
+
+  useEffect(() => {
+    loadHistoryData();
+    fetchTemplates();
+  }, []);
 
   const saveToHistory = (data: CurationFormData, result: AIResult, track: string) => {
     const newEntry: CurationHistory = {
@@ -24,87 +72,62 @@ export function useCuration() {
       data: data,
       result: result
     };
-
-    // Update state history terbaru
     const updatedHistory = [newEntry, ...history];
     setHistory(updatedHistory);
-
-    // Simpan ke localStorage browser agar data tidak hilang saat direfresh
+    
     if (typeof window !== 'undefined') {
       localStorage.setItem('curationHistory', JSON.stringify(updatedHistory));
     }
   };
 
-  const loadHistoryData = () => {
-    if (typeof window !== 'undefined') {
-      const savedHistory = localStorage.getItem('curationHistory');
-      if (savedHistory) {
-        try {
-          setHistory(JSON.parse(savedHistory));
-        } catch (e) {
-          console.error("Gagal memuat history", e);
-        }
-      }
-    }
+  const loadHistoryItem = (item: CurationHistory) => {
+    const templateMatch = templates.find(t => t.trackName === item.trackType);
+    setSelectedTemplate(templateMatch || null);
+    setFormData(item.data);
+    setAiResult(item.result);
+    setViewState('dashboard');
   };
 
   const restart = () => {
-    // Kembalikan semua state ke kondisi awal
     setViewState('landing');
-    setTrackType('');
+    setSelectedTemplate(null);
     setFormData({});
     setAiResult(null);
   };
 
-  // Panggil loadHistoryData sekali saat komponen pertama kali dimuat
-  useEffect(() => {
-    loadHistoryData();
-  }, []);
-
-  // --- AKHIR FUNGSI HISTORY ---
-
-
-  // --- FUNGSI UTAMA PROSES ASESMEN ---
-
   const submitAssessment = async (finalData: CurationFormData) => {
+    if (!selectedTemplate) return;
+
     setFormData(finalData);
     setViewState('processing');
     
     try {
-      // 1. SIAPKAN DATA UNTUK DATABASE & AI
       const dbData: Record<string, any> = { ...finalData };
       const uploadPromises: Promise<void>[] = [];
-
-      // 2. UPLOAD FILE KE FIREBASE STORAGE
+      
+      // 1. Upload semua file dari dynamic forms ke Storage
       for (const key in dbData) {
         const value = dbData[key];
-        // Jika valuenya adalah object File, kita upload ke Storage
         if (value instanceof File) {
-          // Buat nama file unik
           const fileName = `curation_files/${Date.now()}_${value.name.replace(/\s+/g, '_')}`;
           const storageRef = ref(storage, fileName);
-          
-          // Upload dan ganti object File dengan String URL
           const uploadTask = uploadBytes(storageRef, value).then(async (snapshot) => {
             const downloadUrl = await getDownloadURL(snapshot.ref);
-            dbData[key] = downloadUrl; 
+            dbData[key] = downloadUrl; // Timpa object File dengan String URL Firebase
           });
           uploadPromises.push(uploadTask);
         }
       }
-
-      // Tunggu semua proses upload file selesai
       await Promise.all(uploadPromises);
-
-      // 3. KIRIM KE AI SERVICE 
-      // (Kita kirim finalData asli agar service bisa merubah File ke Base64 untuk dibaca AI)
-      const result = await processAIAssessment(finalData, trackType);
+      
+      // 2. Kirim data ke AI Service (Menggunakan nama track dinamis)
+      const trackNameStr = selectedTemplate.trackName;
+      const result = await processAIAssessment(dbData as CurationFormData, trackNameStr);
       setAiResult(result);
-
-      // 4. SIMPAN KE FIRESTORE 
-      // (Gunakan dbData yang sudah bersih dari object File dan hanya berisi URL)
+      
+      // 3. Simpan data yang bersih ke database
       await addDoc(collection(db, "assessments"), {
-        trackType: trackType,
+        trackType: trackNameStr,
         namaUsaha: dbData.namaUsaha || 'Tanpa Nama',
         email: dbData.email || '',
         whatsapp: dbData.whatsapp || '',
@@ -114,32 +137,24 @@ export function useCuration() {
         aiResult: result,
         createdAt: new Date().toISOString()
       });
-      console.log("Data & URL File berhasil disimpan ke Firestore!");
-
-      // 5. SIMPAN KE HISTORY LOCAL BROWSER
-      saveToHistory(dbData, result, trackType || "Umum");
-
+      
+      saveToHistory(dbData, result, trackNameStr);
     } catch (error) {
       console.error("Terjadi kesalahan saat memproses data:", error);
-      // Anda bisa menambahkan UI Toast/Alert error di sini nantinya
     }
-
-    // 6. TAMPILKAN HASIL KE DASHBOARD
+    
     setViewState('dashboard');
-
-    // 7. KOMUNIKASI IFRAME (Opsional)
+    
     if (typeof window !== 'undefined' && window.parent !== window) {
-      // Catatan Keamanan: Untuk di production, disarankan mengganti '*' dengan
-      // domain spesifik Anda, misal: 'https://sintesa.solotechnopark.id'
       window.parent.postMessage({
         type: 'CURATION_COMPLETED',
-        payload: { namaUsaha: finalData.namaUsaha, track: trackType }
+        payload: { namaUsaha: finalData.namaUsaha, track: selectedTemplate?.trackName }
       }, '*');
     }
   };
 
   return {
-    state: { viewState, trackType, formData, aiResult, history },
-    actions: { setViewState, setTrackType, loadHistoryData, submitAssessment, restart }
+    state: { viewState, templates, selectedTemplate, isLoadingTemplates, formData, aiResult, history },
+    actions: { setViewState, setSelectedTemplate, loadHistoryData, loadHistoryItem, submitAssessment, restart }
   };
 }

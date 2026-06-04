@@ -7,11 +7,13 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { 
-  Search, Users, Activity, Target, Eye, X, 
-  Download, Briefcase, Store, Rocket, Calendar
+  Search, Users, Activity, Target, 
+  Download, Settings, ArrowRight
 } from 'lucide-react';
+import Link from 'next/link';
+import { AdminAssessmentDetail } from '@/components/admin/AdminAssessmentDetail';
 
-interface AssessmentDoc {
+export interface AssessmentDoc {
   id: string;
   trackType: string;
   namaUsaha: string;
@@ -27,10 +29,8 @@ interface AssessmentDoc {
 export default function AdminPage() {
   const [assessments, setAssessments] = useState<AssessmentDoc[]>([]);
   const [loading, setLoading] = useState(true);
-  
   const [searchTerm, setSearchTerm] = useState('');
   const [filterTrack, setFilterTrack] = useState('All');
-  
   const [selectedItem, setSelectedItem] = useState<AssessmentDoc | null>(null);
 
   useEffect(() => {
@@ -39,11 +39,9 @@ export default function AdminPage() {
         const q = query(collection(db, 'assessments'), orderBy('createdAt', 'desc'));
         const querySnapshot = await getDocs(q);
         const data: AssessmentDoc[] = [];
-        
         querySnapshot.forEach((doc) => {
           data.push({ id: doc.id, ...doc.data() } as AssessmentDoc);
         });
-        
         setAssessments(data);
       } catch (error) {
         console.error("Gagal mengambil data dari Firebase:", error);
@@ -51,7 +49,6 @@ export default function AdminPage() {
         setLoading(false);
       }
     };
-
     fetchAssessments();
   }, []);
 
@@ -59,12 +56,6 @@ export default function AdminPage() {
   const avgScore = totalSubmissions > 0 
     ? (assessments.reduce((acc, curr) => acc + (curr.score || 0), 0) / totalSubmissions).toFixed(1) 
     : 0;
-  
-  const countByTrack = {
-    Startup: assessments.filter(a => a.trackType === 'Startup').length,
-    UMKM: assessments.filter(a => a.trackType === 'UMKM').length,
-    Jasa: assessments.filter(a => a.trackType === 'Jasa').length,
-  };
 
   const filteredData = assessments.filter(item => {
     const matchesSearch = (item.namaUsaha || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -73,9 +64,10 @@ export default function AdminPage() {
     return matchesSearch && matchesTrack;
   });
 
+  const uniqueTracks = Array.from(new Set(assessments.map(a => a.trackType)));
+
   const exportToCSV = () => {
     if (filteredData.length === 0) return;
-    
     const headers = ['Tanggal', 'Nama Usaha', 'Kategori', 'Email', 'WhatsApp', 'Skor', 'Level Kesiapan', 'Rekomendasi Rute'];
     const csvData = filteredData.map(item => [
       new Date(item.createdAt).toLocaleDateString('id-ID'),
@@ -87,12 +79,10 @@ export default function AdminPage() {
       item.readinessLevel,
       `"${item.aiResult?.recommendations?.incubationRoute || ''}"`
     ]);
-
     const csvContent = [headers.join(','), ...csvData.map(e => e.join(','))].join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    
     link.href = url;
     link.setAttribute('download', `Rekap_Kurasi_${new Date().getTime()}.csv`);
     document.body.appendChild(link);
@@ -101,252 +91,176 @@ export default function AdminPage() {
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 75) return 'bg-emerald-100 text-emerald-700 border-emerald-200';
-    if (score >= 60) return 'bg-blue-100 text-blue-700 border-blue-200';
-    return 'bg-slate-100 text-slate-700 border-slate-200';
+    if (score >= 75) return 'bg-emerald-100 text-emerald-700 ring-1 ring-emerald-200';
+    if (score >= 60) return 'bg-indigo-100 text-indigo-700 ring-1 ring-indigo-200';
+    return 'bg-slate-100 text-slate-700 ring-1 ring-slate-200';
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/50 p-6 lg:p-10">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="min-h-screen bg-slate-50/50 p-4 sm:p-6 lg:p-10">
+      <div className="max-w-7xl mx-auto space-y-6 lg:space-y-8">
         
         {/* Header Dasbor */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-3xl ring-1 ring-slate-200 shadow-sm">
           <div>
-            <h1 className="text-3xl font-black text-slate-900 tracking-tight">Admin Dashboard</h1>
-            <p className="text-slate-500 font-medium mt-1">Monitoring Hasil Kurasi AI Inkubator</p>
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight text-balance">Admin Dashboard</h1>
+            <p className="text-slate-500 font-medium text-sm sm:text-base mt-1">Monitoring Hasil Kurasi Inkubator</p>
           </div>
-          <Button onClick={exportToCSV} className="gap-2 bg-indigo-600 hover:bg-indigo-700 text-white shadow-md">
-            <Download className="w-4 h-4" /> Ekspor CSV
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <Link href="/admin/templates" className="w-full sm:w-auto">
+              <Button variant="outline" className="w-full gap-2 text-indigo-600 border-indigo-200 hover:bg-indigo-50 rounded-xl h-10">
+                <Settings className="w-4 h-4" /> Kelola Template Form
+              </Button>
+            </Link>
+            <Button onClick={exportToCSV} className="w-full sm:w-auto gap-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl h-10">
+              <Download className="w-4 h-4" /> Ekspor CSV
+            </Button>
+          </div>
         </div>
 
         {/* Statistik Overview */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-          <Card className="p-6 bg-white border-slate-200 shadow-sm flex flex-col justify-center">
-            <div className="flex items-center gap-3 text-slate-500 mb-2">
-              <Users className="w-5 h-5 text-indigo-500"/>
-              <h3 className="font-bold text-sm">Total Data</h3>
+        <div className="flex overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4 custom-scrollbar">
+          <Card className="min-w-[140px] sm:min-w-0 p-5 bg-white ring-1 ring-slate-200 border-none shadow-sm flex flex-col justify-center rounded-2xl">
+            <div className="flex items-center gap-2 text-slate-400 mb-2">
+              <Users className="w-4 h-4 text-slate-600"/>
+              <h3 className="font-bold text-xs uppercase tracking-widest">Total Data</h3>
             </div>
-            <p className="text-3xl font-black text-slate-900">{totalSubmissions}</p>
+            <p className="text-2xl font-black text-slate-900">{totalSubmissions}</p>
           </Card>
-          <Card className="p-6 bg-white border-slate-200 shadow-sm flex flex-col justify-center">
-            <div className="flex items-center gap-3 text-slate-500 mb-2">
-              <Activity className="w-5 h-5 text-emerald-500"/>
-              <h3 className="font-bold text-sm">Rata-rata Skor</h3>
+          <Card className="min-w-[140px] sm:min-w-0 p-5 bg-white ring-1 ring-slate-200 border-none shadow-sm flex flex-col justify-center rounded-2xl">
+            <div className="flex items-center gap-2 text-slate-400 mb-2">
+              <Activity className="w-4 h-4 text-emerald-500"/>
+              <h3 className="font-bold text-xs uppercase tracking-widest">Rata Skor</h3>
             </div>
-            <p className="text-3xl font-black text-slate-900">{avgScore}</p>
+            <p className="text-2xl font-black text-slate-900">{avgScore}</p>
           </Card>
-          <Card className="p-6 bg-white border-slate-200 shadow-sm flex flex-col justify-center">
-            <div className="flex items-center gap-3 text-slate-500 mb-2">
-              <Rocket className="w-5 h-5 text-blue-500"/>
-              <h3 className="font-bold text-sm">Startup Tech</h3>
-            </div>
-            <p className="text-3xl font-black text-slate-900">{countByTrack.Startup}</p>
-          </Card>
-          <Card className="p-6 bg-white border-slate-200 shadow-sm flex flex-col justify-center">
-            <div className="flex items-center gap-3 text-slate-500 mb-2">
-              <Store className="w-5 h-5 text-amber-500"/>
-              <h3 className="font-bold text-sm">UMKM / Fisik</h3>
-            </div>
-            <p className="text-3xl font-black text-slate-900">{countByTrack.UMKM}</p>
-          </Card>
-          <Card className="p-6 bg-white border-slate-200 shadow-sm flex flex-col justify-center">
-            <div className="flex items-center gap-3 text-slate-500 mb-2">
-              <Briefcase className="w-5 h-5 text-purple-500"/>
-              <h3 className="font-bold text-sm">Jasa / Agensi</h3>
-            </div>
-            <p className="text-3xl font-black text-slate-900">{countByTrack.Jasa}</p>
-          </Card>
+          {uniqueTracks.slice(0, 2).map((track, idx) => (
+             <Card key={track} className="min-w-[140px] sm:min-w-0 p-5 bg-white ring-1 ring-slate-200 border-none shadow-sm flex flex-col justify-center rounded-2xl">
+              <div className="flex items-center gap-2 text-slate-400 mb-2">
+                <Target className={`w-4 h-4 ${idx === 0 ? 'text-blue-500' : 'text-amber-500'}`}/>
+                <h3 className="font-bold text-xs uppercase tracking-widest truncate">{track}</h3>
+              </div>
+              <p className="text-2xl font-black text-slate-900">{assessments.filter(a => a.trackType === track).length}</p>
+            </Card>
+          ))}
         </div>
 
-        {/* Filter & Table Area */}
-        <Card className="bg-white border-slate-200 shadow-sm overflow-hidden">
-          <div className="p-4 border-b border-slate-100 flex flex-col sm:flex-row gap-4 justify-between items-center bg-slate-50/50">
-            <div className="relative w-full sm:w-80">
+        {/* Filter Area */}
+        <div className="bg-white ring-1 ring-slate-200 rounded-2xl p-2 flex flex-col sm:flex-row gap-2 justify-between items-center shadow-sm">
+           <div className="relative w-full sm:w-80">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <Input 
-                placeholder="Cari nama usaha atau email..." 
-                className="pl-9 h-10 border-slate-200"
+                placeholder="Cari nama atau email..." 
+                className="pl-9 h-11 sm:h-10 border-none bg-slate-50 ring-1 ring-slate-100 rounded-xl w-full"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-            </div>
-            <div className="flex bg-slate-100 p-1 rounded-lg w-full sm:w-auto">
-              {['All', 'Startup', 'UMKM', 'Jasa'].map(track => (
+           </div>
+           <div className="flex w-full sm:w-auto bg-slate-50 p-1 rounded-xl overflow-x-auto custom-scrollbar">
+              {['All', ...uniqueTracks].map(track => (
                 <button
                   key={track}
                   onClick={() => setFilterTrack(track)}
-                  className={`flex-1 sm:flex-none px-4 py-1.5 text-sm font-bold rounded-md transition-all ${
-                    filterTrack === track ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+                  className={`flex-1 sm:flex-none px-3 sm:px-4 py-2 sm:py-1.5 text-xs sm:text-sm font-bold rounded-lg transition-all whitespace-nowrap ${
+                    filterTrack === track ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-slate-200/50' : 'text-slate-500 hover:text-slate-700'
                   }`}
                 >
                   {track}
                 </button>
               ))}
-            </div>
-          </div>
+           </div>
+        </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left">
-              <thead className="text-xs text-slate-500 bg-slate-50/80 uppercase font-black tracking-wider border-b border-slate-200">
-                <tr>
-                  <th className="px-6 py-4">Tanggal</th>
-                  <th className="px-6 py-4">Profil Usaha</th>
-                  <th className="px-6 py-4">Kategori</th>
-                  <th className="px-6 py-4 text-center">Skor AI</th>
-                  <th className="px-6 py-4">Level Kesiapan</th>
-                  <th className="px-6 py-4 text-center">Aksi</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {loading ? (
-                  <tr>
-                    <td colSpan={6} className="px-6 py-10 text-center text-slate-500 font-medium">
-                      <div className="flex justify-center items-center gap-3">
-                        <div className="w-5 h-5 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
-                        Memuat data...
+        {/* DATA LIST */}
+        {loading ? (
+           <div className="py-20 text-center text-slate-500 font-medium flex justify-center items-center gap-3">
+              <div className="w-5 h-5 border-2 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+              Memuat data...
+           </div>
+        ) : filteredData.length === 0 ? (
+           <div className="py-20 text-center text-slate-500 font-medium">Tidak ada data ditemukan.</div>
+        ) : (
+           <>
+              {/* MOBILE VIEW (Cards) */}
+              <div className="grid grid-cols-1 gap-3 sm:hidden">
+                 {filteredData.map(item => (
+                   <div key={item.id} onClick={() => setSelectedItem(item)} className="bg-white p-4 rounded-2xl ring-1 ring-slate-200 shadow-sm flex flex-col gap-3 active:scale-[0.98] transition-transform">
+                      <div className="flex justify-between items-start">
+                         <div>
+                           <p className="font-bold text-slate-900 text-base">{item.namaUsaha}</p>
+                           <p className="text-xs text-slate-500 mt-0.5">{item.email}</p>
+                         </div>
+                         <span className="px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest bg-slate-50 ring-1 ring-slate-100 text-slate-600">{item.trackType}</span>
                       </div>
-                    </td>
-                  </tr>
-                ) : filteredData.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="px-6 py-10 text-center text-slate-500 font-medium">
-                      Tidak ada data yang ditemukan.
-                    </td>
-                  </tr>
-                ) : (
-                  filteredData.map((item) => (
-                    <tr key={item.id} className="hover:bg-slate-50 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap text-slate-500">
-                        <div className="flex items-center gap-2">
-                          <Calendar className="w-4 h-4" /> 
-                          {new Date(item.createdAt).toLocaleDateString('id-ID')}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <p className="font-bold text-slate-900">{item.namaUsaha}</p>
-                        <p className="text-xs text-slate-500">{item.email}</p>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="inline-flex px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest bg-slate-100 text-slate-600 border border-slate-200">
-                          {item.trackType}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        <span className={`inline-flex items-center justify-center w-10 h-10 rounded-full font-black text-sm border-2 ${getScoreColor(item.score)}`}>
-                          {item.score || 0}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 font-semibold text-slate-700">
-                        {item.readinessLevel}
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        <Button variant="ghost" size="sm" onClick={() => setSelectedItem(item)} className="text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700">
-                          <Eye className="w-4 h-4 mr-2" /> Detail
-                        </Button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </Card>
+                      <div className="flex items-center justify-between mt-1 pt-3 border-t border-slate-50">
+                         <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
+                            <Target className="w-3.5 h-3.5 text-slate-400"/> {item.readinessLevel}
+                         </span>
+                         <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full font-black text-xs ${getScoreColor(item.score)}`}>
+                           {item.score}
+                         </span>
+                      </div>
+                   </div>
+                 ))}
+              </div>
 
+              {/* DESKTOP VIEW (Table) */}
+              <Card className="hidden sm:block bg-white ring-1 ring-slate-200 border-none shadow-sm overflow-hidden rounded-2xl">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm text-left">
+                    <thead className="text-xs text-slate-400 bg-slate-50/50 uppercase font-black tracking-wider border-b border-slate-100">
+                      <tr>
+                        <th className="px-6 py-4">Profil Usaha</th>
+                        <th className="px-6 py-4 text-center">Skor AI</th>
+                        <th className="px-6 py-4">Level Kesiapan</th>
+                        <th className="px-6 py-4 text-center">Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-50">
+                      {filteredData.map((item) => (
+                        <tr key={item.id} className="hover:bg-slate-50/50 transition-colors group">
+                          <td className="px-6 py-4">
+                            <div className="flex flex-col">
+                               <div className="flex items-center gap-2">
+                                  <p className="font-bold text-slate-900 text-base">{item.namaUsaha}</p>
+                                  <span className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest bg-slate-50 ring-1 ring-slate-200 text-slate-500">{item.trackType}</span>
+                               </div>
+                               <div className="flex items-center gap-3 mt-1 text-xs text-slate-500">
+                                  <span>{item.email}</span>
+                                  <span className="w-1 h-1 rounded-full bg-slate-300"></span>
+                                  <span>{new Date(item.createdAt).toLocaleDateString('id-ID')}</span>
+                               </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-center">
+                            <span className={`inline-flex items-center justify-center w-9 h-9 rounded-full font-black text-xs shadow-sm ${getScoreColor(item.score)}`}>
+                              {item.score || 0}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 font-bold text-slate-600 text-xs uppercase tracking-wider">
+                            {item.readinessLevel}
+                          </td>
+                          <td className="px-6 py-4 text-center">
+                            <Button variant="ghost" size="sm" onClick={() => setSelectedItem(item)} className="text-indigo-600 hover:bg-indigo-50 font-bold rounded-xl opacity-0 group-hover:opacity-100 transition-opacity">
+                               Detail <ArrowRight className="w-4 h-4 ml-1" />
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </Card>
+           </>
+        )}
       </div>
 
-      {/* MODAL DETAIL */}
+      {/* RENDER KOMPONEN MODAL DETAIL BARU */}
       {selectedItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
-            
-            {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-              <div>
-                <h2 className="text-xl font-black text-slate-900">{selectedItem.namaUsaha}</h2>
-                <div className="flex items-center gap-3 mt-1">
-                  <span className="inline-flex px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-indigo-100 text-indigo-700">
-                    {selectedItem.trackType}
-                  </span>
-                  <span className="text-xs text-slate-500 font-medium">
-                    {new Date(selectedItem.createdAt).toLocaleString('id-ID')}
-                  </span>
-                </div>
-              </div>
-              <Button variant="ghost" size="icon" onClick={() => setSelectedItem(null)} className="text-slate-400 hover:text-slate-700 hover:bg-slate-200 rounded-full">
-                <X className="w-5 h-5" />
-              </Button>
-            </div>
-
-            {/* Modal Body */}
-            <div className="flex-1 overflow-y-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
-              
-              {/* Kolom Kiri: Data Form */}
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-4 flex items-center gap-2">
-                    <Briefcase className="w-4 h-4 text-slate-400"/> Data Input Peserta
-                  </h3>
-                  <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 space-y-4">
-                    {Object.entries(selectedItem.formData || {}).map(([key, value]) => {
-                      if (!value) return null;
-                      return (
-                        <div key={key} className="border-b border-slate-200/60 pb-3 last:border-0 last:pb-0">
-                          <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
-                            {key.replace(/([A-Z])/g, ' $1').trim()}
-                          </p>
-                          <p className="text-sm font-medium text-slate-800">
-                            {Array.isArray(value) ? value.join(', ') : String(value)}
-                          </p>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-
-              {/* Kolom Kanan: Hasil AI */}
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-4 flex items-center gap-2">
-                    <Target className="w-4 h-4 text-indigo-500"/> Hasil Analisis AI
-                  </h3>
-                  
-                  {/* Score Card */}
-                  <div className="grid grid-cols-2 gap-3 mb-4">
-                    <div className={`p-4 rounded-xl border-2 ${getScoreColor(selectedItem.score)} bg-opacity-50`}>
-                      <p className="text-[10px] font-black uppercase tracking-wider opacity-70">Total Skor</p>
-                      <p className="text-3xl font-black mt-1">{selectedItem.score}</p>
-                    </div>
-                    <div className="p-4 rounded-xl border-2 border-slate-200 bg-slate-50">
-                      <p className="text-[10px] font-black uppercase tracking-wider text-slate-500">Readiness Level</p>
-                      <p className="text-sm font-bold text-slate-800 mt-2 leading-tight">{selectedItem.readinessLevel}</p>
-                    </div>
-                  </div>
-
-                  {/* Recommendations */}
-                  <div className="space-y-3">
-                    {selectedItem.aiResult?.recommendations && Object.entries(selectedItem.aiResult.recommendations).map(([key, value]) => {
-                      if (key === 'nextActionSteps' || key === 'incubationRoute') return null;
-                      return (
-                        <div key={key} className="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100">
-                          <p className="text-[11px] font-bold text-indigo-600 uppercase tracking-wider mb-1">
-                            {key.replace(/([A-Z])/g, ' $1').trim()}
-                          </p>
-                          <p className="text-sm font-medium text-slate-700 leading-relaxed">
-                            {String(value)}
-                          </p>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </div>
+        <AdminAssessmentDetail 
+           data={selectedItem} 
+           onClose={() => setSelectedItem(null)} 
+        />
       )}
 
     </div>
