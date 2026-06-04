@@ -1,22 +1,24 @@
 import { NextResponse } from 'next/server';
 
-// PENTING: Gunakan GEMINI_API_KEY (tanpa NEXT_PUBLIC_) di file .env Anda
 const API_KEY = process.env.GEMINI_API_KEY || "";
+
+// Jika aplikasi dijalankan di Vercel, pastikan timeout dinaikkan
+export const maxDuration = 30;
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { formData, trackType } = body;
+    const { formData, trackType, filesBase64 } = body;
 
-    // Bersihkan data dari object File jika tidak sengaja terbawa (karena AI saat ini membaca teks)
+    // Bersihkan data dari field file yang mungkin masih tersisa di string form
     const textData: Record<string, any> = {};
     for (const key in formData) {
-       // Abaikan field yang berakhiran 'File' agar prompt lebih bersih
       if (!key.toLowerCase().includes('file')) {
         textData[key] = formData[key];
       }
     }
 
+    // Ubah object menjadi format string yang mudah dibaca AI
     const dataString = Object.entries(textData)
       .map(([k, v]) => `- ${k}: ${Array.isArray(v) ? v.join(", ") : v}`)
       .join("\n");
@@ -27,12 +29,34 @@ export async function POST(req: Request) {
         ? "UMKM Produk Fisik" 
         : "Bisnis Jasa / Agensi";
 
-    const promptText = `Data pendaftaran untuk kategori: ${trackContext}\n\n${dataString}`;
+    const promptText = `Berikut adalah data pendaftaran lengkap untuk kategori: ${trackContext}\n\nDATA BISNIS:\n${dataString}\n\nTUGAS ANALISIS ANDA:\n1. Evaluasi metrik kritis (seperti LTV:CAC, MRR, Cap Table untuk Startup; atau AOV, Retention untuk Jasa; atau Konsistensi Produksi untuk UMKM).\n2. Jika ada dokumen PDF/Gambar terlampir, baca dan jadikan bahan pertimbangan utama.\n3. Berikan skor yang realistis dan tajam layaknya seorang konsultan bisnis atau Venture Capitalist profesional.`;
     
-    const systemInstruction = `Anda adalah Analis Investasi Inkubator. Analisis kelayakan bisnis ini. \nMatriks Skor:\n0-59: Pre-Incubation (Rute: Pra-Inkubasi)\n60-74: Market Ready (Rute: Inkubasi Reguler)\n75-100: Scalable (Rute: Akselerasi). Berikan output dalam format JSON sesuai schema. Pastikan scoreBreakdown memiliki max value 100 per kategori.`;
+    const systemInstruction = `Anda adalah Kurator Inkubator & Analis Investasi Profesional. Tugas Anda menganalisis kelayakan bisnis. 
+    
+Matriks Skor (Sangat Ketat):
+0-59: Pre-Incubation (Masih tahap ideasi, metrik bisnis buruk, rute: Pra-Inkubasi)
+60-74: Market Ready (Sudah ada traksi, metrik cukup sehat, rute: Inkubasi Reguler)
+75-100: Scalable / Investable (Traction kuat, Unit Economics sangat sehat, siap didanai VC/Investor, rute: Akselerasi).
+
+Berikan output dalam format JSON sesuai schema yang diminta. Pastikan nilai scoreBreakdown memiliki batas maksimal 100 per kategori. Berikan rekomendasi (targetMarket, productImprovement, dll) secara spesifik, terstruktur, dan actionable berdasarkan data yang diinput.`;
+
+    // Susun input "parts" untuk Gemini
+    const parts: any[] = [{ text: promptText }];
+
+    // Jika ada file (dari konversi base64 klien), masukkan ke mata AI
+    if (filesBase64 && Array.isArray(filesBase64) && filesBase64.length > 0) {
+      filesBase64.forEach((file: any) => {
+        parts.push({
+          inlineData: {
+            mimeType: file.mimeType,
+            data: file.data
+          }
+        });
+      });
+    }
 
     const payload = {
-      contents: [{ parts: [{ text: promptText }] }],
+      contents: [{ parts: parts }],
       systemInstruction: { parts: [{ text: systemInstruction }] },
       generationConfig: {
         responseMimeType: "application/json",

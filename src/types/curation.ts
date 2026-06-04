@@ -1,29 +1,29 @@
 export type ViewState = 'landing' | 'track-select' | 'wizard' | 'processing' | 'dashboard';
 
 export interface CurationFormData {
-  // Identitas Dasar
+  // Identitas Dasar Umum
   namaUsaha?: string;
   namaPemilik?: string;
   tahunBerdiri?: string;
-  email?: string;
   whatsapp?: string;
+  email?: string;
   deskripsi?: string;
   omset?: string;
+  channels?: string[];
   kendala?: string[];
-
-  // Bidang Jasa / Agensi
+  legalitas?: string[];
+  sistemProduksi?: string;
   jenisUsaha?: string;
   website?: string;
+
+  // Khusus Bisnis Jasa / Agensi
   tenagaKerja?: string;
-  sistemProduksi?: string;
   legalEntity?: string;
-  legalitas?: string[];
   modelBisnis?: string;
   averageOrderValue?: string;
   customerRetention?: string;
-  channels?: string[];
 
-  // UMKM & Produk Fisik
+  // Khusus UMKM & Produk Fisik
   alamat?: string;
   instagram?: string;
   tiktok?: string;
@@ -33,7 +33,7 @@ export interface CurationFormData {
   statusMerek?: string;
   kualitasKemasan?: string;
 
-  // Startup Teknologi
+  // Khusus Startup Teknologi
   masalah?: string;
   solusi?: string;
   statusProduk?: string;
@@ -50,12 +50,12 @@ export interface CurationFormData {
   bentukPendanaan?: string;
   budgetMarketing?: string;
 
-  // File Uploads (Tipe diperbaiki dari 'any' menjadi 'File | null')
-  portfolioFile?: File | null;
-  legalitasFile?: File | null;
-  fotoProdukFile?: File | null;
-  katalogFile?: File | null;
-  pitchDeckFile?: File | null;
+  // File Uploads (File saat di form, string URL saat diambil dari Firebase)
+  portfolioFile?: File | string | null;
+  legalitasFile?: File | string | null;
+  fotoProdukFile?: File | string | null;
+  katalogFile?: File | string | null;
+  pitchDeckFile?: File | string | null;
 }
 
 export interface AIResult {
