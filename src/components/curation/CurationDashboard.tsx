@@ -203,18 +203,24 @@ const radarData = aiResult.metrics?.map((m, idx) => ({
                 {/* Area Grafik */}
                 <div className="w-full h-[280px] relative">
                   <ResponsiveContainer width="100%" height="100%">
-                      <RadarChart cx="50%" cy="50%" outerRadius="65%" data={radarData}>
-                        <PolarGrid stroke="#e2e8f0" strokeDasharray="3 3" />
-                        {/* Gunakan shortLabel (D1, D2) agar tidak terpotong */}
-                        <PolarAngleAxis dataKey="shortLabel" tick={{ fill: '#4f46e5', fontSize: 12, fontWeight: 800 }} />
-                        <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
-                        <Radar name="Skor" dataKey="A" stroke={isHighTier ? '#10b981' : '#4f46e5'} strokeWidth={2.5} fill={isHighTier ? '#10b981' : '#4f46e5'} fillOpacity={0.15} />
-                        {/* Tooltip dimodifikasi agar memunculkan nama aslinya saat di-hover */}
-                        <Tooltip 
-                          labelFormatter={(label) => radarData.find(d => d.shortLabel === label)?.subject || label} 
-                          wrapperClassName="rounded-xl font-bold text-sm shadow-xl" 
-                        />
-                      </RadarChart>
+<RadarChart cx="50%" cy="50%" outerRadius="65%" data={radarData}>
+  <PolarGrid stroke="#e2e8f0" strokeDasharray="3 3" />
+  <PolarAngleAxis dataKey="shortLabel" tick={{ fill: '#4f46e5', fontSize: 12, fontWeight: 800 }} />
+  <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
+  <Radar 
+    name="Skor" 
+    dataKey="A" 
+    stroke={isHighTier ? '#10b981' : '#4f46e5'} 
+    strokeWidth={2.5} 
+    fill={isHighTier ? '#10b981' : '#4f46e5'} 
+    fillOpacity={0.15} 
+  />
+  {/* PERUBAHAN: Menambahkan z-[9999] agar tooltip selalu di depan */}
+  <Tooltip 
+    labelFormatter={(label) => radarData.find(d => d.shortLabel === label)?.subject || label}
+    wrapperClassName="!z-[9999] rounded-xl font-bold text-sm shadow-xl" 
+  />
+</RadarChart>
                   </ResponsiveContainer>
                 </div>
 
