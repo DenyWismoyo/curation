@@ -1,16 +1,19 @@
-import { CurationFormData, AIResult } from '@/types/curation';
+import { CurationFormData, AIResult, AiPromptConfig } from '@/types/curation';
 
-export async function processAIAssessment(formData: CurationFormData, trackType: string): Promise<AIResult> {
+export async function processAIAssessment(
+  formData: CurationFormData, 
+  trackType: string,
+  aiPromptConfig?: AiPromptConfig
+): Promise<AIResult> {
   let retries = 3;
   let delay = 1000;
 
-  // Format data tidak lagi di-convert ke base64 di client. Semua dikirim dalam bentuk teks/URL
   while (retries > 0) {
     try {
       const response = await fetch('/api/curation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ formData, trackType })
+        body: JSON.stringify({ formData, trackType, aiPromptConfig })
       });
 
       if (!response.ok) throw new Error(`Server returned ${response.status}`);
@@ -27,38 +30,30 @@ export async function processAIAssessment(formData: CurationFormData, trackType:
     }
   }
 
-  // Fallback menyesuaikan skema baru
+  // Fallback data terstruktur array dinamis apabila koneksi terputus
   return {
     readinessLevel: "Market Ready (Fallback)", 
-    totalScore: 68,
-    radarMetrics: {
-      productInnovation: 70,
-      marketPotential: 65,
-      financialHealth: 60,
-      teamCapability: 75,
-      operationalScalability: 60,
-      legalAndCompliance: 70,
-    },
+    totalScore: 65,
+    incubationRoute: "Inkubasi Reguler",
+    metrics: [
+      { label: "Kesiapan Umum", score: 70, description: "Menggunakan fallback data karena sistem utama offline." },
+      { label: "Potensi Pasar", score: 65, description: "Nilai perkiraan sementara." },
+      { label: "Kesehatan Finansial", score: 60, description: "Perlu rekalkulasi ulang setelah server aktif." }
+    ],
     swotAnalysis: {
-      strengths: ["Sistem AI sedang offline, menggunakan fallback data."],
-      weaknesses: ["Koneksi jaringan terganggu sementara."],
-      opportunities: ["Mencoba memuat ulang halaman nanti."],
-      threats: ["Data sementara mungkin kurang akurat."]
+      strengths: ["Sistem AI sedang offline, menggunakan data cadangan terstruktur."],
+      weaknesses: ["Koneksi jaringan terganggu sementara waktu."],
+      opportunities: ["Mencoba melakukan submit ulang form beberapa saat lagi."],
+      threats: ["Analisis mendalam per dimensi industri belum dapat dimuat."]
     },
-    recommendations: {
-      executiveSummary: "Gangguan koneksi API terdeteksi, data berhasil diamankan.",
-      targetMarket: "Tunggu hingga koneksi stabil.", 
-      pricingAndMonetization: "Mohon cek kembali skor Anda nanti.",
-      goToMarketStrategy: "Evaluasi strategi GTM setelah data tersinkronisasi.",
-      productRoadmap: "Fokus pada stabilisasi layanan.",
-      financialOptimization: "Lindungi kas selama transisi.",
-      investmentReadiness: "Lengkapi dokumen pitch deck dan portfolio.", 
-      incubationRoute: "Inkubasi Reguler"
-    },
+    recommendations: [
+      { title: "Status Sistem Terdeteksi", content: "Gangguan koneksi API eksternal terdeteksi, namun data isian form berhasil diamankan di database." },
+      { title: "Langkah Tindak Lanjut", content: "Silakan hubungi administrator jika Anda terus melihat laporan cadangan ini." }
+    ],
     riskAssessment: {
-      criticalRisks: ["Koneksi ke server AI terputus.", "Analisis mendalam tidak dapat dilakukan."],
-      mitigationStrategies: ["Muat ulang halaman.", "Hubungi administrator jika terus berlanjut."]
+      criticalRisks: ["Koneksi ke server AI terputus.", "Analisis kustom template tidak dapat divalidasi."],
+      mitigationStrategies: ["Muat ulang halaman browser.", "Cek konsol jaringan firebase jika ada masalah autentikasi."]
     },
-    nextActionSteps: ["Segarkan halaman", "Coba kirim ulang form asesmen jika perlu"]
+    nextActionSteps: ["Segarkan halaman aplikasi", "Coba kirim ulang form asesmen"]
   };
 }

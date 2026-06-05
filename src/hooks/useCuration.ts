@@ -8,13 +8,9 @@ import { defaultTemplates } from '@/data/defaultTemplates';
 
 export function useCuration() {
   const [viewState, setViewState] = useState<ViewState>('landing');
-  
-  // State Baru untuk Form Dinamis
   const [templates, setTemplates] = useState<FormTemplate[]>([]);
   const [selectedTemplate, setSelectedTemplate] = useState<FormTemplate | null>(null);
   const [isLoadingTemplates, setIsLoadingTemplates] = useState(true);
-
-  // State Lama
   const [formData, setFormData] = useState<CurationFormData>({});
   const [aiResult, setAiResult] = useState<AIResult | null>(null);
   const [history, setHistory] = useState<CurationHistory[]>([]);
@@ -23,8 +19,6 @@ export function useCuration() {
     setIsLoadingTemplates(true);
     try {
       const querySnapshot = await getDocs(collection(db, 'form_templates'));
-      
-      // Jika koleksi kosong, lakukan SEEDING (Pengisian Data Awal)
       if (querySnapshot.empty) {
         console.log("Seeding default templates to Firestore...");
         for (const tpl of defaultTemplates) {
@@ -32,7 +26,6 @@ export function useCuration() {
         }
         setTemplates(defaultTemplates);
       } else {
-        // Jika sudah ada, load dari database
         const loadedTemplates: FormTemplate[] = [];
         querySnapshot.forEach((doc) => {
           loadedTemplates.push(doc.data() as FormTemplate);
@@ -41,7 +34,6 @@ export function useCuration() {
       }
     } catch (error) {
       console.error("Gagal mengambil Form Templates:", error);
-      // Fallback lokal jika Firebase error
       setTemplates(defaultTemplates);
     } finally {
       setIsLoadingTemplates(false);
@@ -105,7 +97,6 @@ export function useCuration() {
       const dbData: Record<string, any> = { ...finalData };
       const uploadPromises: Promise<void>[] = [];
       
-      // 1. Upload semua file dari dynamic forms ke Storage
       for (const key in dbData) {
         const value = dbData[key];
         if (value instanceof File) {
@@ -113,19 +104,23 @@ export function useCuration() {
           const storageRef = ref(storage, fileName);
           const uploadTask = uploadBytes(storageRef, value).then(async (snapshot) => {
             const downloadUrl = await getDownloadURL(snapshot.ref);
-            dbData[key] = downloadUrl; // Timpa object File dengan String URL Firebase
+            dbData[key] = downloadUrl; 
           });
           uploadPromises.push(uploadTask);
         }
       }
       await Promise.all(uploadPromises);
       
-      // 2. Kirim data ke AI Service (Menggunakan nama track dinamis)
       const trackNameStr = selectedTemplate.trackName;
-      const result = await processAIAssessment(dbData as CurationFormData, trackNameStr);
+      
+      // Meneruskan aiPromptConfig dinamis dari template ke API
+      const result = await processAIAssessment(
+        dbData as CurationFormData, 
+        trackNameStr, 
+        selectedTemplate.aiPromptConfig
+      );
       setAiResult(result);
       
-      // 3. Simpan data yang bersih ke database
       await addDoc(collection(db, "assessments"), {
         trackType: trackNameStr,
         namaUsaha: dbData.namaUsaha || 'Tanpa Nama',
