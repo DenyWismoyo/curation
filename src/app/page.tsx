@@ -1,10 +1,14 @@
-import { CurationLanding } from '@/components/curation/CurationLanding';
+'use client';
+
+import { defaultTemplates } from '@/data/defaultTemplates';
+import { DynamicTrackSelector } from '@/components/curation/DynamicTrackSelector';
 
 export default function Home() {
   return (
     <main className="min-h-screen">
-      {/* Landing page sekarang berdiri sendiri */}
-      <CurationLanding />
+      <DynamicTrackSelector 
+        templates={defaultTemplates} 
+      />
     </main>
   );
 }
