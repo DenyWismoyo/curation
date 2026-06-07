@@ -1,15 +1,14 @@
-// src/components/curation/DynamicTrackSelector.tsx
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { ChevronLeft, ArrowRight, LayoutGrid, Search, Sparkles } from 'lucide-react';
 import { FormTemplate } from '@/types/curation';
 import * as LucideIcons from 'lucide-react';
 
 interface DynamicTrackSelectorProps {
   templates: FormTemplate[];
-  onSelect: (template: FormTemplate) => void;
-  onBack: () => void;
+  onBack?: () => void;
 }
 
 // MESIN DETEKSI TEMA KATEGORI
@@ -75,7 +74,8 @@ const getCategoryTheme = (title: string, desc: string) => {
   };
 };
 
-export function DynamicTrackSelector({ templates, onSelect, onBack }: DynamicTrackSelectorProps) {
+export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelectorProps) {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
 
   const activeTemplates = templates.filter(t => t.isActive);
@@ -84,6 +84,19 @@ export function DynamicTrackSelector({ templates, onSelect, onBack }: DynamicTra
     t.trackDescription.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleSelectTrack = (trackId: string) => {
+    // Navigasi ke URL assessment dinamis
+    router.push(`/assessment/${trackId}`);
+  };
+
+  const handleBack = () => {
+    if (onBack) {
+      onBack();
+    } else {
+      router.push('/');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50/50 py-8 px-6 lg:py-16 lg:px-12 flex flex-col items-center">
       <div className="max-w-[1400px] w-full space-y-10 lg:space-y-16">
@@ -91,10 +104,10 @@ export function DynamicTrackSelector({ templates, onSelect, onBack }: DynamicTra
         {/* ================= HEADER SECTION ================= */}
         <div className="space-y-8 animate-in fade-in slide-in-from-top-8 duration-700 ease-out relative z-20">
           <button 
-            onClick={onBack} 
+            onClick={handleBack} 
             className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-indigo-600 transition-all w-fit px-4 py-2.5 -ml-4 rounded-xl hover:bg-white hover:shadow-sm ring-1 ring-transparent hover:ring-slate-200 active:scale-95"
           >
-            <ChevronLeft className="h-4 w-4" /> Kembali ke Dasbor
+            <ChevronLeft className="h-4 w-4" /> Kembali
           </button>
           
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
@@ -148,7 +161,7 @@ export function DynamicTrackSelector({ templates, onSelect, onBack }: DynamicTra
               return (
                 <div 
                   key={template.id} 
-                  onClick={() => onSelect(template)}
+                  onClick={() => handleSelectTrack(template.id)}
                   style={{ animationFillMode: 'both', animationDelay: `${index * 100}ms` }}
                   className={`animate-in fade-in slide-in-from-bottom-12 duration-700 ease-out group relative cursor-pointer rounded-[2rem] p-8 ring-1 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-500 hover:-translate-y-2 flex flex-col justify-between overflow-hidden h-full min-h-[300px] ${theme.gradient} ${theme.border} ${theme.shadow}`}
                 >
