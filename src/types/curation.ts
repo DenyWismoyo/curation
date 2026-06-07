@@ -86,3 +86,9 @@ export interface FormTemplate {
   steps: FormStep[];
   aiPromptConfig?: AiPromptConfig; // Opsional untuk template custom baru
 }
+
+export interface AssessmentPayload {
+  // ... field yang sudah ada ...
+  selfScore?: number;
+  isConfirmedEarnest?: boolean;
+}
