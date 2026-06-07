@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ArrowRight, Sparkles, Check, Trash2 } from 'lucide-react';
+import { ChevronLeft, ArrowRight, Sparkles, Check, Trash2, ClipboardCheck } from 'lucide-react';
 import { FormTemplate } from '@/types/curation';
 import { DynamicField } from './DynamicField';
+import { ReviewAndConfirm } from './ReviewAndConfirm';
 import * as LucideIcons from 'lucide-react';
 
 interface DynamicWizardProps {
@@ -18,6 +19,7 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
 
   const [step, setStep] = useState(1);
   const [saveStatus, setSaveStatus] = useState('');
+  const [isReviewMode, setIsReviewMode] = useState(false);
   const [formData, setFormData] = useState<any>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem(CACHE_KEY);
@@ -70,6 +72,7 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
       setFormData({});
       if (typeof window !== 'undefined') localStorage.removeItem(CACHE_KEY);
       setStep(1);
+      setIsReviewMode(false);
     }
   };
 
@@ -82,6 +85,30 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
     }
     return true;
   };
+
+  // Jika masuk mode review, tampilkan komponen ReviewAndConfirm
+  if (isReviewMode) {
+    return (
+      <div className="flex-1 w-full flex flex-col justify-center max-w-[1920px] mx-auto min-h-[calc(100vh-5.5rem)] bg-slate-50/50 p-4 lg:p-12">
+        <div className="w-full max-w-4xl mx-auto">
+          <div className="mb-8">
+            <h2 className="text-3xl font-black text-slate-900 tracking-tight">Tahap Akhir</h2>
+            <p className="text-slate-500 mt-2">Lakukan penilaian mandiri sebelum data dikirim ke sistem AI.</p>
+          </div>
+          <ReviewAndConfirm 
+            answers={formData}
+            onBack={() => setIsReviewMode(false)}
+            onSubmit={(assessmentData) => {
+              // Gabungkan jawaban form dengan data penilaian diri
+              const finalPayload = { ...formData, ...assessmentData };
+              onComplete(finalPayload);
+              if (typeof window !== 'undefined') localStorage.removeItem(CACHE_KEY);
+            }}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 w-full flex flex-col lg:flex-row max-w-[1920px] mx-auto min-h-[calc(100vh-5.5rem)] relative pb-24 lg:pb-0">
@@ -175,16 +202,21 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
                </p>
                <button 
                   onClick={() => {
-                    if (step < totalSteps) setStep(step + 1);
-                    else {
-                       onComplete(formData);
-                       if (typeof window !== 'undefined') localStorage.removeItem(CACHE_KEY);
+                    if (step < totalSteps) {
+                      setStep(step + 1);
+                    } else {
+                      // Masuk ke mode review jika sudah di langkah terakhir
+                      setIsReviewMode(true);
                     }
                   }} 
                   disabled={!isStepValid()}
                   className="w-full sm:w-auto py-4 px-8 bg-slate-900 text-white font-bold rounded-2xl hover:bg-indigo-600 transition-all shadow-lg shadow-slate-900/20 hover:shadow-indigo-600/30 flex items-center justify-center gap-2 text-base active:scale-[0.98] disabled:opacity-50 group"
                >
-                  {step < totalSteps ? <>Langkah Selanjutnya <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" /></> : <>Kirim & Analisis AI <Sparkles size={18} /></>}
+                  {step < totalSteps ? (
+                    <>Langkah Selanjutnya <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" /></>
+                  ) : (
+                    <>Tinjau & Konfirmasi <ClipboardCheck size={18} className="group-hover:scale-110 transition-transform" /></>
+                  )}
                </button>
             </div>
          </div>
