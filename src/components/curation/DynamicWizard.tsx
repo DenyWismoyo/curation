@@ -102,7 +102,7 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
               // Gabungkan jawaban form dengan data penilaian diri
               const finalPayload = { ...formData, ...assessmentData };
               onComplete(finalPayload);
-              if (typeof window !== 'undefined') localStorage.removeItem(CACHE_KEY);
+              //if (typeof window !== 'undefined') localStorage.removeItem(CACHE_KEY);
             }}
           />
         </div>

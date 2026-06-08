@@ -1,3 +1,4 @@
+// src/components/curation/ReviewAndConfirm.tsx
 'use client';
 
 import React, { useState } from 'react';
@@ -5,26 +6,28 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { AlertCircle, CheckCircle2, ArrowLeft, Send } from 'lucide-react';
+import { AlertCircle, CheckCircle2, ArrowLeft, Send, KeyRound } from 'lucide-react';
 
 export interface ReviewAndConfirmProps {
   answers: Record<string, any>;
   onBack: () => void;
-  onSubmit: (assessmentData: { selfScore: number; isConfirmedEarnest: boolean }) => void;
+  onSubmit: (assessmentData: { selfScore: number; isConfirmedEarnest: boolean; token: string }) => void;
   isSubmitting?: boolean;
 }
 
 export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = false }: ReviewAndConfirmProps) {
   const [selfScore, setSelfScore] = useState<number | ''>('');
   const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
+  const [token, setToken] = useState<string>(''); 
 
-  const isFormValid = selfScore !== '' && selfScore >= 1 && selfScore <= 10 && isConfirmed;
+  const isFormValid = selfScore !== '' && selfScore >= 1 && selfScore <= 10 && isConfirmed && token.trim().length >= 5;
 
   const handleSubmit = () => {
     if (isFormValid) {
       onSubmit({
         selfScore: Number(selfScore),
         isConfirmedEarnest: isConfirmed,
+        token: token.trim().toUpperCase()
       });
     }
   };
@@ -38,7 +41,7 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
             Tinjauan Akhir & Konfirmasi
           </CardTitle>
           <CardDescription>
-            Silakan periksa kembali data yang telah Anda masukkan sebelum dikirim ke sistem analisis AI.
+            Silakan periksa kembali data Anda dan masukkan Token Akses untuk mengirim analisis ke AI.
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-6 space-y-6">
@@ -58,6 +61,25 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
           </div>
 
           <div className="grid gap-6 md:grid-cols-2">
+            {/* Input Token Baru */}
+            <div className="space-y-3 bg-indigo-50/50 p-4 rounded-lg border border-indigo-100 md:col-span-2">
+              <Label htmlFor="token-input" className="text-sm font-bold text-indigo-900 flex items-center gap-2">
+                <KeyRound className="w-4 h-4" /> Token Akses Kurasi <span className="text-destructive">*</span>
+              </Label>
+              <p className="text-xs text-indigo-700 leading-relaxed">
+                Masukkan kode token unik yang diberikan oleh penyelenggara/admin untuk melakukan asesmen ini.
+              </p>
+              <Input
+                id="token-input"
+                type="text"
+                placeholder="Contoh: CORP-XYZ123"
+                value={token}
+                onChange={(e) => setToken(e.target.value)}
+                className="w-full text-lg font-bold bg-white tracking-widest uppercase"
+                disabled={isSubmitting}
+              />
+            </div>
+
             {/* Skor Kesungguhan */}
             <div className="space-y-3 bg-blue-50/50 p-4 rounded-lg border border-blue-100">
               <Label htmlFor="self-score" className="text-sm font-bold text-blue-900 flex items-center gap-2">
@@ -65,7 +87,6 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
               </Label>
               <p className="text-xs text-blue-700 leading-relaxed">
                 Seberapa yakin dan sungguh-sungguh Anda terhadap kelengkapan dan keakuratan data ini? 
-                Nilai ini akan mempengaruhi ketajaman analisis AI.
               </p>
               <Input
                 id="self-score"
@@ -103,7 +124,6 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
                   </Label>
                   <p className="text-xs text-amber-700 leading-relaxed cursor-pointer" onClick={() => setIsConfirmed(!isConfirmed)}>
                     Saya menyatakan bahwa pengisian form ini dilakukan dengan sungguh-sungguh. 
-                    Saya memahami bahwa kualitas evaluasi sepenuhnya bergantung pada akurasi data yang saya berikan.
                   </p>
                 </div>
               </div>
@@ -111,9 +131,9 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
           </div>
           
           {!isFormValid && (
-            <div className="flex items-center gap-2 text-sm text-amber-600 bg-amber-50 p-3 rounded border border-amber-200">
+            <div className="flex items-center gap-2 text-sm text-amber-600 bg-amber-50 p-3 rounded border border-amber-200 mt-4">
               <AlertCircle className="w-4 h-4" />
-              <span>Harap berikan nilai keyakinan (1-10) dan centang pernyataan tanggung jawab untuk melanjutkan.</span>
+              <span>Harap isi Token, Nilai Keyakinan (1-10), dan centang pernyataan tanggung jawab untuk melanjutkan.</span>
             </div>
           )}
         </CardContent>

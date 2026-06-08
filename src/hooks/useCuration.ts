@@ -1,3 +1,4 @@
+// src/hooks/useCuration.ts
 import { useState, useEffect } from 'react';
 import { ViewState, CurationFormData, AIResult, CurationHistory, FormTemplate } from '@/types/curation';
 import { processAIAssessment } from '@/services/ai.service';
@@ -87,10 +88,14 @@ export function useCuration() {
     setAiResult(null);
   };
 
-  const submitAssessment = async (finalData: CurationFormData) => {
+  const submitAssessment = async (finalData: Record<string, any>) => {
     if (!selectedTemplate) return;
 
-    setFormData(finalData);
+    // Pisahkan token agar tidak masuk ke formData bisnis
+    const tokenUsed = finalData.token;
+    delete finalData.token;
+
+    setFormData(finalData as CurationFormData);
     setViewState('processing');
     
     try {
@@ -113,38 +118,54 @@ export function useCuration() {
       
       const trackNameStr = selectedTemplate.trackName;
       
-      // Meneruskan aiPromptConfig dinamis dari template ke API
+      // Kirim data, track, instruksi AI, dan TOKEN ke Backend
       const result = await processAIAssessment(
         dbData as CurationFormData, 
         trackNameStr, 
-        selectedTemplate.aiPromptConfig
+        selectedTemplate.aiPromptConfig,
+        tokenUsed
       );
+      
       setAiResult(result);
       
+      // Simpan data di database assessments beserta info Token
+// Simpan data di database assessments beserta info Token
+// Simpan data di database assessments beserta info Token
       await addDoc(collection(db, "assessments"), {
         trackType: trackNameStr,
         namaUsaha: dbData.namaUsaha || 'Tanpa Nama',
         email: dbData.email || '',
         whatsapp: dbData.whatsapp || '',
-        score: result.totalScore,
-        readinessLevel: result.readinessLevel,
+        score: result.totalScore || 0,
+        readinessLevel: result.readinessLevel || 'Belum Ditentukan',
         formData: dbData,
         aiResult: result,
+        tokenUsed: tokenUsed || null, 
         createdAt: new Date().toISOString()
       });
       
       saveToHistory(dbData, result, trackNameStr);
-    } catch (error) {
+
+      // --- TAMBAHKAN BLOK INI ---
+      // Hapus cache lokal HANYA jika proses asessemen sukses sepenuhnya
+      if (typeof window !== 'undefined' && selectedTemplate) {
+        localStorage.removeItem(`curation_draft_dynamic_${selectedTemplate.id}`);
+      }
+      // --------------------------
+      
+      setViewState('dashboard');
+
+      if (typeof window !== 'undefined' && window.parent !== window) {
+        window.parent.postMessage({
+          type: 'CURATION_COMPLETED',
+          payload: { namaUsaha: finalData.namaUsaha, track: selectedTemplate?.trackName }
+        }, '*');
+      }
+
+    } catch (error: any) {
       console.error("Terjadi kesalahan saat memproses data:", error);
-    }
-    
-    setViewState('dashboard');
-    
-    if (typeof window !== 'undefined' && window.parent !== window) {
-      window.parent.postMessage({
-        type: 'CURATION_COMPLETED',
-        payload: { namaUsaha: finalData.namaUsaha, track: selectedTemplate?.trackName }
-      }, '*');
+      alert(error.message || "Gagal memproses AI. Pastikan Token benar.");
+      setViewState('wizard'); // Kembalikan ke layar form jika error
     }
   };
 

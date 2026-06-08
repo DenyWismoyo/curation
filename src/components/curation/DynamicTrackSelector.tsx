@@ -1,8 +1,9 @@
+// src/components/curation/DynamicTrackSelector.tsx
 'use client';
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronLeft, ArrowRight, LayoutGrid, Search, Sparkles } from 'lucide-react';
+import { ChevronLeft, ArrowRight, LayoutGrid, Search, Sparkles, AlertCircle, ShieldCheck, HardDrive } from 'lucide-react';
 import { FormTemplate } from '@/types/curation';
 import * as LucideIcons from 'lucide-react';
 
@@ -15,7 +16,6 @@ interface DynamicTrackSelectorProps {
 const getCategoryTheme = (title: string, desc: string) => {
   const text = `${title} ${desc}`.toLowerCase();
   
-  // Tema Hijau: Koperasi, Komunitas, Lingkungan
   if (text.includes('koperasi') || text.includes('kelurahan') || text.includes('komunitas') || text.includes('hijau') || text.includes('sampah')) {
     return {
       gradient: 'bg-gradient-to-br from-white to-emerald-50/40 hover:to-emerald-100/60',
@@ -30,7 +30,6 @@ const getCategoryTheme = (title: string, desc: string) => {
     };
   }
   
-  // Tema Oranye/Amber: Pemerintahan, Layanan Publik, Administrasi
   if (text.includes('pemerintah') || text.includes('skp') || text.includes('kecamatan') || text.includes('layanan') || text.includes('disposisi')) {
     return {
       gradient: 'bg-gradient-to-br from-white to-amber-50/40 hover:to-amber-100/60',
@@ -45,7 +44,6 @@ const getCategoryTheme = (title: string, desc: string) => {
     };
   }
 
-  // Tema Biru Muda: Riset, Akademik, Techno Park
   if (text.includes('riset') || text.includes('akademik') || text.includes('perguruan') || text.includes('techno park') || text.includes('inkubasi')) {
     return {
       gradient: 'bg-gradient-to-br from-white to-sky-50/40 hover:to-sky-100/60',
@@ -60,7 +58,6 @@ const getCategoryTheme = (title: string, desc: string) => {
     };
   }
   
-  // Tema Ungu/Indigo: Default (Startup, Tech, Umum)
   return {
     gradient: 'bg-gradient-to-br from-white to-indigo-50/40 hover:to-indigo-100/60',
     iconWrap: 'bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white group-hover:shadow-indigo-500/30',
@@ -77,6 +74,9 @@ const getCategoryTheme = (title: string, desc: string) => {
 export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelectorProps) {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
+  
+  // State untuk mengontrol Pop-up (Modal) konfirmasi
+  const [selectedTrack, setSelectedTrack] = useState<FormTemplate | null>(null);
 
   const activeTemplates = templates.filter(t => t.isActive);
   const filteredTemplates = activeTemplates.filter(t => 
@@ -84,9 +84,22 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
     t.trackDescription.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleSelectTrack = (trackId: string) => {
-    // Navigasi ke URL assessment dinamis
-    router.push(`/assessment/${trackId}`);
+  // Fungsi ini HANYA memunculkan pop-up, bukan langsung pindah
+  const handleSelectTrack = (template: FormTemplate) => {
+    setSelectedTrack(template);
+  };
+
+  // Fungsi ini dipanggil ketika user setuju pada Pop-up
+  const confirmSelection = () => {
+    if (!selectedTrack) return;
+    
+    // Konversi nama menjadi Slug untuk URL
+    const slug = selectedTrack.trackName
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)+/g, '');
+      
+    router.push(`/assessment/${slug}`);
   };
 
   const handleBack = () => {
@@ -155,17 +168,15 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
                                      ? (LucideIcons as any)[template.trackIcon] 
                                      : LayoutGrid;
               
-              // Terapkan deteksi tema
               const theme = getCategoryTheme(template.trackName, template.trackDescription);
               
               return (
                 <div 
                   key={template.id} 
-                  onClick={() => handleSelectTrack(template.id)}
+                  onClick={() => handleSelectTrack(template)}
                   style={{ animationFillMode: 'both', animationDelay: `${index * 100}ms` }}
                   className={`animate-in fade-in slide-in-from-bottom-12 duration-700 ease-out group relative cursor-pointer rounded-[2rem] p-8 ring-1 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-500 hover:-translate-y-2 flex flex-col justify-between overflow-hidden h-full min-h-[300px] ${theme.gradient} ${theme.border} ${theme.shadow}`}
                 >
-                  {/* WATERMARK ICON BESAR DI KANAN BAWAH */}
                   <div className={`absolute -bottom-8 -right-8 w-48 h-48 transform group-hover:scale-110 group-hover:-rotate-6 transition-all duration-700 ease-out pointer-events-none ${theme.watermark}`}>
                     <IconComponent className="w-full h-full" strokeWidth={1.5} />
                   </div>
@@ -183,7 +194,6 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
                     </p>
                   </div>
 
-                  {/* Bagian Bawah: Action Button Interaktif */}
                   <div className="relative z-10 mt-10 flex items-center justify-between border-t border-slate-100/50 pt-6 transition-colors duration-300">
                     <span className={`text-sm font-bold text-slate-400 transition-colors duration-300 ${theme.arrow}`}>
                       Mulai Asesmen
@@ -193,7 +203,6 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
                     </div>
                   </div>
                   
-                  {/* Garis Bawah Aksen */}
                   <div className={`absolute bottom-0 left-0 h-1.5 w-0 group-hover:w-full transition-all duration-700 ease-out ${theme.line}`} />
                 </div>
               );
@@ -201,6 +210,68 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
           </div>
         )}
       </div>
+
+      {/* ================= MODAL KONFIRMASI (POP-UP) ================= */}
+      {selectedTrack && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-6 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
+          <div 
+            className="bg-white w-full max-w-lg rounded-[2rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.2)] overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-4 duration-300"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header Pop-up */}
+            <div className="bg-indigo-600 p-6 md:p-8 flex items-start gap-4">
+              <div className="bg-white/20 p-3 rounded-2xl shrink-0">
+                <AlertCircle className="w-8 h-8 text-white" />
+              </div>
+              <div>
+                <h3 className="text-xl md:text-2xl font-black text-white mb-1">Persetujuan Asesmen</h3>
+                <p className="text-indigo-100 font-medium text-sm md:text-base leading-snug">
+                  Modul: {selectedTrack.trackName}
+                </p>
+              </div>
+            </div>
+
+            {/* Konten Peraturan */}
+            <div className="p-6 md:p-8 space-y-6">
+              <p className="text-slate-600 font-medium text-sm md:text-base leading-relaxed">
+                Sebelum memulai pengisian data, mohon perhatikan pedoman berikut agar hasil kurasi AI bekerja maksimal:
+              </p>
+
+              <div className="space-y-4">
+                <div className="flex gap-4 p-4 rounded-2xl bg-amber-50 ring-1 ring-amber-100 text-amber-900">
+                  <ShieldCheck className="w-6 h-6 shrink-0 text-amber-500" />
+                  <p className="text-sm font-semibold">Semua data dan dokumen yang diinput harus sesuai dengan kondisi entitas Anda yang sebenarnya.</p>
+                </div>
+                
+                <div className="flex gap-4 p-4 rounded-2xl bg-emerald-50 ring-1 ring-emerald-100 text-emerald-900">
+                  <HardDrive className="w-6 h-6 shrink-0 text-emerald-500" />
+                  <div>
+                    <p className="text-sm font-semibold mb-1">Aman Ter-Cache Lokal</p>
+                    <p className="text-sm opacity-90">Jika ada berkas yang belum disiapkan, Anda bisa melengkapinya nanti. Form ini menyimpan progres Anda secara otomatis. Data tidak akan hilang saat direfresh.</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tombol Aksi */}
+              <div className="flex flex-col-reverse md:flex-row gap-3 pt-4">
+                <button 
+                  onClick={() => setSelectedTrack(null)}
+                  className="w-full md:w-auto px-6 py-3.5 rounded-xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors focus:ring-4 focus:ring-slate-100"
+                >
+                  Batal
+                </button>
+                <button 
+                  onClick={confirmSelection}
+                  className="w-full flex-1 px-6 py-3.5 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-600/20 transition-all focus:ring-4 focus:ring-indigo-100 flex items-center justify-center gap-2 group"
+                >
+                  Mengerti & Lanjutkan
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

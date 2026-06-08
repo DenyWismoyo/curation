@@ -8,7 +8,7 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { 
   Search, Users, Activity, Target, 
-  Download, Settings, ArrowRight
+  Download, Settings, ArrowRight, KeyRound
 } from 'lucide-react';
 import Link from 'next/link';
 import { AdminAssessmentDetail } from '@/components/admin/AdminAssessmentDetail';
@@ -106,13 +106,23 @@ export default function AdminPage() {
             <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight text-balance">Admin Dashboard</h1>
             <p className="text-slate-500 font-medium text-sm sm:text-base mt-1">Monitoring Hasil Kurasi Inkubator</p>
           </div>
+          
+          {/* Menu Navigasi Admin */}
           <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            {/* Tombol Baru: Menuju Manajemen Token */}
+            <Link href="/admin/tokens" className="w-full sm:w-auto">
+              <Button variant="outline" className="w-full gap-2 text-indigo-600 border-indigo-200 hover:bg-indigo-50 rounded-xl h-10 px-4 font-bold">
+                <KeyRound className="w-4 h-4" /> Kelola Token Akses
+              </Button>
+            </Link>
+
             <Link href="/admin/templates" className="w-full sm:w-auto">
-              <Button variant="outline" className="w-full gap-2 text-indigo-600 border-indigo-200 hover:bg-indigo-50 rounded-xl h-10">
+              <Button variant="outline" className="w-full gap-2 text-slate-700 border-slate-200 hover:bg-slate-50 rounded-xl h-10 px-4 font-bold">
                 <Settings className="w-4 h-4" /> Kelola Template Form
               </Button>
             </Link>
-            <Button onClick={exportToCSV} className="w-full sm:w-auto gap-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl h-10">
+
+            <Button onClick={exportToCSV} className="w-full sm:w-auto gap-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl h-10 px-4 font-bold">
               <Download className="w-4 h-4" /> Ekspor CSV
             </Button>
           </div>
@@ -255,7 +265,7 @@ export default function AdminPage() {
         )}
       </div>
 
-      {/* RENDER KOMPONEN MODAL DETAIL BARU */}
+      {/* RENDER KOMPONEN MODAL DETAIL */}
       {selectedItem && (
         <AdminAssessmentDetail 
            data={selectedItem} 

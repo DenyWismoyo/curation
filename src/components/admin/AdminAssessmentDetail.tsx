@@ -9,6 +9,9 @@ import {
 } from 'lucide-react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip } from 'recharts';
 
+// Import Komponen Export PDF yang baru
+import { AdminExportPDF } from './AdminExportPDF';
+
 interface AdminAssessmentDetailProps {
   data: any;
   onClose: () => void;
@@ -36,17 +39,16 @@ const InsightAccordion = ({ id, title, icon: Icon, content, expandedSection, set
       </div>
     </div>
   );
-};
+}
 
 export function AdminAssessmentDetail({ data, onClose }: AdminAssessmentDetailProps) {
   const [activeTab, setActiveTab] = useState<'ai' | 'input'>('ai');
   const [expandedSection, setExpandedSection] = useState<string | null>('rec-0');
-
+  
   const { formData, aiResult, score, readinessLevel, trackType, namaUsaha, createdAt } = data;
   const isHighTier = (score || 0) >= 75;
 
-  // PERUBAHAN: Mengambil data metrik dari array dinamis
-const radarData = aiResult?.metrics?.map((m: any, idx: number) => ({
+  const radarData = aiResult?.metrics?.map((m: any, idx: number) => ({
     subject: m.label,
     shortLabel: `D${idx + 1}`,
     A: m.score,
@@ -61,6 +63,7 @@ const radarData = aiResult?.metrics?.map((m: any, idx: number) => ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
       <div className="bg-slate-50 w-full max-w-6xl h-[95vh] rounded-[2rem] shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-300">
         
+        {/* HEADER MODAL DENGAN TOMBOL EXPORT PDF */}
         <div className="bg-white px-6 py-5 sm:px-8 border-b border-slate-200 flex justify-between items-center shrink-0">
           <div>
             <h2 className="text-2xl font-black text-slate-900 tracking-tight">{namaUsaha}</h2>
@@ -73,9 +76,16 @@ const radarData = aiResult?.metrics?.map((m: any, idx: number) => ({
               </span>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 bg-slate-100 hover:bg-rose-100 text-slate-500 hover:text-rose-600 rounded-full transition-colors active:scale-95">
-            <X className="w-6 h-6" />
-          </button>
+          
+          {/* Tombol Aksi di Kanan */}
+          <div className="flex items-center gap-3">
+            {/* INJEKSI KOMPONEN EXPORT DI SINI */}
+            <AdminExportPDF data={data} />
+            
+            <button onClick={onClose} className="p-2 bg-slate-100 hover:bg-rose-100 text-slate-500 hover:text-rose-600 rounded-full transition-colors active:scale-95" title="Tutup Panel">
+              <X className="w-6 h-6" />
+            </button>
+          </div>
         </div>
 
         <div className="flex gap-4 px-6 sm:px-8 pt-4 bg-white border-b border-slate-200 shrink-0 overflow-x-auto custom-scrollbar">
@@ -105,7 +115,6 @@ const radarData = aiResult?.metrics?.map((m: any, idx: number) => ({
                     if (value === null || value === undefined || value === '') return null;
                     const isUrl = typeof value === 'string' && value.startsWith('http');
                     const isArray = Array.isArray(value);
-
                     return (
                       <div key={key} className="bg-slate-50 p-4 rounded-2xl ring-1 ring-slate-100">
                         <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">
@@ -177,7 +186,6 @@ const radarData = aiResult?.metrics?.map((m: any, idx: number) => ({
                 </div>
               )}
 
-{/* PERUBAHAN 2: Tampilan Radar Chart & Legenda */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="bg-white p-6 rounded-[2rem] ring-1 ring-slate-200 shadow-sm flex flex-col items-center">
                   <h4 className="font-black text-slate-900 mb-2 text-center text-lg tracking-tight">Analisis Dimensi</h4>
@@ -190,13 +198,12 @@ const radarData = aiResult?.metrics?.map((m: any, idx: number) => ({
                           <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
                           <Radar name="Skor" dataKey="A" stroke={isHighTier ? '#10b981' : '#4f46e5'} strokeWidth={2.5} fill={isHighTier ? '#10b981' : '#4f46e5'} fillOpacity={0.15} />
                           <Tooltip 
-                            labelFormatter={(label) => radarData.find((d: any) => d.shortLabel === label)?.subject || label} 
-                            wrapperClassName="rounded-xl font-bold text-sm shadow-xl" 
-                          />
+                             labelFormatter={(label) => radarData.find((d: any) => d.shortLabel === label)?.subject || label} 
+                             wrapperClassName="rounded-xl font-bold text-sm shadow-xl" 
+                           />
                         </RadarChart>
                     </ResponsiveContainer>
                   </div>
-
                   <div className="w-full mt-4 grid grid-cols-2 gap-x-2 gap-y-3 pt-4 border-t border-slate-100">
                     {radarData.map((item: any, idx: number) => (
                       <div key={idx} className="flex items-start gap-1.5 text-[11px] leading-tight text-slate-600">
@@ -242,7 +249,6 @@ const radarData = aiResult?.metrics?.map((m: any, idx: number) => ({
                     <h3 className="font-black text-slate-900 text-xl tracking-tight">Rekomendasi Strategis</h3>
                   </div>
                   
-                  {/* PERUBAHAN: Looping Dinamis untuk Rekomendasi */}
                   <div className="flex flex-col gap-3">
                     {aiResult.recommendations?.map((rec: any, idx: number) => (
                       <InsightAccordion 
@@ -280,7 +286,6 @@ const radarData = aiResult?.metrics?.map((m: any, idx: number) => ({
                   </div>
                 </div>
               </div>
-
             </div>
           )}
 
