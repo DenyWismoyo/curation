@@ -4,24 +4,46 @@ export interface CurationFormData {
   [key: string]: any; 
 }
 
-// Skema output metrik penilaian dinamis
 export interface DynamicMetric {
-  label: string;      // Contoh: "Kesiapan Teknologi (TRL)" atau "Kesehatan SHU Koperasi"
-  score: number;      // Nilai skala 0 - 100
-  description: string; // Alasan penilaian singkat dari AI
+  label: string;
+  score: number;
+  description: string;
 }
 
-// Skema output blok rekomendasi dinamis
 export interface DynamicSection {
-  title: string;      // Contoh: "Strategi HAKI & Komersialisasi" atau "Rencana Skalasi Bisnis"
-  content: string;    // Isi analisis detail dari AI
+  title: string;
+  content: string;
 }
 
-// Integrasi hasil analisa AI yang fleksibel mengikuti template
 export interface AIResult {
   readinessLevel: string;
   totalScore: number;
   incubationRoute: string;
+  executiveSummary: string;
+  marketPositioning: {
+    niche: string;
+    competitorAdvantage: string;
+    marketScalability: "Low" | "Medium" | "High" | "Exponential";
+  };
+  fileAnalysisInsights: {
+    documentQuality: string;
+    keyFindingsFromFiles: string[];
+    discrepancies: string; // Ketidaksesuaian antara form dan dokumen (jika ada)
+  };
+  financialHealth: {
+    revenueModelViability: string;
+    burnRateOrRunwayAssessment: string;
+    financialScore: number;
+  };
+  teamAssessment: {
+    founderMarketFit: string;
+    identifiedSkillGaps: string[];
+  };
+  investmentReadiness: {
+    currentFundingStage: string;
+    recommendedInstrument: string;
+    investorAttractiveness: "Not Ready" | "Angel/Seed" | "VC Backable" | "Bankable (Credit)";
+  };
   metrics: DynamicMetric[]; 
   swotAnalysis: {
     strengths: string[];
@@ -34,7 +56,10 @@ export interface AIResult {
     criticalRisks: string[];
     mitigationStrategies: string[];
   };
-  nextActionSteps: string[];
+  nextActionSteps: {
+    timeframe: "30 Hari" | "60 Hari" | "90 Hari" | "1 Tahun";
+    task: string;
+  }[];
 }
 
 export interface CurationHistory {
@@ -69,10 +94,9 @@ export interface FormStep {
   fields: FormField[];    
 }
 
-// Konfigurasi instruksi AI khusus untuk setiap template
 export interface AiPromptConfig {
-  expectedMetrics: string[];         // Metrik yang wajib dinilai oleh AI
-  expectedRecommendations: string[]; // Judul blok rekomendasi strategis yang wajib dibuat AI
+  expectedMetrics: string[];
+  expectedRecommendations: string[];
 }
 
 export interface FormTemplate {
@@ -84,11 +108,10 @@ export interface FormTemplate {
   version: number;
   lastUpdated: string;
   steps: FormStep[];
-  aiPromptConfig?: AiPromptConfig; // Opsional untuk template custom baru
+  aiPromptConfig?: AiPromptConfig;
 }
 
 export interface AssessmentPayload {
-  // ... field yang sudah ada ...
   selfScore?: number;
   isConfirmedEarnest?: boolean;
 }
