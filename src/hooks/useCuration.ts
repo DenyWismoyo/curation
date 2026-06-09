@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { ViewState, CurationFormData, AIResult, CurationHistory, FormTemplate } from '@/types/curation';
 import { processAIAssessment } from '@/services/ai.service';
-import { collection, addDoc, getDocs, setDoc, doc, updateDoc, increment, getDoc } from 'firebase/firestore'; 
+import { collection, getDocs, setDoc, doc } from 'firebase/firestore'; 
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '@/lib/firebase';
 import { defaultTemplates } from '@/data/defaultTemplates';
@@ -55,10 +55,9 @@ export function useCuration() {
     fetchTemplates();
   }, []);
 
-  // PERUBAHAN DI SINI: Tambahkan parameter `firestoreId` opsional
-  const saveToHistory = (data: CurationFormData, result: AIResult, track: string, firestoreId?: string) => {
+  const saveToHistory = (data: CurationFormData, result: AIResult, track: string, firestoreId: string) => {
     const newEntry: CurationHistory = {
-      id: firestoreId || Date.now().toString(), // Gunakan ID asli dari Firestore jika ada
+      id: firestoreId,
       date: new Date().toISOString(),
       trackType: track,
       namaUsaha: data.namaUsaha || 'Tanpa Nama',
@@ -93,7 +92,6 @@ export function useCuration() {
   const submitAssessment = async (finalData: Record<string, any>) => {
     if (!selectedTemplate) return;
 
-    // Pisahkan token agar tidak masuk ke formData bisnis
     const tokenUsed = finalData.token;
     delete finalData.token;
 
@@ -102,91 +100,45 @@ export function useCuration() {
     
     try {
       const dbData: Record<string, any> = { ...finalData };
+      const storageFilePaths: string[] = []; 
       const uploadPromises: Promise<void>[] = [];
       
       for (const key in dbData) {
         const value = dbData[key];
         if (value instanceof File) {
-          const fileName = `curation_files/${Date.now()}_${value.name.replace(/\s+/g, '_')}`;
-          const storageRef = ref(storage, fileName);
+          const filePath = `curation_files/${Date.now()}_${value.name.replace(/\s+/g, '_')}`;
+          const storageRef = ref(storage, filePath);
+          
           const uploadTask = uploadBytes(storageRef, value).then(async (snapshot) => {
             const downloadUrl = await getDownloadURL(snapshot.ref);
-            dbData[key] = downloadUrl; 
+            dbData[key] = downloadUrl; // Untuk ditampilkan di frontend (PDF Viewer dll)
+            storageFilePaths.push(filePath); // Path internal GCP untuk dikirim ke Backend
           });
           uploadPromises.push(uploadTask);
         }
       }
 
+      // Tunggu hingga semua file terupload ke Storage
       await Promise.all(uploadPromises);
       
-      const trackNameStr = selectedTemplate.trackName;
-      
-      // Kirim data, track, instruksi AI, dan TOKEN ke Backend
-      const result = await processAIAssessment(
+      // Panggil Cloud Function
+      const { assessmentId, aiResult } = await processAIAssessment(
         dbData as CurationFormData, 
-        trackNameStr, 
+        selectedTemplate.trackName, 
+        storageFilePaths,
         selectedTemplate.aiPromptConfig,
         tokenUsed
       );
       
-      setAiResult(result);
+      setAiResult(aiResult);
       
-      // Ambil nama corporate secara dinamis dari token batch untuk di-link ke curator dashboard
-      let corporateEntityName = null;
+      // Simpan referensi ke local history (assessmentId dari backend)
+      saveToHistory(dbData, aiResult, selectedTemplate.trackName, assessmentId);
 
-      // =========================================================
-      // BLOK EKSEKUSI PEMBAKARAN (BURN) TOKEN DI FIRESTORE & AMBIL NAMA PROGRAM
-      // =========================================================
-      if (tokenUsed && typeof tokenUsed === 'string' && tokenUsed.includes('-')) {
-        try {
-          const [corpId, tokenCode] = tokenUsed.split('-');
-          const tokenDocRef = doc(db, 'corporate_tokens', corpId);
-
-          // Ambil snapshot data token batch untuk mendapatkan corporateName asli secara aman
-          const tokenDocSnap = await getDoc(tokenDocRef);
-          if (tokenDocSnap.exists()) {
-            corporateEntityName = tokenDocSnap.data().corporateName;
-          }
-
-          // Update status token spesifik di dalam objek JSON tokens dan naikkan count
-          await updateDoc(tokenDocRef, {
-            [`tokens.${tokenCode}.isUsed`]: true,
-            [`tokens.${tokenCode}.usedAt`]: new Date().toISOString(),
-            [`tokens.${tokenCode}.usedByNamaUsaha`]: dbData.namaUsaha || 'Tanpa Nama',
-            usedCount: increment(1)
-          });
-
-          // Bersihkan session agar tidak bisa di-refresh untuk bypass
-          if (typeof window !== 'undefined') {
-            sessionStorage.removeItem('active_token');
-            sessionStorage.removeItem('active_model');
-          }
-        } catch (tokenError) {
-          console.error("Gagal melakukan update status token atau mengambil nama korporat:", tokenError);
-        }
-      }
-      // =========================================================
-      
-      // PERUBAHAN DI SINI: Tangkap Response dari addDoc sebagai `docRef`
-      const docRef = await addDoc(collection(db, "assessments"), {
-        trackType: trackNameStr,
-        corporateEntity: corporateEntityName, 
-        namaUsaha: dbData.namaUsaha || 'Tanpa Nama',
-        email: dbData.email || '',
-        whatsapp: dbData.whatsapp || '',
-        score: result.totalScore || 0,
-        readinessLevel: result.readinessLevel || 'Belum Ditentukan',
-        formData: dbData,
-        aiResult: result,
-        tokenUsed: tokenUsed || null, 
-        createdAt: new Date().toISOString()
-      });
-
-      // PERUBAHAN DI SINI: Kirim docRef.id ke fungsi saveToHistory
-      saveToHistory(dbData, result, trackNameStr, docRef.id);
-
-      // Hapus cache lokal HANYA jika proses asessemen sukses sepenuhnya
-      if (typeof window !== 'undefined' && selectedTemplate) {
+      // Bersihkan session cache
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem('active_token');
+        sessionStorage.removeItem('active_model');
         localStorage.removeItem(`curation_draft_dynamic_${selectedTemplate.id}`);
       }
       
@@ -202,7 +154,7 @@ export function useCuration() {
     } catch (error: any) {
       console.error("Terjadi kesalahan saat memproses data:", error);
       alert(error.message || "Gagal memproses AI. Pastikan Token benar.");
-      setViewState('wizard'); // Kembalikan ke layar form jika error
+      setViewState('wizard'); 
     }
   };
 
