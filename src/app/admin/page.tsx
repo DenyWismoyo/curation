@@ -1,3 +1,4 @@
+// src/app/admin/page.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -8,7 +9,8 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { 
   Search, Users, Activity, Target, 
-  Download, Settings, ArrowRight, KeyRound
+  Download, Settings, ArrowRight, KeyRound,
+  CheckCircle2, Clock, Edit3, Building2
 } from 'lucide-react';
 import Link from 'next/link';
 import { AdminAssessmentDetail } from '@/components/admin/AdminAssessmentDetail';
@@ -24,6 +26,9 @@ export interface AssessmentDoc {
   formData: any;
   aiResult: any;
   createdAt: string;
+  status?: string;
+  corporateEntity?: string;
+  curatorAssessment?: any;
 }
 
 export default function AdminPage() {
@@ -68,23 +73,30 @@ export default function AdminPage() {
 
   const exportToCSV = () => {
     if (filteredData.length === 0) return;
-    const headers = ['Tanggal', 'Nama Usaha', 'Kategori', 'Email', 'WhatsApp', 'Skor', 'Level Kesiapan', 'Rekomendasi Rute'];
-    const csvData = filteredData.map(item => [
-      new Date(item.createdAt).toLocaleDateString('id-ID'),
-      `"${item.namaUsaha || ''}"`,
-      item.trackType,
-      item.email,
-      `'${item.whatsapp}'`, 
-      item.score,
-      item.readinessLevel,
-      `"${item.aiResult?.recommendations?.incubationRoute || ''}"`
-    ]);
+    const headers = ['Tanggal', 'Nama Usaha', 'Program/Entitas', 'Kategori', 'Email', 'WhatsApp', 'Skor AI', 'Level AI', 'Status Kurasi', 'Skor Kurator'];
+    const csvData = filteredData.map(item => {
+      const statusLabel = item.status === 'Curator_Validated' ? 'Selesai' : item.status === 'Curator_Draft' ? 'Draf' : 'Menunggu';
+      const curatorScore = item.curatorAssessment?.verifiedScore || '-';
+      
+      return [
+        new Date(item.createdAt).toLocaleDateString('id-ID'),
+        `"${item.namaUsaha || ''}"`,
+        `"${item.corporateEntity || 'Umum'}"`,
+        item.trackType,
+        item.email,
+        `'${item.whatsapp}'`, 
+        item.score,
+        item.readinessLevel,
+        statusLabel,
+        curatorScore
+      ];
+    });
     const csvContent = [headers.join(','), ...csvData.map(e => e.join(','))].join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `Rekap_Kurasi_${new Date().getTime()}.csv`);
+    link.setAttribute('download', `Rekap_Admin_Inkubator_${new Date().getTime()}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -107,9 +119,7 @@ export default function AdminPage() {
             <p className="text-slate-500 font-medium text-sm sm:text-base mt-1">Monitoring Hasil Kurasi Inkubator</p>
           </div>
           
-          {/* Menu Navigasi Admin */}
           <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-            {/* Tombol Baru: Menuju Manajemen Token */}
             <Link href="/admin/tokens" className="w-full sm:w-auto">
               <Button variant="outline" className="w-full gap-2 text-indigo-600 border-indigo-200 hover:bg-indigo-50 rounded-xl h-10 px-4 font-bold">
                 <KeyRound className="w-4 h-4" /> Kelola Token Akses
@@ -193,70 +203,135 @@ export default function AdminPage() {
            <>
               {/* MOBILE VIEW (Cards) */}
               <div className="grid grid-cols-1 gap-3 sm:hidden">
-                 {filteredData.map(item => (
-                   <div key={item.id} onClick={() => setSelectedItem(item)} className="bg-white p-4 rounded-2xl ring-1 ring-slate-200 shadow-sm flex flex-col gap-3 active:scale-[0.98] transition-transform">
-                      <div className="flex justify-between items-start">
-                         <div>
-                           <p className="font-bold text-slate-900 text-base">{item.namaUsaha}</p>
-                           <p className="text-xs text-slate-500 mt-0.5">{item.email}</p>
-                         </div>
-                         <span className="px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest bg-slate-50 ring-1 ring-slate-100 text-slate-600">{item.trackType}</span>
-                      </div>
-                      <div className="flex items-center justify-between mt-1 pt-3 border-t border-slate-50">
-                         <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
-                            <Target className="w-3.5 h-3.5 text-slate-400"/> {item.readinessLevel}
-                         </span>
-                         <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full font-black text-xs ${getScoreColor(item.score)}`}>
-                           {item.score}
-                         </span>
-                      </div>
-                   </div>
-                 ))}
+                 {filteredData.map(item => {
+                   const isValidated = item.status === 'Curator_Validated';
+                   const isDraft = item.status === 'Curator_Draft';
+                   
+                   return (
+                     <div key={item.id} onClick={() => setSelectedItem(item)} className="bg-white p-4 rounded-2xl ring-1 ring-slate-200 shadow-sm flex flex-col gap-3 active:scale-[0.98] transition-transform">
+                        <div className="flex justify-between items-start">
+                           <div>
+                             <p className="font-bold text-slate-900 text-base">{item.namaUsaha}</p>
+                             <p className="text-xs text-slate-500 mt-0.5 mb-2">{item.email}</p>
+                             <div className="flex flex-wrap items-center gap-2">
+                               <span className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200 flex items-center gap-1">
+                                 <Building2 size={10} /> {item.corporateEntity || 'Program Umum'}
+                               </span>
+                               <span className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest bg-slate-50 ring-1 ring-slate-200 text-slate-600">
+                                 {item.trackType}
+                               </span>
+                             </div>
+                           </div>
+                           <div className="flex items-center">
+                             {isValidated ? (
+                               <span className="p-1.5 bg-emerald-100 text-emerald-600 rounded-lg"><CheckCircle2 size={16}/></span>
+                             ) : isDraft ? (
+                               <span className="p-1.5 bg-amber-100 text-amber-600 rounded-lg"><Edit3 size={16}/></span>
+                             ) : (
+                               <span className="p-1.5 bg-slate-100 text-slate-500 rounded-lg"><Clock size={16}/></span>
+                             )}
+                           </div>
+                        </div>
+                        <div className="flex items-center justify-between mt-1 pt-3 border-t border-slate-50">
+                           <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
+                              <Target className="w-3.5 h-3.5 text-slate-400"/> AI: {item.score} {isValidated && `• Kurator: ${item.curatorAssessment?.verifiedScore}`}
+                           </span>
+                           <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full font-black text-xs ${getScoreColor(isValidated ? item.curatorAssessment?.verifiedScore : item.score)}`}>
+                             {isValidated ? item.curatorAssessment?.verifiedScore : item.score}
+                           </span>
+                        </div>
+                     </div>
+                   );
+                 })}
               </div>
 
               {/* DESKTOP VIEW (Table) */}
               <Card className="hidden sm:block bg-white ring-1 ring-slate-200 border-none shadow-sm overflow-hidden rounded-2xl">
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm text-left">
-                    <thead className="text-xs text-slate-400 bg-slate-50/50 uppercase font-black tracking-wider border-b border-slate-100">
+                    <thead className="text-[10px] text-slate-400 bg-slate-50/50 uppercase font-black tracking-wider border-b border-slate-100">
                       <tr>
                         <th className="px-6 py-4">Profil Usaha</th>
-                        <th className="px-6 py-4 text-center">Skor AI</th>
-                        <th className="px-6 py-4">Level Kesiapan</th>
+                        <th className="px-6 py-4 text-center">Skor (AI / Kurator)</th>
+                        <th className="px-6 py-4">Status Kurasi</th>
                         <th className="px-6 py-4 text-center">Aksi</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50">
-                      {filteredData.map((item) => (
-                        <tr key={item.id} className="hover:bg-slate-50/50 transition-colors group">
-                          <td className="px-6 py-4">
-                            <div className="flex flex-col">
-                               <div className="flex items-center gap-2">
-                                  <p className="font-bold text-slate-900 text-base">{item.namaUsaha}</p>
-                                  <span className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest bg-slate-50 ring-1 ring-slate-200 text-slate-500">{item.trackType}</span>
-                               </div>
-                               <div className="flex items-center gap-3 mt-1 text-xs text-slate-500">
-                                  <span>{item.email}</span>
-                                  <span className="w-1 h-1 rounded-full bg-slate-300"></span>
-                                  <span>{new Date(item.createdAt).toLocaleDateString('id-ID')}</span>
-                               </div>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 text-center">
-                            <span className={`inline-flex items-center justify-center w-9 h-9 rounded-full font-black text-xs shadow-sm ${getScoreColor(item.score)}`}>
-                              {item.score || 0}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 font-bold text-slate-600 text-xs uppercase tracking-wider">
-                            {item.readinessLevel}
-                          </td>
-                          <td className="px-6 py-4 text-center">
-                            <Button variant="ghost" size="sm" onClick={() => setSelectedItem(item)} className="text-indigo-600 hover:bg-indigo-50 font-bold rounded-xl opacity-0 group-hover:opacity-100 transition-opacity">
-                               Detail <ArrowRight className="w-4 h-4 ml-1" />
-                            </Button>
-                          </td>
-                        </tr>
-                      ))}
+                      {filteredData.map((item) => {
+                        const isValidated = item.status === 'Curator_Validated';
+                        const isDraft = item.status === 'Curator_Draft';
+                        
+                        return (
+                          <tr key={item.id} className="hover:bg-slate-50/50 transition-colors group">
+                            <td className="px-6 py-4">
+                              <div className="flex flex-col">
+                                 <div className="flex items-center gap-2">
+                                    <p className="font-bold text-slate-900 text-base">{item.namaUsaha}</p>
+                                 </div>
+                                 <div className="flex items-center gap-3 mt-1 text-xs text-slate-500">
+                                    <span>{item.email}</span>
+                                    <span className="w-1 h-1 rounded-full bg-slate-300"></span>
+                                    <span>{new Date(item.createdAt).toLocaleDateString('id-ID')}</span>
+                                 </div>
+                                 {/* Program / Entitas dipindah ke bawah email */}
+                                 <div className="flex items-center gap-2 mt-2.5">
+                                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-widest bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200">
+                                      <Building2 size={10} /> {item.corporateEntity || 'Program Umum'}
+                                    </span>
+                                    <span className="px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest bg-slate-50 ring-1 ring-slate-200 text-slate-500">
+                                      {item.trackType}
+                                    </span>
+                                 </div>
+                              </div>
+                            </td>
+
+                            <td className="px-6 py-4">
+                              <div className="flex items-center justify-center gap-3">
+                                <div className="flex flex-col items-center">
+                                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">AI</span>
+                                  <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full font-black text-xs shadow-sm ${getScoreColor(item.score)}`}>
+                                    {item.score || 0}
+                                  </span>
+                                </div>
+                                {isValidated && (
+                                  <>
+                                    <div className="w-4 border-t-2 border-dashed border-slate-200"></div>
+                                    <div className="flex flex-col items-center">
+                                      <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest mb-1">Final</span>
+                                      <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full font-black text-xs shadow-sm ${getScoreColor(item.curatorAssessment?.verifiedScore)}`}>
+                                        {item.curatorAssessment?.verifiedScore}
+                                      </span>
+                                    </div>
+                                  </>
+                                )}
+                              </div>
+                            </td>
+
+                            <td className="px-6 py-4">
+                              {isValidated ? (
+                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest bg-emerald-100 text-emerald-700 ring-1 ring-emerald-200">
+                                  <CheckCircle2 className="w-3 h-3" /> Selesai
+                                </span>
+                              ) : isDraft ? (
+                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest bg-amber-100 text-amber-700 ring-1 ring-amber-200">
+                                  <Edit3 className="w-3 h-3" /> Draf
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest bg-slate-100 text-slate-500 ring-1 ring-slate-200">
+                                  <Clock className="w-3 h-3" /> Menunggu
+                                </span>
+                              )}
+                            </td>
+
+                            <td className="px-6 py-4 text-center">
+                              <Button variant="ghost" size="sm" onClick={() => setSelectedItem(item)} className="text-indigo-600 hover:bg-indigo-50 font-bold rounded-xl opacity-0 group-hover:opacity-100 transition-opacity">
+                                 Buka Detail <ArrowRight className="w-4 h-4 ml-1" />
+                              </Button>
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
