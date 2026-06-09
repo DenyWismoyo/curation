@@ -1,179 +1,239 @@
+// src/components/curation/DynamicField.tsx
 'use client';
 
-import React from 'react';
-import { Check, Upload, X } from 'lucide-react';
+import React, { useRef, useState } from 'react';
 import { FormField } from '@/types/curation';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { UploadCloud, File, X, Check } from 'lucide-react';
 
-// ==========================================
-// UI HELPER COMPONENTS
-// ==========================================
-const InputField = ({ label, type = 'text', value, onChange, placeholder, required, desc }: any) => (
-  <div className="space-y-2 w-full">
-    <label className="block text-xs font-bold text-slate-700 uppercase tracking-widest">
-      {label} {required && <span className="text-rose-500">*</span>}
-    </label>
-    {desc && <p className="text-[11px] text-slate-500 mb-2 leading-relaxed">{desc}</p>}
-    {type === 'textarea' ? (
-      <textarea 
-        rows={4} 
-        value={value || ''} 
-        onChange={(e) => onChange(e.target.value)} 
-        placeholder={placeholder} 
-        className="w-full px-4 py-3.5 bg-slate-50 ring-1 ring-slate-200 rounded-2xl text-sm focus:ring-2 focus:ring-indigo-600 focus:bg-white outline-none transition-all resize-none shadow-sm text-slate-800 placeholder:text-slate-400" 
-      />
-    ) : (
-      <input 
-        type={type} 
-        value={value || ''} 
-        onChange={(e) => onChange(e.target.value)} 
-        placeholder={placeholder} 
-        className="w-full px-4 py-3.5 bg-slate-50 ring-1 ring-slate-200 rounded-2xl text-sm focus:ring-2 focus:ring-indigo-600 focus:bg-white outline-none transition-all shadow-sm text-slate-800 placeholder:text-slate-400" 
-      />
-    )}
-  </div>
-);
-
-const RadioCard = ({ label, isChecked, onChange, desc }: any) => (
-  <label className={`
-    relative flex flex-col p-4 sm:p-5 rounded-2xl cursor-pointer transition-all duration-200 ease-out active:scale-[0.98] 
-    ${isChecked ? 'bg-indigo-50/60 ring-2 ring-indigo-600 shadow-sm' : 'bg-white ring-1 ring-slate-200 hover:ring-slate-300 hover:bg-slate-50/50'}
-  `}>
-    <div className="flex items-center justify-between mb-1.5">
-      <span className={`font-bold text-sm leading-tight pr-4 ${isChecked ? 'text-indigo-900' : 'text-slate-700'}`}>
-        {label}
-      </span>
-      <div className={`w-5 h-5 rounded-full flex shrink-0 items-center justify-center transition-all ${isChecked ? 'bg-indigo-600' : 'bg-slate-100 ring-1 ring-slate-200'}`}>
-        {isChecked && <Check size={12} className="text-white stroke-[3]" />}
-      </div>
-    </div>
-    {desc && <p className="text-[12px] text-slate-500 font-medium leading-relaxed mt-1">{desc}</p>}
-    <input type="radio" className="hidden" checked={isChecked} onChange={onChange} />
-  </label>
-);
-
-const CheckboxCard = ({ label, isChecked, onChange, desc }: any) => (
-  <label className={`
-    relative flex flex-col p-4 sm:p-5 rounded-2xl cursor-pointer transition-all duration-200 ease-out active:scale-[0.98] 
-    ${isChecked ? 'bg-indigo-50/60 ring-2 ring-indigo-600 shadow-sm' : 'bg-white ring-1 ring-slate-200 hover:ring-slate-300 hover:bg-slate-50/50'}
-  `}>
-    <div className="flex items-center justify-between mb-1.5">
-      <span className={`font-bold text-sm leading-tight pr-4 ${isChecked ? 'text-indigo-900' : 'text-slate-700'}`}>
-        {label}
-      </span>
-      <div className={`w-5 h-5 rounded-[6px] flex shrink-0 items-center justify-center transition-all ${isChecked ? 'bg-indigo-600' : 'bg-slate-100 ring-1 ring-slate-200'}`}>
-        {isChecked && <Check size={14} className="text-white stroke-[3]" />}
-      </div>
-    </div>
-    {desc && <p className="text-[12px] text-slate-500 font-medium leading-relaxed mt-1">{desc}</p>}
-    <input type="checkbox" className="hidden" checked={isChecked} onChange={onChange} />
-  </label>
-);
-
-const FileUploadField = ({ label, file, onChange, accept = "*", desc }: any) => (
-  <div className="space-y-2 w-full">
-    <label className="block text-xs font-bold text-slate-700 uppercase tracking-widest">{label}</label>
-    {desc && <p className="text-[11px] text-slate-500 mb-2 leading-relaxed">{desc}</p>}
-    <div className="flex items-center gap-3">
-      <label className="flex-1 flex flex-col sm:flex-row items-center justify-center px-4 py-6 sm:py-4 bg-slate-50 border-2 border-dashed border-slate-300 rounded-2xl text-sm font-bold text-slate-600 hover:bg-slate-100 hover:border-indigo-400 transition-all cursor-pointer active:scale-[0.98]">
-        <Upload size={20} className="sm:mr-3 mb-2 sm:mb-0 text-slate-400" />
-        <span className="truncate max-w-[200px] text-center sm:text-left">
-          {file && typeof file === 'object' && file.name ? file.name : 'Pilih Dokumen (Max 5MB)'}
-        </span>
-        <input type="file" accept={accept} onChange={(e) => onChange(e.target.files?.[0] || null)} className="hidden" />
-      </label>
-      {file && (
-        <button type="button" onClick={() => onChange(null)} className="p-4 sm:p-5 text-rose-500 bg-rose-50 ring-1 ring-rose-200 rounded-2xl hover:bg-rose-100 transition-colors active:scale-95 shrink-0">
-          <X size={20} />
-        </button>
-      )}
-    </div>
-  </div>
-);
-
-// ==========================================
-// DYNAMIC RENDER ENGINE
-// ==========================================
 interface DynamicFieldProps {
   field: FormField;
-  formData: any;
-  handleChange: (id: string, value: any) => void;
-  handleArrayChange: (id: string, value: string, checked: boolean) => void;
-  handleFileChange: (id: string, file: File | null) => void;
+  value: any;
+  onChange: (value: any) => void;
 }
 
-export function DynamicField({ field, formData, handleChange, handleArrayChange, handleFileChange }: DynamicFieldProps) {
-  const colSpanClass = field.gridSpan === 2 ? 'lg:col-span-2' : 'lg:col-span-1';
+export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [dragActive, setDragActive] = useState(false);
 
-  switch (field.type) {
-    case 'text':
-    case 'number':
-    case 'textarea':
-      return (
-        <div className={colSpanClass}>
-          <InputField 
-            type={field.type}
-            label={field.label}
-            value={formData[field.id]}
-            onChange={(val: any) => handleChange(field.id, val)}
-            placeholder={field.placeholder}
-            required={field.required}
-            desc={field.description}
+  // Handler untuk perubahan Checkbox (Multi-select array)
+  const handleCheckboxChange = (option: string, isChecked: boolean) => {
+    let currentValues = Array.isArray(value) ? [...value] : [];
+    if (isChecked) {
+      currentValues.push(option);
+    } else {
+      currentValues = currentValues.filter((v) => v !== option);
+    }
+    onChange(currentValues);
+  };
+
+  // UI Render berdasarkan field.type
+  const renderField = () => {
+    switch (field.type) {
+      case 'text':
+        return (
+          <Input
+            type="text"
+            placeholder={field.placeholder || 'Ketik di sini...'}
+            value={value || ''}
+            onChange={(e) => onChange(e.target.value)}
+            className="h-12 bg-slate-50 border-slate-200 focus-visible:ring-indigo-500 rounded-xl transition-all font-medium text-slate-700"
           />
-        </div>
-      );
+        );
 
-    case 'radio':
-      return (
-        <div className={colSpanClass}>
-          <label className="block text-xs font-bold text-slate-700 uppercase tracking-widest mb-4">
-            {field.label} {field.required && <span className="text-rose-500">*</span>}
-          </label>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-            {field.options?.map((opt) => (
-              <RadioCard 
-                key={opt}
-                label={opt}
-                isChecked={formData[field.id] === opt}
-                onChange={() => handleChange(field.id, opt)}
-              />
+      case 'number':
+        return (
+          <Input
+            type="number"
+            placeholder={field.placeholder || '0'}
+            value={value || ''}
+            onChange={(e) => onChange(e.target.value)}
+            className="h-12 bg-slate-50 border-slate-200 focus-visible:ring-indigo-500 rounded-xl transition-all font-medium text-slate-700"
+          />
+        );
+
+      case 'textarea':
+        return (
+          <Textarea
+            placeholder={field.placeholder || 'Ketik penjelasan detail di sini...'}
+            value={value || ''}
+            onChange={(e) => onChange(e.target.value)}
+            className="bg-slate-50 border-slate-200 focus-visible:ring-indigo-500 rounded-xl min-h-[100px] resize-y transition-all font-medium text-slate-700"
+          />
+        );
+
+      // FIX: LOGIKA RENDER UNTUK DATE PICKER (TANGGAL)
+      case 'date':
+        return (
+          <Input
+            type="date"
+            value={value || ''}
+            onChange={(e) => onChange(e.target.value)}
+            className="h-12 bg-slate-50 border-slate-200 focus-visible:ring-indigo-500 rounded-xl transition-all font-medium text-slate-700 w-full"
+          />
+        );
+
+      // FIX: LOGIKA RENDER UNTUK SELECT DROPDOWN
+      case 'select':
+        return (
+          <div className="relative">
+            <select
+              value={value || ''}
+              onChange={(e) => onChange(e.target.value)}
+              className="w-full h-12 bg-slate-50 border border-slate-200 text-slate-700 font-medium rounded-xl px-4 appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all cursor-pointer"
+            >
+              <option value="" disabled>-- Pilih salah satu opsi --</option>
+              {field.options?.map((opt, idx) => (
+                <option key={idx} value={opt}>{opt}</option>
+              ))}
+            </select>
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </div>
+          </div>
+        );
+
+      case 'radio':
+        return (
+          <div className="flex flex-col gap-3 pt-1">
+            {field.options?.map((opt, idx) => (
+              <label 
+                key={idx} 
+                className={`flex items-center gap-3 p-3 rounded-xl border transition-all cursor-pointer ${value === opt ? 'border-indigo-500 bg-indigo-50/50 text-indigo-900 shadow-sm' : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-600'}`}
+              >
+                <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${value === opt ? 'border-indigo-600' : 'border-slate-300'}`}>
+                  {value === opt && <div className="w-2.5 h-2.5 bg-indigo-600 rounded-full" />}
+                </div>
+                <input
+                  type="radio"
+                  name={field.id}
+                  value={opt}
+                  checked={value === opt}
+                  onChange={(e) => onChange(e.target.value)}
+                  className="hidden"
+                />
+                <span className="font-medium text-sm">{opt}</span>
+              </label>
             ))}
           </div>
-        </div>
-      );
+        );
 
-    case 'checkbox':
-      return (
-        <div className={colSpanClass}>
-          <label className="block text-xs font-bold text-slate-700 uppercase tracking-widest mb-4">
-            {field.label} {field.required && <span className="text-rose-500">*</span>}
-          </label>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-            {field.options?.map((opt) => (
-              <CheckboxCard 
-                key={opt}
-                label={opt}
-                isChecked={(formData[field.id] || []).includes(opt)}
-                onChange={(e: any) => handleArrayChange(field.id, opt, e.target.checked)}
-              />
-            ))}
+      case 'checkbox':
+        const checkedValues = Array.isArray(value) ? value : [];
+        return (
+          <div className="flex flex-col gap-3 pt-1">
+            {field.options?.map((opt, idx) => {
+              const isChecked = checkedValues.includes(opt);
+              return (
+                <label 
+                  key={idx} 
+                  className={`flex items-center gap-3 p-3 rounded-xl border transition-all cursor-pointer ${isChecked ? 'border-indigo-500 bg-indigo-50/50 text-indigo-900 shadow-sm' : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-600'}`}
+                >
+                  <div className={`w-5 h-5 rounded border flex items-center justify-center shrink-0 ${isChecked ? 'bg-indigo-600 border-indigo-600 text-white' : 'border-slate-300'}`}>
+                    {isChecked && <Check size={14} strokeWidth={3} />}
+                  </div>
+                  <input
+                    type="checkbox"
+                    value={opt}
+                    checked={isChecked}
+                    onChange={(e) => handleCheckboxChange(opt, e.target.checked)}
+                    className="hidden"
+                  />
+                  <span className="font-medium text-sm">{opt}</span>
+                </label>
+              );
+            })}
           </div>
-        </div>
-      );
+        );
 
-    case 'file':
-      return (
-        <div className={colSpanClass}>
-          <FileUploadField 
-            label={field.label}
-            file={formData[field.id]}
-            onChange={(file: File | null) => handleFileChange(field.id, file)}
-            accept={field.fileAccept}
-            desc={field.description}
-          />
-        </div>
-      );
+      case 'file':
+        const handleDrag = (e: React.DragEvent) => {
+          e.preventDefault(); e.stopPropagation();
+          if (e.type === 'dragenter' || e.type === 'dragover') setDragActive(true);
+          else if (e.type === 'dragleave') setDragActive(false);
+        };
+        const handleDrop = (e: React.DragEvent) => {
+          e.preventDefault(); e.stopPropagation();
+          setDragActive(false);
+          if (e.dataTransfer.files && e.dataTransfer.files[0]) onChange(e.dataTransfer.files[0]);
+        };
 
-    default:
-      return null;
-  }
+        return (
+          <div className="mt-1">
+            {value ? (
+              <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex items-center justify-between shadow-sm">
+                <div className="flex items-center gap-3 overflow-hidden">
+                  <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center shrink-0">
+                    <File size={20} />
+                  </div>
+                  <div className="truncate">
+                    <p className="text-sm font-bold text-emerald-900 truncate">
+                      {value.name || (typeof value === 'string' ? value.split('/').pop() : 'Dokumen Terlampir')}
+                    </p>
+                    <p className="text-xs text-emerald-600 font-medium">Siap diunggah</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => onChange(null)}
+                  className="p-2 hover:bg-rose-100 text-slate-400 hover:text-rose-600 rounded-full transition-colors shrink-0"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+            ) : (
+              <div 
+                className={`relative border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-2 
+                  ${dragActive ? 'border-indigo-500 bg-indigo-50' : 'border-slate-300 bg-slate-50 hover:bg-slate-100'}`}
+                onDragEnter={handleDrag}
+                onDragLeave={handleDrag}
+                onDragOver={handleDrag}
+                onDrop={handleDrop}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <div className="w-12 h-12 bg-white rounded-full shadow-sm ring-1 ring-slate-200 flex items-center justify-center text-indigo-500 mb-2">
+                  <UploadCloud size={24} />
+                </div>
+                <p className="text-sm font-bold text-slate-700">
+                  <span className="text-indigo-600">Klik untuk unggah</span> atau seret file ke sini
+                </p>
+                <p className="text-xs font-medium text-slate-400 mt-1 uppercase tracking-wider">
+                  Mendukung format: {field.fileAccept ? field.fileAccept.replace(/,/g, ', ') : 'Semua Format'}
+                </p>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept={field.fileAccept} 
+                  className="hidden"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) onChange(e.target.files[0]);
+                  }}
+                />
+              </div>
+            )}
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className={`space-y-2 ${field.gridSpan === 2 ? 'sm:col-span-2' : ''}`}>
+      <label className="text-sm font-bold text-slate-800 flex items-start gap-1">
+        {field.label}
+        {field.required && <span className="text-rose-500 text-lg leading-none">*</span>}
+      </label>
+      
+      {field.description && (
+        <p className="text-xs text-slate-500 font-medium -mt-1 mb-2 leading-relaxed">
+          {field.description}
+        </p>
+      )}
+
+      {renderField()}
+    </div>
+  );
 }

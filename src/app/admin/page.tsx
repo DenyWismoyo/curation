@@ -1,7 +1,8 @@
+// src/app/admin/page.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { collection, query, onSnapshot } from 'firebase/firestore'; 
 import { db } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -36,22 +37,47 @@ export default function AdminPage() {
   const [selectedItem, setSelectedItem] = useState<AssessmentDoc | null>(null);
 
   useEffect(() => {
-    const fetchAssessments = async () => {
-      try {
-        const q = query(collection(db, 'assessments'), orderBy('createdAt', 'desc'));
-        const querySnapshot = await getDocs(q);
-        const data: AssessmentDoc[] = [];
-        querySnapshot.forEach((doc) => {
-          data.push({ id: doc.id, ...doc.data() } as AssessmentDoc);
-        });
-        setAssessments(data);
-      } catch (error) {
-        console.error("Gagal mengambil data dari Firebase:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchAssessments();
+    // Hapus orderBy dari query Firestore agar tidak bentrok antar tipe data
+    const q = query(collection(db, 'assessments'));
+    
+    // Gunakan onSnapshot agar Dashboard Admin bersifat Real-Time
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const data: AssessmentDoc[] = [];
+      
+      querySnapshot.forEach((doc) => {
+        const docData = doc.data();
+        
+        // NORMALISASI TANGGAL: Mengubah Timestamp/String menjadi format seragam
+        let dateStr = new Date().toISOString();
+        if (docData.createdAt) {
+          if (typeof docData.createdAt.toDate === 'function') {
+            // Jika data baru (Firestore Timestamp dari Cloud Function)
+            dateStr = docData.createdAt.toDate().toISOString();
+          } else {
+            // Jika data lama (String biasa)
+            dateStr = new Date(docData.createdAt).toISOString();
+          }
+        }
+
+        data.push({ 
+          id: doc.id, 
+          ...docData, 
+          createdAt: dateStr 
+        } as AssessmentDoc);
+      });
+
+      // Lakukan Sorting di Frontend secara akurat (Data paling baru DI ATAS)
+      data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+      setAssessments(data);
+      setLoading(false);
+    }, (error) => {
+      console.error("Gagal mengambil data dari Firebase:", error);
+      setLoading(false);
+    });
+
+    // Bersihkan listener saat halaman ditutup agar memori tidak bocor
+    return () => unsubscribe();
   }, []);
 
   const totalSubmissions = assessments.length;

@@ -2,6 +2,7 @@
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { defineSecret } from "firebase-functions/params";
 import * as admin from "firebase-admin";
+import { getFirestore } from "firebase-admin/firestore";
 import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 import { GoogleAIFileManager } from "@google/generative-ai/server";
 import * as os from "os";
@@ -9,7 +10,9 @@ import * as path from "path";
 import * as fs from "fs";
 
 admin.initializeApp();
-const db = admin.firestore();
+
+// Menggunakan database "curation" secara eksplisit agar selaras dengan Frontend
+const db = getFirestore(admin.app(), "curation");
 
 const geminiApiKeySecret = defineSecret("GEMINI_API_KEY");
 
@@ -48,36 +51,40 @@ export const processCurationAssessment = onCall(
     const tempLocalFiles: string[] = [];
 
     // =========================================================
-    // FASE 1: PRE-VALIDASI TOKEN DARI SUB-COLLECTION (FIXED GHOST DOCUMENT)
+    // FASE 1: PRE-VALIDASI TOKEN (MENCEGAH PENGGUNAAN GANDA)
     // =========================================================
     if (tokenUsed && typeof tokenUsed === 'string' && tokenUsed.includes('-')) {
       const lastDashIndex = tokenUsed.lastIndexOf('-');
-      // Menambahkan trim() untuk berjaga-jaga jika ada spasi tersembunyi
-      const corpId = tokenUsed.substring(0, lastDashIndex).trim();
-      const tokenCode = tokenUsed.substring(lastDashIndex + 1).trim();
+      const rawCorpId = tokenUsed.substring(0, lastDashIndex);
+      const rawTokenCode = tokenUsed.substring(lastDashIndex + 1);
+      
+      const corpId = rawCorpId.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+      const tokenCode = rawTokenCode.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
       
       if (!corpId || !tokenCode) {
-        throw new HttpsError("invalid-argument", "Format token tidak valid.");
+        throw new HttpsError("invalid-argument", "Format token tidak valid setelah sanitasi.");
       }
 
       const corpRef = db.collection('corporate_tokens').doc(corpId);
-      const tokenRef = corpRef.collection('tokens').doc(tokenCode);
-      
-      // 1. Langsung tembak ke Sub-Collection Token, abaikan eksistensi dokumen induk
-      const tokenDoc = await tokenRef.get();
+      const corpDoc = await corpRef.get();
 
-      if (!tokenDoc.exists) {
+      if (!corpDoc.exists) {
+        throw new HttpsError("not-found", `Entitas korporat ${corpId} tidak ditemukan.`);
+      }
+
+      const corpData = corpDoc.data();
+      const tokensMap = corpData?.tokens || {};
+      const tokenData = tokensMap[tokenCode];
+
+      if (!tokenData) {
         throw new HttpsError("not-found", `Kode token ${tokenCode} tidak ditemukan di entitas ${corpId}.`);
       }
 
-      const tokenData = tokenDoc.data();
-      if (tokenData?.isUsed) {
+      if (tokenData.isUsed) {
         throw new HttpsError("permission-denied", "Token ini sudah pernah digunakan.");
       }
 
-      // 2. Coba ambil nama korporat jika dokumen induknya nyata (bukan ghost document)
-      const corpDoc = await corpRef.get();
-      corporateEntityName = corpDoc.exists ? (corpDoc.data()?.corporateName || corpId) : corpId;
+      corporateEntityName = corpData?.corporateName || corpId;
     }
 
     try {
@@ -85,7 +92,7 @@ export const processCurationAssessment = onCall(
       const bucket = admin.storage().bucket(); 
       
       // =========================================================
-      // FASE 2: INTERNAL FILE TRANSFER
+      // FASE 2: INTERNAL FILE TRANSFER (GCS TO GEMINI)
       // =========================================================
       if (storageFilePaths && storageFilePaths.length > 0) {
         for (const filePath of storageFilePaths) {
@@ -109,7 +116,7 @@ export const processCurationAssessment = onCall(
       }
 
       // =========================================================
-      // FASE 3: PERSIAPAN DATA PROMPT
+      // FASE 3: PERSIAPAN PROMPT DINAMIS & ENTERPRISE RULES
       // =========================================================
       const isPro = aiModelType === 'pro';
       const selectedModelName = isPro ? 'gemini-2.5-pro' : 'gemini-2.5-flash';
@@ -129,22 +136,49 @@ export const processCurationAssessment = onCall(
         .map(([k, v]) => `- ${k}: ${Array.isArray(v) ? v.join(", ") : v}`)
         .join("\n");
 
+      // --- EKSTRAKSI ATURAN ENTERPRISE DARI ADMIN ---
       const trackContext = trackType;
       const aiPersona = aiPromptConfig?.aiPersona || "AHLI ANALISIS DAN DUE DILIGENCE KELAS DUNIA";
       const assessmentGoal = aiPromptConfig?.assessmentGoal || "Melakukan evaluasi kelayakan yang ketat, menganalisis potensi, dan memberikan rekomendasi strategis.";
 
+      // 1. Grading Strictness
+      const strictness = aiPromptConfig?.gradingStrictness || 'standard';
+      let strictnessInstruction = "Lakukan penilaian secara objektif dan berimbang sesuai standar industri.";
+      if (strictness === 'strict') strictnessInstruction = "Lakukan penilaian SANGAT KETAT selevel audit Venture Capital. Bersikaplah skeptis, cari celah fatal, dan jangan ragu memberikan skor rendah (di bawah 50) jika bukti tidak solid.";
+      if (strictness === 'supportive') strictnessInstruction = "Lakukan penilaian yang suportif dan edukatif. Apresiasi usaha, berikan skor yang memotivasi, dan fokus pada potensi perbaikan.";
+
+      // 2. Report Tone
+      const tone = aiPromptConfig?.reportTone || 'consultative';
+      let toneInstruction = "Gaya bahasa: Konsultatif & Solutif (seperti mentor yang membimbing).";
+      if (tone === 'investigative') toneInstruction = "Gaya bahasa: Investigatif & Analitis (tajam, kritis, langsung pada intinya, tanpa basa-basi).";
+      if (tone === 'academic') toneInstruction = "Gaya bahasa: Akademis Formal (objektif, terstruktur, berbasis data dan argumen logis).";
+
+      // 3. Readiness Tiers
+      const customTiers = aiPromptConfig?.customReadinessTiers || [];
+      const tiersString = customTiers.length > 0 
+        ? customTiers.map((t: string) => `"${t}"`).join(', ') 
+        : '"Pra-Inkubasi", "Siap Akselerasi", "Lulus Investasi"';
+
+      // 4. Risk Framework
+      const riskFramework = aiPromptConfig?.riskFramework || '';
+      const riskInstruction = riskFramework ? `FOKUS IDENTIFIKASI RISIKO WAJIB: ${riskFramework}` : "Identifikasi risiko operasional, finansial, dan pasar secara umum.";
+
+      // --- EKSTRAKSI BLOK METRIK ---
       const targetAnalysisBlocks = aiPromptConfig?.expectedAnalysisBlocks && aiPromptConfig.expectedAnalysisBlocks.length > 0
         ? aiPromptConfig.expectedAnalysisBlocks.map((block: string) => `- ${block}`).join("\n")
-        : "- Posisi Pasar\n- Kesehatan Finansial\n- Kapabilitas Tim";
+        : "- Posisi Pasar (Fokus Indikator: Niche Pasar, Keunggulan)\n- Kesehatan Finansial (Fokus Indikator: Pendapatan, Runway)\n- Kapabilitas Tim (Fokus Indikator: Keahlian, Hambatan)";
 
       const targetMetrics = aiPromptConfig?.expectedMetrics && aiPromptConfig.expectedMetrics.length > 0
         ? aiPromptConfig.expectedMetrics
-        : ["Kualitas & Inovasi", "Validasi Pasar", "Kesehatan Finansial", "Kapabilitas Tim", "Skalabilitas", "Legalitas / Kepatuhan"];
+        : ["Kualitas & Inovasi", "Validasi Pasar", "Kesehatan Finansial / Pendanaan", "Kapabilitas Tim", "Skalabilitas", "Legalitas / Kepatuhan"];
 
       const promptText = `
 ANDA ADALAH: ${aiPersona}.
 Tugas Anda adalah melakukan penilaian terhadap profil/entitas/peserta berikut dalam kategori: "${trackContext}".
-Tujuan Utama Analisis: ${assessmentGoal}
+
+TUJUAN UTAMA: ${assessmentGoal}
+ATURAN PENILAIAN (SKOR): ${strictnessInstruction}
+ATURAN GAYA BAHASA: ${toneInstruction}
 
 DATA TEKS FORM:
 ${dataString}
@@ -157,11 +191,15 @@ INSTRUKSI FORMAT ANALISIS:
 3. CUSTOM ANALYSIS BLOCKS: Hasilkan blok analisis dengan MERUJUK SANGAT KETAT pada daftar berikut. Pastikan Anda menjabarkan nilai indikator (label) secara mendetail:
 ${targetAnalysisBlocks}
 4. METRICS ARRAY: Berikan skor objektif (0-100) untuk indikator berikut: [${targetMetrics.join(", ")}].
-5. SWOT & RISKS: Petakan SWOT. Buat daftar 'Critical Risks' dan 'Mitigation Strategies' yang berpasangan.
+   -> Deskripsi alasan skor WAJIB spesifik.
+5. SWOT & RISKS: Petakan SWOT. Buat daftar 'Critical Risks' dan 'Mitigation Strategies' yang berpasangan. ${riskInstruction}
 6. ACTION PLAN: Buat rekomendasi dengan Timeframe spesifik.
-7. SCORING: Berikan "totalScore" (0-100) dan "readinessLevel". Tentukan "incubationRoute" (Rute rekomendasi selanjutnya).
+7. SCORING & TIERING: 
+   - Berikan "totalScore" (0-100) sesuai aturan penilaian di atas.
+   - Penentuan "readinessLevel" WAJIB memilih HANYA DARI SALAH SATU STATUS BERIKUT: [${tiersString}]. Jika tidak ada yang cocok, pilih yang paling mendekati.
+   - Tentukan "incubationRoute" (Rute rekomendasi selanjutnya).
 
-ATURAN WAJIB:
+ATURAN MULTLAK:
 - Output MURNI dalam format JSON.
 - SELURUH TEKS JAWABAN WAJIB MENGGUNAKAN BAHASA INDONESIA.
 `;
@@ -169,7 +207,7 @@ ATURAN WAJIB:
       parts.unshift({ text: promptText });
 
       const systemPrompt = isPro 
-        ? "Anda adalah AI Evaluator Premium. Analisis mendalam, kritis, deteksi celah logika, dan berikan strategi level mahir. Format output hanya JSON berbahasa Indonesia."
+        ? "Anda adalah AI Evaluator Premium. Analisis mendalam, kritis, deteksi celah logika, dan patuhi instruksi format secara absolut. Format output hanya JSON berbahasa Indonesia."
         : "Anda adalah AI Evaluator Standar. Evaluasi secara komprehensif, suportif, dan akurat berdasarkan fakta. Format output hanya JSON berbahasa Indonesia.";
 
       const model = genAI.getGenerativeModel({
@@ -183,24 +221,28 @@ ATURAN WAJIB:
             required: ["readinessLevel", "totalScore", "incubationRoute", "executiveSummary", "customAnalysisBlocks", "fileAnalysisInsights", "metrics", "swotAnalysis", "recommendations", "riskAssessment", "nextActionSteps"],
             properties: {
               executiveSummary: { type: SchemaType.STRING },
-              readinessLevel: { type: SchemaType.STRING },
+              readinessLevel: { 
+                type: SchemaType.STRING, 
+                description: `WAJIB pilih salah satu persis dari daftar ini: [${tiersString}]` 
+              },
               totalScore: { type: SchemaType.INTEGER },
               incubationRoute: { type: SchemaType.STRING },
               customAnalysisBlocks: {
                 type: SchemaType.ARRAY,
+                description: "Blok analisis dinamis menyesuaikan ekspektasi yang diwajibkan",
                 items: {
                   type: SchemaType.OBJECT,
                   required: ["title", "iconType", "metrics"],
                   properties: {
-                    title: { type: SchemaType.STRING },
-                    iconType: { type: SchemaType.STRING },
+                    title: { type: SchemaType.STRING, description: "Judul analitik sesuai blueprint, misal: 'Potensi Pasar', 'Kesehatan Finansial'" },
+                    iconType: { type: SchemaType.STRING, description: "Pilih salah satu string ini yang paling cocok: 'finance', 'target', 'users', 'idea', 'document', 'award', 'shield'" },
                     metrics: {
                       type: SchemaType.ARRAY,
                       items: {
                         type: SchemaType.OBJECT,
                         properties: {
-                          label: { type: SchemaType.STRING },
-                          value: { type: SchemaType.STRING }
+                          label: { type: SchemaType.STRING, description: "Indikator spesifik sesuai fokus, misal: 'Target Niche', 'Skalabilitas'" },
+                          value: { type: SchemaType.STRING, description: "Penjelasan mendetail dari label tersebut" }
                         }
                       }
                     }
@@ -268,35 +310,37 @@ ATURAN WAJIB:
         
         if (tokenUsed && typeof tokenUsed === 'string' && tokenUsed.includes('-')) {
           const lastDashIndex = tokenUsed.lastIndexOf('-');
-          const corpId = tokenUsed.substring(0, lastDashIndex).trim();
-          const tokenCode = tokenUsed.substring(lastDashIndex + 1).trim();
+          const rawCorpId = tokenUsed.substring(0, lastDashIndex);
+          const rawTokenCode = tokenUsed.substring(lastDashIndex + 1);
+          
+          const corpId = rawCorpId.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+          const tokenCode = rawTokenCode.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
           
           const corpRefToUpdate = db.collection('corporate_tokens').doc(corpId);
-          const tokenRefToUpdate = corpRefToUpdate.collection('tokens').doc(tokenCode);
+          const cDoc = await transaction.get(corpRefToUpdate);
           
-          const tDoc = await transaction.get(tokenRefToUpdate);
-          
-          if (!tDoc.exists) {
-            throw new Error(`Token ${tokenCode} tidak ditemukan di entitas ${corpId}`);
+          if (!cDoc.exists) {
+            throw new Error(`Entitas ${corpId} tidak ditemukan saat memproses transaksi.`);
           }
 
-          const tokenData = tDoc.data();
-          if (tokenData?.isUsed) {
+          const corpData = cDoc.data();
+          const currentTokens = corpData?.tokens || {};
+          const tData = currentTokens[tokenCode];
+
+          if (!tData) {
+            throw new Error(`Token ${tokenCode} tidak ditemukan di entitas ${corpId}.`);
+          }
+
+          if (tData.isUsed) {
             throw new Error("Token telah digunakan secara paralel oleh pihak lain. Transaksi dibatalkan.");
           }
 
-          // Update status di dokumen token sub-collection
-          transaction.update(tokenRefToUpdate, {
-            isUsed: true,
-            usedAt: admin.firestore.FieldValue.serverTimestamp(),
-            usedByNamaUsaha: formData.namaUsaha || 'Tanpa Nama',
-          });
-
-          // Menggunakan SET dengan { merge: true } untuk mengatasi Ghost Document
-          // Jika dokumen IBTPRO belum nyata, akan dibuatkan otomatis.
-          transaction.set(corpRefToUpdate, {
+          transaction.update(corpRefToUpdate, {
+            [`tokens.${tokenCode}.isUsed`]: true,
+            [`tokens.${tokenCode}.usedAt`]: new Date().toISOString(),
+            [`tokens.${tokenCode}.usedByNamaUsaha`]: formData.namaUsaha || 'Tanpa Nama',
             usedCount: admin.firestore.FieldValue.increment(1)
-          }, { merge: true });
+          });
         }
 
         const newAssessmentRef = db.collection("assessments").doc();

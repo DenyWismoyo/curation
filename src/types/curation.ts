@@ -31,7 +31,6 @@ export interface AIResult {
   incubationRoute: string;
   executiveSummary: string;
   
-  // BLOK DINAMIS (Menggantikan financial, market, team, investment statis)
   customAnalysisBlocks: CustomAnalysisBlock[];
   
   fileAnalysisInsights?: {
@@ -67,7 +66,8 @@ export interface CurationHistory {
   result: AIResult;
 }
 
-export type FieldType = 'text' | 'textarea' | 'number' | 'radio' | 'checkbox' | 'file';
+// UPGRADE: Tambahan tipe field 'select' dan 'date'
+export type FieldType = 'text' | 'textarea' | 'number' | 'radio' | 'checkbox' | 'file' | 'select' | 'date';
 
 export interface FormField {
   id: string;             
@@ -75,7 +75,7 @@ export interface FormField {
   type: FieldType;        
   required: boolean;      
   placeholder?: string;   
-  description?: string;   
+  description?: string;   // UPGRADE: Teks bantuan/instruksi di bawah label
   options?: string[];     
   fileAccept?: string;    
   gridSpan?: 1 | 2;       
@@ -92,9 +92,14 @@ export interface FormStep {
 export interface AiPromptConfig {
   aiPersona?: string;
   assessmentGoal?: string;
-  expectedAnalysisBlocks?: string[]; // TAMBAHAN BARU
+  expectedAnalysisBlocks?: string[]; 
   expectedMetrics: string[];
   expectedRecommendations: string[];
+  
+  gradingStrictness?: 'supportive' | 'standard' | 'strict';
+  customReadinessTiers?: string[];
+  riskFramework?: string;
+  reportTone?: 'investigative' | 'consultative' | 'academic';
 }
 
 export interface FormTemplate {

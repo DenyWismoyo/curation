@@ -55,7 +55,23 @@ export default function CuratorDashboard() {
         );
         
         const snap = await getDocs(q);
-        const data = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        
+        // NORMALISASI TANGGAL SEBELUM DI-SORTING
+        const data = snap.docs.map(doc => {
+          const docData = doc.data();
+          let dateStr = new Date().toISOString();
+          
+          if (docData.createdAt) {
+            if (typeof docData.createdAt.toDate === 'function') {
+              dateStr = docData.createdAt.toDate().toISOString();
+            } else {
+              dateStr = new Date(docData.createdAt).toISOString();
+            }
+          }
+          return { id: doc.id, ...docData, createdAt: dateStr };
+        });
+        
+        // Sekarang sorting dijamin aman tanpa menghasilkan NaN
         data.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         setAssessments(data);
 
