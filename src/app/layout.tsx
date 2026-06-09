@@ -11,7 +11,7 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'Curation App',
+  title: 'SCRS',
   description: 'Aplikasi Kurasi Data Elegan dan Minimalis',
 };
 
