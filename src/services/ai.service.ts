@@ -17,6 +17,9 @@ export async function processAIAssessment(
   let retries = 3;
   let delay = 1000;
 
+  // PERBAIKAN: Menambahkan log untuk melakukan tracking payload token dari client Next.js
+  console.log("Mengirim payload token ke Cloud Function:", tokenUsed);
+
   while (retries > 0) {
     try {
       // Kita kirimkan semua parameter yang dibutuhkan Cloud Function

@@ -11,23 +11,34 @@ import * as fs from "fs";
 admin.initializeApp();
 const db = admin.firestore();
 
-// Mendaftarkan Secret Manager untuk API Key
 const geminiApiKeySecret = defineSecret("GEMINI_API_KEY");
 
 export const processCurationAssessment = onCall(
   {
     memory: "2GiB",
-    timeoutSeconds: 540, // Batas waktu 9 menit (Aman untuk AI dan File Besar)
-    region: "asia-southeast2", // Region server, sesuaikan jika Anda pakai region lain
-    secrets: [geminiApiKeySecret], // Mengaitkan secret ke fungsi ini
+    timeoutSeconds: 540,
+    region: "asia-southeast2",
+    secrets: [geminiApiKeySecret],
+    cors: [
+      "https://curation--teknopark-surakarta.asia-southeast1.hosted.app",
+      "http://localhost:3000"
+    ],
   },
   async (request) => {
-    // 1. Ekstrak Parameter dari Frontend
-    const { formData, trackType, aiPromptConfig, aiModelType = 'pro', tokenUsed, storageFilePaths } = request.data;
+    const data = request.data as any;
+    if (!data) {
+      throw new HttpsError("invalid-argument", "Data request kosong atau tidak valid.");
+    }
+
+    const formData = data.formData || {};
+    const trackType = data.trackType || "Evaluasi Umum";
+    const aiPromptConfig = data.aiPromptConfig;
+    const aiModelType = data.aiModelType || 'pro';
+    const tokenUsed = data.tokenUsed;
+    const storageFilePaths = data.storageFilePaths || [];
     
-    // Ambil nilai API Key yang aman dari Secret Manager
     const API_KEY = geminiApiKeySecret.value();
-    if (!API_KEY) throw new HttpsError("internal", "API Key AI tidak dikonfigurasi di Secret Manager.");
+    if (!API_KEY) throw new HttpsError("internal", "API Key AI tidak dikonfigurasi.");
 
     const fileManager = new GoogleAIFileManager(API_KEY);
     const genAI = new GoogleGenerativeAI(API_KEY);
@@ -37,21 +48,36 @@ export const processCurationAssessment = onCall(
     const tempLocalFiles: string[] = [];
 
     // =========================================================
-    // FASE 1: PRE-VALIDASI TOKEN DARI DATABASE
+    // FASE 1: PRE-VALIDASI TOKEN DARI SUB-COLLECTION (FIXED GHOST DOCUMENT)
     // =========================================================
     if (tokenUsed && typeof tokenUsed === 'string' && tokenUsed.includes('-')) {
-      const [corpId, tokenCode] = tokenUsed.split('-');
-      const tokenDoc = await db.collection('corporate_tokens').doc(corpId).get();
+      const lastDashIndex = tokenUsed.lastIndexOf('-');
+      // Menambahkan trim() untuk berjaga-jaga jika ada spasi tersembunyi
+      const corpId = tokenUsed.substring(0, lastDashIndex).trim();
+      const tokenCode = tokenUsed.substring(lastDashIndex + 1).trim();
       
+      if (!corpId || !tokenCode) {
+        throw new HttpsError("invalid-argument", "Format token tidak valid.");
+      }
+
+      const corpRef = db.collection('corporate_tokens').doc(corpId);
+      const tokenRef = corpRef.collection('tokens').doc(tokenCode);
+      
+      // 1. Langsung tembak ke Sub-Collection Token, abaikan eksistensi dokumen induk
+      const tokenDoc = await tokenRef.get();
+
       if (!tokenDoc.exists) {
-        throw new HttpsError("not-found", "Entitas korporat tidak ditemukan.");
+        throw new HttpsError("not-found", `Kode token ${tokenCode} tidak ditemukan di entitas ${corpId}.`);
       }
-      
+
       const tokenData = tokenDoc.data();
-      if (!tokenData?.tokens?.[tokenCode] || tokenData.tokens[tokenCode].isUsed) {
-        throw new HttpsError("permission-denied", "Token tidak valid atau sudah pernah digunakan.");
+      if (tokenData?.isUsed) {
+        throw new HttpsError("permission-denied", "Token ini sudah pernah digunakan.");
       }
-      corporateEntityName = tokenData.corporateName;
+
+      // 2. Coba ambil nama korporat jika dokumen induknya nyata (bukan ghost document)
+      const corpDoc = await corpRef.get();
+      corporateEntityName = corpDoc.exists ? (corpDoc.data()?.corporateName || corpId) : corpId;
     }
 
     try {
@@ -59,21 +85,19 @@ export const processCurationAssessment = onCall(
       const bucket = admin.storage().bucket(); 
       
       // =========================================================
-      // FASE 2: INTERNAL FILE TRANSFER (Zero Double-Hop)
+      // FASE 2: INTERNAL FILE TRANSFER
       // =========================================================
       if (storageFilePaths && storageFilePaths.length > 0) {
         for (const filePath of storageFilePaths) {
           const fileName = path.basename(filePath);
           const tempFilePath = path.join(os.tmpdir(), `gemini_${Date.now()}_${fileName}`);
           
-          // Download super-cepat dari Cloud Storage ke Memori Function
           await bucket.file(filePath).download({ destination: tempFilePath });
           tempLocalFiles.push(tempFilePath);
           
           const [metadata] = await bucket.file(filePath).getMetadata();
           const mimeType = metadata.contentType || 'application/pdf';
 
-          // Upload ke server Google AI
           const uploadResult = await fileManager.uploadFile(tempFilePath, {
             mimeType: mimeType,
             displayName: "Dokumen Lampiran Asesmen"
@@ -85,7 +109,7 @@ export const processCurationAssessment = onCall(
       }
 
       // =========================================================
-      // FASE 3: PERSIAPAN PROMPT & SKEMA JSON
+      // FASE 3: PERSIAPAN DATA PROMPT
       // =========================================================
       const isPro = aiModelType === 'pro';
       const selectedModelName = isPro ? 'gemini-2.5-pro' : 'gemini-2.5-flash';
@@ -93,7 +117,6 @@ export const processCurationAssessment = onCall(
       const textData: Record<string, any> = {};
       for (const key in formData) {
         const val = formData[key];
-        // Jangan sertakan URL panjang ke prompt text
         if (typeof val !== 'string' || !val.startsWith('http')) {
           if (val !== null && val !== undefined && val !== '') {
             const readableKey = key.replace(/([A-Z])/g, ' $1').replace(/^./, function(str){ return str.toUpperCase(); });
@@ -106,7 +129,7 @@ export const processCurationAssessment = onCall(
         .map(([k, v]) => `- ${k}: ${Array.isArray(v) ? v.join(", ") : v}`)
         .join("\n");
 
-      const trackContext = trackType || "Evaluasi Umum";
+      const trackContext = trackType;
       const aiPersona = aiPromptConfig?.aiPersona || "AHLI ANALISIS DAN DUE DILIGENCE KELAS DUNIA";
       const assessmentGoal = aiPromptConfig?.assessmentGoal || "Melakukan evaluasi kelayakan yang ketat, menganalisis potensi, dan memberikan rekomendasi strategis.";
 
@@ -238,24 +261,42 @@ ATURAN WAJIB:
       const aiResultJson = JSON.parse(cleanText);
 
       // =========================================================
-      // FASE 4: DATABASE TRANSACTION (ACID)
+      // FASE 4: TRANSACTION DATABASE SECURE AMAN (ACID)
       // =========================================================
       let assessmentId = "";
-      
       await db.runTransaction(async (transaction) => {
-        let tokenRef;
-        let tokenCode = "";
         
-        // Cek ulanh token tepat sebelum menyimpan untuk cegah Race-Condition
         if (tokenUsed && typeof tokenUsed === 'string' && tokenUsed.includes('-')) {
-          const split = tokenUsed.split('-');
-          tokenRef = db.collection('corporate_tokens').doc(split[0]);
-          tokenCode = split[1];
+          const lastDashIndex = tokenUsed.lastIndexOf('-');
+          const corpId = tokenUsed.substring(0, lastDashIndex).trim();
+          const tokenCode = tokenUsed.substring(lastDashIndex + 1).trim();
           
-          const tDoc = await transaction.get(tokenRef);
-          if (!tDoc.exists || tDoc.data()?.tokens?.[tokenCode]?.isUsed) {
+          const corpRefToUpdate = db.collection('corporate_tokens').doc(corpId);
+          const tokenRefToUpdate = corpRefToUpdate.collection('tokens').doc(tokenCode);
+          
+          const tDoc = await transaction.get(tokenRefToUpdate);
+          
+          if (!tDoc.exists) {
+            throw new Error(`Token ${tokenCode} tidak ditemukan di entitas ${corpId}`);
+          }
+
+          const tokenData = tDoc.data();
+          if (tokenData?.isUsed) {
             throw new Error("Token telah digunakan secara paralel oleh pihak lain. Transaksi dibatalkan.");
           }
+
+          // Update status di dokumen token sub-collection
+          transaction.update(tokenRefToUpdate, {
+            isUsed: true,
+            usedAt: admin.firestore.FieldValue.serverTimestamp(),
+            usedByNamaUsaha: formData.namaUsaha || 'Tanpa Nama',
+          });
+
+          // Menggunakan SET dengan { merge: true } untuk mengatasi Ghost Document
+          // Jika dokumen IBTPRO belum nyata, akan dibuatkan otomatis.
+          transaction.set(corpRefToUpdate, {
+            usedCount: admin.firestore.FieldValue.increment(1)
+          }, { merge: true });
         }
 
         const newAssessmentRef = db.collection("assessments").doc();
@@ -275,14 +316,6 @@ ATURAN WAJIB:
           createdAt: admin.firestore.FieldValue.serverTimestamp()
         });
 
-        if (tokenRef && tokenCode) {
-          transaction.update(tokenRef, {
-            [`tokens.${tokenCode}.isUsed`]: true,
-            [`tokens.${tokenCode}.usedAt`]: admin.firestore.FieldValue.serverTimestamp(),
-            [`tokens.${tokenCode}.usedByNamaUsaha`]: formData.namaUsaha || 'Tanpa Nama',
-            usedCount: admin.firestore.FieldValue.increment(1)
-          });
-        }
       });
 
       return { assessmentId, aiResult: aiResultJson };
