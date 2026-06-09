@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { ViewState, CurationFormData, AIResult, CurationHistory, FormTemplate } from '@/types/curation';
 import { processAIAssessment } from '@/services/ai.service';
-import { collection, addDoc, getDocs, setDoc, doc } from 'firebase/firestore';
+import { collection, addDoc, getDocs, setDoc, doc, updateDoc, increment, getDoc } from 'firebase/firestore'; 
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '@/lib/firebase';
 import { defaultTemplates } from '@/data/defaultTemplates';
@@ -128,11 +128,46 @@ export function useCuration() {
       
       setAiResult(result);
       
-      // Simpan data di database assessments beserta info Token
-// Simpan data di database assessments beserta info Token
-// Simpan data di database assessments beserta info Token
+      // Ambil nama corporate secara dinamis dari token batch untuk di-link ke curator dashboard
+      let corporateEntityName = null;
+
+      // =========================================================
+      // BLOK EKSEKUSI PEMBAKARAN (BURN) TOKEN DI FIRESTORE & AMBIL NAMA PROGRAM
+      // =========================================================
+      if (tokenUsed && typeof tokenUsed === 'string' && tokenUsed.includes('-')) {
+        try {
+          const [corpId, tokenCode] = tokenUsed.split('-');
+          const tokenDocRef = doc(db, 'corporate_tokens', corpId);
+
+          // Ambil snapshot data token batch untuk mendapatkan corporateName asli secara aman
+          const tokenDocSnap = await getDoc(tokenDocRef);
+          if (tokenDocSnap.exists()) {
+            corporateEntityName = tokenDocSnap.data().corporateName;
+          }
+
+          // Update status token spesifik di dalam objek JSON tokens dan naikkan count
+          await updateDoc(tokenDocRef, {
+            [`tokens.${tokenCode}.isUsed`]: true,
+            [`tokens.${tokenCode}.usedAt`]: new Date().toISOString(),
+            [`tokens.${tokenCode}.usedByNamaUsaha`]: dbData.namaUsaha || 'Tanpa Nama',
+            usedCount: increment(1)
+          });
+
+          // Bersihkan session agar tidak bisa di-refresh untuk bypass
+          if (typeof window !== 'undefined') {
+            sessionStorage.removeItem('active_token');
+            sessionStorage.removeItem('active_model');
+          }
+        } catch (tokenError) {
+          console.error("Gagal melakukan update status token atau mengambil nama korporat:", tokenError);
+        }
+      }
+      // =========================================================
+      
+      // Simpan data di database assessments dengan tambahan field corporateEntity
       await addDoc(collection(db, "assessments"), {
         trackType: trackNameStr,
+        corporateEntity: corporateEntityName, // Penyeimbang filter query dashboard kurator
         namaUsaha: dbData.namaUsaha || 'Tanpa Nama',
         email: dbData.email || '',
         whatsapp: dbData.whatsapp || '',
@@ -143,15 +178,13 @@ export function useCuration() {
         tokenUsed: tokenUsed || null, 
         createdAt: new Date().toISOString()
       });
-      
+
       saveToHistory(dbData, result, trackNameStr);
 
-      // --- TAMBAHKAN BLOK INI ---
       // Hapus cache lokal HANYA jika proses asessemen sukses sepenuhnya
       if (typeof window !== 'undefined' && selectedTemplate) {
         localStorage.removeItem(`curation_draft_dynamic_${selectedTemplate.id}`);
       }
-      // --------------------------
       
       setViewState('dashboard');
 

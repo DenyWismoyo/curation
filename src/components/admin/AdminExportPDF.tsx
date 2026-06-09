@@ -44,9 +44,9 @@ export function AdminExportPDF({ data }: { data: any }) {
     }, 800);
   };
 
-  const { formData, aiResult, score, readinessLevel, trackType, namaUsaha, createdAt } = data;
+  const { formData, aiResult, score, readinessLevel, trackType, namaUsaha, createdAt, curatorNotes } = data;
+  const isValidated = !!curatorNotes;
 
-  // PERBAIKAN 1: Gabungkan Analisis Dimensi menjadi 1 halaman
   const metrics = aiResult?.metrics || [];
   const METRICS_PER_PAGE = 10; 
   const metricsChunks = [];
@@ -55,7 +55,6 @@ export function AdminExportPDF({ data }: { data: any }) {
   }
   if (metricsChunks.length === 0) metricsChunks.push([]);
 
-  // PERBAIKAN 2: Gabungkan Rekomendasi Taktis menjadi 1 halaman
   const recs = aiResult?.recommendations || [];
   const REC_PER_PAGE = 10; 
   const recChunks = [];
@@ -64,9 +63,8 @@ export function AdminExportPDF({ data }: { data: any }) {
   }
   if (recChunks.length === 0) recChunks.push([]);
 
-  // PERBAIKAN 3: Bagi Lampiran Data Raw menjadi 2 atau 3 halaman
   const rawDataEntries = Object.entries(formData || {}).filter(([k, v]) => v !== null && v !== '');
-  const RAW_DATA_PER_PAGE = 10; // Diturunkan agar terbagi menjadi 2-3 halaman
+  const RAW_DATA_PER_PAGE = 10; 
   const rawDataChunks = [];
   for (let i = 0; i < rawDataEntries.length; i += RAW_DATA_PER_PAGE) {
     rawDataChunks.push(rawDataEntries.slice(i, i + RAW_DATA_PER_PAGE));
@@ -93,7 +91,16 @@ export function AdminExportPDF({ data }: { data: any }) {
           
           {/* HALAMAN 1: EKSEKUTIF SUMMARY & RISIKO */}
           <div className="pdf-page flex flex-col justify-start font-sans text-slate-800" style={pageStyle}>
-            <h1 className="text-2xl font-black text-slate-900 border-b-[4px] border-indigo-600 pb-3 mb-5">
+            
+            {/* STEMPEL VALIDASI LAPANGAN */}
+            {isValidated && (
+              <div className="absolute top-[64px] right-[64px] border-[6px] border-emerald-500 text-emerald-500 px-6 py-2 rotate-12 opacity-80 z-50 rounded-2xl">
+                <p className="text-3xl font-black tracking-[0.2em] uppercase m-0 leading-none">FIELD</p>
+                <p className="text-3xl font-black tracking-[0.2em] uppercase m-0 leading-none">VALIDATED</p>
+              </div>
+            )}
+
+            <h1 className="text-2xl font-black text-slate-900 border-b-[4px] border-indigo-600 pb-3 mb-5 w-3/4">
               Laporan Analisis Eksekutif AI
             </h1>
             <div className="flex justify-between font-bold text-slate-500 mb-6 text-sm">
@@ -102,11 +109,19 @@ export function AdminExportPDF({ data }: { data: any }) {
               <span>Tanggal: {new Date(createdAt).toLocaleDateString('id-ID')}</span>
             </div>
 
-            <div className="bg-slate-50 border-2 border-slate-200 p-6 text-center rounded-3xl mb-8">
-              <h2 className="text-[60px] font-black text-slate-900 m-0 tracking-tighter leading-none">{score || 0} / 100</h2>
-              <p className="text-indigo-600 font-black text-xl mt-3 uppercase tracking-widest">{readinessLevel}</p>
+            <div className={`border-2 p-6 text-center rounded-3xl mb-8 ${isValidated ? 'bg-emerald-50 border-emerald-200' : 'bg-slate-50 border-slate-200'}`}>
+              <h2 className={`text-[60px] font-black m-0 tracking-tighter leading-none ${isValidated ? 'text-emerald-900' : 'text-slate-900'}`}>{score || 0} / 100</h2>
+              <p className={`font-black text-xl mt-3 uppercase tracking-widest ${isValidated ? 'text-emerald-600' : 'text-indigo-600'}`}>{readinessLevel}</p>
               <p className="text-slate-500 text-base mt-2 font-medium">Rekomendasi Rute: {aiResult?.incubationRoute || '-'}</p>
             </div>
+
+            {/* SEKSI CATATAN KURATOR */}
+            {isValidated && (
+              <div className="bg-emerald-50 border-l-[6px] border-emerald-500 p-5 mt-2 mb-6">
+                <h3 className="text-emerald-800 font-bold mb-2 text-base flex items-center gap-2">Catatan Validasi Lapangan (Oleh Kurator)</h3>
+                <p className="text-sm text-emerald-900 font-medium whitespace-pre-wrap leading-relaxed">{curatorNotes}</p>
+              </div>
+            )}
 
             <h2 className="text-xl font-bold text-indigo-700 mt-2 mb-3 border-b-2 border-slate-200 pb-2">1. Executive Summary</h2>
             <p className="text-justify text-sm leading-relaxed mb-6 text-slate-700">
@@ -204,11 +219,16 @@ export function AdminExportPDF({ data }: { data: any }) {
               {idx === recChunks.length - 1 && (
                 <div className="mt-6 border-t border-slate-200 pt-4">
                   <h2 className="text-xl font-bold text-indigo-700 mb-3 border-b-2 border-slate-200 pb-2">5. Action Plan (30 Hari)</h2>
-                  <ul className="list-decimal pl-5 text-sm space-y-2 font-medium text-slate-800">
-                    {aiResult?.nextActionSteps?.map((step: string, i: number) => (
-                      <li key={i} className="leading-relaxed pl-1 text-justify">{step}</li>
-                    )) || <li>Tidak ada action plan.</li>}
-                  </ul>
+                  <div className="space-y-4">
+                    {aiResult?.nextActionSteps?.map((step: any, i: number) => (
+                      <div key={i} className="flex items-start gap-4 border-b border-slate-200 pb-4 last:border-0 last:pb-0">
+                        <div className="bg-slate-900 text-white w-24 py-1.5 flex items-center justify-center font-black shrink-0 text-[10px] uppercase tracking-widest text-center rounded-sm">
+                          {step.timeframe}
+                        </div>
+                        <p className="text-sm text-slate-800 font-semibold leading-relaxed text-justify">{step.task}</p>
+                      </div>
+                    )) || <p className="text-sm text-slate-700">Tidak ada action plan.</p>}
+                  </div>
                 </div>
               )}
 

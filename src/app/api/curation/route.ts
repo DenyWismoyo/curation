@@ -1,3 +1,4 @@
+// src/app/api/curation/route.ts
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI, SchemaType } from '@google/generative-ai';
 import { GoogleAIFileManager } from '@google/generative-ai/server';
@@ -17,8 +18,9 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { formData, trackType, aiPromptConfig, aiModelType = 'pro' } = body;
 
-    // Menggunakan Gemini 2.5
-    const selectedModelName = aiModelType === 'pro' ? 'gemini-2.5-pro' : 'gemini-2.5-flash';
+    // Menentukan Model dan Kondisi "Deep Dive"
+    const isPro = aiModelType === 'pro';
+    const selectedModelName = isPro ? 'gemini-2.5-pro' : 'gemini-2.5-flash';
 
     const textData: Record<string, any> = {};
     const fileUrls: string[] = [];
@@ -40,7 +42,6 @@ export async function POST(req: Request) {
 
     const trackContext = trackType || "Model Bisnis Umum";
 
-    // Dynamic Metrics & Recommendations
     const targetMetrics: string[] = aiPromptConfig?.expectedMetrics && aiPromptConfig.expectedMetrics.length > 0
       ? aiPromptConfig.expectedMetrics
       : ["Inovasi & Value Proposition", "Traction & Validasi Pasar", "Kesehatan Finansial (Unit Economics)", "Kapabilitas Tim", "Skalabilitas & Moat", "Legalitas & Kepatuhan"];
@@ -70,44 +71,65 @@ export async function POST(req: Request) {
       }
     }
 
+    // =================================================================
+    // DYNAMIC INSTRUCTION BERDASARKAN TIPE MODEL (PRO VS FLASH)
+    // =================================================================
+    const proSpecificInstructions = `
+[INSTRUKSI KHUSUS AI PRO - DEEP DIVE & CRITICAL ANALYSIS]
+1. Lakukan "Stress Test" mental pada bisnis ini. Cari celah tersembunyi (Hidden Vulnerabilities), risiko operasional, dan kegagalan unit economics.
+2. Analisis harus bersifat pragmatis, tajam, dan "brutally honest" ala Tier-1 Venture Capitalist. Jangan berikan pujian basa-basi.
+3. Bedah "Moat" (keunggulan kompetitif) dengan standar tinggi. Apakah bisnis ini mudah di-copy oleh kompetitor besar?
+4. Berikan saran taktis C-Level Executive yang sangat terukur (Contoh: "Turunkan CAC hingga 20% dengan channel X", bukan sekadar "Lakukan pemasaran digital").
+5. Jika ada klaim tidak masuk akal di data pengguna, Anda WAJIB mempertanyakannya di bagian eksekutif summary atau discrepancies.
+`;
+
+    const flashSpecificInstructions = `
+[INSTRUKSI STANDAR AI FLASH - GENERAL EVALUATION]
+1. Berikan evaluasi komprehensif yang ringkas, jelas, informatif, dan membangun (constructive).
+2. Fokus pada poin-poin utama kekuatan dan kelemahan di permukaan berdasarkan data yang diberikan.
+3. Gunakan bahasa yang lebih memotivasi dan mudah dipahami oleh pelaku UMKM/Startup tahap awal.
+4. Berikan rekomendasi praktis dan mendasar yang bisa langsung diterapkan tanpa harus mengeluarkan biaya besar.
+`;
+
     const promptText = `
 ANDA ADALAH SENIOR PARTNER DI FIRMA VENTURE CAPITAL TIER-1 DAN AHLI DUE DILIGENCE KELAS DUNIA.
-Tugas Anda adalah melakukan penilaian mendalam (Deep Dive Assessment) terhadap entitas bisnis berikut dalam kategori spesifik: "${trackContext}".
+Tugas Anda adalah melakukan penilaian terhadap entitas bisnis berikut dalam kategori spesifik: "${trackContext}".
 
 DATA TEKS FORM ENTITAS:
 ${dataString}
 
-${fileUrls.length > 0 ? "DOKUMEN TERLAMPIR (Pitch Deck, Laporan, Legalitas) TELAH DISERTAKAN. ANDA WAJIB MEMBACA DAN MENYILANGKAN DATANYA DENGAN TEKS FORM." : "TIDAK ADA DOKUMEN YANG DILAMPIRKAN. BERIKAN PENILAIAN BERDASARKAN TEKS SAJA."}
+${fileUrls.length > 0 ? "DOKUMEN TERLAMPIR TELAH DISERTAKAN. ANDA WAJIB MEMBACA DAN MENYILANGKAN DATANYA DENGAN TEKS FORM." : "TIDAK ADA DOKUMEN YANG DILAMPIRKAN. BERIKAN PENILAIAN BERDASARKAN TEKS SAJA."}
 
-INSTRUKSI ANALISIS MATANG, SPESIFIK & KOMPREHENSIF:
-Anda TIDAK BOLEH memberikan jawaban generik atau template. Anda wajib merujuk pada detail isian dari "DATA TEKS FORM ENTITAS" untuk setiap analisis Anda.
+${isPro ? proSpecificInstructions : flashSpecificInstructions}
 
-1. EXECUTIVE SUMMARY & POSITIONING: Buat ringkasan padat tentang entitas ini. Tentukan Niche secara spesifik, Keunggulan Kompetitif berdasarkan data form, dan tingkat Skalabilitas Pasar.
-2. FILE ANALYSIS (DUE DILIGENCE): Jika ada lampiran, nilai validitas dan kualitas dokumennya. Sebutkan temuan penting (Key Findings). Catat jika ada ketidaksesuaian (Discrepancies) antara form dan file. Jika tidak ada file, tulis "Dokumen tidak dilampirkan, sehingga validasi data bergantung sepenuhnya pada klaim form."
-3. FINANCIAL & TEAM CAPABILITY: 
-   - Analisis model pendapatan secara riil berdasarkan data.
-   - Analisis efisiensi biaya (Burn rate / Runway).
-   - Nilai kecocokan pendiri (Founder-Market Fit) dan tunjukkan kesenjangan keahlian (Skill Gaps) yang perlu diisi.
-4. INVESTMENT READINESS: Tentukan stage saat ini secara realistis, instrumen pendanaan yang cocok (Equity, Grant, Loan, dll), dan daya tarik bagi investor.
+INSTRUKSI FORMAT ANALISIS:
+1. EXECUTIVE SUMMARY & POSITIONING: Buat ringkasan padat tentang entitas ini. Tentukan Niche, Keunggulan Kompetitif, dan tingkat Skalabilitas Pasar.
+2. FILE ANALYSIS (DUE DILIGENCE): Nilai validitas dokumen. Catat jika ada ketidaksesuaian (Discrepancies). Jika tidak ada file, tulis "Dokumen tidak dilampirkan, validasi data bergantung pada form."
+3. FINANCIAL & TEAM CAPABILITY: Analisis model pendapatan secara riil, efisiensi biaya (Burn rate / Runway), dan kesenjangan keahlian tim (Skill Gaps).
+4. INVESTMENT READINESS: Tentukan stage saat ini, instrumen pendanaan yang cocok (Equity, Grant, Loan), dan daya tarik bagi investor.
 5. METRICS ARRAY: Berikan skor objektif (0-100) untuk indikator berikut: [${targetMetrics.join(", ")}]. 
-   -> PENTING: Deskripsi/alasan skor WAJIB sangat detail dan merujuk pada poin spesifik dari form pengguna (bukan teori umum).
-6. SWOT & RISKS: Petakan Kekuatan, Kelemahan, Peluang, dan Ancaman dari bisnis ini.
-   -> Buat daftar 'Critical Risks' (Risiko Kritis) spesifik.
-   -> Buat daftar 'Mitigation Strategies' (Strategi Mitigasi) spesifik. (Catatan: Indeks ke-0 pada mitigasi harus menjawab risiko pada indeks ke-0, dst).
-7. ACTION PLAN: Buat rekomendasi taktis dengan Timeframe spesifik (Contoh: "30 Hari", "60 Hari", "90 Hari") yang menjawab kelemahan entitas.
-8. SCORING: Berikan "totalScore" (rata-rata berbobot) dan "readinessLevel" (Early, Validation, Market Ready, Investment Ready). Tentukan "incubationRoute" (Rute program pembinaan yang paling tepat).
+   -> Deskripsi alasan skor WAJIB merujuk pada poin spesifik dari data pengguna.
+6. SWOT & RISKS: Petakan SWOT. Buat daftar 'Critical Risks' dan 'Mitigation Strategies' yang berpasangan secara indeks.
+7. ACTION PLAN: Buat rekomendasi taktis dengan Timeframe spesifik (Contoh: "30 Hari", "60 Hari") yang menjawab kelemahan entitas.
+8. SCORING: Berikan "totalScore" (0-100) dan "readinessLevel". Tentukan "incubationRoute" (Rute pembinaan).
 
 ATURAN WAJIB:
-- Output MURNI dalam format JSON sesuai skema.
-- SELURUH TEKS JAWABAN (Value dalam JSON) WAJIB MENGGUNAKAN BAHASA INDONESIA, kecuali istilah teknis (seperti Runway, Burn Rate, dll).
+- Output MURNI dalam format JSON.
+- SELURUH TEKS JAWABAN WAJIB MENGGUNAKAN BAHASA INDONESIA (kecuali istilah teknis).
 `;
 
     parts.unshift({ text: promptText });
 
     const genAI = new GoogleGenerativeAI(API_KEY);
+    
+    // Perbedaan System Instructions
+    const systemPrompt = isPro 
+      ? "Anda adalah sistem analitik AI Premium. Anda WAJIB menganalisis dengan kedalaman maksimal, bersikap sangat kritis, mendeteksi cacat model bisnis, dan memberikan strategi tingkat lanjut. Format output hanya JSON berbahasa Indonesia."
+      : "Anda adalah sistem analitik AI Standar. Anda bertugas mengevaluasi kelayakan bisnis dengan cara yang mudah dipahami, akurat, dan suportif. Format output hanya JSON berbahasa Indonesia.";
+
     const model = genAI.getGenerativeModel({
       model: selectedModelName,
-      systemInstruction: "Anda adalah sistem analitik bisnis AI. Anda mendeteksi konteks data dan WAJIB membalas SELURUH teks di dalam JSON menggunakan BAHASA INDONESIA. Jadilah sangat detail, jangan gunakan placeholder. Kembalikan HANYA JSON valid.",
+      systemInstruction: systemPrompt,
       generationConfig: {
         maxOutputTokens: 8192,
         responseMimeType: "application/json",
