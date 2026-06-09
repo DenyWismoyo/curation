@@ -151,17 +151,46 @@ export function CurationDashboard({ trackType, formData, aiResult, programName, 
         <div className="bg-white p-2 sm:p-6 lg:p-8 rounded-3xl shadow-sm ring-1 ring-slate-200 overflow-hidden relative">
           
           {/* ========================================================= */}
-          {/* DISCLAIMER BANNER (BARU) */}
+          {/* ENHANCED DISCLAIMER & UPGRADE AWARENESS BANNER */}
           {/* ========================================================= */}
-          <div className="bg-amber-50/80 border border-amber-200/80 p-4 sm:p-5 rounded-2xl mb-8 flex flex-col sm:flex-row gap-4 items-start mx-2 sm:mx-0 mt-2 sm:mt-0">
-            <div className="bg-amber-100 p-2.5 rounded-xl shrink-0 text-amber-600 sm:mt-0.5">
-              <AlertTriangle className="w-6 h-6" />
+          <div className="bg-gradient-to-br from-amber-50 to-orange-50/40 border border-amber-200/80 p-5 sm:p-6 rounded-[2rem] mb-8 flex flex-col gap-4 mx-2 sm:mx-0 mt-2 sm:mt-0 shadow-sm relative overflow-hidden">
+            
+            {/* Dekorasi Background */}
+            <div className="absolute right-0 top-0 opacity-[0.03] pointer-events-none transform translate-x-6 -translate-y-6">
+              <Shield size={160} />
             </div>
-            <div>
-              <h4 className="text-amber-800 font-black text-sm uppercase tracking-widest mb-1.5">Disclaimer Penilaian Sistem AI</h4>
-              <p className="text-amber-700/90 text-xs sm:text-sm font-medium leading-relaxed text-justify">
-                Laporan analitik dan Skor Kesiapan (Readiness Score) ini dihasilkan secara otomatis oleh kecerdasan buatan (AI) sebagai instrumen evaluasi awal berdasarkan data mandiri yang Anda input. <b>Hasil ini bersifat tidak mengikat dan wajib melalui tahapan verifikasi, uji tuntas (due-diligence), serta validasi lapangan oleh Tim Ahli, Kurator, atau Komite Penyelenggara Program</b> untuk menetapkan keputusan akhir yang sah.
-              </p>
+
+            <div className="flex flex-col lg:flex-row gap-4 items-start relative z-10">
+              <div className="bg-amber-100/80 p-3 rounded-2xl shrink-0 text-amber-600 ring-1 ring-amber-200 shadow-inner">
+                <AlertTriangle className="w-7 h-7" />
+              </div>
+              
+              <div className="flex-1 w-full space-y-3">
+                {/* Header Status */}
+                <div className="flex items-center gap-2">
+                  <span className="bg-amber-100/80 text-amber-800 text-[10px] font-black px-3 py-1 rounded-md uppercase tracking-widest ring-1 ring-amber-200">
+                    Status Laporan
+                  </span>
+                  <h4 className="text-amber-900 font-black text-sm sm:text-base uppercase tracking-wider">
+                    Draft Evaluasi Awal (AI-Generated)
+                  </h4>
+                </div>
+                
+                {/* Pesan Utama */}
+                <p className="text-amber-800/90 text-sm font-medium leading-relaxed text-justify">
+                  Laporan analitik dan <span className="font-bold">AI Readiness Score</span> ini dihasilkan secara otomatis oleh kecerdasan buatan sebagai instrumen evaluasi awal berdasarkan data mandiri yang Anda input. <b>Hasil ini bersifat tidak mengikat dan wajib melalui tahapan verifikasi, uji tuntas (due-diligence), serta validasi lapangan resmi yang ditentukan oleh masing-masing Komite Penyelenggara Program</b> untuk menetapkan keputusan akhir yang sah.
+                </p>
+
+                {/* Informasi Peningkatan Nilai Tambah (Upgrade Nilai Usaha) */}
+                <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 ring-1 ring-amber-200/60 shadow-sm border-l-4 border-l-amber-500">
+                  <h5 className="text-xs font-black text-slate-900 uppercase tracking-wide mb-1 flex items-center gap-1.5">
+                    <Sparkles className="w-4 h-4 text-amber-600 animate-pulse" /> Rekomendasi Peningkatan Kapasitas & Nilai Tambah
+                  </h5>
+                  <p className="text-xs text-slate-600 leading-relaxed font-medium">
+                    Terlepas dari proses seleksi program, Anda sangat disarankan memanfaatkan poin analisis strategis, peta risiko, dan tolok ukur dimensi kinerja di bawah ini sebagai panduan mandiri untuk melakukan <b>upgrade/perbaikan berkelanjutan</b> guna membangun <b>nilai tambah (value-added)</b>.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -170,7 +199,7 @@ export function CurationDashboard({ trackType, formData, aiResult, programName, 
             <div className="flex-1 flex flex-col justify-between">
               <div>
                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight text-balance mb-3">
-                  AI Assessment Report
+                  CSRS Assessment Report
                 </h1>
                 
                 {/* IDENTITAS PROGRAM & ENTITAS */}
