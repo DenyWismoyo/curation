@@ -55,9 +55,10 @@ export function useCuration() {
     fetchTemplates();
   }, []);
 
-  const saveToHistory = (data: CurationFormData, result: AIResult, track: string) => {
+  // PERUBAHAN DI SINI: Tambahkan parameter `firestoreId` opsional
+  const saveToHistory = (data: CurationFormData, result: AIResult, track: string, firestoreId?: string) => {
     const newEntry: CurationHistory = {
-      id: Date.now().toString(),
+      id: firestoreId || Date.now().toString(), // Gunakan ID asli dari Firestore jika ada
       date: new Date().toISOString(),
       trackType: track,
       namaUsaha: data.namaUsaha || 'Tanpa Nama',
@@ -65,6 +66,7 @@ export function useCuration() {
       data: data,
       result: result
     };
+
     const updatedHistory = [newEntry, ...history];
     setHistory(updatedHistory);
     
@@ -114,6 +116,7 @@ export function useCuration() {
           uploadPromises.push(uploadTask);
         }
       }
+
       await Promise.all(uploadPromises);
       
       const trackNameStr = selectedTemplate.trackName;
@@ -164,10 +167,10 @@ export function useCuration() {
       }
       // =========================================================
       
-      // Simpan data di database assessments dengan tambahan field corporateEntity
-      await addDoc(collection(db, "assessments"), {
+      // PERUBAHAN DI SINI: Tangkap Response dari addDoc sebagai `docRef`
+      const docRef = await addDoc(collection(db, "assessments"), {
         trackType: trackNameStr,
-        corporateEntity: corporateEntityName, // Penyeimbang filter query dashboard kurator
+        corporateEntity: corporateEntityName, 
         namaUsaha: dbData.namaUsaha || 'Tanpa Nama',
         email: dbData.email || '',
         whatsapp: dbData.whatsapp || '',
@@ -179,7 +182,8 @@ export function useCuration() {
         createdAt: new Date().toISOString()
       });
 
-      saveToHistory(dbData, result, trackNameStr);
+      // PERUBAHAN DI SINI: Kirim docRef.id ke fungsi saveToHistory
+      saveToHistory(dbData, result, trackNameStr, docRef.id);
 
       // Hapus cache lokal HANYA jika proses asessemen sukses sepenuhnya
       if (typeof window !== 'undefined' && selectedTemplate) {

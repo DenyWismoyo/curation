@@ -1,8 +1,8 @@
-// src/components/curation/PDFReportTemplate.tsx
+// src/components/curator/PDFReportTemplate.tsx
 import React, { forwardRef } from 'react';
 import { 
   ShieldCheck, AlertTriangle, TrendingUp, Lightbulb, 
-  Target, Activity, Compass, FileText, Banknote, Users
+  Target, Activity, Compass, FileText, Banknote, Users, Award, Shield
 } from 'lucide-react';
 import { CurationFormData, AIResult } from '@/types/curation';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
@@ -10,14 +10,14 @@ import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Responsi
 interface PDFTemplateProps {
   trackType: string;
   formData: CurationFormData;
-  aiResult: AIResult & { curatorNotes?: string }; // Ditambahkan prop curatorNotes
+  aiResult: AIResult & { curatorNotes?: string }; 
   logoUrl: string | null;
 }
 
 export const PDFReportTemplate = forwardRef<HTMLDivElement, PDFTemplateProps>(
   ({ trackType, formData, aiResult, logoUrl }, ref) => {
     
-    const isValidated = !!aiResult.curatorNotes; // Cek status validasi
+    const isValidated = !!aiResult.curatorNotes; 
 
     const radarData = aiResult.metrics?.map((m, idx) => ({
       subject: m.label,
@@ -46,7 +46,7 @@ export const PDFReportTemplate = forwardRef<HTMLDivElement, PDFTemplateProps>(
           {subtitle && <p className="text-[14px] font-medium text-slate-500 mt-3">{subtitle}</p>}
         </div>
         <div className="text-right">
-          <p className="text-[12px] font-bold tracking-[0.2em] text-slate-500 uppercase mb-1">{formData.namaUsaha}</p>
+          <p className="text-[12px] font-bold tracking-[0.2em] text-slate-500 uppercase mb-1">{formData.namaUsaha || formData.namaProyek || "Peserta"}</p>
           <p className="text-[10px] font-bold tracking-[0.1em] text-slate-400 uppercase">{today} | {trackType}</p>
         </div>
       </div>
@@ -58,10 +58,23 @@ export const PDFReportTemplate = forwardRef<HTMLDivElement, PDFTemplateProps>(
           <ShieldCheck size={16} className="text-indigo-600"/> 
           <span className="text-slate-700">Strictly Confidential</span>
         </div>
-        <div className="tracking-[0.4em] text-slate-300">DUE DILIGENCE REPORT</div>
+        <div className="tracking-[0.4em] text-slate-300">ASSESSMENT REPORT</div>
         <div className="text-slate-700">Page {pageNum} <span className="mx-2 text-slate-300">/</span> 5</div>
       </div>
     );
+
+    const renderDynamicIcon = (type: string) => {
+      switch (type) {
+        case 'finance': return <Banknote size={14} />;
+        case 'users': return <Users size={14} />;
+        case 'idea': return <Lightbulb size={14} />;
+        case 'award': return <Award size={14} />;
+        case 'document': return <FileText size={14} />;
+        case 'shield': return <Shield size={14} />;
+        case 'target':
+        default: return <Target size={14} />;
+      }
+    };
 
     return (
       <div ref={ref} className="bg-white flex flex-col font-sans text-slate-900 w-[1024px]">
@@ -79,7 +92,7 @@ export const PDFReportTemplate = forwardRef<HTMLDivElement, PDFTemplateProps>(
 
           <div className="flex justify-between items-start mb-16">
             <div className="h-20 w-48 flex items-center">
-              {logoUrl ? <img src={logoUrl} alt="Logo" className="max-h-full max-w-full object-contain grayscale" /> : <div className="h-16 w-16 bg-slate-900 text-white flex items-center justify-center font-black text-3xl">{formData.namaUsaha?.charAt(0).toUpperCase()}</div>}
+              {logoUrl ? <img src={logoUrl} alt="Logo" className="max-h-full max-w-full object-contain grayscale" /> : <div className="h-16 w-16 bg-slate-900 text-white flex items-center justify-center font-black text-3xl">{(formData.namaUsaha || formData.namaProyek || "P")?.charAt(0).toUpperCase()}</div>}
             </div>
             <div className={`border px-4 py-2 ${isValidated ? 'border-emerald-500 bg-emerald-50' : 'border-slate-300'}`}>
               <p className={`text-[10px] font-black tracking-[0.3em] uppercase ${isValidated ? 'text-emerald-700' : 'text-slate-900'}`}>
@@ -91,7 +104,7 @@ export const PDFReportTemplate = forwardRef<HTMLDivElement, PDFTemplateProps>(
           <div className="mb-12">
             <p className="text-[14px] font-bold tracking-[0.4em] text-indigo-600 uppercase mb-4">Executive Review</p>
             <h1 className="text-[64px] font-black text-slate-900 tracking-tighter uppercase leading-[1.05] mb-4 text-balance break-words line-clamp-2">
-              {formData.namaUsaha}
+              {formData.namaUsaha || formData.namaProyek || "Profil Peserta"}
             </h1>
             <p className="text-xl font-semibold text-slate-500 uppercase tracking-widest border-l-4 border-indigo-600 pl-4">{trackType}</p>
           </div>
@@ -112,21 +125,21 @@ export const PDFReportTemplate = forwardRef<HTMLDivElement, PDFTemplateProps>(
                   {aiResult.executiveSummary}
                </div>
 
+               {/* Grid Kecil untuk Custom Blocks (Maksimal 4 blok agar muat di PDF) */}
                <div className="grid grid-cols-2 gap-6">
-                 {aiResult.marketPositioning && (
-                   <div className="bg-slate-50 p-5 border border-slate-200">
-                     <p className="text-[10px] font-black uppercase text-indigo-600 tracking-widest mb-3 flex items-center gap-2"><Target size={14}/> Market Positioning</p>
-                     <p className="text-[12px] text-slate-700 mb-1"><span className="font-bold text-slate-900">Niche:</span> {aiResult.marketPositioning.niche}</p>
-                     <p className="text-[12px] text-slate-700 line-clamp-2"><span className="font-bold text-slate-900">Advantage:</span> {aiResult.marketPositioning.competitorAdvantage}</p>
+                 {aiResult.customAnalysisBlocks?.slice(0, 4).map((block, idx) => (
+                   <div key={idx} className="bg-slate-50 p-5 border border-slate-200">
+                     <p className="text-[10px] font-black uppercase text-indigo-600 tracking-widest mb-3 flex items-center gap-2">
+                        {renderDynamicIcon(block.iconType)} {block.title}
+                     </p>
+                     {/* Menampilkan maksimal 2 baris metrik per kotak agar desain rapi */}
+                     {block.metrics.slice(0, 2).map((m, mIdx) => (
+                       <p key={mIdx} className="text-[12px] text-slate-700 mb-1 line-clamp-2">
+                         <span className="font-bold text-slate-900">{m.label}:</span> {m.value}
+                       </p>
+                     ))}
                    </div>
-                 )}
-                 {aiResult.investmentReadiness && (
-                   <div className="bg-slate-50 p-5 border border-slate-200">
-                     <p className="text-[10px] font-black uppercase text-amber-600 tracking-widest mb-3 flex items-center gap-2"><Banknote size={14}/> Investment Prep</p>
-                     <p className="text-[12px] text-slate-700 mb-1"><span className="font-bold text-slate-900">Stage:</span> {aiResult.investmentReadiness.currentFundingStage}</p>
-                     <p className="text-[12px] text-slate-700"><span className="font-bold text-slate-900">Status:</span> {aiResult.investmentReadiness.investorAttractiveness}</p>
-                   </div>
-                 )}
+                 ))}
                </div>
             </div>
           </div>
@@ -175,24 +188,16 @@ export const PDFReportTemplate = forwardRef<HTMLDivElement, PDFTemplateProps>(
           <PageFooter pageNum={2} />
         </div>
 
-        {/* HALAMAN 3: STRATEGIC SWOT MATRIX & TEAM */}
+        {/* HALAMAN 3: STRATEGIC SWOT MATRIX */}
         <div style={pageStyle} className="flex flex-col">
           <PageHeader title="SWOT & Capability Matrix" subtitle="Pemetaan posisi kompetitif internal dan dinamika eksternal pasar." />
           
-          <div className="mt-4 mb-8 grid grid-cols-2 grid-rows-2 gap-8 h-[600px]">
-            <div className="border border-slate-200 p-8 flex flex-col"><div className="border-b-[3px] border-indigo-600 pb-4 mb-6 flex justify-between items-center"><h4 className="text-slate-900 font-black text-xl uppercase tracking-[0.2em]">Strengths</h4><TrendingUp className="text-indigo-600" size={24}/></div><ul className="space-y-4 text-slate-700 text-[13px] font-medium leading-[1.7] overflow-hidden flex-1">{aiResult.swotAnalysis?.strengths?.slice(0, 4).map((s,i) => <li key={i} className="flex gap-4 items-start"><div className="w-1.5 h-1.5 rounded-full bg-indigo-600 mt-2 shrink-0"></div><span className="text-justify line-clamp-3">{s}</span></li>)}</ul></div>
-            <div className="border border-slate-200 p-8 flex flex-col bg-slate-50/50"><div className="border-b-[3px] border-rose-500 pb-4 mb-6 flex justify-between items-center"><h4 className="text-slate-900 font-black text-xl uppercase tracking-[0.2em]">Weaknesses</h4><Activity className="text-rose-500" size={24}/></div><ul className="space-y-4 text-slate-700 text-[13px] font-medium leading-[1.7] overflow-hidden flex-1">{aiResult.swotAnalysis?.weaknesses?.slice(0, 4).map((w,i) => <li key={i} className="flex gap-4 items-start"><div className="w-1.5 h-1.5 rounded-full bg-rose-500 mt-2 shrink-0"></div><span className="text-justify line-clamp-3">{w}</span></li>)}</ul></div>
-            <div className="border border-slate-200 p-8 flex flex-col bg-slate-50/50"><div className="border-b-[3px] border-emerald-500 pb-4 mb-6 flex justify-between items-center"><h4 className="text-slate-900 font-black text-xl uppercase tracking-[0.2em]">Opportunities</h4><Lightbulb className="text-emerald-500" size={24}/></div><ul className="space-y-4 text-slate-700 text-[13px] font-medium leading-[1.7] overflow-hidden flex-1">{aiResult.swotAnalysis?.opportunities?.slice(0, 4).map((o,i) => <li key={i} className="flex gap-4 items-start"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0"></div><span className="text-justify line-clamp-3">{o}</span></li>)}</ul></div>
-            <div className="border border-slate-200 p-8 flex flex-col"><div className="border-b-[3px] border-amber-500 pb-4 mb-6 flex justify-between items-center"><h4 className="text-slate-900 font-black text-xl uppercase tracking-[0.2em]">Threats</h4><AlertTriangle className="text-amber-500" size={24}/></div><ul className="space-y-4 text-slate-700 text-[13px] font-medium leading-[1.7] overflow-hidden flex-1">{aiResult.swotAnalysis?.threats?.slice(0, 4).map((t,i) => <li key={i} className="flex gap-4 items-start"><div className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-2 shrink-0"></div><span className="text-justify line-clamp-3">{t}</span></li>)}</ul></div>
+          <div className="mt-4 mb-8 grid grid-cols-2 grid-rows-2 gap-8 h-[750px]">
+            <div className="border border-slate-200 p-8 flex flex-col"><div className="border-b-[3px] border-indigo-600 pb-4 mb-6 flex justify-between items-center"><h4 className="text-slate-900 font-black text-xl uppercase tracking-[0.2em]">Strengths</h4><TrendingUp className="text-indigo-600" size={24}/></div><ul className="space-y-4 text-slate-700 text-[13px] font-medium leading-[1.7] overflow-hidden flex-1">{aiResult.swotAnalysis?.strengths?.slice(0, 5).map((s,i) => <li key={i} className="flex gap-4 items-start"><div className="w-1.5 h-1.5 rounded-full bg-indigo-600 mt-2 shrink-0"></div><span className="text-justify line-clamp-4">{s}</span></li>)}</ul></div>
+            <div className="border border-slate-200 p-8 flex flex-col bg-slate-50/50"><div className="border-b-[3px] border-rose-500 pb-4 mb-6 flex justify-between items-center"><h4 className="text-slate-900 font-black text-xl uppercase tracking-[0.2em]">Weaknesses</h4><Activity className="text-rose-500" size={24}/></div><ul className="space-y-4 text-slate-700 text-[13px] font-medium leading-[1.7] overflow-hidden flex-1">{aiResult.swotAnalysis?.weaknesses?.slice(0, 5).map((w,i) => <li key={i} className="flex gap-4 items-start"><div className="w-1.5 h-1.5 rounded-full bg-rose-500 mt-2 shrink-0"></div><span className="text-justify line-clamp-4">{w}</span></li>)}</ul></div>
+            <div className="border border-slate-200 p-8 flex flex-col bg-slate-50/50"><div className="border-b-[3px] border-emerald-500 pb-4 mb-6 flex justify-between items-center"><h4 className="text-slate-900 font-black text-xl uppercase tracking-[0.2em]">Opportunities</h4><Lightbulb className="text-emerald-500" size={24}/></div><ul className="space-y-4 text-slate-700 text-[13px] font-medium leading-[1.7] overflow-hidden flex-1">{aiResult.swotAnalysis?.opportunities?.slice(0, 5).map((o,i) => <li key={i} className="flex gap-4 items-start"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0"></div><span className="text-justify line-clamp-4">{o}</span></li>)}</ul></div>
+            <div className="border border-slate-200 p-8 flex flex-col"><div className="border-b-[3px] border-amber-500 pb-4 mb-6 flex justify-between items-center"><h4 className="text-slate-900 font-black text-xl uppercase tracking-[0.2em]">Threats</h4><AlertTriangle className="text-amber-500" size={24}/></div><ul className="space-y-4 text-slate-700 text-[13px] font-medium leading-[1.7] overflow-hidden flex-1">{aiResult.swotAnalysis?.threats?.slice(0, 5).map((t,i) => <li key={i} className="flex gap-4 items-start"><div className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-2 shrink-0"></div><span className="text-justify line-clamp-4">{t}</span></li>)}</ul></div>
           </div>
-
-          {aiResult.teamAssessment && (
-            <div className="border-l-4 border-blue-500 pl-6 py-2">
-              <h4 className="text-[12px] font-black uppercase text-blue-600 tracking-widest mb-2 flex items-center gap-2"><Users size={16}/> Team Execution & Gaps</h4>
-              <p className="text-[13px] text-slate-700 font-medium mb-2"><span className="font-bold text-slate-900">Founder-Market Fit:</span> {aiResult.teamAssessment.founderMarketFit}</p>
-              <p className="text-[13px] text-slate-700 font-medium"><span className="font-bold text-slate-900">Skill Gaps:</span> {aiResult.teamAssessment.identifiedSkillGaps?.join(", ")}</p>
-            </div>
-          )}
           <PageFooter pageNum={3} />
         </div>
 
@@ -243,7 +248,7 @@ export const PDFReportTemplate = forwardRef<HTMLDivElement, PDFTemplateProps>(
             </h2>
             
             <div className="text-[16px] text-slate-400 font-medium leading-[2] text-balance max-w-2xl text-justify mb-8">
-              Berdasarkan sintesis dari bacaan dokumen (pitch deck/legalitas), metrik kesiapan, kesehatan finansial, dan profil risiko yang telah dikalkulasi oleh mesin *due diligence* kami, rute di atas dirancang sebagai panduan eksekusi paling optimal untuk mengamankan valuasi dan skalabilitas entitas Anda.
+              Berdasarkan sintesis dari bacaan form, indikator analisis dinamis, metrik evaluasi khusus, dan profil risiko yang telah dikalkulasi oleh mesin *AI Analyzer* kami, rute dan rekomendasi di atas dirancang sebagai panduan eksekusi paling rasional untuk mengoptimalkan potensi dan kelayakan entitas Anda.
             </div>
 
             {/* SEKSI CATATAN KURATOR PADA PDF HALAMAN TERAKHIR */}
@@ -265,7 +270,7 @@ export const PDFReportTemplate = forwardRef<HTMLDivElement, PDFTemplateProps>(
           </div>
           
           <div className="absolute bottom-12 left-0 right-0 text-center">
-             <p className="text-[10px] font-bold tracking-[0.4em] text-slate-500 uppercase">End of Document <span className="mx-3">•</span> {formData.namaUsaha} <span className="mx-3">•</span> {today}</p>
+             <p className="text-[10px] font-bold tracking-[0.4em] text-slate-500 uppercase">End of Document <span className="mx-3">•</span> {formData.namaUsaha || formData.namaProyek} <span className="mx-3">•</span> {today}</p>
           </div>
         </div>
 

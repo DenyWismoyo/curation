@@ -18,14 +18,12 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { formData, trackType, aiPromptConfig, aiModelType = 'pro' } = body;
 
-    // Menentukan Model dan Kondisi "Deep Dive"
     const isPro = aiModelType === 'pro';
     const selectedModelName = isPro ? 'gemini-2.5-pro' : 'gemini-2.5-flash';
 
     const textData: Record<string, any> = {};
     const fileUrls: string[] = [];
 
-    // Ekstraksi data form dan URL file
     for (const key in formData) {
       const val = formData[key];
       if (typeof val === 'string' && val.startsWith('http') && val.includes('firebasestorage')) {
@@ -40,19 +38,26 @@ export async function POST(req: Request) {
       .map(([k, v]) => `- ${k}: ${Array.isArray(v) ? v.join(", ") : v}`)
       .join("\n");
 
-    const trackContext = trackType || "Model Bisnis Umum";
+    const trackContext = trackType || "Evaluasi Umum";
+
+    const aiPersona = aiPromptConfig?.aiPersona || "AHLI ANALISIS DAN DUE DILIGENCE KELAS DUNIA";
+    const assessmentGoal = aiPromptConfig?.assessmentGoal || "Melakukan evaluasi kelayakan yang ketat, menganalisis potensi, dan memberikan rekomendasi strategis.";
+
+    // MENGAMBIL BLUEPRINT BLOK ANALISIS DARI ADMIN
+    const targetAnalysisBlocks = aiPromptConfig?.expectedAnalysisBlocks && aiPromptConfig.expectedAnalysisBlocks.length > 0
+      ? aiPromptConfig.expectedAnalysisBlocks.map((block: string) => `- ${block}`).join("\n")
+      : "- Posisi Pasar (Fokus Indikator: Niche Pasar, Keunggulan)\n- Kesehatan Finansial (Fokus Indikator: Pendapatan, Runway)\n- Kapabilitas Tim (Fokus Indikator: Keahlian, Hambatan)";
 
     const targetMetrics: string[] = aiPromptConfig?.expectedMetrics && aiPromptConfig.expectedMetrics.length > 0
       ? aiPromptConfig.expectedMetrics
-      : ["Inovasi & Value Proposition", "Traction & Validasi Pasar", "Kesehatan Finansial (Unit Economics)", "Kapabilitas Tim", "Skalabilitas & Moat", "Legalitas & Kepatuhan"];
+      : ["Kualitas & Inovasi", "Validasi Pasar", "Kesehatan Finansial / Pendanaan", "Kapabilitas Tim", "Skalabilitas", "Legalitas / Kepatuhan"];
 
     const targetSections: string[] = aiPromptConfig?.expectedRecommendations && aiPromptConfig.expectedRecommendations.length > 0
       ? aiPromptConfig.expectedRecommendations
-      : ["Strategi Go-To-Market", "Optimasi Model Bisnis", "Persiapan Penggalangan Dana"];
+      : ["Strategi Pelaksanaan", "Optimasi Proses", "Rencana Pengembangan"];
 
     const parts: any[] = [];
     
-    // UPLOAD FILES TO GEMINI
     if (fileUrls.length > 0 && API_KEY) {
       fileManager = new GoogleAIFileManager(API_KEY);
       for (const url of fileUrls) {
@@ -65,67 +70,45 @@ export async function POST(req: Request) {
         fs.writeFileSync(tempFilePath, Buffer.from(buffer));
         tempFiles.push(tempFilePath);
 
-        const uploadResult = await fileManager.uploadFile(tempFilePath, { mimeType: contentType, displayName: "Dokumen Kurasi (Pitch Deck/Legal/Laporan)" });
+        const uploadResult = await fileManager.uploadFile(tempFilePath, { mimeType: contentType, displayName: "Dokumen Lampiran Asesmen" });
         uploadedGeminiFiles.push(uploadResult.file);
         parts.push({ fileData: { mimeType: uploadResult.file.mimeType, fileUri: uploadResult.file.uri } });
       }
     }
 
-    // =================================================================
-    // DYNAMIC INSTRUCTION BERDASARKAN TIPE MODEL (PRO VS FLASH)
-    // =================================================================
-    const proSpecificInstructions = `
-[INSTRUKSI KHUSUS AI PRO - DEEP DIVE & CRITICAL ANALYSIS]
-1. Lakukan "Stress Test" mental pada bisnis ini. Cari celah tersembunyi (Hidden Vulnerabilities), risiko operasional, dan kegagalan unit economics.
-2. Analisis harus bersifat pragmatis, tajam, dan "brutally honest" ala Tier-1 Venture Capitalist. Jangan berikan pujian basa-basi.
-3. Bedah "Moat" (keunggulan kompetitif) dengan standar tinggi. Apakah bisnis ini mudah di-copy oleh kompetitor besar?
-4. Berikan saran taktis C-Level Executive yang sangat terukur (Contoh: "Turunkan CAC hingga 20% dengan channel X", bukan sekadar "Lakukan pemasaran digital").
-5. Jika ada klaim tidak masuk akal di data pengguna, Anda WAJIB mempertanyakannya di bagian eksekutif summary atau discrepancies.
-`;
-
-    const flashSpecificInstructions = `
-[INSTRUKSI STANDAR AI FLASH - GENERAL EVALUATION]
-1. Berikan evaluasi komprehensif yang ringkas, jelas, informatif, dan membangun (constructive).
-2. Fokus pada poin-poin utama kekuatan dan kelemahan di permukaan berdasarkan data yang diberikan.
-3. Gunakan bahasa yang lebih memotivasi dan mudah dipahami oleh pelaku UMKM/Startup tahap awal.
-4. Berikan rekomendasi praktis dan mendasar yang bisa langsung diterapkan tanpa harus mengeluarkan biaya besar.
-`;
-
     const promptText = `
-ANDA ADALAH SENIOR PARTNER DI FIRMA VENTURE CAPITAL TIER-1 DAN AHLI DUE DILIGENCE KELAS DUNIA.
-Tugas Anda adalah melakukan penilaian terhadap entitas bisnis berikut dalam kategori spesifik: "${trackContext}".
+ANDA ADALAH: ${aiPersona}.
+Tugas Anda adalah melakukan penilaian terhadap profil/entitas/peserta berikut dalam kategori: "${trackContext}".
+Tujuan Utama Analisis: ${assessmentGoal}
 
-DATA TEKS FORM ENTITAS:
+DATA TEKS FORM:
 ${dataString}
 
 ${fileUrls.length > 0 ? "DOKUMEN TERLAMPIR TELAH DISERTAKAN. ANDA WAJIB MEMBACA DAN MENYILANGKAN DATANYA DENGAN TEKS FORM." : "TIDAK ADA DOKUMEN YANG DILAMPIRKAN. BERIKAN PENILAIAN BERDASARKAN TEKS SAJA."}
 
-${isPro ? proSpecificInstructions : flashSpecificInstructions}
-
 INSTRUKSI FORMAT ANALISIS:
-1. EXECUTIVE SUMMARY & POSITIONING: Buat ringkasan padat tentang entitas ini. Tentukan Niche, Keunggulan Kompetitif, dan tingkat Skalabilitas Pasar.
-2. FILE ANALYSIS (DUE DILIGENCE): Nilai validitas dokumen. Catat jika ada ketidaksesuaian (Discrepancies). Jika tidak ada file, tulis "Dokumen tidak dilampirkan, validasi data bergantung pada form."
-3. FINANCIAL & TEAM CAPABILITY: Analisis model pendapatan secara riil, efisiensi biaya (Burn rate / Runway), dan kesenjangan keahlian tim (Skill Gaps).
-4. INVESTMENT READINESS: Tentukan stage saat ini, instrumen pendanaan yang cocok (Equity, Grant, Loan), dan daya tarik bagi investor.
-5. METRICS ARRAY: Berikan skor objektif (0-100) untuk indikator berikut: [${targetMetrics.join(", ")}]. 
-   -> Deskripsi alasan skor WAJIB merujuk pada poin spesifik dari data pengguna.
-6. SWOT & RISKS: Petakan SWOT. Buat daftar 'Critical Risks' dan 'Mitigation Strategies' yang berpasangan secara indeks.
-7. ACTION PLAN: Buat rekomendasi taktis dengan Timeframe spesifik (Contoh: "30 Hari", "60 Hari") yang menjawab kelemahan entitas.
-8. SCORING: Berikan "totalScore" (0-100) dan "readinessLevel". Tentukan "incubationRoute" (Rute pembinaan).
+1. EXECUTIVE SUMMARY: Buat ringkasan padat tentang entitas ini sesuai tujuan asesmen.
+2. FILE ANALYSIS: Nilai validitas dokumen. Catat jika ada ketidaksesuaian (Discrepancies).
+3. CUSTOM ANALYSIS BLOCKS: Hasilkan blok analisis dengan MERUJUK SANGAT KETAT pada daftar berikut. Pastikan Anda menjabarkan nilai indikator (label) secara mendetail dan spesifik:
+${targetAnalysisBlocks}
+4. METRICS ARRAY: Berikan skor objektif (0-100) untuk indikator berikut: [${targetMetrics.join(", ")}]. 
+   -> Deskripsi alasan skor WAJIB spesifik.
+5. SWOT & RISKS: Petakan SWOT. Buat daftar 'Critical Risks' dan 'Mitigation Strategies' yang berpasangan.
+6. ACTION PLAN: Buat rekomendasi dengan Timeframe spesifik.
+7. SCORING: Berikan "totalScore" (0-100) dan "readinessLevel". Tentukan "incubationRoute" (Rute rekomendasi selanjutnya).
 
 ATURAN WAJIB:
 - Output MURNI dalam format JSON.
-- SELURUH TEKS JAWABAN WAJIB MENGGUNAKAN BAHASA INDONESIA (kecuali istilah teknis).
+- SELURUH TEKS JAWABAN WAJIB MENGGUNAKAN BAHASA INDONESIA.
 `;
 
     parts.unshift({ text: promptText });
 
     const genAI = new GoogleGenerativeAI(API_KEY);
     
-    // Perbedaan System Instructions
     const systemPrompt = isPro 
-      ? "Anda adalah sistem analitik AI Premium. Anda WAJIB menganalisis dengan kedalaman maksimal, bersikap sangat kritis, mendeteksi cacat model bisnis, dan memberikan strategi tingkat lanjut. Format output hanya JSON berbahasa Indonesia."
-      : "Anda adalah sistem analitik AI Standar. Anda bertugas mengevaluasi kelayakan bisnis dengan cara yang mudah dipahami, akurat, dan suportif. Format output hanya JSON berbahasa Indonesia.";
+      ? "Anda adalah AI Evaluator Premium. Analisis mendalam, kritis, deteksi celah logika, dan berikan strategi level mahir. Format output hanya JSON berbahasa Indonesia."
+      : "Anda adalah AI Evaluator Standar. Evaluasi secara komprehensif, suportif, dan akurat berdasarkan fakta. Format output hanya JSON berbahasa Indonesia.";
 
     const model = genAI.getGenerativeModel({
       model: selectedModelName,
@@ -136,22 +119,35 @@ ATURAN WAJIB:
         responseSchema: {
           type: SchemaType.OBJECT,
           required: [
-            "readinessLevel", "totalScore", "incubationRoute", "executiveSummary", "marketPositioning", 
-            "fileAnalysisInsights", "financialHealth", "teamAssessment", "investmentReadiness",
+            "readinessLevel", "totalScore", "incubationRoute", "executiveSummary",
+            "customAnalysisBlocks", "fileAnalysisInsights",
             "metrics", "swotAnalysis", "recommendations", "riskAssessment", "nextActionSteps"
           ],
           properties: {
-            executiveSummary: { type: SchemaType.STRING, description: "Penjelasan mendalam mengenai profil dan status bisnis saat ini." },
+            executiveSummary: { type: SchemaType.STRING },
             readinessLevel: { type: SchemaType.STRING },
             totalScore: { type: SchemaType.INTEGER },
             incubationRoute: { type: SchemaType.STRING },
-            marketPositioning: {
-              type: SchemaType.OBJECT,
-              required: ["niche", "competitorAdvantage", "marketScalability"],
-              properties: {
-                niche: { type: SchemaType.STRING },
-                competitorAdvantage: { type: SchemaType.STRING },
-                marketScalability: { type: SchemaType.STRING, description: "Pilih salah satu: Low, Medium, High, Exponential" }
+            customAnalysisBlocks: {
+              type: SchemaType.ARRAY,
+              description: "Blok analisis dinamis menyesuaikan ekspektasi yang diwajibkan",
+              items: {
+                type: SchemaType.OBJECT,
+                required: ["title", "iconType", "metrics"],
+                properties: {
+                  title: { type: SchemaType.STRING, description: "Judul analitik sesuai blueprint, misal: 'Potensi Pasar', 'Kesehatan Finansial'" },
+                  iconType: { type: SchemaType.STRING, description: "Pilih salah satu string ini yang paling cocok: 'finance', 'target', 'users', 'idea', 'document', 'award', 'shield'" },
+                  metrics: {
+                    type: SchemaType.ARRAY,
+                    items: {
+                      type: SchemaType.OBJECT,
+                      properties: {
+                        label: { type: SchemaType.STRING, description: "Indikator spesifik sesuai fokus, misal: 'Target Niche', 'Skalabilitas'" },
+                        value: { type: SchemaType.STRING, description: "Penjelasan mendetail dari label tersebut" }
+                      }
+                    }
+                  }
+                }
               }
             },
             fileAnalysisInsights: {
@@ -163,32 +159,6 @@ ATURAN WAJIB:
                 discrepancies: { type: SchemaType.STRING }
               }
             },
-            financialHealth: {
-              type: SchemaType.OBJECT,
-              required: ["revenueModelViability", "burnRateOrRunwayAssessment", "financialScore"],
-              properties: {
-                revenueModelViability: { type: SchemaType.STRING },
-                burnRateOrRunwayAssessment: { type: SchemaType.STRING },
-                financialScore: { type: SchemaType.INTEGER }
-              }
-            },
-            teamAssessment: {
-              type: SchemaType.OBJECT,
-              required: ["founderMarketFit", "identifiedSkillGaps"],
-              properties: {
-                founderMarketFit: { type: SchemaType.STRING },
-                identifiedSkillGaps: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } }
-              }
-            },
-            investmentReadiness: {
-              type: SchemaType.OBJECT,
-              required: ["currentFundingStage", "recommendedInstrument", "investorAttractiveness"],
-              properties: {
-                currentFundingStage: { type: SchemaType.STRING },
-                recommendedInstrument: { type: SchemaType.STRING },
-                investorAttractiveness: { type: SchemaType.STRING }
-              }
-            },
             metrics: {
               type: SchemaType.ARRAY,
               items: {
@@ -197,7 +167,7 @@ ATURAN WAJIB:
                 properties: {
                   label: { type: SchemaType.STRING },
                   score: { type: SchemaType.INTEGER },
-                  description: { type: SchemaType.STRING, description: "Alasan komprehensif mengapa skor tersebut diberikan, harus spesifik berdasarkan input pengguna." }
+                  description: { type: SchemaType.STRING }
                 }
               }
             },
@@ -236,7 +206,7 @@ ATURAN WAJIB:
                 type: SchemaType.OBJECT,
                 required: ["timeframe", "task"],
                 properties: {
-                  timeframe: { type: SchemaType.STRING, description: "Batas waktu, misal: 30 Hari, 60 Hari, 1 Tahun" },
+                  timeframe: { type: SchemaType.STRING },
                   task: { type: SchemaType.STRING }
                 }
               }

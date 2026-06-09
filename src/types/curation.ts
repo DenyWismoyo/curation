@@ -1,3 +1,4 @@
+// src/types/curation.ts
 export type ViewState = 'landing' | 'track-select' | 'wizard' | 'processing' | 'dashboard';
 
 export interface CurationFormData {
@@ -15,34 +16,28 @@ export interface DynamicSection {
   content: string;
 }
 
+export interface CustomAnalysisBlock {
+  title: string;
+  iconType: string;
+  metrics: {
+    label: string;
+    value: string;
+  }[];
+}
+
 export interface AIResult {
   readinessLevel: string;
   totalScore: number;
   incubationRoute: string;
   executiveSummary: string;
-  marketPositioning: {
-    niche: string;
-    competitorAdvantage: string;
-    marketScalability: "Low" | "Medium" | "High" | "Exponential";
-  };
-  fileAnalysisInsights: {
+  
+  // BLOK DINAMIS (Menggantikan financial, market, team, investment statis)
+  customAnalysisBlocks: CustomAnalysisBlock[];
+  
+  fileAnalysisInsights?: {
     documentQuality: string;
     keyFindingsFromFiles: string[];
-    discrepancies: string; // Ketidaksesuaian antara form dan dokumen (jika ada)
-  };
-  financialHealth: {
-    revenueModelViability: string;
-    burnRateOrRunwayAssessment: string;
-    financialScore: number;
-  };
-  teamAssessment: {
-    founderMarketFit: string;
-    identifiedSkillGaps: string[];
-  };
-  investmentReadiness: {
-    currentFundingStage: string;
-    recommendedInstrument: string;
-    investorAttractiveness: "Not Ready" | "Angel/Seed" | "VC Backable" | "Bankable (Credit)";
+    discrepancies: string;
   };
   metrics: DynamicMetric[]; 
   swotAnalysis: {
@@ -57,7 +52,7 @@ export interface AIResult {
     mitigationStrategies: string[];
   };
   nextActionSteps: {
-    timeframe: "30 Hari" | "60 Hari" | "90 Hari" | "1 Tahun";
+    timeframe: string;
     task: string;
   }[];
 }
@@ -95,6 +90,9 @@ export interface FormStep {
 }
 
 export interface AiPromptConfig {
+  aiPersona?: string;
+  assessmentGoal?: string;
+  expectedAnalysisBlocks?: string[]; // TAMBAHAN BARU
   expectedMetrics: string[];
   expectedRecommendations: string[];
 }

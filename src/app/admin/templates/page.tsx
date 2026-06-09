@@ -24,7 +24,6 @@ export default function TemplateBuilderPage() {
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [previewStepIdx, setPreviewStepIdx] = useState(0);
 
-  // Load Templates from Firestore
   const fetchTemplates = async () => {
     setIsLoading(true);
     try {
@@ -45,7 +44,6 @@ export default function TemplateBuilderPage() {
     fetchTemplates();
   }, []);
 
-  // FITUR IMPORT TEMPLATE DARI JSON
   const importTemplate = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -79,7 +77,6 @@ export default function TemplateBuilderPage() {
     event.target.value = '';
   };
 
-  // FITUR EXPORT TEMPLATE KE JSON
   const exportTemplate = () => {
     if (!activeTemplate) return;
     
@@ -95,7 +92,6 @@ export default function TemplateBuilderPage() {
     linkElement.click();
   };
 
-  // CRUD Template
   const createNewTemplate = () => {
     const newId = `track_${Date.now()}`;
     const newTemplate: FormTemplate = {
@@ -106,10 +102,11 @@ export default function TemplateBuilderPage() {
       isActive: false,
       version: 1,
       lastUpdated: new Date().toISOString(),
-      // Inisialisasi default agar array tidak undefined
       aiPromptConfig: {
-        expectedMetrics: ["Inovasi Produk", "Potensi Pasar", "Kesehatan Finansial"],
-        expectedRecommendations: ["Strategi Go-To-Market", "Product Roadmap"]
+        aiPersona: "Dewan Juri Krenova & Pakar Inovasi Daerah",
+        assessmentGoal: "Mengevaluasi orisinalitas ide, potensi implementasi, dan dampak sosial yang terukur.",
+        expectedMetrics: ["Inovasi Produk", "Potensi Pasar", "Keberlanjutan"],
+        expectedRecommendations: ["Strategi Pengembangan", "Roadmap Implementasi"]
       },
       steps: [
         {
@@ -170,7 +167,6 @@ export default function TemplateBuilderPage() {
     }
   };
 
-  // Helper Mutasi Data (Steps & Fields)
   const addStep = () => {
     if (!activeTemplate) return;
     const newStep: FormStep = {
@@ -266,8 +262,6 @@ export default function TemplateBuilderPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row">
-      
-      {/* SIDEBAR: Daftar Template */}
       <div className="w-full md:w-80 bg-white border-r border-slate-200 flex flex-col h-screen sticky top-0 z-10">
         <div className="p-6 border-b border-slate-100 flex items-center justify-between">
           <h2 className="font-black text-slate-900 text-lg">Form Builder</h2>
@@ -310,7 +304,6 @@ export default function TemplateBuilderPage() {
         </div>
       </div>
 
-      {/* MAIN CONTENT WORKSPACE */}
       <div className="flex-1 h-screen overflow-y-auto bg-slate-50 custom-scrollbar p-6 lg:p-10">
         {!activeTemplate ? (
           <div className="h-full flex flex-col items-center justify-center text-slate-400">
@@ -320,8 +313,6 @@ export default function TemplateBuilderPage() {
           </div>
         ) : (
           <div className="max-w-4xl mx-auto space-y-8 pb-20">
-            
-            {/* Template Settings & Control Panel */}
             <div className="bg-white p-6 md:p-8 rounded-[2rem] ring-1 ring-slate-200 shadow-sm space-y-6">
               <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
                 <div>
@@ -378,19 +369,64 @@ export default function TemplateBuilderPage() {
                     <Textarea value={activeTemplate.trackDescription} onChange={e => setActiveTemplate({...activeTemplate, trackDescription: e.target.value})} className="rounded-xl bg-slate-50" />
                   </div>
 
-                  {/* PENAMBAHAN: KONFIGURASI AI PROMPT DINAMIS */}
                   <div className="md:col-span-2 p-5 bg-indigo-50/50 rounded-2xl border border-indigo-100 space-y-5 mt-2">
                     <div className="flex items-center gap-2 mb-2">
                       <Sparkles className="h-5 w-5 text-indigo-600" />
                       <div>
                         <h3 className="font-bold text-indigo-900">Konfigurasi Prompt AI (Dinamis)</h3>
                         <p className="text-xs text-indigo-700/70 mt-1">
-                          Atur metrik dan rekomendasi spesifik yang harus dievaluasi AI untuk kategori ini. Tekan <kbd className="px-1.5 py-0.5 bg-indigo-100 rounded">Enter</kbd> untuk memisahkan setiap item.
+                          Atur persona dan metrik spesifik yang harus dievaluasi AI. Fitur ini memungkinkan form digunakan untuk Startup, UMKM, Riset Kampus, hingga Lomba.
                         </p>
                       </div>
                     </div>
-
+<div className="space-y-2 md:col-span-2">
+                        <label className="text-xs font-bold text-slate-700 uppercase tracking-widest flex justify-between items-center">
+                          <span>Judul & Indikator Blok Analisis (Custom Blocks)</span>
+                        </label>
+                        <p className="text-[10px] text-slate-500 mb-1">
+                          Ketik judul blok dan indikator yang ingin dianalisis. Pisahkan dengan Enter. <br/>
+                          Format Bebas. Contoh: <strong>Kesehatan Finansial (Fokus: Burn Rate, Model Pendapatan)</strong>
+                        </p>
+                        <Textarea 
+                          value={activeTemplate.aiPromptConfig?.expectedAnalysisBlocks?.join('\n') || ''} 
+                          onChange={e => {
+                            const val = e.target.value.split('\n').map(s => s.trim()).filter(Boolean);
+                            setActiveTemplate({
+                              ...activeTemplate,
+                              aiPromptConfig: { ...activeTemplate.aiPromptConfig, expectedAnalysisBlocks: val } as any
+                            });
+                          }} 
+                          placeholder="Cth:&#10;Market Positioning (Fokus: Niche Pasar, Unfair Advantage)&#10;Kapasitas Tim (Fokus: Founder Fit, Skill Gaps)&#10;Kesiapan Investasi (Fokus: Funding Stage, Daya Tarik)" 
+                          className="rounded-xl bg-white min-h-[120px] resize-y" 
+                        />
+                      </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2 md:col-span-2">
+                        <label className="text-xs font-bold text-slate-700 uppercase tracking-widest">Persona & Peran AI (Opsional)</label>
+                        <Input 
+                          value={activeTemplate.aiPromptConfig?.aiPersona || ''} 
+                          onChange={e => setActiveTemplate({
+                            ...activeTemplate,
+                            aiPromptConfig: { ...activeTemplate.aiPromptConfig, aiPersona: e.target.value } as any
+                          })} 
+                          placeholder="Cth: Anda adalah Dewan Juri Krenova yang sangat objektif..." 
+                          className="rounded-xl h-12 bg-white" 
+                        />
+                      </div>
+                      
+                      <div className="space-y-2 md:col-span-2">
+                        <label className="text-xs font-bold text-slate-700 uppercase tracking-widest">Tujuan / Fokus Asesmen (Opsional)</label>
+                        <Textarea 
+                          value={activeTemplate.aiPromptConfig?.assessmentGoal || ''} 
+                          onChange={e => setActiveTemplate({
+                            ...activeTemplate,
+                            aiPromptConfig: { ...activeTemplate.aiPromptConfig, assessmentGoal: e.target.value } as any
+                          })} 
+                          placeholder="Cth: Fokus analisis untuk mengevaluasi dampak inovasi dan orisinalitas ide dalam Krenova 2026." 
+                          className="rounded-xl bg-white min-h-[80px] resize-y" 
+                        />
+                      </div>
+
                       <div className="space-y-2">
                         <label className="text-xs font-bold text-slate-700 uppercase tracking-widest">Metrik Radar (Expected Metrics)</label>
                         <Textarea 
@@ -399,10 +435,10 @@ export default function TemplateBuilderPage() {
                             const val = e.target.value.split('\n').map(s => s.trim()).filter(Boolean);
                             setActiveTemplate({
                               ...activeTemplate,
-                              aiPromptConfig: { ...activeTemplate.aiPromptConfig, expectedMetrics: val, expectedRecommendations: activeTemplate.aiPromptConfig?.expectedRecommendations || [] }
+                              aiPromptConfig: { ...activeTemplate.aiPromptConfig, expectedMetrics: val } as any
                             });
                           }} 
-                          placeholder="Cth:&#10;Kesiapan Teknologi (TRL)&#10;Potensi Pasar&#10;Kesehatan Finansial" 
+                          placeholder="Cth:&#10;Inovasi Produk&#10;Potensi Pasar&#10;Kesehatan Finansial" 
                           className="rounded-xl bg-white min-h-[140px] resize-y" 
                         />
                       </div>
@@ -414,16 +450,15 @@ export default function TemplateBuilderPage() {
                             const val = e.target.value.split('\n').map(s => s.trim()).filter(Boolean);
                             setActiveTemplate({
                               ...activeTemplate,
-                              aiPromptConfig: { ...activeTemplate.aiPromptConfig, expectedRecommendations: val, expectedMetrics: activeTemplate.aiPromptConfig?.expectedMetrics || [] }
+                              aiPromptConfig: { ...activeTemplate.aiPromptConfig, expectedRecommendations: val } as any
                             });
                           }} 
-                          placeholder="Cth:&#10;Strategi Go-To-Market&#10;Model Bisnis & Skalabilitas&#10;Mitigasi Risiko Regulasi" 
+                          placeholder="Cth:&#10;Strategi Go-To-Market&#10;Roadmap Pengembangan&#10;Mitigasi Risiko" 
                           className="rounded-xl bg-white min-h-[140px] resize-y" 
                         />
                       </div>
                     </div>
                   </div>
-                  {/* SELESAI PENAMBAHAN */}
 
                   <div className="md:col-span-2 flex items-center gap-3 p-4 bg-slate-50 rounded-xl border border-slate-200 mt-2">
                     <input type="checkbox" checked={activeTemplate.isActive} onChange={e => setActiveTemplate({...activeTemplate, isActive: e.target.checked})} className="w-5 h-5 rounded accent-indigo-600" />
@@ -436,7 +471,6 @@ export default function TemplateBuilderPage() {
               )}
             </div>
 
-            {/* IF PREVIEW MODE ACTIVE */}
             {isPreviewMode ? (
               <div className="bg-white rounded-[2rem] border border-slate-200 p-6 md:p-8 shadow-sm space-y-6 animate-in fade-in duration-200">
                 <div className="border-b border-slate-100 pb-4 flex items-center justify-between">
@@ -453,7 +487,6 @@ export default function TemplateBuilderPage() {
                   <p className="text-center text-sm text-slate-400 py-10">Belum ada langkah yang dikonfigurasi.</p>
                 ) : (
                   <div>
-                    {/* Step Navigator Bar */}
                     <div className="flex gap-2 overflow-x-auto pb-4 mb-6 border-b border-slate-100">
                       {activeTemplate.steps.map((st, idx) => (
                         <button
@@ -466,7 +499,6 @@ export default function TemplateBuilderPage() {
                       ))}
                     </div>
 
-                    {/* Render Form Mock Fields */}
                     <div className="bg-slate-50/50 border border-slate-100 p-6 rounded-2xl">
                       <h4 className="text-md font-bold text-slate-900 mb-4">
                         {activeTemplate.steps[previewStepIdx]?.title}
@@ -529,14 +561,12 @@ export default function TemplateBuilderPage() {
                 )}
               </div>
             ) : (
-              /* EDITOR MODE ACTIVE */
               <div className="space-y-6">
                 <h3 className="text-xl font-black text-slate-900 ml-2">Langkah & Pertanyaan Form</h3>
                 
                 {activeTemplate.steps.map((step, sIdx) => (
                   <div key={`step-${sIdx}`} className="bg-white rounded-3xl ring-1 ring-slate-200 shadow-sm overflow-hidden">
                     
-                    {/* Step Header */}
                     <div className="bg-slate-900 p-4 md:p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                       <div className="flex-1 w-full">
                         <div className="flex items-center gap-3 mb-2">
@@ -553,7 +583,6 @@ export default function TemplateBuilderPage() {
                       </Button>
                     </div>
 
-                    {/* Fields Container */}
                     <div className="p-4 md:p-6 space-y-4 bg-slate-50/50">
                       {step.fields.map((field, fIdx) => (
                         <div key={`field-${sIdx}-${fIdx}`} className="bg-white p-5 rounded-2xl ring-1 ring-slate-200 shadow-sm flex flex-col md:flex-row gap-6 relative group transition-all hover:ring-slate-300">
@@ -625,7 +654,6 @@ export default function TemplateBuilderPage() {
                             )}
                           </div>
 
-                          {/* Control Actions Toolbar */}
                           <div className="absolute top-4 right-4 md:static md:mt-5 flex md:flex-col gap-2 items-center justify-center border-l md:border-l-0 md:border-t border-slate-100 pl-2 md:pl-0 md:pt-2">
                             <button 
                               type="button"

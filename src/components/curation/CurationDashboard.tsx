@@ -1,13 +1,14 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import {
-  RotateCcw, ShieldCheck, Target, Sparkles, Activity,
-  Route, ListChecks, CheckSquare, Download, Loader2, ChevronDown,
-  AlertTriangle, Zap, TrendingUp, Lightbulb, Banknote, Users, Search, FileText, ImagePlus, Landmark, Briefcase
+import { 
+  RotateCcw, ShieldCheck, Target, Sparkles, Activity, 
+  Route, ListChecks, CheckSquare, Download, Loader2, ChevronDown, 
+  AlertTriangle, Zap, TrendingUp, Lightbulb, Banknote, Users, Search, 
+  FileText, ImagePlus, Landmark, Briefcase, Award, Shield, Building2 
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { CurationFormData, AIResult } from '@/types/curation';
+import { CurationFormData, AIResult, CustomAnalysisBlock } from '@/types/curation';
 import { toJpeg } from 'html-to-image';
 import { jsPDF } from 'jspdf';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip } from 'recharts';
@@ -17,14 +18,15 @@ interface Props {
   trackType: string;
   formData: CurationFormData;
   aiResult: AIResult;
+  programName?: string; // Prop baru untuk menerima Nama Program
   onRestart: () => void;
 }
 
-export function CurationDashboard({ trackType, formData, aiResult, onRestart }: Props) {
+export function CurationDashboard({ trackType, formData, aiResult, programName, onRestart }: Props) {
   const isHighTier = aiResult.totalScore >= 75;
   const pdfTemplateRef = useRef<HTMLDivElement>(null);
   const [isExporting, setIsExporting] = useState(false);
-  const [expandedSection, setExpandedSection] = useState<string | null>('rec-0'); 
+  const [expandedSection, setExpandedSection] = useState<string | null>('rec-0');
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
 
   const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,15 +57,15 @@ export function CurationDashboard({ trackType, formData, aiResult, onRestart }: 
         pdf.addImage(dataUrl, 'JPEG', 0, position, pdfWidth, totalImgHeight);
         heightLeft -= pdfHeight;
 
-        while (heightLeft > 2) { 
+        while (heightLeft > 2) {
           position -= pdfHeight;
           pdf.addPage();
           pdf.addImage(dataUrl, 'JPEG', 0, position, pdfWidth, totalImgHeight);
           heightLeft -= pdfHeight;
         }
         
-        const safeName = formData.namaUsaha?.replace(/[^a-z0-9]/gi, '_').toLowerCase() || 'startup';
-        pdf.save(`Laporan_Due_Diligence_${safeName}.pdf`);
+        const safeName = formData.namaUsaha?.replace(/[^a-z0-9]/gi, '_').toLowerCase() || 'asesmen';
+        pdf.save(`Laporan_AI_Asesmen_${safeName}.pdf`);
       } catch (error) {
         console.error("Gagal melakukan export PDF:", error);
         alert("Gagal melakukan eksport PDF.");
@@ -75,7 +77,7 @@ export function CurationDashboard({ trackType, formData, aiResult, onRestart }: 
 
   const radarData = aiResult.metrics?.map((m, idx) => ({
     subject: m.label,
-    shortLabel: `D${idx + 1}`, 
+    shortLabel: `D${idx + 1}`,
     A: m.score,
     fullMark: 100
   })) || [];
@@ -104,10 +106,26 @@ export function CurationDashboard({ trackType, formData, aiResult, onRestart }: 
     );
   };
 
+  const renderDynamicIcon = (type: string) => {
+    switch (type) {
+      case 'finance': return <Banknote className="w-4 h-4" />;
+      case 'users': return <Users className="w-4 h-4" />;
+      case 'idea': return <Lightbulb className="w-4 h-4" />;
+      case 'award': return <Award className="w-4 h-4" />;
+      case 'document': return <FileText className="w-4 h-4" />;
+      case 'shield': return <Shield className="w-4 h-4" />;
+      case 'target':
+      default: return <Target className="w-4 h-4" />;
+    }
+  };
+
+  const borderColors = ['ring-indigo-200', 'ring-emerald-200', 'ring-amber-200', 'ring-blue-200', 'ring-rose-200'];
+  const textColors = ['text-indigo-600', 'text-emerald-600', 'text-amber-600', 'text-blue-600', 'text-rose-600'];
+
   return (
     <div className="min-h-screen bg-slate-50 py-8 px-4 sm:py-12 sm:px-6 lg:px-12 animate-in fade-in duration-700">
       <div className="overflow-hidden absolute top-[-9999px] left-[-9999px]">
-        <PDFReportTemplate ref={pdfTemplateRef} trackType={trackType} formData={formData} aiResult={aiResult} logoUrl={logoUrl} />
+        <PDFReportTemplate ref={pdfTemplateRef} trackType={trackType} formData={formData} aiResult={aiResult as any} logoUrl={logoUrl} />
       </div>
 
       <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
@@ -132,16 +150,43 @@ export function CurationDashboard({ trackType, formData, aiResult, onRestart }: 
 
         <div className="bg-white p-2 sm:p-6 lg:p-8 rounded-3xl shadow-sm ring-1 ring-slate-200 overflow-hidden relative">
           
+          {/* ========================================================= */}
+          {/* DISCLAIMER BANNER (BARU) */}
+          {/* ========================================================= */}
+          <div className="bg-amber-50/80 border border-amber-200/80 p-4 sm:p-5 rounded-2xl mb-8 flex flex-col sm:flex-row gap-4 items-start mx-2 sm:mx-0 mt-2 sm:mt-0">
+            <div className="bg-amber-100 p-2.5 rounded-xl shrink-0 text-amber-600 sm:mt-0.5">
+              <AlertTriangle className="w-6 h-6" />
+            </div>
+            <div>
+              <h4 className="text-amber-800 font-black text-sm uppercase tracking-widest mb-1.5">Disclaimer Penilaian Sistem AI</h4>
+              <p className="text-amber-700/90 text-xs sm:text-sm font-medium leading-relaxed text-justify">
+                Laporan analitik dan Skor Kesiapan (Readiness Score) ini dihasilkan secara otomatis oleh kecerdasan buatan (AI) sebagai instrumen evaluasi awal berdasarkan data mandiri yang Anda input. <b>Hasil ini bersifat tidak mengikat dan wajib melalui tahapan verifikasi, uji tuntas (due-diligence), serta validasi lapangan oleh Tim Ahli, Kurator, atau Komite Penyelenggara Program</b> untuk menetapkan keputusan akhir yang sah.
+              </p>
+            </div>
+          </div>
+
           {/* 1. HEADER & EXECUTIVE SUMMARY */}
-          <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 mb-12">
+          <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 mb-12 px-2 sm:px-0">
             <div className="flex-1 flex flex-col justify-between">
               <div>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight text-balance mb-2">
-                  Due Diligence AI Report
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight text-balance mb-3">
+                  AI Assessment Report
                 </h1>
-                <div className="flex items-center gap-2 mb-8">
-                  <p className="text-indigo-600 font-bold text-lg sm:text-xl bg-indigo-50 px-3 py-1 rounded-lg">{formData.namaUsaha}</p>
-                  <span className="text-slate-400 font-medium text-sm sm:text-base uppercase tracking-widest">{trackType}</span>
+                
+                {/* IDENTITAS PROGRAM & ENTITAS */}
+                <div className="flex flex-wrap items-center gap-2 mb-8">
+                  <p className="text-indigo-600 font-bold text-base sm:text-lg bg-indigo-50 px-3 py-1.5 rounded-lg ring-1 ring-indigo-100">
+                    {formData.namaUsaha || formData.namaProyek || "Peserta"}
+                  </p>
+                  <span className="bg-slate-100 text-slate-500 font-bold text-xs sm:text-sm px-3 py-1.5 rounded-lg uppercase tracking-widest ring-1 ring-slate-200">
+                    {trackType}
+                  </span>
+                  {/* Tampilkan Nama Program Jika Ada */}
+                  {programName && (
+                    <span className="bg-emerald-50 text-emerald-600 font-bold text-xs sm:text-sm px-3 py-1.5 rounded-lg uppercase tracking-widest ring-1 ring-emerald-200 flex items-center gap-1.5">
+                       <Building2 className="w-3.5 h-3.5" /> {programName}
+                    </span>
+                  )}
                 </div>
               </div>
               
@@ -170,67 +215,30 @@ export function CurationDashboard({ trackType, formData, aiResult, onRestart }: 
             </div>
           </div>
 
-          {/* 2. ADVANCED ANALYSIS GRIDS */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            {/* Market Positioning */}
-            {aiResult.marketPositioning && (
-              <div className="bg-white ring-1 ring-slate-200 p-6 rounded-2xl hover:shadow-md transition-shadow">
-                <h3 className="text-xs font-black uppercase text-indigo-600 tracking-widest mb-4 flex items-center gap-2"><Target className="w-4 h-4"/> Market Positioning</h3>
-                <div className="space-y-4">
-                  <div><p className="text-[10px] uppercase text-slate-400 font-bold mb-1">Niche Pasar</p><p className="text-sm font-semibold text-slate-800">{aiResult.marketPositioning.niche}</p></div>
-                  <div><p className="text-[10px] uppercase text-slate-400 font-bold mb-1">Unfair Advantage</p><p className="text-sm font-semibold text-slate-800">{aiResult.marketPositioning.competitorAdvantage}</p></div>
-                  <div><p className="text-[10px] uppercase text-slate-400 font-bold mb-1">Potensi Skalabilitas</p>
-                    <span className="inline-block bg-indigo-50 text-indigo-700 text-xs font-bold px-2 py-1 rounded-md ring-1 ring-indigo-200">{aiResult.marketPositioning.marketScalability}</span>
-                  </div>
-                </div>
-              </div>
-            )}
-            {/* Financial Health */}
-            {aiResult.financialHealth && (
-              <div className="bg-white ring-1 ring-slate-200 p-6 rounded-2xl hover:shadow-md transition-shadow">
-                <h3 className="text-xs font-black uppercase text-emerald-600 tracking-widest mb-4 flex items-center gap-2"><Banknote className="w-4 h-4"/> Financial Health</h3>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center mb-2">
-                    <p className="text-[10px] uppercase text-slate-400 font-bold">Financial Score</p>
-                    <span className="font-black text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">{aiResult.financialHealth.financialScore}/100</span>
-                  </div>
-                  <div><p className="text-[10px] uppercase text-slate-400 font-bold mb-1">Model Pendapatan</p><p className="text-sm font-medium text-slate-700">{aiResult.financialHealth.revenueModelViability}</p></div>
-                  <div><p className="text-[10px] uppercase text-slate-400 font-bold mb-1">Burn Rate / Runway</p><p className="text-sm font-medium text-slate-700">{aiResult.financialHealth.burnRateOrRunwayAssessment}</p></div>
-                </div>
-              </div>
-            )}
-            {/* Investment Readiness */}
-            {aiResult.investmentReadiness && (
-              <div className="bg-white ring-1 ring-slate-200 p-6 rounded-2xl hover:shadow-md transition-shadow">
-                <h3 className="text-xs font-black uppercase text-amber-600 tracking-widest mb-4 flex items-center gap-2"><Landmark className="w-4 h-4"/> Investment Readiness</h3>
-                <div className="space-y-4">
-                  <div><p className="text-[10px] uppercase text-slate-400 font-bold mb-1">Funding Stage</p><p className="text-sm font-semibold text-slate-800">{aiResult.investmentReadiness.currentFundingStage}</p></div>
-                  <div><p className="text-[10px] uppercase text-slate-400 font-bold mb-1">Instrumen Rekomendasi</p><p className="text-sm font-semibold text-slate-800">{aiResult.investmentReadiness.recommendedInstrument}</p></div>
-                  <div><p className="text-[10px] uppercase text-slate-400 font-bold mb-1">Daya Tarik Investor</p>
-                    <span className={`inline-block text-xs font-bold px-2 py-1 rounded-md ring-1 ${aiResult.investmentReadiness.investorAttractiveness?.includes('Ready') || aiResult.investmentReadiness.investorAttractiveness?.includes('Not') ? 'bg-rose-50 text-rose-700 ring-rose-200' : 'bg-amber-50 text-amber-700 ring-amber-200'}`}>
-                      {aiResult.investmentReadiness.investorAttractiveness}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
-            {/* Team Capability */}
-            {aiResult.teamAssessment && (
-              <div className="bg-white ring-1 ring-slate-200 p-6 rounded-2xl hover:shadow-md transition-shadow md:col-span-2 lg:col-span-1">
-                <h3 className="text-xs font-black uppercase text-blue-600 tracking-widest mb-4 flex items-center gap-2"><Users className="w-4 h-4"/> Team & Execution</h3>
-                <div className="space-y-4">
-                  <div><p className="text-[10px] uppercase text-slate-400 font-bold mb-1">Founder-Market Fit</p><p className="text-sm font-medium text-slate-700 leading-relaxed">{aiResult.teamAssessment.founderMarketFit}</p></div>
-                  <div><p className="text-[10px] uppercase text-slate-400 font-bold mb-2">Identified Skill Gaps</p>
-                    <div className="flex flex-wrap gap-2">
-                      {aiResult.teamAssessment.identifiedSkillGaps?.map((gap, i) => (
-                        <span key={i} className="bg-slate-100 text-slate-600 text-xs font-bold px-2 py-1 rounded ring-1 ring-slate-200">{gap}</span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-            {/* File Insights */}
+          {/* 2. DYNAMIC ANALYSIS BLOCKS */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12 px-2 sm:px-0">
+            {aiResult.customAnalysisBlocks?.map((block, idx) => {
+               const ringColor = borderColors[idx % borderColors.length];
+               const textColor = textColors[idx % textColors.length];
+               
+               return (
+                 <div key={idx} className={`bg-white ring-1 ${ringColor} p-6 rounded-2xl hover:shadow-md transition-shadow`}>
+                   <h3 className={`text-xs font-black uppercase ${textColor} tracking-widest mb-4 flex items-center gap-2`}>
+                     {renderDynamicIcon(block.iconType)} {block.title}
+                   </h3>
+                   <div className="space-y-4">
+                     {block.metrics.map((metric, mIdx) => (
+                       <div key={mIdx}>
+                         <p className="text-[10px] uppercase text-slate-400 font-bold mb-1">{metric.label}</p>
+                         <p className="text-[13px] font-medium text-slate-700 leading-relaxed">{metric.value}</p>
+                       </div>
+                     ))}
+                   </div>
+                 </div>
+               )
+            })}
+
+            {/* File Insights (Tampil Jika Ada) */}
             {aiResult.fileAnalysisInsights && (
               <div className="bg-slate-900 text-white p-6 rounded-2xl shadow-md md:col-span-2 lg:col-span-2 relative overflow-hidden">
                 <div className="absolute right-0 top-0 opacity-10 pointer-events-none"><FileText size={160} className="transform translate-x-8 -translate-y-8"/></div>
@@ -247,7 +255,7 @@ export function CurationDashboard({ trackType, formData, aiResult, onRestart }: 
                     <ul className="space-y-2">
                       {aiResult.fileAnalysisInsights.keyFindingsFromFiles?.map((find, i) => (
                         <li key={i} className="text-sm text-slate-300 flex items-start gap-2">
-                          <span className="text-indigo-400 mt-0.5">●</span> <span className="leading-snug">{find}</span>
+                          <span className="text-indigo-400 mt-0.5"> </span> <span className="leading-snug">{find}</span>
                         </li>
                       ))}
                     </ul>
@@ -257,20 +265,18 @@ export function CurationDashboard({ trackType, formData, aiResult, onRestart }: 
             )}
           </div>
 
-          {/* 3. DIMENSI KINERJA & METRIK DETAIL (PERUBAHAN UTAMA) */}
-          <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-[2rem] ring-1 ring-slate-200 shadow-sm mb-12">
+          {/* 3. DIMENSI KINERJA & METRIK DETAIL */}
+          <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-[2rem] ring-1 ring-slate-200 shadow-sm mb-12 mx-2 sm:mx-0">
             <div className="flex items-center gap-3 mb-8">
               <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0">
                 <Activity className="h-5 w-5"/>
               </div>
               <div>
                 <h3 className="font-black text-slate-900 text-xl tracking-tight">Dimensi Kinerja</h3>
-                <p className="text-sm text-slate-500 font-medium">Analisis mendalam setiap pilar metrik</p>
+                <p className="text-sm text-slate-500 font-medium">Analisis mendalam setiap pilar metrik utama</p>
               </div>
             </div>
-
             <div className="flex flex-col lg:flex-row gap-10 xl:gap-16 items-center">
-              {/* Kiri: Grafik Radar Lebih Besar */}
               <div className="w-full lg:w-2/5 flex flex-col items-center shrink-0">
                 <div className="w-full h-[320px] sm:h-[400px] relative">
                   <ResponsiveContainer width="100%" height="100%">
@@ -284,8 +290,6 @@ export function CurationDashboard({ trackType, formData, aiResult, onRestart }: 
                   </ResponsiveContainer>
                 </div>
               </div>
-
-              {/* Kanan: Deskripsi AI Lengkap */}
               <div className="w-full lg:w-3/5 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {aiResult.metrics?.map((item, idx) => (
                   <div key={idx} className="bg-slate-50 p-5 rounded-2xl ring-1 ring-slate-100 hover:ring-indigo-200 transition-all hover:shadow-md flex flex-col">
@@ -308,8 +312,8 @@ export function CurationDashboard({ trackType, formData, aiResult, onRestart }: 
             </div>
           </div>
 
-          {/* 4. SWOT MATRIX (Sekarang terpisah dan lebih proporsional) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+          {/* 4. SWOT MATRIX */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12 px-2 sm:px-0">
             <div className="bg-emerald-50/80 backdrop-blur-sm p-6 rounded-3xl ring-1 ring-emerald-200/60 shadow-sm transition-all hover:shadow-md">
                 <h4 className="text-emerald-900 font-black flex items-center gap-2 mb-4"><TrendingUp className="h-5 w-5"/> Strengths</h4>
                 <ul className="list-disc list-inside text-emerald-800/80 text-sm font-medium space-y-2.5">
@@ -338,7 +342,7 @@ export function CurationDashboard({ trackType, formData, aiResult, onRestart }: 
 
           {/* 5. RISK & MITIGATION */}
           {aiResult.riskAssessment?.criticalRisks?.length > 0 && (
-            <div className="mb-12 p-6 sm:p-8 rounded-[2rem] ring-1 ring-rose-200 bg-rose-50/30">
+            <div className="mb-12 p-6 sm:p-8 rounded-[2rem] ring-1 ring-rose-200 bg-rose-50/30 mx-2 sm:mx-0">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-rose-100 text-rose-600 rounded-xl flex items-center justify-center shrink-0"><AlertTriangle className="h-5 w-5"/></div>
                 <h3 className="font-black text-slate-900 text-xl tracking-tight">Critical Risks & Mitigation Map</h3>
@@ -361,11 +365,11 @@ export function CurationDashboard({ trackType, formData, aiResult, onRestart }: 
           )}
 
           {/* 6. STRATEGIC ROADMAP & TIMELINE */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 px-2 sm:px-0">
             <div className="lg:col-span-2 p-6 sm:p-8 lg:p-10 bg-white ring-1 ring-slate-200 rounded-[2rem] shadow-sm">
               <div className="flex items-center gap-3 mb-6 sm:mb-8">
                 <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0"><Sparkles className="h-5 w-5"/></div>
-                <h3 className="font-black text-slate-900 text-xl sm:text-2xl tracking-tight">Rekomendasi Analis</h3>
+                <h3 className="font-black text-slate-900 text-xl sm:text-2xl tracking-tight">Rekomendasi Strategis</h3>
               </div>
               <div className="flex flex-col gap-3">
                 {aiResult.recommendations?.map((rec, idx) => (
@@ -383,7 +387,7 @@ export function CurationDashboard({ trackType, formData, aiResult, onRestart }: 
             <div className="lg:col-span-1 flex flex-col gap-4 sm:gap-6">
               <div className={`p-6 sm:p-8 rounded-[2rem] text-center ring-1 shadow-sm ${isHighTier ? 'bg-emerald-50 ring-emerald-200/60 text-emerald-900' : 'bg-indigo-50 ring-indigo-200/60 text-indigo-900'}`}>
                 <Route className={`mx-auto mb-3 h-8 w-8 ${isHighTier ? 'text-emerald-500' : 'text-indigo-500'}`} />
-                <p className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-1.5">Rute Akselerasi</p>
+                <p className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-1.5">Rekomendasi Tindak Lanjut</p>
                 <h4 className="text-xl sm:text-2xl font-black leading-tight tracking-tight text-balance">{aiResult.incubationRoute || "Reguler Track"}</h4>
               </div>
               

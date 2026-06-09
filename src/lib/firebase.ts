@@ -2,6 +2,7 @@ import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import { getFunctions } from 'firebase/functions';
+import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -16,10 +17,13 @@ const firebaseConfig = {
 // Initialize Firebase only if it hasn't been initialized yet
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
-// PERUBAHAN DI SINI: Tambahkan "curation" sebagai parameter kedua
+// Inisialisasi layanan Firebase
 const db = getFirestore(app, "curation"); 
-
 const storage = getStorage(app);
 const functions = getFunctions(app);
 
-export { app, db, storage, functions };
+// Inisialisasi Auth untuk Login Google
+const auth = getAuth(app);
+const googleProvider = new GoogleAuthProvider();
+
+export { app, db, storage, functions, auth, googleProvider };

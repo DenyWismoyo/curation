@@ -1,4 +1,3 @@
-// src/app/admin/page.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -9,10 +8,8 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { 
   Search, Users, Activity, Target, 
-  Download, Settings, ArrowRight, KeyRound,
-  CheckCircle2, Clock, Edit3, Building2
+  Download, ArrowRight, CheckCircle2, Clock, Edit3, Building2
 } from 'lucide-react';
-import Link from 'next/link';
 import { AdminAssessmentDetail } from '@/components/admin/AdminAssessmentDetail';
 
 export interface AssessmentDoc {
@@ -109,29 +106,17 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/50 p-4 sm:p-6 lg:p-10">
+    <div className="p-4 sm:p-6 lg:p-10">
       <div className="max-w-7xl mx-auto space-y-6 lg:space-y-8">
         
         {/* Header Dasbor */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-3xl ring-1 ring-slate-200 shadow-sm">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight text-balance">Admin Dashboard</h1>
-            <p className="text-slate-500 font-medium text-sm sm:text-base mt-1">Monitoring Hasil Kurasi Inkubator</p>
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight text-balance">Monitoring Kurasi</h1>
+            <p className="text-slate-500 font-medium text-sm sm:text-base mt-1">Pantau dan kelola hasil inkubator</p>
           </div>
           
-          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-            <Link href="/admin/tokens" className="w-full sm:w-auto">
-              <Button variant="outline" className="w-full gap-2 text-indigo-600 border-indigo-200 hover:bg-indigo-50 rounded-xl h-10 px-4 font-bold">
-                <KeyRound className="w-4 h-4" /> Kelola Token Akses
-              </Button>
-            </Link>
-
-            <Link href="/admin/templates" className="w-full sm:w-auto">
-              <Button variant="outline" className="w-full gap-2 text-slate-700 border-slate-200 hover:bg-slate-50 rounded-xl h-10 px-4 font-bold">
-                <Settings className="w-4 h-4" /> Kelola Template Form
-              </Button>
-            </Link>
-
+          <div className="flex w-full sm:w-auto">
             <Button onClick={exportToCSV} className="w-full sm:w-auto gap-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl h-10 px-4 font-bold">
               <Download className="w-4 h-4" /> Ekspor CSV
             </Button>
@@ -208,7 +193,7 @@ export default function AdminPage() {
                    const isDraft = item.status === 'Curator_Draft';
                    
                    return (
-                     <div key={item.id} onClick={() => setSelectedItem(item)} className="bg-white p-4 rounded-2xl ring-1 ring-slate-200 shadow-sm flex flex-col gap-3 active:scale-[0.98] transition-transform">
+                     <div key={item.id} onClick={() => setSelectedItem(item)} className="bg-white p-4 rounded-2xl ring-1 ring-slate-200 shadow-sm flex flex-col gap-3 active:scale-[0.98] transition-transform cursor-pointer">
                         <div className="flex justify-between items-start">
                            <div>
                              <p className="font-bold text-slate-900 text-base">{item.namaUsaha}</p>
@@ -274,7 +259,6 @@ export default function AdminPage() {
                                     <span className="w-1 h-1 rounded-full bg-slate-300"></span>
                                     <span>{new Date(item.createdAt).toLocaleDateString('id-ID')}</span>
                                  </div>
-                                 {/* Program / Entitas dipindah ke bawah email */}
                                  <div className="flex items-center gap-2 mt-2.5">
                                     <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-widest bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200">
                                       <Building2 size={10} /> {item.corporateEntity || 'Program Umum'}
