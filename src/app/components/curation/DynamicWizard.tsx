@@ -58,16 +58,10 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
     }
   }, [formData, CACHE_KEY]);
 
-  const handleChange = (id: string, value: any) => setFormData((prev: any) => ({ ...prev, [id]: value }));
-  
-  const handleArrayChange = (id: string, value: string, checked: boolean) => {
-    setFormData((prev: any) => {
-      const arr = prev[id] || [];
-      return checked ? { ...prev, [id]: [...arr, value] } : { ...prev, [id]: arr.filter((i: any) => i !== value) };
-    });
+  // Fungsi tunggal untuk handle perubahan data dari DynamicField
+  const handleChange = (id: string, value: any) => {
+    setFormData((prev: any) => ({ ...prev, [id]: value }));
   };
-
-  const handleFileChange = (id: string, file: File | null) => setFormData((prev: any) => ({ ...prev, [id]: file }));
 
   const handleClearForm = () => {
     if (window.confirm('Apakah Anda yakin ingin mengosongkan semua isian form?')) {
@@ -253,10 +247,8 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
                     >
                       <DynamicField 
                         field={field}
-                        formData={formData}
-                        handleChange={handleChange}
-                        handleArrayChange={handleArrayChange}
-                        handleFileChange={handleFileChange}
+                        value={formData[field.id]}
+                        onChange={(val) => handleChange(field.id, val)}
                       />
                     </motion.div>
                   ))}
