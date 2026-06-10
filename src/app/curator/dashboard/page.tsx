@@ -297,7 +297,7 @@ export default function CuratorDashboard() {
                         <td className="px-6 py-5 text-center">
                           <Button 
                             variant="default"
-                            onClick={() => setSelectedAssessment(item)}
+                            onClick={() => router.push(`/curator/assessment/${item.id}`)}
                             className={`rounded-xl font-bold h-9 px-4 shadow-sm transition-all ${isFinalized ? 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100' : isDraft ? 'bg-amber-500 hover:bg-amber-600 text-white shadow-amber-200' : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-200'}`}
                           >
                             {isFinalized ? (

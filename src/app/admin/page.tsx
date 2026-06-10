@@ -293,7 +293,7 @@ function AdminDashboardContent() {
 
                       <td className="px-6 py-4 text-center">
                         <Button 
-                          onClick={() => setSelectedItem(item)} 
+                          onClick={() => router.push(`/admin/assessment/${item.id}`)}
                           className="bg-slate-900 hover:bg-indigo-600 text-white font-bold rounded-xl h-9 px-4 shadow-sm opacity-0 group-hover:opacity-100 transition-all"
                         >
                            Buka Detail <ArrowRight className="w-4 h-4 ml-1.5" />

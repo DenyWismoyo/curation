@@ -147,10 +147,10 @@ export const processCurationAssessment = onCall(
       const targetAnalysisBlocks = aiPromptConfig?.expectedAnalysisBlocks?.map((block: string) => `- ${block}`).join("\n") || "- Posisi Pasar\n- Kesehatan Finansial\n- Kapabilitas Tim";
       const targetMetrics = aiPromptConfig?.expectedMetrics || ["Validasi Pasar", "Keuangan", "Tim", "Skalabilitas", "Legalitas"];
       
-      // SINKRONISASI BARU: Rekomendasi & Media Focus
       const targetRecommendations = aiPromptConfig?.expectedRecommendations?.map((rec: string) => `- ${rec}`).join("\n") || "- Strategi Bisnis\n- Rencana Pendanaan";
       const mediaFocus = aiPromptConfig?.mediaAnalysisFocus ? `Fokus Evaluasi Media: Aspek ${aiPromptConfig.mediaAnalysisFocus}.` : '';
 
+      // UPGRADE: Penambahan instruksi output berbentuk poin-poin.
       const promptText = `
 ANDA ADALAH: ${aiPersona}.
 Tugas Anda adalah melakukan penilaian terhadap profil/entitas/peserta berikut dalam kategori: "${trackContext}".
@@ -165,28 +165,28 @@ ${dataString}
 ${storageFilePaths && storageFilePaths.length > 0 ? "DOKUMEN TERLAMPIR TELAH DISERTAKAN. ANDA WAJIB MEMBACA DAN MENYILANGKAN DATANYA DENGAN TEKS FORM." : "TIDAK ADA DOKUMEN YANG DILAMPIRKAN. BERIKAN PENILAIAN BERDASARKAN TEKS SAJA."}
 
 INSTRUKSI FORMAT ANALISIS:
-1. EXECUTIVE SUMMARY: Buat ringkasan padat dan analitis tentang entitas ini sesuai tujuan asesmen.
-2. FILE ANALYSIS: Nilai validitas dokumen ataupun lampiran media. Catat jika ada ketidaksesuaian dengan isi formulir. ${mediaFocus}
+1. EXECUTIVE SUMMARY: Buat ringkasan padat dan analitis tentang entitas ini sesuai tujuan asesmen. (Hasilkan dalam format POIN-POIN).
+2. FILE ANALYSIS: Nilai validitas dokumen ataupun lampiran media. Catat jika ada ketidaksesuaian dengan isi formulir. (Hasilkan dalam format POIN-POIN). ${mediaFocus}
 3. CUSTOM ANALYSIS BLOCKS: Hasilkan blok analisis dengan MERUJUK SANGAT KETAT pada daftar berikut.
-Pastikan Anda menjabarkan nilai indikator (label) secara mendetail, analitis, dan berbobot dalam bentuk paragraf (minimal 2-3 kalimat):
+Pastikan Anda menjabarkan nilai indikator (label) secara mendetail dan analitis. (Hasilkan DALAM BENTUK 2-3 POIN SINGKAT DAN TAJAM. Gunakan ENTER/NEWLINE untuk memisahkan setiap poin).
 ${targetAnalysisBlocks}
-4. METRICS ARRAY: Berikan skor objektif (0-100) untuk indikator berikut: [${targetMetrics.join(", ")}]. Deskripsi WAJIB spesifik.
+4. METRICS ARRAY: Berikan skor objektif (0-100) untuk indikator berikut: [${targetMetrics.join(", ")}]. (Deskripsi alasan wajib disajikan dalam bentuk POIN-POIN/NEWLINE).
 5. SWOT & RISKS: Petakan SWOT. Buat daftar 'Critical Risks' dan 'Mitigation Strategies' yang berpasangan. ${riskInstruction}
-6. ACTION PLAN: Buat rekomendasi strategis HANYA UNTUK AREA BERIKUT dengan Timeframe spesifik:
+6. ACTION PLAN: Buat rekomendasi strategis HANYA UNTUK AREA BERIKUT dengan Timeframe spesifik. (Konten rekomendasi wajib berupa POIN-POIN TERSTRUKTUR):
 ${targetRecommendations}
 7. SCORING & TIERING: 
    - Berikan "totalScore" (0-100) sesuai aturan penilaian di atas.
    - Penentuan "readinessLevel" WAJIB memilih HANYA DARI SALAH SATU STATUS BERIKUT: [${tiersString}].
    - Tentukan "incubationRoute".
 
-ATURAN MUTLAK: Output MURNI dalam format JSON. JAWABAN WAJIB BERBAHASA INDONESIA.
+ATURAN MUTLAK: Output MURNI dalam format JSON. JAWABAN WAJIB BERBAHASA INDONESIA. Jangan gunakan teks paragraf panjang, usahakan semuanya berbentuk poin baris baru.
 `;
 
       parts.unshift({ text: promptText });
       
       const systemPrompt = isPro 
-        ? "Anda adalah AI Evaluator Premium. Lakukan analisis mendalam, kritis, deteksi celah logika, dan berikan evaluasi berbasis penalaran tingkat tinggi. Format output hanya JSON berbahasa Indonesia." 
-        : "Anda adalah AI Evaluator Standar. Evaluasi secara komprehensif, suportif, dan akurat berdasarkan fakta. Berikan narasi detail. Format output JSON berbahasa Indonesia.";
+        ? "Anda adalah AI Evaluator Premium. Lakukan analisis mendalam, kritis, deteksi celah logika, dan berikan evaluasi berbasis penalaran tingkat tinggi. Format output selalu terstruktur dalam bentuk bullet-points (newline). Format output hanya JSON berbahasa Indonesia." 
+        : "Anda adalah AI Evaluator Standar. Evaluasi secara komprehensif, suportif, dan akurat berdasarkan fakta. Berikan narasi dalam bentuk poin-poin rapi (newline). Format output JSON berbahasa Indonesia.";
 
       const modelConfig: any = {
         model: selectedModelName,
@@ -198,7 +198,7 @@ ATURAN MUTLAK: Output MURNI dalam format JSON. JAWABAN WAJIB BERBAHASA INDONESIA
             type: SchemaType.OBJECT,
             required: ["readinessLevel", "totalScore", "incubationRoute", "executiveSummary", "customAnalysisBlocks", "fileAnalysisInsights", "metrics", "swotAnalysis", "recommendations", "riskAssessment", "nextActionSteps"],
             properties: {
-              executiveSummary: { type: SchemaType.STRING, description: "Ringkasan eksekutif analitis." },
+              executiveSummary: { type: SchemaType.STRING, description: "Ringkasan eksekutif analitis. Wajib dalam bentuk poin-poin utama yang dipisahkan dengan enter (newline)." },
               readinessLevel: { type: SchemaType.STRING, description: `WAJIB pilih salah satu: [${tiersString}]` },
               totalScore: { type: SchemaType.INTEGER },
               incubationRoute: { type: SchemaType.STRING },
@@ -217,7 +217,7 @@ ATURAN MUTLAK: Output MURNI dalam format JSON. JAWABAN WAJIB BERBAHASA INDONESIA
                         required: ["label", "value"],
                         properties: {
                           label: { type: SchemaType.STRING },
-                          value: { type: SchemaType.STRING, description: "Penjelasan analitis mendetail (paragraf panjang)." }
+                          value: { type: SchemaType.STRING, description: "Penjelasan analitis. WAJIB berupa 2-3 poin ringkas dan tajam. Pisahkan setiap poin dengan enter (newline)." }
                         }
                       }
                     }
@@ -228,9 +228,9 @@ ATURAN MUTLAK: Output MURNI dalam format JSON. JAWABAN WAJIB BERBAHASA INDONESIA
                 type: SchemaType.OBJECT,
                 required: ["documentQuality", "keyFindingsFromFiles", "discrepancies"],
                 properties: {
-                  documentQuality: { type: SchemaType.STRING },
+                  documentQuality: { type: SchemaType.STRING, description: "Evaluasi kualitas dokumen dalam bentuk poin-poin (newline)." },
                   keyFindingsFromFiles: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
-                  discrepancies: { type: SchemaType.STRING }
+                  discrepancies: { type: SchemaType.STRING, description: "Penjelasan ketidaksesuaian dalam bentuk poin-poin jika ada (newline)." }
                 }
               },
               metrics: {
@@ -241,7 +241,7 @@ ATURAN MUTLAK: Output MURNI dalam format JSON. JAWABAN WAJIB BERBAHASA INDONESIA
                   properties: {
                     label: { type: SchemaType.STRING },
                     score: { type: SchemaType.INTEGER },
-                    description: { type: SchemaType.STRING, description: "Penjelasan rasionalisasi skor." }
+                    description: { type: SchemaType.STRING, description: "Evaluasi alasan pemberian skor dalam bentuk poin-poin (newline)." }
                   }
                 }
               },
@@ -262,7 +262,7 @@ ATURAN MUTLAK: Output MURNI dalam format JSON. JAWABAN WAJIB BERBAHASA INDONESIA
                   required: ["title", "content"], 
                   properties: { 
                     title: { type: SchemaType.STRING, description: "Judul rekomendasi (Sesuai fokus area)" }, 
-                    content: { type: SchemaType.STRING, description: "Isi rekomendasi strategis yang mendetail." } 
+                    content: { type: SchemaType.STRING, description: "Langkah strategis konkret berupa poin-poin terstruktur (newline)." } 
                   } 
                 }
               },

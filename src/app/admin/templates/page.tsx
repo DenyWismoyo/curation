@@ -5,6 +5,7 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { collection, getDocs, doc, setDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
+import { AIPromptPresets } from '@/data/aiPromptTemplates';
 import { FormTemplate, FormStep, FormField, FieldType } from '@/types/curation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -115,7 +116,6 @@ function TemplateBuilderContent() {
         assessmentGoal: "Evaluasi model bisnis dan kelayakan investasi.",
         expectedMetrics: ["Potensi Pasar", "Keuangan"],
         expectedAnalysisBlocks: ["Posisi Pasar", "Kesehatan Finansial"],
-        // PERBAIKAN: Menambahkan array expectedRecommendations yang terlewat
         expectedRecommendations: ["Strategi Bisnis", "Rencana Pendanaan"], 
         gradingStrictness: 'standard',
         customReadinessTiers: ["Pra-Inkubasi", "Siap Inkubasi", "Akselerasi"],
@@ -252,6 +252,23 @@ function TemplateBuilderContent() {
       [fields[fieldIndex], fields[fieldIndex + 1]] = [fields[fieldIndex + 1], fields[fieldIndex]];
     }
     setActiveTemplate({ ...activeTemplate, steps: newSteps });
+  };
+
+  const applyAIPreset = (presetId: string) => {
+    if (!presetId || !activeTemplate) return;
+    const preset = AIPromptPresets.find(p => p.id === presetId);
+    if (!preset) return;
+    
+    if (confirm(`Apakah Anda yakin ingin menimpa konfigurasi AI saat ini dengan preset: "${preset.name}"?`)) {
+      setActiveTemplate({
+        ...activeTemplate,
+        aiPromptConfig: {
+          ...(activeTemplate.aiPromptConfig || {}), 
+          ...preset.config 
+        }
+      });
+      alert('Berhasil menerapkan preset AI!');
+    }
   };
 
   // ==========================================
@@ -460,13 +477,32 @@ function TemplateBuilderContent() {
         {/* TAB 2: KONFIGURASI AI */}
         {activeTab === 'ai' && (
           <div className="bg-white p-6 md:p-8 rounded-3xl ring-1 ring-slate-200 shadow-sm space-y-8">
-            <div className="flex items-start gap-4 pb-6 border-b border-slate-100">
-              <div className="p-3 bg-amber-50 text-amber-600 rounded-2xl shrink-0"><Sparkles className="w-6 h-6"/></div>
-              <div>
-                <h3 className="text-xl font-black text-slate-900">Arsitektur Audit AI</h3>
-                <p className="text-sm text-slate-500 font-medium mt-1 leading-relaxed max-w-2xl">
-                  Atur persona, tingkat keketatan nilai, dan parameter khusus lainnya untuk mencapai standar <strong className="text-slate-700">Enterprise Due Diligence</strong>.
-                </p>
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-6 border-b border-slate-100">
+              <div className="flex items-start gap-4">
+                <div className="p-3 bg-amber-50 text-amber-600 rounded-2xl shrink-0"><Sparkles className="w-6 h-6"/></div>
+                <div>
+                  <h3 className="text-xl font-black text-slate-900">Arsitektur Audit AI</h3>
+                  <p className="text-sm text-slate-500 font-medium mt-1 leading-relaxed max-w-2xl">
+                    Atur persona, tingkat keketatan nilai, dan parameter khusus lainnya untuk mencapai standar <strong className="text-slate-700">Enterprise Due Diligence</strong>.
+                  </p>
+                </div>
+              </div>
+
+              {/* PENAMBAHAN DROPDOWN PRESET DI SINI */}
+              <div className="shrink-0 w-full md:w-auto">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Load dari Preset:</label>
+                <select
+                  onChange={(e) => {
+                    applyAIPreset(e.target.value);
+                    e.target.value = ""; 
+                  }}
+                  className="w-full md:w-64 bg-indigo-50 border border-indigo-200 text-indigo-700 h-10 rounded-xl text-sm px-3 font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm cursor-pointer"
+                >
+                  <option value="">-- Pilih Template Instan --</option>
+                  {AIPromptPresets.map(preset => (
+                    <option key={preset.id} value={preset.id}>{preset.name}</option>
+                  ))}
+                </select>
               </div>
             </div>
 
@@ -703,15 +739,65 @@ function TemplateBuilderContent() {
                     </Button>
                   </div>
 
-                  {/* 4. Fokus Mitigasi Risiko (Textarea karena String Prompt) */}
+                  {/* 4. Rekomendasi Area (Array) - UPDATE BARU */}
                   <div className="space-y-3 p-5 bg-slate-50/80 rounded-2xl border border-slate-200 md:col-span-2 lg:col-span-1">
                     <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest block mb-2">
-                      Fokus Mitigasi Risiko
+                      Target Area Rekomendasi AI
+                    </label>
+                    <div className="space-y-2.5">
+                      {(activeTemplate.aiPromptConfig?.expectedRecommendations || []).map((rec, idx) => (
+                        <div key={idx} className="flex items-start gap-2 group/option">
+                          <div className="flex-1 relative">
+                            <div className="absolute left-3 top-3.5 w-1.5 h-1.5 rounded-full bg-slate-300 group-focus-within/option:bg-indigo-500 transition-colors"></div>
+                            <Textarea 
+                              value={rec}
+                              onChange={e => {
+                                const newArr = [...(activeTemplate.aiPromptConfig?.expectedRecommendations || [])];
+                                newArr[idx] = e.target.value;
+                                setActiveTemplate({...activeTemplate, aiPromptConfig: { ...(activeTemplate.aiPromptConfig || {}), expectedRecommendations: newArr } as any});
+                              }}
+                              className="pl-7 py-2.5 bg-white border-slate-200 min-h-[70px] rounded-xl text-sm focus-visible:ring-indigo-500 shadow-sm resize-y leading-relaxed"
+                              placeholder={`Area Rekomendasi ${idx + 1}...`}
+                            />
+                          </div>
+                          <Button 
+                            type="button" 
+                            variant="ghost" 
+                            onClick={() => {
+                              const newArr = [...(activeTemplate.aiPromptConfig?.expectedRecommendations || [])];
+                              newArr.splice(idx, 1);
+                              setActiveTemplate({...activeTemplate, aiPromptConfig: { ...(activeTemplate.aiPromptConfig || {}), expectedRecommendations: newArr } as any});
+                            }} 
+                            className="h-10 w-10 p-0 mt-0.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 shrink-0 rounded-xl transition-colors"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      onClick={() => {
+                        const newArr = [...(activeTemplate.aiPromptConfig?.expectedRecommendations || [])];
+                        newArr.push(`Area Rekomendasi ${newArr.length + 1}`);
+                        setActiveTemplate({...activeTemplate, aiPromptConfig: { ...(activeTemplate.aiPromptConfig || {}), expectedRecommendations: newArr } as any});
+                      }} 
+                      className="w-full mt-2 border-dashed border-2 border-slate-300 text-slate-500 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-300 rounded-xl h-10 font-bold shadow-sm gap-2 text-xs transition-colors"
+                    >
+                      <Plus className="h-4 w-4" /> Tambah Area Rekomendasi
+                    </Button>
+                  </div>
+
+                  {/* 5. Fokus Mitigasi Risiko (Textarea karena String Prompt) */}
+                  <div className="space-y-3 p-5 bg-slate-50/80 rounded-2xl border border-slate-200 md:col-span-2">
+                    <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest block mb-2">
+                      Fokus Mitigasi Risiko Khusus
                     </label>
                     <Textarea 
                       value={activeTemplate.aiPromptConfig?.riskFramework || ''} 
                       onChange={e => setActiveTemplate({...activeTemplate, aiPromptConfig: { ...(activeTemplate.aiPromptConfig || {}), riskFramework: e.target.value } as any})} 
-                      placeholder="Misal: Fokus pada legalitas dan cashflow." 
+                      placeholder="Misal: Fokus pada legalitas dan cashflow. Biarkan kosong jika tidak ada instruksi spesifik." 
                       className="rounded-xl bg-white border-slate-200 min-h-[120px] shadow-sm text-sm font-medium leading-relaxed" 
                     />
                   </div>
@@ -890,7 +976,7 @@ function TemplateBuilderContent() {
                                   </div>
                                 )}
 
-                                {/* PEMBARUAN UX: MODEL LIST ITEM DINAMIS UNTUK RADIO, CHECKBOX, SELECT */}
+                                {/* MODEL LIST ITEM DINAMIS UNTUK RADIO, CHECKBOX, SELECT */}
                                 {(field.type === 'radio' || field.type === 'checkbox' || field.type === 'select') && !isPrimaryIdentity && (
                                   <div className="md:col-span-2 space-y-3 mt-2 p-5 bg-slate-50/80 rounded-2xl border border-slate-200">
                                     <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest block mb-2">

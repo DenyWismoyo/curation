@@ -1,0 +1,619 @@
+// src/components/shared/UniversalAssessmentView.tsx
+'use client';
+
+import React, { useState } from 'react';
+import { 
+  ShieldCheck, Target, Sparkles, Activity, Route, ListChecks, 
+  ChevronDown, AlertTriangle, Zap, TrendingUp, Lightbulb, 
+  Banknote, Users, Search, FileText, Award, Shield, Building2, 
+  Briefcase, MessageSquare, Tag, Compass, Mic, MicOff
+} from 'lucide-react';
+import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip } from 'recharts';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { CurationFormData, AIResult } from '@/types/curation';
+
+// ========================================================
+// 1. HELPER COMPONENTS
+// ========================================================
+export const TextToBullets = ({ text, colorClass = "text-indigo-500" }: { text: string, colorClass?: string }) => {
+  if (!text) return <span className="italic text-slate-400">Tidak ada deskripsi.</span>;
+  const lines = text.split('\n').filter(line => line.trim().length > 0);
+  if (lines.length === 1 && !lines[0].includes('-')) return <p className="leading-relaxed">{text}</p>;
+
+  return (
+    <ul className="space-y-2 mt-2">
+      {lines.map((line, idx) => {
+        const cleanLine = line.replace(/^[\-\*]\s*/, '').trim();
+        return (
+          <li key={idx} className="flex items-start gap-2.5">
+            <span className={`mt-1 flex-shrink-0 text-[10px] ${colorClass}`}>●</span>
+            <span className="leading-relaxed">{cleanLine}</span>
+          </li>
+        );
+      })}
+    </ul>
+  );
+};
+
+const InsightAccordion = ({ id, title, icon: Icon, content }: any) => {
+  const [isOpen, setIsOpen] = useState(id === 'rec-0');
+  return (
+    <div className="bg-white ring-1 ring-slate-100 rounded-3xl overflow-hidden shadow-sm transition-all duration-300">
+      <button onClick={() => setIsOpen(!isOpen)} className="w-full flex items-center justify-between p-5 sm:p-6 text-left bg-white hover:bg-slate-50 transition-colors">
+        <div className="flex items-center gap-4">
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isOpen ? 'bg-indigo-100 text-indigo-600' : 'bg-slate-50 text-slate-500'}`}>
+            <Icon size={18} />
+          </div>
+          <h4 className={`text-sm font-black uppercase tracking-widest ${isOpen ? 'text-indigo-900' : 'text-slate-700'}`}>{title}</h4>
+        </div>
+        <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+      <div className={`transition-all duration-300 ease-in-out ${isOpen ? 'max-h-fit opacity-100' : 'max-h-0 opacity-0'}`}>
+        <div className="p-5 sm:p-6 pt-0 text-sm font-medium text-slate-600 border-t border-slate-50">
+          <TextToBullets text={content || "Tidak ada detail."} colorClass="text-indigo-400" />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const renderDynamicIcon = (type: string) => {
+  switch (type?.toLowerCase()) {
+    case 'finance': return <Banknote className="w-4 h-4" />;
+    case 'users': return <Users className="w-4 h-4" />;
+    case 'idea': return <Lightbulb className="w-4 h-4" />;
+    case 'award': return <Award className="w-4 h-4" />;
+    case 'document': return <FileText className="w-4 h-4" />;
+    case 'shield': return <Shield className="w-4 h-4" />;
+    case 'target': default: return <Target className="w-4 h-4" />;
+  }
+};
+
+const borderColors = ['ring-indigo-200', 'ring-emerald-200', 'ring-amber-200', 'ring-blue-200', 'ring-rose-200'];
+const textColors = ['text-indigo-600', 'text-emerald-600', 'text-amber-600', 'text-blue-600', 'text-rose-600'];
+
+// ========================================================
+// 2. INTERFACES (Props)
+// ========================================================
+export interface CuratorDataProps {
+  isEditing: boolean;
+  curatorScore: number;
+  setCuratorScore?: (v: number) => void;
+  curatorLevel: string;
+  setCuratorLevel?: (v: string) => void;
+  curatorRoute: string;
+  setCuratorRoute?: (v: string) => void;
+  curatorNotes: string;
+  setCuratorNotes?: (v: string) => void;
+  customBlockNotes: Record<string, string>;
+  setCustomBlockNotes?: (title: string, v: string) => void;
+  documentNotes: string;
+  setDocumentNotes?: (v: string) => void;
+  metricsNotes: string;
+  setMetricsNotes?: (v: string) => void;
+  swotNotes: string;
+  setSwotNotes?: (v: string) => void;
+  selectedTags: string[];
+  toggleTag?: (tag: string) => void;
+  availableTags?: string[];
+  isCuratorValidated?: boolean;
+  voiceDictation?: {
+    isListening: boolean;
+    toggleRecord: () => void;
+  };
+}
+
+export interface UniversalAssessmentProps {
+  mode: 'dashboard' | 'curator' | 'admin';
+  trackType: string;
+  programName?: string;
+  corporateEntity?: string;
+  formData: CurationFormData | any;
+  aiResult: AIResult | any;
+  headerActions?: React.ReactNode; 
+  curatorData?: CuratorDataProps;
+  pdfRef?: React.RefObject<HTMLDivElement>;
+}
+
+// ========================================================
+// 3. MAIN COMPONENT (Tanpa Wrapper Putih Raksasa)
+// ========================================================
+export function UniversalAssessmentView({ 
+  mode, trackType, programName, corporateEntity, formData, aiResult, headerActions, curatorData, pdfRef
+}: UniversalAssessmentProps) {
+
+  const isPublic = mode === 'dashboard';
+  const isInternal = mode === 'curator' || mode === 'admin';
+  const isEditing = curatorData?.isEditing || false;
+
+  const aiScore = aiResult?.totalScore || 0;
+  const finalScore = isInternal ? (curatorData?.curatorScore || 0) : aiScore;
+  const isHighTier = finalScore >= 75;
+
+  const radarData = aiResult?.metrics?.map((m: any, idx: number) => ({
+    subject: m?.label || `Metrik ${idx+1}`, shortLabel: `D${idx + 1}`, A: m?.score || 0, fullMark: 100
+  })) || [];
+
+  return (
+    // Kontainer utama ini membiarkan elemen meregang penuh (w-full) mengikuti Parent
+    <div ref={pdfRef} className="w-full space-y-6 sm:space-y-8 animate-in fade-in duration-500">
+      
+      {/* 1. HEADER ACTION SLOT (Bila Ada) */}
+      {headerActions && (
+        <div className="flex flex-col sm:flex-row justify-end items-start sm:items-center gap-4">
+          <div className="flex w-full sm:w-auto gap-3 flex-col sm:flex-row ml-auto">
+            {headerActions}
+          </div>
+        </div>
+      )}
+
+      {/* DISCLAIMER BANNER (Khusus Dashboard Publik) */}
+      {isPublic && (
+        <div className="bg-gradient-to-br from-amber-50 to-orange-50/40 border border-amber-200/80 p-5 sm:p-6 rounded-3xl shadow-sm relative overflow-hidden">
+          <div className="absolute right-0 top-0 opacity-[0.03] pointer-events-none transform translate-x-6 -translate-y-6"><Shield size={160} /></div>
+          <div className="flex flex-col lg:flex-row gap-4 items-start relative z-10">
+            <div className="bg-amber-100/80 p-3 rounded-2xl shrink-0 text-amber-600 ring-1 ring-amber-200 shadow-inner"><AlertTriangle className="w-7 h-7" /></div>
+            <div className="flex-1 w-full space-y-3">
+              <div className="flex items-center gap-2">
+                <span className="bg-amber-100/80 text-amber-800 text-[10px] font-black px-3 py-1 rounded-md uppercase tracking-widest ring-1 ring-amber-200">Status Laporan</span>
+                <h4 className="text-amber-900 font-black text-sm sm:text-base uppercase tracking-wider">Draft Evaluasi Awal (AI-Generated)</h4>
+              </div>
+              <p className="text-amber-800/90 text-sm font-medium leading-relaxed">Laporan analitik ini dihasilkan secara otomatis oleh AI berdasarkan data mandiri. <b>Hasil ini bersifat tidak mengikat dan wajib melalui tahapan verifikasi resmi.</b></p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAGS & QUICK ACCESS (Khusus Curator/Admin) */}
+      {isInternal && curatorData && (
+        <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm ring-1 ring-slate-200 w-full">
+          <h3 className="text-xs font-black uppercase text-slate-500 tracking-widest mb-4 flex items-center gap-2">
+            <Tag className="w-4 h-4 text-indigo-500"/> Kustomisasi Quick Tags
+          </h3>
+          <div className="flex flex-wrap items-center gap-2.5">
+            {isEditing ? (
+              curatorData.availableTags?.map(tag => {
+                const isSelected = curatorData.selectedTags.includes(tag);
+                return (
+                  <button
+                    key={tag}
+                    onClick={() => curatorData.toggleTag && curatorData.toggleTag(tag)}
+                    className={`flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold rounded-full transition-all border ${isSelected ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm ring-2 ring-indigo-200' : 'bg-white text-slate-500 border-slate-200 hover:border-indigo-300 hover:bg-slate-50'}`}
+                  >
+                    {tag}
+                  </button>
+                );
+              })
+            ) : (
+              curatorData.selectedTags.length > 0 ? curatorData.selectedTags.map((tag) => (
+                <span key={tag} className="flex items-center gap-1.5 px-4 py-1.5 bg-indigo-50 text-indigo-700 font-bold text-xs rounded-full ring-1 ring-indigo-200">{tag}</span>
+              )) : (
+                <span className="text-xs italic text-slate-400">Tidak ada tag yang disematkan.</span>
+              )
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* CATATAN VALIDASI LAPANGAN UTAMA (Khusus Curator/Admin) */}
+      {isInternal && curatorData && (
+        <div className={`p-6 sm:p-8 rounded-3xl shadow-sm ring-1 transition-all w-full ${isEditing ? 'bg-white ring-indigo-500 shadow-indigo-100 ring-2' : 'bg-white ring-slate-200'}`}>
+          <h3 className="font-black text-slate-900 text-lg mb-2 flex items-center gap-2">
+            <FileText className="w-5 h-5 text-indigo-600"/> Kesimpulan Utama Validasi Lapangan <span className="text-rose-500">*</span>
+          </h3>
+          <p className="text-xs text-slate-500 mb-4 font-medium">Ringkasan penilaian langsung hasil verifikasi fisik, wawancara, dan argumen bisnis.</p>
+          {isEditing ? (
+            <div className="relative">
+              <Textarea 
+                value={curatorData.curatorNotes} 
+                onChange={(e) => curatorData.setCuratorNotes && curatorData.setCuratorNotes(e.target.value)} 
+                placeholder="Isi catatan lapangan kurator di sini..." 
+                className="min-h-[140px] bg-slate-50 rounded-2xl border-slate-200 text-sm font-medium focus-visible:ring-indigo-500 pb-12"
+              />
+              {curatorData.voiceDictation && (
+                <button
+                  onClick={curatorData.voiceDictation.toggleRecord}
+                  type="button"
+                  className={`absolute bottom-3 right-3 flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all shadow-sm ${curatorData.voiceDictation.isListening ? 'bg-rose-500 text-white animate-pulse' : 'bg-white text-slate-500 hover:text-indigo-600 ring-1 ring-slate-200 hover:bg-slate-50'}`}
+                >
+                  {curatorData.voiceDictation.isListening ? <><MicOff size={14} /> Mendengarkan...</> : <><Mic size={14} /> Dikte Suara</>}
+                </button>
+              )}
+            </div>
+          ) : (
+            <div className="bg-slate-50 p-5 rounded-2xl ring-1 ring-slate-100 min-h-[90px] text-sm text-slate-700 whitespace-pre-wrap font-medium leading-relaxed">
+              {curatorData.curatorNotes || <span className="italic text-slate-400">Belum ada catatan lapangan utama.</span>}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 2. TITLE, EXECUTIVE SUMMARY & MAIN SCORE CARDS */}
+      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 w-full">
+        <div className="flex-1 flex flex-col gap-6">
+          {/* JUDUL LAPORAN */}
+          <div>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight text-balance mb-3">
+              {isPublic ? 'CSRS Assessment Report' : 'Laporan Kurasi Internal'}
+            </h1>
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="text-indigo-600 font-bold text-base sm:text-lg bg-indigo-50 px-3 py-1.5 rounded-lg ring-1 ring-indigo-100">
+                {formData?.namaUsaha || formData?.namaProyek || "Entitas"}
+              </p>
+              <span className="bg-slate-100 text-slate-500 font-bold text-xs sm:text-sm px-3 py-1.5 rounded-lg uppercase tracking-widest ring-1 ring-slate-200">{trackType}</span>
+              {programName && (
+                <span className="bg-emerald-50 text-emerald-600 font-bold text-xs sm:text-sm px-3 py-1.5 rounded-lg uppercase tracking-widest ring-1 ring-emerald-200 flex items-center gap-1.5">
+                   <Building2 className="w-3.5 h-3.5" /> {programName}
+                </span>
+              )}
+              {corporateEntity && (
+                <span className="bg-indigo-100 text-indigo-700 font-bold text-xs sm:text-sm px-3 py-1.5 rounded-lg uppercase tracking-widest ring-1 ring-indigo-200">
+                  {corporateEntity}
+                </span>
+              )}
+            </div>
+          </div>
+          
+          {/* EXEC SUMMARY CARD */}
+          <div className="bg-white ring-1 ring-slate-200 p-6 sm:p-8 rounded-3xl shadow-sm h-full">
+            <h3 className="text-slate-900 font-black uppercase tracking-widest text-xs mb-3 flex items-center gap-2">
+              <Zap className="h-4 w-4 text-indigo-500"/> Executive Summary (AI)
+            </h3>
+            <div className="text-slate-600 text-sm font-medium">
+              <TextToBullets text={aiResult?.executiveSummary || "Ringkasan eksekutif tidak tersedia."} colorClass="text-indigo-500" />
+            </div>
+          </div>
+        </div>
+
+        {/* DYNAMIC SCORING CARD BASED ON MODE */}
+        {isPublic ? (
+          <div className={`w-full lg:w-[340px] shrink-0 p-8 rounded-3xl text-white relative overflow-hidden flex flex-col justify-center items-center shadow-lg ${isHighTier ? 'bg-gradient-to-br from-[#0f3d32] to-emerald-800' : 'bg-gradient-to-br from-slate-900 to-indigo-900'}`}>
+            <div className="absolute inset-0 bg-gradient-to-tr from-black/20 to-transparent opacity-30 mix-blend-overlay"></div>
+            <p className="relative z-10 text-white/70 text-xs font-black uppercase tracking-widest mb-2 flex items-center gap-2"><ShieldCheck className="h-4 w-4"/> AI Readiness Score</p>
+            <span className="relative z-10 text-[100px] font-black leading-none tracking-tighter drop-shadow-md mb-4">{Math.min(aiScore, 100)}</span>
+            <span className="relative z-10 text-sm font-bold bg-white/20 backdrop-blur-md px-6 py-2.5 rounded-full ring-1 ring-white/30 text-center">{aiResult?.readinessLevel || "Belum Ditentukan"}</span>
+          </div>
+        ) : (
+          <div className="w-full lg:w-[400px] shrink-0 p-6 rounded-3xl text-white relative overflow-hidden shadow-lg bg-slate-900 flex flex-col justify-center">
+            <div className="absolute inset-0 bg-gradient-to-tr from-black/20 to-transparent opacity-30 mix-blend-overlay"></div>
+            <div className="flex justify-between gap-4 relative z-10 w-full">
+              <div className="flex-1 text-center bg-white/10 rounded-2xl p-4 flex flex-col justify-center">
+                <p className="text-[10px] uppercase font-black tracking-widest text-slate-400 mb-2">Rekomendasi AI</p>
+                <p className="text-5xl font-black text-white/50 leading-none mb-2">{aiScore}</p>
+                <span className="inline-block text-[10px] font-bold bg-white/10 px-2 py-0.5 rounded text-white/50">{aiResult?.readinessLevel}</span>
+              </div>
+              <div className={`flex-1 text-center rounded-2xl p-4 ring-2 shadow-xl ${isHighTier ? 'bg-emerald-800 ring-emerald-400' : 'bg-indigo-600 ring-indigo-400'}`}>
+                <p className="text-[10px] uppercase font-black tracking-widest text-white/90 mb-2">Skor Final Kurator</p>
+                {isEditing && curatorData ? (
+                  <div className="flex flex-col items-center gap-2">
+                    <Input type="number" min="0" max="100" value={curatorData.curatorScore} onChange={(e) => curatorData.setCuratorScore && curatorData.setCuratorScore(Number(e.target.value))} className="w-20 text-center text-3xl font-black bg-white/20 text-white border-white/30 h-11 rounded-xl" />
+                    <Input value={curatorData.curatorLevel} onChange={(e) => curatorData.setCuratorLevel && curatorData.setCuratorLevel(e.target.value)} className="text-center text-[10px] font-bold bg-white/20 border-white/30 text-white rounded-lg h-7 px-2 w-full" placeholder="Ubah Level" />
+                  </div>
+                ) : (
+                  <div className="flex flex-col justify-center items-center h-full">
+                    <p className="text-5xl font-black text-white leading-none mb-2">{curatorData?.curatorScore}</p>
+                    <span className="inline-block text-[10px] font-black bg-white/20 px-2 py-0.5 rounded text-white text-center w-full">{curatorData?.curatorLevel}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 3. DYNAMIC ANALYSIS BLOCKS */}
+      {aiResult?.customAnalysisBlocks && aiResult.customAnalysisBlocks.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+          {aiResult.customAnalysisBlocks.map((block: any, idx: number) => {
+             const ringColor = borderColors[idx % borderColors.length];
+             const textColor = textColors[idx % textColors.length];
+             
+             return (
+               <div key={idx} className={`bg-white ring-1 ${ringColor} p-6 sm:p-8 rounded-3xl shadow-sm flex flex-col justify-between`}>
+                 <div>
+                   <h3 className={`text-xs font-black uppercase ${textColor} tracking-widest mb-4 flex items-center gap-2`}>
+                     {renderDynamicIcon(block?.iconType)} {block?.title}
+                   </h3>
+                   <div className="space-y-4 mb-4">
+                     {block?.metrics?.map((metric: any, mIdx: number) => (
+                       <div key={mIdx}>
+                         <p className="text-[10px] uppercase text-slate-400 font-bold mb-1">{metric?.label}</p>
+                         <div className="text-[13px] font-medium text-slate-700">
+                           <TextToBullets text={metric?.value} colorClass={textColor} />
+                         </div>
+                       </div>
+                     ))}
+                   </div>
+                 </div>
+
+                 {/* Tanggapan Kurator per Block (Internal) */}
+                 {isInternal && curatorData && (
+                    <div className="pt-4 border-t border-slate-100 mt-auto">
+                      <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 flex items-center gap-1.5">
+                        <ShieldCheck size={14} className="text-emerald-500" /> Tanggapan Kurator
+                      </h4>
+                      {isEditing ? (
+                        <Textarea 
+                          value={curatorData.customBlockNotes?.[block.title] || ''} 
+                          onChange={(e) => curatorData.setCustomBlockNotes && curatorData.setCustomBlockNotes(block.title, e.target.value)} 
+                          placeholder={`Reviu aspek ${block.title}...`}
+                          className="bg-indigo-50/40 border-indigo-100 text-xs h-24 rounded-xl" 
+                        />
+                      ) : (
+                        <div className="bg-slate-50 p-3 rounded-xl text-xs font-medium text-slate-700 min-h-[60px]">
+                          {curatorData.customBlockNotes?.[block.title] || <span className="italic text-slate-400">Belum direviu.</span>}
+                        </div>
+                      )}
+                    </div>
+                 )}
+               </div>
+             )
+          })}
+
+          {/* File Insights */}
+          {aiResult?.fileAnalysisInsights && (
+            <div className="bg-slate-900 text-white p-6 sm:p-8 rounded-3xl shadow-md md:col-span-2 lg:col-span-2 relative flex flex-col justify-between overflow-hidden">
+              <div className="absolute right-0 top-0 opacity-10 pointer-events-none"><FileText size={160} className="transform translate-x-8 -translate-y-8"/></div>
+              <div>
+                <h3 className="text-xs font-black uppercase tracking-widest mb-4 flex items-center gap-2 text-indigo-300"><Search className="w-4 h-4"/> Document / File Insights</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10 mb-6">
+                  <div>
+                    <p className="text-[10px] uppercase text-slate-400 font-bold mb-1">Kualitas Berkas</p>
+                    <div className="text-sm text-slate-200"><TextToBullets text={aiResult.fileAnalysisInsights.documentQuality} colorClass="text-emerald-400" /></div>
+                    {aiResult.fileAnalysisInsights.discrepancies && (
+                      <>
+                        <p className="text-[10px] uppercase text-slate-400 font-bold mt-4 mb-1 text-rose-300">Data Discrepancies (Kesenjangan)</p>
+                        <div className="text-sm text-rose-200 italic"><TextToBullets text={aiResult.fileAnalysisInsights.discrepancies} colorClass="text-rose-400" /></div>
+                      </>
+                    )}
+                  </div>
+                  {aiResult.fileAnalysisInsights.keyFindingsFromFiles && (
+                    <div>
+                      <p className="text-[10px] uppercase text-slate-400 font-bold mb-2">Key Findings Dokumen</p>
+                      <ul className="space-y-2">
+                        {aiResult.fileAnalysisInsights.keyFindingsFromFiles.map((find: string, i: number) => (
+                          <li key={i} className="text-sm text-slate-300 flex items-start gap-2">
+                            <span className="text-indigo-400 mt-0.5">•</span> <span className="leading-snug">{find}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Validasi Fisik Kurator (Internal) */}
+              {isInternal && curatorData && (
+                <div className="pt-4 border-t border-slate-800 relative z-10 mt-auto">
+                  <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 flex items-center gap-1.5">
+                    <ShieldCheck size={14} className="text-emerald-400" /> Konfirmasi Fisik Berkas
+                  </h4>
+                  {isEditing ? (
+                    <Textarea 
+                      value={curatorData.documentNotes} 
+                      onChange={(e) => curatorData.setDocumentNotes && curatorData.setDocumentNotes(e.target.value)} 
+                      placeholder="Contoh: Kesesuaian berkas fisik tervalidasi asli..."
+                      className="bg-slate-800 border-slate-700 text-white text-xs h-20 rounded-xl" 
+                    />
+                  ) : (
+                    <div className="bg-slate-800/60 p-3 rounded-xl text-xs font-medium text-slate-300 min-h-[50px]">
+                      {curatorData.documentNotes || <span className="italic text-slate-500">Belum ada catatan validasi fisik.</span>}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 4. DIMENSI KINERJA & RADAR CHART */}
+      {aiResult?.metrics && aiResult.metrics.length > 0 && (
+        <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-3xl ring-1 ring-slate-200 shadow-sm w-full">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0"><Activity className="h-5 w-5"/></div>
+            <div>
+              <h3 className="font-black text-slate-900 text-xl tracking-tight">Dimensi Kinerja</h3>
+              <p className="text-sm text-slate-500 font-medium">Analisis mendalam setiap pilar metrik utama</p>
+            </div>
+          </div>
+          <div className="flex flex-col lg:flex-row gap-10 xl:gap-16 items-center">
+            <div className="w-full lg:w-2/5 flex flex-col items-center shrink-0">
+              <div className="w-full h-[320px] sm:h-[400px] relative">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadarChart cx="50%" cy="50%" outerRadius="65%" data={radarData}>
+                    <PolarGrid stroke="#e2e8f0" strokeDasharray="3 3" />
+                    <PolarAngleAxis dataKey="shortLabel" tick={{ fill: '#4f46e5', fontSize: 14, fontWeight: 900 }} />
+                    <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
+                    <Radar name="Skor" dataKey="A" stroke={isHighTier ? '#10b981' : '#4f46e5'} strokeWidth={3} fill={isHighTier ? '#10b981' : '#4f46e5'} fillOpacity={0.15} />
+                    <Tooltip labelFormatter={(label) => radarData.find((d: any) => d.shortLabel === label)?.subject || label} wrapperClassName="!z-[9999] rounded-xl font-bold text-sm shadow-xl" />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+            <div className="w-full lg:w-3/5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {aiResult.metrics.map((item: any, idx: number) => (
+                <div key={idx} className="bg-slate-50 p-5 rounded-2xl ring-1 ring-slate-100 flex flex-col">
+                  <div className="flex justify-between items-start mb-3 gap-3">
+                    <h4 className="text-sm font-black text-slate-900 leading-tight"><span className="text-indigo-600 mr-1.5">D{idx + 1}.</span>{item?.label}</h4>
+                    <div className="bg-white ring-1 ring-slate-200 px-2 py-1 rounded-md shrink-0">
+                      <span className={`text-base font-black ${item?.score >= 80 ? 'text-emerald-600' : item?.score >= 60 ? 'text-amber-500' : 'text-rose-500'}`}>{item?.score}</span>
+                    </div>
+                  </div>
+                  <div className="text-xs text-slate-600 font-medium flex-1">
+                    <TextToBullets text={item?.description} colorClass="text-slate-400" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Kalibrasi Metrik (Internal) */}
+          {isInternal && curatorData && (
+            <div className="mt-8 pt-6 border-t border-slate-100">
+              <h4 className="text-xs font-black uppercase tracking-widest text-slate-900 mb-2 flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-emerald-600"/> Catatan Kurator Terhadap Kalibrasi Pilar Penilaian
+              </h4>
+              {isEditing ? (
+                <Textarea
+                  value={curatorData.metricsNotes}
+                  onChange={(e) => curatorData.setMetricsNotes && curatorData.setMetricsNotes(e.target.value)}
+                  placeholder="Justifikasi jika nilai pilar kinerja lapangan berbeda..."
+                  className="bg-indigo-50/40 border-indigo-100 text-sm min-h-[90px] rounded-xl"
+                />
+              ) : (
+                <div className="bg-slate-50 p-4 rounded-xl text-sm font-medium text-slate-700 min-h-[60px]">
+                  {curatorData.metricsNotes || <span className="italic text-slate-400">Belum ada catatan kalibrasi pilar.</span>}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 5. SWOT MATRIX */}
+      {aiResult?.swotAnalysis && (
+        <div className="w-full">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div className="bg-emerald-50/80 p-6 rounded-3xl ring-1 ring-emerald-200/60 shadow-sm">
+                <h4 className="text-emerald-900 font-black flex items-center gap-2 mb-4"><TrendingUp className="h-5 w-5"/> Strengths</h4>
+                <ul className="list-disc list-inside text-emerald-800/80 text-sm font-medium space-y-2.5">
+                  {aiResult.swotAnalysis.strengths?.map((s: string, i: number) => <li key={i}>{s}</li>)}
+                </ul>
+            </div>
+            <div className="bg-rose-50/80 p-6 rounded-3xl ring-1 ring-rose-200/60 shadow-sm">
+                <h4 className="text-rose-900 font-black flex items-center gap-2 mb-4"><Activity className="h-5 w-5"/> Weaknesses</h4>
+                <ul className="list-disc list-inside text-rose-800/80 text-sm font-medium space-y-2.5">
+                  {aiResult.swotAnalysis.weaknesses?.map((w: string, i: number) => <li key={i}>{w}</li>)}
+                </ul>
+            </div>
+            <div className="bg-blue-50/80 p-6 rounded-3xl ring-1 ring-blue-200/60 shadow-sm">
+                <h4 className="text-blue-900 font-black flex items-center gap-2 mb-4"><Lightbulb className="h-5 w-5"/> Opportunities</h4>
+                <ul className="list-disc list-inside text-blue-800/80 text-sm font-medium space-y-2.5">
+                  {aiResult.swotAnalysis.opportunities?.map((o: string, i: number) => <li key={i}>{o}</li>)}
+                </ul>
+            </div>
+            <div className="bg-amber-50/80 p-6 rounded-3xl ring-1 ring-amber-200/60 shadow-sm">
+                <h4 className="text-amber-900 font-black flex items-center gap-2 mb-4"><AlertTriangle className="h-5 w-5"/> Threats</h4>
+                <ul className="list-disc list-inside text-amber-800/80 text-sm font-medium space-y-2.5">
+                  {aiResult.swotAnalysis.threats?.map((t: string, i: number) => <li key={i}>{t}</li>)}
+                </ul>
+            </div>
+          </div>
+
+          {/* SWOT Notes (Internal) */}
+          {isInternal && curatorData && (
+            <div className="bg-white p-6 sm:p-8 rounded-3xl ring-1 ring-slate-200 shadow-sm">
+              <h4 className="text-xs font-black uppercase tracking-widest text-slate-900 mb-2 flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-emerald-600"/> Validasi Strategi Kompetitif (SWOT Lapangan)
+              </h4>
+              {isEditing ? (
+                <Textarea
+                  value={curatorData.swotNotes}
+                  onChange={(e) => curatorData.setSwotNotes && curatorData.setSwotNotes(e.target.value)}
+                  placeholder="Tambahkan faktor eksternal atau kelemahan fatal yang terlewat oleh AI..."
+                  className="bg-indigo-50/40 border-indigo-100 text-sm min-h-[80px] rounded-xl"
+                />
+              ) : (
+                <div className="bg-slate-50 p-3 rounded-xl text-sm font-medium text-slate-700 min-h-[50px]">
+                  {curatorData.swotNotes || <span className="italic text-slate-400">Belum ada catatan validasi SWOT.</span>}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 6. RISK MAP */}
+      {aiResult?.riskAssessment?.criticalRisks && aiResult.riskAssessment.criticalRisks.length > 0 && (
+        <div className="p-6 sm:p-8 rounded-3xl ring-1 ring-rose-200 bg-rose-50/30 w-full">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-rose-100 text-rose-600 rounded-xl flex items-center justify-center shrink-0"><AlertTriangle className="h-5 w-5"/></div>
+            <h3 className="font-black text-slate-900 text-xl tracking-tight">Critical Risks & Mitigation Map</h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {aiResult.riskAssessment.criticalRisks.map((risk: string, idx: number) => (
+              <div key={idx} className="flex flex-col ring-1 ring-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-md transition-all">
+                <div className="bg-rose-50/50 p-4 border-b border-rose-100/50">
+                  <h4 className="text-[10px] font-black uppercase tracking-widest text-rose-600 mb-1">Identifikasi Risiko</h4>
+                  <div className="text-sm font-semibold text-slate-800">
+                    <TextToBullets text={risk} colorClass="text-rose-400" />
+                  </div>
+                </div>
+                <div className="p-4">
+                  <h4 className="text-[10px] font-black uppercase tracking-widest text-emerald-600 mb-1 flex items-center gap-1.5"><ShieldCheck size={12}/> Strategi Mitigasi</h4>
+                  <div className="text-sm font-medium text-slate-600">
+                    <TextToBullets text={aiResult.riskAssessment.mitigationStrategies?.[idx]} colorClass="text-emerald-500" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 7. STRATEGIC ROADMAP & TIMELINE */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
+        {aiResult?.recommendations && aiResult.recommendations.length > 0 && (
+          <div className="lg:col-span-2 p-6 sm:p-8 lg:p-10 bg-white ring-1 ring-slate-200 rounded-3xl shadow-sm">
+            <div className="flex items-center gap-3 mb-6 sm:mb-8">
+              <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0"><Sparkles className="h-5 w-5"/></div>
+              <h3 className="font-black text-slate-900 text-xl sm:text-2xl tracking-tight">Rekomendasi Strategis {isInternal && '(AI)'}</h3>
+            </div>
+            <div className="flex flex-col gap-3">
+              {aiResult.recommendations.map((rec: any, idx: number) => (
+                 <InsightAccordion key={idx} id={`rec-${idx}`} title={rec?.title} icon={Briefcase} content={rec?.content} />
+              ))}
+            </div>
+          </div>
+        )}
+        
+        <div className={`${(!aiResult?.recommendations || aiResult.recommendations.length === 0) ? 'lg:col-span-3' : 'lg:col-span-1'} flex flex-col gap-6`}>
+          
+          <div className={`p-6 sm:p-8 rounded-3xl text-center ring-1 shadow-sm ${isHighTier ? 'bg-emerald-50 ring-emerald-200/60 text-emerald-900' : 'bg-indigo-50 ring-indigo-200/60 text-indigo-900'}`}>
+            <Route className={`mx-auto mb-3 h-8 w-8 ${isHighTier ? 'text-emerald-500' : 'text-indigo-500'}`} />
+            <p className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-1.5">{isInternal ? 'Penetapan Rute Kurator Final' : 'Rekomendasi Tindak Lanjut'}</p>
+            
+            {isEditing && curatorData ? (
+              <Input 
+                value={curatorData.curatorRoute} 
+                onChange={(e) => curatorData.setCuratorRoute && curatorData.setCuratorRoute(e.target.value)} 
+                className="bg-white font-black text-center h-10 border-slate-300 rounded-xl text-slate-900 mt-2" 
+                placeholder="Tentukan Rute Akhir..." 
+              />
+            ) : (
+              <h4 className="text-xl sm:text-2xl font-black leading-tight tracking-tight text-balance">
+                {isInternal ? (curatorData?.curatorRoute || aiResult?.incubationRoute) : aiResult?.incubationRoute}
+              </h4>
+            )}
+          </div>
+          
+          {aiResult?.nextActionSteps && aiResult.nextActionSteps.length > 0 && (
+            <div className="flex-1 bg-white ring-1 ring-slate-200 p-6 sm:p-8 shadow-sm flex flex-col rounded-3xl">
+              <h3 className="font-black text-slate-900 text-lg tracking-tight mb-6 flex items-center gap-2"><ListChecks className="h-5 w-5 text-indigo-600"/> Action Plan Timeline</h3>
+              <div className="relative border-l-2 border-slate-100 ml-3 space-y-5 pb-2">
+                {aiResult.nextActionSteps.map((step: any, idx: number) => {
+                  const isUrgent = step?.timeframe?.includes('30') || false;
+                  const markerColor = isUrgent ? 'bg-rose-500 ring-rose-100' : 'bg-indigo-500 ring-indigo-100';
+                  return (
+                    <div key={idx} className="relative pl-6">
+                      <div className={`absolute -left-[9px] top-1 w-4 h-4 rounded-full ring-4 ${markerColor}`} />
+                      <div className="bg-slate-50 p-4 rounded-xl ring-1 ring-slate-100 hover:bg-white hover:shadow-md transition-all">
+                        <span className="inline-block text-[10px] font-black uppercase tracking-widest px-2 py-1 bg-slate-200 text-slate-700 rounded-md mb-2">{step?.timeframe || "TBD"}</span>
+                        <div className="text-sm text-slate-700 font-bold">
+                          <TextToBullets text={step?.task} colorClass="text-indigo-400" />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+    </div>
+  );
+}

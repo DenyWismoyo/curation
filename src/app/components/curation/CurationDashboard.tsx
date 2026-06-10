@@ -14,6 +14,39 @@ import { jsPDF } from 'jspdf';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip } from 'recharts';
 import { PDFReportTemplate } from './PDFReportTemplate';
 
+// ========================================================
+// KOMPONEN HELPER: TEXT TO BULLETS
+// ========================================================
+const TextToBullets = ({ text, colorClass = "text-indigo-500" }: { text: string, colorClass?: string }) => {
+  if (!text) return <span className="italic text-slate-400">Tidak ada deskripsi.</span>;
+
+  // Pisahkan teks berdasarkan baris baru (newline)
+  const lines = text.split('\n').filter(line => line.trim().length > 0);
+
+  // Jika teks hanya 1 kalimat tanpa pemisah strip, tampilkan normal
+  if (lines.length === 1 && !lines[0].includes('-')) {
+    return <p className="leading-relaxed">{text}</p>;
+  }
+
+  return (
+    <ul className="space-y-2 mt-2">
+      {lines.map((line, idx) => {
+        // Bersihkan tanda strip (-) atau asterisk (*) bawaan dari awal kalimat
+        const cleanLine = line.replace(/^[\-\*]\s*/, '').trim();
+        return (
+          <li key={idx} className="flex items-start gap-2.5">
+            <span className={`mt-1 flex-shrink-0 text-[10px] ${colorClass}`}>●</span>
+            <span className="leading-relaxed">{cleanLine}</span>
+          </li>
+        );
+      })}
+    </ul>
+  );
+};
+
+// ========================================================
+// INTERFACE & MAIN COMPONENT
+// ========================================================
 interface Props {
   trackType: string;
   formData: CurationFormData;
@@ -101,9 +134,9 @@ export function CurationDashboard({ trackType, formData, aiResult, programName, 
           </div>
           <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
         </button>
-        <div className={`transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
-          <div className="p-4 sm:p-5 pt-0 text-sm font-medium text-slate-600 leading-relaxed border-t border-slate-50 whitespace-pre-wrap">
-            {content || "Tidak ada detail yang diberikan."}
+        <div className={`transition-all duration-300 ease-in-out ${isOpen ? 'max-h-fit opacity-100' : 'max-h-0 opacity-0'}`}>
+          <div className="p-4 sm:p-5 pt-0 text-sm font-medium text-slate-600 border-t border-slate-50">
+            <TextToBullets text={content || "Tidak ada detail yang diberikan."} colorClass="text-indigo-400" />
           </div>
         </div>
       </div>
@@ -214,9 +247,9 @@ export function CurationDashboard({ trackType, formData, aiResult, programName, 
                 <h3 className="text-slate-900 font-black uppercase tracking-widest text-xs mb-3 flex items-center gap-2">
                   <Zap className="h-4 w-4 text-indigo-500"/> Executive Summary
                 </h3>
-                <p className="text-slate-600 leading-relaxed text-sm font-medium">
-                  {aiResult?.executiveSummary || "Ringkasan eksekutif tidak tersedia untuk laporan ini."}
-                </p>
+                <div className="text-slate-600 text-sm font-medium">
+                  <TextToBullets text={aiResult?.executiveSummary || "Ringkasan eksekutif tidak tersedia untuk laporan ini."} colorClass="text-indigo-500" />
+                </div>
               </div>
             </div>
 
@@ -250,7 +283,9 @@ export function CurationDashboard({ trackType, formData, aiResult, programName, 
                        {block?.metrics?.map((metric, mIdx) => (
                          <div key={mIdx}>
                            <p className="text-[10px] uppercase text-slate-400 font-bold mb-1">{metric?.label || "Indikator"}</p>
-                           <p className="text-[13px] font-medium text-slate-700 leading-relaxed">{metric?.value || "Tidak ada deskripsi."}</p>
+                           <div className="text-[13px] font-medium text-slate-700">
+                             <TextToBullets text={metric?.value || "Tidak ada deskripsi."} colorClass={textColor} />
+                           </div>
                          </div>
                        ))}
                      </div>
@@ -266,11 +301,16 @@ export function CurationDashboard({ trackType, formData, aiResult, programName, 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
                     <div>
                       <p className="text-[10px] uppercase text-slate-400 font-bold mb-1">Kualitas Berkas</p>
-                      <p className="text-sm text-slate-200">{aiResult.fileAnalysisInsights.documentQuality || "Belum dievaluasi"}</p>
+                      <div className="text-sm text-slate-200">
+                        <TextToBullets text={aiResult.fileAnalysisInsights.documentQuality || "Belum dievaluasi"} colorClass="text-emerald-400" />
+                      </div>
+                      
                       {aiResult.fileAnalysisInsights.discrepancies && (
                         <>
                           <p className="text-[10px] uppercase text-slate-400 font-bold mt-4 mb-1 text-rose-300">Data Discrepancies (Kesenjangan)</p>
-                          <p className="text-sm text-rose-200 italic">{aiResult.fileAnalysisInsights.discrepancies}</p>
+                          <div className="text-sm text-rose-200 italic">
+                            <TextToBullets text={aiResult.fileAnalysisInsights.discrepancies} colorClass="text-rose-400" />
+                          </div>
                         </>
                       )}
                     </div>
@@ -331,9 +371,9 @@ export function CurationDashboard({ trackType, formData, aiResult, programName, 
                           </span>
                         </div>
                       </div>
-                      <p className="text-xs text-slate-600 font-medium leading-relaxed flex-1">
-                        {item?.description || "Deskripsi skor tidak tersedia."}
-                      </p>
+                      <div className="text-xs text-slate-600 font-medium flex-1">
+                        <TextToBullets text={item?.description || "Deskripsi skor tidak tersedia."} colorClass="text-slate-400" />
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -391,11 +431,15 @@ export function CurationDashboard({ trackType, formData, aiResult, programName, 
                   <div key={idx} className="flex flex-col ring-1 ring-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-md transition-all">
                     <div className="bg-rose-50/50 p-4 border-b border-rose-100/50">
                       <h4 className="text-[10px] font-black uppercase tracking-widest text-rose-600 mb-1">Identifikasi Risiko</h4>
-                      <p className="text-sm font-semibold text-slate-800 leading-snug">{risk || "Risiko tidak diketahui"}</p>
+                      <div className="text-sm font-semibold text-slate-800">
+                        <TextToBullets text={risk || "Risiko tidak diketahui"} colorClass="text-rose-400" />
+                      </div>
                     </div>
                     <div className="p-4">
                       <h4 className="text-[10px] font-black uppercase tracking-widest text-emerald-600 mb-1 flex items-center gap-1.5"><ShieldCheck size={12}/> Strategi Mitigasi</h4>
-                      <p className="text-sm font-medium text-slate-600 leading-relaxed">{aiResult.riskAssessment.mitigationStrategies?.[idx] || "Belum ada mitigasi khusus."}</p>
+                      <div className="text-sm font-medium text-slate-600">
+                        <TextToBullets text={aiResult.riskAssessment.mitigationStrategies?.[idx] || "Belum ada mitigasi khusus."} colorClass="text-emerald-500" />
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -444,7 +488,9 @@ export function CurationDashboard({ trackType, formData, aiResult, programName, 
                           <div className={`absolute -left-[9px] top-1 w-4 h-4 rounded-full ring-4 ${markerColor}`} />
                           <div className="bg-slate-50 p-4 rounded-xl ring-1 ring-slate-100 hover:bg-white hover:shadow-md transition-all">
                             <span className="inline-block text-[10px] font-black uppercase tracking-widest px-2 py-1 bg-slate-200 text-slate-700 rounded-md mb-2">{step?.timeframe || "TBD"}</span>
-                            <p className="text-sm text-slate-700 font-bold leading-relaxed">{step?.task || "Langkah belum ditentukan."}</p>
+                            <div className="text-sm text-slate-700 font-bold">
+                              <TextToBullets text={step?.task || "Langkah belum ditentukan."} colorClass="text-indigo-400" />
+                            </div>
                           </div>
                         </div>
                       );
