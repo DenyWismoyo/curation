@@ -17,7 +17,6 @@ admin.initializeApp();
 const db = getFirestore(admin.app(), "curation");
 
 const geminiApiKeySecret = defineSecret("GEMINI_API_KEY");
-// DEKLARASI SECRET UNTUK EMAIL (Pastikan Anda sudah menyetelnya di Firebase CLI)
 const smtpEmailSecret = defineSecret("SMTP_EMAIL");
 const smtpPasswordSecret = defineSecret("SMTP_PASSWORD");
 
@@ -27,10 +26,7 @@ export const processCurationAssessment = onCall(
     timeoutSeconds: 540,
     region: "asia-southeast2",
     secrets: [geminiApiKeySecret, smtpEmailSecret, smtpPasswordSecret],
-    cors: [
-      "https://curation--teknopark-surakarta.asia-southeast1.hosted.app",
-      "http://localhost:3000"
-    ],
+    cors: true,
   },
   async (request) => {
     // FASE 0: VALIDASI AUTENTIKASI
@@ -127,61 +123,74 @@ export const processCurationAssessment = onCall(
 
       const dataString = Object.entries(textData).map(([k, v]) => `- ${k}: ${Array.isArray(v) ? v.join(", ") : v}`).join("\n");
       const trackContext = trackType;
+      
+      // -- SINKRONISASI DARI ADMIN TEMPLATES --
       const aiPersona = aiPromptConfig?.aiPersona || "AHLI ANALISIS DAN DUE DILIGENCE KELAS DUNIA";
-      const assessmentGoal = aiPromptConfig?.assessmentGoal || "Melakukan evaluasi kelayakan yang ketat.";
+      const assessmentGoal = aiPromptConfig?.assessmentGoal || "Melakukan evaluasi kelayakan yang ketat, menganalisis potensi, dan memberikan rekomendasi strategis.";
       
       const strictness = aiPromptConfig?.gradingStrictness || 'standard';
-      let strictnessInstruction = "Lakukan penilaian secara objektif.";
-      if (strictness === 'strict') strictnessInstruction = "Lakukan penilaian SANGAT KETAT selevel audit Venture Capital.";
-      if (strictness === 'supportive') strictnessInstruction = "Lakukan penilaian yang suportif dan edukatif.";
+      let strictnessInstruction = "Lakukan penilaian secara objektif dan berimbang sesuai standar industri.";
+      if (strictness === 'strict') strictnessInstruction = "Lakukan penilaian SANGAT KETAT selevel audit Venture Capital. Bersikaplah skeptis, cari celah fatal, dan berikan skor sesuai porsi.";
+      if (strictness === 'supportive') strictnessInstruction = "Lakukan penilaian yang suportif dan edukatif. Fokus pada potensi perbaikan dan pertumbuhan.";
 
       const tone = aiPromptConfig?.reportTone || 'consultative';
-      let toneInstruction = "Gaya bahasa: Konsultatif & Solutif.";
-      if (tone === 'investigative') toneInstruction = "Gaya bahasa: Investigatif & Analitis.";
-      if (tone === 'academic') toneInstruction = "Gaya bahasa: Akademis Formal.";
+      let toneInstruction = "Gaya bahasa: Konsultatif & Solutif (seperti mentor yang membimbing).";
+      if (tone === 'investigative') toneInstruction = "Gaya bahasa: Investigatif & Analitis (tajam, kritis, langsung pada intinya).";
+      if (tone === 'academic') toneInstruction = "Gaya bahasa: Akademis Formal (objektif, terstruktur, berbasis data).";
 
       const customTiers = aiPromptConfig?.customReadinessTiers || [];
       const tiersString = customTiers.length > 0 ? customTiers.map((t: string) => `"${t}"`).join(', ') : '"Pra-Inkubasi", "Siap Akselerasi", "Lulus Investasi"';
-      const riskInstruction = aiPromptConfig?.riskFramework ? `FOKUS IDENTIFIKASI RISIKO WAJIB: ${aiPromptConfig.riskFramework}` : "Identifikasi risiko operasional.";
+      
+      const riskFramework = aiPromptConfig?.riskFramework || '';
+      const riskInstruction = riskFramework ? `FOKUS IDENTIFIKASI RISIKO WAJIB: ${riskFramework}` : "Identifikasi risiko operasional, finansial, dan pasar secara umum.";
+      
       const targetAnalysisBlocks = aiPromptConfig?.expectedAnalysisBlocks?.map((block: string) => `- ${block}`).join("\n") || "- Posisi Pasar\n- Kesehatan Finansial\n- Kapabilitas Tim";
       const targetMetrics = aiPromptConfig?.expectedMetrics || ["Validasi Pasar", "Keuangan", "Tim", "Skalabilitas", "Legalitas"];
+      
+      // SINKRONISASI BARU: Rekomendasi & Media Focus
+      const targetRecommendations = aiPromptConfig?.expectedRecommendations?.map((rec: string) => `- ${rec}`).join("\n") || "- Strategi Bisnis\n- Rencana Pendanaan";
+      const mediaFocus = aiPromptConfig?.mediaAnalysisFocus ? `Fokus Evaluasi Media: Aspek ${aiPromptConfig.mediaAnalysisFocus}.` : '';
 
       const promptText = `
 ANDA ADALAH: ${aiPersona}.
-Tugas Anda adalah melakukan penilaian terhadap profil berikut dalam kategori: "${trackContext}".
+Tugas Anda adalah melakukan penilaian terhadap profil/entitas/peserta berikut dalam kategori: "${trackContext}".
 
 TUJUAN UTAMA: ${assessmentGoal}
-ATURAN PENILAIAN: ${strictnessInstruction}
+ATURAN PENILAIAN (SKOR): ${strictnessInstruction}
 ATURAN GAYA BAHASA: ${toneInstruction}
 
 DATA TEKS FORM:
 ${dataString}
 
-${storageFilePaths && storageFilePaths.length > 0 ? "DOKUMEN TERLAMPIR TELAH DISERTAKAN. BACA DAN SILANGKAN DATANYA." : "TIDAK ADA DOKUMEN YANG DILAMPIRKAN."}
+${storageFilePaths && storageFilePaths.length > 0 ? "DOKUMEN TERLAMPIR TELAH DISERTAKAN. ANDA WAJIB MEMBACA DAN MENYILANGKAN DATANYA DENGAN TEKS FORM." : "TIDAK ADA DOKUMEN YANG DILAMPIRKAN. BERIKAN PENILAIAN BERDASARKAN TEKS SAJA."}
 
 INSTRUKSI FORMAT ANALISIS:
-1. EXECUTIVE SUMMARY: Ringkasan padat entitas ini.
-2. FILE ANALYSIS: Nilai validitas lampiran media.
-3. CUSTOM ANALYSIS BLOCKS: Hasilkan blok analisis MERUJUK KETAT pada daftar berikut:
+1. EXECUTIVE SUMMARY: Buat ringkasan padat dan analitis tentang entitas ini sesuai tujuan asesmen.
+2. FILE ANALYSIS: Nilai validitas dokumen ataupun lampiran media. Catat jika ada ketidaksesuaian dengan isi formulir. ${mediaFocus}
+3. CUSTOM ANALYSIS BLOCKS: Hasilkan blok analisis dengan MERUJUK SANGAT KETAT pada daftar berikut.
+Pastikan Anda menjabarkan nilai indikator (label) secara mendetail, analitis, dan berbobot dalam bentuk paragraf (minimal 2-3 kalimat):
 ${targetAnalysisBlocks}
-4. METRICS ARRAY: Skor objektif (0-100) untuk: [${targetMetrics.join(", ")}].
-5. SWOT & RISKS: Petakan SWOT. Buat 'Critical Risks' dan 'Mitigation Strategies'. ${riskInstruction}
-6. ACTION PLAN: Buat rekomendasi dengan Timeframe.
+4. METRICS ARRAY: Berikan skor objektif (0-100) untuk indikator berikut: [${targetMetrics.join(", ")}]. Deskripsi WAJIB spesifik.
+5. SWOT & RISKS: Petakan SWOT. Buat daftar 'Critical Risks' dan 'Mitigation Strategies' yang berpasangan. ${riskInstruction}
+6. ACTION PLAN: Buat rekomendasi strategis HANYA UNTUK AREA BERIKUT dengan Timeframe spesifik:
+${targetRecommendations}
 7. SCORING & TIERING: 
-   - "totalScore" (0-100).
-   - "readinessLevel" HANYA DARI: [${tiersString}].
+   - Berikan "totalScore" (0-100) sesuai aturan penilaian di atas.
+   - Penentuan "readinessLevel" WAJIB memilih HANYA DARI SALAH SATU STATUS BERIKUT: [${tiersString}].
    - Tentukan "incubationRoute".
 
-Output MURNI format JSON. BAHASA INDONESIA.
+ATURAN MUTLAK: Output MURNI dalam format JSON. JAWABAN WAJIB BERBAHASA INDONESIA.
 `;
 
       parts.unshift({ text: promptText });
-      const systemPrompt = isPro ? "Anda adalah AI Evaluator Premium. Output format JSON." : "Anda adalah AI Evaluator Standar. Output format JSON.";
+      
+      const systemPrompt = isPro 
+        ? "Anda adalah AI Evaluator Premium. Lakukan analisis mendalam, kritis, deteksi celah logika, dan berikan evaluasi berbasis penalaran tingkat tinggi. Format output hanya JSON berbahasa Indonesia." 
+        : "Anda adalah AI Evaluator Standar. Evaluasi secara komprehensif, suportif, dan akurat berdasarkan fakta. Berikan narasi detail. Format output JSON berbahasa Indonesia.";
 
-      const model = genAI.getGenerativeModel({
+      const modelConfig: any = {
         model: selectedModelName,
         systemInstruction: systemPrompt,
-        tools: [{ googleSearchRetrieval: { dynamicRetrievalConfig: { mode: "MODE_DYNAMIC", dynamicThreshold: 0.3 } } } as any],
         generationConfig: {
           maxOutputTokens: 8192,
           responseMimeType: "application/json",
@@ -189,24 +198,104 @@ Output MURNI format JSON. BAHASA INDONESIA.
             type: SchemaType.OBJECT,
             required: ["readinessLevel", "totalScore", "incubationRoute", "executiveSummary", "customAnalysisBlocks", "fileAnalysisInsights", "metrics", "swotAnalysis", "recommendations", "riskAssessment", "nextActionSteps"],
             properties: {
-              executiveSummary: { type: SchemaType.STRING },
-              readinessLevel: { type: SchemaType.STRING },
+              executiveSummary: { type: SchemaType.STRING, description: "Ringkasan eksekutif analitis." },
+              readinessLevel: { type: SchemaType.STRING, description: `WAJIB pilih salah satu: [${tiersString}]` },
               totalScore: { type: SchemaType.INTEGER },
               incubationRoute: { type: SchemaType.STRING },
-              customAnalysisBlocks: { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, required: ["title", "iconType", "metrics"], properties: { title: { type: SchemaType.STRING }, iconType: { type: SchemaType.STRING }, metrics: { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, properties: { label: { type: SchemaType.STRING }, value: { type: SchemaType.STRING } } } } } } },
-              fileAnalysisInsights: { type: SchemaType.OBJECT, required: ["documentQuality", "keyFindingsFromFiles", "discrepancies"], properties: { documentQuality: { type: SchemaType.STRING }, keyFindingsFromFiles: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } }, discrepancies: { type: SchemaType.STRING } } },
-              metrics: { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, required: ["label", "score", "description"], properties: { label: { type: SchemaType.STRING }, score: { type: SchemaType.INTEGER }, description: { type: SchemaType.STRING } } } },
-              swotAnalysis: { type: SchemaType.OBJECT, required: ["strengths", "weaknesses", "opportunities", "threats"], properties: { strengths: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } }, weaknesses: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } }, opportunities: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } }, threats: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } } } },
-              recommendations: { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, required: ["title", "content"], properties: { title: { type: SchemaType.STRING }, content: { type: SchemaType.STRING } } } },
-              riskAssessment: { type: SchemaType.OBJECT, required: ["criticalRisks", "mitigationStrategies"], properties: { criticalRisks: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } }, mitigationStrategies: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } } } },
-              nextActionSteps: { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, required: ["timeframe", "task"], properties: { timeframe: { type: SchemaType.STRING }, task: { type: SchemaType.STRING } } } }
+              customAnalysisBlocks: {
+                type: SchemaType.ARRAY,
+                items: {
+                  type: SchemaType.OBJECT,
+                  required: ["title", "iconType", "metrics"],
+                  properties: {
+                    title: { type: SchemaType.STRING },
+                    iconType: { type: SchemaType.STRING },
+                    metrics: {
+                      type: SchemaType.ARRAY,
+                      items: {
+                        type: SchemaType.OBJECT,
+                        required: ["label", "value"],
+                        properties: {
+                          label: { type: SchemaType.STRING },
+                          value: { type: SchemaType.STRING, description: "Penjelasan analitis mendetail (paragraf panjang)." }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              fileAnalysisInsights: {
+                type: SchemaType.OBJECT,
+                required: ["documentQuality", "keyFindingsFromFiles", "discrepancies"],
+                properties: {
+                  documentQuality: { type: SchemaType.STRING },
+                  keyFindingsFromFiles: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
+                  discrepancies: { type: SchemaType.STRING }
+                }
+              },
+              metrics: {
+                type: SchemaType.ARRAY,
+                items: {
+                  type: SchemaType.OBJECT,
+                  required: ["label", "score", "description"],
+                  properties: {
+                    label: { type: SchemaType.STRING },
+                    score: { type: SchemaType.INTEGER },
+                    description: { type: SchemaType.STRING, description: "Penjelasan rasionalisasi skor." }
+                  }
+                }
+              },
+              swotAnalysis: {
+                type: SchemaType.OBJECT,
+                required: ["strengths", "weaknesses", "opportunities", "threats"],
+                properties: {
+                  strengths: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
+                  weaknesses: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
+                  opportunities: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
+                  threats: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } }
+                }
+              },
+              recommendations: {
+                type: SchemaType.ARRAY,
+                items: { 
+                  type: SchemaType.OBJECT, 
+                  required: ["title", "content"], 
+                  properties: { 
+                    title: { type: SchemaType.STRING, description: "Judul rekomendasi (Sesuai fokus area)" }, 
+                    content: { type: SchemaType.STRING, description: "Isi rekomendasi strategis yang mendetail." } 
+                  } 
+                }
+              },
+              riskAssessment: {
+                type: SchemaType.OBJECT,
+                required: ["criticalRisks", "mitigationStrategies"],
+                properties: { 
+                  criticalRisks: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } }, 
+                  mitigationStrategies: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } } 
+                }
+              },
+              nextActionSteps: {
+                type: SchemaType.ARRAY,
+                items: { 
+                  type: SchemaType.OBJECT, 
+                  required: ["timeframe", "task"], 
+                  properties: { 
+                    timeframe: { type: SchemaType.STRING }, 
+                    task: { type: SchemaType.STRING } 
+                  } 
+                }
+              }
             }
           }
         }
-      });
+      };
 
+      const model = genAI.getGenerativeModel(modelConfig);
       const result = await model.generateContent({ contents: [{ role: "user", parts }] });
-      const cleanText = result.response.text().replace(/```json/g, '').replace(/```/g, '').trim();
+      
+      const rawText = result.response.text();
+      const cleanText = rawText.replace(new RegExp('```json', 'g'), '').replace(new RegExp('```', 'g'), '').trim();
+      
       const aiResultJson = JSON.parse(cleanText);
 
       // FASE 4: TRANSACTION DATABASE
@@ -256,9 +345,7 @@ Output MURNI format JSON. BAHASA INDONESIA.
         });
       });
 
-      // =========================================================
-      // FASE 4.5: PEMANGGILAN MODUL EMAIL (NON-BLOCKING)
-      // =========================================================
+      // FASE 4.5: MENGIRIM EMAIL
       const smtpEmail = smtpEmailSecret.value();
       const smtpPassword = smtpPasswordSecret.value();
       const targetEmail = formData.email || userEmail;
@@ -266,7 +353,6 @@ Output MURNI format JSON. BAHASA INDONESIA.
       if (smtpEmail && smtpPassword && targetEmail) {
         const assessmentUrl = `https://curation--teknopark-surakarta.asia-southeast1.hosted.app/result/${assessmentId}`;
         
-        // Panggil fungsi secara asinkron tanpa 'await' agar Firebase Function bisa langsung mengembalikan respons ke Frontend tanpa harus menunggu pengiriman email selesai.
         sendAssessmentEmail(smtpEmail, smtpPassword, {
           targetEmail: targetEmail,
           namaUsaha: formData.namaUsaha || 'Bisnis Anda',
@@ -274,7 +360,7 @@ Output MURNI format JSON. BAHASA INDONESIA.
           readinessLevel: aiResultJson.readinessLevel,
           trackType: trackType,
           assessmentUrl: assessmentUrl
-        }).catch(err => console.error("Kegagalan pada pemanggilan modul email:", err));
+        }).catch(err => console.error("Kegagalan pengiriman email:", err));
       }
 
       return { assessmentId, aiResult: aiResultJson };

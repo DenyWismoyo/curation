@@ -12,38 +12,29 @@ export async function processAIAssessment(
 ): Promise<{ assessmentId: string, aiResult: AIResult }> {
   
   const functions = getFunctions(app, 'asia-southeast2');
-  const processCuration = httpsCallable(functions, 'processCurationAssessment');
+  
+  // PERBAIKAN KRUSIAL: Tambahkan timeout 9 menit (540000 ms) agar selaras dengan Backend
+  const processCuration = httpsCallable(functions, 'processCurationAssessment', {
+    timeout: 540000 
+  });
 
-  let retries = 3;
-  let delay = 1000;
-
-  // PERBAIKAN: Menambahkan log untuk melakukan tracking payload token dari client Next.js
   console.log("Mengirim payload token ke Cloud Function:", tokenUsed);
 
-  while (retries > 0) {
-    try {
-      // Kita kirimkan semua parameter yang dibutuhkan Cloud Function
-      const result = await processCuration({
-        formData,
-        trackType,
-        storageFilePaths,
-        aiPromptConfig,
-        tokenUsed
-      });
+  try {
+    // HAPUS perulangan (while retries) agar tidak terjadi error "Token Paralel"
+    const result = await processCuration({
+      formData,
+      trackType,
+      storageFilePaths,
+      aiPromptConfig,
+      tokenUsed
+    });
 
-      const data = result.data as { assessmentId: string, aiResult: AIResult };
-      return { assessmentId: data.assessmentId, aiResult: data.aiResult };
+    const data = result.data as { assessmentId: string, aiResult: AIResult };
+    return { assessmentId: data.assessmentId, aiResult: data.aiResult };
 
-    } catch (err: any) {
-      console.warn(`Attempt failed: ${err.message}. Retries left: ${retries - 1}`);
-      retries--;
-      if (retries === 0) {
-        throw new Error(err.message || "Gagal terhubung ke server setelah beberapa percobaan.");
-      }
-      await new Promise(res => setTimeout(res, delay));
-      delay *= 2;
-    }
+  } catch (err: any) {
+    console.error("Gagal terhubung ke server:", err);
+    throw new Error(err.message || "Gagal memproses data. Waktu tunggu habis.");
   }
-
-  throw new Error("Gagal terhubung ke server setelah beberapa percobaan.");
 }
