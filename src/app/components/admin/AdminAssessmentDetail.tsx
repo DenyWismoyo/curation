@@ -6,7 +6,7 @@ import {
   X, Briefcase, Sparkles, AlertTriangle, TrendingUp, 
   Activity, Lightbulb, Target, Route, ChevronDown, ShieldCheck,
   ListChecks, Zap, Banknote, Users, Search, FileText, Landmark,
-  CheckCircle2, Edit3, MessageSquare, Tag, Compass
+  CheckCircle2, Edit3, MessageSquare, Tag, Compass, Award, Shield
 } from 'lucide-react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip } from 'recharts';
 
@@ -17,6 +17,7 @@ interface AdminAssessmentDetailProps {
   onClose: () => void;
 }
 
+// PENTING: Dikeluarkan dari fungsi utama
 const InsightAccordion = ({ id, title, icon: Icon, content, expandedSection, setExpandedSection }: any) => {
   const isOpen = expandedSection === id;
   return (
@@ -41,8 +42,22 @@ const InsightAccordion = ({ id, title, icon: Icon, content, expandedSection, set
   );
 }
 
+const renderDynamicIcon = (type: string) => {
+  switch (type) {
+    case 'finance': return <Banknote className="w-4 h-4" />;
+    case 'users': return <Users className="w-4 h-4" />;
+    case 'idea': return <Lightbulb className="w-4 h-4" />;
+    case 'award': return <Award className="w-4 h-4" />;
+    case 'document': return <FileText className="w-4 h-4" />;
+    case 'shield': return <Shield className="w-4 h-4" />;
+    case 'target':
+    default: return <Target className="w-4 h-4" />;
+  }
+};
+
+const textColors = ['text-indigo-600', 'text-emerald-600', 'text-amber-600', 'text-blue-600', 'text-rose-600'];
+
 export function AdminAssessmentDetail({ data, onClose }: AdminAssessmentDetailProps) {
-  // Tambahkan 'curator' pada opsi activeTab
   const [activeTab, setActiveTab] = useState<'ai' | 'input' | 'curator'>('ai');
   const [expandedSection, setExpandedSection] = useState<string | null>('rec-0');
   
@@ -204,62 +219,32 @@ export function AdminAssessmentDetail({ data, onClose }: AdminAssessmentDetailPr
                 </div>
               </div>
 
-              {/* 2. ADVANCED ANALYSIS GRIDS */}
+              {/* 2. ADVANCED ANALYSIS GRIDS (DYNAMIC) */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {aiResult.marketPositioning && (
-                  <div className="bg-white ring-1 ring-slate-200 p-6 rounded-2xl">
-                    <h3 className="text-xs font-black uppercase text-indigo-600 tracking-widest mb-4 flex items-center gap-2"><Target className="w-4 h-4"/> Market Positioning</h3>
-                    <div className="space-y-4">
-                      <div><p className="text-[10px] uppercase text-slate-400 font-bold mb-1">Niche Pasar</p><p className="text-sm font-semibold text-slate-800">{aiResult.marketPositioning.niche}</p></div>
-                      <div><p className="text-[10px] uppercase text-slate-400 font-bold mb-1">Unfair Advantage</p><p className="text-sm font-semibold text-slate-800">{aiResult.marketPositioning.competitorAdvantage}</p></div>
-                      <div><p className="text-[10px] uppercase text-slate-400 font-bold mb-1">Potensi Skalabilitas</p>
-                        <span className="inline-block bg-indigo-50 text-indigo-700 text-xs font-bold px-2 py-1 rounded-md ring-1 ring-indigo-200">{aiResult.marketPositioning.marketScalability}</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {aiResult.financialHealth && (
-                  <div className="bg-white ring-1 ring-slate-200 p-6 rounded-2xl">
-                    <h3 className="text-xs font-black uppercase text-emerald-600 tracking-widest mb-4 flex items-center gap-2"><Banknote className="w-4 h-4"/> Financial Health</h3>
-                    <div className="space-y-4">
-                      <div className="flex justify-between items-center mb-2">
-                        <p className="text-[10px] uppercase text-slate-400 font-bold">Financial Score</p>
-                        <span className="font-black text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">{aiResult.financialHealth.financialScore}/100</span>
-                      </div>
-                      <div><p className="text-[10px] uppercase text-slate-400 font-bold mb-1">Model Pendapatan</p><p className="text-sm font-medium text-slate-700">{aiResult.financialHealth.revenueModelViability}</p></div>
-                      <div><p className="text-[10px] uppercase text-slate-400 font-bold mb-1">Burn Rate / Runway</p><p className="text-sm font-medium text-slate-700">{aiResult.financialHealth.burnRateOrRunwayAssessment}</p></div>
-                    </div>
-                  </div>
-                )}
-                {aiResult.investmentReadiness && (
-                  <div className="bg-white ring-1 ring-slate-200 p-6 rounded-2xl">
-                    <h3 className="text-xs font-black uppercase text-amber-600 tracking-widest mb-4 flex items-center gap-2"><Landmark className="w-4 h-4"/> Investment Readiness</h3>
-                    <div className="space-y-4">
-                      <div><p className="text-[10px] uppercase text-slate-400 font-bold mb-1">Funding Stage</p><p className="text-sm font-semibold text-slate-800">{aiResult.investmentReadiness.currentFundingStage}</p></div>
-                      <div><p className="text-[10px] uppercase text-slate-400 font-bold mb-1">Instrumen Rekomendasi</p><p className="text-sm font-semibold text-slate-800">{aiResult.investmentReadiness.recommendedInstrument}</p></div>
-                      <div><p className="text-[10px] uppercase text-slate-400 font-bold mb-1">Daya Tarik Investor</p>
-                        <span className={`inline-block text-xs font-bold px-2 py-1 rounded-md ring-1 ${aiResult.investmentReadiness.investorAttractiveness?.includes('Ready') || aiResult.investmentReadiness.investorAttractiveness?.includes('Not') ? 'bg-rose-50 text-rose-700 ring-rose-200' : 'bg-amber-50 text-amber-700 ring-amber-200'}`}>
-                          {aiResult.investmentReadiness.investorAttractiveness}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {aiResult.teamAssessment && (
-                  <div className="bg-white ring-1 ring-slate-200 p-6 rounded-2xl md:col-span-2 lg:col-span-1">
-                    <h3 className="text-xs font-black uppercase text-blue-600 tracking-widest mb-4 flex items-center gap-2"><Users className="w-4 h-4"/> Team & Execution</h3>
-                    <div className="space-y-4">
-                      <div><p className="text-[10px] uppercase text-slate-400 font-bold mb-1">Founder-Market Fit</p><p className="text-sm font-medium text-slate-700 leading-relaxed">{aiResult.teamAssessment.founderMarketFit}</p></div>
-                      <div><p className="text-[10px] uppercase text-slate-400 font-bold mb-2">Identified Skill Gaps</p>
-                        <div className="flex flex-wrap gap-2">
-                          {aiResult.teamAssessment.identifiedSkillGaps?.map((gap: string, i: number) => (
-                            <span key={i} className="bg-slate-100 text-slate-600 text-xs font-bold px-2 py-1 rounded ring-1 ring-slate-200">{gap}</span>
+                
+                {aiResult.customAnalysisBlocks?.map((block: any, idx: number) => {
+                  const textColor = textColors[idx % textColors.length];
+                  const IconComponent = renderDynamicIcon(block.iconType);
+
+                  return (
+                    <div key={idx} className="bg-white ring-1 ring-slate-200 p-6 rounded-2xl shadow-sm flex flex-col justify-between">
+                      <div>
+                        <h3 className={`text-xs font-black uppercase ${textColor} tracking-widest mb-4 flex items-center gap-2`}>
+                          {IconComponent} {block.title}
+                        </h3>
+                        <div className="space-y-3 mb-4">
+                          {block.metrics.map((metric: any, mIdx: number) => (
+                            <div key={mIdx}>
+                              <p className="text-[10px] uppercase text-slate-400 font-bold mb-1">{metric.label}</p>
+                              <p className="text-sm font-semibold text-slate-800 leading-relaxed">{metric.value}</p>
+                            </div>
                           ))}
                         </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  );
+                })}
+
                 {aiResult.fileAnalysisInsights && (
                   <div className="bg-slate-900 text-white p-6 rounded-2xl shadow-md md:col-span-2 lg:col-span-2 relative overflow-hidden">
                     <div className="absolute right-0 top-0 opacity-10 pointer-events-none"><FileText size={160} className="transform translate-x-8 -translate-y-8"/></div>
@@ -297,7 +282,6 @@ export function AdminAssessmentDetail({ data, onClose }: AdminAssessmentDetailPr
                     <p className="text-sm text-slate-500 font-medium">Analisis mendalam setiap pilar metrik</p>
                   </div>
                 </div>
-
                 <div className="flex flex-col lg:flex-row gap-10 xl:gap-16 items-center">
                   <div className="w-full lg:w-2/5 flex flex-col items-center shrink-0">
                     <div className="w-full h-[320px] sm:h-[400px] relative">
@@ -312,7 +296,6 @@ export function AdminAssessmentDetail({ data, onClose }: AdminAssessmentDetailPr
                       </ResponsiveContainer>
                     </div>
                   </div>
-
                   <div className="w-full lg:w-3/5 grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {aiResult.metrics?.map((item: any, idx: number) => (
                       <div key={idx} className="bg-slate-50 p-5 rounded-2xl ring-1 ring-slate-100 hover:ring-indigo-200 transition-all hover:shadow-md flex flex-col">
@@ -350,8 +333,8 @@ export function AdminAssessmentDetail({ data, onClose }: AdminAssessmentDetailPr
                         title={rec.title} 
                         icon={Briefcase} 
                         content={rec.content} 
-                        expandedSection={expandedSection} 
-                        setExpandedSection={setExpandedSection} 
+                        expandedSection={expandedSection}
+                        setExpandedSection={setExpandedSection}
                       />
                     ))}
                   </div>
@@ -434,46 +417,58 @@ export function AdminAssessmentDetail({ data, onClose }: AdminAssessmentDetailPr
                     </div>
                   </div>
 
-                  {/* Catatan Aspek Spesifik */}
+                  {/* Catatan Aspek Spesifik (DINAMIS SESUAI CUSTOM BLOCKS) */}
                   <div className="bg-white ring-1 ring-slate-200 rounded-3xl shadow-sm overflow-hidden">
                     <div className="p-6 border-b border-slate-100">
                       <h3 className="font-black text-slate-900 flex items-center gap-2">
                         <FileText className="w-5 h-5 text-indigo-600"/> Catatan Review per Aspek (Koreksi AI)
                       </h3>
                     </div>
+                    
                     <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-100">
-                      
                       <div className="p-6 space-y-6">
-                        <div>
-                          <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 mb-2"><Target className="w-4 h-4 text-indigo-400"/> Market Positioning</h4>
-                          <p className="text-sm text-slate-700 font-medium bg-slate-50 p-3 rounded-xl">{curatorAssessment?.marketNotes || '-'}</p>
-                        </div>
-                        <div>
-                          <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 mb-2"><Banknote className="w-4 h-4 text-emerald-400"/> Financial Health</h4>
-                          <p className="text-sm text-slate-700 font-medium bg-slate-50 p-3 rounded-xl">{curatorAssessment?.financialNotes || '-'}</p>
-                        </div>
-                        <div>
-                          <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 mb-2"><Landmark className="w-4 h-4 text-amber-400"/> Investment Readiness</h4>
-                          <p className="text-sm text-slate-700 font-medium bg-slate-50 p-3 rounded-xl">{curatorAssessment?.investmentNotes || '-'}</p>
-                        </div>
+                        {aiResult?.customAnalysisBlocks?.filter((_: any, i: number) => i % 2 === 0).map((block: any, idx: number) => {
+                          const IconComponent = renderDynamicIcon(block.iconType);
+                          return (
+                            <div key={idx}>
+                              <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 mb-2">
+                                <span className="text-indigo-400">{IconComponent}</span> {block.title}
+                              </h4>
+                              <p className="text-sm text-slate-700 font-medium bg-slate-50 p-3 rounded-xl">
+                                {curatorAssessment?.customBlockNotes?.[block.title] || '-'}
+                              </p>
+                            </div>
+                          );
+                        })}
                       </div>
 
                       <div className="p-6 space-y-6">
-                        <div>
-                          <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 mb-2"><Users className="w-4 h-4 text-blue-400"/> Team & Execution</h4>
-                          <p className="text-sm text-slate-700 font-medium bg-slate-50 p-3 rounded-xl">{curatorAssessment?.teamNotes || '-'}</p>
-                        </div>
-                        <div>
-                          <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 mb-2"><Search className="w-4 h-4 text-purple-400"/> Analisis Berkas & Dokumen</h4>
-                          <p className="text-sm text-slate-700 font-medium bg-slate-50 p-3 rounded-xl">{curatorAssessment?.documentNotes || '-'}</p>
-                        </div>
-                        <div>
-                          <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 mb-2"><Compass className="w-4 h-4 text-rose-400"/> SWOT & Strategi Eksternal</h4>
-                          <p className="text-sm text-slate-700 font-medium bg-slate-50 p-3 rounded-xl">{curatorAssessment?.swotNotes || '-'}</p>
-                        </div>
+                        {aiResult?.customAnalysisBlocks?.filter((_: any, i: number) => i % 2 !== 0).map((block: any, idx: number) => {
+                          const IconComponent = renderDynamicIcon(block.iconType);
+                          return (
+                            <div key={idx}>
+                              <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 mb-2">
+                                <span className="text-indigo-400">{IconComponent}</span> {block.title}
+                              </h4>
+                              <p className="text-sm text-slate-700 font-medium bg-slate-50 p-3 rounded-xl">
+                                {curatorAssessment?.customBlockNotes?.[block.title] || '-'}
+                              </p>
+                            </div>
+                          );
+                        })}
+                        
+                        {/* Static Extra Sections */}
+                        {aiResult?.fileAnalysisInsights && (
+                          <div>
+                            <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 mb-2">
+                              <Search className="w-4 h-4 text-purple-400"/> Analisis Berkas &amp; Dokumen
+                            </h4>
+                            <p className="text-sm text-slate-700 font-medium bg-slate-50 p-3 rounded-xl">{curatorAssessment?.documentNotes || '-'}</p>
+                          </div>
+                        )}
                       </div>
-
                     </div>
+                    
                     {curatorAssessment?.metricsNotes && (
                       <div className="p-6 border-t border-slate-100 bg-slate-50/50">
                         <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 mb-2"><Activity className="w-4 h-4 text-indigo-500"/> Kalibrasi Pilar / Metrik Kinerja</h4>

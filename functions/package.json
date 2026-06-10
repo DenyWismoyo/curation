@@ -1,6 +1,6 @@
 {
   "name": "functions",
-"scripts": {
+  "scripts": {
     "lint": "eslint .",
     "build": "node --max-old-space-size=4096 ./node_modules/typescript/bin/tsc",
     "build:watch": "tsc --watch",
@@ -10,9 +10,8 @@
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log"
   },
-"engines": {
+  "engines": {
     "node": "22"
-
   },
   "main": "lib/index.js",
   "dependencies": {

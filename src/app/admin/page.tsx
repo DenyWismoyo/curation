@@ -1,15 +1,16 @@
 // src/app/admin/page.tsx
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { collection, query, onSnapshot } from 'firebase/firestore'; 
+import React, { useState, useEffect, useMemo, Suspense } from 'react';
+import { collection, query, onSnapshot, orderBy } from 'firebase/firestore'; 
 import { db } from '@/lib/firebase';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { 
-  Search, Users, Activity, Target, 
-  Download, ArrowRight, CheckCircle2, Clock, Edit3, Building2
+  Search, Users, Activity, Target, FolderOpen,
+  ArrowRight, CheckCircle2, Clock, Edit3, Building2, ChevronLeft, Briefcase
 } from 'lucide-react';
 import { AdminAssessmentDetail } from '@/app/components/admin/AdminAssessmentDetail';
 
@@ -29,326 +30,283 @@ export interface AssessmentDoc {
   curatorAssessment?: any;
 }
 
-export default function AdminPage() {
+// ==========================================
+// KONTEN UTAMA DASHBOARD
+// ==========================================
+function AdminDashboardContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  
+  // Membaca status folder aktif langsung dari URL (Browser History)
+  const activeProgramFolder = searchParams.get('folder');
+
   const [assessments, setAssessments] = useState<AssessmentDoc[]>([]);
   const [loading, setLoading] = useState(true);
+  
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterTrack, setFilterTrack] = useState('All');
   const [selectedItem, setSelectedItem] = useState<AssessmentDoc | null>(null);
 
   useEffect(() => {
-    // Hapus orderBy dari query Firestore agar tidak bentrok antar tipe data
-    const q = query(collection(db, 'assessments'));
+    const q = query(collection(db, 'assessments'), orderBy('createdAt', 'desc'));
     
-    // Gunakan onSnapshot agar Dashboard Admin bersifat Real-Time
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const unsubscribe = onSnapshot(q, (snapshot) => {
       const data: AssessmentDoc[] = [];
-      
-      querySnapshot.forEach((doc) => {
-        const docData = doc.data();
-        
-        // NORMALISASI TANGGAL: Mengubah Timestamp/String menjadi format seragam
+      snapshot.forEach((doc) => {
+        const item = doc.data();
         let dateStr = new Date().toISOString();
-        if (docData.createdAt) {
-          if (typeof docData.createdAt.toDate === 'function') {
-            // Jika data baru (Firestore Timestamp dari Cloud Function)
-            dateStr = docData.createdAt.toDate().toISOString();
-          } else {
-            // Jika data lama (String biasa)
-            dateStr = new Date(docData.createdAt).toISOString();
-          }
+        if (item.createdAt && typeof item.createdAt.toDate === 'function') {
+          dateStr = item.createdAt.toDate().toISOString();
+        } else if (item.createdAt) {
+          dateStr = new Date(item.createdAt).toISOString();
         }
-
-        data.push({ 
-          id: doc.id, 
-          ...docData, 
-          createdAt: dateStr 
-        } as AssessmentDoc);
+        data.push({ id: doc.id, ...item, createdAt: dateStr } as AssessmentDoc);
       });
-
-      // Lakukan Sorting di Frontend secara akurat (Data paling baru DI ATAS)
-      data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-
       setAssessments(data);
       setLoading(false);
     }, (error) => {
-      console.error("Gagal mengambil data dari Firebase:", error);
+      console.error("Gagal menarik data admin:", error);
       setLoading(false);
     });
 
-    // Bersihkan listener saat halaman ditutup agar memori tidak bocor
     return () => unsubscribe();
   }, []);
 
-  const totalSubmissions = assessments.length;
-  const avgScore = totalSubmissions > 0 
-    ? (assessments.reduce((acc, curr) => acc + (curr.score || 0), 0) / totalSubmissions).toFixed(1) 
-    : 0;
-
-  const filteredData = assessments.filter(item => {
-    const matchesSearch = (item.namaUsaha || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          (item.email || '').toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesTrack = filterTrack === 'All' || item.trackType === filterTrack;
-    return matchesSearch && matchesTrack;
-  });
-
-  const uniqueTracks = Array.from(new Set(assessments.map(a => a.trackType)));
-
-  const exportToCSV = () => {
-    if (filteredData.length === 0) return;
-    const headers = ['Tanggal', 'Nama Usaha', 'Program/Entitas', 'Kategori', 'Email', 'WhatsApp', 'Skor AI', 'Level AI', 'Status Kurasi', 'Skor Kurator'];
-    const csvData = filteredData.map(item => {
-      const statusLabel = item.status === 'Curator_Validated' ? 'Selesai' : item.status === 'Curator_Draft' ? 'Draf' : 'Menunggu';
-      const curatorScore = item.curatorAssessment?.verifiedScore || '-';
-      
-      return [
-        new Date(item.createdAt).toLocaleDateString('id-ID'),
-        `"${item.namaUsaha || ''}"`,
-        `"${item.corporateEntity || 'Umum'}"`,
-        item.trackType,
-        item.email,
-        `'${item.whatsapp}'`, 
-        item.score,
-        item.readinessLevel,
-        statusLabel,
-        curatorScore
-      ];
+  // --- LOGIC GROUPING FOLDER ---
+  const groupedPrograms = useMemo(() => {
+    const groups: Record<string, AssessmentDoc[]> = {};
+    
+    assessments.forEach(item => {
+      const programName = item.corporateEntity || 'Program Umum (Publik)';
+      if (!groups[programName]) {
+        groups[programName] = [];
+      }
+      groups[programName].push(item);
     });
-    const csvContent = [headers.join(','), ...csvData.map(e => e.join(','))].join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', `Rekap_Admin_Inkubator_${new Date().getTime()}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+    
+    return groups;
+  }, [assessments]);
 
-  const getScoreColor = (score: number) => {
-    if (score >= 75) return 'bg-emerald-100 text-emerald-700 ring-1 ring-emerald-200';
-    if (score >= 60) return 'bg-indigo-100 text-indigo-700 ring-1 ring-indigo-200';
-    return 'bg-slate-100 text-slate-700 ring-1 ring-slate-200';
-  };
+  // Data untuk tabel di dalam Folder Aktif
+  const filteredTableData = useMemo(() => {
+    if (!activeProgramFolder) return [];
+    const programData = groupedPrograms[activeProgramFolder] || [];
+    
+    return programData.filter(item => 
+      item.namaUsaha?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.trackType?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [activeProgramFolder, groupedPrograms, searchTerm]);
 
-  return (
-    <div className="p-4 sm:p-6 lg:p-10">
-      <div className="max-w-7xl mx-auto space-y-6 lg:space-y-8">
-        
-        {/* Header Dasbor */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-3xl ring-1 ring-slate-200 shadow-sm">
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-[60vh]">
+        <div className="flex flex-col items-center gap-3 text-slate-400">
+          <div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+          <p className="font-bold tracking-widest text-xs uppercase">Menyinkronkan Data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // ==========================================
+  // VIEW 1: FOLDER BERBASIS PROGRAM KORPORAT
+  // ==========================================
+  if (!activeProgramFolder) {
+    return (
+      <div className="space-y-6 animate-in fade-in duration-500">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight text-balance">Monitoring Kurasi</h1>
-            <p className="text-slate-500 font-medium text-sm sm:text-base mt-1">Pantau dan kelola hasil inkubator</p>
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight">Manajemen Data Asesmen</h1>
+            <p className="text-slate-500 mt-2 font-medium max-w-2xl text-balance">
+              Sistem pintar secara otomatis mengelompokkan entitas pendaftar berdasarkan Program atau Token yang digunakan.
+            </p>
           </div>
-          
-          <div className="flex w-full sm:w-auto">
-            <Button onClick={exportToCSV} className="w-full sm:w-auto gap-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl h-10 px-4 font-bold">
-              <Download className="w-4 h-4" /> Ekspor CSV
-            </Button>
+          <div className="flex items-center gap-3 bg-white px-5 py-3 rounded-2xl ring-1 ring-slate-200 shadow-sm shrink-0">
+            <div className="bg-indigo-100 text-indigo-600 p-2 rounded-xl"><Users size={20}/></div>
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Total Keseluruhan</p>
+              <p className="text-xl font-black text-slate-900 leading-none">{assessments.length} <span className="text-sm font-medium text-slate-500">Entitas</span></p>
+            </div>
           </div>
         </div>
 
-        {/* Statistik Overview */}
-        <div className="flex overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4 custom-scrollbar">
-          <Card className="min-w-[140px] sm:min-w-0 p-5 bg-white ring-1 ring-slate-200 border-none shadow-sm flex flex-col justify-center rounded-2xl">
-            <div className="flex items-center gap-2 text-slate-400 mb-2">
-              <Users className="w-4 h-4 text-slate-600"/>
-              <h3 className="font-bold text-xs uppercase tracking-widest">Total Data</h3>
-            </div>
-            <p className="text-2xl font-black text-slate-900">{totalSubmissions}</p>
-          </Card>
-          <Card className="min-w-[140px] sm:min-w-0 p-5 bg-white ring-1 ring-slate-200 border-none shadow-sm flex flex-col justify-center rounded-2xl">
-            <div className="flex items-center gap-2 text-slate-400 mb-2">
-              <Activity className="w-4 h-4 text-emerald-500"/>
-              <h3 className="font-bold text-xs uppercase tracking-widest">Rata Skor</h3>
-            </div>
-            <p className="text-2xl font-black text-slate-900">{avgScore}</p>
-          </Card>
-          {uniqueTracks.slice(0, 2).map((track, idx) => (
-             <Card key={track} className="min-w-[140px] sm:min-w-0 p-5 bg-white ring-1 ring-slate-200 border-none shadow-sm flex flex-col justify-center rounded-2xl">
-              <div className="flex items-center gap-2 text-slate-400 mb-2">
-                <Target className={`w-4 h-4 ${idx === 0 ? 'text-blue-500' : 'text-amber-500'}`}/>
-                <h3 className="font-bold text-xs uppercase tracking-widest truncate">{track}</h3>
-              </div>
-              <p className="text-2xl font-black text-slate-900">{assessments.filter(a => a.trackType === track).length}</p>
-            </Card>
-          ))}
-        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+          {Object.entries(groupedPrograms).map(([programName, items]) => {
+            const total = items.length;
+            const validated = items.filter(i => i.status === 'Curator_Validated').length;
+            const draft = items.filter(i => i.status === 'Curator_Draft').length;
+            
+            // Hitung rata-rata skor final
+            const avgScore = total > 0 
+              ? Math.round(items.reduce((acc, curr) => acc + (curr.curatorAssessment?.verifiedScore || curr.score || 0), 0) / total) 
+              : 0;
 
-        {/* Filter Area */}
-        <div className="bg-white ring-1 ring-slate-200 rounded-2xl p-2 flex flex-col sm:flex-row gap-2 justify-between items-center shadow-sm">
-           <div className="relative w-full sm:w-80">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-              <Input 
-                placeholder="Cari nama atau email..." 
-                className="pl-9 h-11 sm:h-10 border-none bg-slate-50 ring-1 ring-slate-100 rounded-xl w-full"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-           </div>
-           <div className="flex w-full sm:w-auto bg-slate-50 p-1 rounded-xl overflow-x-auto custom-scrollbar">
-              {['All', ...uniqueTracks].map(track => (
-                <button
-                  key={track}
-                  onClick={() => setFilterTrack(track)}
-                  className={`flex-1 sm:flex-none px-3 sm:px-4 py-2 sm:py-1.5 text-xs sm:text-sm font-bold rounded-lg transition-all whitespace-nowrap ${
-                    filterTrack === track ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-slate-200/50' : 'text-slate-500 hover:text-slate-700'
-                  }`}
-                >
-                  {track}
-                </button>
-              ))}
-           </div>
-        </div>
+            const isPublic = programName === 'Program Umum (Publik)';
 
-        {/* DATA LIST */}
-        {loading ? (
-           <div className="py-20 text-center text-slate-500 font-medium flex justify-center items-center gap-3">
-              <div className="w-5 h-5 border-2 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
-              Memuat data...
-           </div>
-        ) : filteredData.length === 0 ? (
-           <div className="py-20 text-center text-slate-500 font-medium">Tidak ada data ditemukan.</div>
-        ) : (
-           <>
-              {/* MOBILE VIEW (Cards) */}
-              <div className="grid grid-cols-1 gap-3 sm:hidden">
-                 {filteredData.map(item => {
-                   const isValidated = item.status === 'Curator_Validated';
-                   const isDraft = item.status === 'Curator_Draft';
-                   
-                   return (
-                     <div key={item.id} onClick={() => setSelectedItem(item)} className="bg-white p-4 rounded-2xl ring-1 ring-slate-200 shadow-sm flex flex-col gap-3 active:scale-[0.98] transition-transform cursor-pointer">
-                        <div className="flex justify-between items-start">
-                           <div>
-                             <p className="font-bold text-slate-900 text-base">{item.namaUsaha}</p>
-                             <p className="text-xs text-slate-500 mt-0.5 mb-2">{item.email}</p>
-                             <div className="flex flex-wrap items-center gap-2">
-                               <span className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200 flex items-center gap-1">
-                                 <Building2 size={10} /> {item.corporateEntity || 'Program Umum'}
-                               </span>
-                               <span className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest bg-slate-50 ring-1 ring-slate-200 text-slate-600">
-                                 {item.trackType}
-                               </span>
-                             </div>
-                           </div>
-                           <div className="flex items-center">
-                             {isValidated ? (
-                               <span className="p-1.5 bg-emerald-100 text-emerald-600 rounded-lg"><CheckCircle2 size={16}/></span>
-                             ) : isDraft ? (
-                               <span className="p-1.5 bg-amber-100 text-amber-600 rounded-lg"><Edit3 size={16}/></span>
-                             ) : (
-                               <span className="p-1.5 bg-slate-100 text-slate-500 rounded-lg"><Clock size={16}/></span>
-                             )}
-                           </div>
-                        </div>
-                        <div className="flex items-center justify-between mt-1 pt-3 border-t border-slate-50">
-                           <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
-                              <Target className="w-3.5 h-3.5 text-slate-400"/> AI: {item.score} {isValidated && `• Kurator: ${item.curatorAssessment?.verifiedScore}`}
-                           </span>
-                           <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full font-black text-xs ${getScoreColor(isValidated ? item.curatorAssessment?.verifiedScore : item.score)}`}>
-                             {isValidated ? item.curatorAssessment?.verifiedScore : item.score}
-                           </span>
-                        </div>
-                     </div>
-                   );
-                 })}
-              </div>
+            return (
+              <Card 
+                key={programName} 
+                onClick={() => {
+                  // PUSH URL BARU KE BROWSER HISTORY
+                  router.push(`?folder=${encodeURIComponent(programName)}`);
+                  setSearchTerm('');
+                }}
+                className="p-6 bg-white rounded-3xl border-none ring-1 ring-slate-200 shadow-sm hover:shadow-xl hover:ring-indigo-300 transition-all cursor-pointer group flex flex-col justify-between h-full"
+              >
+                <div>
+                  <div className="flex items-start justify-between mb-4">
+                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors ${isPublic ? 'bg-slate-100 text-slate-500 group-hover:bg-slate-200' : 'bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white'}`}>
+                      {isPublic ? <FolderOpen size={24} /> : <Building2 size={24} />}
+                    </div>
+                    <span className="bg-slate-50 text-slate-600 font-black text-xs px-3 py-1.5 rounded-lg ring-1 ring-slate-200 group-hover:bg-indigo-50 group-hover:text-indigo-700 transition-colors">
+                      {total} Pendaftar
+                    </span>
+                  </div>
+                  <h3 className="text-lg font-black text-slate-900 leading-snug mb-1 line-clamp-2">{programName}</h3>
+                  <p className="text-xs font-bold text-slate-400 mb-6 flex items-center gap-1.5"><Briefcase size={14}/> Workspace Direktori</p>
+                </div>
 
-              {/* DESKTOP VIEW (Table) */}
-              <Card className="hidden sm:block bg-white ring-1 ring-slate-200 border-none shadow-sm overflow-hidden rounded-2xl">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm text-left">
-                    <thead className="text-[10px] text-slate-400 bg-slate-50/50 uppercase font-black tracking-wider border-b border-slate-100">
-                      <tr>
-                        <th className="px-6 py-4">Profil Usaha</th>
-                        <th className="px-6 py-4 text-center">Skor (AI / Kurator)</th>
-                        <th className="px-6 py-4">Status Kurasi</th>
-                        <th className="px-6 py-4 text-center">Aksi</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-50">
-                      {filteredData.map((item) => {
-                        const isValidated = item.status === 'Curator_Validated';
-                        const isDraft = item.status === 'Curator_Draft';
-                        
-                        return (
-                          <tr key={item.id} className="hover:bg-slate-50/50 transition-colors group">
-                            <td className="px-6 py-4">
-                              <div className="flex flex-col">
-                                 <div className="flex items-center gap-2">
-                                    <p className="font-bold text-slate-900 text-base">{item.namaUsaha}</p>
-                                 </div>
-                                 <div className="flex items-center gap-3 mt-1 text-xs text-slate-500">
-                                    <span>{item.email}</span>
-                                    <span className="w-1 h-1 rounded-full bg-slate-300"></span>
-                                    <span>{new Date(item.createdAt).toLocaleDateString('id-ID')}</span>
-                                 </div>
-                                 <div className="flex items-center gap-2 mt-2.5">
-                                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-widest bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200">
-                                      <Building2 size={10} /> {item.corporateEntity || 'Program Umum'}
-                                    </span>
-                                    <span className="px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest bg-slate-50 ring-1 ring-slate-200 text-slate-500">
-                                      {item.trackType}
-                                    </span>
-                                 </div>
-                              </div>
-                            </td>
-
-                            <td className="px-6 py-4">
-                              <div className="flex items-center justify-center gap-3">
-                                <div className="flex flex-col items-center">
-                                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">AI</span>
-                                  <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full font-black text-xs shadow-sm ${getScoreColor(item.score)}`}>
-                                    {item.score || 0}
-                                  </span>
-                                </div>
-                                {isValidated && (
-                                  <>
-                                    <div className="w-4 border-t-2 border-dashed border-slate-200"></div>
-                                    <div className="flex flex-col items-center">
-                                      <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest mb-1">Final</span>
-                                      <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full font-black text-xs shadow-sm ${getScoreColor(item.curatorAssessment?.verifiedScore)}`}>
-                                        {item.curatorAssessment?.verifiedScore}
-                                      </span>
-                                    </div>
-                                  </>
-                                )}
-                              </div>
-                            </td>
-
-                            <td className="px-6 py-4">
-                              {isValidated ? (
-                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest bg-emerald-100 text-emerald-700 ring-1 ring-emerald-200">
-                                  <CheckCircle2 className="w-3 h-3" /> Selesai
-                                </span>
-                              ) : isDraft ? (
-                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest bg-amber-100 text-amber-700 ring-1 ring-amber-200">
-                                  <Edit3 className="w-3 h-3" /> Draf
-                                </span>
-                              ) : (
-                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest bg-slate-100 text-slate-500 ring-1 ring-slate-200">
-                                  <Clock className="w-3 h-3" /> Menunggu
-                                </span>
-                              )}
-                            </td>
-
-                            <td className="px-6 py-4 text-center">
-                              <Button variant="ghost" size="sm" onClick={() => setSelectedItem(item)} className="text-indigo-600 hover:bg-indigo-50 font-bold rounded-xl opacity-0 group-hover:opacity-100 transition-opacity">
-                                 Buka Detail <ArrowRight className="w-4 h-4 ml-1" />
-                              </Button>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+                <div className="pt-4 border-t border-slate-100 grid grid-cols-3 gap-2 text-center mt-auto">
+                  <div className="bg-slate-50 rounded-xl p-2">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase">Selesai</p>
+                    <p className="text-sm font-black text-emerald-600">{validated}</p>
+                  </div>
+                  <div className="bg-slate-50 rounded-xl p-2">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase">Draf</p>
+                    <p className="text-sm font-black text-amber-500">{draft}</p>
+                  </div>
+                  <div className="bg-indigo-50 rounded-xl p-2 ring-1 ring-indigo-100/50">
+                    <p className="text-[10px] font-bold text-indigo-400 uppercase">Rata Skor</p>
+                    <p className="text-sm font-black text-indigo-700">{avgScore}</p>
+                  </div>
                 </div>
               </Card>
-           </>
-        )}
+            );
+          })}
+        </div>
       </div>
+    );
+  }
+
+  // ==========================================
+  // VIEW 2: TABEL ASESMEN DI DALAM FOLDER
+  // ==========================================
+  return (
+    <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
+      
+      {/* HEADER FOLDER AKTIF */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 sm:p-6 rounded-3xl ring-1 ring-slate-200 shadow-sm sticky top-0 md:relative z-20">
+        <div className="flex items-center gap-4">
+          <Button 
+            variant="ghost" 
+            onClick={() => {
+              // MENGHAPUS QUERY FOLDER UNTUK KEMBALI KE DAFTAR FOLDER
+              router.push('/admin');
+              setSearchTerm('');
+            }}
+            className="w-10 h-10 p-0 rounded-full bg-slate-50 hover:bg-slate-200 text-slate-600 shrink-0"
+            title="Kembali ke Daftar Folder"
+          >
+            <ChevronLeft size={20} />
+          </Button>
+          <div className="min-w-0">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Direktori Program Aktif</p>
+            <h1 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight leading-tight truncate">{activeProgramFolder}</h1>
+          </div>
+        </div>
+        
+        <div className="relative w-full sm:w-72 shrink-0">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+          <Input 
+            placeholder="Cari nama usaha, email..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-9 h-11 bg-slate-50 rounded-xl border-slate-200 focus-visible:ring-indigo-500"
+          />
+        </div>
+      </div>
+
+      {/* TABEL DATA */}
+      <Card className="bg-white rounded-[2rem] border-none ring-1 ring-slate-200 shadow-sm overflow-hidden flex flex-col">
+        {filteredTableData.length === 0 ? (
+          <div className="p-16 text-center text-slate-400">
+            <Target className="w-12 h-12 mx-auto mb-4 opacity-20" />
+            <p className="font-bold">Tidak ada data pendaftar yang cocok.</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto w-full custom-scrollbar">
+            <table className="w-full text-sm text-left whitespace-nowrap">
+              <thead className="bg-slate-50 text-slate-500 uppercase font-black text-[10px] tracking-widest border-b border-slate-100">
+                <tr>
+                  <th className="px-6 py-5">Identitas Usaha</th>
+                  <th className="px-6 py-5">Kategori / Modul</th>
+                  <th className="px-6 py-5 text-center">Skor Akhir</th>
+                  <th className="px-6 py-5">Status Validasi</th>
+                  <th className="px-6 py-5 text-center">Aksi</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-50">
+                {filteredTableData.map((item) => {
+                  const finalScore = item.curatorAssessment?.verifiedScore || item.score || 0;
+                  const isCuratorValidated = item.status === 'Curator_Validated';
+                  const isCuratorDraft = item.status === 'Curator_Draft';
+                  
+                  return (
+                    <tr key={item.id} className="hover:bg-slate-50/80 transition-colors group">
+                      <td className="px-6 py-4">
+                        <div className="font-black text-slate-900 text-base mb-1 group-hover:text-indigo-600 transition-colors">
+                          {item.namaUsaha}
+                        </div>
+                        <div className="text-[11px] text-slate-500 font-medium">
+                          {item.email}
+                        </div>
+                      </td>
+
+                      <td className="px-6 py-4">
+                        <span className="inline-flex px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest bg-slate-100 text-slate-600 ring-1 ring-slate-200">
+                          {item.trackType}
+                        </span>
+                      </td>
+
+                      <td className="px-6 py-4 text-center">
+                        <div className={`inline-flex items-center justify-center w-10 h-10 rounded-full font-black text-base ring-1 shadow-sm ${isCuratorValidated ? 'bg-emerald-50 text-emerald-700 ring-emerald-200' : 'bg-indigo-50 text-indigo-700 ring-indigo-200'}`}>
+                          {finalScore}
+                        </div>
+                      </td>
+
+                      <td className="px-6 py-4">
+                        {isCuratorValidated ? (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest bg-emerald-100 text-emerald-700 ring-1 ring-emerald-200">
+                            <CheckCircle2 className="w-3.5 h-3.5" /> Selesai
+                          </span>
+                        ) : isCuratorDraft ? (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest bg-amber-100 text-amber-700 ring-1 ring-amber-200">
+                            <Edit3 className="w-3.5 h-3.5" /> Draf Kurator
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest bg-slate-100 text-slate-500 ring-1 ring-slate-200">
+                            <Clock className="w-3.5 h-3.5" /> AI Selesai
+                          </span>
+                        )}
+                      </td>
+
+                      <td className="px-6 py-4 text-center">
+                        <Button 
+                          onClick={() => setSelectedItem(item)} 
+                          className="bg-slate-900 hover:bg-indigo-600 text-white font-bold rounded-xl h-9 px-4 shadow-sm opacity-0 group-hover:opacity-100 transition-all"
+                        >
+                           Buka Detail <ArrowRight className="w-4 h-4 ml-1.5" />
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Card>
 
       {/* RENDER KOMPONEN MODAL DETAIL */}
       {selectedItem && (
@@ -359,5 +317,24 @@ export default function AdminPage() {
       )}
 
     </div>
+  );
+}
+
+// ==========================================
+// ROOT COMPONENT DENGAN SUSPENSE BOUNDARY
+// Mencegah Error "De-opt to CSR" pada Next.js Build
+// ==========================================
+export default function AdminPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center gap-3 text-slate-400">
+          <div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+          <p className="font-bold tracking-widest text-xs uppercase">Menyiapkan Dashboard...</p>
+        </div>
+      </div>
+    }>
+      <AdminDashboardContent />
+    </Suspense>
   );
 }

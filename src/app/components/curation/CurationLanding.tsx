@@ -1,3 +1,4 @@
+// src/app/components/curation/CurationLanding.tsx
 'use client';
 
 import React, { useState } from 'react';
@@ -15,8 +16,8 @@ interface Props {
   onStart: () => void;
   history: CurationHistory[];
   onLoadHistory: (item: CurationHistory) => void;
-  user: User | null; // Menerima status user dari page.tsx
-  role: 'user' | 'admin_csrs' | null; // Menerima status role
+  user: User | null; 
+  role: 'user' | 'admin_csrs' | null; 
   onLogin: () => void;
   onLogout: () => void;
 }
@@ -124,8 +125,8 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
             <ShieldCheck className="h-8 w-8 text-white" />
           </motion.div>
           
-<motion.div variants={fadeUpVariants} className="space-y-6">
-            {/* Judul Utama Tetap Dipertahankan */}
+          <motion.div variants={fadeUpVariants} className="space-y-6">
+            {/* Judul Utama */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 leading-[1.15] text-balance">
               Smart Curation <br className="hidden sm:block"/> 
               <span className="text-indigo-600 bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-600">
@@ -133,7 +134,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
               </span>
             </h1>
             
-            {/* Deskripsi Super Visioner & Universal */}
+            {/* Deskripsi */}
             <p className="text-base sm:text-lg text-slate-500 max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed text-balance">
               Mesin komputasi analitik berbasis kecerdasan buatan untuk memetakan maturitas, skalabilitas, dan profil kelayakan entitas—dari purwarupa riset hingga ekosistem korporasi—menuju akselerasi global.
             </p>
@@ -249,9 +250,17 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
             className="w-full max-w-md bg-white/60 backdrop-blur-3xl border border-white/40 p-6 sm:p-8 rounded-[2rem] shadow-2xl shadow-slate-200/40 relative"
           >
             <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-white/60 pointer-events-none"></div>
-            <h3 className="text-sm font-black text-slate-800 flex items-center gap-2 mb-6 relative z-10">
-              <History className="h-5 w-5 text-indigo-600" /> Riwayat Kurasi Anda
-            </h3>
+            
+            {/* Indikator Live Sync (Animasi Berkedip) */}
+            <div className="flex items-center justify-between mb-6 relative z-10">
+              <h3 className="text-sm font-black text-slate-800 flex items-center gap-2">
+                <History className="h-5 w-5 text-indigo-600" /> Riwayat Kurasi Anda
+              </h3>
+              <div className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 rounded-full border border-emerald-100" title="Terhubung secara real-time ke sistem AI">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></div>
+                <span className="text-[9px] font-black text-emerald-600 uppercase tracking-wider">Live Sync</span>
+              </div>
+            </div>
             
             <motion.div 
               variants={staggerContainer}
@@ -264,7 +273,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                   variants={historyItemVariants}
                   whileHover={{ y: -4, scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  key={idx} 
+                  key={item.id || idx} // Prioritaskan ID dokumen
                   onClick={() => onLoadHistory(item)} 
                   className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 cursor-pointer group transition-shadow hover:shadow-md hover:shadow-indigo-500/5"
                 >

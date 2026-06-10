@@ -28,6 +28,18 @@ export const processCurationAssessment = onCall(
     ],
   },
   async (request) => {
+    // =========================================================
+    // FASE 0: VALIDASI AUTENTIKASI (GOOGLE LOGIN)
+    // =========================================================
+    if (!request.auth) {
+      throw new HttpsError(
+        "unauthenticated", 
+        "Akses ditolak. Pengguna harus login menggunakan akun Google untuk memproses asesmen."
+      );
+    }
+    const userId = request.auth.uid; 
+    const userEmail = request.auth.token.email || '';
+
     const data = request.data as any;
     if (!data) {
       throw new HttpsError("invalid-argument", "Data request kosong atau tidak valid.");
@@ -92,7 +104,7 @@ export const processCurationAssessment = onCall(
       const bucket = admin.storage().bucket(); 
       
       // =========================================================
-      // FASE 2: INTERNAL FILE TRANSFER (GCS TO GEMINI)
+      // FASE 2: INTERNAL FILE TRANSFER (GCS TO GEMINI) & POLLING
       // =========================================================
       if (storageFilePaths && storageFilePaths.length > 0) {
         for (const filePath of storageFilePaths) {
@@ -110,6 +122,18 @@ export const processCurationAssessment = onCall(
             displayName: "Dokumen Lampiran Asesmen"
           });
           
+          // MEKANISME POLLING: Menunggu pemrosesan internal Google AI File Manager (Sangat krusial untuk file Video dan Audio)
+          let fileState = await fileManager.getFile(uploadResult.file.name);
+          while (fileState.state === "PROCESSING") {
+            // Berikan jeda waktu 5 detik sebelum mengecek ulang status file
+            await new Promise((resolve) => setTimeout(resolve, 5000));
+            fileState = await fileManager.getFile(uploadResult.file.name);
+          }
+          
+          if (fileState.state === "FAILED") {
+            throw new Error(`Pemrosesan file media ${fileName} oleh Google AI File Manager gagal.`);
+          }
+
           uploadedGeminiFiles.push(uploadResult.file);
           parts.push({ fileData: { mimeType: uploadResult.file.mimeType, fileUri: uploadResult.file.uri } });
         }
@@ -183,11 +207,11 @@ ATURAN GAYA BAHASA: ${toneInstruction}
 DATA TEKS FORM:
 ${dataString}
 
-${storageFilePaths && storageFilePaths.length > 0 ? "DOKUMEN TERLAMPIR TELAH DISERTAKAN. ANDA WAJIB MEMBACA DAN MENYILANGKAN DATANYA DENGAN TEKS FORM." : "TIDAK ADA DOKUMEN YANG DILAMPIRKAN. BERIKAN PENILAIAN BERDASARKAN TEKS SAJA."}
+${storageFilePaths && storageFilePaths.length > 0 ? "DOKUMEN TERLAMPIR TELAH DISERTAKAN. ANDA WAJIB MEMBACA DAN MENYILANGKAN DATANYA DENGAN TEKS FORM BERTAUTAN MULTIMEDIA TERSEBUT." : "TIDAK ADA DOKUMEN YANG DILAMPIRKAN. BERIKAN PENILAIAN BERDASARKAN TEKS SAJA."}
 
 INSTRUKSI FORMAT ANALISIS:
-1. EXECUTIVE SUMMARY: Buat ringkasan padat tentang entitas ini sesuai tujuan asesmen.
-2. FILE ANALYSIS: Nilai validitas dokumen. Catat jika ada ketidaksesuaian (Discrepancies).
+1. EXECUTIVE SUMMARY: Buat ringkasan padat tentang entitas ini sesuai tujuan asesmen. Manfaatkan data web penelusuran (search grounding) untuk memvalidasi tren industri, keunikan produk, serta kompetitor utama yang sejenis secara relevan.
+2. FILE ANALYSIS: Nilai validitas dokumen ataupun lampiran media (video/audio/gambar). Catat jika ada ketidaksesuaian (Discrepancies) dengan isi formulir.
 3. CUSTOM ANALYSIS BLOCKS: Hasilkan blok analisis dengan MERUJUK SANGAT KETAT pada daftar berikut. Pastikan Anda menjabarkan nilai indikator (label) secara mendetail:
 ${targetAnalysisBlocks}
 4. METRICS ARRAY: Berikan skor objektif (0-100) untuk indikator berikut: [${targetMetrics.join(", ")}].
@@ -207,12 +231,13 @@ ATURAN MULTLAK:
       parts.unshift({ text: promptText });
 
       const systemPrompt = isPro 
-        ? "Anda adalah AI Evaluator Premium. Analisis mendalam, kritis, deteksi celah logika, dan patuhi instruksi format secara absolut. Format output hanya JSON berbahasa Indonesia."
-        : "Anda adalah AI Evaluator Standar. Evaluasi secara komprehensif, suportif, dan akurat berdasarkan fakta. Format output hanya JSON berbahasa Indonesia.";
+        ? "Anda adalah AI Evaluator Premium. Analisis mendalam, kritis, deteksi celah logika, manfaatkan penelusuran web search grounding untuk memvalidasi keabsahan data entitas secara real-time, dan patuhi instruksi format secara absolut. Format output hanya JSON berbahasa Indonesia."
+        : "Anda adalah AI Evaluator Standar. Evaluasi secara komprehensif, suportif, akurat berdasarkan fakta, dan optimalkan pencarian search grounding demi validitas info. Format output hanya JSON berbahasa Indonesia.";
 
       const model = genAI.getGenerativeModel({
         model: selectedModelName,
         systemInstruction: systemPrompt,
+        tools: [{ googleSearch: {} }], // MENGAKTIFKAN ENTERPRISE GOOGLE SEARCH GROUNDING
         generationConfig: {
           maxOutputTokens: 8192,
           responseMimeType: "application/json",
@@ -282,16 +307,33 @@ ATURAN MULTLAK:
               },
               recommendations: {
                 type: SchemaType.ARRAY,
-                items: { type: SchemaType.OBJECT, required: ["title", "content"], properties: { title: { type: SchemaType.STRING }, content: { type: SchemaType.STRING } } }
+                items: { 
+                  type: SchemaType.OBJECT, 
+                  required: ["title", "content"], 
+                  properties: { 
+                    title: { type: SchemaType.STRING }, 
+                    content: { type: SchemaType.STRING } 
+                  } 
+                }
               },
               riskAssessment: {
                 type: SchemaType.OBJECT,
                 required: ["criticalRisks", "mitigationStrategies"],
-                properties: { criticalRisks: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } }, mitigationStrategies: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } } }
+                properties: { 
+                  criticalRisks: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } }, 
+                  mitigationStrategies: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } } 
+                }
               },
               nextActionSteps: {
                 type: SchemaType.ARRAY,
-                items: { type: SchemaType.OBJECT, required: ["timeframe", "task"], properties: { timeframe: { type: SchemaType.STRING }, task: { type: SchemaType.STRING } } }
+                items: { 
+                  type: SchemaType.OBJECT, 
+                  required: ["timeframe", "task"], 
+                  properties: { 
+                    timeframe: { type: SchemaType.STRING }, 
+                    task: { type: SchemaType.STRING } 
+                  } 
+                }
               }
             }
           }
@@ -346,11 +388,13 @@ ATURAN MULTLAK:
         const newAssessmentRef = db.collection("assessments").doc();
         assessmentId = newAssessmentRef.id;
         
+        // PENTING: MENYIMPAN userId (UID GOOGLE) KE DATABASE
         transaction.set(newAssessmentRef, {
+          userId: userId, 
+          userEmail: formData.email || userEmail,
           trackType: trackType,
           corporateEntity: corporateEntityName, 
           namaUsaha: formData.namaUsaha || 'Tanpa Nama',
-          email: formData.email || '',
           whatsapp: formData.whatsapp || '',
           score: aiResultJson.totalScore || 0,
           readinessLevel: aiResultJson.readinessLevel || 'Belum Ditentukan',

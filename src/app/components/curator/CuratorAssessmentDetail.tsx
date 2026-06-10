@@ -9,12 +9,50 @@ import {
   Activity, Lightbulb, Save, Edit3, CheckCircle2,
   ListChecks, ShieldCheck, FileText, Loader2, MapPin,
   Banknote, Users, Search, ChevronDown, Landmark, Compass,
-  Target, MessageCircle, Mic, MicOff, Tag, Zap, Check
+  Target, MessageCircle, Mic, MicOff, Tag, Zap, Check, Award, Shield
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip } from 'recharts';
+
+// PENTING: Komponen diletakkan di luar untuk mencegah error "Unstable Nested Component" saat proses build
+const InsightAccordion = ({ id: accordId, title, icon: Icon, content, expandedSection, setExpandedSection }: any) => {
+  const isOpen = expandedSection === accordId;
+  return (
+    <div className="bg-white ring-1 ring-slate-100 rounded-2xl overflow-hidden transition-all duration-300">
+      <button onClick={() => setExpandedSection(isOpen ? null : accordId)} className="w-full flex items-center justify-between p-4 sm:p-5 text-left bg-white hover:bg-slate-50 transition-colors">
+        <div className="flex items-center gap-3">
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isOpen ? 'bg-indigo-100 text-indigo-600' : 'bg-slate-50 text-slate-500'}`}>
+            <Icon size={16} />
+          </div>
+          <h4 className={`text-sm font-black uppercase tracking-widest ${isOpen ? 'text-indigo-900' : 'text-slate-700'}`}>{title}</h4>
+        </div>
+        <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+      <div className={`transition-all duration-300 ease-in-out ${isOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}>
+        <div className="p-4 sm:p-5 pt-0 text-sm font-medium text-slate-600 leading-relaxed border-t border-slate-50">
+          <p className="whitespace-pre-wrap pt-2 font-medium text-slate-600">{content}</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const renderDynamicIcon = (type: string) => {
+  switch (type) {
+    case 'finance': return <Banknote className="w-4 h-4" />;
+    case 'users': return <Users className="w-4 h-4" />;
+    case 'idea': return <Lightbulb className="w-4 h-4" />;
+    case 'award': return <Award className="w-4 h-4" />;
+    case 'document': return <FileText className="w-4 h-4" />;
+    case 'shield': return <Shield className="w-4 h-4" />;
+    case 'target':
+    default: return <Target className="w-4 h-4" />;
+  }
+};
+
+const textColors = ['text-indigo-600', 'text-emerald-600', 'text-amber-600', 'text-blue-600', 'text-rose-600'];
 
 interface CuratorAssessmentDetailProps {
   data: any;
@@ -56,10 +94,10 @@ export function CuratorAssessmentDetail({ data, availableTags = [], onClose, onS
   const [curatorNotes, setCuratorNotes] = useState<string>(data.curatorNotes || '');
   const [selectedTags, setSelectedTags] = useState<string[]>(data.curatorAssessment?.tags || []);
 
-  const [marketNotes, setMarketNotes] = useState<string>(data.curatorAssessment?.marketNotes || '');
-  const [financialNotes, setFinancialNotes] = useState<string>(data.curatorAssessment?.financialNotes || '');
-  const [investmentNotes, setInvestmentNotes] = useState<string>(data.curatorAssessment?.investmentNotes || '');
-  const [teamNotes, setTeamNotes] = useState<string>(data.curatorAssessment?.teamNotes || '');
+  // State Dinamis untuk Custom Blocks
+  const [customBlockNotes, setCustomBlockNotes] = useState<Record<string, string>>(data.curatorAssessment?.customBlockNotes || {});
+  
+  // State Statis untuk bagian Fix
   const [documentNotes, setDocumentNotes] = useState<string>(data.curatorAssessment?.documentNotes || '');
   const [metricsNotes, setMetricsNotes] = useState<string>(data.curatorAssessment?.metricsNotes || '');
   const [swotNotes, setSwotNotes] = useState<string>(data.curatorAssessment?.swotNotes || '');
@@ -83,7 +121,6 @@ export function CuratorAssessmentDetail({ data, availableTags = [], onClose, onS
           curatorNotes: curatorNotes, 
           score: Number(curatorScore), 
           readinessLevel: curatorLevel,
-          // Tetap biarkan Validated jika sebelumnya sudah Validated dan hanya diedit kecil
           status: status === 'Curator_Validated' ? 'Curator_Validated' : 'Curator_Draft',
           updatedAt: new Date().toISOString(),
           curatorAssessment: {
@@ -91,7 +128,10 @@ export function CuratorAssessmentDetail({ data, availableTags = [], onClose, onS
             verifiedLevel: curatorLevel,
             finalRoute: curatorRoute,
             tags: selectedTags,
-            marketNotes, financialNotes, investmentNotes, teamNotes, documentNotes, metricsNotes, swotNotes
+            customBlockNotes, 
+            documentNotes, 
+            metricsNotes, 
+            swotNotes
           }
         };
 
@@ -100,27 +140,23 @@ export function CuratorAssessmentDetail({ data, availableTags = [], onClose, onS
         await updateDoc(docRef, payload);
         setAutoSaveStatus('saved');
         
-        // Hapus status 'saved' setelah 3 detik untuk UI yang lebih bersih
         setTimeout(() => setAutoSaveStatus('idle'), 3000);
       } catch (error) {
         console.error("Autosave failed:", error);
         setAutoSaveStatus('error');
       }
-    }, 2500); // Trigger save 2.5 detik setelah user berhenti mengetik (Debounce)
+    }, 2500); 
 
     return () => clearTimeout(timer);
   }, [
     curatorScore, curatorLevel, curatorRoute, curatorNotes, selectedTags, 
-    marketNotes, financialNotes, investmentNotes, teamNotes, documentNotes, 
-    metricsNotes, swotNotes, isEditing
+    customBlockNotes, documentNotes, metricsNotes, swotNotes, isEditing
   ]);
-
 
   // --- LOGIC FINALISASI (SUBMIT VALIDATED) ---
   const handleFinalizeClick = () => {
     if (!curatorNotes.trim()) {
       setErrorMsg('Catatan Validasi Lapangan Utama WAJIB diisi untuk melakukan Finalisasi.');
-      // Scroll ke atas agar error terlihat
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
@@ -136,14 +172,17 @@ export function CuratorAssessmentDetail({ data, availableTags = [], onClose, onS
         curatorNotes: curatorNotes, 
         score: Number(curatorScore), 
         readinessLevel: curatorLevel,
-        status: 'Curator_Validated', // Kunci status menjadi tervalidasi final
+        status: 'Curator_Validated', 
         validatedAt: new Date().toISOString(),
         curatorAssessment: {
           verifiedScore: Number(curatorScore),
           verifiedLevel: curatorLevel,
           finalRoute: curatorRoute,
           tags: selectedTags,
-          marketNotes, financialNotes, investmentNotes, teamNotes, documentNotes, metricsNotes, swotNotes
+          customBlockNotes, 
+          documentNotes, 
+          metricsNotes, 
+          swotNotes
         }
       };
 
@@ -152,7 +191,7 @@ export function CuratorAssessmentDetail({ data, availableTags = [], onClose, onS
       await updateDoc(docRef, payload);
       setIsConfirmModalOpen(false);
       alert('Data telah difinalisasi secara permanen!');
-      onSaveSuccess(); // Akan men-trigger tutup modal dan refresh dari parent
+      onSaveSuccess(); 
     } catch (error) {
       console.error('Gagal memfinalisasi kurator:', error);
       setErrorMsg('Gagal terhubung ke database. Silakan periksa kembali koneksi Anda.');
@@ -161,7 +200,6 @@ export function CuratorAssessmentDetail({ data, availableTags = [], onClose, onS
       setIsFinalizing(false);
     }
   };
-
 
   // --- LOGIC VOICE-TO-TEXT ---
   const toggleVoiceRecord = () => {
@@ -203,28 +241,6 @@ export function CuratorAssessmentDetail({ data, availableTags = [], onClose, onS
     subject: m.label, shortLabel: `D${idx + 1}`, A: m.score, fullMark: 100
   }));
 
-  const InsightAccordion = ({ id: accordId, title, icon: Icon, content }: any) => {
-    const isOpen = expandedSection === accordId;
-    return (
-      <div className="bg-white ring-1 ring-slate-100 rounded-2xl overflow-hidden transition-all duration-300">
-        <button onClick={() => setExpandedSection(isOpen ? null : accordId)} className="w-full flex items-center justify-between p-4 sm:p-5 text-left bg-white hover:bg-slate-50 transition-colors">
-          <div className="flex items-center gap-3">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isOpen ? 'bg-indigo-100 text-indigo-600' : 'bg-slate-50 text-slate-500'}`}>
-              <Icon size={16} />
-            </div>
-            <h4 className={`text-sm font-black uppercase tracking-widest ${isOpen ? 'text-indigo-900' : 'text-slate-700'}`}>{title}</h4>
-          </div>
-          <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
-        </button>
-        <div className={`transition-all duration-300 ease-in-out ${isOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}>
-          <div className="p-4 sm:p-5 pt-0 text-sm font-medium text-slate-600 leading-relaxed border-t border-slate-50">
-            <p className="whitespace-pre-wrap pt-2 font-medium text-slate-600">{content}</p>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 md:p-6 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
       <div className="bg-slate-50 w-full h-full sm:h-[95vh] max-w-7xl sm:rounded-[2rem] shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-300 relative">
@@ -254,10 +270,8 @@ export function CuratorAssessmentDetail({ data, availableTags = [], onClose, onS
             </p>
           </div>
           
-          {/* Action Buttons Top Bar */}
           <div className="flex flex-wrap items-center w-full lg:w-auto justify-between lg:justify-end gap-2 shrink-0 pt-3 lg:pt-0 border-t lg:border-0 border-slate-100">
             
-            {/* Indikator Autosave (Hanya tampil saat mode edit) */}
             {isEditing && (
               <div className="hidden sm:flex items-center mr-2 text-[10px] font-bold uppercase tracking-widest">
                 {autoSaveStatus === 'saving' && <span className="text-indigo-500 flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin"/> Menyimpan...</span>}
@@ -279,7 +293,6 @@ export function CuratorAssessmentDetail({ data, availableTags = [], onClose, onS
                 <Button onClick={() => setIsEditing(false)} variant="outline" className="rounded-xl h-10 px-3 font-bold border-slate-200 text-slate-600 flex-1 sm:flex-none">
                   Tutup Editor
                 </Button>
-                {/* Tombol Finalisasi Atas dengan Pop-up Konfirmasi */}
                 <Button onClick={handleFinalizeClick} disabled={isFinalizing} className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black h-10 px-4 shadow-md shadow-emerald-200 flex-1 sm:flex-none">
                   <CheckCircle2 className="w-4 h-4 mr-2"/>
                   Finalisasi
@@ -296,7 +309,7 @@ export function CuratorAssessmentDetail({ data, availableTags = [], onClose, onS
         {/* CONTROLLER NAVIGATION TABS */}
         <div className="flex gap-4 px-6 sm:px-8 pt-4 bg-white border-b border-slate-200 shrink-0 overflow-x-auto custom-scrollbar">
           <button onClick={() => setActiveTab('ai')} className={`px-4 py-3 text-sm font-bold border-b-2 transition-colors whitespace-nowrap ${activeTab === 'ai' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-800'}`}>
-            <span className="flex items-center gap-2"><ShieldCheck className="w-4 h-4"/> Validasi & Rekap Laporan</span>
+            <span className="flex items-center gap-2"><ShieldCheck className="w-4 h-4"/> Validasi &amp; Rekap Laporan</span>
           </button>
           <button onClick={() => setActiveTab('input')} className={`px-4 py-3 text-sm font-bold border-b-2 transition-colors whitespace-nowrap ${activeTab === 'input' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-800'}`}>
             <span className="flex items-center gap-2"><Briefcase className="w-4 h-4"/> Data Input Peserta</span>
@@ -461,214 +474,96 @@ export function CuratorAssessmentDetail({ data, availableTags = [], onClose, onS
                 </div>
               </div>
 
-              {/* 2. ADVANCED MATRIX INTERACTIVE PANELS GRID */}
+              {/* 2. ADVANCED MATRIX INTERACTIVE PANELS GRID (DYNAMIC) */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 
-                <div className="bg-white ring-1 ring-slate-200 p-6 rounded-2xl shadow-sm flex flex-col justify-between">
-                  <div>
-                    <h3 className="text-xs font-black uppercase text-indigo-600 tracking-widest mb-4 flex items-center gap-2">
-                      <Target className="w-4 h-4"/> Market Positioning (AI)
-                    </h3>
-                    <div className="space-y-3 mb-4">
-                      <div>
-                        <p className="text-[10px] uppercase text-slate-400 font-bold">Niche Pasar</p>
-                        <p className="text-sm font-semibold text-slate-800">{currentAiResult.marketPositioning?.niche || '-'}</p>
-                      </div>
-                      <div>
-                        <p className="text-[10px] uppercase text-slate-400 font-bold">Unfair Advantage</p>
-                        <p className="text-sm font-semibold text-slate-800">{currentAiResult.marketPositioning?.competitorAdvantage || '-'}</p>
-                      </div>
-                      <div>
-                        <p className="text-[10px] uppercase text-slate-400 font-bold">Potensi Skalabilitas</p>
-                        <span className="inline-block bg-indigo-50 text-indigo-700 text-xs font-bold px-2 py-0.5 rounded ring-1 ring-indigo-200">
-                          {currentAiResult.marketPositioning?.marketScalability || 'Medium'}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="pt-4 border-t border-slate-100 mt-auto">
-                    <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 flex items-center gap-1.5">
-                      <ShieldCheck size={14} className="text-emerald-500" /> Tanggapan Kurator
-                    </h4>
-                    {isEditing ? (
-                      <Textarea 
-                        value={marketNotes} 
-                        onChange={(e) => setMarketNotes(e.target.value)} 
-                        placeholder="Berikan reviu aspek pasar berdasarkan temuan riil..."
-                        className="bg-indigo-50/40 border-indigo-100 text-xs h-24 rounded-xl" 
-                      />
-                    ) : (
-                      <div className="bg-slate-50 p-3 rounded-xl text-xs font-medium text-slate-700 min-h-[60px]">
-                        {marketNotes || <span className="italic text-slate-400">Belum ada catatan peninjau pasar.</span>}
-                      </div>
-                    )}
-                  </div>
-                </div>
+                {currentAiResult.customAnalysisBlocks?.map((block: any, idx: number) => {
+                  const textColor = textColors[idx % textColors.length];
+                  const IconComponent = renderDynamicIcon(block.iconType);
 
-                <div className="bg-white ring-1 ring-slate-200 p-6 rounded-2xl shadow-sm flex flex-col justify-between">
-                  <div>
-                    <h3 className="text-xs font-black uppercase text-emerald-600 tracking-widest mb-4 flex items-center gap-2">
-                      <Banknote className="w-4 h-4"/> Financial Health (AI)
-                    </h3>
-                    <div className="space-y-3 mb-4">
-                      <div className="flex justify-between items-center">
-                        <p className="text-[10px] uppercase text-slate-400 font-bold">Financial Score</p>
-                        <span className="font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md text-xs">{currentAiResult.financialHealth?.financialScore || 0}/100</span>
-                      </div>
+                  return (
+                    <div key={idx} className="bg-white ring-1 ring-slate-200 p-6 rounded-2xl shadow-sm flex flex-col justify-between">
                       <div>
-                        <p className="text-[10px] uppercase text-slate-400 font-bold">Model Pendapatan</p>
-                        <p className="text-sm font-medium text-slate-700">{currentAiResult.financialHealth?.revenueModelViability || '-'}</p>
-                      </div>
-                      <div>
-                        <p className="text-[10px] uppercase text-slate-400 font-bold">Burn Rate / Runway</p>
-                        <p className="text-sm font-medium text-slate-700">{currentAiResult.financialHealth?.burnRateOrRunwayAssessment || '-'}</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="pt-4 border-t border-slate-100 mt-auto">
-                    <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 flex items-center gap-1.5">
-                      <ShieldCheck size={14} className="text-emerald-500" /> Tanggapan Kurator
-                    </h4>
-                    {isEditing ? (
-                      <Textarea 
-                        value={financialNotes} 
-                        onChange={(e) => setFinancialNotes(e.target.value)} 
-                        placeholder="Validasi kebenaran omzet riil vs rekening koran pendaftar..."
-                        className="bg-indigo-50/40 border-indigo-100 text-xs h-24 rounded-xl" 
-                      />
-                    ) : (
-                      <div className="bg-slate-50 p-3 rounded-xl text-xs font-medium text-slate-700 min-h-[60px]">
-                        {financialNotes || <span className="italic text-slate-400">Belum ada catatan validasi keuangan.</span>}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="bg-white ring-1 ring-slate-200 p-6 rounded-2xl shadow-sm flex flex-col justify-between">
-                  <div>
-                    <h3 className="text-xs font-black uppercase text-amber-600 tracking-widest mb-4 flex items-center gap-2">
-                      <Landmark className="w-4 h-4"/> Investment Readiness (AI)
-                    </h3>
-                    <div className="space-y-3 mb-4">
-                      <div>
-                        <p className="text-[10px] uppercase text-slate-400 font-bold">Funding Stage</p>
-                        <p className="text-sm font-semibold text-slate-800">{currentAiResult.investmentReadiness?.currentFundingStage || '-'}</p>
-                      </div>
-                      <div>
-                        <p className="text-[10px] uppercase text-slate-400 font-bold">Instrumen Rekomendasi</p>
-                        <p className="text-sm font-semibold text-slate-800">{currentAiResult.investmentReadiness?.recommendedInstrument || '-'}</p>
-                      </div>
-                      <div>
-                        <p className="text-[10px] uppercase text-slate-400 font-bold">Daya Tarik Investor</p>
-                        <span className="inline-block text-xs font-bold px-2 py-0.5 rounded ring-1 bg-amber-50 text-amber-700 ring-amber-200">
-                          {currentAiResult.investmentReadiness?.investorAttractiveness || 'Angel/Seed'}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="pt-4 border-t border-slate-100 mt-auto">
-                    <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 flex items-center gap-1.5">
-                      <ShieldCheck size={14} className="text-emerald-500" /> Tanggapan Kurator
-                    </h4>
-                    {isEditing ? (
-                      <Textarea 
-                        value={investmentNotes} 
-                        onChange={(e) => setInvestmentNotes(e.target.value)} 
-                        placeholder="Berikan analisis kelayakan instrumen investasi..."
-                        className="bg-indigo-50/40 border-indigo-100 text-xs h-24 rounded-xl" 
-                      />
-                    ) : (
-                      <div className="bg-slate-50 p-3 rounded-xl text-xs font-medium text-slate-700 min-h-[60px]">
-                        {investmentNotes || <span className="italic text-slate-400">Belum ada catatan kesiapan investasi.</span>}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="bg-white ring-1 ring-slate-200 p-6 rounded-2xl shadow-sm md:col-span-2 lg:col-span-1 flex flex-col justify-between">
-                  <div>
-                    <h3 className="text-xs font-black uppercase text-blue-600 tracking-widest mb-4 flex items-center gap-2">
-                      <Users className="w-4 h-4"/> Team & Execution (AI)
-                    </h3>
-                    <div className="space-y-3 mb-4">
-                      <div>
-                        <p className="text-[10px] uppercase text-slate-400 font-bold">Founder-Market Fit</p>
-                        <p className="text-xs font-medium text-slate-700 leading-relaxed">{currentAiResult.teamAssessment?.founderMarketFit || '-'}</p>
-                      </div>
-                      <div>
-                        <p className="text-[10px] uppercase text-slate-400 font-bold mb-1.5">Identified Skill Gaps</p>
-                        <div className="flex flex-wrap gap-1">
-                          {(currentAiResult.teamAssessment?.identifiedSkillGaps || []).map((gap: string, i: number) => (
-                            <span key={i} className="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded ring-1 ring-slate-200">{gap}</span>
+                        <h3 className={`text-xs font-black uppercase ${textColor} tracking-widest mb-4 flex items-center gap-2`}>
+                          {IconComponent} {block.title}
+                        </h3>
+                        <div className="space-y-3 mb-4">
+                          {block.metrics.map((metric: any, mIdx: number) => (
+                            <div key={mIdx}>
+                              <p className="text-[10px] uppercase text-slate-400 font-bold mb-1">{metric.label}</p>
+                              <p className="text-sm font-semibold text-slate-800 leading-relaxed">{metric.value}</p>
+                            </div>
                           ))}
                         </div>
                       </div>
-                    </div>
-                  </div>
-                  <div className="pt-4 border-t border-slate-100 mt-auto">
-                    <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 flex items-center gap-1.5">
-                      <ShieldCheck size={14} className="text-emerald-500" /> Tanggapan Kurator
-                    </h4>
-                    {isEditing ? (
-                      <Textarea 
-                        value={teamNotes} 
-                        onChange={(e) => setTeamNotes(e.target.value)} 
-                        placeholder="Catat komitmen founder, coachability, serta soliditas tim..."
-                        className="bg-indigo-50/40 border-indigo-100 text-xs h-24 rounded-xl" 
-                      />
-                    ) : (
-                      <div className="bg-slate-50 p-3 rounded-xl text-xs font-medium text-slate-700 min-h-[60px]">
-                        {teamNotes || <span className="italic text-slate-400">Belum ada catatan kapabilitas tim.</span>}
+                      <div className="pt-4 border-t border-slate-100 mt-auto">
+                        <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 flex items-center gap-1.5">
+                          <ShieldCheck size={14} className="text-emerald-500" /> Tanggapan Kurator
+                        </h4>
+                        {isEditing ? (
+                          <Textarea 
+                            value={customBlockNotes[block.title] || ''} 
+                            onChange={(e) => setCustomBlockNotes(prev => ({...prev, [block.title]: e.target.value}))} 
+                            placeholder={`Berikan reviu kurator untuk aspek ${block.title}...`}
+                            className="bg-indigo-50/40 border-indigo-100 text-xs h-24 rounded-xl" 
+                          />
+                        ) : (
+                          <div className="bg-slate-50 p-3 rounded-xl text-xs font-medium text-slate-700 min-h-[60px]">
+                            {customBlockNotes[block.title] || <span className="italic text-slate-400">Belum ada catatan peninjau untuk aspek ini.</span>}
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                </div>
+                    </div>
+                  );
+                })}
 
-                <div className="bg-slate-900 text-white p-6 rounded-2xl shadow-md md:col-span-2 lg:col-span-2 flex flex-col justify-between relative overflow-hidden">
-                  <div className="absolute right-0 top-0 opacity-5 pointer-events-none">
-                    <FileText size={160} className="transform translate-x-8 -translate-y-8"/>
-                  </div>
-                  <div>
-                    <h3 className="text-xs font-black uppercase tracking-widest mb-4 flex items-center gap-2 text-indigo-300">
-                      <Search className="w-4 h-4"/> Document & File Insights (AI Verification)
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10 mb-4">
-                      <div>
-                        <p className="text-[10px] uppercase text-slate-400 font-bold mb-0.5">Kualitas Berkas</p>
-                        <p className="text-xs text-slate-200 font-semibold">{currentAiResult.fileAnalysisInsights?.documentQuality || '-'}</p>
-                        <p className="text-[10px] uppercase text-rose-300 font-bold mt-3 mb-0.5">Kesenjangan Data (Discrepancies)</p>
-                        <p className="text-xs text-rose-200 italic font-medium">{currentAiResult.fileAnalysisInsights?.discrepancies || 'Tidak ada kesenjangan data.'}</p>
-                      </div>
-                      <div>
-                        <p className="text-[10px] uppercase text-slate-400 font-bold mb-1">Temuan Kunci Dokumen</p>
-                        <ul className="space-y-1">
-                          {(currentAiResult.fileAnalysisInsights?.keyFindingsFromFiles || []).map((find: string, i: number) => (
-                            <li key={i} className="text-[11px] text-slate-300 flex items-start gap-1">
-                              <span className="text-indigo-400 mt-0.5">●</span> <span className="leading-tight">{find}</span>
-                            </li>
-                          ))}
-                        </ul>
+                {currentAiResult.fileAnalysisInsights && (
+                  <div className="bg-slate-900 text-white p-6 rounded-2xl shadow-md md:col-span-2 lg:col-span-2 flex flex-col justify-between relative overflow-hidden">
+                    <div className="absolute right-0 top-0 opacity-5 pointer-events-none">
+                      <FileText size={160} className="transform translate-x-8 -translate-y-8"/>
+                    </div>
+                    <div>
+                      <h3 className="text-xs font-black uppercase tracking-widest mb-4 flex items-center gap-2 text-indigo-300">
+                        <Search className="w-4 h-4"/> Document &amp; File Insights (AI Verification)
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10 mb-4">
+                        <div>
+                          <p className="text-[10px] uppercase text-slate-400 font-bold mb-0.5">Kualitas Berkas</p>
+                          <p className="text-xs text-slate-200 font-semibold">{currentAiResult.fileAnalysisInsights?.documentQuality || '-'}</p>
+                          <p className="text-[10px] uppercase text-rose-300 font-bold mt-3 mb-0.5">Kesenjangan Data (Discrepancies)</p>
+                          <p className="text-xs text-rose-200 italic font-medium">{currentAiResult.fileAnalysisInsights?.discrepancies || 'Tidak ada kesenjangan data.'}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] uppercase text-slate-400 font-bold mb-1">Temuan Kunci Dokumen</p>
+                          <ul className="space-y-1">
+                            {(currentAiResult.fileAnalysisInsights?.keyFindingsFromFiles || []).map((find: string, i: number) => (
+                              <li key={i} className="text-[11px] text-slate-300 flex items-start gap-1">
+                                <span className="text-indigo-400 mt-0.5">●</span> <span className="leading-tight">{find}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
                       </div>
                     </div>
+                    <div className="pt-4 border-t border-slate-800 relative z-10 mt-auto">
+                      <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 flex items-center gap-1.5">
+                        <ShieldCheck size={14} className="text-emerald-400" /> Hasil Konfirmasi Keabsahan Dokumen Fisik
+                      </h4>
+                      {isEditing ? (
+                        <Textarea 
+                          value={documentNotes} 
+                          onChange={(e) => setDocumentNotes(e.target.value)} 
+                          placeholder="Contoh: Kesesuaian berkas fisik NIB dan sertifikasi produk telah tervalidasi asli..."
+                          className="bg-slate-800 border-slate-700 text-white text-xs h-20 rounded-xl placeholder:text-slate-500 focus-visible:ring-indigo-500" 
+                        />
+                      ) : (
+                        <div className="bg-slate-800/60 p-3 rounded-xl text-xs font-medium text-slate-300 min-h-[50px]">
+                          {documentNotes || <span className="italic text-slate-500">Belum ada catatan validasi fisik berkas.</span>}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <div className="pt-4 border-t border-slate-800 relative z-10 mt-auto">
-                    <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 flex items-center gap-1.5">
-                      <ShieldCheck size={14} className="text-emerald-400" /> Hasil Konfirmasi Keabsahan Dokumen Fisik
-                    </h4>
-                    {isEditing ? (
-                      <Textarea 
-                        value={documentNotes} 
-                        onChange={(e) => setDocumentNotes(e.target.value)} 
-                        placeholder="Contoh: Kesesuaian berkas fisik NIB dan sertifikasi produk telah tervalidasi asli..."
-                        className="bg-slate-800 border-slate-700 text-white text-xs h-20 rounded-xl placeholder:text-slate-500 focus-visible:ring-indigo-500" 
-                      />
-                    ) : (
-                      <div className="bg-slate-800/60 p-3 rounded-xl text-xs font-medium text-slate-300 min-h-[50px]">
-                        {documentNotes || <span className="italic text-slate-500">Belum ada catatan validasi fisik berkas.</span>}
-                      </div>
-                    )}
-                  </div>
-                </div>
+                )}
               </div>
 
               {/* 3. PERFORMANCE DIMENSION RADAR AND CARDS LOCK MATRIX */}
@@ -787,7 +682,7 @@ export function CuratorAssessmentDetail({ data, availableTags = [], onClose, onS
                     <div className="w-10 h-10 bg-rose-100 text-rose-600 rounded-xl flex items-center justify-center shrink-0">
                       <AlertTriangle className="h-5 w-5"/>
                     </div>
-                    <h3 className="font-black text-slate-900 text-xl tracking-tight">Critical Risks & Mitigation Map (AI Assessment)</h3>
+                    <h3 className="font-black text-slate-900 text-xl tracking-tight">Critical Risks &amp; Mitigation Map (AI Assessment)</h3>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {currentAiResult.riskAssessment.criticalRisks.map((risk: string, idx: number) => (
@@ -827,6 +722,8 @@ export function CuratorAssessmentDetail({ data, availableTags = [], onClose, onS
                         title={rec.title} 
                         icon={Briefcase} 
                         content={rec.content}
+                        expandedSection={expandedSection}
+                        setExpandedSection={setExpandedSection}
                       />
                     ))}
                   </div>
@@ -887,7 +784,7 @@ export function CuratorAssessmentDetail({ data, availableTags = [], onClose, onS
             </div>
             <h3 className="text-xl font-black text-slate-900 mb-2">Finalisasi Penilaian?</h3>
             <p className="text-sm text-slate-500 font-medium mb-6 leading-relaxed">
-              Apakah Anda yakin ingin memfinalisasi data validasi untuk <strong>{namaUsaha}</strong>? Setelah difinalisasi, status peserta akan berubah menjadi "Selesai".
+              Apakah Anda yakin ingin memfinalisasi data validasi untuk <strong>{namaUsaha}</strong>? Setelah difinalisasi, status peserta akan berubah menjadi &quot;Selesai&quot;.
             </p>
             <div className="flex gap-3 w-full">
               <Button 

@@ -10,7 +10,7 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { LogOut, ShieldCheck, Search, Users, Activity, CheckCircle2, Clock, MapPin, Eye, Tag, X, Plus, Loader2, Edit3 } from 'lucide-react';
 
-import { CuratorAssessmentDetail } from '@/components/curator/CuratorAssessmentDetail';
+import { CuratorAssessmentDetail } from '@/app/components/curator/CuratorAssessmentDetail';
 
 interface CuratorSession {
   token: string;
@@ -71,7 +71,6 @@ export default function CuratorDashboard() {
           return { id: doc.id, ...docData, createdAt: dateStr };
         });
         
-        // Sekarang sorting dijamin aman tanpa menghasilkan NaN
         data.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         setAssessments(data);
 
@@ -137,9 +136,7 @@ export default function CuratorDashboard() {
   );
 
   const totalSubmissions = assessments.length;
-  // Hitung jumlah yang statusnya Selesai/Validated
   const validatedCount = assessments.filter(a => a.status === 'Curator_Validated').length;
-  // Hitung jumlah yang masih pending / draft
   const pendingCount = totalSubmissions - validatedCount;
 
   if (!session) return null;
@@ -374,7 +371,7 @@ export default function CuratorDashboard() {
             </div>
 
             <Button className="w-full mt-6 h-12 rounded-xl font-bold bg-slate-900 text-white" onClick={() => setIsManageTagsOpen(false)}>
-              Selesai & Tutup
+              Selesai &amp; Tutup
             </Button>
           </div>
         </div>

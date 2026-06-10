@@ -1,8 +1,9 @@
+// src/app/page.tsx
 'use client';
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, onSnapshot } from 'firebase/firestore'; // UPGRADE: Menggunakan onSnapshot
 import { db } from '@/lib/firebase';
 import { useCuration } from '@/hooks/useCuration';
 import { CurationLanding } from '@/app/components/curation/CurationLanding';
@@ -17,39 +18,48 @@ export default function Home() {
   
   const [dbHistory, setDbHistory] = useState<CurationHistory[]>([]);
 
-  // 1. Tarik Data Riwayat dari Database
+  // 1. Tarik Data Riwayat dari Database secara REAL-TIME
   useEffect(() => {
-    const fetchUserHistory = async () => {
-      if (!user?.email) return;
-      try {
-        const q = query(
-          collection(db, 'assessments'),
-          where('email', '==', user.email)
-        );
-        const snap = await getDocs(q);
-        const historyData: CurationHistory[] = [];
-        
-        snap.forEach((doc) => {
-          const data = doc.data();
-          historyData.push({
-            id: doc.id,
-            date: data.createdAt,
-            trackType: data.trackType,
-            namaUsaha: data.namaUsaha,
-            score: data.score,
-            data: data.formData,
-            result: data.aiResult,
-          });
-        });
-        
-        setDbHistory(historyData);
-      } catch (error) {
-        console.error("Gagal mengambil riwayat dari database:", error);
-      }
-    };
+    // Jika tidak ada user login, pastikan history kosong
+    if (!user) {
+      setDbHistory([]);
+      return;
+    }
 
-    fetchUserHistory();
-  }, [user?.email]);
+    // Menggunakan query berdasarkan userId (UID Google yang sangat aman)
+    // yang sudah kita atur untuk disimpan di Cloud Function sebelumnya.
+    const q = query(
+      collection(db, 'assessments'),
+      where('userId', '==', user.uid) 
+    );
+
+    // onSnapshot mendengarkan perubahan (Live Sync). 
+    // Jika AI selesai memproses di latar belakang, daftar ini akan otomatis berkedip dan bertambah!
+    const unsubscribe = onSnapshot(q, (snap) => {
+      const historyData: CurationHistory[] = [];
+      
+      snap.forEach((doc) => {
+        const data = doc.data();
+        historyData.push({
+          id: doc.id,
+          // Handle format tanggal secara aman untuk data baru (timestamp) maupun lokal lama
+          date: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : new Date().toISOString(),
+          trackType: data.trackType || 'Evaluasi',
+          namaUsaha: data.namaUsaha || 'Tanpa Nama',
+          score: data.score || 0,
+          data: data.formData,
+          result: data.aiResult,
+        });
+      });
+      
+      setDbHistory(historyData);
+    }, (error) => {
+      console.error("Gagal mengambil riwayat real-time dari database:", error);
+    });
+
+    // Cleanup memori listener saat berpindah halaman
+    return () => unsubscribe();
+  }, [user]); // Eksekusi ulang jika state user berubah
 
   // 2. TAMPILKAN DASHBOARD LOKAL JIKA USER BARU SAJA MENYELESAIKAN ASESMEN BARU
   // (Ini mempertahankan fungsi sistem lama agar tidak patah saat form baru disubmit)
@@ -76,6 +86,7 @@ export default function Home() {
     if (!exists) combinedHistory.push(localItem);
   });
 
+  // Urutkan selalu dari yang paling baru di paling atas
   combinedHistory.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   // 4. HANDLER KLIK RIWAYAT (Menggunakan Shareable Link Baru)
@@ -102,7 +113,7 @@ export default function Home() {
       <CurationLanding
         onStart={() => router.push('/assessment')}
         history={combinedHistory}
-        onLoadHistory={handleLoadHistory} // Panggil Handler Baru di sini
+        onLoadHistory={handleLoadHistory}
         user={user}
         role={role}
         onLogin={loginWithGoogle}

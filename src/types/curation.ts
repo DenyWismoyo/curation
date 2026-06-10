@@ -99,6 +99,7 @@ export interface AiPromptConfig {
   gradingStrictness?: 'supportive' | 'standard' | 'strict';
   customReadinessTiers?: string[];
   riskFramework?: string;
+  mediaAnalysisFocus?: 'pitch-delivery' | 'ui-ux-design' | 'product-demo';
   reportTone?: 'investigative' | 'consultative' | 'academic';
 }
 
