@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCuration } from '@/hooks/useCuration';
-import { DynamicTrackSelector } from '@/components/curation/DynamicTrackSelector';
+import { DynamicTrackSelector } from '@/app/components/curation/DynamicTrackSelector';
 
 export default function AssessmentIndexPage() {
   const router = useRouter();

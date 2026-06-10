@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useCuration } from '@/hooks/useCuration';
-import { CurationLanding } from '@/components/curation/CurationLanding';
-import { CurationDashboard } from '@/components/curation/CurationDashboard';
+import { CurationLanding } from '@/app/components/curation/CurationLanding';
+import { CurationDashboard } from '@/app/components/curation/CurationDashboard';
 import { useAuth } from '@/contexts/AuthContext';
 import { CurationHistory } from '@/types/curation';
 

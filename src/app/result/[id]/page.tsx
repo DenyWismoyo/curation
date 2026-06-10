@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { CurationDashboard } from '@/components/curation/CurationDashboard';
+import { CurationDashboard } from '@/app/components/curation/CurationDashboard';
 import { Loader2, Share2, Copy, CheckCircle2, Home } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 

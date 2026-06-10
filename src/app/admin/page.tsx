@@ -11,7 +11,7 @@ import {
   Search, Users, Activity, Target, 
   Download, ArrowRight, CheckCircle2, Clock, Edit3, Building2
 } from 'lucide-react';
-import { AdminAssessmentDetail } from '@/components/admin/AdminAssessmentDetail';
+import { AdminAssessmentDetail } from '@/app/components/admin/AdminAssessmentDetail';
 
 export interface AssessmentDoc {
   id: string;

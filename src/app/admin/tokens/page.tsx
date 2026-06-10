@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { KeyRound, Download, Plus, Building2, Users, Sparkles, Zap, Eye, X, Copy, Check, Search, ShieldCheck, UserCheck, Trash2 } from 'lucide-react';
-import { AdminTokenExportPDF } from '@/components/admin/AdminTokenExportPDF';
+import { AdminTokenExportPDF } from '@/app/components/admin/AdminTokenExportPDF';
 import Link from 'next/link';
 
 // === INTERFACES ===

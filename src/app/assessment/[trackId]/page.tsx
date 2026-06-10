@@ -3,8 +3,8 @@
 
 import React, { use, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { DynamicWizard } from '@/components/curation/DynamicWizard';
-import { CurationDashboard } from '@/components/curation/CurationDashboard';
+import { DynamicWizard } from '@/app/components/curation/DynamicWizard';
+import { CurationDashboard } from '@/app/components/curation/CurationDashboard';
 import { useCuration } from '@/hooks/useCuration';
 
 export default function AssessmentPage({ params }: { params: Promise<{ trackId: string }> }) {
