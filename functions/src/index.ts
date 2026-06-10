@@ -122,10 +122,9 @@ export const processCurationAssessment = onCall(
             displayName: "Dokumen Lampiran Asesmen"
           });
           
-          // MEKANISME POLLING: Menunggu pemrosesan internal Google AI File Manager (Sangat krusial untuk file Video dan Audio)
+          // MEKANISME POLLING: Menunggu pemrosesan internal Google AI File Manager
           let fileState = await fileManager.getFile(uploadResult.file.name);
           while (fileState.state === "PROCESSING") {
-            // Berikan jeda waktu 5 detik sebelum mengecek ulang status file
             await new Promise((resolve) => setTimeout(resolve, 5000));
             fileState = await fileManager.getFile(uploadResult.file.name);
           }
@@ -165,29 +164,24 @@ export const processCurationAssessment = onCall(
       const aiPersona = aiPromptConfig?.aiPersona || "AHLI ANALISIS DAN DUE DILIGENCE KELAS DUNIA";
       const assessmentGoal = aiPromptConfig?.assessmentGoal || "Melakukan evaluasi kelayakan yang ketat, menganalisis potensi, dan memberikan rekomendasi strategis.";
 
-      // 1. Grading Strictness
       const strictness = aiPromptConfig?.gradingStrictness || 'standard';
       let strictnessInstruction = "Lakukan penilaian secara objektif dan berimbang sesuai standar industri.";
       if (strictness === 'strict') strictnessInstruction = "Lakukan penilaian SANGAT KETAT selevel audit Venture Capital. Bersikaplah skeptis, cari celah fatal, dan jangan ragu memberikan skor rendah (di bawah 50) jika bukti tidak solid.";
       if (strictness === 'supportive') strictnessInstruction = "Lakukan penilaian yang suportif dan edukatif. Apresiasi usaha, berikan skor yang memotivasi, dan fokus pada potensi perbaikan.";
 
-      // 2. Report Tone
       const tone = aiPromptConfig?.reportTone || 'consultative';
       let toneInstruction = "Gaya bahasa: Konsultatif & Solutif (seperti mentor yang membimbing).";
       if (tone === 'investigative') toneInstruction = "Gaya bahasa: Investigatif & Analitis (tajam, kritis, langsung pada intinya, tanpa basa-basi).";
       if (tone === 'academic') toneInstruction = "Gaya bahasa: Akademis Formal (objektif, terstruktur, berbasis data dan argumen logis).";
 
-      // 3. Readiness Tiers
       const customTiers = aiPromptConfig?.customReadinessTiers || [];
       const tiersString = customTiers.length > 0 
         ? customTiers.map((t: string) => `"${t}"`).join(', ') 
         : '"Pra-Inkubasi", "Siap Akselerasi", "Lulus Investasi"';
 
-      // 4. Risk Framework
       const riskFramework = aiPromptConfig?.riskFramework || '';
       const riskInstruction = riskFramework ? `FOKUS IDENTIFIKASI RISIKO WAJIB: ${riskFramework}` : "Identifikasi risiko operasional, finansial, dan pasar secara umum.";
 
-      // --- EKSTRAKSI BLOK METRIK ---
       const targetAnalysisBlocks = aiPromptConfig?.expectedAnalysisBlocks && aiPromptConfig.expectedAnalysisBlocks.length > 0
         ? aiPromptConfig.expectedAnalysisBlocks.map((block: string) => `- ${block}`).join("\n")
         : "- Posisi Pasar (Fokus Indikator: Niche Pasar, Keunggulan)\n- Kesehatan Finansial (Fokus Indikator: Pendapatan, Runway)\n- Kapabilitas Tim (Fokus Indikator: Keahlian, Hambatan)";
@@ -237,7 +231,17 @@ ATURAN MULTLAK:
       const model = genAI.getGenerativeModel({
         model: selectedModelName,
         systemInstruction: systemPrompt,
-        tools: [{ googleSearch: {} }], // MENGAKTIFKAN ENTERPRISE GOOGLE SEARCH GROUNDING
+        // PERBAIKAN: Menggunakan sintaks googleSearchRetrieval dan memaksa bypass TS lint menggunakan `as any`
+        tools: [
+          {
+            googleSearchRetrieval: {
+              dynamicRetrievalConfig: {
+                mode: "MODE_DYNAMIC",
+                dynamicThreshold: 0.3,
+              },
+            },
+          } as any
+        ],
         generationConfig: {
           maxOutputTokens: 8192,
           responseMimeType: "application/json",
@@ -388,7 +392,6 @@ ATURAN MULTLAK:
         const newAssessmentRef = db.collection("assessments").doc();
         assessmentId = newAssessmentRef.id;
         
-        // PENTING: MENYIMPAN userId (UID GOOGLE) KE DATABASE
         transaction.set(newAssessmentRef, {
           userId: userId, 
           userEmail: formData.email || userEmail,

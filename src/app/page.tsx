@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { collection, query, where, onSnapshot } from 'firebase/firestore'; // UPGRADE: Menggunakan onSnapshot
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useCuration } from '@/hooks/useCuration';
 import { CurationLanding } from '@/app/components/curation/CurationLanding';
@@ -18,23 +18,23 @@ export default function Home() {
   
   const [dbHistory, setDbHistory] = useState<CurationHistory[]>([]);
 
-  // 1. Tarik Data Riwayat dari Database secara REAL-TIME
+  // 1. Tarik Data Riwayat dari Database secara REAL-TIME berdasarkan UID (userId)
   useEffect(() => {
-    // Jika tidak ada user login, pastikan history kosong
-    if (!user) {
+    // Jika belum login, pastikan riwayat kosong
+    if (!user?.uid) {
       setDbHistory([]);
       return;
     }
 
-    // Menggunakan query berdasarkan userId (UID Google yang sangat aman)
-    // yang sudah kita atur untuk disimpan di Cloud Function sebelumnya.
+    // KUNCI UTAMA: Kita query menggunakan 'userId' agar benar-benar melekat dengan Google Auth UID.
+    // Ini menghilangkan risiko gagal muat jika user salah mengetik email di form.
     const q = query(
       collection(db, 'assessments'),
-      where('userId', '==', user.uid) 
+      where('userId', '==', user.uid)
     );
 
-    // onSnapshot mendengarkan perubahan (Live Sync). 
-    // Jika AI selesai memproses di latar belakang, daftar ini akan otomatis berkedip dan bertambah!
+    // onSnapshot mendengarkan perubahan secara Live. Jika AI selesai di latar belakang, 
+    // atau jika Anda mengerjakan di Localhost, data akan otomatis muncul di Produksi.
     const unsubscribe = onSnapshot(q, (snap) => {
       const historyData: CurationHistory[] = [];
       
@@ -42,13 +42,13 @@ export default function Home() {
         const data = doc.data();
         historyData.push({
           id: doc.id,
-          // Handle format tanggal secara aman untuk data baru (timestamp) maupun lokal lama
-          date: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : new Date().toISOString(),
+          // Handle format tanggal secara aman untuk data baru (timestamp) maupun data lama
+          date: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : (data.createdAt || new Date().toISOString()),
           trackType: data.trackType || 'Evaluasi',
           namaUsaha: data.namaUsaha || 'Tanpa Nama',
           score: data.score || 0,
           data: data.formData,
-          result: data.aiResult,
+          result: data.aiResult || data.originalAiResult,
         });
       });
       
@@ -59,10 +59,9 @@ export default function Home() {
 
     // Cleanup memori listener saat berpindah halaman
     return () => unsubscribe();
-  }, [user]); // Eksekusi ulang jika state user berubah
+  }, [user]);
 
   // 2. TAMPILKAN DASHBOARD LOKAL JIKA USER BARU SAJA MENYELESAIKAN ASESMEN BARU
-  // (Ini mempertahankan fungsi sistem lama agar tidak patah saat form baru disubmit)
   if (state.viewState === 'dashboard' && state.aiResult) {
     return (
       <CurationDashboard
@@ -77,7 +76,7 @@ export default function Home() {
     );
   }
 
-  // 3. Gabungkan Riwayat (Mencegah Duplikasi)
+  // 3. Gabungkan Riwayat Local Storage & DB (Mencegah Duplikasi Tampilan)
   const combinedHistory = [...dbHistory];
   state.history.forEach((localItem) => {
     const exists = combinedHistory.find(
@@ -86,7 +85,7 @@ export default function Home() {
     if (!exists) combinedHistory.push(localItem);
   });
 
-  // Urutkan selalu dari yang paling baru di paling atas
+  // Urutkan selalu dari yang paling baru di paling atas (Di-handle oleh Javascript agar tidak terkena error Firestore Missing Index)
   combinedHistory.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   // 4. HANDLER KLIK RIWAYAT (Menggunakan Shareable Link Baru)
@@ -115,7 +114,7 @@ export default function Home() {
         history={combinedHistory}
         onLoadHistory={handleLoadHistory}
         user={user}
-        role={role}
+        role={role as any}
         onLogin={loginWithGoogle}
         onLogout={logout}
       />
