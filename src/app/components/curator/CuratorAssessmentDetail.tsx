@@ -8,8 +8,7 @@ import {
   ShieldCheck, Loader2, MapPin, MessageCircle, Check
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
-// IMPORT KOMPONEN UNIVERSAL (Sesuaikan path jika perlu)
+import { CuratorExportPDF } from './PDFReportTemplate';
 import { UniversalAssessmentView } from '@/app/components/shared/UniversalAssessmentView';
 
 interface CuratorAssessmentDetailProps {
@@ -165,7 +164,7 @@ export function CuratorAssessmentDetail({ data, availableTags = [], onClose, onS
   const handleShareWhatsApp = () => {
     const phone = formData?.whatsapp || '';
     const formattedPhone = phone.startsWith('0') ? '62' + phone.substring(1) : phone;
-    const textMessage = `Halo tim *${namaUsaha}*, 👋\n\nTerima kasih telah mengikuti tahapan Kurasi bersama kami. Berikut ringkasan hasil akhir:\n\n📊 *Skor Kesiapan Akhir:* ${curatorScore}/100\n📈 *Level Kesiapan:* ${curatorLevel}\n\n*📝 Catatan Kurator:*\n_"${curatorNotes || 'Terus tingkatkan kapasitas bisnis Anda.'}"_\n\nSalam hangat,\n*Tim Penilai*`;
+    const textMessage = `Halo tim *${namaUsaha}*,\n\nTerima kasih telah mengikuti tahapan Kurasi bersama kami. Berikut ringkasan hasil akhir:\n\n*Skor Kesiapan Akhir:* ${curatorScore}/100\n*Level Kesiapan:* ${curatorLevel}\n\n*Catatan Kurator:*\n_"${curatorNotes || 'Terus tingkatkan kapasitas bisnis Anda.'}"_\n\nSalam hangat,\n*Tim Penilai*`;
     window.open(`https://wa.me/${formattedPhone}?text=${encodeURIComponent(textMessage)}`, '_blank');
   };
 
@@ -206,7 +205,6 @@ export function CuratorAssessmentDetail({ data, availableTags = [], onClose, onS
 
         {/* AREA KERJA KONTEN */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 custom-scrollbar">
-          
           {errorMsg && (
             <div className="max-w-6xl mx-auto mb-6 bg-rose-50 text-rose-600 p-4 rounded-2xl font-bold flex items-center gap-3 ring-1 ring-rose-200">
               <AlertTriangle className="w-5 h-5 shrink-0"/> {errorMsg}
@@ -243,6 +241,21 @@ export function CuratorAssessmentDetail({ data, availableTags = [], onClose, onS
                       {autoSaveStatus === 'saved' && <span className="text-emerald-500 flex items-center gap-1"><Check className="w-3 h-3"/> Draf Tersimpan</span>}
                     </div>
                   )}
+                  
+                  {/* Ekspor Terintegrasi State Realtime Kurator */}
+                  <CuratorExportPDF 
+                    trackType={trackType}
+                    formData={formData}
+                    aiResult={currentAiResult}
+                    namaUsaha={namaUsaha}
+                    liveData={{
+                      curatorScore,
+                      curatorLevel,
+                      curatorRoute,
+                      curatorNotes
+                    }}
+                  />
+
                   <Button onClick={handleShareWhatsApp} variant="outline" className="bg-white hover:bg-emerald-50 text-emerald-600 border-emerald-200 rounded-xl font-bold h-10 px-4 shadow-sm">
                     <MessageCircle className="w-4 h-4 sm:mr-2" /> <span className="hidden sm:inline">Bagikan</span>
                   </Button>
@@ -291,7 +304,6 @@ export function CuratorAssessmentDetail({ data, availableTags = [], onClose, onS
               </div>
             </div>
           )}
-
         </div>
       </div>
 

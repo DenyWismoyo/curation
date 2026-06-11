@@ -71,10 +71,14 @@ export default function SharedResultPage() {
     <div className="relative">
       {/* Komponen Dasbor yang sudah dikirim prop programName (corporateEntity) */}
       <CurationDashboard
+        assessmentId={params.id as string} // <--- TAMBAHKAN BARIS INI
         trackType={data.trackType || 'Model Bisnis'}
         formData={data.formData}
         aiResult={data.aiResult}
         programName={data.corporateEntity} 
+        // PASSING STATE MONETISASI
+        documentGenerationQuota={data.documentGenerationQuota}
+        hasPaidForDocument={data.hasPaidForDocument}
         onRestart={() => router.push('/')} 
       />
     </div>

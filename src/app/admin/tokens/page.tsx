@@ -7,8 +7,14 @@ import { db } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
-import { KeyRound, Download, Plus, Building2, Users, Sparkles, Zap, Eye, X, Copy, Check, Search, ShieldCheck, UserCheck, Trash2, Edit3, Save } from 'lucide-react';
+import { 
+  KeyRound, Download, Plus, Building2, Users, Sparkles, Zap, 
+  Eye, X, Copy, Check, Search, ShieldCheck, UserCheck, Trash2, Edit3, FileText 
+} from 'lucide-react';
 import { AdminTokenExportPDF } from '@/app/components/admin/AdminTokenExportPDF';
+
+// IMPORT DOCUMENT PRESETS (Data Template Word)
+import { DocumentPresets } from '@/data/documentPromptTemplates';
 
 // === INTERFACES ===
 interface CorporateBatch {
@@ -18,12 +24,13 @@ interface CorporateBatch {
   totalTokens: number;
   usedCount: number;
   createdAt: string;
-  allowedTemplates?: string[]; // <-- Field baru untuk filter template
+  allowedTemplates?: string[]; 
+  allowedDocumentTemplates?: string[]; 
   tokens: Record<string, { isUsed: boolean; usedAt: string | null; usedByNamaUsaha: string | null }>;
 }
 
 interface CuratorToken {
-  id: string; // Token kode akses
+  id: string; 
   programName: string;
   createdAt: string;
   role: string;
@@ -40,13 +47,15 @@ export default function TokenManagerPage() {
   const [loading, setLoading] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
 
-  // State Form Templates (Untuk Filter)
+  // State Form Templates & Document Templates (Untuk Filter)
   const [availableTemplates, setAvailableTemplates] = useState<FormTemplateLight[]>([]);
   const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
+  const [selectedDocTemplates, setSelectedDocTemplates] = useState<string[]>([]);
 
   // State Edit Allowed Templates di Table
   const [editingBatchId, setEditingBatchId] = useState<string | null>(null);
   const [editingAllowedTemplates, setEditingAllowedTemplates] = useState<string[]>([]);
+  const [editingDocTemplates, setEditingDocTemplates] = useState<string[]>([]);
   const [isUpdatingTemplates, setIsUpdatingTemplates] = useState(false);
 
   // State Token Peserta (Batch)
@@ -70,21 +79,18 @@ export default function TokenManagerPage() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      // 1. Fetch Form Templates
       const qTemplates = query(collection(db, 'form_templates'));
       const snapTemplates = await getDocs(qTemplates);
       const dataTemplates = snapTemplates.docs
         .map(d => ({ id: d.id, trackName: d.data().trackName, isActive: d.data().isActive } as FormTemplateLight))
-        .filter(t => t.isActive); // Hanya ambil yang aktif
+        .filter(t => t.isActive); 
       setAvailableTemplates(dataTemplates);
 
-      // 2. Fetch Peserta Batches
       const qBatch = query(collection(db, 'corporate_tokens'), orderBy('createdAt', 'desc'));
       const snapBatch = await getDocs(qBatch);
       const dataBatch = snapBatch.docs.map(d => ({ id: d.id, ...d.data() } as CorporateBatch));
       setBatches(dataBatch);
 
-      // 3. Fetch Curator Tokens
       const qCurator = query(collection(db, 'curator_tokens'), orderBy('createdAt', 'desc'));
       const snapCurator = await getDocs(qCurator);
       const dataCurator = snapCurator.docs.map(d => ({ id: d.id, ...d.data() } as CuratorToken));
@@ -98,7 +104,6 @@ export default function TokenManagerPage() {
 
   useEffect(() => { fetchData(); }, []);
 
-  // Mengekstrak nama-nama program/entitas yang unik dari data batch peserta
   const uniquePrograms = Array.from(new Set(batches.map(b => b.corporateName)));
 
   // === HANDLER TOKEN PESERTA ===
@@ -122,17 +127,19 @@ export default function TokenManagerPage() {
         totalTokens: qty,
         usedCount: 0,
         createdAt: new Date().toISOString(),
-        allowedTemplates: selectedTemplates, // <-- Simpan pilihan filter template
+        allowedTemplates: selectedTemplates, 
+        allowedDocumentTemplates: selectedDocTemplates,
         tokens: newTokens
       };
 
       await setDoc(doc(db, 'corporate_tokens', cleanCorpId), batchData);
       setBatches([{ id: cleanCorpId, ...batchData } as CorporateBatch, ...batches]);
-      alert(`Berhasil! 1 Batch dengan ${qty} Token (${modelType.toUpperCase()}) untuk ${corporateName} dibuat.`);
+      alert(`Berhasil! Batch untuk ${corporateName} dibuat.`);
       
       setCorporateName('');
       setCorpId('');
-      setSelectedTemplates([]); // Reset pilihan
+      setSelectedTemplates([]); 
+      setSelectedDocTemplates([]); 
     } catch (error) {
       console.error("Gagal generate token:", error);
       alert("Terjadi kesalahan sistem.");
@@ -146,14 +153,18 @@ export default function TokenManagerPage() {
     setIsUpdatingTemplates(true);
     try {
       await updateDoc(doc(db, 'corporate_tokens', batchId), {
-        allowedTemplates: editingAllowedTemplates
+        allowedTemplates: editingAllowedTemplates,
+        allowedDocumentTemplates: editingDocTemplates 
       });
-      // Update state lokal
-      setBatches(prev => prev.map(b => b.id === batchId ? { ...b, allowedTemplates: editingAllowedTemplates } : b));
+      setBatches(prev => prev.map(b => b.id === batchId ? { 
+        ...b, 
+        allowedTemplates: editingAllowedTemplates, 
+        allowedDocumentTemplates: editingDocTemplates 
+      } : b));
       setEditingBatchId(null);
-      alert('Akses form berhasil diperbarui!');
+      alert('Hak akses berhasil diperbarui!');
     } catch (error) {
-      console.error("Gagal update allowedTemplates:", error);
+      console.error("Gagal update templates:", error);
       alert("Terjadi kesalahan saat memperbarui akses.");
     } finally {
       setIsUpdatingTemplates(false);
@@ -162,7 +173,7 @@ export default function TokenManagerPage() {
 
   // === HANDLER TOKEN KURATOR ===
   const generateCuratorToken = async () => {
-    const code = curatorCode.trim().toUpperCase();
+    const code = curatorCode.trim().toUpperCase().replace(/\s/g, '-');
     const program = curatorProgram.trim();
     if (!code || code.length < 5) return alert("Kode Kurator minimal 5 karakter.");
     if (!program) return alert("Silakan pilih Nama Program/Entitas terlebih dahulu.");
@@ -207,7 +218,7 @@ export default function TokenManagerPage() {
     }
   };
 
-  // === UTILS ===
+  // === UTILITY FUNCTIONS ===
   const exportTokensToCSV = (batchId: string, batchData: CorporateBatch) => {
     const tokensArr = Object.entries(batchData.tokens);
     const csvContent = [
@@ -223,7 +234,7 @@ export default function TokenManagerPage() {
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.setAttribute('download', `Token_${batchData.modelType.toUpperCase()}_${batchId}_${batchData.corporateName}.csv`);
+    link.setAttribute('download', `Token_${batchData.modelType.toUpperCase()}_${batchId}_${batchData.corporateName.replace(/\s+/g, '_')}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -260,28 +271,14 @@ export default function TokenManagerPage() {
           </p>
         </div>
         <div className="flex items-center gap-2 bg-white p-1.5 rounded-2xl ring-1 ring-slate-200 shadow-sm shrink-0">
-          <button 
-            onClick={() => setActiveTab('peserta')} 
-            className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${activeTab === 'peserta' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-500 hover:bg-slate-50'}`}
-          >
-            <Users className="w-4 h-4"/> Peserta
-          </button>
-          <button 
-            onClick={() => setActiveTab('kurator')} 
-            className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${activeTab === 'kurator' ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-500 hover:bg-slate-50'}`}
-          >
-            <UserCheck className="w-4 h-4"/> Kurator
-          </button>
+          <button onClick={() => setActiveTab('peserta')} className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${activeTab === 'peserta' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-500 hover:bg-slate-50'}`}><Users className="w-4 h-4"/> Peserta</button>
+          <button onClick={() => setActiveTab('kurator')} className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${activeTab === 'kurator' ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-500 hover:bg-slate-50'}`}><UserCheck className="w-4 h-4"/> Kurator</button>
         </div>
       </div>
 
-      {/* ========================================= */}
-      {/* TAB 1: MANAJEMEN TOKEN PESERTA (BATCH B2B)  */}
-      {/* ========================================= */}
       {activeTab === 'peserta' && (
         <div className="space-y-6 animate-in fade-in duration-300">
           
-          {/* Panel Generate Batch Peserta */}
           <Card className="p-6 sm:p-8 bg-white rounded-3xl shadow-sm border-none ring-1 ring-slate-200 flex flex-col gap-5">
             <div className="flex flex-col md:flex-row items-end gap-5">
               <div className="space-y-2 flex-1 w-full">
@@ -298,160 +295,146 @@ export default function TokenManagerPage() {
               </div>
             </div>
 
-            {/* SEKSI PILIH TEMPLATE UNTUK BATCH INI */}
+            {/* FILTER 1: AKSES MODUL ASESMEN */}
             <div className="pt-4 border-t border-slate-100 space-y-3">
               <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest flex items-center justify-between">
-                <span>Akses Form Template (Modul Asesmen)</span>
+                <span>1. Akses Form Modul Asesmen</span>
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {availableTemplates.length === 0 ? (
-                  <p className="text-xs text-slate-400 italic">Belum ada template aktif di database.</p>
-                ) : (
-                  availableTemplates.map(tpl => (
-                    <label key={tpl.id} className={`flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all ${selectedTemplates.includes(tpl.id) ? 'border-indigo-600 bg-indigo-50/50' : 'border-slate-200 bg-white hover:border-indigo-200'}`}>
-                      <input 
-                        type="checkbox" 
-                        className="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500"
-                        checked={selectedTemplates.includes(tpl.id)}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setSelectedTemplates([...selectedTemplates, tpl.id]);
-                          } else {
-                            setSelectedTemplates(selectedTemplates.filter(id => id !== tpl.id));
-                          }
-                        }}
-                      />
-                      <span className={`text-sm font-bold ${selectedTemplates.includes(tpl.id) ? 'text-indigo-900' : 'text-slate-700'}`}>
-                        {tpl.trackName}
-                      </span>
-                    </label>
-                  ))
-                )}
+                {availableTemplates.map(tpl => (
+                  <label key={tpl.id} className={`flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all ${selectedTemplates.includes(tpl.id) ? 'border-indigo-600 bg-indigo-50/50' : 'border-slate-200 bg-white hover:border-indigo-200'}`}>
+                    <input type="checkbox" className="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500" checked={selectedTemplates.includes(tpl.id)} onChange={(e) => { if (e.target.checked) setSelectedTemplates([...selectedTemplates, tpl.id]); else setSelectedTemplates(selectedTemplates.filter(id => id !== tpl.id)); }} />
+                    <span className={`text-sm font-bold ${selectedTemplates.includes(tpl.id) ? 'text-indigo-900' : 'text-slate-700'}`}>{tpl.trackName}</span>
+                  </label>
+                ))}
               </div>
-              <p className="text-[10px] text-slate-400 font-medium mt-1">
-                Jika tidak ada modul yang dipilih, peserta akan dapat mengakses <strong>Semua Modul Asesmen</strong> yang aktif.
-              </p>
+            </div>
+
+            {/* FILTER 2: AKSES TEMPLATE DOKUMEN (WORD) */}
+            <div className="pt-4 border-t border-slate-100 space-y-3">
+              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest flex items-center justify-between">
+                <span>2. Akses Template Dokumen AI (Word)</span>
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {DocumentPresets.map(docTpl => (
+                  <label key={docTpl.id} className={`flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all ${selectedDocTemplates.includes(docTpl.id) ? 'border-emerald-600 bg-emerald-50/50' : 'border-slate-200 bg-white hover:border-emerald-200'}`}>
+                    <input type="checkbox" className="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500" checked={selectedDocTemplates.includes(docTpl.id)} onChange={(e) => { if (e.target.checked) setSelectedDocTemplates([...selectedDocTemplates, docTpl.id]); else setSelectedDocTemplates(selectedDocTemplates.filter(id => id !== docTpl.id)); }} />
+                    <div className="flex flex-col">
+                      <span className={`text-sm font-bold ${selectedDocTemplates.includes(docTpl.id) ? 'text-emerald-900' : 'text-slate-700'}`}>{docTpl.name}</span>
+                    </div>
+                  </label>
+                ))}
+              </div>
+              <p className="text-[10px] text-slate-400 font-medium mt-1">Jika tidak dicentang sama sekali, peserta program ini bisa mengakses <strong>Semua Dokumen</strong>. Centang untuk membatasi tipe dokumen yang bisa dibuat oleh peserta.</p>
             </div>
 
             <div className="flex flex-col md:flex-row items-center justify-between gap-5 pt-4 border-t border-slate-100">
               <div className="space-y-2 w-full md:w-auto">
                 <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Pilih Mesin AI (Model)</label>
                 <div className="flex gap-3">
-                  <button 
-                    onClick={() => setModelType('flash')}
-                    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border-2 transition-all ${modelType === 'flash' ? 'border-indigo-600 bg-indigo-50 text-indigo-700' : 'border-slate-200 bg-white text-slate-500 hover:border-indigo-300'}`}
-                  >
-                    <Zap className="w-4 h-4" /> AI Flash (Standar)
-                  </button>
-                  <button 
-                    onClick={() => setModelType('pro')}
-                    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border-2 transition-all ${modelType === 'pro' ? 'border-amber-500 bg-amber-50 text-amber-700' : 'border-slate-200 bg-white text-slate-500 hover:border-amber-300'}`}
-                  >
-                    <Sparkles className="w-4 h-4" /> AI Pro (Premium)
-                  </button>
+                  <button onClick={() => setModelType('flash')} className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border-2 transition-all ${modelType === 'flash' ? 'border-indigo-600 bg-indigo-50 text-indigo-700' : 'border-slate-200 bg-white text-slate-500 hover:border-indigo-300'}`}><Zap className="w-4 h-4" /> AI Flash (Standar)</button>
+                  <button onClick={() => setModelType('pro')} className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border-2 transition-all ${modelType === 'pro' ? 'border-amber-500 bg-amber-50 text-amber-700' : 'border-slate-200 bg-white text-slate-500 hover:border-amber-300'}`}><Sparkles className="w-4 h-4" /> AI Pro (Premium)</button>
                 </div>
               </div>
               <Button onClick={generateCorporateBatch} disabled={isGenerating} className="w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 h-12 px-8 rounded-xl font-bold shadow-lg shadow-indigo-200">
-                <Plus className="w-4 h-4 mr-2" /> {isGenerating ? 'Memproses JSON...' : 'Buat Batch Baru'}
+                <Plus className="w-4 h-4 mr-2" /> {isGenerating ? 'Memproses...' : 'Buat Batch Baru'}
               </Button>
             </div>
           </Card>
 
-          {/* Tabel Data Batch Peserta */}
           <Card className="bg-white rounded-3xl overflow-hidden shadow-sm ring-1 ring-slate-200 border-none">
             {loading ? (
-              <div className="py-20 text-center text-slate-500 flex justify-center items-center gap-3 font-medium">
-                <div className="w-6 h-6 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
-                Memuat Data...
-              </div>
+              <div className="py-20 text-center text-slate-500 flex justify-center items-center gap-3 font-medium">Memuat Data...</div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm text-left">
                   <thead className="bg-slate-50/80 text-slate-500 uppercase font-black text-[10px] tracking-widest border-b border-slate-100">
                     <tr>
-                      <th className="px-6 py-5">Nama Program / Entitas</th>
+                      <th className="px-6 py-5">Nama Program</th>
                       <th className="px-6 py-5">Tipe &amp; Prefix</th>
-                      <th className="px-6 py-5">Akses Form (Modul)</th>
+                      <th className="px-6 py-5">Akses Modul & Dokumen</th>
                       <th className="px-6 py-5 text-center">Penggunaan</th>
-                      <th className="px-6 py-5 text-center">Aksi / Ekspor</th>
+                      <th className="px-6 py-5 text-center">Aksi</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50">
-                    {batches.length === 0 ? (
-                      <tr><td colSpan={5} className="py-10 text-center text-slate-400 font-medium">Belum ada batch korporat yang dibuat.</td></tr>
-                    ) : batches.map(batch => (
+                    {batches.map(batch => (
                       <tr key={batch.id} className="hover:bg-slate-50/50 transition-colors">
                         <td className="px-6 py-5">
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0"><Building2 size={18}/></div>
                             <div>
                               <p className="font-bold text-slate-900 text-base">{batch.corporateName}</p>
-                              <p className="text-[11px] text-slate-400 mt-0.5 font-medium">{new Date(batch.createdAt).toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})}</p>
+                              <p className="text-[11px] text-slate-400 font-medium">{new Date(batch.createdAt).toLocaleDateString('id-ID')}</p>
                             </div>
                           </div>
                         </td>
                         <td className="px-6 py-5">
                           <div className="flex flex-col gap-1.5 items-start">
-                            <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded flex items-center gap-1 ${batch.modelType === 'pro' ? 'bg-amber-100 text-amber-700' : 'bg-slate-200 text-slate-700'}`}>
-                              {batch.modelType === 'pro' ? <Sparkles className="w-3 h-3"/> : <Zap className="w-3 h-3"/>}
-                              AI {batch.modelType}
-                            </span>
-                            <span className="font-mono font-black text-indigo-700 bg-indigo-50 px-2 py-1 rounded-md ring-1 ring-indigo-100">{batch.id}-******</span>
+                            <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded flex items-center gap-1 ${batch.modelType === 'pro' ? 'bg-amber-100 text-amber-700' : 'bg-slate-200 text-slate-700'}`}>AI {batch.modelType}</span>
+                            <span className="font-mono font-black text-indigo-700 bg-indigo-50 px-2 py-1 rounded-md">{batch.id}-******</span>
                           </div>
                         </td>
-                        <td className="px-6 py-5 align-top max-w-[240px]">
-                          {/* LOGIKA EDIT ALLOWED TEMPLATES */}
+                        <td className="px-6 py-5 align-top max-w-[280px]">
                           {editingBatchId === batch.id ? (
-                            <div className="space-y-3 bg-white p-3 rounded-xl ring-1 ring-slate-200 shadow-sm relative z-10">
-                              <p className="text-[10px] font-bold text-slate-500 uppercase">Ubah Hak Akses Form:</p>
-                              <div className="max-h-[120px] overflow-y-auto space-y-2 custom-scrollbar pr-2">
-                                {availableTemplates.map(tpl => (
-                                  <label key={tpl.id} className="flex items-start gap-2 cursor-pointer group">
-                                    <input 
-                                      type="checkbox"
-                                      className="mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
-                                      checked={editingAllowedTemplates.includes(tpl.id)}
-                                      onChange={(e) => {
-                                        if (e.target.checked) setEditingAllowedTemplates([...editingAllowedTemplates, tpl.id]);
-                                        else setEditingAllowedTemplates(editingAllowedTemplates.filter(id => id !== tpl.id));
-                                      }}
-                                    />
-                                    <span className="text-xs font-semibold text-slate-700 leading-tight group-hover:text-indigo-600">{tpl.trackName}</span>
-                                  </label>
-                                ))}
+                            <div className="space-y-4 bg-white p-4 rounded-xl ring-1 ring-slate-200 shadow-sm relative z-10 w-[300px]">
+                              {/* EDIT MODUL ASESMEN */}
+                              <div>
+                                <p className="text-[10px] font-bold text-slate-500 uppercase mb-2">1. Akses Form Asesmen:</p>
+                                <div className="max-h-[100px] overflow-y-auto space-y-1.5 custom-scrollbar pr-2">
+                                  {availableTemplates.map(tpl => (
+                                    <label key={tpl.id} className="flex items-start gap-2 cursor-pointer group">
+                                      <input type="checkbox" className="mt-0.5 rounded text-indigo-600" checked={editingAllowedTemplates.includes(tpl.id)} onChange={(e) => { if (e.target.checked) setEditingAllowedTemplates([...editingAllowedTemplates, tpl.id]); else setEditingAllowedTemplates(editingAllowedTemplates.filter(id => id !== tpl.id)); }} />
+                                      <span className="text-xs font-semibold text-slate-700 group-hover:text-indigo-600">{tpl.trackName}</span>
+                                    </label>
+                                  ))}
+                                </div>
+                              </div>
+                              {/* EDIT DOKUMEN WORD */}
+                              <div>
+                                <p className="text-[10px] font-bold text-slate-500 uppercase mb-2 border-t border-slate-100 pt-3">2. Akses Dokumen Word:</p>
+                                <div className="max-h-[100px] overflow-y-auto space-y-1.5 custom-scrollbar pr-2">
+                                  {DocumentPresets.map(docTpl => (
+                                    <label key={docTpl.id} className="flex items-start gap-2 cursor-pointer group">
+                                      <input type="checkbox" className="mt-0.5 rounded text-emerald-600" checked={editingDocTemplates.includes(docTpl.id)} onChange={(e) => { if (e.target.checked) setEditingDocTemplates([...editingDocTemplates, docTpl.id]); else setEditingDocTemplates(editingDocTemplates.filter(id => id !== docTpl.id)); }} />
+                                      <span className="text-xs font-semibold text-slate-700 group-hover:text-emerald-600">{docTpl.name}</span>
+                                    </label>
+                                  ))}
+                                </div>
                               </div>
                               <div className="flex gap-2 pt-2 border-t border-slate-100">
-                                <Button size="sm" className="h-7 text-xs px-3 bg-indigo-600 hover:bg-indigo-700 flex-1" onClick={() => updateBatchTemplates(batch.id)} disabled={isUpdatingTemplates}>
-                                  {isUpdatingTemplates ? '...' : 'Simpan'}
-                                </Button>
-                                <Button size="sm" variant="outline" className="h-7 text-xs px-3 text-slate-500 flex-1" onClick={() => setEditingBatchId(null)}>
-                                  Batal
-                                </Button>
+                                <Button size="sm" className="h-8 text-xs px-3 bg-indigo-600 flex-1" onClick={() => updateBatchTemplates(batch.id)} disabled={isUpdatingTemplates}>Simpan</Button>
+                                <Button size="sm" variant="outline" className="h-8 text-xs px-3 text-slate-500 flex-1" onClick={() => setEditingBatchId(null)}>Batal</Button>
                               </div>
                             </div>
                           ) : (
-                            <div className="flex flex-col items-start gap-2">
-                              {(!batch.allowedTemplates || batch.allowedTemplates.length === 0) ? (
-                                <span className="inline-flex bg-slate-100 text-slate-600 font-bold text-[10px] uppercase tracking-widest px-2 py-1 rounded-md ring-1 ring-slate-200">Semua Akses (Publik)</span>
-                              ) : (
+                            <div className="flex flex-col items-start gap-3">
+                              {/* VIEW MODUL ASESMEN */}
+                              <div>
+                                <p className="text-[9px] font-black text-slate-400 uppercase mb-1">Modul Form:</p>
                                 <div className="flex flex-wrap gap-1.5">
-                                  {batch.allowedTemplates.map(id => {
+                                  {(!batch.allowedTemplates || batch.allowedTemplates.length === 0) ? (
+                                    <span className="inline-flex bg-slate-100 text-slate-500 font-bold text-[10px] px-2 py-1 rounded border border-slate-200">Semua Modul</span>
+                                  ) : batch.allowedTemplates.map(id => {
                                     const tName = availableTemplates.find(t => t.id === id)?.trackName || 'Form Dihapus';
-                                    return (
-                                      <span key={id} className="inline-flex items-center bg-indigo-50 text-indigo-700 font-bold text-[10px] leading-tight px-2 py-1 rounded-md ring-1 ring-indigo-200/50 max-w-[200px] truncate" title={tName}>
-                                        {tName}
-                                      </span>
-                                    );
+                                    return <span key={id} className="inline-flex bg-indigo-50 text-indigo-700 font-bold text-[10px] px-2 py-1 rounded border border-indigo-200 truncate max-w-[150px]">{tName}</span>
                                   })}
                                 </div>
-                              )}
-                              <button 
-                                onClick={() => { 
-                                  setEditingBatchId(batch.id); 
-                                  setEditingAllowedTemplates(batch.allowedTemplates || []); 
-                                }} 
-                                className="text-[10px] font-bold uppercase tracking-widest text-indigo-500 hover:text-indigo-700 flex items-center gap-1 mt-1 bg-indigo-50/50 hover:bg-indigo-100 px-2 py-1 rounded transition-colors"
-                              >
+                              </div>
+                              {/* VIEW DOKUMEN WORD */}
+                              <div>
+                                <p className="text-[9px] font-black text-slate-400 uppercase mb-1">Dokumen Word:</p>
+                                <div className="flex flex-wrap gap-1.5">
+                                  {(!batch.allowedDocumentTemplates || batch.allowedDocumentTemplates.length === 0) ? (
+                                    <span className="inline-flex bg-slate-100 text-slate-500 font-bold text-[10px] px-2 py-1 rounded border border-slate-200">Semua Dokumen</span>
+                                  ) : batch.allowedDocumentTemplates.map(id => {
+                                    const dName = DocumentPresets.find(d => d.id === id)?.name || 'Dokumen Dihapus';
+                                    return <span key={id} className="inline-flex bg-emerald-50 text-emerald-700 font-bold text-[10px] px-2 py-1 rounded border border-emerald-200 truncate max-w-[150px]"><FileText size={10} className="mr-1 inline" />{dName}</span>
+                                  })}
+                                </div>
+                              </div>
+
+                              <button onClick={() => { setEditingBatchId(batch.id); setEditingAllowedTemplates(batch.allowedTemplates || []); setEditingDocTemplates(batch.allowedDocumentTemplates || []); }} className="text-[10px] font-bold uppercase tracking-widest text-indigo-500 flex items-center gap-1 bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded mt-1">
                                 <Edit3 size={10} /> Ubah Akses
                               </button>
                             </div>
@@ -459,23 +442,14 @@ export default function TokenManagerPage() {
                         </td>
                         <td className="px-6 py-5">
                           <div className="flex flex-col items-center">
-                            <div className="flex items-center gap-1.5 font-black text-slate-700 text-lg">
-                              <Users className="w-4 h-4 text-slate-400"/>
-                              {batch.usedCount || 0} <span className="text-slate-300 text-sm font-medium">/ {batch.totalTokens}</span>
-                            </div>
-                            <div className="w-24 h-1.5 bg-slate-100 rounded-full mt-2 overflow-hidden relative">
-                              <div className="absolute top-0 left-0 h-full bg-emerald-500 rounded-full" style={{width: `${((batch.usedCount || 0)/batch.totalTokens)*100}%`}}></div>
-                            </div>
+                            <div className="font-black text-slate-700 text-lg">{batch.usedCount || 0} <span className="text-slate-300 text-sm">/ {batch.totalTokens}</span></div>
+                            <div className="w-24 h-1.5 bg-slate-100 rounded-full mt-2 overflow-hidden relative"><div className="absolute h-full bg-emerald-500" style={{width: `${((batch.usedCount || 0)/batch.totalTokens)*100}%`}}></div></div>
                           </div>
                         </td>
                         <td className="px-6 py-5 text-center">
-                          <div className="flex items-center justify-center gap-2">
-                            <Button onClick={() => setSelectedBatch(batch)} variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-100 font-bold rounded-xl h-10 px-4 shadow-sm bg-white">
-                              <Eye className="w-4 h-4 sm:mr-1.5" /> <span className="hidden sm:inline">Lihat Token</span>
-                            </Button>
-                            <Button onClick={() => exportTokensToCSV(batch.id, batch)} variant="outline" className="border-indigo-200 text-indigo-700 hover:bg-indigo-50 font-bold rounded-xl h-10 w-10 p-0 shadow-sm bg-white shrink-0" title="Export CSV">
-                              <Download className="w-4 h-4" /> 
-                            </Button>
+                          <div className="flex justify-center gap-2">
+                            <Button onClick={() => setSelectedBatch(batch)} variant="outline" className="border-slate-200 bg-white shadow-sm w-10 h-10 p-0"><Eye className="w-4 h-4" /></Button>
+                            <Button onClick={() => exportTokensToCSV(batch.id, batch)} variant="outline" className="border-indigo-200 bg-white w-10 h-10 p-0"><Download className="w-4 h-4 text-indigo-600" /></Button>
                             <AdminTokenExportPDF batch={batch} />
                           </div>
                         </td>
@@ -494,8 +468,6 @@ export default function TokenManagerPage() {
       {/* ========================================= */}
       {activeTab === 'kurator' && (
         <div className="space-y-6 animate-in fade-in duration-300">
-          
-          {/* Panel Generate Kurator */}
           <Card className="p-6 sm:p-8 bg-white rounded-3xl shadow-sm border-none ring-1 ring-slate-200 flex flex-col md:flex-row items-end gap-5">
             <div className="space-y-2 flex-1 w-full">
               <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
@@ -533,11 +505,9 @@ export default function TokenManagerPage() {
             </Button>
           </Card>
 
-          {/* Tabel Data Kurator */}
           <Card className="bg-white rounded-3xl overflow-hidden shadow-sm ring-1 ring-slate-200 border-none">
             {loading ? (
               <div className="py-20 text-center text-slate-500 flex justify-center items-center gap-3 font-medium">
-                <div className="w-6 h-6 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin"></div>
                 Memuat Data Kurator...
               </div>
             ) : (
@@ -575,7 +545,7 @@ export default function TokenManagerPage() {
                           <span className="font-bold text-slate-800 text-base">{token.programName}</span>
                         </td>
                         <td className="px-6 py-5 text-center text-slate-500 font-medium">
-                          {new Date(token.createdAt).toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})}
+                          {new Date(token.createdAt).toLocaleDateString('id-ID')}
                         </td>
                         <td className="px-6 py-5 text-center">
                           <Button 

@@ -11,6 +11,10 @@ import * as fs from "fs";
 
 // IMPOR FUNGSI EMAIL DARI FILE TERPISAH
 import { sendAssessmentEmail } from "./emailService";
+// ... (kode index.ts Anda yang sudah ada)
+
+// EXPORT FUNGSI GENERATOR DOKUMEN WORD
+export { generateDocumentDraft } from "./documentGenerator";
 
 admin.initializeApp();
 
@@ -52,7 +56,8 @@ export const processCurationAssessment = onCall(
     const fileManager = new GoogleAIFileManager(API_KEY);
     const genAI = new GoogleGenerativeAI(API_KEY);
     
-    let corporateEntityName = null;
+let corporateEntityName = null;
+    let allowedDocTemplates: string[] = []; // <-- 1. Tambahkan wadah kosong ini
     const uploadedGeminiFiles: any[] = [];
     const tempLocalFiles: string[] = [];
 
@@ -72,7 +77,8 @@ export const processCurationAssessment = onCall(
       if (!tokenData) throw new HttpsError("not-found", `Kode token tidak ditemukan.`);
       if (tokenData.isUsed) throw new HttpsError("permission-denied", "Token ini sudah pernah digunakan.");
 
-      corporateEntityName = corpData?.corporateName || corpId;
+corporateEntityName = corpData?.corporateName || corpId;
+      allowedDocTemplates = corpData?.allowedDocumentTemplates || [];
     }
 
     try {
@@ -329,7 +335,7 @@ ATURAN MUTLAK: Output MURNI dalam format JSON. JAWABAN WAJIB BERBAHASA INDONESIA
         const newAssessmentRef = db.collection("assessments").doc();
         assessmentId = newAssessmentRef.id;
         
-        transaction.set(newAssessmentRef, {
+transaction.set(newAssessmentRef, {
           userId: userId, 
           userEmail: formData.email || userEmail,
           trackType: trackType,
@@ -341,6 +347,13 @@ ATURAN MUTLAK: Output MURNI dalam format JSON. JAWABAN WAJIB BERBAHASA INDONESIA
           formData: formData,
           aiResult: aiResultJson,
           tokenUsed: tokenUsed || null, 
+          
+          // ==========================================
+          // INJEKSI SISTEM MONETISASI & TEMPLATE
+          // ==========================================
+          allowedDocumentTemplates: allowedDocTemplates, // <-- 3. Gunakan variabel dari Fase 1
+          documentGenerationQuota: tokenUsed ? 1 : 0, 
+          hasPaidForDocument: false,
           createdAt: admin.firestore.FieldValue.serverTimestamp()
         });
       });

@@ -119,3 +119,16 @@ export interface AssessmentPayload {
   selfScore?: number;
   isConfirmedEarnest?: boolean;
 }
+
+export type ExportRole = 'public' | 'admin' | 'curator';
+
+export interface UniversalPDFProps {
+  role: ExportRole;
+  trackType: string;
+  formData: CurationFormData;
+  aiResult: AIResult;
+  curatorNotes?: string | null;
+  corporateEntity?: string;
+  timestamp: string;
+  watermarkText?: string; // Persiapan untuk fitur keamanan nanti
+}

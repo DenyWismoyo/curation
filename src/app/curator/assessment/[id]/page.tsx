@@ -1,4 +1,3 @@
-// src/app/curator/assessment/[id]/page.tsx
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -9,14 +8,16 @@ import { ChevronLeft, Briefcase, ShieldCheck, Loader2, Edit3, CheckCircle2, Mess
 import { Button } from '@/components/ui/button';
 import { UniversalAssessmentView } from '@/app/components/shared/UniversalAssessmentView';
 
+// IMPORT KOMPONEN EXPORT
+import { CuratorExportPDF } from '@/app/components/curator/PDFReportTemplate';
+
 export default function CuratorAssessmentDetailPage() {
   const params = useParams();
   const router = useRouter();
-  
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [masterTags, setMasterTags] = useState<string[]>([]);
-  
+
   // State UI
   const [activeTab, setActiveTab] = useState<'evaluasi' | 'input'>('evaluasi');
   const [isEditing, setIsEditing] = useState(false);
@@ -94,6 +95,7 @@ export default function CuratorAssessmentDetailPage() {
         setTimeout(() => setAutoSaveStatus('idle'), 3000);
       } catch (error) { setAutoSaveStatus('error'); }
     }, 2500); 
+
     return () => clearTimeout(timer);
   }, [curatorScore, curatorLevel, curatorRoute, curatorNotes, selectedTags, customBlockNotes, documentNotes, metricsNotes, swotNotes, isEditing, data]);
 
@@ -117,7 +119,7 @@ export default function CuratorAssessmentDetailPage() {
   const handleShareWhatsApp = () => {
     const phone = data.formData?.whatsapp || '';
     const formattedPhone = phone.startsWith('0') ? '62' + phone.substring(1) : phone;
-    const textMessage = `Halo tim *${data.namaUsaha}*, 👋\n\nTerima kasih telah mengikuti tahapan Kurasi bersama kami. Berikut ringkasan hasil akhir:\n\n📊 *Skor Kesiapan Akhir:* ${curatorScore}/100\n📈 *Level Kesiapan:* ${curatorLevel}\n\n*📝 Catatan Kurator:*\n_"${curatorNotes || 'Terus tingkatkan kapasitas bisnis Anda.'}"_\n\nSalam hangat,\n*Tim Penilai*`;
+    const textMessage = `Halo tim *${data.namaUsaha}*,\n\nTerima kasih telah mengikuti tahapan Kurasi bersama kami. Berikut ringkasan hasil akhir:\n\n*Skor Kesiapan Akhir:* ${curatorScore}/100\n*Level Kesiapan:* ${curatorLevel}\n\n*Catatan Kurator:*\n_"${curatorNotes || 'Terus tingkatkan kapasitas bisnis Anda.'}"_\n\nSalam hangat,\n*Tim Penilai*`;
     window.open(`https://wa.me/${formattedPhone}?text=${encodeURIComponent(textMessage)}`, '_blank');
   };
 
@@ -129,21 +131,17 @@ export default function CuratorAssessmentDetailPage() {
   );
 
   return (
-    // PERBAIKAN: Membungkus seluruh halaman dengan background abu-abu (bg-slate-50) 
-    // dan memberikan padding layar penuh agar konten di dalamnya terlihat seperti melayang di tengah.
     <div className="min-h-screen bg-slate-50/80 p-4 sm:p-6 lg:p-8">
-      
-      {/* Kontainer batas tengah (maksimal 1280px) */}
       <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8 animate-in fade-in duration-500 pb-24">
         
         {/* HEADER NAVIGASI */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 sm:p-6 rounded-3xl ring-1 ring-slate-200 shadow-sm sticky top-4 z-40 w-full">
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 bg-white p-4 sm:p-6 rounded-3xl ring-1 ring-slate-200 shadow-sm sticky top-4 z-40 w-full">
           <div className="flex items-center gap-4">
             <Button variant="ghost" onClick={() => router.push('/curator/dashboard')} className="w-10 h-10 p-0 rounded-full bg-slate-50 hover:bg-slate-200 text-slate-600 shrink-0">
               <ChevronLeft size={20} />
             </Button>
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 flex items-center gap-1.5">Workspace Kurator • {data.trackType}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 flex items-center gap-1.5">Workspace Kurator   {data.trackType}</p>
               <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight">{data.namaUsaha}</h1>
             </div>
           </div>
@@ -156,6 +154,21 @@ export default function CuratorAssessmentDetailPage() {
                   {autoSaveStatus === 'saved' && <span className="text-emerald-500 flex items-center gap-1"><Check className="w-3 h-3"/> Draf Tersimpan</span>}
                 </div>
             )}
+            
+            {/* 🎯 TOMBOL EXPORT PDF DITAMBAHKAN DI SINI */}
+            <CuratorExportPDF 
+              trackType={data.trackType}
+              formData={data.formData}
+              aiResult={data.aiResult || {}}
+              namaUsaha={data.namaUsaha}
+              liveData={{
+                curatorScore,
+                curatorLevel,
+                curatorRoute,
+                curatorNotes
+              }}
+            />
+
             <Button onClick={handleShareWhatsApp} variant="outline" className="bg-white text-emerald-600 border-emerald-200 rounded-xl font-bold h-10 px-4 shadow-sm">
               <MessageCircle className="w-4 h-4 sm:mr-2" /> <span className="hidden sm:inline">Bagikan</span>
             </Button>
@@ -227,7 +240,6 @@ export default function CuratorAssessmentDetailPage() {
             </div>
           </div>
         )}
-
       </div>
     </div>
   );
