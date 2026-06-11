@@ -11,7 +11,6 @@ import * as fs from "fs";
 
 // IMPOR FUNGSI EMAIL DARI FILE TERPISAH
 import { sendAssessmentEmail } from "./emailService";
-// ... (kode index.ts Anda yang sudah ada)
 
 // EXPORT FUNGSI GENERATOR DOKUMEN WORD
 export { generateDocumentDraft } from "./documentGenerator";
@@ -56,8 +55,8 @@ export const processCurationAssessment = onCall(
     const fileManager = new GoogleAIFileManager(API_KEY);
     const genAI = new GoogleGenerativeAI(API_KEY);
     
-let corporateEntityName = null;
-    let allowedDocTemplates: string[] = []; // <-- 1. Tambahkan wadah kosong ini
+    let corporateEntityName = null;
+    let allowedDocTemplates: string[] = []; // Tetap dideklarasikan untuk jaga-jaga
     const uploadedGeminiFiles: any[] = [];
     const tempLocalFiles: string[] = [];
 
@@ -77,7 +76,7 @@ let corporateEntityName = null;
       if (!tokenData) throw new HttpsError("not-found", `Kode token tidak ditemukan.`);
       if (tokenData.isUsed) throw new HttpsError("permission-denied", "Token ini sudah pernah digunakan.");
 
-corporateEntityName = corpData?.corporateName || corpId;
+      corporateEntityName = corpData?.corporateName || corpId;
       allowedDocTemplates = corpData?.allowedDocumentTemplates || [];
     }
 
@@ -156,7 +155,6 @@ corporateEntityName = corpData?.corporateName || corpId;
       const targetRecommendations = aiPromptConfig?.expectedRecommendations?.map((rec: string) => `- ${rec}`).join("\n") || "- Strategi Bisnis\n- Rencana Pendanaan";
       const mediaFocus = aiPromptConfig?.mediaAnalysisFocus ? `Fokus Evaluasi Media: Aspek ${aiPromptConfig.mediaAnalysisFocus}.` : '';
 
-      // UPGRADE: Penambahan instruksi output berbentuk poin-poin.
       const promptText = `
 ANDA ADALAH: ${aiPersona}.
 Tugas Anda adalah melakukan penilaian terhadap profil/entitas/peserta berikut dalam kategori: "${trackContext}".
@@ -307,6 +305,10 @@ ATURAN MUTLAK: Output MURNI dalam format JSON. JAWABAN WAJIB BERBAHASA INDONESIA
       // FASE 4: TRANSACTION DATABASE
       let assessmentId = "";
       await db.runTransaction(async (transaction) => {
+        
+        // DEKLARASI WADAH KHUSUS DI DALAM TRANSAKSI AGAR TYPESCRIPT BISA MEMBACANYA
+        let finalDocTemplates: string[] = [];
+
         if (tokenUsed && typeof tokenUsed === 'string' && tokenUsed.includes('-')) {
           const lastDashIndex = tokenUsed.lastIndexOf('-');
           const rawCorpId = tokenUsed.substring(0, lastDashIndex);
@@ -324,6 +326,9 @@ ATURAN MUTLAK: Output MURNI dalam format JSON. JAWABAN WAJIB BERBAHASA INDONESIA
           if (!tData) throw new Error(`Token ${tokenCode} tidak ditemukan.`);
           if (tData.isUsed) throw new Error("Token telah digunakan secara paralel.");
 
+          // MENGAMBIL DATA TEMPLATE LANGSUNG DARI DOKUMEN TRANSAKSI
+          finalDocTemplates = corpData?.allowedDocumentTemplates || [];
+
           transaction.update(corpRefToUpdate, {
             [`tokens.${tokenCode}.isUsed`]: true,
             [`tokens.${tokenCode}.usedAt`]: new Date().toISOString(),
@@ -335,7 +340,7 @@ ATURAN MUTLAK: Output MURNI dalam format JSON. JAWABAN WAJIB BERBAHASA INDONESIA
         const newAssessmentRef = db.collection("assessments").doc();
         assessmentId = newAssessmentRef.id;
         
-transaction.set(newAssessmentRef, {
+        transaction.set(newAssessmentRef, {
           userId: userId, 
           userEmail: formData.email || userEmail,
           trackType: trackType,
@@ -351,9 +356,11 @@ transaction.set(newAssessmentRef, {
           // ==========================================
           // INJEKSI SISTEM MONETISASI & TEMPLATE
           // ==========================================
-          allowedDocumentTemplates: allowedDocTemplates, // <-- 3. Gunakan variabel dari Fase 1
+          // Menggunakan variabel scope dalam yang tidak akan terkena error garis merah
+          allowedDocumentTemplates: finalDocTemplates, 
           documentGenerationQuota: tokenUsed ? 1 : 0, 
-          hasPaidForDocument: false,
+          hasPaidForDocument: false, 
+          
           createdAt: admin.firestore.FieldValue.serverTimestamp()
         });
       });

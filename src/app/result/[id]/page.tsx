@@ -4,7 +4,11 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { CurationDashboard } from '@/app/components/curation/CurationDashboard';
+
+// Pastikan path import ini sesuai dengan lokasi file CurationDashboard Anda.
+// Jika error, coba hapus '/app' menjadi: '@/components/curation/CurationDashboard'
+import { CurationDashboard } from '@/app/components/curation/CurationDashboard'; 
+
 import { Loader2, Share2, Home } from 'lucide-react';
 
 export default function SharedResultPage() {
@@ -69,16 +73,20 @@ export default function SharedResultPage() {
 
   return (
     <div className="relative">
-      {/* Komponen Dasbor yang sudah dikirim prop programName (corporateEntity) */}
       <CurationDashboard
-        assessmentId={params.id as string} // <--- TAMBAHKAN BARIS INI
+        // Data Utama
+        assessmentId={params.id as string}
         trackType={data.trackType || 'Model Bisnis'}
-        formData={data.formData}
-        aiResult={data.aiResult}
-        programName={data.corporateEntity} 
-        // PASSING STATE MONETISASI
-        documentGenerationQuota={data.documentGenerationQuota}
-        hasPaidForDocument={data.hasPaidForDocument}
+        formData={data.formData || {}}
+        aiResult={data.aiResult || {}}
+        programName={data.corporateEntity || ''}
+        
+        // Data Monetisasi & Pembatasan Template (Disertai nilai fallback agar TS tidak error)
+        documentGenerationQuota={data.documentGenerationQuota || 0}
+        hasPaidForDocument={data.hasPaidForDocument || false}
+        allowedDocumentTemplates={data.allowedDocumentTemplates || []}
+        
+        // Fungsi Restart
         onRestart={() => router.push('/')} 
       />
     </div>

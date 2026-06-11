@@ -1,8 +1,9 @@
+// src/components/curation/CurationDashboard.tsx
 'use client';
 
 import React, { useState } from 'react';
 import { 
-  RotateCcw, ImagePlus, Wand2, FileText, 
+  RotateCcw, Wand2, FileText, 
   Loader2, ChevronDown, Lock, ShoppingCart 
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -10,7 +11,6 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { CurationFormData, AIResult } from '@/types/curation';
 import { PublicExportPDF } from './PublicExportPDF';
 import { UniversalAssessmentView } from '@/app/components/shared/UniversalAssessmentView';
-
 import { DocumentPresets } from '@/data/documentPromptTemplates'; 
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { app } from '@/lib/firebase';
@@ -20,10 +20,10 @@ interface Props {
   trackType: string;
   formData: CurationFormData | any;
   aiResult: AIResult | any;
-  programName?: string; 
-  documentGenerationQuota?: number; 
+  programName?: string;
+  documentGenerationQuota?: number;
   hasPaidForDocument?: boolean;     
-  allowedDocumentTemplates?: string[]; // <-- TANGKAP PROP INI DARI RESULT PAGE
+  allowedDocumentTemplates?: string[]; 
   onRestart: () => void;
 }
 
@@ -32,38 +32,27 @@ export function CurationDashboard({
   documentGenerationQuota = 0, hasPaidForDocument = false, allowedDocumentTemplates, 
   onRestart 
 }: Props) {
-  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  
   const [isGeneratingDoc, setIsGeneratingDoc] = useState(false);
 
   // LOGIKA FILTERING TEMPLATE DOKUMEN BERDASARKAN ATURAN BATCH TOKEN
-  // Jika array ada isinya, filter. Jika kosong/undefined (B2C), tampilkan semua.
   const filteredDocumentPresets = allowedDocumentTemplates && allowedDocumentTemplates.length > 0 
     ? DocumentPresets.filter(preset => allowedDocumentTemplates.includes(preset.id))
     : DocumentPresets;
 
   const canGenerateDocument = documentGenerationQuota > 0 || hasPaidForDocument;
 
-  const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const objectUrl = URL.createObjectURL(file);
-      setLogoUrl(objectUrl);
-    }
-  };
-
   const handleGenerateWordDraft = async (presetId: string, docTitle: string, promptTemplate: string) => {
     if (!canGenerateDocument) {
       alert("Kuota gratis Anda habis. Fitur ini memerlukan pembayaran mandiri untuk diakses kembali.");
       return;
     }
-
     if (!assessmentId) return alert("ID Laporan tidak valid.");
 
     setIsGeneratingDoc(true);
     try {
       const functions = getFunctions(app, 'asia-southeast2');
       const generateDocFn = httpsCallable(functions, 'generateDocumentDraft');
-
       const response = await generateDocFn({ assessmentId, docTitle, promptTemplate });
       const data = response.data as { htmlContent: string };
       
@@ -122,13 +111,13 @@ export function CurationDashboard({
                   </Button>
                 </DropdownMenuTrigger>
                 
-                <DropdownMenuContent className="w-72 rounded-2xl p-2" align="end">
+                {/* PENAMBAHAN BG-WHITE DAN BORDER AGAR TIDAK TRANSPARAN */}
+                <DropdownMenuContent className="w-72 rounded-2xl p-2 bg-white shadow-xl border border-slate-200" align="end">
                   <div className="px-2 py-1.5 mb-1 flex justify-between items-center border-b border-slate-100 pb-2">
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Pilih Format Draf (Word)</p>
                     {!canGenerateDocument && <Lock className="w-3 h-3 text-amber-500"/>}
                   </div>
                   
-                  {/* MAPPING HASIL FILTER DOKUMEN YANG DIIZINKAN */}
                   {filteredDocumentPresets.length === 0 ? (
                     <div className="px-3 py-4 text-center text-xs text-slate-500 italic">Tidak ada dokumen yang diizinkan untuk program ini.</div>
                   ) : (
@@ -151,14 +140,9 @@ export function CurationDashboard({
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              <div>
-                <input type="file" id="logo-upload" className="hidden" accept="image/png, image/jpeg, image/jpg" onChange={handleLogoUpload} />
-                <label htmlFor="logo-upload" className="flex items-center justify-center w-full sm:w-auto gap-2 bg-white ring-1 ring-slate-200 text-slate-700 hover:bg-slate-50 font-bold rounded-xl h-10 px-4 transition-all active:scale-95 cursor-pointer shadow-sm">
-                  <ImagePlus className="h-4 w-4" /> {logoUrl ? 'Ganti Logo' : 'Upload Logo'}
-                </label>
-              </div>
+              {/* FUNGSI UPLOAD LOGO TELAH DIHAPUS */}
               
-              <PublicExportPDF trackType={trackType} formData={formData} aiResult={aiResult} logoUrl={logoUrl} />
+              <PublicExportPDF trackType={trackType} formData={formData} aiResult={aiResult} />
             </div>
           </>
         }

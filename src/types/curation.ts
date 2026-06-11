@@ -132,3 +132,14 @@ export interface UniversalPDFProps {
   timestamp: string;
   watermarkText?: string; // Persiapan untuk fitur keamanan nanti
 }
+
+// Di dalam src/types/curation.ts
+
+export interface AssessmentData { // (Sesuaikan dengan nama interface Anda)
+  // ... (properti lama Anda)
+  
+  // TAMBAHKAN 3 BARIS INI:
+  documentGenerationQuota?: number;
+  hasPaidForDocument?: boolean;
+  allowedDocumentTemplates?: string[]; 
+}
