@@ -157,6 +157,7 @@ export default function CuratorAssessmentDetailPage() {
             
             {/* 🎯 TOMBOL EXPORT PDF DITAMBAHKAN DI SINI */}
             <CuratorExportPDF 
+              assessmentId={data.id}
               trackType={data.trackType}
               formData={data.formData}
               aiResult={data.aiResult || {}}

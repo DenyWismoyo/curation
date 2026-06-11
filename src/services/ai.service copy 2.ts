@@ -13,15 +13,15 @@ export async function processAIAssessment(
   
   const functions = getFunctions(app, 'asia-southeast2');
   
-  // KEMBALI KE METODE STABIL: Timeout diatur ke 9 Menit karena menunggu AI selesai
+  // PERBAIKAN KRUSIAL: Tambahkan timeout 9 menit (540000 ms) agar selaras dengan Backend
   const processCuration = httpsCallable(functions, 'processCurationAssessment', {
     timeout: 540000 
   });
 
-  console.log("Mengirim payload data ke Cloud Function...");
+  console.log("Mengirim payload token ke Cloud Function:", tokenUsed);
 
   try {
-    // KIRIM DATA & TUNGGU HASIL SECARA LANGSUNG DARI SERVER
+    // HAPUS perulangan (while retries) agar tidak terjadi error "Token Paralel"
     const result = await processCuration({
       formData,
       trackType,
@@ -31,12 +31,10 @@ export async function processAIAssessment(
     });
 
     const data = result.data as { assessmentId: string, aiResult: AIResult };
-    console.log("Berhasil menerima respons AI! ID:", data.assessmentId);
-
     return { assessmentId: data.assessmentId, aiResult: data.aiResult };
 
   } catch (err: any) {
     console.error("Gagal terhubung ke server:", err);
-    throw new Error(err.message || "Gagal memproses data atau waktu tunggu habis. Silakan coba lagi.");
+    throw new Error(err.message || "Gagal memproses data. Waktu tunggu habis.");
   }
 }
