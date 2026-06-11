@@ -244,6 +244,7 @@ export function CuratorAssessmentDetail({ data, availableTags = [], onClose, onS
                   
                   {/* Ekspor Terintegrasi State Realtime Kurator */}
                   <CuratorExportPDF 
+                    assessmentId={data.id}
                     trackType={trackType}
                     formData={formData}
                     aiResult={currentAiResult}

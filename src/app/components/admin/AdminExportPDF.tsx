@@ -2,15 +2,13 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Download, Loader2 } from 'lucide-react';
+import { Download, Loader2, RefreshCw } from 'lucide-react';
 import { usePDFExport } from '@/hooks/usePDFExport';
-import { UniversalPDFDocument } from '@/app/components/shared/UniversalPDFDocument';
 
 export function AdminExportPDF({ data }: { data: any }) {
   const { exportToPDF, isExporting } = usePDFExport();
 
-  const handleDownload = () => {
-    // Gabungkan riwayat AI asli dengan reviu final kurator agar tersaji akurat di PDF
+  const handleDownload = (forceRegenerate: boolean = false) => {
     const patchedAiResult = {
       ...data.aiResult,
       totalScore: data.score !== undefined ? data.score : data.aiResult?.totalScore,
@@ -19,26 +17,50 @@ export function AdminExportPDF({ data }: { data: any }) {
       curatorNotes: data.curatorNotes || ''
     };
 
-    const documentComponent = (
-      <UniversalPDFDocument 
-        role="admin_csrs" 
-        trackType={data.trackType} 
-        formData={data.formData} 
-        aiResult={patchedAiResult} 
-      />
-    );
+    // Susun payload untuk backend
+    const payload = {
+      trackType: data.trackType,
+      formData: data.formData,
+      aiResult: patchedAiResult
+    };
     
-    exportToPDF(documentComponent, data.namaUsaha || 'Admin');
+    // Pastikan data.id merujuk ke ID dokumen Firestore
+    const assessmentId = data.id || data.assessmentId; 
+    const templateVersion = data.templateVersion || 1;
+
+    // Panggil hook dengan role "admin_csrs" beserta instruksi cache
+    exportToPDF(
+      "admin_csrs", 
+      payload, 
+      data.namaUsaha || 'Admin', 
+      assessmentId, 
+      templateVersion, 
+      forceRegenerate
+    );
   };
 
   return (
-    <Button 
-      onClick={handleDownload} 
-      disabled={isExporting}
-      className="bg-indigo-600 hover:bg-indigo-700 text-white gap-2 font-bold rounded-xl h-10 px-4 shadow-sm transition-all active:scale-95"
-    >
-      {isExporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-      {isExporting ? 'Memproses PDF...' : 'Unduh Laporan Internal (Admin)'}
-    </Button>
+    <div className="flex gap-2">
+      {/* Tombol Unduh Standar (Memanfaatkan Arsip jika ada) */}
+      <Button 
+        onClick={() => handleDownload(false)} 
+        disabled={isExporting}
+        className="bg-indigo-600 hover:bg-indigo-700 text-white gap-2 font-bold rounded-xl h-10 px-4 shadow-sm transition-all active:scale-95"
+      >
+        {isExporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+        {isExporting ? 'Memproses...' : 'Unduh Laporan Internal'}
+      </Button>
+
+      {/* Tombol Force Regenerate (Memaksa Render Ulang jika ada data baru) */}
+      <Button 
+        onClick={() => handleDownload(true)} 
+        disabled={isExporting}
+        variant="outline"
+        title="Render Ulang PDF Baru (Abaikan Arsip)"
+        className="h-10 px-3 rounded-xl border-indigo-200 text-indigo-600 hover:bg-indigo-50"
+      >
+        <RefreshCw className={`w-4 h-4 ${isExporting ? 'animate-spin' : ''}`} />
+      </Button>
+    </div>
   );
 }

@@ -142,7 +142,13 @@ export function CurationDashboard({
 
               {/* FUNGSI UPLOAD LOGO TELAH DIHAPUS */}
               
-              <PublicExportPDF trackType={trackType} formData={formData} aiResult={aiResult} />
+              {/* KOMPONEN PUBLIC EXPORT PDF DENGAN SMART CACHE ID */}
+              <PublicExportPDF 
+                assessmentId={assessmentId || ''} 
+                trackType={trackType} 
+                formData={formData} 
+                aiResult={aiResult} 
+              />
             </div>
           </>
         }

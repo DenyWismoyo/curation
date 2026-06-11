@@ -16,19 +16,38 @@ import { CurationFormData, AIResult } from '@/types/curation';
 // ========================================================
 // 1. HELPER COMPONENTS
 // ========================================================
+
+// FUNGSI BARU: Parser untuk membaca Markdown Bold (**) menjadi Tag HTML <strong>
+const renderTextWithBold = (str: string) => {
+  if (!str) return null;
+  // Memecah teks berdasarkan pola **teks tebal**
+  const parts = str.split(/(\*\*.*?\*\*)/g);
+  return parts.map((part, index) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      // Hilangkan ** dan render sebagai strong
+      return <strong key={index} className="font-bold text-slate-900">{part.slice(2, -2)}</strong>;
+    }
+    return part; // Kembalikan teks normal
+  });
+};
+
 export const TextToBullets = ({ text, colorClass = "text-indigo-500" }: { text: string, colorClass?: string }) => {
   if (!text) return <span className="italic text-slate-400">Tidak ada deskripsi.</span>;
   const lines = text.split('\n').filter(line => line.trim().length > 0);
-  if (lines.length === 1 && !lines[0].includes('-')) return <p className="leading-relaxed">{text}</p>;
+  
+  if (lines.length === 1 && !lines[0].includes('-')) {
+    return <p className="leading-relaxed">{renderTextWithBold(text)}</p>;
+  }
 
   return (
     <ul className="space-y-2 mt-2">
       {lines.map((line, idx) => {
-        const cleanLine = line.replace(/^[\-\*]\s*/, '').trim();
+        // Bersihkan karakter bullet (-, *, •) di awal baris jika ada
+        const cleanLine = line.replace(/^[\-\*\•]\s*/, '').trim();
         return (
           <li key={idx} className="flex items-start gap-2.5">
             <span className={`mt-1 flex-shrink-0 text-[10px] ${colorClass}`}>●</span>
-            <span className="leading-relaxed">{cleanLine}</span>
+            <span className="leading-relaxed">{renderTextWithBold(cleanLine)}</span>
           </li>
         );
       })}
@@ -117,7 +136,7 @@ export interface UniversalAssessmentProps {
 }
 
 // ========================================================
-// 3. MAIN COMPONENT (Tanpa Wrapper Putih Raksasa)
+// 3. MAIN COMPONENT
 // ========================================================
 export function UniversalAssessmentView({ 
   mode, trackType, programName, corporateEntity, formData, aiResult, headerActions, curatorData, pdfRef
@@ -136,7 +155,6 @@ export function UniversalAssessmentView({
   })) || [];
 
   return (
-    // Kontainer utama ini membiarkan elemen meregang penuh (w-full) mengikuti Parent
     <div ref={pdfRef} className="w-full space-y-6 sm:space-y-8 animate-in fade-in duration-500">
       
       {/* 1. HEADER ACTION SLOT (Bila Ada) */}
@@ -374,7 +392,7 @@ export function UniversalAssessmentView({
                       <ul className="space-y-2">
                         {aiResult.fileAnalysisInsights.keyFindingsFromFiles.map((find: string, i: number) => (
                           <li key={i} className="text-sm text-slate-300 flex items-start gap-2">
-                            <span className="text-indigo-400 mt-0.5">•</span> <span className="leading-snug">{find}</span>
+                            <span className="text-indigo-400 mt-0.5">•</span> <span className="leading-snug">{renderTextWithBold(find)}</span>
                           </li>
                         ))}
                       </ul>
@@ -479,25 +497,25 @@ export function UniversalAssessmentView({
             <div className="bg-emerald-50/80 p-6 rounded-3xl ring-1 ring-emerald-200/60 shadow-sm">
                 <h4 className="text-emerald-900 font-black flex items-center gap-2 mb-4"><TrendingUp className="h-5 w-5"/> Strengths</h4>
                 <ul className="list-disc list-inside text-emerald-800/80 text-sm font-medium space-y-2.5">
-                  {aiResult.swotAnalysis.strengths?.map((s: string, i: number) => <li key={i}>{s}</li>)}
+                  {aiResult.swotAnalysis.strengths?.map((s: string, i: number) => <li key={i}>{renderTextWithBold(s)}</li>)}
                 </ul>
             </div>
             <div className="bg-rose-50/80 p-6 rounded-3xl ring-1 ring-rose-200/60 shadow-sm">
                 <h4 className="text-rose-900 font-black flex items-center gap-2 mb-4"><Activity className="h-5 w-5"/> Weaknesses</h4>
                 <ul className="list-disc list-inside text-rose-800/80 text-sm font-medium space-y-2.5">
-                  {aiResult.swotAnalysis.weaknesses?.map((w: string, i: number) => <li key={i}>{w}</li>)}
+                  {aiResult.swotAnalysis.weaknesses?.map((w: string, i: number) => <li key={i}>{renderTextWithBold(w)}</li>)}
                 </ul>
             </div>
             <div className="bg-blue-50/80 p-6 rounded-3xl ring-1 ring-blue-200/60 shadow-sm">
                 <h4 className="text-blue-900 font-black flex items-center gap-2 mb-4"><Lightbulb className="h-5 w-5"/> Opportunities</h4>
                 <ul className="list-disc list-inside text-blue-800/80 text-sm font-medium space-y-2.5">
-                  {aiResult.swotAnalysis.opportunities?.map((o: string, i: number) => <li key={i}>{o}</li>)}
+                  {aiResult.swotAnalysis.opportunities?.map((o: string, i: number) => <li key={i}>{renderTextWithBold(o)}</li>)}
                 </ul>
             </div>
             <div className="bg-amber-50/80 p-6 rounded-3xl ring-1 ring-amber-200/60 shadow-sm">
                 <h4 className="text-amber-900 font-black flex items-center gap-2 mb-4"><AlertTriangle className="h-5 w-5"/> Threats</h4>
                 <ul className="list-disc list-inside text-amber-800/80 text-sm font-medium space-y-2.5">
-                  {aiResult.swotAnalysis.threats?.map((t: string, i: number) => <li key={i}>{t}</li>)}
+                  {aiResult.swotAnalysis.threats?.map((t: string, i: number) => <li key={i}>{renderTextWithBold(t)}</li>)}
                 </ul>
             </div>
           </div>

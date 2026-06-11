@@ -7,10 +7,10 @@ import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/rendere
 Font.register({
   family: 'Inter',
   fonts: [
-    { src: '/fonts/Inter-Regular.ttf', fontWeight: 400 },
-    { src: '/fonts/Inter-Medium.ttf', fontWeight: 500 },
-    { src: '/fonts/Inter-Bold.ttf', fontWeight: 700 },
-    { src: '/fonts/Inter-Black.ttf', fontWeight: 900 }
+    { src: 'https://curation--teknopark-surakarta.asia-southeast1.hosted.app/fonts/Inter-Regular.ttf', fontWeight: 400 },
+    { src: 'https://curation--teknopark-surakarta.asia-southeast1.hosted.app/fonts/Inter-Medium.ttf', fontWeight: 500 },
+    { src: 'https://curation--teknopark-surakarta.asia-southeast1.hosted.app/fonts/Inter-Bold.ttf', fontWeight: 700 },
+    { src: 'https://curation--teknopark-surakarta.asia-southeast1.hosted.app/fonts/Inter-Black.ttf', fontWeight: 900 }
   ]
 });
 
@@ -54,7 +54,6 @@ const styles = StyleSheet.create({
   },
   disclaimerTitle: { fontSize: 10, fontWeight: 900, color: '#000000', textTransform: 'uppercase', marginBottom: 6 },
   disclaimerText: { fontSize: 8, color: '#333333', lineHeight: 1.5, textAlign: 'justify', marginBottom: 8 },
-  disclaimerLog: { fontSize: 8, fontWeight: 900, color: '#000000', textTransform: 'uppercase', marginTop: 4 },
 
   // --- HEADER EKSEKUTIF ---
   headerContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', borderBottom: '2pt solid #000000', paddingBottom: 16, marginBottom: 32 },
@@ -145,7 +144,6 @@ const renderBullets = (text: string) => {
 export function UniversalPDFDocument({ role, trackType, formData, aiResult, downloadedBy }: ExportRole) {
   const printDateObj = new Date();
   const dateStr = printDateObj.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
-  const timeLogStr = printDateObj.toLocaleString('id-ID'); 
   
   const isInternal = role === 'admin_csrs' || role === 'curator';
   const isCuratorWorksheet = role === 'curator';
@@ -158,8 +156,6 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
       <View style={styles.watermarkWrapper} fixed>
         <Text style={styles.watermarkText}>AI GENERATED DRAFT</Text>
         <Text style={styles.watermarkText}>UNVERIFIED</Text>
-        <Text style={styles.watermarkSub}>ISSUED TO: {downloadedBy?.name?.toUpperCase()}</Text>
-        <Text style={[styles.watermarkSub, { marginTop: 4 }]}>TIMESTAMP: {timeLogStr}</Text>
       </View>
     );
   };
@@ -214,9 +210,6 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
             </Text>
             <Text style={[styles.disclaimerText, { fontWeight: 700 }]}>
               Meskipun bersifat tidak mengikat, hasil komputasi dalam dokumen ini dirancang sebagai instrumen pendukung keputusan strategis. Kami sangat merekomendasikan penggunaan laporan ini sebagai rujukan internal untuk agenda evaluasi berkelanjutan, peningkatan kapasitas (upgrading), mitigasi risiko, pemetaan skalabilitas, serta optimalisasi kualitas.
-            </Text>
-            <Text style={styles.disclaimerLog}>
-              DIUNDUH OLEH: {downloadedBy?.name?.toUpperCase()} | LOG SISTEM: {timeLogStr} WIB
             </Text>
           </View>
         )}

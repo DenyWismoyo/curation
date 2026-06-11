@@ -2,11 +2,12 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Loader2, ShieldCheck } from 'lucide-react';
+import { Loader2, ShieldCheck, RefreshCw } from 'lucide-react';
 import { usePDFExport } from '@/hooks/usePDFExport';
-import { UniversalPDFDocument } from '@/app/components/shared/UniversalPDFDocument';
 
 interface CuratorExportPDFProps {
+  assessmentId: string;     // <-- Props Baru yang Wajib
+  templateVersion?: number; // <-- Props Baru
   trackType: string;
   formData: any;
   aiResult: any;
@@ -19,11 +20,10 @@ interface CuratorExportPDFProps {
   };
 }
 
-export function CuratorExportPDF({ trackType, formData, aiResult, namaUsaha, liveData }: CuratorExportPDFProps) {
+export function CuratorExportPDF({ assessmentId, templateVersion = 1, trackType, formData, aiResult, namaUsaha, liveData }: CuratorExportPDFProps) {
   const { exportToPDF, isExporting } = usePDFExport();
 
-  const handleDownload = () => {
-    // Selaraskan data hasil reviu realtime kurator ke dalam objek hasil analisis AI
+  const handleDownload = (forceRegenerate: boolean = false) => {
     const patchedAiResult = {
       ...aiResult,
       totalScore: liveData.curatorScore,
@@ -32,26 +32,46 @@ export function CuratorExportPDF({ trackType, formData, aiResult, namaUsaha, liv
       curatorNotes: liveData.curatorNotes
     };
 
-    const documentComponent = (
-      <UniversalPDFDocument 
-        role="curator" 
-        trackType={trackType} 
-        formData={formData} 
-        aiResult={patchedAiResult} 
-      />
-    );
+    // Susun payload untuk backend
+    const payload = {
+      trackType,
+      formData,
+      aiResult: patchedAiResult
+    };
     
-    exportToPDF(documentComponent, namaUsaha || 'Curator');
+    // Panggil hook dengan role "curator"
+    exportToPDF(
+      "curator", 
+      payload, 
+      namaUsaha || 'Curator', 
+      assessmentId, 
+      templateVersion, 
+      forceRegenerate
+    );
   };
 
   return (
-    <Button 
-      onClick={handleDownload} 
-      disabled={isExporting}
-      className="bg-emerald-600 hover:bg-emerald-700 text-white gap-2 font-bold rounded-xl h-10 px-4 shadow-sm transition-all active:scale-95"
-    >
-      {isExporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
-      {isExporting ? 'Menyiapkan Dokumen...' : 'Ekspor Laporan Kurasi'}
-    </Button>
+    <div className="flex gap-2">
+      {/* Tombol Unduh Standar (Dari Arsip) */}
+      <Button 
+        onClick={() => handleDownload(false)} 
+        disabled={isExporting}
+        className="bg-emerald-600 hover:bg-emerald-700 text-white gap-2 font-bold rounded-xl h-10 px-4 shadow-sm transition-all active:scale-95"
+      >
+        {isExporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
+        {isExporting ? 'Menyiapkan...' : 'Ekspor Laporan Kurasi'}
+      </Button>
+
+      {/* Tombol Force Regenerate (Jika Kurator mengubah nilai / catatan) */}
+      <Button 
+        onClick={() => handleDownload(true)} 
+        disabled={isExporting}
+        variant="outline"
+        title="Render Ulang PDF Baru dengan Perubahan Terbaru"
+        className="h-10 px-3 rounded-xl border-emerald-200 text-emerald-600 hover:bg-emerald-50"
+      >
+        <RefreshCw className={`w-4 h-4 ${isExporting ? 'animate-spin' : ''}`} />
+      </Button>
+    </div>
   );
 }

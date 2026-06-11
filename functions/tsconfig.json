@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "module": "commonjs",
+    "jsx": "react-jsx",
     "esModuleInterop": true,
     "moduleResolution": "node", 
     "noImplicitReturns": false,

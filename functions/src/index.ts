@@ -14,6 +14,7 @@ import { sendAssessmentEmail } from "./emailService";
 
 // EXPORT FUNGSI GENERATOR DOKUMEN WORD
 export { generateDocumentDraft } from "./documentGenerator";
+export { generatePDFReport } from "./pdfGenerator"; // <-- TAMBAHKAN INI
 
 admin.initializeApp();
 
@@ -56,7 +57,7 @@ export const processCurationAssessment = onCall(
     const genAI = new GoogleGenerativeAI(API_KEY);
     
     let corporateEntityName = null;
-    let allowedDocTemplates: string[] = []; // Tetap dideklarasikan untuk jaga-jaga
+    let allowedDocTemplates: string[] = []; 
     const uploadedGeminiFiles: any[] = [];
     const tempLocalFiles: string[] = [];
 
@@ -155,6 +156,7 @@ export const processCurationAssessment = onCall(
       const targetRecommendations = aiPromptConfig?.expectedRecommendations?.map((rec: string) => `- ${rec}`).join("\n") || "- Strategi Bisnis\n- Rencana Pendanaan";
       const mediaFocus = aiPromptConfig?.mediaAnalysisFocus ? `Fokus Evaluasi Media: Aspek ${aiPromptConfig.mediaAnalysisFocus}.` : '';
 
+      // --- PERBAIKAN PROMPT UTAMA UNTUK MENGHILANGKAN BULLET POINT (•) ---
       const promptText = `
 ANDA ADALAH: ${aiPersona}.
 Tugas Anda adalah melakukan penilaian terhadap profil/entitas/peserta berikut dalam kategori: "${trackContext}".
@@ -169,28 +171,32 @@ ${dataString}
 ${storageFilePaths && storageFilePaths.length > 0 ? "DOKUMEN TERLAMPIR TELAH DISERTAKAN. ANDA WAJIB MEMBACA DAN MENYILANGKAN DATANYA DENGAN TEKS FORM." : "TIDAK ADA DOKUMEN YANG DILAMPIRKAN. BERIKAN PENILAIAN BERDASARKAN TEKS SAJA."}
 
 INSTRUKSI FORMAT ANALISIS:
-1. EXECUTIVE SUMMARY: Buat ringkasan padat dan analitis tentang entitas ini sesuai tujuan asesmen. (Hasilkan dalam format POIN-POIN).
-2. FILE ANALYSIS: Nilai validitas dokumen ataupun lampiran media. Catat jika ada ketidaksesuaian dengan isi formulir. (Hasilkan dalam format POIN-POIN). ${mediaFocus}
+1. EXECUTIVE SUMMARY: Buat ringkasan padat dan analitis tentang entitas ini sesuai tujuan asesmen. (Hasilkan dalam bentuk kalimat-kalimat yang dipisahkan MURNI dengan enter/newline, TANPA simbol bullet seperti • / - / *).
+2. FILE ANALYSIS: Nilai validitas dokumen ataupun lampiran media. Catat jika ada ketidaksesuaian dengan isi formulir. (Pisahkan dengan enter/newline, TANPA simbol bullet). ${mediaFocus}
 3. CUSTOM ANALYSIS BLOCKS: Hasilkan blok analisis dengan MERUJUK SANGAT KETAT pada daftar berikut.
-Pastikan Anda menjabarkan nilai indikator (label) secara mendetail dan analitis. (Hasilkan DALAM BENTUK 2-3 POIN SINGKAT DAN TAJAM. Gunakan ENTER/NEWLINE untuk memisahkan setiap poin).
+Pastikan Anda menjabarkan nilai indikator (label) secara mendetail dan analitis. (Hasilkan DALAM BENTUK 2-3 KALIMAT SINGKAT. Pisahkan setiap kalimat MURNI dengan enter/newline, TANPA simbol bullet).
 ${targetAnalysisBlocks}
-4. METRICS ARRAY: Berikan skor objektif (0-100) untuk indikator berikut: [${targetMetrics.join(", ")}]. (Deskripsi alasan wajib disajikan dalam bentuk POIN-POIN/NEWLINE).
-5. SWOT & RISKS: Petakan SWOT. Buat daftar 'Critical Risks' dan 'Mitigation Strategies' yang berpasangan. ${riskInstruction}
-6. ACTION PLAN: Buat rekomendasi strategis HANYA UNTUK AREA BERIKUT dengan Timeframe spesifik. (Konten rekomendasi wajib berupa POIN-POIN TERSTRUKTUR):
+4. METRICS ARRAY: Berikan skor objektif (0-100) untuk indikator berikut: [${targetMetrics.join(", ")}]. (Deskripsi alasan wajib disajikan dalam kalimat yang dipisahkan enter/newline, TANPA simbol bullet).
+5. SWOT & RISKS: Petakan SWOT. Buat daftar 'Critical Risks' dan 'Mitigation Strategies' yang berpasangan. ${riskInstruction} (Pisahkan dengan newline, TANPA simbol bullet).
+6. ACTION PLAN: Buat rekomendasi strategis HANYA UNTUK AREA BERIKUT dengan Timeframe spesifik. (Konten rekomendasi wajib dipisahkan newline, TANPA simbol bullet):
 ${targetRecommendations}
 7. SCORING & TIERING: 
    - Berikan "totalScore" (0-100) sesuai aturan penilaian di atas.
    - Penentuan "readinessLevel" WAJIB memilih HANYA DARI SALAH SATU STATUS BERIKUT: [${tiersString}].
    - Tentukan "incubationRoute".
 
-ATURAN MUTLAK: Output MURNI dalam format JSON. JAWABAN WAJIB BERBAHASA INDONESIA. Jangan gunakan teks paragraf panjang, usahakan semuanya berbentuk poin baris baru.
+ATURAN MUTLAK: 
+- Output MURNI dalam format JSON. 
+- JAWABAN WAJIB BERBAHASA INDONESIA. 
+- DILARANG KERAS MENGGUNAKAN SIMBOL BULLET POINT (seperti •, -, *) ATAU ANGKA LISTING DI AWAL KALIMAT PADA STRING MANAPUN.
+- GUNAKAN HANYA NEWLINE (\\n) SEBAGAI PEMISAH ANTAR POIN/KALIMAT.
 `;
 
       parts.unshift({ text: promptText });
       
       const systemPrompt = isPro 
-        ? "Anda adalah AI Evaluator Premium. Lakukan analisis mendalam, kritis, deteksi celah logika, dan berikan evaluasi berbasis penalaran tingkat tinggi. Format output selalu terstruktur dalam bentuk bullet-points (newline). Format output hanya JSON berbahasa Indonesia." 
-        : "Anda adalah AI Evaluator Standar. Evaluasi secara komprehensif, suportif, dan akurat berdasarkan fakta. Berikan narasi dalam bentuk poin-poin rapi (newline). Format output JSON berbahasa Indonesia.";
+        ? "Anda adalah AI Evaluator Premium. Lakukan analisis mendalam, kritis, deteksi celah logika. Format output terstruktur menggunakan pemisah baris baru (newline) murni. DILARANG KERAS menggunakan simbol bullet (•/ - / *) di awal kalimat. Format output hanya JSON berbahasa Indonesia." 
+        : "Anda adalah AI Evaluator Standar. Evaluasi secara komprehensif, suportif, dan akurat. Berikan narasi rapi dengan pemisah baris baru (newline) murni. DILARANG KERAS menggunakan simbol bullet (•/ - / *) di awal kalimat. Format output JSON berbahasa Indonesia.";
 
       const modelConfig: any = {
         model: selectedModelName,
@@ -202,7 +208,7 @@ ATURAN MUTLAK: Output MURNI dalam format JSON. JAWABAN WAJIB BERBAHASA INDONESIA
             type: SchemaType.OBJECT,
             required: ["readinessLevel", "totalScore", "incubationRoute", "executiveSummary", "customAnalysisBlocks", "fileAnalysisInsights", "metrics", "swotAnalysis", "recommendations", "riskAssessment", "nextActionSteps"],
             properties: {
-              executiveSummary: { type: SchemaType.STRING, description: "Ringkasan eksekutif analitis. Wajib dalam bentuk poin-poin utama yang dipisahkan dengan enter (newline)." },
+              executiveSummary: { type: SchemaType.STRING, description: "Ringkasan eksekutif analitis. Wajib dipisahkan dengan enter (newline) TANPA simbol bullet (•, -, *)." },
               readinessLevel: { type: SchemaType.STRING, description: `WAJIB pilih salah satu: [${tiersString}]` },
               totalScore: { type: SchemaType.INTEGER },
               incubationRoute: { type: SchemaType.STRING },
@@ -221,7 +227,7 @@ ATURAN MUTLAK: Output MURNI dalam format JSON. JAWABAN WAJIB BERBAHASA INDONESIA
                         required: ["label", "value"],
                         properties: {
                           label: { type: SchemaType.STRING },
-                          value: { type: SchemaType.STRING, description: "Penjelasan analitis. WAJIB berupa 2-3 poin ringkas dan tajam. Pisahkan setiap poin dengan enter (newline)." }
+                          value: { type: SchemaType.STRING, description: "Penjelasan analitis berupa 2-3 kalimat ringkas. Pisahkan setiap poin HANYA dengan enter (newline) TANPA simbol bullet (•, -, *)." }
                         }
                       }
                     }
@@ -232,9 +238,9 @@ ATURAN MUTLAK: Output MURNI dalam format JSON. JAWABAN WAJIB BERBAHASA INDONESIA
                 type: SchemaType.OBJECT,
                 required: ["documentQuality", "keyFindingsFromFiles", "discrepancies"],
                 properties: {
-                  documentQuality: { type: SchemaType.STRING, description: "Evaluasi kualitas dokumen dalam bentuk poin-poin (newline)." },
+                  documentQuality: { type: SchemaType.STRING, description: "Evaluasi kualitas dokumen dipisahkan dengan enter (newline) TANPA simbol bullet (•, -, *)." },
                   keyFindingsFromFiles: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
-                  discrepancies: { type: SchemaType.STRING, description: "Penjelasan ketidaksesuaian dalam bentuk poin-poin jika ada (newline)." }
+                  discrepancies: { type: SchemaType.STRING, description: "Penjelasan ketidaksesuaian dipisahkan dengan enter (newline) TANPA simbol bullet (•, -, *)." }
                 }
               },
               metrics: {
@@ -245,7 +251,7 @@ ATURAN MUTLAK: Output MURNI dalam format JSON. JAWABAN WAJIB BERBAHASA INDONESIA
                   properties: {
                     label: { type: SchemaType.STRING },
                     score: { type: SchemaType.INTEGER },
-                    description: { type: SchemaType.STRING, description: "Evaluasi alasan pemberian skor dalam bentuk poin-poin (newline)." }
+                    description: { type: SchemaType.STRING, description: "Evaluasi alasan pemberian skor dipisahkan dengan enter (newline) TANPA simbol bullet (•, -, *)." }
                   }
                 }
               },
@@ -266,7 +272,7 @@ ATURAN MUTLAK: Output MURNI dalam format JSON. JAWABAN WAJIB BERBAHASA INDONESIA
                   required: ["title", "content"], 
                   properties: { 
                     title: { type: SchemaType.STRING, description: "Judul rekomendasi (Sesuai fokus area)" }, 
-                    content: { type: SchemaType.STRING, description: "Langkah strategis konkret berupa poin-poin terstruktur (newline)." } 
+                    content: { type: SchemaType.STRING, description: "Langkah strategis konkret dipisahkan dengan enter (newline) TANPA simbol bullet (•, -, *)." } 
                   } 
                 }
               },
@@ -285,7 +291,7 @@ ATURAN MUTLAK: Output MURNI dalam format JSON. JAWABAN WAJIB BERBAHASA INDONESIA
                   required: ["timeframe", "task"], 
                   properties: { 
                     timeframe: { type: SchemaType.STRING }, 
-                    task: { type: SchemaType.STRING } 
+                    task: { type: SchemaType.STRING, description: "Task yang dipisahkan newline TANPA simbol bullet (•, -, *)." } 
                   } 
                 }
               }
@@ -305,8 +311,6 @@ ATURAN MUTLAK: Output MURNI dalam format JSON. JAWABAN WAJIB BERBAHASA INDONESIA
       // FASE 4: TRANSACTION DATABASE
       let assessmentId = "";
       await db.runTransaction(async (transaction) => {
-        
-        // DEKLARASI WADAH KHUSUS DI DALAM TRANSAKSI AGAR TYPESCRIPT BISA MEMBACANYA
         let finalDocTemplates: string[] = [];
 
         if (tokenUsed && typeof tokenUsed === 'string' && tokenUsed.includes('-')) {
@@ -326,7 +330,6 @@ ATURAN MUTLAK: Output MURNI dalam format JSON. JAWABAN WAJIB BERBAHASA INDONESIA
           if (!tData) throw new Error(`Token ${tokenCode} tidak ditemukan.`);
           if (tData.isUsed) throw new Error("Token telah digunakan secara paralel.");
 
-          // MENGAMBIL DATA TEMPLATE LANGSUNG DARI DOKUMEN TRANSAKSI
           finalDocTemplates = corpData?.allowedDocumentTemplates || [];
 
           transaction.update(corpRefToUpdate, {
@@ -353,10 +356,6 @@ ATURAN MUTLAK: Output MURNI dalam format JSON. JAWABAN WAJIB BERBAHASA INDONESIA
           aiResult: aiResultJson,
           tokenUsed: tokenUsed || null, 
           
-          // ==========================================
-          // INJEKSI SISTEM MONETISASI & TEMPLATE
-          // ==========================================
-          // Menggunakan variabel scope dalam yang tidak akan terkena error garis merah
           allowedDocumentTemplates: finalDocTemplates, 
           documentGenerationQuota: tokenUsed ? 1 : 0, 
           hasPaidForDocument: false, 

@@ -1,33 +1,51 @@
+// src/hooks/usePDFExport.ts
 import { useState } from 'react';
-import { pdf } from '@react-pdf/renderer';
+import { getFunctions, httpsCallable } from 'firebase/functions';
+import { app } from '@/lib/firebase';
 
 export function usePDFExport() {
   const [isExporting, setIsExporting] = useState(false);
 
-  // Menerima komponen React secara langsung, bukan Ref!
-  const exportToPDF = async (DocumentComponent: React.ReactElement, fileName: string) => {
+  const exportToPDF = async (
+    role: string, 
+    payload: any, 
+    fileName: string, 
+    assessmentId: string, 
+    templateVersion: number = 1, 
+    forceRegenerate: boolean = false
+  ) => {
     setIsExporting(true);
     try {
-      // 1. Inisialisasi engine react-pdf
-      const asPdf = pdf();
-      // 2. Berikan struktur komponen Document
-      asPdf.updateContainer(DocumentComponent);
-      // 3. Render ke dalam bentuk file blob secara background
-      const blob = await asPdf.toBlob();
+      const functions = getFunctions(app, 'asia-southeast2'); 
+      const generatePDFCloud = httpsCallable(functions, 'generatePDFReport');
+
+      // Mengirim payload lengkap beserta ID dan instruksi arsip
+      const result = await generatePDFCloud({ 
+        role, 
+        payload, 
+        assessmentId, 
+        templateVersion, 
+        forceRegenerate 
+      });
       
-      // 4. Unduh secara otomatis
-      const url = URL.createObjectURL(blob);
+      const data = result.data as { downloadUrl: string; cached: boolean };
+      
+      // (Opsional) Anda bisa memunculkan toast: data.cached ? "Mengambil dari arsip" : "PDF baru dibuat"
+
       const link = document.createElement('a');
-      link.href = url;
+      link.href = data.downloadUrl;
+      link.target = '_blank';
       
       const safeName = fileName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
       link.download = `Report_CSRS_${safeName}.pdf`;
-      link.click();
       
-      URL.revokeObjectURL(url);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
     } catch (error) {
-      console.error("Gagal melakukan export PDF", error);
-      alert("Terjadi kesalahan sistem saat menyusun dokumen PDF. Pastikan data tidak kosong.");
+      console.error("Gagal melakukan export PDF:", error);
+      alert("Terjadi kesalahan sistem saat mengambil dokumen PDF.");
     } finally {
       setIsExporting(false);
     }
