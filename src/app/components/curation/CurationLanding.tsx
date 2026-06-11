@@ -73,6 +73,15 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
       sessionStorage.setItem('active_token', cleanToken);
       sessionStorage.setItem('active_model', batchData.modelType);
       
+      // --- TAMBAHAN FILTERING ---
+      // Simpan allowedTemplates ke session jika ada, jika tidak ada hapus session-nya
+      if (batchData.allowedTemplates && Array.isArray(batchData.allowedTemplates) && batchData.allowedTemplates.length > 0) {
+        sessionStorage.setItem('active_allowed_templates', JSON.stringify(batchData.allowedTemplates));
+      } else {
+        sessionStorage.removeItem('active_allowed_templates');
+      }
+      // --------------------------
+
       onStart();
     } catch (error) {
       console.error("Error validating token:", error);

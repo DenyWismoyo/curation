@@ -217,10 +217,37 @@ export default function AssessmentPage({ params }: { params: Promise<{ trackId: 
     return slug === trackId;
   });
 
-  // Efek proteksi: Kembalikan ke halaman PILIH KATEGORI jika template tidak ditemukan
+  // Efek proteksi: Kembalikan ke halaman PILIH KATEGORI jika template tidak ditemukan ATAU tidak diizinkan
   useEffect(() => {
-    if (!state.isLoadingTemplates && state.templates.length > 0 && !template) {
-      router.push('/assessment');
+    // Pastikan token masih ada
+    const activeToken = sessionStorage.getItem('active_token');
+    if (!activeToken) {
+      router.replace('/');
+      return;
+    }
+
+    if (!state.isLoadingTemplates && state.templates.length > 0) {
+      // Jika template tidak valid dari awal
+      if (!template) {
+        router.push('/assessment');
+        return;
+      }
+
+      // --- TAMBAHAN FILTERING: PROTEKSI BYPASS URL ---
+      const savedAllowed = sessionStorage.getItem('active_allowed_templates');
+      if (savedAllowed) {
+        try {
+          const allowedIds = JSON.parse(savedAllowed) as string[];
+          if (!allowedIds.includes(template.id)) {
+            alert("Akses Ditolak: Token Anda tidak memiliki izin untuk mengakses modul ini.");
+            router.push('/assessment');
+            return;
+          }
+        } catch (e) {
+          console.error("Gagal membaca proteksi URL dari session", e);
+        }
+      }
+      // -----------------------------------------------
     }
   }, [state.isLoadingTemplates, state.templates, template, router]);
 

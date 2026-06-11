@@ -2,12 +2,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { collection, getDocs, doc, setDoc, deleteDoc, query, orderBy } from 'firebase/firestore';
+import { collection, getDocs, doc, setDoc, deleteDoc, updateDoc, query, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
-import { KeyRound, Download, Plus, Building2, Users, Sparkles, Zap, Eye, X, Copy, Check, Search, ShieldCheck, UserCheck, Trash2 } from 'lucide-react';
+import { KeyRound, Download, Plus, Building2, Users, Sparkles, Zap, Eye, X, Copy, Check, Search, ShieldCheck, UserCheck, Trash2, Edit3, Save } from 'lucide-react';
 import { AdminTokenExportPDF } from '@/app/components/admin/AdminTokenExportPDF';
 
 // === INTERFACES ===
@@ -18,6 +18,7 @@ interface CorporateBatch {
   totalTokens: number;
   usedCount: number;
   createdAt: string;
+  allowedTemplates?: string[]; // <-- Field baru untuk filter template
   tokens: Record<string, { isUsed: boolean; usedAt: string | null; usedByNamaUsaha: string | null }>;
 }
 
@@ -28,11 +29,26 @@ interface CuratorToken {
   role: string;
 }
 
+interface FormTemplateLight {
+  id: string;
+  trackName: string;
+  isActive: boolean;
+}
+
 export default function TokenManagerPage() {
   const [activeTab, setActiveTab] = useState<'peserta' | 'kurator'>('peserta');
   const [loading, setLoading] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
-  
+
+  // State Form Templates (Untuk Filter)
+  const [availableTemplates, setAvailableTemplates] = useState<FormTemplateLight[]>([]);
+  const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
+
+  // State Edit Allowed Templates di Table
+  const [editingBatchId, setEditingBatchId] = useState<string | null>(null);
+  const [editingAllowedTemplates, setEditingAllowedTemplates] = useState<string[]>([]);
+  const [isUpdatingTemplates, setIsUpdatingTemplates] = useState(false);
+
   // State Token Peserta (Batch)
   const [batches, setBatches] = useState<CorporateBatch[]>([]);
   const [qty, setQty] = useState(50);
@@ -54,13 +70,21 @@ export default function TokenManagerPage() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      // Fetch Peserta Batches
+      // 1. Fetch Form Templates
+      const qTemplates = query(collection(db, 'form_templates'));
+      const snapTemplates = await getDocs(qTemplates);
+      const dataTemplates = snapTemplates.docs
+        .map(d => ({ id: d.id, trackName: d.data().trackName, isActive: d.data().isActive } as FormTemplateLight))
+        .filter(t => t.isActive); // Hanya ambil yang aktif
+      setAvailableTemplates(dataTemplates);
+
+      // 2. Fetch Peserta Batches
       const qBatch = query(collection(db, 'corporate_tokens'), orderBy('createdAt', 'desc'));
       const snapBatch = await getDocs(qBatch);
       const dataBatch = snapBatch.docs.map(d => ({ id: d.id, ...d.data() } as CorporateBatch));
       setBatches(dataBatch);
 
-      // Fetch Curator Tokens
+      // 3. Fetch Curator Tokens
       const qCurator = query(collection(db, 'curator_tokens'), orderBy('createdAt', 'desc'));
       const snapCurator = await getDocs(qCurator);
       const dataCurator = snapCurator.docs.map(d => ({ id: d.id, ...d.data() } as CuratorToken));
@@ -85,7 +109,6 @@ export default function TokenManagerPage() {
     if (!corporateName) return alert("Nama korporat wajib diisi.");
 
     setIsGenerating(true);
-
     try {
       const newTokens: Record<string, any> = {};
       for (let i = 0; i < qty; i++) {
@@ -99,15 +122,17 @@ export default function TokenManagerPage() {
         totalTokens: qty,
         usedCount: 0,
         createdAt: new Date().toISOString(),
+        allowedTemplates: selectedTemplates, // <-- Simpan pilihan filter template
         tokens: newTokens
       };
 
       await setDoc(doc(db, 'corporate_tokens', cleanCorpId), batchData);
-      setBatches([{ id: cleanCorpId, ...batchData }, ...batches]);
+      setBatches([{ id: cleanCorpId, ...batchData } as CorporateBatch, ...batches]);
       alert(`Berhasil! 1 Batch dengan ${qty} Token (${modelType.toUpperCase()}) untuk ${corporateName} dibuat.`);
       
       setCorporateName('');
       setCorpId('');
+      setSelectedTemplates([]); // Reset pilihan
     } catch (error) {
       console.error("Gagal generate token:", error);
       alert("Terjadi kesalahan sistem.");
@@ -116,14 +141,32 @@ export default function TokenManagerPage() {
     }
   };
 
+  // === HANDLER UPDATE TEMPLATES BATCH ===
+  const updateBatchTemplates = async (batchId: string) => {
+    setIsUpdatingTemplates(true);
+    try {
+      await updateDoc(doc(db, 'corporate_tokens', batchId), {
+        allowedTemplates: editingAllowedTemplates
+      });
+      // Update state lokal
+      setBatches(prev => prev.map(b => b.id === batchId ? { ...b, allowedTemplates: editingAllowedTemplates } : b));
+      setEditingBatchId(null);
+      alert('Akses form berhasil diperbarui!');
+    } catch (error) {
+      console.error("Gagal update allowedTemplates:", error);
+      alert("Terjadi kesalahan saat memperbarui akses.");
+    } finally {
+      setIsUpdatingTemplates(false);
+    }
+  };
+
   // === HANDLER TOKEN KURATOR ===
   const generateCuratorToken = async () => {
     const code = curatorCode.trim().toUpperCase();
     const program = curatorProgram.trim();
-
     if (!code || code.length < 5) return alert("Kode Kurator minimal 5 karakter.");
     if (!program) return alert("Silakan pilih Nama Program/Entitas terlebih dahulu.");
-
+    
     if (curatorTokens.find(t => t.id === code)) {
       return alert("Kode Token ini sudah ada. Silakan gunakan kode lain.");
     }
@@ -237,6 +280,7 @@ export default function TokenManagerPage() {
       {/* ========================================= */}
       {activeTab === 'peserta' && (
         <div className="space-y-6 animate-in fade-in duration-300">
+          
           {/* Panel Generate Batch Peserta */}
           <Card className="p-6 sm:p-8 bg-white rounded-3xl shadow-sm border-none ring-1 ring-slate-200 flex flex-col gap-5">
             <div className="flex flex-col md:flex-row items-end gap-5">
@@ -252,6 +296,41 @@ export default function TokenManagerPage() {
                 <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Jumlah Token</label>
                 <Input type="number" value={qty} onChange={e => setQty(Number(e.target.value))} min={1} max={5000} className="h-12 rounded-xl bg-slate-50 font-bold" />
               </div>
+            </div>
+
+            {/* SEKSI PILIH TEMPLATE UNTUK BATCH INI */}
+            <div className="pt-4 border-t border-slate-100 space-y-3">
+              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest flex items-center justify-between">
+                <span>Akses Form Template (Modul Asesmen)</span>
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {availableTemplates.length === 0 ? (
+                  <p className="text-xs text-slate-400 italic">Belum ada template aktif di database.</p>
+                ) : (
+                  availableTemplates.map(tpl => (
+                    <label key={tpl.id} className={`flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all ${selectedTemplates.includes(tpl.id) ? 'border-indigo-600 bg-indigo-50/50' : 'border-slate-200 bg-white hover:border-indigo-200'}`}>
+                      <input 
+                        type="checkbox" 
+                        className="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500"
+                        checked={selectedTemplates.includes(tpl.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedTemplates([...selectedTemplates, tpl.id]);
+                          } else {
+                            setSelectedTemplates(selectedTemplates.filter(id => id !== tpl.id));
+                          }
+                        }}
+                      />
+                      <span className={`text-sm font-bold ${selectedTemplates.includes(tpl.id) ? 'text-indigo-900' : 'text-slate-700'}`}>
+                        {tpl.trackName}
+                      </span>
+                    </label>
+                  ))
+                )}
+              </div>
+              <p className="text-[10px] text-slate-400 font-medium mt-1">
+                Jika tidak ada modul yang dipilih, peserta akan dapat mengakses <strong>Semua Modul Asesmen</strong> yang aktif.
+              </p>
             </div>
 
             <div className="flex flex-col md:flex-row items-center justify-between gap-5 pt-4 border-t border-slate-100">
@@ -272,7 +351,6 @@ export default function TokenManagerPage() {
                   </button>
                 </div>
               </div>
-
               <Button onClick={generateCorporateBatch} disabled={isGenerating} className="w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 h-12 px-8 rounded-xl font-bold shadow-lg shadow-indigo-200">
                 <Plus className="w-4 h-4 mr-2" /> {isGenerating ? 'Memproses JSON...' : 'Buat Batch Baru'}
               </Button>
@@ -293,13 +371,14 @@ export default function TokenManagerPage() {
                     <tr>
                       <th className="px-6 py-5">Nama Program / Entitas</th>
                       <th className="px-6 py-5">Tipe &amp; Prefix</th>
+                      <th className="px-6 py-5">Akses Form (Modul)</th>
                       <th className="px-6 py-5 text-center">Penggunaan</th>
                       <th className="px-6 py-5 text-center">Aksi / Ekspor</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50">
                     {batches.length === 0 ? (
-                      <tr><td colSpan={4} className="py-10 text-center text-slate-400 font-medium">Belum ada batch korporat yang dibuat.</td></tr>
+                      <tr><td colSpan={5} className="py-10 text-center text-slate-400 font-medium">Belum ada batch korporat yang dibuat.</td></tr>
                     ) : batches.map(batch => (
                       <tr key={batch.id} className="hover:bg-slate-50/50 transition-colors">
                         <td className="px-6 py-5">
@@ -320,6 +399,64 @@ export default function TokenManagerPage() {
                             <span className="font-mono font-black text-indigo-700 bg-indigo-50 px-2 py-1 rounded-md ring-1 ring-indigo-100">{batch.id}-******</span>
                           </div>
                         </td>
+                        <td className="px-6 py-5 align-top max-w-[240px]">
+                          {/* LOGIKA EDIT ALLOWED TEMPLATES */}
+                          {editingBatchId === batch.id ? (
+                            <div className="space-y-3 bg-white p-3 rounded-xl ring-1 ring-slate-200 shadow-sm relative z-10">
+                              <p className="text-[10px] font-bold text-slate-500 uppercase">Ubah Hak Akses Form:</p>
+                              <div className="max-h-[120px] overflow-y-auto space-y-2 custom-scrollbar pr-2">
+                                {availableTemplates.map(tpl => (
+                                  <label key={tpl.id} className="flex items-start gap-2 cursor-pointer group">
+                                    <input 
+                                      type="checkbox"
+                                      className="mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                                      checked={editingAllowedTemplates.includes(tpl.id)}
+                                      onChange={(e) => {
+                                        if (e.target.checked) setEditingAllowedTemplates([...editingAllowedTemplates, tpl.id]);
+                                        else setEditingAllowedTemplates(editingAllowedTemplates.filter(id => id !== tpl.id));
+                                      }}
+                                    />
+                                    <span className="text-xs font-semibold text-slate-700 leading-tight group-hover:text-indigo-600">{tpl.trackName}</span>
+                                  </label>
+                                ))}
+                              </div>
+                              <div className="flex gap-2 pt-2 border-t border-slate-100">
+                                <Button size="sm" className="h-7 text-xs px-3 bg-indigo-600 hover:bg-indigo-700 flex-1" onClick={() => updateBatchTemplates(batch.id)} disabled={isUpdatingTemplates}>
+                                  {isUpdatingTemplates ? '...' : 'Simpan'}
+                                </Button>
+                                <Button size="sm" variant="outline" className="h-7 text-xs px-3 text-slate-500 flex-1" onClick={() => setEditingBatchId(null)}>
+                                  Batal
+                                </Button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="flex flex-col items-start gap-2">
+                              {(!batch.allowedTemplates || batch.allowedTemplates.length === 0) ? (
+                                <span className="inline-flex bg-slate-100 text-slate-600 font-bold text-[10px] uppercase tracking-widest px-2 py-1 rounded-md ring-1 ring-slate-200">Semua Akses (Publik)</span>
+                              ) : (
+                                <div className="flex flex-wrap gap-1.5">
+                                  {batch.allowedTemplates.map(id => {
+                                    const tName = availableTemplates.find(t => t.id === id)?.trackName || 'Form Dihapus';
+                                    return (
+                                      <span key={id} className="inline-flex items-center bg-indigo-50 text-indigo-700 font-bold text-[10px] leading-tight px-2 py-1 rounded-md ring-1 ring-indigo-200/50 max-w-[200px] truncate" title={tName}>
+                                        {tName}
+                                      </span>
+                                    );
+                                  })}
+                                </div>
+                              )}
+                              <button 
+                                onClick={() => { 
+                                  setEditingBatchId(batch.id); 
+                                  setEditingAllowedTemplates(batch.allowedTemplates || []); 
+                                }} 
+                                className="text-[10px] font-bold uppercase tracking-widest text-indigo-500 hover:text-indigo-700 flex items-center gap-1 mt-1 bg-indigo-50/50 hover:bg-indigo-100 px-2 py-1 rounded transition-colors"
+                              >
+                                <Edit3 size={10} /> Ubah Akses
+                              </button>
+                            </div>
+                          )}
+                        </td>
                         <td className="px-6 py-5">
                           <div className="flex flex-col items-center">
                             <div className="flex items-center gap-1.5 font-black text-slate-700 text-lg">
@@ -336,7 +473,7 @@ export default function TokenManagerPage() {
                             <Button onClick={() => setSelectedBatch(batch)} variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-100 font-bold rounded-xl h-10 px-4 shadow-sm bg-white">
                               <Eye className="w-4 h-4 sm:mr-1.5" /> <span className="hidden sm:inline">Lihat Token</span>
                             </Button>
-                            <Button onClick={() => exportTokensToCSV(batch.id, batch)} variant="outline" className="border-indigo-200 text-indigo-700 hover:bg-indigo-50 font-bold rounded-xl h-10 w-10 p-0 shadow-sm bg-white shrink-0">
+                            <Button onClick={() => exportTokensToCSV(batch.id, batch)} variant="outline" className="border-indigo-200 text-indigo-700 hover:bg-indigo-50 font-bold rounded-xl h-10 w-10 p-0 shadow-sm bg-white shrink-0" title="Export CSV">
                               <Download className="w-4 h-4" /> 
                             </Button>
                             <AdminTokenExportPDF batch={batch} />
@@ -357,6 +494,7 @@ export default function TokenManagerPage() {
       {/* ========================================= */}
       {activeTab === 'kurator' && (
         <div className="space-y-6 animate-in fade-in duration-300">
+          
           {/* Panel Generate Kurator */}
           <Card className="p-6 sm:p-8 bg-white rounded-3xl shadow-sm border-none ring-1 ring-slate-200 flex flex-col md:flex-row items-end gap-5">
             <div className="space-y-2 flex-1 w-full">
@@ -366,7 +504,7 @@ export default function TokenManagerPage() {
               <select 
                 value={curatorProgram} 
                 onChange={e => setCuratorProgram(e.target.value)} 
-                className="flex h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500" 
+                className="flex h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
               >
                 <option value="" disabled>-- Pilih Program / Entitas --</option>
                 {uniquePrograms.map((prog, idx) => (
@@ -383,7 +521,7 @@ export default function TokenManagerPage() {
                 value={curatorCode} 
                 onChange={e => setCuratorCode(e.target.value.toUpperCase().replace(/\s/g, '-'))} 
                 placeholder="CUR-SOLO-2026" 
-                className="h-12 rounded-xl bg-slate-50 uppercase font-mono font-bold" 
+                className="h-12 rounded-xl bg-slate-50 uppercase font-mono font-bold"
               />
             </div>
             <Button 
@@ -422,7 +560,7 @@ export default function TokenManagerPage() {
                           <div className="flex items-center gap-3">
                             <Button 
                               variant="outline" 
-                              size="sm"
+                              size="sm" 
                               onClick={() => handleCopyToken(token.id)}
                               className="h-8 px-2 border-slate-200"
                             >
@@ -469,21 +607,19 @@ export default function TokenManagerPage() {
                   <KeyRound className="w-5 h-5 text-indigo-600" /> Detail Batch: {selectedBatch.corporateName}
                 </h3>
                 <p className="text-xs font-bold text-slate-500 mt-1 uppercase tracking-widest">
-                  Prefix: {selectedBatch.id} • Total: {selectedBatch.totalTokens} Token
+                  Prefix: {selectedBatch.id} | Total: {selectedBatch.totalTokens} Token
                 </p>
               </div>
-              <button onClick={() => { setSelectedBatch(null); setSearchToken(''); }} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-200 text-slate-500 transition-colors">
+              <button onClick={() => { setSelectedBatch(null); setSearchToken(''); setEditingBatchId(null); }} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-200 text-slate-500 transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
-
             <div className="p-4 border-b border-slate-100 bg-white">
               <div className="relative">
                 <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                 <Input value={searchToken} onChange={(e) => setSearchToken(e.target.value)} placeholder="Cari Token atau Nama Usaha pengguna..." className="pl-10 h-12 bg-slate-50 border-slate-200 rounded-xl font-medium" />
               </div>
             </div>
-
             <div className="flex-1 overflow-y-auto bg-slate-50/30 p-4 space-y-3 custom-scrollbar">
               {getFilteredTokens().length === 0 ? (
                 <div className="text-center py-10 text-slate-400 font-medium text-sm">Tidak ada token yang cocok.</div>
