@@ -9,6 +9,22 @@ import { ReviewAndConfirm } from './ReviewAndConfirm';
 import * as LucideIcons from 'lucide-react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 
+// ========================================================
+// FUNGSI PARSER MARKDOWN UNTUK MENGUBAH *TEKS* MENJADI BOLD
+// ========================================================
+const renderMarkdownText = (str: string) => {
+  if (typeof str !== 'string') return str;
+  const parts = str.split(/(\*\*.*?\*\*|\*.*?\*)/g);
+  return parts.map((part, index) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={index} className="font-black text-indigo-600">{part.slice(2, -2)}</strong>;
+    } else if (part.startsWith('*') && part.endsWith('*')) {
+      return <strong key={index} className="font-bold text-indigo-600">{part.slice(1, -1)}</strong>;
+    }
+    return part;
+  });
+};
+
 interface DynamicWizardProps {
   template: FormTemplate;
   onComplete: (data: any) => void;
@@ -18,10 +34,10 @@ interface DynamicWizardProps {
 export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardProps) {
   const CACHE_KEY = `curation_draft_dynamic_${template.id}`;
   const totalSteps = template.steps.length;
-
   const [step, setStep] = useState(1);
   const [saveStatus, setSaveStatus] = useState('');
   const [isReviewMode, setIsReviewMode] = useState(false);
+
   const [formData, setFormData] = useState<any>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem(CACHE_KEY);
@@ -32,11 +48,10 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
     return {};
   });
 
-  // Render Icon Dinamis untuk header Form
   const currentStepData = template.steps[step - 1];
   const StepIcon = currentStepData.icon && (LucideIcons as any)[currentStepData.icon] 
-                   ? (LucideIcons as any)[currentStepData.icon] 
-                   : Sparkles;
+                    ? (LucideIcons as any)[currentStepData.icon] 
+                    : Sparkles;
 
   // Auto-Save ke LocalStorage
   useEffect(() => {
@@ -58,7 +73,6 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
     }
   }, [formData, CACHE_KEY]);
 
-  // Fungsi tunggal untuk handle perubahan data dari DynamicField
   const handleChange = (id: string, value: any) => {
     setFormData((prev: any) => ({ ...prev, [id]: value }));
   };
@@ -81,7 +95,6 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
     return true;
   };
 
-  // Variants Animasi
   const formVariants: Variants = {
     enter: { opacity: 0, x: 30 },
     center: { opacity: 1, x: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
@@ -118,7 +131,7 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
       
       {/* PANEL KIRI: PROGRESS & INFO */}
       <div className="w-full lg:w-[380px] xl:w-[420px] lg:border-r border-slate-200 bg-white/90 lg:bg-[#FAFAFA] backdrop-blur-xl lg:h-[calc(100vh-5.5rem)] sticky top-0 z-40 lg:z-30 p-4 lg:p-10 xl:p-12 flex flex-col justify-between overflow-y-auto custom-scrollbar border-b lg:border-b-0">
-        
+         
         {/* Mobile Header */}
         <div className="flex lg:hidden items-center justify-between w-full">
           <button onClick={() => step > 1 ? setStep(step - 1) : onBack()} className="p-2 -ml-2 text-slate-500 hover:text-indigo-600 active:scale-95 transition-transform">
@@ -153,7 +166,6 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
           <button onClick={() => step > 1 ? setStep(step - 1) : onBack()} className="flex items-center gap-1.5 text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors mb-8 bg-white lg:bg-transparent px-4 py-2 lg:px-0 rounded-full lg:rounded-none shadow-sm lg:shadow-none border border-slate-200 lg:border-transparent w-fit">
             <ChevronLeft size={18} /> Kembali
           </button>
-
           <motion.h3 
             key={template.trackName}
             initial={{ opacity: 0, y: 10 }}
@@ -227,11 +239,14 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
                   <div className="p-2.5 bg-indigo-50 rounded-2xl ring-1 ring-indigo-100/50">
                     <StepIcon className="text-indigo-600 w-6 h-6 sm:w-8 sm:h-8 shrink-0"/> 
                   </div>
-                  {currentStepData.title}
+                  {/* PENERAPAN MARKDOWN PADA JUDUL */}
+                  {renderMarkdownText(currentStepData.title)}
                 </h2>
+
                 {currentStepData.description && (
                   <p className="text-slate-500 text-sm sm:text-base mb-8 leading-relaxed max-w-2xl">
-                    {currentStepData.description}
+                    {/* PENERAPAN MARKDOWN PADA DESKRIPSI */}
+                    {renderMarkdownText(currentStepData.description)}
                   </p>
                 )}
 
@@ -262,7 +277,7 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
                  Pastikan kolom bertanda <span className="text-rose-500">*</span> terisi.
                </p>
                <button 
-                  onClick={() => {
+                 onClick={() => {
                     if (step < totalSteps) {
                       setStep(step + 1);
                       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -270,9 +285,9 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
                       setIsReviewMode(true);
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }
-                  }} 
-                  disabled={!isStepValid()}
-                  className="w-full sm:w-auto py-4 px-8 bg-slate-900 text-white font-bold rounded-2xl hover:bg-indigo-600 transition-all shadow-lg shadow-slate-900/20 hover:shadow-indigo-600/30 flex items-center justify-center gap-2 text-base active:scale-[0.98] disabled:opacity-50 group"
+                 }} 
+                 disabled={!isStepValid()}
+                 className="w-full sm:w-auto py-4 px-8 bg-slate-900 text-white font-bold rounded-2xl hover:bg-indigo-600 transition-all shadow-lg shadow-slate-900/20 hover:shadow-indigo-600/30 flex items-center justify-center gap-2 text-base active:scale-[0.98] disabled:opacity-50 group"
                >
                   {step < totalSteps ? (
                     <>Langkah Selanjutnya <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" /></>

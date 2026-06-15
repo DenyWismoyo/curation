@@ -7,6 +7,7 @@ import { db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { AIPromptPresets } from '@/data/aiPromptTemplates';
 import { FormTemplate, FormStep, FormField, FieldType } from '@/types/curation';
+import { TemplateExportPDFButton } from '@/app/components/admin/TemplateExportPDFButton'; // Sesuaikan path jika berbeda
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -17,6 +18,7 @@ import {
   Copy, ArrowUp, ArrowDown, Sparkles, Upload, Download,
   BrainCircuit, FileEdit, ChevronDown, ChevronUp, Lock,
   AlertTriangle, ChevronLeft, Calendar
+
 } from 'lucide-react';
 
 function TemplateBuilderContent() {
@@ -335,20 +337,27 @@ function TemplateBuilderContent() {
                 className="p-6 bg-white rounded-3xl border-none ring-1 ring-slate-200 shadow-sm hover:shadow-xl hover:ring-indigo-300 transition-all cursor-pointer group flex flex-col justify-between h-full"
               >
                 <div>
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="w-12 h-12 bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white rounded-2xl flex items-center justify-center shrink-0 transition-colors">
-                      <LayoutGrid size={24} />
-                    </div>
-                    {template.isActive ? (
-                      <span className="flex items-center gap-1 bg-emerald-50 text-emerald-700 font-black text-[10px] uppercase tracking-widest px-2.5 py-1 rounded-md ring-1 ring-emerald-200 transition-colors">
-                        <CheckCircle2 size={12}/> Aktif
-                      </span>
-                    ) : (
-                      <span className="flex items-center gap-1 bg-amber-50 text-amber-700 font-black text-[10px] uppercase tracking-widest px-2.5 py-1 rounded-md ring-1 ring-amber-200 transition-colors">
-                        <AlertCircle size={12}/> Draft
-                      </span>
-                    )}
-                  </div>
+<div className="flex items-start justify-between mb-4">
+  <div className="w-12 h-12 bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white rounded-2xl flex items-center justify-center shrink-0 transition-colors">
+    <LayoutGrid size={24} />
+  </div>
+
+  {/* Modifikasi: Group badge status dan tombol download secara berdampingan */}
+  <div className="flex items-center gap-2">
+    {template.isActive ? (
+      <span className="flex items-center h-8 gap-1 bg-emerald-50 text-emerald-700 font-black text-[10px] uppercase tracking-widest px-2.5 rounded-md ring-1 ring-emerald-200 transition-colors">
+        <CheckCircle2 size={12}/> Aktif
+      </span>
+    ) : (
+      <span className="flex items-center h-8 gap-1 bg-amber-50 text-amber-700 font-black text-[10px] uppercase tracking-widest px-2.5 rounded-md ring-1 ring-amber-200 transition-colors">
+        <AlertCircle size={12}/> Draft
+      </span>
+    )}
+
+    {/* Sisipkan Tombol PDF di sini */}
+    <TemplateExportPDFButton template={template} />
+  </div>
+</div>
                   <h3 className="text-lg font-black text-slate-900 leading-snug mb-1 line-clamp-2 group-hover:text-indigo-600 transition-colors">
                     {template.trackName}
                   </h3>

@@ -7,6 +7,23 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { UploadCloud, File, X, Check } from 'lucide-react';
 
+// ========================================================
+// FUNGSI PARSER MARKDOWN UNTUK MENGUBAH *TEKS* MENJADI BOLD
+// ========================================================
+const renderMarkdownText = (str: string) => {
+  if (typeof str !== 'string') return str;
+  // Memecah teks berdasarkan **teks** atau *teks*
+  const parts = str.split(/(\*\*.*?\*\*|\*.*?\*)/g);
+  return parts.map((part, index) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={index} className="font-black text-indigo-600">{part.slice(2, -2)}</strong>;
+    } else if (part.startsWith('*') && part.endsWith('*')) {
+      return <strong key={index} className="font-bold text-indigo-600">{part.slice(1, -1)}</strong>;
+    }
+    return part; // Kembalikan string biasa jika tidak ada tanda bintang
+  });
+};
+
 interface DynamicFieldProps {
   field: FormField;
   value: any;
@@ -41,7 +58,6 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
             className="h-12 bg-slate-50 border-slate-200 focus-visible:ring-indigo-500 rounded-xl transition-all font-medium text-slate-700"
           />
         );
-
       case 'number':
         return (
           <Input
@@ -52,7 +68,6 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
             className="h-12 bg-slate-50 border-slate-200 focus-visible:ring-indigo-500 rounded-xl transition-all font-medium text-slate-700"
           />
         );
-
       case 'textarea':
         return (
           <Textarea
@@ -62,8 +77,6 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
             className="bg-slate-50 border-slate-200 focus-visible:ring-indigo-500 rounded-xl min-h-[100px] resize-y transition-all font-medium text-slate-700"
           />
         );
-
-      // FIX: LOGIKA RENDER UNTUK DATE PICKER (TANGGAL)
       case 'date':
         return (
           <Input
@@ -73,8 +86,6 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
             className="h-12 bg-slate-50 border-slate-200 focus-visible:ring-indigo-500 rounded-xl transition-all font-medium text-slate-700 w-full"
           />
         );
-
-      // FIX: LOGIKA RENDER UNTUK SELECT DROPDOWN
       case 'select':
         return (
           <div className="relative">
@@ -85,7 +96,10 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
             >
               <option value="" disabled>-- Pilih salah satu opsi --</option>
               {field.options?.map((opt, idx) => (
-                <option key={idx} value={opt}>{opt}</option>
+                <option key={idx} value={opt}>
+                  {/* HTML Option tidak mendukung tag span, jadi kita hapus karakter bintangnya saja */}
+                  {opt.replace(/\*/g, '')}
+                </option>
               ))}
             </select>
             <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
@@ -93,16 +107,15 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
             </div>
           </div>
         );
-
       case 'radio':
         return (
           <div className="flex flex-col gap-3 pt-1">
             {field.options?.map((opt, idx) => (
-              <label 
-                key={idx} 
-                className={`flex items-center gap-3 p-3 rounded-xl border transition-all cursor-pointer ${value === opt ? 'border-indigo-500 bg-indigo-50/50 text-indigo-900 shadow-sm' : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-600'}`}
+              <label
+                key={idx}
+                className={`flex items-start gap-3 p-3.5 rounded-xl border transition-all cursor-pointer ${value === opt ? 'border-indigo-500 bg-indigo-50/50 text-indigo-900 shadow-sm' : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-600'}`}
               >
-                <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${value === opt ? 'border-indigo-600' : 'border-slate-300'}`}>
+                <div className={`mt-0.5 w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${value === opt ? 'border-indigo-600' : 'border-slate-300'}`}>
                   {value === opt && <div className="w-2.5 h-2.5 bg-indigo-600 rounded-full" />}
                 </div>
                 <input
@@ -113,12 +126,11 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
                   onChange={(e) => onChange(e.target.value)}
                   className="hidden"
                 />
-                <span className="font-medium text-sm">{opt}</span>
+                <span className="font-medium text-sm leading-relaxed">{renderMarkdownText(opt)}</span>
               </label>
             ))}
           </div>
         );
-
       case 'checkbox':
         const checkedValues = Array.isArray(value) ? value : [];
         return (
@@ -126,11 +138,11 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
             {field.options?.map((opt, idx) => {
               const isChecked = checkedValues.includes(opt);
               return (
-                <label 
-                  key={idx} 
-                  className={`flex items-center gap-3 p-3 rounded-xl border transition-all cursor-pointer ${isChecked ? 'border-indigo-500 bg-indigo-50/50 text-indigo-900 shadow-sm' : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-600'}`}
+                <label
+                  key={idx}
+                  className={`flex items-start gap-3 p-3.5 rounded-xl border transition-all cursor-pointer ${isChecked ? 'border-indigo-500 bg-indigo-50/50 text-indigo-900 shadow-sm' : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-600'}`}
                 >
-                  <div className={`w-5 h-5 rounded border flex items-center justify-center shrink-0 ${isChecked ? 'bg-indigo-600 border-indigo-600 text-white' : 'border-slate-300'}`}>
+                  <div className={`mt-0.5 w-5 h-5 rounded border flex items-center justify-center shrink-0 ${isChecked ? 'bg-indigo-600 border-indigo-600 text-white' : 'border-slate-300'}`}>
                     {isChecked && <Check size={14} strokeWidth={3} />}
                   </div>
                   <input
@@ -140,13 +152,12 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
                     onChange={(e) => handleCheckboxChange(opt, e.target.checked)}
                     className="hidden"
                   />
-                  <span className="font-medium text-sm">{opt}</span>
+                  <span className="font-medium text-sm leading-relaxed">{renderMarkdownText(opt)}</span>
                 </label>
               );
             })}
           </div>
         );
-
       case 'file':
         const handleDrag = (e: React.DragEvent) => {
           e.preventDefault(); e.stopPropagation();
@@ -158,7 +169,6 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
           setDragActive(false);
           if (e.dataTransfer.files && e.dataTransfer.files[0]) onChange(e.dataTransfer.files[0]);
         };
-
         return (
           <div className="mt-1">
             {value ? (
@@ -183,7 +193,7 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
                 </button>
               </div>
             ) : (
-              <div 
+              <div
                 className={`relative border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-2 
                   ${dragActive ? 'border-indigo-500 bg-indigo-50' : 'border-slate-300 bg-slate-50 hover:bg-slate-100'}`}
                 onDragEnter={handleDrag}
@@ -204,7 +214,7 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
                 <input
                   ref={fileInputRef}
                   type="file"
-                  accept={field.fileAccept} 
+                  accept={field.fileAccept}
                   className="hidden"
                   onChange={(e) => {
                     if (e.target.files && e.target.files[0]) onChange(e.target.files[0]);
@@ -214,7 +224,6 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
             )}
           </div>
         );
-
       default:
         return null;
     }
@@ -223,13 +232,13 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
   return (
     <div className={`space-y-2 ${field.gridSpan === 2 ? 'sm:col-span-2' : ''}`}>
       <label className="text-sm font-bold text-slate-800 flex items-start gap-1">
-        {field.label}
-        {field.required && <span className="text-rose-500 text-lg leading-none">*</span>}
+        <span className="flex-1 leading-snug">{renderMarkdownText(field.label)}</span>
+        {field.required && <span className="text-rose-500 text-lg leading-none shrink-0">*</span>}
       </label>
       
       {field.description && (
         <p className="text-xs text-slate-500 font-medium -mt-1 mb-2 leading-relaxed">
-          {field.description}
+          {renderMarkdownText(field.description)}
         </p>
       )}
 

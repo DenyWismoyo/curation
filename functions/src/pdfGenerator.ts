@@ -31,6 +31,12 @@ export const generatePDFReport = onCall(
     const fileName = `pdf_exports/${assessmentId}_${role}.pdf`;
     const file = bucket.file(fileName);
 
+    // Sanitasi nama file agar aman saat diunduh
+    const safeEntityName = payload?.formData?.namaUsaha 
+      ? String(payload.formData.namaUsaha).replace(/[^a-zA-Z0-9]/gi, '_') 
+      : assessmentId;
+    const downloadFileName = `Laporan_CSRS_${safeEntityName}_${role}.pdf`;
+
     try {
       const docSnap = await docRef.get();
       if (!docSnap.exists) throw new HttpsError("not-found", "Data asesmen tidak ditemukan di Database.");
@@ -46,6 +52,8 @@ export const generatePDFReport = onCall(
          const [downloadUrl] = await file.getSignedUrl({
             action: 'read',
             expires: Date.now() + 2 * 60 * 60 * 1000, // 2 Jam
+            // Memaksa browser untuk langsung mengunduh file
+            responseDisposition: `attachment; filename="${downloadFileName}"`,
          });
          return { downloadUrl, cached: true };
       }
@@ -87,6 +95,8 @@ export const generatePDFReport = onCall(
       const [downloadUrl] = await file.getSignedUrl({
         action: 'read',
         expires: Date.now() + 2 * 60 * 60 * 1000,
+        // Memaksa browser untuk langsung mengunduh file
+        responseDisposition: `attachment; filename="${downloadFileName}"`,
       });
 
       return { downloadUrl, cached: false };
