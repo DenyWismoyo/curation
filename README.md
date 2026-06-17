@@ -1,6 +1,6 @@
 # 🚀 Smart Curation & Assessment Platform
 
-Sebuah platform web *full-stack* yang dirancang untuk mengelola asesmen dinamis, alur kurasi multi-peran, dan analisis data otomatis menggunakan Kecerdasan Buatan (AI). Dibangun menggunakan ekosistem modern **Next.js** dan **Firebase**, aplikasi ini memfasilitasi pembuatan formulir kustom, *generate* dokumen PDF secara langsung, dan integrasi AI untuk menghasilkan *blueprint* evaluasi yang presisi.
+Sebuah platform web *full-stack* yang dirancang untuk mengelola asesmen dinamis, alur kurasi multi-peran, dan analisis data otomatis menggunakan Kecerdasan Buatan (AI). Dibangun menggunakan ekosistem modern **Next.js** dan **Firebase**, aplikasi ini memfasilitasi pembuatan formulir kustom, *generate* dokumen PDF secara langsung, dan integrasi AI untuk menghasilkan evaluasi yang presisi.
 
 ![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
 ![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)
@@ -11,24 +11,24 @@ Sebuah platform web *full-stack* yang dirancang untuk mengelola asesmen dinamis,
 
 ## ✨ Fitur Utama
 
-- 🔐 **Role-Based Access Control (RBAC):** Otentikasi dan dasbor terpisah untuk tiga peran utama: **Admin**, **Curator**, dan **Public User**.
-- 🛠️ **Dynamic Template Builder:** Admin dapat membangun formulir asesmen secara dinamis (Tab Form Builder) dan mengonfigurasi parameter AI (Tab AI Config) langsung dari antarmuka.
-- 🤖 **AI-Powered Evaluation:** Integrasi layanan AI untuk menganalisis hasil asesmen pengguna dan menghasilkan *AI Prompt Blueprint* serta rekomendasi cerdas.
-- 📄 **Universal PDF Export:** Menghasilkan dokumen PDF berkualitas tinggi (*Universal Assessment View* & *Report Template*) secara *real-time* menggunakan *React PDF*.
-- 📊 **Vector & Email Services:** Layanan *backend* pendukung untuk pencarian berbasis vektor dan otomatisasi notifikasi email.
+*   🔐 **Role-Based Access Control (RBAC):** Otentikasi dan dasbor terpisah untuk peran **Admin**, **Curator**, dan **Public User**.
+*   🛠️ **Dynamic Template Builder:** Admin dapat membangun formulir asesmen secara dinamis melalui antarmuka *Form Builder* dan mengonfigurasi parameter AI (*AI Config*).
+*   🤖 **AI-Powered Evaluation:** Integrasi layanan AI untuk menganalisis hasil asesmen pengguna dan menghasilkan *AI Prompt Blueprint* secara otomatis.
+*   📄 **Universal PDF Export:** Menghasilkan dokumen PDF berkualitas tinggi (*Universal Assessment View*, *Template Questions*, & *Report Template*) secara *real-time*.
+*   🧩 **Dynamic Wizard & Tracks:** Pengguna publik dapat memilih jalur (*track*) asesmen dan mengisi formulir melalui sistem *Dynamic Wizard*.
 
 ---
 
 ## 🏗️ Arsitektur Sistem
 
-Aplikasi ini menggunakan pendekatan modular di mana *frontend* dan *backend* terintegrasi secara mulus melalui Firebase Services.
+Aplikasi ini menggunakan pendekatan modular di mana *frontend* dan *backend* terintegrasi secara mulus melalui layanan Firebase.
 
 ```mermaid
 graph TD
     subgraph Frontend ["Frontend (Next.js App Router)"]
-        UI["UI Components<br/>(Tailwind + Shadcn)"]
-        Context["Contexts & Hooks<br/>(AuthContext, useCuration)"]
-        Pages["Role-based Pages<br/>(Admin, Curator, Public)"]
+        UI["UI Components<br/>(Tailwind + Shadcn UI)"]
+        Context["Contexts & Hooks<br/>(AuthContext, useCuration, usePDFExport)"]
+        Pages["Role-based Pages<br/>(Admin, Curator, Assessment)"]
     end
 
     subgraph Backend ["Firebase Backend"]
@@ -37,10 +37,9 @@ graph TD
         Functions["Cloud Functions<br/>(Node.js)"]
     end
 
-    subgraph Core_Services ["Core Microservices"]
+    subgraph Core_Services ["Core Services"]
         AI["AI Service<br/>(Prompt Templates)"]
         PDF["PDF Generator<br/>(React PDF)"]
-        Vector["Vector Service"]
         Email["Email Service"]
     end
 
@@ -53,39 +52,5 @@ graph TD
     Pages -->|Trigger Actions| Functions
 
     Functions --> AI
-    Functions --> Vector
     Functions --> Email
     Functions --> PDF
-
-sequenceDiagram
-    autonumber
-    actor User as Public User
-    actor Curator as Curator
-    actor Admin as System Admin
-    participant App as Next.js App
-    participant DB as Firestore
-    participant AI as AI Service
-    participant PDF as PDF Generator
-
-    %% Admin Setup
-    Admin->>App: Kelola Templates & Prompts
-    App->>DB: Simpan Master Data
-
-    %% User Flow
-    User->>App: Mengisi Dynamic Wizard Assessment
-    App->>DB: Simpan Draft/Final Assessment
-    
-    %% AI Generation
-    App->>AI: Minta Analisis & Rekomendasi AI
-    AI-->>App: Kembalikan Prompt Blueprint
-    App->>DB: Simpan Hasil AI
-    
-    %% PDF Export
-    User->>PDF: Generate Universal Assessment PDF
-    PDF-->>User: Download Dokumen
-    
-    %% Curator Flow
-    Curator->>App: Buka Dashboard Kurator
-    App->>DB: Ambil Data Assessment Masuk
-    Curator->>App: Review & Validasi Detail
-    App->>DB: Update Status Kurasi
