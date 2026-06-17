@@ -56,3 +56,36 @@ graph TD
     Functions --> Vector
     Functions --> Email
     Functions --> PDF
+
+sequenceDiagram
+    autonumber
+    actor User as Public User
+    actor Curator as Curator
+    actor Admin as System Admin
+    participant App as Next.js App
+    participant DB as Firestore
+    participant AI as AI Service
+    participant PDF as PDF Generator
+
+    %% Admin Setup
+    Admin->>App: Kelola Templates & Prompts
+    App->>DB: Simpan Master Data
+
+    %% User Flow
+    User->>App: Mengisi Dynamic Wizard Assessment
+    App->>DB: Simpan Draft/Final Assessment
+    
+    %% AI Generation
+    App->>AI: Minta Analisis & Rekomendasi AI
+    AI-->>App: Kembalikan Prompt Blueprint
+    App->>DB: Simpan Hasil AI
+    
+    %% PDF Export
+    User->>PDF: Generate Universal Assessment PDF
+    PDF-->>User: Download Dokumen
+    
+    %% Curator Flow
+    Curator->>App: Buka Dashboard Kurator
+    App->>DB: Ambil Data Assessment Masuk
+    Curator->>App: Review & Validasi Detail
+    App->>DB: Update Status Kurasi
