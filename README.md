@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 Smart Curation & Assessment Platform
 
-## Getting Started
+Sebuah platform web *full-stack* yang dirancang untuk mengelola asesmen dinamis, alur kurasi multi-peran, dan analisis data otomatis menggunakan Kecerdasan Buatan (AI). Dibangun menggunakan ekosistem modern **Next.js** dan **Firebase**, aplikasi ini memfasilitasi pembuatan formulir kustom, *generate* dokumen PDF secara langsung, dan integrasi AI untuk menghasilkan *blueprint* evaluasi yang presisi.
 
-First, run the development server:
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
+![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ✨ Fitur Utama
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- 🔐 **Role-Based Access Control (RBAC):** Otentikasi dan dasbor terpisah untuk tiga peran utama: **Admin**, **Curator**, dan **Public User**.
+- 🛠️ **Dynamic Template Builder:** Admin dapat membangun formulir asesmen secara dinamis (Tab Form Builder) dan mengonfigurasi parameter AI (Tab AI Config) langsung dari antarmuka.
+- 🤖 **AI-Powered Evaluation:** Integrasi layanan AI untuk menganalisis hasil asesmen pengguna dan menghasilkan *AI Prompt Blueprint* serta rekomendasi cerdas.
+- 📄 **Universal PDF Export:** Menghasilkan dokumen PDF berkualitas tinggi (*Universal Assessment View* & *Report Template*) secara *real-time* menggunakan *React PDF*.
+- 📊 **Vector & Email Services:** Layanan *backend* pendukung untuk pencarian berbasis vektor dan otomatisasi notifikasi email.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🏗️ Arsitektur Sistem
 
-To learn more about Next.js, take a look at the following resources:
+Aplikasi ini menggunakan pendekatan modular di mana *frontend* dan *backend* terintegrasi secara mulus melalui Firebase Services.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```mermaid
+graph TD
+    subgraph Frontend ["Frontend (Next.js App Router)"]
+        UI["UI Components<br/>(Tailwind + Shadcn)"]
+        Context["Contexts & Hooks<br/>(AuthContext, useCuration)"]
+        Pages["Role-based Pages<br/>(Admin, Curator, Public)"]
+    end
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+    subgraph Backend ["Firebase Backend"]
+        Auth["Firebase Authentication"]
+        Firestore[("Cloud Firestore<br/>(Rules & Indexes)")]
+        Functions["Cloud Functions<br/>(Node.js)"]
+    end
 
-## Deploy on Vercel
+    subgraph Core_Services ["Core Microservices"]
+        AI["AI Service<br/>(Prompt Templates)"]
+        PDF["PDF Generator<br/>(React PDF)"]
+        Vector["Vector Service"]
+        Email["Email Service"]
+    end
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+    %% Connections
+    UI --> Context
+    Context --> Pages
+    
+    Pages -->|Login/Session| Auth
+    Pages -->|Read/Write Data| Firestore
+    Pages -->|Trigger Actions| Functions
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+    Functions --> AI
+    Functions --> Vector
+    Functions --> Email
+    Functions --> PDF
