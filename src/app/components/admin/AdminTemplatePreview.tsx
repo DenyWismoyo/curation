@@ -42,7 +42,7 @@ export function AdminTemplatePreview({ template }: { template: FormTemplate }) {
   };
 
   // ========================================================
-  // FUNGSI 1: EXPORT PDF STRUKTUR FORM (TemplateQuestionsPDF)
+  // FUNGSI 1: EXPORT PDF STRUKTUR FORM
   // ========================================================
   const handleExportFormPDF = async () => {
     if (isExportingForm) return;
@@ -74,7 +74,7 @@ export function AdminTemplatePreview({ template }: { template: FormTemplate }) {
   };
 
   // ========================================================
-  // FUNGSI 2: EXPORT PDF BLUEPRINT AI (AIPromptBlueprintPDF)
+  // FUNGSI 2: EXPORT PDF BLUEPRINT AI
   // ========================================================
   const handleExportAIPDF = async () => {
     if (isExportingAI) return;
@@ -155,9 +155,7 @@ export function AdminTemplatePreview({ template }: { template: FormTemplate }) {
       {/* MAIN CONTENT AREA */}
       <div className="flex-1 p-6 md:p-8 lg:p-10 overflow-y-auto bg-slate-50/50 custom-scrollbar relative">
         
-        {/* ======================================================== */}
-        {/* VIEW 1: SIMULASI FORMULIR (DIROMBAK)                       */}
-        {/* ======================================================== */}
+        {/* VIEW 1: SIMULASI FORMULIR */}
         {viewMode === 'form' && (
           template.steps.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-slate-400">
@@ -167,14 +165,11 @@ export function AdminTemplatePreview({ template }: { template: FormTemplate }) {
             </div>
           ) : (
             <div className="max-w-4xl mx-auto space-y-6">
-              
-              {/* Header Simulasi Formulir */}
               <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-200 pb-5">
                 <div>
                   <h2 className="text-2xl font-black text-slate-900">Simulasi Formulir</h2>
                   <p className="text-sm text-slate-500 font-medium">Pratinjau antarmuka pendaftaran untuk peserta (End-User).</p>
                 </div>
-                {/* Tombol Download PDF Form Structure */}
                 <Button 
                   onClick={handleExportFormPDF}
                   disabled={isExportingForm}
@@ -185,13 +180,10 @@ export function AdminTemplatePreview({ template }: { template: FormTemplate }) {
                 </Button>
               </div>
 
-              {/* Form Container (Card Style) */}
               <div className="bg-white rounded-3xl ring-1 ring-slate-200 shadow-md p-6 md:p-10 relative overflow-hidden">
-                {/* Aksen visual halus di pojok */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-bl-full -z-0 opacity-50 pointer-events-none"></div>
 
                 <div className="relative z-10">
-                  {/* Step Title & Progress Indicator */}
                   <div className="mb-10">
                     <div className="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg mb-3 ring-1 ring-indigo-100">
                       <Sparkles size={12} />
@@ -205,11 +197,9 @@ export function AdminTemplatePreview({ template }: { template: FormTemplate }) {
                     )}
                   </div>
 
-                  {/* Fields Grid */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8">
                     {currentStepData.fields.map((field) => (
                       <div key={field.id} className={field.type === 'textarea' || field.type === 'file' ? 'md:col-span-2' : ''}>
-                        {/* DynamicField Anda akan mengisi area ini */}
                         <DynamicField 
                           field={field} 
                           value={dummyData[field.id]} 
@@ -219,7 +209,6 @@ export function AdminTemplatePreview({ template }: { template: FormTemplate }) {
                     ))}
                   </div>
 
-                  {/* Form Footer Actions */}
                   <div className="pt-10 mt-10 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
                       Preview {currentStep === totalSteps ? 'Selesai' : 'Berjalan'}
@@ -234,14 +223,11 @@ export function AdminTemplatePreview({ template }: { template: FormTemplate }) {
                   </div>
                 </div>
               </div>
-
             </div>
           )
         )}
 
-        {/* ======================================================== */}
-        {/* VIEW 2: RINGKASAN PROMPT AI (TETAP SAMA SEPERTI SEBELUMNYA)*/}
-        {/* ======================================================== */}
+        {/* VIEW 2: RINGKASAN PROMPT AI (TERMINAL VIEW DIUPDATE) */}
         {viewMode === 'ai' && (
           <div className="max-w-4xl mx-auto space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-200 pb-4">
@@ -259,7 +245,7 @@ export function AdminTemplatePreview({ template }: { template: FormTemplate }) {
               </Button>
             </div>
             
-            <div className="bg-slate-900 rounded-3xl p-8 text-emerald-400 font-mono text-xs sm:text-sm leading-relaxed overflow-x-auto shadow-2xl ring-1 ring-slate-800">
+            <div className="bg-slate-900 rounded-3xl p-8 text-emerald-400 font-mono text-xs sm:text-sm leading-relaxed overflow-x-auto shadow-2xl ring-1 ring-slate-800 mb-10">
               <p className="text-slate-400 mb-4 italic text-base">/* System Prompt Configuration */</p>
               <div className="space-y-1.5 mb-8">
                 <p><span className="text-pink-400 font-bold">Persona:</span> "{ai.aiPersona || 'Pakar'}"</p>
@@ -269,10 +255,16 @@ export function AdminTemplatePreview({ template }: { template: FormTemplate }) {
                 {ai.mediaAnalysisFocus && <p><span className="text-amber-400 font-bold">Fokus Media:</span> {ai.mediaAnalysisFocus}</p>}
               </div>
               
-              <p className="text-slate-400 mb-2 italic">/* Metrik Penilaian Radar */</p>
+              <p className="text-slate-400 mb-2 italic">/* Metrik Penilaian Radar (0-100) */</p>
               <ul className="list-disc list-inside pl-2 mb-8 text-indigo-300 space-y-1">
                 {(ai.expectedMetrics || []).map((m: any, i: number) => <li key={i}>{m}</li>)}
                 {(!ai.expectedMetrics || ai.expectedMetrics.length === 0) && <li>Belum dikonfigurasi</li>}
+              </ul>
+
+              <p className="text-slate-400 mb-2 italic">/* Tiers Level Readiness (Klaster Hasil Akhir) */</p>
+              <ul className="list-disc list-inside pl-2 mb-8 text-purple-300 space-y-1">
+                {(ai.customReadinessTiers || []).map((t: any, i: number) => <li key={i}>{t}</li>)}
+                {(!ai.customReadinessTiers || ai.customReadinessTiers.length === 0) && <li>Belum dikonfigurasi</li>}
               </ul>
 
               <p className="text-slate-400 mb-2 italic">/* Target Blok Analisis */</p>
@@ -287,12 +279,42 @@ export function AdminTemplatePreview({ template }: { template: FormTemplate }) {
                 {(!ai.expectedRecommendations || ai.expectedRecommendations.length === 0) && <li>Belum dikonfigurasi</li>}
               </ul>
 
+              {/* ADVANCED PROMPTING PREVIEW */}
               {ai.riskFramework && (
                 <>
-                  <p className="text-slate-400 mb-2 italic">/* Fokus Mitigasi Risiko Khusus */</p>
+                  <p className="text-slate-400 mb-2 italic mt-8">/* Fokus Mitigasi Risiko Khusus */</p>
                   <p className="text-amber-200 bg-slate-800/50 p-4 rounded-xl border border-slate-700 leading-loose">"{ai.riskFramework}"</p>
                 </>
               )}
+
+              {ai.customScoringRubric && (
+                <>
+                  <p className="text-slate-400 mb-2 italic mt-6">/* Rubrik Penilaian Matematis */</p>
+                  <p className="text-amber-300 bg-amber-900/30 p-4 rounded-xl border border-amber-800/50 leading-loose">"{ai.customScoringRubric}"</p>
+                </>
+              )}
+
+              {ai.customSystemPrompt && (
+                <>
+                  <p className="text-slate-400 mb-2 italic mt-6">/* Logika Kondisional & System Rules */</p>
+                  <p className="text-indigo-300 bg-indigo-900/30 p-4 rounded-xl border border-indigo-800/50 leading-loose">"{ai.customSystemPrompt}"</p>
+                </>
+              )}
+
+              {ai.negativePrompts && (
+                <>
+                  <p className="text-slate-400 mb-2 italic mt-6">/* Pantangan AI (Negative Prompts) */</p>
+                  <p className="text-rose-300 bg-rose-900/30 p-4 rounded-xl border border-rose-800/50 leading-loose">"{ai.negativePrompts}"</p>
+                </>
+              )}
+
+              {ai.formatInstructions && (
+                <>
+                  <p className="text-slate-400 mb-2 italic mt-6">/* Instruksi Pemformatan & Markdown Output */</p>
+                  <p className="text-emerald-300 bg-emerald-900/30 p-4 rounded-xl border border-emerald-800/50 leading-loose">"{ai.formatInstructions}"</p>
+                </>
+              )}
+
             </div>
           </div>
         )}

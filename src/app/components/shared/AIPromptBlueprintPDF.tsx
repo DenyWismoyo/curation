@@ -45,10 +45,17 @@ const styles = StyleSheet.create({
   bullet: { fontSize: 10, color: '#4F46E5', marginRight: 6 },
   bulletText: { fontSize: 10, color: '#334155', lineHeight: 1.4, flex: 1 },
 
-  // Risk Box
+  // Special/Advanced Config Boxes
+  advancedBox: { backgroundColor: '#F8FAFC', borderLeft: '4pt solid #4F46E5', padding: 12, marginTop: 12 },
+  advancedLabel: { fontSize: 9, fontWeight: 900, color: '#312E81', textTransform: 'uppercase', marginBottom: 4 },
+  advancedText: { fontSize: 10, color: '#334155', lineHeight: 1.5, fontWeight: 500 },
+
+  negativeBox: { backgroundColor: '#FEF2F2', borderLeft: '4pt solid #E11D48', padding: 12, marginTop: 12 },
+  negativeLabel: { fontSize: 9, fontWeight: 900, color: '#9F1239', textTransform: 'uppercase', marginBottom: 4 },
+  negativeText: { fontSize: 10, color: '#881337', lineHeight: 1.5, fontWeight: 500 },
+
   riskBox: { backgroundColor: '#FFFBEB', borderLeft: '4pt solid #F59E0B', padding: 12, marginTop: 12 },
   riskLabel: { fontSize: 9, fontWeight: 900, color: '#B45309', textTransform: 'uppercase', marginBottom: 4 },
-  // PERBAIKAN: fontStyle: 'italic' DIHAPUS agar tidak terjadi error missing font
   riskText: { fontSize: 10, color: '#92400E', lineHeight: 1.5, fontWeight: 500 },
 
   footer: { position: 'absolute', bottom: 30, left: 48, right: 48, borderTop: '1pt solid #E5E5E5', paddingTop: 12, flexDirection: 'row', justifyContent: 'space-between' },
@@ -128,9 +135,27 @@ export function AIPromptBlueprintPDF({ template }: { template: FormTemplate }) {
           )}
         </View>
 
+        {/* NEW: Tiers Level Readiness */}
         <View style={styles.listSection}>
           <View style={styles.listTitleContainer}>
-            <Text style={styles.listIndex}>2</Text>
+            <Text style={[styles.listIndex, { backgroundColor: '#F3E8FF', color: '#9333EA' }]}>2</Text>
+            <Text style={styles.listTitle}>Tiers Level Readiness (Klaster Hasil Akhir)</Text>
+          </View>
+          {(!ai.customReadinessTiers || ai.customReadinessTiers.length === 0) ? (
+            <Text style={styles.bulletText}>Belum dikonfigurasi.</Text>
+          ) : (
+            (ai.customReadinessTiers as string[]).map((t, i) => (
+              <View key={i} style={styles.bulletRow} wrap={false}>
+                <Text style={[styles.bullet, { color: '#9333EA' }]}>■</Text>
+                <Text style={styles.bulletText}>{t}</Text>
+              </View>
+            ))
+          )}
+        </View>
+
+        <View style={styles.listSection}>
+          <View style={styles.listTitleContainer}>
+            <Text style={styles.listIndex}>3</Text>
             <Text style={styles.listTitle}>Target Ekstraksi Narasi (Blok Analisis)</Text>
           </View>
           {(!ai.expectedAnalysisBlocks || ai.expectedAnalysisBlocks.length === 0) ? (
@@ -147,7 +172,7 @@ export function AIPromptBlueprintPDF({ template }: { template: FormTemplate }) {
 
         <View style={styles.listSection}>
           <View style={styles.listTitleContainer}>
-            <Text style={styles.listIndex}>3</Text>
+            <Text style={styles.listIndex}>4</Text>
             <Text style={styles.listTitle}>Fokus Rekomendasi / Tindak Lanjut</Text>
           </View>
           {(!ai.expectedRecommendations || ai.expectedRecommendations.length === 0) ? (
@@ -162,10 +187,38 @@ export function AIPromptBlueprintPDF({ template }: { template: FormTemplate }) {
           )}
         </View>
 
-        {/* Risk Mitigation */}
+        {/* --- ADVANCED PROMPTING SECTION --- */}
+        {ai.customScoringRubric && (
+          <View style={[styles.advancedBox, { borderLeftColor: '#D97706', backgroundColor: '#FFFBEB' }]} wrap={false}>
+            <Text style={[styles.advancedLabel, { color: '#B45309' }]}>Rubrik Penilaian Matematis (Scoring Rubric)</Text>
+            <Text style={[styles.advancedText, { color: '#92400E' }]}>{ai.customScoringRubric}</Text>
+          </View>
+        )}
+
+        {ai.customSystemPrompt && (
+          <View style={styles.advancedBox} wrap={false}>
+            <Text style={styles.advancedLabel}>Logika Kondisional & System Rules</Text>
+            <Text style={styles.advancedText}>{ai.customSystemPrompt}</Text>
+          </View>
+        )}
+
+        {ai.negativePrompts && (
+          <View style={styles.negativeBox} wrap={false}>
+            <Text style={styles.negativeLabel}>Pantangan AI (Negative Prompts)</Text>
+            <Text style={styles.negativeText}>{ai.negativePrompts}</Text>
+          </View>
+        )}
+
+        {ai.formatInstructions && (
+          <View style={[styles.advancedBox, { borderLeftColor: '#059669', backgroundColor: '#ECFDF5' }]} wrap={false}>
+            <Text style={[styles.advancedLabel, { color: '#065F46' }]}>Instruksi Pemformatan & Layout (Markdown)</Text>
+            <Text style={[styles.advancedText, { color: '#064E3B' }]}>{ai.formatInstructions}</Text>
+          </View>
+        )}
+
         {ai.riskFramework && (
           <View style={styles.riskBox} wrap={false}>
-            <Text style={styles.riskLabel}>Instruksi Khusus Mitigasi Risiko</Text>
+            <Text style={styles.riskLabel}>Instruksi Khusus Mitigasi Risiko (Risk Framework)</Text>
             <Text style={styles.riskText}>"{ai.riskFramework}"</Text>
           </View>
         )}

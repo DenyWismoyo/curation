@@ -1,4 +1,4 @@
-// src/components/shared/UniversalAssessmentView.tsx
+// src/app/components/shared/UniversalAssessmentView.tsx
 'use client';
 
 import React, { useState } from 'react';
@@ -14,20 +14,20 @@ import { Textarea } from '@/components/ui/textarea';
 import { CurationFormData, AIResult } from '@/types/curation';
 
 // ========================================================
-// 1. HELPER COMPONENTS
+// 1. HELPER COMPONENTS (UPGRADED RICH TEXT PARSER)
 // ========================================================
 
-// FUNGSI BARU: Parser untuk membaca Markdown Bold (**) menjadi Tag HTML <strong>
-const renderTextWithBold = (str: string) => {
+const renderRichText = (str: string) => {
   if (!str) return null;
-  // Memecah teks berdasarkan pola **teks tebal**
-  const parts = str.split(/(\*\*.*?\*\*)/g);
+  // Memecah teks berdasarkan pola **tebal** ATAU *miring*
+  const parts = str.split(/(\*\*.*?\*\*|\*.*?\*)/g);
   return parts.map((part, index) => {
     if (part.startsWith('**') && part.endsWith('**')) {
-      // Hilangkan ** dan render sebagai strong
       return <strong key={index} className="font-bold text-slate-900">{part.slice(2, -2)}</strong>;
+    } else if (part.startsWith('*') && part.endsWith('*')) {
+      return <em key={index} className="italic text-slate-800 font-medium">{part.slice(1, -1)}</em>;
     }
-    return part; // Kembalikan teks normal
+    return part; 
   });
 };
 
@@ -36,18 +36,29 @@ export const TextToBullets = ({ text, colorClass = "text-indigo-500" }: { text: 
   const lines = text.split('\n').filter(line => line.trim().length > 0);
   
   if (lines.length === 1 && !lines[0].includes('-')) {
-    return <p className="leading-relaxed">{renderTextWithBold(text)}</p>;
+    return <p className="leading-relaxed">{renderRichText(text)}</p>;
   }
 
   return (
     <ul className="space-y-2 mt-2">
       {lines.map((line, idx) => {
-        // Bersihkan karakter bullet (-, *, •) di awal baris jika ada
         const cleanLine = line.replace(/^[\-\*\•]\s*/, '').trim();
+        
+        // Deteksi jika baris ini bertindak sebagai Sub-Judul (Markdown ## atau ###)
+        if (cleanLine.startsWith('###') || cleanLine.startsWith('##') || (cleanLine === cleanLine.toUpperCase() && cleanLine.length > 5)) {
+           return (
+             <li key={idx} className="block mt-5 mb-1 list-none">
+                <strong className="text-slate-900 font-black text-sm uppercase tracking-wide border-b border-slate-100 pb-1.5 w-full block">
+                  {renderRichText(cleanLine.replace(/^#+\s*/, ''))}
+                </strong>
+             </li>
+           );
+        }
+
         return (
           <li key={idx} className="flex items-start gap-2.5">
             <span className={`mt-1 flex-shrink-0 text-[10px] ${colorClass}`}>●</span>
-            <span className="leading-relaxed">{renderTextWithBold(cleanLine)}</span>
+            <span className="leading-relaxed">{renderRichText(cleanLine)}</span>
           </li>
         );
       })}
@@ -284,13 +295,27 @@ export function UniversalAssessmentView({
           </div>
         </div>
 
+
+
         {/* DYNAMIC SCORING CARD BASED ON MODE */}
         {isPublic ? (
           <div className={`w-full lg:w-[340px] shrink-0 p-8 rounded-3xl text-white relative overflow-hidden flex flex-col justify-center items-center shadow-lg ${isHighTier ? 'bg-gradient-to-br from-[#0f3d32] to-emerald-800' : 'bg-gradient-to-br from-slate-900 to-indigo-900'}`}>
             <div className="absolute inset-0 bg-gradient-to-tr from-black/20 to-transparent opacity-30 mix-blend-overlay"></div>
             <p className="relative z-10 text-white/70 text-xs font-black uppercase tracking-widest mb-2 flex items-center gap-2"><ShieldCheck className="h-4 w-4"/> AI Readiness Score</p>
             <span className="relative z-10 text-[100px] font-black leading-none tracking-tighter drop-shadow-md mb-4">{Math.min(aiScore, 100)}</span>
-            <span className="relative z-10 text-sm font-bold bg-white/20 backdrop-blur-md px-6 py-2.5 rounded-full ring-1 ring-white/30 text-center">{aiResult?.readinessLevel || "Belum Ditentukan"}</span>
+            
+            {/* UPGRADE UI TIER READINESS (SPLIT TITLE & SUBTITLE) */}
+            <div className="relative z-10 flex flex-col items-center gap-2 w-full">
+              <span className="text-sm font-black bg-white/20 backdrop-blur-md px-6 py-2 rounded-full ring-1 ring-white/30 text-center uppercase tracking-wider">
+                {aiResult?.readinessLevel?.split('|')[0]?.trim() || "Belum Ditentukan"}
+              </span>
+              {aiResult?.readinessLevel?.includes('|') && (
+                <span className="text-[11px] font-bold text-white/90 bg-black/20 px-4 py-1.5 rounded-full text-center text-balance leading-snug">
+                  {aiResult.readinessLevel.split('|')[1]?.trim()}
+                </span>
+              )}
+            </div>
+            
           </div>
         ) : (
           <div className="w-full lg:w-[400px] shrink-0 p-6 rounded-3xl text-white relative overflow-hidden shadow-lg bg-slate-900 flex flex-col justify-center">
@@ -298,9 +323,21 @@ export function UniversalAssessmentView({
             <div className="flex justify-between gap-4 relative z-10 w-full">
               <div className="flex-1 text-center bg-white/10 rounded-2xl p-4 flex flex-col justify-center">
                 <p className="text-[10px] uppercase font-black tracking-widest text-slate-400 mb-2">Rekomendasi AI</p>
-                <p className="text-5xl font-black text-white/50 leading-none mb-2">{aiScore}</p>
-                <span className="inline-block text-[10px] font-bold bg-white/10 px-2 py-0.5 rounded text-white/50">{aiResult?.readinessLevel}</span>
+                <p className="text-5xl font-black text-white/50 leading-none mb-3">{aiScore}</p>
+                
+                {/* UPGRADE UI TIER READINESS INTERNAL */}
+                <div className="flex flex-col gap-1 w-full">
+                  <span className="inline-block text-[10px] font-black bg-white/20 px-2 py-1 rounded text-white/80 uppercase">
+                    {aiResult?.readinessLevel?.split('|')[0]?.trim() || "Belum Ditentukan"}
+                  </span>
+                  {aiResult?.readinessLevel?.includes('|') && (
+                    <span className="inline-block text-[9px] font-medium text-white/50 px-1 leading-tight">
+                      {aiResult.readinessLevel.split('|')[1]?.trim()}
+                    </span>
+                  )}
+                </div>
               </div>
+              
               <div className={`flex-1 text-center rounded-2xl p-4 ring-2 shadow-xl ${isHighTier ? 'bg-emerald-800 ring-emerald-400' : 'bg-indigo-600 ring-indigo-400'}`}>
                 <p className="text-[10px] uppercase font-black tracking-widest text-white/90 mb-2">Skor Final Kurator</p>
                 {isEditing && curatorData ? (
@@ -310,8 +347,10 @@ export function UniversalAssessmentView({
                   </div>
                 ) : (
                   <div className="flex flex-col justify-center items-center h-full">
-                    <p className="text-5xl font-black text-white leading-none mb-2">{curatorData?.curatorScore}</p>
-                    <span className="inline-block text-[10px] font-black bg-white/20 px-2 py-0.5 rounded text-white text-center w-full">{curatorData?.curatorLevel}</span>
+                    <p className="text-5xl font-black text-white leading-none mb-3">{curatorData?.curatorScore}</p>
+                    <span className="inline-block text-[10px] font-black bg-white/20 px-2 py-1 rounded text-white text-center w-full uppercase">
+                      {curatorData?.curatorLevel?.split('|')[0]?.trim() || "-"}
+                    </span>
                   </div>
                 )}
               </div>
@@ -319,6 +358,7 @@ export function UniversalAssessmentView({
           </div>
         )}
       </div>
+
 
       {/* 3. DYNAMIC ANALYSIS BLOCKS */}
       {aiResult?.customAnalysisBlocks && aiResult.customAnalysisBlocks.length > 0 && (
@@ -392,7 +432,7 @@ export function UniversalAssessmentView({
                       <ul className="space-y-2">
                         {aiResult.fileAnalysisInsights.keyFindingsFromFiles.map((find: string, i: number) => (
                           <li key={i} className="text-sm text-slate-300 flex items-start gap-2">
-                            <span className="text-indigo-400 mt-0.5">•</span> <span className="leading-snug">{renderTextWithBold(find)}</span>
+                            <span className="text-indigo-400 mt-0.5">•</span> <span className="leading-snug">{renderRichText(find)}</span>
                           </li>
                         ))}
                       </ul>
@@ -497,25 +537,25 @@ export function UniversalAssessmentView({
             <div className="bg-emerald-50/80 p-6 rounded-3xl ring-1 ring-emerald-200/60 shadow-sm">
                 <h4 className="text-emerald-900 font-black flex items-center gap-2 mb-4"><TrendingUp className="h-5 w-5"/> Strengths</h4>
                 <ul className="list-disc list-inside text-emerald-800/80 text-sm font-medium space-y-2.5">
-                  {aiResult.swotAnalysis.strengths?.map((s: string, i: number) => <li key={i}>{renderTextWithBold(s)}</li>)}
+                  {aiResult.swotAnalysis.strengths?.map((s: string, i: number) => <li key={i}>{renderRichText(s)}</li>)}
                 </ul>
             </div>
             <div className="bg-rose-50/80 p-6 rounded-3xl ring-1 ring-rose-200/60 shadow-sm">
                 <h4 className="text-rose-900 font-black flex items-center gap-2 mb-4"><Activity className="h-5 w-5"/> Weaknesses</h4>
                 <ul className="list-disc list-inside text-rose-800/80 text-sm font-medium space-y-2.5">
-                  {aiResult.swotAnalysis.weaknesses?.map((w: string, i: number) => <li key={i}>{renderTextWithBold(w)}</li>)}
+                  {aiResult.swotAnalysis.weaknesses?.map((w: string, i: number) => <li key={i}>{renderRichText(w)}</li>)}
                 </ul>
             </div>
             <div className="bg-blue-50/80 p-6 rounded-3xl ring-1 ring-blue-200/60 shadow-sm">
                 <h4 className="text-blue-900 font-black flex items-center gap-2 mb-4"><Lightbulb className="h-5 w-5"/> Opportunities</h4>
                 <ul className="list-disc list-inside text-blue-800/80 text-sm font-medium space-y-2.5">
-                  {aiResult.swotAnalysis.opportunities?.map((o: string, i: number) => <li key={i}>{renderTextWithBold(o)}</li>)}
+                  {aiResult.swotAnalysis.opportunities?.map((o: string, i: number) => <li key={i}>{renderRichText(o)}</li>)}
                 </ul>
             </div>
             <div className="bg-amber-50/80 p-6 rounded-3xl ring-1 ring-amber-200/60 shadow-sm">
                 <h4 className="text-amber-900 font-black flex items-center gap-2 mb-4"><AlertTriangle className="h-5 w-5"/> Threats</h4>
                 <ul className="list-disc list-inside text-amber-800/80 text-sm font-medium space-y-2.5">
-                  {aiResult.swotAnalysis.threats?.map((t: string, i: number) => <li key={i}>{renderTextWithBold(t)}</li>)}
+                  {aiResult.swotAnalysis.threats?.map((t: string, i: number) => <li key={i}>{renderRichText(t)}</li>)}
                 </ul>
             </div>
           </div>

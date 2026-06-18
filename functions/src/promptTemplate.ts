@@ -14,7 +14,13 @@ export interface PromptParams {
   riskInstruction: string;
   targetRecommendations: string;
   tiersString: string;
-  fewShotContext?: string; // Tambahan dinamis untuk RAG
+  fewShotContext?: string; 
+  
+  // TAMBAHAN BARU UNTUK ADVANCED PROMPTING:
+  customSystemPrompt?: string; 
+  negativePrompts?: string;    
+  formatInstructions?: string; 
+  customScoringRubric?: string; 
 }
 
 export const buildAssessmentPrompt = (params: PromptParams) => {
@@ -23,8 +29,13 @@ ANDA ADALAH: ${params.aiPersona}.
 Tugas Anda adalah melakukan penilaian terhadap profil/entitas/peserta berikut dalam kategori: "${params.trackContext}".
 
 TUJUAN UTAMA: ${params.assessmentGoal}
-ATURAN PENILAIAN (SKOR): ${params.strictnessInstruction} ${params.fewShotContext || ''}
+ATURAN PENILAIAN UMUM: ${params.strictnessInstruction} ${params.fewShotContext || ''}
 ATURAN GAYA BAHASA: ${params.toneInstruction}
+
+${params.customScoringRubric ? `\nRUBRIK PENILAIAN SKOR (WAJIB DIPATUHI):\n${params.customScoringRubric}` : ''}
+${params.customSystemPrompt ? `\nATURAN KONDISIONAL & LOGIKA KHUSUS:\n${params.customSystemPrompt}` : ''}
+${params.negativePrompts ? `\nPANTANGAN & BATASAN (DILARANG KERAS):\n${params.negativePrompts}` : ''}
+${params.formatInstructions ? `\nINSTRUKSI PEMFORMATAN TEKS (MARKDOWN):\n${params.formatInstructions}` : ''}
 
 DATA TEKS FORM:
 ${params.dataString}
@@ -43,7 +54,9 @@ ${params.targetAnalysisBlocks}
 ${params.targetRecommendations}
 7. SCORING & TIERING: 
    - Berikan "totalScore" (0-100) sesuai aturan penilaian di atas.
-   - Penentuan "readinessLevel" WAJIB memilih HANYA DARI SALAH SATU STATUS BERIKUT: [${params.tiersString}].
+   - Penentuan "readinessLevel": Evaluasi menggunakan panduan tier berikut: [${params.tiersString}].
+     TUGAS KUSTOMISASI AI: JANGAN MENYALIN MENTAH-MENTAH SELURUH TEKS TIER! Ambil NAMA UTAMA tier-nya saja, beri pemisah simbol " | ", lalu ciptakan 3-5 kata sifat/frasa dinamis yang merepresentasikan keunikan spesifik peserta ini berdasarkan jawaban mereka.
+     CONTOH FORMAT WAJIB: "Kandidat Tech-Bootstrapper | Lincah, Mandiri, & Iterasi Cepat" atau "Fase Inkonsistensi | Visi Ambisius, Eksekusi Terhambat".
    - Tentukan "incubationRoute".
 
 ATURAN MUTLAK: 

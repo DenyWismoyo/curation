@@ -75,7 +75,7 @@ export interface FormField {
   type: FieldType;        
   required: boolean;      
   placeholder?: string;   
-  description?: string;   // UPGRADE: Teks bantuan/instruksi di bawah label
+  description?: string;   
   options?: string[];     
   fileAccept?: string;    
   gridSpan?: 1 | 2;       
@@ -91,16 +91,23 @@ export interface FormStep {
 
 export interface AiPromptConfig {
   aiPersona?: string;
-  assessmentGoal?: string;
-  expectedAnalysisBlocks?: string[]; 
-  expectedMetrics: string[];
-  expectedRecommendations: string[];
-  
-  gradingStrictness?: 'supportive' | 'standard' | 'strict';
-  customReadinessTiers?: string[];
-  riskFramework?: string;
-  mediaAnalysisFocus?: 'pitch-delivery' | 'ui-ux-design' | 'product-demo';
   reportTone?: 'investigative' | 'consultative' | 'academic';
+  gradingStrictness?: 'supportive' | 'standard' | 'strict';
+  
+  assessmentGoal?: string;
+  mediaAnalysisFocus?: 'pitch-delivery' | 'ui-ux-design' | 'product-demo';
+  riskFramework?: string;
+
+  customReadinessTiers?: string[];
+  expectedMetrics: string[];
+  expectedAnalysisBlocks?: string[]; 
+  expectedRecommendations: string[];
+
+  // ---> EKSTENSI ULTRA KOMPREHENSIF (ADVANCED CONFIG) <---
+  customSystemPrompt?: string; 
+  negativePrompts?: string;    
+  formatInstructions?: string; 
+  customScoringRubric?: string; // BARU: Rubrik Skor Matematik Eksak
 }
 
 export interface FormTemplate {
@@ -111,7 +118,7 @@ export interface FormTemplate {
   isActive: boolean;      
   version: number;
   lastUpdated: string;
-  steps: FormStep[];
+  steps: FormStep[]; 
   aiPromptConfig?: AiPromptConfig;
 }
 
@@ -130,15 +137,10 @@ export interface UniversalPDFProps {
   curatorNotes?: string | null;
   corporateEntity?: string;
   timestamp: string;
-  watermarkText?: string; // Persiapan untuk fitur keamanan nanti
+  watermarkText?: string; 
 }
 
-// Di dalam src/types/curation.ts
-
-export interface AssessmentData { // (Sesuaikan dengan nama interface Anda)
-  // ... (properti lama Anda)
-  
-  // TAMBAHKAN 3 BARIS INI:
+export interface AssessmentData { 
   documentGenerationQuota?: number;
   hasPaidForDocument?: boolean;
   allowedDocumentTemplates?: string[]; 

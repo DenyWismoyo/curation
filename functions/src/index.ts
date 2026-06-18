@@ -21,7 +21,6 @@ const geminiApiKeySecret = defineSecret("GEMINI_API_KEY");
 const smtpEmailSecret = defineSecret("SMTP_EMAIL");
 const smtpPasswordSecret = defineSecret("SMTP_PASSWORD");
 
-// Fungsi Retry agar aman dari fluktuasi server Google Gemini
 const withRetry = async <T>(fn: () => Promise<T>, retries = 3, delayMs = 2000): Promise<T> => {
   try { return await fn(); }
   catch (error: any) {
@@ -32,12 +31,6 @@ const withRetry = async <T>(fn: () => Promise<T>, retries = 3, delayMs = 2000): 
   }
 };
 
-/**
- * ============================================================================
- * FUNGSI UTAMA (VERSI STABIL & SINKRONUS)
- * Seluruh proses AI diselesaikan sebelum merespons kembali ke Frontend
- * ============================================================================
- */
 export const processCurationAssessment = onCall(
   { 
     memory: "2GiB", 
@@ -47,7 +40,6 @@ export const processCurationAssessment = onCall(
     cors: true 
   },
   async (request) => {
-    // 0. VALIDASI AUTH
     if (!request.auth) throw new HttpsError("unauthenticated", "Akses ditolak. Pengguna harus login.");
 
     const userId = request.auth.uid;
@@ -64,7 +56,6 @@ export const processCurationAssessment = onCall(
     const aiModelType = data.aiModelType || 'pro';
     const storageFilePaths = data.storageFilePaths || [];
 
-    // 1. PRE-VALIDASI TOKEN ENTERPRISE (CEK SAJA, BELUM DIPOTONG)
     if (tokenUsed && typeof tokenUsed === 'string' && tokenUsed.includes('-')) {
       const lastDashIndex = tokenUsed.lastIndexOf('-');
       const corpId = tokenUsed.substring(0, lastDashIndex).replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
@@ -94,7 +85,6 @@ export const processCurationAssessment = onCall(
       const parts: any[] = [];
       const bucket = admin.storage().bucket();
 
-      // 2. GCS TO GEMINI FILE UPLOAD
       if (storageFilePaths && storageFilePaths.length > 0) {
         for (const filePath of storageFilePaths) {
           const fileName = path.basename(filePath);
@@ -120,7 +110,6 @@ export const processCurationAssessment = onCall(
         }
       }
 
-      // 3. VECTOR SEARCH RAG (FEW-SHOT CONTEXT)
       let fewShotContext = "";
       try {
          const embedModel = genAI.getGenerativeModel({ model: "text-embedding-004" });
@@ -135,7 +124,7 @@ export const processCurationAssessment = onCall(
          }
       } catch (err) { console.warn("RAG Vector search dilewati."); }
 
-      // 4. MEMBANGUN PROMPT UTAMA
+      // FORMAT DATA LEBIH RAPI UNTUK AI
       const textData: Record<string, any> = {};
       for (const key in formData) {
         const val = formData[key];
@@ -143,8 +132,7 @@ export const processCurationAssessment = onCall(
           if (val) textData[key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())] = val;
         }
       }
-
-      const dataString = Object.entries(textData).map(([k, v]) => `- ${k}: ${Array.isArray(v) ? v.join(", ") : v}`).join("\n");
+      const dataString = Object.entries(textData).map(([k, v]) => `- [Data ${k}]: ${Array.isArray(v) ? v.join(", ") : v}`).join("\n");
 
       const strictness = aiPromptConfig.gradingStrictness || 'standard';
       let strictnessInstruction = "Lakukan penilaian secara objektif dan berimbang.";
@@ -158,6 +146,12 @@ export const processCurationAssessment = onCall(
       const customTiers = aiPromptConfig.customReadinessTiers || [];
       const tiersString = customTiers.length > 0 ? customTiers.map((t: string) => `"${t}"`).join(', ') : '"Pra-Inkubasi", "Siap Akselerasi", "Lulus Investasi"';
 
+      // PROSES DYNAMIC TAGS JIKA ADA (contoh: {{namaUsaha}})
+      let finalSystemPrompt = aiPromptConfig.customSystemPrompt || '';
+      finalSystemPrompt = finalSystemPrompt.replace(/{{namaUsaha}}/g, formData.namaUsaha || 'Entitas Terkait');
+      finalSystemPrompt = finalSystemPrompt.replace(/{{sektorIndustri}}/g, formData.sektorIndustri || 'Sektor Usaha');
+
+      // INJEKSI ADVANCED PROMPT
       const mainPromptText = buildAssessmentPrompt({
         aiPersona: aiPromptConfig.aiPersona || "AHLI ANALISIS DAN DUE DILIGENCE KELAS DUNIA",
         trackContext: trackType,
@@ -168,7 +162,13 @@ export const processCurationAssessment = onCall(
         targetMetrics: aiPromptConfig.expectedMetrics || ["Validasi Pasar", "Keuangan", "Tim", "Skalabilitas", "Legalitas"],
         riskInstruction: aiPromptConfig.riskFramework ? `FOKUS IDENTIFIKASI RISIKO WAJIB: ${aiPromptConfig.riskFramework}` : "Identifikasi risiko operasional, finansial, dan pasar secara umum.",
         targetRecommendations: aiPromptConfig.expectedRecommendations?.map((r: string) => `- ${r}`).join("\n") || "- Strategi Bisnis\n- Rencana Pendanaan",
-        tiersString, fewShotContext
+        tiersString, fewShotContext,
+        
+        // PARAMETER BARU YG SEBELUMNYA HILANG
+        customSystemPrompt: finalSystemPrompt,
+        negativePrompts: aiPromptConfig.negativePrompts,
+        formatInstructions: aiPromptConfig.formatInstructions,
+        customScoringRubric: aiPromptConfig.customScoringRubric
       });
 
       parts.unshift({ text: mainPromptText });
@@ -177,7 +177,6 @@ export const processCurationAssessment = onCall(
       const modelName = isPro ? 'gemini-2.5-pro' : 'gemini-2.5-flash';
       const systemPrompt = getSystemPrompt(isPro);
 
-      // 5. CALL GEMINI DENGAN SINGLE SCHEMA RAKSASA STABIL
       const unifiedModel = genAI.getGenerativeModel({
         model: modelName,
         systemInstruction: systemPrompt,
@@ -186,10 +185,18 @@ export const processCurationAssessment = onCall(
           responseMimeType: "application/json",
           responseSchema: {
             type: SchemaType.OBJECT,
-            required: ["readinessLevel", "totalScore", "incubationRoute", "executiveSummary", "customAnalysisBlocks", "fileAnalysisInsights", "metrics", "swotAnalysis", "recommendations", "riskAssessment", "nextActionSteps"],
+            // REQUIRED DITAMBAH _internalReasoning UNTUK CHAIN OF THOUGHT AI
+            required: ["_internalReasoning", "readinessLevel", "totalScore", "incubationRoute", "executiveSummary", "customAnalysisBlocks", "fileAnalysisInsights", "metrics", "swotAnalysis", "recommendations", "riskAssessment", "nextActionSteps"],
             properties: {
+              _internalReasoning: { 
+                type: SchemaType.STRING, 
+                description: "RUANG BERPIKIR AI: Gunakan field ini untuk berpikir langkah-demi-langkah, mencari korelasi antar jawaban form, dan mensintesis kekuatan/kelemahan utama SEBELUM memberikan skor final." 
+              },
               executiveSummary: { type: SchemaType.STRING },
-              readinessLevel: { type: SchemaType.STRING, description: `WAJIB pilih salah satu: [${tiersString}]` },
+              readinessLevel: { 
+                type: SchemaType.STRING, 
+                description: `Format WAJIB: '[Nama Tier/Kuadran Utama] | [3-5 kata sifat spesifik yang menggambarkan entitas ini]'. DILARANG KERAS memasukkan deskripsi panjang atau angka rentang skor ke dalam field ini.` 
+              },
               totalScore: { type: SchemaType.INTEGER },
               incubationRoute: { type: SchemaType.STRING },
               customAnalysisBlocks: {
@@ -235,12 +242,13 @@ export const processCurationAssessment = onCall(
         }
       });
 
-      // Proses Generate Content (Memerlukan Waktu 10-30 Detik)
       const result = await withRetry(() => unifiedModel.generateContent({ contents: [{ role: "user", parts }] }));
       const cleanText = result.response.text().replace(/```json/g, '').replace(/```/g, '').trim();
       const aiResultJson = JSON.parse(cleanText);
 
-      // 6. TRANSACTION DATABASE SECURE (Tulis Token & Asesmen secara bersamaan)
+      // Hapus _internalReasoning agar tidak disimpan ke database dan memakan memori
+      if(aiResultJson._internalReasoning) delete aiResultJson._internalReasoning;
+
       let assessmentId = "";
       await db.runTransaction(async (transaction) => {
         if (tokenUsed && typeof tokenUsed === 'string' && tokenUsed.includes('-')) {
@@ -290,8 +298,6 @@ export const processCurationAssessment = onCall(
 
         transaction.set(newAssessmentRef, updatedDocData);
 
-        // 7. BACKGROUND TASKS NON-BLOCKING (PDF, Email, Vector)
-        // Kita tidak memakai 'await' di sini agar respon balik ke Frontend segera dieksekusi
         import("./documentGenerator").then(({ generateInternalPDF }) => {
           generateInternalPDF(assessmentId, updatedDocData, 'user').catch(e => console.error(e));
           generateInternalPDF(assessmentId, updatedDocData, 'curator').catch(e => console.error(e));
@@ -319,14 +325,12 @@ export const processCurationAssessment = onCall(
         }
       });
 
-      // 8. RESPON AKHIR DIKEMBALIKAN KE FRONTEND
       return { assessmentId, aiResult: aiResultJson };
 
     } catch (error: any) {
       console.error("Cloud Function Error:", error);
       throw new HttpsError("internal", error.message || "Gagal memproses analisis AI.");
     } finally {
-      // 9. PEMBERSIHAN GARBAGE COLLECTION
       for (const tmpFile of tempLocalFiles) { try { if (fs.existsSync(tmpFile)) fs.unlinkSync(tmpFile); } catch (e) {} }
       for (const geminiFile of uploadedGeminiFiles) { try { await fileManager.deleteFile(geminiFile.name); } catch (e) {} }
     }

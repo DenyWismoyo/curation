@@ -1,3 +1,4 @@
+// src/app/components/shared/UniversalPDFDocument.tsx
 'use client';
 
 import React from 'react';
@@ -111,15 +112,22 @@ export interface ExportRole {
   downloadedBy?: { name: string; email: string };
 }
 
-// FUNGSI Parser untuk React-PDF membaca teks Bold (**)
-const renderTextWithBoldPdf = (str: string) => {
+// FUNGSI Parser untuk React-PDF membaca teks Bold (**) & Italic (*)
+const renderRichTextPdf = (str: string) => {
   if (!str) return null;
-  const parts = str.split(/(\*\*.*?\*\*)/g);
+  const parts = str.split(/(\*\*.*?\*\*|\*.*?\*)/g);
   return parts.map((part, index) => {
     if (part.startsWith('**') && part.endsWith('**')) {
       return (
         <Text key={index} style={{ fontWeight: 700, color: '#000000' }}>
           {part.slice(2, -2)}
+        </Text>
+      );
+    } else if (part.startsWith('*') && part.endsWith('*')) {
+      // Fake italic by using a lighter color or medium weight since italic font is strictly removed
+      return (
+        <Text key={index} style={{ fontWeight: 500, color: '#4B5563' }}>
+          {part.slice(1, -1)}
         </Text>
       );
     }
@@ -133,10 +141,22 @@ const renderBullets = (text: string) => {
   const lines = text.split('\n').filter(line => line.trim().length > 0);
   return lines.map((line, idx) => {
     const cleanLine = line.replace(/^[-*\u2022]\s*/, '');
+
+    // Deteksi sub-judul markdown ## di PDF
+    if (cleanLine.startsWith('###') || cleanLine.startsWith('##')) {
+      return (
+        <View key={idx} style={{ marginTop: 12, marginBottom: 4 }}>
+          <Text style={{ fontSize: 10, fontWeight: 900, color: '#000000', textTransform: 'uppercase' }}>
+            {renderRichTextPdf(cleanLine.replace(/^#+\s*/, ''))}
+          </Text>
+        </View>
+      );
+    }
+
     return (
       <View key={idx} style={styles.bulletRow}>
         <Text style={styles.bulletDot}>■</Text>
-        <Text style={styles.bulletText}>{renderTextWithBoldPdf(cleanLine)}</Text>
+        <Text style={styles.bulletText}>{renderRichTextPdf(cleanLine)}</Text>
       </View>
     );
   });
@@ -227,23 +247,21 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
             <View style={styles.grid2Col}>
               <View style={styles.colHalf}>
                 <Text style={styles.label}>Quality Status</Text>
-                {/* PERBAIKAN: Gunakan renderBullets agar teks panjang yang mengandung \n aman dikalkulasi */}
                 {renderBullets(aiResult.fileAnalysisInsights.documentQuality)}
               </View>
               {aiResult.fileAnalysisInsights.discrepancies && (
                 <View style={styles.colHalf}>
                   <Text style={[styles.label, { color: '#000000' }]}>Data Discrepancies</Text>
-                  {/* PERBAIKAN: Gunakan renderBullets di sini juga */}
                   {renderBullets(aiResult.fileAnalysisInsights.discrepancies)}
                 </View>
               )}
             </View>
             
             {aiResult.fileAnalysisInsights.keyFindingsFromFiles && (
-              <View style={{ marginTop: 16 }}> {/* PERBAIKAN: Tambah Margin Top agar tidak sesak */}
+              <View style={{ marginTop: 16 }}> 
                 <Text style={styles.label}>Key Findings</Text>
                 {aiResult.fileAnalysisInsights.keyFindingsFromFiles.map((find: string, idx: number) => (
-                  <View key={idx} style={styles.bulletRow}><Text style={styles.bulletDot}>■</Text><Text style={styles.bulletText}>{renderTextWithBoldPdf(find)}</Text></View>
+                  <View key={idx} style={styles.bulletRow}><Text style={styles.bulletDot}>■</Text><Text style={styles.bulletText}>{renderRichTextPdf(find)}</Text></View>
                 ))}
               </View>
             )}
@@ -315,7 +333,7 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
                   {items.map((item: string, i: number) => (
                     <View key={i} style={styles.bulletRow}>
                       <Text style={[styles.bulletDot, { color: '#666666' }]}>-</Text>
-                      <Text style={styles.bulletText}>{renderTextWithBoldPdf(item)}</Text>
+                      <Text style={styles.bulletText}>{renderRichTextPdf(item)}</Text>
                     </View>
                   ))}
                   {isCuratorWorksheet && <View style={styles.worksheetArea}><Text style={styles.worksheetLabel}>Validasi Fakta:</Text></View>}
