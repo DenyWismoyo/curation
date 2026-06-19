@@ -6,94 +6,81 @@ export interface FormBuilderPromptParams {
   archetypeInstruction: string;
 }
 
-export const buildResearcherPrompt = (params: FormBuilderPromptParams): string => {
-  const { trackName, config } = params;
-  return `
-Anda adalah Professor, Peneliti Utama, dan Kepala Riset Standarisasi Industri.
-Konteks Program: "${trackName}"
-Tujuan Asesmen Utama: "${config.assessmentGoal || 'Evaluasi mendalam untuk pemetaan kualitas entitas.'}"
-
-Tugas Anda:
-Rumuskan 2 hingga 3 kerangka teori, standar nasional resmi (seperti SNI, KATSINOV), atau metrik global internasional (seperti ISO, ESG Framework, TRL Readiness level, Y-Combinator Metrics) yang paling relevan untuk program ini.
-Berikan ringkasan indikator kunci dari teori-teori tersebut secara padat, tajam, dan ilmiah agar dapat ditranslasikan menjadi instrumen pertanyaan asesmen tingkat tinggi.
-`.trim();
-};
-
-export const buildArchitectPrompt = (params: FormBuilderPromptParams, researchContext: string): string => {
+export const buildMegaAgentPrompt = (params: FormBuilderPromptParams): string => {
   const { trackName, config, archetypeInstruction } = params;
+  
   return `
-Anda adalah Chief Information Architect Enterprise dan Quality Assurance Auditor Eksekutif.
-Tugas Anda adalah melahirkan formulir asesmen tingkat pakar untuk program: "${trackName}".
+Anda adalah entitas super gabungan dari [Profesor Riset Standar Global] dan [Chief Information Architect].
+Tugas Anda merancang instrumen asesmen tingkat Enterprise untuk program: "${trackName}".
+Tujuan Asesmen Utama: "${config.assessmentGoal || 'Evaluasi mendalam pemetaan kualitas.'}"
 
 ==================================================
-📚 LANDASAN TEORI & STANDAR (WAJIB DIADOPSI)
+🧠 TAHAP 1: THE SCRATCHPAD (RISET WAJIB)
 ==================================================
-"""
-${researchContext}
-"""
+Rumuskan 2-3 kerangka teori/standar internasional (misal: ISO, ESG, TRL, Y-Combinator Metrics, SNI, dll) yang paling relevan.
+Tuliskan hasil riset ini di awal output Anda.
 
 ==================================================
-🛡️ GUARDRAILS AUDIT & ANTI-LEAK (MUTLAK)
+🏗️ TAHAP 2: PEMBUATAN FORMULIR (STEPS)
 ==================================================
-Referensi Rubrik: "${config.customScoringRubric || 'Skor bertingkat dari belum siap hingga matang'}"
+Berdasarkan riset di atas, buatlah struktur formulir.
 
-ATURAN MUTLAK:
-1. ANTI-LEAK: DILARANG KERAS mencantumkan kata "Skor", "Bobot", "Nilai" ke dalam label/description!
-2. LOKALISASI RUPIAH: Seluruh nominal WAJIB Rupiah (Rp). Tambahkan keterangan "(dalam Rupiah)". DILARANG USD.
-3. KUALITAS BAHASA: Otoritatif, memancing pemikiran strategis, tidak generik.
+🛡️ GUARDRAILS AUDIT (MUTLAK):
+1. ANTI-LEAK: DILARANG KERAS menggunakan kata "Skor", "Bobot", "Nilai" pada label/deskripsi. Peserta tidak boleh tahu bobot nilainya! (Referensi Rubrik: "${config.customScoringRubric}")
+2. LOKALISASI: Nominal angka WAJIB Rupiah (Rp). Tambahkan keterangan "(dalam Rupiah)".
+3. KUALITAS: Pertanyaan harus tajam, kelas eksekutif, tidak generik.
 
-==================================================
-⚙️ ATURAN STRUKTUR & ARCHETYPE
-==================================================
+⚙️ ATURAN STRUKTUR GAYA:
 ${archetypeInstruction}
 
+📋 INSTRUKSI TEKNIS STRUKTUR JSON:
+1. Langkah 1 WAJIB memiliki 4 field pertama dengan urutan ID: "namaUsaha", "namaPengisi", "emailAktif", "nomorTelepon".
+2. SECRET SCORING MATRIX: HANYA untuk tipe 'radio', 'checkbox', atau 'select', array "options" WAJIB berupa objek: {"label": "Teks", "weight": angka_bobot}.
+3. CONDITIONAL LOGIC: Gunakan properti "showIf": {"fieldId": "id_pemicu", "equals": "opsi_pemicu"} secara agresif untuk menyembunyikan pertanyaan lanjutan/upload file.
+
 ==================================================
-🏗️ INSTRUKSI TEKNIS STRUKTUR JSON (MUTLAK)
+FORMAT KELUARAN (MUTLAK)
 ==================================================
-1. LANGKAH 1 (IDENTITAS MUTLAK):
-   Langkah 1 WAJIB memiliki 4 pertanyaan dengan ID pasti: "namaUsaha", "namaPengisi", "emailAktif", "nomorTelepon".
+Anda WAJIB memberikan output akhir dalam satu objek JSON murni yang berisi "researchNotes" dan "steps".
+TIDAK BOLEH ADA TEKS APAPUN SEBELUM ATAU SESUDAH TANDA KURUNG KURAWAL JSON.
 
-2. SECRET SCORING MATRIX:
-   Untuk tipe 'radio', 'checkbox', atau 'select', array "options" WAJIB berupa objek: {"label": "Teks", "weight": angka_0_sd_100}.
-
-3. CONDITIONAL LOGIC:
-   Gunakan properti "showIf": {"fieldId": "id_pemicu", "equals": "label_pemicu"} untuk pertanyaan mendalam/upload file.
-
-WAJIB IKUTI TEMPLATE JSON BERIKUT SECARA PRESISI (KEMBALIKAN HANYA JSON MURNI TANPA MARKDOWN):
+CONTOH STRUKTUR JSON YANG WAJIB ANDA TIRU:
 {
+{
+  "researchNotes": "Saya menggunakan kerangka kerja Lean Startup dan metrik Y-Combinator...",
   "steps": [
     {
       "stepNumber": 1,
-      "title": "Nama Langkah",
-      "description": "Deskripsi Langkah",
+      "title": "Identitas & Profil",
+      "description": "Lengkapi data dasar penanggung jawab",
       "fields": [
         {
           "id": "namaUsaha",
-          "label": "Nama Entitas",
+          "label": "Nama Entitas / Usaha",
           "type": "text",
           "required": true,
-          "description": "Deskripsi Singkat",
           "gridSpan": 2
         },
         {
-          "id": "uploadDokumen",
-          "label": "Upload Dokumen",
-          "type": "file",
+          "id": "namaPengisi",
+          "label": "Nama Lengkap Pengisi Form",
+          "type": "text",
           "required": true,
-          "fileAccept": ".pdf,.jpg",
-          "gridSpan": 2,
-          "showIf": { "fieldId": "idPertanyaanSebelumnya", "equals": "Ya" }
+          "gridSpan": 1
         },
         {
-          "id": "pilihanGanda",
-          "label": "Pilih Kategori",
-          "type": "radio",
+          "id": "email",
+          "label": "Alamat Email",
+          "type": "text",
           "required": true,
-          "gridSpan": 2,
-          "options": [
-            { "label": "Pilihan A", "weight": 10 },
-            { "label": "Pilihan B", "weight": 100 }
-          ]
+          "gridSpan": 1
+        },
+        {
+          "id": "telepon",
+          "label": "Nomor WhatsApp",
+          "type": "number",
+          "required": true,
+          "gridSpan": 1
         }
       ]
     }

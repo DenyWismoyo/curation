@@ -2,7 +2,7 @@
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { defineSecret } from "firebase-functions/params";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { buildResearcherPrompt, buildArchitectPrompt } from "./formBuilderPrompt";
+import { buildMegaAgentPrompt } from "./formBuilderPrompt";
 
 const geminiApiKeySecret = defineSecret("GEMINI_API_KEY");
 
@@ -28,7 +28,6 @@ const withRetry = async <T>(fn: () => Promise<T>, retries = 3, delayMs = 2000): 
   }
 };
 
-// TIMEOUT DIUBAH KE 540 DETIK (9 MENIT) UNTUK MEMBERI RUANG SELF-HEALING
 export const generateFormTemplateFromAI = onCall(
   { memory: "2GiB", timeoutSeconds: 540, region: "asia-southeast2", secrets: [geminiApiKeySecret], cors: true },
   async (request) => {
@@ -38,15 +37,13 @@ export const generateFormTemplateFromAI = onCall(
     try {
       const genAI = new GoogleGenerativeAI(geminiApiKeySecret.value());
       
-      const modelText = genAI.getGenerativeModel({ model: "gemini-2.5-flash", generationConfig: { temperature: 0.4 } });
-      
-      // PERUBAHAN KRUSIAL: Menghapus responseSchema agar AI tidak stress dan terpotong
-      const modelJson = genAI.getGenerativeModel({
-        model: "gemini-2.5-flash", 
+      // KITA MATIKAN responseSchema SEPENUHNYA!
+      // Kita biarkan AI menggunakan memori maksimal tanpa halangan struktural
+      const model = genAI.getGenerativeModel({
+        model: "gemini-2.5-pro", 
         generationConfig: {
           maxOutputTokens: 8192,
-          temperature: 0.1, 
-          responseMimeType: "application/json"
+          temperature: 0.2, 
         }
       });
 
@@ -56,48 +53,54 @@ export const generateFormTemplateFromAI = onCall(
         archetypeInstruction: data.archetypeInstruction || ""
       };
 
-      // --- TAHAP 1: THE RESEARCHER AGENT (Dieksekusi sekali saja) ---
-      console.log("🤖 [STAGE 1] Agen Peneliti merumuskan landasan...");
-      const researcherPrompt = buildResearcherPrompt(params);
-      const researcherResult = await withRetry(() => modelText.generateContent(researcherPrompt));
-      const researchContext = researcherResult.response.text();
-
-      // --- TAHAP 2: THE ARCHITECT AGENT DENGAN AUTO-HEALING LOOP ---
-      console.log("🤖 [STAGE 2] Memulai penyusunan JSON...");
-      const architectPrompt = buildArchitectPrompt(params, researchContext);
+      const prompt = buildMegaAgentPrompt(params);
       
       let attempt = 0;
-      const MAX_ATTEMPTS = 3; // Maksimal mencoba 3 kali jika JSON rusak
+      const MAX_ATTEMPTS = 3;
 
       while (attempt < MAX_ATTEMPTS) {
         attempt++;
         try {
           console.log(`🔄 [Mencoba Generate JSON - Percobaan ${attempt}/${MAX_ATTEMPTS}]`);
-          const architectResult = await withRetry(() => modelJson.generateContent(architectPrompt));
           
-          let finalCleanText = architectResult.response.text().trim();
-          // Membersihkan potensi markdown sisa
-          finalCleanText = finalCleanText.replace(/^```(json)?\n?/gi, "").replace(/```\n?$/g, "").trim();
+          const result = await withRetry(() => model.generateContent(prompt));
+          const rawText = result.response.text();
 
-          // UJI COBA PARSING JSON
-          const parsedObject = JSON.parse(finalCleanText);
+          // =========================================================================
+          // 🛡️ THE BULLETPROOF EXTRACTOR
+          // Mengabaikan celotehan AI dan hanya mengambil data dari { pertama hingga } terakhir
+          // =========================================================================
+          const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+          
+          if (!jsonMatch) {
+            throw new Error("AI tidak menghasilkan struktur objek JSON.");
+          }
+
+          const extractedJson = jsonMatch[0];
+
+          // PARSING JSON
+          const parsedObject = JSON.parse(extractedJson);
+          
+          // Log hasil riset rahasia AI ke console Firebase
+          if (parsedObject.researchNotes) {
+             console.log("📚 [HASIL RISET TEORI AI]:", parsedObject.researchNotes);
+          }
+
           const finalStepsArray = parsedObject.steps || [];
           
           if (!Array.isArray(finalStepsArray) || finalStepsArray.length === 0) {
-            throw new Error("JSON Valid tapi array steps kosong.");
+            throw new Error("JSON terekstrak, tetapi array 'steps' kosong/hilang.");
           }
 
-          console.log("✅ [SUKSES] JSON berhasil divalidasi!");
-          return cleanUndefinedAndNull(finalStepsArray); // BERHASIL! Keluar dari loop dan kirim ke Frontend.
+          console.log("✅ [SUKSES] JSON berhasil divalidasi dan diekstrak!");
+          return cleanUndefinedAndNull(finalStepsArray);
 
         } catch (parseError: any) {
           console.error(`❌ [GAGAL PARSING JSON pada Percobaan ${attempt}]`, parseError.message);
           
           if (attempt >= MAX_ATTEMPTS) {
-            // Jika sudah 3 kali masih gagal, baru kita serah menyerah dan infokan ke Frontend
-            throw new Error("AI gagal menyusun format JSON setelah 3 kali percobaan. Silakan coba klik Generate lagi.");
+            throw new Error("Sistem AI mengalami kendala merangkai format formulir (terpotong atau tidak valid). Harap ulangi.");
           }
-          // Jika belum batas maksimal, sistem akan diam diam mengulang loop tanpa disadari Frontend
         }
       }
 
