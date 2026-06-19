@@ -67,6 +67,8 @@ export interface CurationHistory {
 }
 
 // UPGRADE: Tambahan tipe field 'select' dan 'date'
+// Di dalam src/types/curation.ts (Timpa interface FormField)
+
 export type FieldType = 'text' | 'textarea' | 'number' | 'radio' | 'checkbox' | 'file' | 'select' | 'date';
 
 export interface FormField {
@@ -76,9 +78,15 @@ export interface FormField {
   required: boolean;      
   placeholder?: string;   
   description?: string;   
-  options?: string[];     
+  // UPDATE: options sekarang bisa berupa string biasa ATAU objek berbobot
+  options?: any[]; // Bisa berisi string[] atau { label: string, weight: number }[]
   fileAccept?: string;    
   gridSpan?: 1 | 2;       
+  // FITUR BARU: Conditional Logic
+  showIf?: {
+    fieldId: string;
+    equals: string | number | boolean;
+  };
 }
 
 export interface FormStep {
@@ -120,6 +128,7 @@ export interface FormTemplate {
   lastUpdated: string;
   steps: FormStep[]; 
   aiPromptConfig?: AiPromptConfig;
+  folder?: string;
 }
 
 export interface AssessmentPayload {

@@ -11,9 +11,16 @@ import * as fs from "fs";
 
 import { buildAssessmentPrompt, getSystemPrompt } from "./promptTemplate"; 
 
+// ============================================================================
+// EXPORT FUNGSI MODULAR (Akan otomatis dideteksi & di-deploy oleh Firebase)
+// ============================================================================
 export { generatePDFReport } from "./documentGenerator";
 export { matchBusinessWithIndustry } from "./vectorService";
+export { generateFormTemplateFromAI } from "./formBuilderService"; // 👈 TAMBAHAN BARU UNTUK AI FORM BUILDER
 
+// ============================================================================
+// INISIALISASI FIREBASE
+// ============================================================================
 admin.initializeApp();
 const db = getFirestore(admin.app(), "curation");
 
@@ -31,6 +38,9 @@ const withRetry = async <T>(fn: () => Promise<T>, retries = 3, delayMs = 2000): 
   }
 };
 
+// ============================================================================
+// CLOUD FUNCTION: ASESMEN AI UTAMA
+// ============================================================================
 export const processCurationAssessment = onCall(
   { 
     memory: "2GiB", 
@@ -163,8 +173,6 @@ export const processCurationAssessment = onCall(
         riskInstruction: aiPromptConfig.riskFramework ? `FOKUS IDENTIFIKASI RISIKO WAJIB: ${aiPromptConfig.riskFramework}` : "Identifikasi risiko operasional, finansial, dan pasar secara umum.",
         targetRecommendations: aiPromptConfig.expectedRecommendations?.map((r: string) => `- ${r}`).join("\n") || "- Strategi Bisnis\n- Rencana Pendanaan",
         tiersString, fewShotContext,
-        
-        // PARAMETER BARU YG SEBELUMNYA HILANG
         customSystemPrompt: finalSystemPrompt,
         negativePrompts: aiPromptConfig.negativePrompts,
         formatInstructions: aiPromptConfig.formatInstructions,
@@ -185,7 +193,6 @@ export const processCurationAssessment = onCall(
           responseMimeType: "application/json",
           responseSchema: {
             type: SchemaType.OBJECT,
-            // REQUIRED DITAMBAH _internalReasoning UNTUK CHAIN OF THOUGHT AI
             required: ["_internalReasoning", "readinessLevel", "totalScore", "incubationRoute", "executiveSummary", "customAnalysisBlocks", "fileAnalysisInsights", "metrics", "swotAnalysis", "recommendations", "riskAssessment", "nextActionSteps"],
             properties: {
               _internalReasoning: { 

@@ -7,12 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { UploadCloud, File, X, Check } from 'lucide-react';
 
-// ========================================================
-// FUNGSI PARSER MARKDOWN UNTUK MENGUBAH *TEKS* MENJADI BOLD
-// ========================================================
 const renderMarkdownText = (str: string) => {
   if (typeof str !== 'string') return str;
-  // Memecah teks berdasarkan **teks** atau *teks*
   const parts = str.split(/(\*\*.*?\*\*|\*.*?\*)/g);
   return parts.map((part, index) => {
     if (part.startsWith('**') && part.endsWith('**')) {
@@ -20,7 +16,7 @@ const renderMarkdownText = (str: string) => {
     } else if (part.startsWith('*') && part.endsWith('*')) {
       return <strong key={index} className="font-bold text-indigo-600">{part.slice(1, -1)}</strong>;
     }
-    return part; // Kembalikan string biasa jika tidak ada tanda bintang
+    return part;
   });
 };
 
@@ -34,73 +30,48 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragActive, setDragActive] = useState(false);
 
-  // Handler untuk perubahan Checkbox (Multi-select array)
-  const handleCheckboxChange = (option: string, isChecked: boolean) => {
+  // Helper untuk mendapatkan label dari opsi (bisa berupa string atau objek {label, weight})
+  const getOptionLabel = (opt: any): string => {
+    return typeof opt === 'object' && opt !== null ? opt.label : String(opt);
+  };
+
+  const handleCheckboxChange = (optionLabel: string, isChecked: boolean) => {
     let currentValues = Array.isArray(value) ? [...value] : [];
     if (isChecked) {
-      currentValues.push(option);
+      currentValues.push(optionLabel);
     } else {
-      currentValues = currentValues.filter((v) => v !== option);
+      currentValues = currentValues.filter((v) => v !== optionLabel);
     }
     onChange(currentValues);
   };
 
-  // UI Render berdasarkan field.type
   const renderField = () => {
     switch (field.type) {
       case 'text':
         return (
-          <Input
-            type="text"
-            placeholder={field.placeholder || 'Ketik di sini...'}
-            value={value || ''}
-            onChange={(e) => onChange(e.target.value)}
-            className="h-12 bg-slate-50 border-slate-200 focus-visible:ring-indigo-500 rounded-xl transition-all font-medium text-slate-700"
-          />
+          <Input type="text" placeholder={field.placeholder || 'Ketik di sini...'} value={value || ''} onChange={(e) => onChange(e.target.value)} className="h-12 bg-slate-50 border-slate-200 focus-visible:ring-indigo-500 rounded-xl transition-all font-medium text-slate-700" />
         );
       case 'number':
         return (
-          <Input
-            type="number"
-            placeholder={field.placeholder || '0'}
-            value={value || ''}
-            onChange={(e) => onChange(e.target.value)}
-            className="h-12 bg-slate-50 border-slate-200 focus-visible:ring-indigo-500 rounded-xl transition-all font-medium text-slate-700"
-          />
+          <Input type="number" placeholder={field.placeholder || '0'} value={value || ''} onChange={(e) => onChange(e.target.value)} className="h-12 bg-slate-50 border-slate-200 focus-visible:ring-indigo-500 rounded-xl transition-all font-medium text-slate-700" />
         );
       case 'textarea':
         return (
-          <Textarea
-            placeholder={field.placeholder || 'Ketik penjelasan detail di sini...'}
-            value={value || ''}
-            onChange={(e) => onChange(e.target.value)}
-            className="bg-slate-50 border-slate-200 focus-visible:ring-indigo-500 rounded-xl min-h-[100px] resize-y transition-all font-medium text-slate-700"
-          />
+          <Textarea placeholder={field.placeholder || 'Ketik penjelasan detail di sini...'} value={value || ''} onChange={(e) => onChange(e.target.value)} className="bg-slate-50 border-slate-200 focus-visible:ring-indigo-500 rounded-xl min-h-[100px] resize-y transition-all font-medium text-slate-700" />
         );
       case 'date':
         return (
-          <Input
-            type="date"
-            value={value || ''}
-            onChange={(e) => onChange(e.target.value)}
-            className="h-12 bg-slate-50 border-slate-200 focus-visible:ring-indigo-500 rounded-xl transition-all font-medium text-slate-700 w-full"
-          />
+          <Input type="date" value={value || ''} onChange={(e) => onChange(e.target.value)} className="h-12 bg-slate-50 border-slate-200 focus-visible:ring-indigo-500 rounded-xl transition-all font-medium text-slate-700 w-full" />
         );
       case 'select':
         return (
           <div className="relative">
-            <select
-              value={value || ''}
-              onChange={(e) => onChange(e.target.value)}
-              className="w-full h-12 bg-slate-50 border border-slate-200 text-slate-700 font-medium rounded-xl px-4 appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all cursor-pointer"
-            >
+            <select value={value || ''} onChange={(e) => onChange(e.target.value)} className="w-full h-12 bg-slate-50 border border-slate-200 text-slate-700 font-medium rounded-xl px-4 appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all cursor-pointer">
               <option value="" disabled>-- Pilih salah satu opsi --</option>
-              {field.options?.map((opt, idx) => (
-                <option key={idx} value={opt}>
-                  {/* HTML Option tidak mendukung tag span, jadi kita hapus karakter bintangnya saja */}
-                  {opt.replace(/\*/g, '')}
-                </option>
-              ))}
+              {field.options?.map((opt, idx) => {
+                const optLabel = getOptionLabel(opt);
+                return <option key={idx} value={optLabel}>{optLabel.replace(/\*/g, '')}</option>;
+              })}
             </select>
             <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
@@ -110,25 +81,18 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
       case 'radio':
         return (
           <div className="flex flex-col gap-3 pt-1">
-            {field.options?.map((opt, idx) => (
-              <label
-                key={idx}
-                className={`flex items-start gap-3 p-3.5 rounded-xl border transition-all cursor-pointer ${value === opt ? 'border-indigo-500 bg-indigo-50/50 text-indigo-900 shadow-sm' : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-600'}`}
-              >
-                <div className={`mt-0.5 w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${value === opt ? 'border-indigo-600' : 'border-slate-300'}`}>
-                  {value === opt && <div className="w-2.5 h-2.5 bg-indigo-600 rounded-full" />}
-                </div>
-                <input
-                  type="radio"
-                  name={field.id}
-                  value={opt}
-                  checked={value === opt}
-                  onChange={(e) => onChange(e.target.value)}
-                  className="hidden"
-                />
-                <span className="font-medium text-sm leading-relaxed">{renderMarkdownText(opt)}</span>
-              </label>
-            ))}
+            {field.options?.map((opt, idx) => {
+              const optLabel = getOptionLabel(opt);
+              return (
+                <label key={idx} className={`flex items-start gap-3 p-3.5 rounded-xl border transition-all cursor-pointer ${value === optLabel ? 'border-indigo-500 bg-indigo-50/50 text-indigo-900 shadow-sm' : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-600'}`}>
+                  <div className={`mt-0.5 w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${value === optLabel ? 'border-indigo-600' : 'border-slate-300'}`}>
+                    {value === optLabel && <div className="w-2.5 h-2.5 bg-indigo-600 rounded-full" />}
+                  </div>
+                  <input type="radio" name={field.id} value={optLabel} checked={value === optLabel} onChange={(e) => onChange(e.target.value)} className="hidden" />
+                  <span className="font-medium text-sm leading-relaxed">{renderMarkdownText(optLabel)}</span>
+                </label>
+              );
+            })}
           </div>
         );
       case 'checkbox':
@@ -136,23 +100,15 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
         return (
           <div className="flex flex-col gap-3 pt-1">
             {field.options?.map((opt, idx) => {
-              const isChecked = checkedValues.includes(opt);
+              const optLabel = getOptionLabel(opt);
+              const isChecked = checkedValues.includes(optLabel);
               return (
-                <label
-                  key={idx}
-                  className={`flex items-start gap-3 p-3.5 rounded-xl border transition-all cursor-pointer ${isChecked ? 'border-indigo-500 bg-indigo-50/50 text-indigo-900 shadow-sm' : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-600'}`}
-                >
+                <label key={idx} className={`flex items-start gap-3 p-3.5 rounded-xl border transition-all cursor-pointer ${isChecked ? 'border-indigo-500 bg-indigo-50/50 text-indigo-900 shadow-sm' : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-600'}`}>
                   <div className={`mt-0.5 w-5 h-5 rounded border flex items-center justify-center shrink-0 ${isChecked ? 'bg-indigo-600 border-indigo-600 text-white' : 'border-slate-300'}`}>
                     {isChecked && <Check size={14} strokeWidth={3} />}
                   </div>
-                  <input
-                    type="checkbox"
-                    value={opt}
-                    checked={isChecked}
-                    onChange={(e) => handleCheckboxChange(opt, e.target.checked)}
-                    className="hidden"
-                  />
-                  <span className="font-medium text-sm leading-relaxed">{renderMarkdownText(opt)}</span>
+                  <input type="checkbox" value={optLabel} checked={isChecked} onChange={(e) => handleCheckboxChange(optLabel, e.target.checked)} className="hidden" />
+                  <span className="font-medium text-sm leading-relaxed">{renderMarkdownText(optLabel)}</span>
                 </label>
               );
             })}
@@ -174,52 +130,23 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
             {value ? (
               <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex items-center justify-between shadow-sm">
                 <div className="flex items-center gap-3 overflow-hidden">
-                  <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center shrink-0">
-                    <File size={20} />
-                  </div>
+                  <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center shrink-0"><File size={20} /></div>
                   <div className="truncate">
-                    <p className="text-sm font-bold text-emerald-900 truncate">
-                      {value.name || (typeof value === 'string' ? value.split('/').pop() : 'Dokumen Terlampir')}
-                    </p>
+                    <p className="text-sm font-bold text-emerald-900 truncate">{value.name || (typeof value === 'string' ? value.split('/').pop() : 'Dokumen Terlampir')}</p>
                     <p className="text-xs text-emerald-600 font-medium">Siap diunggah</p>
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => onChange(null)}
-                  className="p-2 hover:bg-rose-100 text-slate-400 hover:text-rose-600 rounded-full transition-colors shrink-0"
-                >
-                  <X size={18} />
-                </button>
+                <button type="button" onClick={() => onChange(null)} className="p-2 hover:bg-rose-100 text-slate-400 hover:text-rose-600 rounded-full transition-colors shrink-0"><X size={18} /></button>
               </div>
             ) : (
               <div
-                className={`relative border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-2 
-                  ${dragActive ? 'border-indigo-500 bg-indigo-50' : 'border-slate-300 bg-slate-50 hover:bg-slate-100'}`}
-                onDragEnter={handleDrag}
-                onDragLeave={handleDrag}
-                onDragOver={handleDrag}
-                onDrop={handleDrop}
-                onClick={() => fileInputRef.current?.click()}
+                className={`relative border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-2 ${dragActive ? 'border-indigo-500 bg-indigo-50' : 'border-slate-300 bg-slate-50 hover:bg-slate-100'}`}
+                onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop} onClick={() => fileInputRef.current?.click()}
               >
-                <div className="w-12 h-12 bg-white rounded-full shadow-sm ring-1 ring-slate-200 flex items-center justify-center text-indigo-500 mb-2">
-                  <UploadCloud size={24} />
-                </div>
-                <p className="text-sm font-bold text-slate-700">
-                  <span className="text-indigo-600">Klik untuk unggah</span> atau seret file ke sini
-                </p>
-                <p className="text-xs font-medium text-slate-400 mt-1 uppercase tracking-wider">
-                  Mendukung format: {field.fileAccept ? field.fileAccept.replace(/,/g, ', ') : 'Semua Format'}
-                </p>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept={field.fileAccept}
-                  className="hidden"
-                  onChange={(e) => {
-                    if (e.target.files && e.target.files[0]) onChange(e.target.files[0]);
-                  }}
-                />
+                <div className="w-12 h-12 bg-white rounded-full shadow-sm ring-1 ring-slate-200 flex items-center justify-center text-indigo-500 mb-2"><UploadCloud size={24} /></div>
+                <p className="text-sm font-bold text-slate-700"><span className="text-indigo-600">Klik untuk unggah</span> atau seret file ke sini</p>
+                <p className="text-xs font-medium text-slate-400 mt-1 uppercase tracking-wider">Mendukung format: {field.fileAccept ? field.fileAccept.replace(/,/g, ', ') : 'Semua Format'}</p>
+                <input ref={fileInputRef} type="file" accept={field.fileAccept} className="hidden" onChange={(e) => { if (e.target.files && e.target.files[0]) onChange(e.target.files[0]); }} />
               </div>
             )}
           </div>
@@ -235,13 +162,9 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
         <span className="flex-1 leading-snug">{renderMarkdownText(field.label)}</span>
         {field.required && <span className="text-rose-500 text-lg leading-none shrink-0">*</span>}
       </label>
-      
       {field.description && (
-        <p className="text-xs text-slate-500 font-medium -mt-1 mb-2 leading-relaxed">
-          {renderMarkdownText(field.description)}
-        </p>
+        <p className="text-xs text-slate-500 font-medium -mt-1 mb-2 leading-relaxed">{renderMarkdownText(field.description)}</p>
       )}
-
       {renderField()}
     </div>
   );
