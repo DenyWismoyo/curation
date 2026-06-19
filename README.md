@@ -13,29 +13,29 @@ Platform *web* cerdas berskala *enterprise* yang dirancang untuk mendigitalisasi
 
 Sistem ini dirancang sangat fleksibel dan dapat diadaptasi untuk berbagai kebutuhan industri dan sektor publik:
 
-*   🏛️ **Tata Kelola "Smart Hub" & Administrasi Publik:** Berfungsi sebagai modul inti dalam ekosistem digital pemerintah daerah untuk mengevaluasi kelayakan program masyarakat, mendata unit perlindungan komunitas, hingga manajemen perizinan secara transparan.
-*   🤝 **Kolaborasi Model Pentahelix:** Platform ideal untuk memfasilitasi, mengkurasi, dan menilai proposal inovasi silang sektor yang melibatkan pemerintah, akademisi, badan usaha, komunitas, dan media secara terpusat.
-*   🏢 **Corporate HR & Talent Acquisition:** Memungkinkan perusahaan melakukan asesmen kompetensi karyawan atau kandidat secara dinamis, dilengkapi dengan rekomendasi profil berbasis AI.
-*   🎓 **EdTech & Sertifikasi:** Mengotomatisasi ujian, penilaian akreditasi, dan penerbitan laporan kelulusan.
+1. 🏛️ **Tata Kelola "Smart Hub" & Administrasi Publik:** Berfungsi sebagai modul inti dalam ekosistem digital pemerintah daerah untuk mengevaluasi kelayakan program masyarakat, mendata unit perlindungan komunitas, hingga manajemen perizinan secara transparan.
+2. 🤝 **Kolaborasi Model Pentahelix:** Platform ideal untuk memfasilitasi, mengkurasi, dan menilai proposal inovasi silang sektor yang melibatkan pemerintah, akademisi, badan usaha, komunitas, dan media secara terpusat.
+3. 🏢 **Corporate HR & Talent Acquisition:** Memungkinkan perusahaan melakukan asesmen kompetensi karyawan atau kandidat secara dinamis, dilengkapi dengan rekomendasi profil berbasis AI.
+4. 🎓 **EdTech & Sertifikasi:** Mengotomatisasi ujian, penilaian akreditasi, dan penerbitan laporan kelulusan.
 
 ---
 
 ## ✨ Fitur Komersial Unggulan
 
-*   🧩 **Dynamic Wizard & Adaptive Tracks:** Pengguna dapat memilih jalur (*track*) yang relevan dan sistem akan menyajikan formulir yang beradaptasi secara dinamis sesuai kebutuhan asesmen.
-*   🤖 **AI-Powered Decision Support:** Sistem secara otonom menganalisis parameter input menggunakan AI (*Generative AI Service*) untuk merumuskan *AI Prompt Blueprint* dan memberikan rekomendasi objektif kepada tim kurator.
-*   📄 **High-Fidelity PDF Generation:** Pembuatan *Universal Assessment View* dan *Report Template*[cite: 1] berformat PDF dengan standar profesional langsung dari antarmuka aplikasi.
-*   🔐 **Enterprise-Grade RBAC:** Dasbor terisolasi untuk peran **Admin**, **Curator**, dan **Public User**[cite: 1] guna memastikan alur kerja yang terstruktur dan terukur.
-*   🛠️ **No-Code Template Builder:** Admin dapat membuat atau memodifikasi formulir asesmen baru (*Tab Form Builder*) serta mengkalibrasi instruksi AI (*Tab AI Config*) tanpa memerlukan *deployment* ulang[cite: 1].
+1. 🧩 **Dynamic Wizard & Adaptive Tracks:** Pengguna dapat memilih jalur (*track*) yang relevan dan sistem akan menyajikan formulir yang beradaptasi secara dinamis sesuai kebutuhan asesmen.
+2. 🤖 **AI-Powered Decision Support:** Sistem secara otonom menganalisis parameter input menggunakan AI (*Generative AI Service*) untuk merumuskan *AI Prompt Blueprint* dan memberikan rekomendasi objektif kepada tim kurator.
+3. 📄 **High-Fidelity PDF Generation:** Pembuatan *Universal Assessment View* dan *Report Template* berformat PDF dengan standar profesional langsung dari antarmuka aplikasi.
+4. 🔐 **Enterprise-Grade RBAC:** Dasbor terisolasi untuk peran **Admin**, **Curator**, dan **Public User** guna memastikan alur kerja yang terstruktur dan terukur.
+5. 🛠️ **No-Code Template Builder:** Admin dapat membuat atau memodifikasi formulir asesmen baru (*Tab Form Builder*) serta mengkalibrasi instruksi AI (*Tab AI Config*) tanpa memerlukan *deployment* ulang.
 
 ---
 
 ## 🛡️ Keamanan & Kepatuhan (Security & Compliance)
 
 Sebagai produk komersial, keamanan data adalah prioritas utama:
-*   **Data Isolation:** Implementasi ketat *Firestore Security Rules* (`firestore.rules`)[cite: 1] menjamin bahwa setiap lapisan peran hanya dapat mengakses dan memodifikasi data yang menjadi wewenangnya.
-*   **API Security:** Kredensial AI dan logika pemrosesan data berat diamankan secara penuh di lapisan *backend* (Firebase Cloud Functions)[cite: 1] untuk mencegah kebocoran *prompt* atau API Key.
-*   **Privacy-First AI:** Data dikelola secara selektif sebelum dikirim ke layanan AI untuk menjaga kerahasiaan informasi sensitif institusi.
+1. **Data Isolation:** Implementasi ketat *Firestore Security Rules* (`firestore.rules`) menjamin bahwa setiap lapisan peran hanya dapat mengakses dan memodifikasi data yang menjadi wewenangnya.
+2. **API Security:** Kredensial AI dan logika pemrosesan data berat diamankan secara penuh di lapisan *backend* (Firebase Cloud Functions) untuk mencegah kebocoran *prompt* atau API Key.
+3. **Privacy-First AI:** Data dikelola secara selektif sebelum dikirim ke layanan AI untuk menjaga kerahasiaan informasi sensitif institusi.
 
 ---
 
