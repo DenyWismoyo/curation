@@ -3,7 +3,7 @@ import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { defineSecret } from "firebase-functions/params";
 import * as admin from "firebase-admin";
 import { getFirestore } from "firebase-admin/firestore";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 
 import { buildMegaAgentPrompt } from "./promt/formBuilderPrompt";
 import { buildAIConfigPrompt } from "./promt/aiConfigPrompt";
@@ -23,7 +23,7 @@ const cleanUndefinedAndNull = (obj: any): any => {
   return obj;
 };
 
-// PERBAIKAN: withRetry diperkuat agar tidak mengulang (retry) jika error mutlak (seperti Safety Block / 400)
+// withRetry diperkuat agar tidak mengulang (retry) jika error mutlak (seperti Safety Block / 400)
 const withRetry = async <T>(fn: () => Promise<T>, retries = 3, delayMs = 2000): Promise<T> => {
   try { return await fn(); }
   catch (error: any) {
@@ -36,12 +36,12 @@ const withRetry = async <T>(fn: () => Promise<T>, retries = 3, delayMs = 2000): 
 };
 
 // ============================================================================
-// FUNGSI 1: MEMBANGUN FORMULIR BERDASARKAN CONFIG
+// FUNGSI 1: MEMBANGUN FORMULIR BERDASARKAN CONFIG (SINGLE-PASS GENERATION)
 // ============================================================================
 export const generateFormTemplateFromAI = onCall(
   { 
     memory: "2GiB", 
-    timeoutSeconds: 540, 
+    timeoutSeconds: 300, 
     region: "asia-southeast2", 
     secrets: [geminiApiKeySecret], 
     cors: true 
@@ -65,46 +65,20 @@ export const generateFormTemplateFromAI = onCall(
     try {
       await templateRef.update({
         aiGenerationStatus: {
-          phase: "RESEARCHING",
-          message: "AI sedang melakukan Deep Research mengenai kerangka kerja industri global...",
-          updatedAt: new Date().toISOString()
-        }
-      });
-
-      const researchModel = genAI.getGenerativeModel({
-        model: "gemini-3.1-pro-preview", 
-        generationConfig: { temperature: 0.7 }
-      });
-
-      const goal = aiPromptConfig?.assessmentGoal || "Evaluasi mendalam pemetaan kualitas.";
-      const researchPrompt = `
-        Anda adalah Chief Research Officer tingkat Enterprise. Tugas Anda adalah menyusun referensi kerangka kerja (framework) dan daftar variabel metrik terbaik di dunia untuk mengukur program: "${trackName || "Asesmen Umum"}".
-        Tujuan asesmen ini adalah: "${goal}".
-        Tuliskan 3 kerangka teori/framework standar global yang paling relevan (misal: ISO, COBIT, ESG, TRL, SNI, Y-Combinator Metrics), dan jabarkan indikator spesifik yang harus ditanyakan dalam formulir.
-      `;
-
-      console.log(`🔍 [${templateId}] Menjalankan Deep Research Latar Belakang menggunakan 3.1 Pro Preview...`);
-      const researchResult = await withRetry(() => researchModel.generateContent(researchPrompt));
-      const deepResearchContext = researchResult.response.text();
-
-      await storeTemplateResearchVector(templateId, trackName, deepResearchContext, API_KEY)
-         .catch(e => console.error("Gagal merekam vector research formulir:", e));
-
-      await templateRef.update({
-        aiGenerationStatus: {
           phase: "BUILDING_FORM",
-          message: "Riset selesai. AI sedang merancang skema pertanyaan bercabang & scoring matrix...",
+          message: "AI sedang melakukan Deep Research sekaligus merancang struktur form dan skoring matriks...",
           updatedAt: new Date().toISOString()
         }
       });
 
-      // PERBAIKAN: Mengganti model yang salah (gemini-3.5-flash) menjadi gemini-3.1-pro-preview
+      // MENGGUNAKAN FLASH DENGAN KONFIGURASI JSON NATIVE YANG LEBIH STABIL
       const architectModel = genAI.getGenerativeModel({
-        model: "gemini-3.1-pro-preview", 
+        model: "gemini-2.5-flash", 
         generationConfig: {
+          temperature: 0.5, // Dikembalikan ke 0.5 agar output kuesioner lebih komprehensif dan maksimal
           maxOutputTokens: 8192,
-          temperature: 0.2,
-          responseMimeType: "application/json",
+          responseMimeType: "application/json"
+          // KITA MENGHAPUS responseSchema KARENA SCHEMA BERSARANG (NESTED) MEMBUAT AI BUG SYNTAX
         }
       });
 
@@ -114,57 +88,66 @@ export const generateFormTemplateFromAI = onCall(
         archetypeInstruction: archetypeInstruction || ""
       };
 
-      const finalPrompt = `
-        ${buildMegaAgentPrompt(promptParams)}
-        
-        BERIKUT ADALAH HASIL DEEP RESEARCH YANG WAJIB ANDA JADIKAN ACUAN PERTANYAAN:
-        ${deepResearchContext}
+      let finalPrompt = buildMegaAgentPrompt(promptParams);
+      // KITA INJEKSIKAN PERINTAH KETAT AGAR STRUKTUR JSON SEMPURNA
+      finalPrompt += `
+      
+      ==================================================
+      🚨 ATURAN KETAT JSON (MUTLAK) 🚨
+      ==================================================
+      1. OUTPUT WAJIB BERUPA JSON MURNI TANPA MARKDOWN BACKTICKS (\`\`\`json).
+      2. SELURUH NAMA PROPERTI/KEY WAJIB MENGGUNAKAN TANDA KUTIP GANDA (Contoh: "label": "Nama"). DILARANG KERAS menggunakan unquoted keys (seperti label: "Nama").
+      3. DILARANG meninggalkan trailing comma (koma di akhir array/objek sebelum tanda tutup).
+      4. Hasilkan kuesioner pertanyaan formulir yang komprehensif, mendalam, dan selengkap mungkin (Output Maksimal).
       `;
 
-      let attempt = 0;
-      const MAX_ATTEMPTS = 3;
-
-      while (attempt < MAX_ATTEMPTS) {
-        attempt++;
-        try {
-          console.log(`🏗️ [${templateId}] Merakit struktur form JSON - Percobaan ${attempt}`);
-          const result = await withRetry(() => architectModel.generateContent(finalPrompt));
-          
-          // PERBAIKAN: Optimasi parsing, memanfaatkan native JSON response
-          let rawText = result.response.text().trim();
-          // Fallback pembersihan ringan jika API sesekali masih membungkus tag markdown
-          if (rawText.startsWith('```json')) {
-            rawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
-          }
-
-          const parsedObject = JSON.parse(rawText);
-          const finalStepsArray = parsedObject.steps || [];
-
-          if (!Array.isArray(finalStepsArray) || finalStepsArray.length === 0) {
-            throw new Error("Objek JSON berhasil terbentuk, tetapi array 'steps' kosong.");
-          }
-
-          const cleanedSteps = cleanUndefinedAndNull(finalStepsArray);
-
-          await templateRef.update({
-            steps: cleanedSteps,
-            version: admin.firestore.FieldValue.increment(1),
-            lastUpdated: new Date().toISOString(),
-            aiGenerationStatus: {
-              phase: "COMPLETED",
-              message: "Formulir berstandar Enterprise berhasil dibuat dan disimpan otomatis!",
-              updatedAt: new Date().toISOString()
-            }
-          });
-
-          console.log(`✅ [${templateId}] Auto-Save dan Vector Database Sukses Berjalan!`);
-          return { success: true, steps: cleanedSteps };
-
-        } catch (parseError: any) {
-          console.error(`❌ Gagal merangkai JSON pada percobaan ${attempt}:`, parseError.message);
-          if (attempt >= MAX_ATTEMPTS) throw parseError;
-        }
+      console.log(`🏗️ [${templateId}] Merakit struktur form JSON menggunakan Gemini 2.5 Flash...`);
+      const result = await withRetry(() => architectModel.generateContent(finalPrompt));
+      
+      let rawText = result.response.text().trim();
+      
+      // PEMBERSIHAN MARKDOWN BACKTICKS
+      if (rawText.startsWith('```json')) {
+        rawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
+      } else if (rawText.startsWith('```')) {
+        rawText = rawText.replace(/```/g, '').trim();
       }
+      
+      // 🔥 AUTO-FIXER: Mengoreksi bug syntax JSON yang sering dilakukan mesin AI secara otomatis
+      rawText = rawText.replace(/,\s*([\]}])/g, '$1'); // Menghapus koma gantung (trailing comma) di akhir elemen
+      rawText = rawText.replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":'); // Memaksa tanda kutip ganda pada key yang luput diketik AI
+
+      const parsedObject = JSON.parse(rawText);
+
+      // 1. SIMPAN HASIL RISET (researchNotes) KE VECTOR DATABASE UNTUK MASA DEPAN
+      if (parsedObject.researchNotes) {
+        console.log(`📚 [${templateId}] Mengekstrak researchNotes dan menyimpannya ke Vector Database...`);
+        await storeTemplateResearchVector(templateId, trackName, parsedObject.researchNotes, API_KEY)
+          .catch(e => console.error("Gagal merekam vector research formulir:", e));
+      }
+
+      // 2. BERSIHKAN & SIMPAN STRUKTUR FORMULIR
+      const finalStepsArray = parsedObject.steps || [];
+      if (!Array.isArray(finalStepsArray) || finalStepsArray.length === 0) {
+        throw new Error("Objek JSON berhasil terbentuk, tetapi array 'steps' kosong.");
+      }
+
+      const cleanedSteps = cleanUndefinedAndNull(finalStepsArray);
+
+      await templateRef.update({
+        steps: cleanedSteps,
+        version: admin.firestore.FieldValue.increment(1),
+        lastUpdated: new Date().toISOString(),
+        aiGenerationStatus: {
+          phase: "COMPLETED",
+          message: "Formulir berstandar Enterprise berhasil dibuat dan disimpan otomatis!",
+          updatedAt: new Date().toISOString()
+        }
+      });
+
+      console.log(`✅ [${templateId}] Auto-Save dan Vector Database Sukses Berjalan!`);
+      return { success: true, steps: cleanedSteps };
+
     } catch (error: any) {
       console.error(`💥 Fatal Error pada Latar Belakang Template [${templateId}]:`, error);
       await templateRef.update({
@@ -179,14 +162,19 @@ export const generateFormTemplateFromAI = onCall(
   }
 );
 
-
+// ============================================================================
+// FUNGSI 2: AI CONFIGURATION ENHANCER (META-PROMPTING) & VECTOR RAG ENRICHMENT
+// ============================================================================
+// ============================================================================
+// FUNGSI 2: AI CONFIGURATION ENHANCER (META-PROMPTING) & VECTOR RAG ENRICHMENT
+// ============================================================================
 // ============================================================================
 // FUNGSI 2: AI CONFIGURATION ENHANCER (META-PROMPTING) & VECTOR RAG ENRICHMENT
 // ============================================================================
 export const generateAIConfigResearch = onCall(
   { 
     memory: "1GiB", 
-    timeoutSeconds: 300, // PERBAIKAN: Diperpanjang menjadi 300 detik (5 menit) untuk reasoning
+    timeoutSeconds: 300, 
     region: "asia-southeast2", 
     secrets: [geminiApiKeySecret], 
     cors: true 
@@ -203,12 +191,58 @@ export const generateAIConfigResearch = onCall(
     const genAI = new GoogleGenerativeAI(API_KEY);
 
     try {
+      // MENGGUNAKAN FLASH 2.5 + STRICT SCHEMA & PENAHAN HALUSINASI PANJANG TEKS
       const model = genAI.getGenerativeModel({
-        model: "gemini-3.1-pro-preview", 
+        model: "gemini-2.5-flash", 
         generationConfig: {
-          temperature: 0.7,
+          temperature: 0.5, // Diturunkan agar AI lebih logis dan tidak terlalu berkhayal (menulis esai)
           maxOutputTokens: 8192,
           responseMimeType: "application/json", 
+          responseSchema: {
+            type: SchemaType.OBJECT,
+            description: "PENTING: TULIS DENGAN PADAT DAN RINGKAS. DILARANG KERAS menulis esai atau paragraf panjang pada field string.",
+            // REQUIRED memastikan AI tidak boleh berhenti sebelum kolom ini terisi semua
+            required: [
+              "aiPersona", "assessmentGoal", "gradingStrictness", "reportTone",
+              "expectedMetrics", "expectedAnalysisBlocks", "expectedRecommendations",
+              "riskFramework", "customReadinessTiers"
+            ],
+            properties: {
+              aiPersona: { type: SchemaType.STRING, description: "Maksimal 1 kalimat." },
+              assessmentGoal: { type: SchemaType.STRING, description: "Maksimal 2 kalimat." },
+              gradingStrictness: { type: SchemaType.STRING },
+              reportTone: { type: SchemaType.STRING },
+              mediaAnalysisFocus: { type: SchemaType.STRING },
+              expectedMetrics: { 
+                type: SchemaType.ARRAY, 
+                items: { type: SchemaType.STRING },
+                description: "WAJIB BUAT 5 HINGGA 8 METRIK. Tulis padat maksimal 1 kalimat per metrik." 
+              },
+              expectedAnalysisBlocks: { 
+                type: SchemaType.ARRAY, 
+                items: { type: SchemaType.STRING },
+                description: "WAJIB BUAT 3 HINGGA 5 BLOK. Tulis padat maksimal 1 kalimat per blok." 
+              },
+              expectedRecommendations: { 
+                type: SchemaType.ARRAY, 
+                items: { type: SchemaType.STRING },
+                description: "WAJIB BUAT 3 HINGGA 4 REKOMENDASI. Tulis padat dan dapat dieksekusi." 
+              },
+              riskFramework: { 
+                type: SchemaType.STRING, 
+                description: "MUTLAK: MAKSIMAL 3 KALIMAT SAJA. Sebutkan poin red flags utama. DILARANG menulis panjang lebar." 
+              },
+              customReadinessTiers: { 
+                type: SchemaType.ARRAY, 
+                items: { type: SchemaType.STRING },
+                description: "Wajib buat 3 tier (Fase Awal, Menengah, Matang)." 
+              },
+              customSystemPrompt: { type: SchemaType.STRING, description: "Maksimal 2 kalimat." },
+              negativePrompts: { type: SchemaType.STRING, description: "Maksimal 2 kalimat." },
+              formatInstructions: { type: SchemaType.STRING, description: "Maksimal 2 kalimat." },
+              customScoringRubric: { type: SchemaType.STRING, description: "Maksimal 3 kalimat." }
+            }
+          }
         }
       });
 
@@ -224,7 +258,6 @@ export const generateAIConfigResearch = onCall(
 
       const result = await withRetry(() => model.generateContent(systemPrompt));
       
-      // PERBAIKAN: Optimasi parsing, memanfaatkan native JSON response
       let rawText = result.response.text().trim();
       if (rawText.startsWith('```json')) {
         rawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
