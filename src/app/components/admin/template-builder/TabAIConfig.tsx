@@ -1,11 +1,12 @@
 // src/app/components/admin/template-builder/TabAIConfig.tsx
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { FormTemplate } from '@/types/curation';
 import { AIPromptPresets } from '@/data/aiPromptTemplates';
-import { Sparkles, Plus, Trash2, HelpCircle, Lightbulb, ChevronDown } from 'lucide-react';
+import { Sparkles, Plus, Trash2, Lightbulb, ChevronDown, Bot, Loader2, Search } from 'lucide-react';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 
 // ========================================================
 // KOMPONEN PEMBANTU: PANEL PANDUAN TUTORIAL AI
@@ -50,13 +51,76 @@ interface TabAIConfigProps {
 }
 
 export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
+  const [isGeneratingConfig, setIsGeneratingConfig] = useState(false);
+  const [customTopic, setCustomTopic] = useState('');
+
+  // STATE UNTUK SEARCHABLE DROPDOWN TEMPLATE INSTAN
+  const [isPresetDropdownOpen, setIsPresetDropdownOpen] = useState(false);
+  const [presetSearchTerm, setPresetSearchTerm] = useState('');
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Fungsi untuk menutup dropdown jika area di luar dropdown diklik
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsPresetDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Filter 110+ Template berdasarkan pencarian (nama atau deskripsi)
+  const filteredPresets = AIPromptPresets?.filter(preset => 
+    preset.name.toLowerCase().includes(presetSearchTerm.toLowerCase()) || 
+    preset.description.toLowerCase().includes(presetSearchTerm.toLowerCase())
+  ) || [];
+
+  const handleAutoResearchConfig = async () => {
+    if (!template.trackName && !customTopic) {
+      alert("Mohon ketikkan Standar/Konteks Referensi di kolom hijau terlebih dahulu.");
+      return;
+    }
+    
+    if (confirm("AI akan meriset standar industri dan MENYEMPURNAKAN konfigurasi saat ini secara otomatis. Lanjutkan?")) {
+      setIsGeneratingConfig(true);
+      try {
+        const functions = getFunctions(undefined, 'asia-southeast2');
+        const generateAIConfigFn = httpsCallable(functions, 'generateAIConfigResearch', { timeout: 120000 });
+        
+        const result = await generateAIConfigFn({
+          templateId: template.id, 
+          trackName: template.trackName,
+          customTopic: customTopic,
+          currentConfig: template.aiPromptConfig 
+        });
+
+        const data = result.data as any;
+        if (data.success && data.aiPromptConfig) {
+          onChange({
+            ...template,
+            aiPromptConfig: data.aiPromptConfig 
+          });
+          alert("Penyusunan Indikator berstandar pakar berhasil dilakukan & direkam ke Vector Database!");
+          setCustomTopic(''); 
+        } else {
+          throw new Error("Format balikan tidak sesuai.");
+        }
+      } catch (error: any) {
+        console.error(error);
+        alert(`Gagal menyempurnakan Config AI: ${error.message}`);
+      } finally {
+        setIsGeneratingConfig(false);
+      }
+    }
+  };
   
   const applyAIPreset = (presetId: string) => {
     if (!presetId) return;
     const preset = AIPromptPresets.find(p => p.id === presetId);
     if (!preset) return;
     
-    if (confirm(`Apakah Anda yakin ingin menimpa konfigurasi AI saat ini dengan preset: "${preset.name}"?`)) {
+    if (confirm(`Apakah Anda yakin ingin menimpa konfigurasi AI saat ini dengan preset:\n"${preset.name}"?`)) {
       onChange({
         ...template,
         aiPromptConfig: {
@@ -64,7 +128,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
           ...preset.config 
         }
       });
-      alert('Berhasil menerapkan preset AI!');
+      alert('Berhasil menerapkan preset AI! Anda bisa menambahkan standar khusus lalu klik "Sempurnakan AI" di bawah.');
     }
   };
 
@@ -150,24 +214,107 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
           </div>
         </div>
 
-        <div className="shrink-0 w-full md:w-auto">
-          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Load dari Preset Instan:</label>
-          <select
-            onChange={(e) => {
-              applyAIPreset(e.target.value);
-              e.target.value = ""; 
-            }}
-            className="w-full md:w-64 bg-indigo-50 border border-indigo-200 text-indigo-700 h-10 rounded-xl text-sm px-3 font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm cursor-pointer"
+        {/* SEARCHABLE DROPDOWN PRESET */}
+        <div className="shrink-0 w-full md:w-80 relative z-[60]" ref={dropdownRef}>
+          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Cari & Load Preset Instan:</label>
+          
+          <div 
+            onClick={() => setIsPresetDropdownOpen(!isPresetDropdownOpen)}
+            className="w-full bg-indigo-50 border border-indigo-200 text-indigo-700 h-10 rounded-xl text-sm px-3 flex items-center justify-between font-bold cursor-pointer hover:bg-indigo-100 transition-colors shadow-sm"
           >
-            <option value="">-- Pilih Template Instan --</option>
-            {AIPromptPresets?.map(preset => (
-              <option key={preset.id} value={preset.id}>{preset.name}</option>
-            ))}
-          </select>
+            <span className="truncate flex-1 text-left opacity-90">
+              {isPresetDropdownOpen ? "Mencari Template..." : "-- Pilih dari 110+ Template --"}
+            </span>
+            <ChevronDown className={`w-4 h-4 ml-2 shrink-0 transition-transform duration-300 ${isPresetDropdownOpen ? 'rotate-180' : ''}`} />
+          </div>
+
+          {/* KOTAK DROPDOWN DENGAN OVERFLOW-HIDDEN AGAR TIDAK BOCOR */}
+          {isPresetDropdownOpen && (
+            <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl ring-1 ring-slate-200 flex flex-col z-[100] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+              
+              {/* Kolom Input Pencarian */}
+              <div className="p-2 border-b border-slate-100 bg-slate-50">
+                <div className="relative">
+                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <input 
+                    type="text" 
+                    autoFocus
+                    placeholder="Ketik kata kunci (Misal: Retail, IT)..." 
+                    value={presetSearchTerm}
+                    onChange={(e) => setPresetSearchTerm(e.target.value)}
+                    className="w-full bg-white border border-slate-200 rounded-lg h-9 pl-9 pr-3 text-[13px] font-medium focus:outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 placeholder:text-slate-400"
+                  />
+                </div>
+              </div>
+              
+              {/* FIX MUTLAK: Kunci tinggi list dengan Inline Style */}
+              <div 
+                className="overflow-y-auto overscroll-contain block p-1 bg-white" 
+                style={{ height: '240px', maxHeight: '240px' }} 
+              >
+                {filteredPresets.length === 0 ? (
+                  <div className="py-8 text-center flex flex-col items-center text-slate-400">
+                    <Search className="w-8 h-8 mb-2 opacity-20" />
+                    <span className="text-xs font-bold text-slate-500">Template tidak ditemukan.</span>
+                    <span className="text-[10px] mt-1">Coba kata kunci lain.</span>
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-0.5">
+                    {filteredPresets.map(preset => (
+                      <button
+                        key={preset.id}
+                        type="button"
+                        onClick={() => {
+                          applyAIPreset(preset.id);
+                          setIsPresetDropdownOpen(false);
+                          setPresetSearchTerm('');
+                        }}
+                        className="w-full text-left px-3 py-2.5 rounded-lg hover:bg-indigo-50 focus:bg-indigo-50 outline-none transition-colors flex flex-col gap-0.5 group shrink-0"
+                      >
+                        <span className="text-xs font-black text-slate-700 group-hover:text-indigo-700 line-clamp-1">{preset.name}</span>
+                        <span className="text-[10px] text-slate-500 font-medium line-clamp-1">{preset.description}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="p-5 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-2xl flex flex-col md:flex-row items-center gap-4 shadow-sm relative overflow-hidden z-10">
+        <div className="absolute top-0 left-0 w-1.5 h-full bg-emerald-500"></div>
+        <div className="flex-1 space-y-1">
+          <h4 className="font-black text-emerald-900 flex items-center gap-2">
+            <Bot className="w-5 h-5 text-emerald-600" /> Sempurnakan dengan AI Researcher
+          </h4>
+          <p className="text-xs text-emerald-700/80 font-medium leading-relaxed">
+            Pilih <b>Template Instan</b> di atas, lalu ketik referensi standar (misal: <i className="font-bold text-emerald-800">"Sempurnakan dengan standar ISO 9001"</i>). AI akan otomatis menganalisis dan melakukan upgrade pada konfigurasi di bawah tanpa merusak konteks aslinya.
+          </p>
+        </div>
+        <div className="flex w-full md:w-auto gap-2">
+          <Input 
+            value={customTopic}
+            onChange={(e) => setCustomTopic(e.target.value)}
+            placeholder="Referensi Industri/Standar Pakar..."
+            className="h-10 bg-white border-emerald-200 text-sm w-full md:w-56"
+          />
+          <Button 
+            onClick={handleAutoResearchConfig} 
+            disabled={isGeneratingConfig}
+            className={`h-10 px-4 font-bold rounded-xl shadow-sm transition-all duration-300 whitespace-nowrap ${isGeneratingConfig ? 'bg-emerald-400 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-700 text-white hover:scale-[1.02]'}`}
+          >
+            {isGeneratingConfig ? (
+               <span className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin"/> Menganalisis...</span>
+            ) : (
+               <span className="flex items-center gap-2"><Sparkles className="w-4 h-4"/> Sempurnakan AI</span>
+            )}
+          </Button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4 z-0 relative">
         
         <div className="space-y-6">
           <h4 className="font-black text-slate-900 border-l-4 border-indigo-600 pl-3">Instruksi Dasar & Karakter AI</h4>

@@ -28,6 +28,12 @@ export interface CustomAnalysisBlock {
 export interface AIResult {
   readinessLevel: string;
   totalScore: number;
+  
+  // ---> TAMBAHAN ENTERPRISE-GRADE <---
+  dataConfidenceScore: number; 
+  contradictionsFound: string[];
+  // -----------------------------------
+  
   incubationRoute: string;
   executiveSummary: string;
   
@@ -66,9 +72,6 @@ export interface CurationHistory {
   result: AIResult;
 }
 
-// UPGRADE: Tambahan tipe field 'select' dan 'date'
-// Di dalam src/types/curation.ts (Timpa interface FormField)
-
 export type FieldType = 'text' | 'textarea' | 'number' | 'radio' | 'checkbox' | 'file' | 'select' | 'date';
 
 export interface FormField {
@@ -78,11 +81,9 @@ export interface FormField {
   required: boolean;      
   placeholder?: string;   
   description?: string;   
-  // UPDATE: options sekarang bisa berupa string biasa ATAU objek berbobot
   options?: any[]; // Bisa berisi string[] atau { label: string, weight: number }[]
   fileAccept?: string;    
   gridSpan?: 1 | 2;       
-  // FITUR BARU: Conditional Logic
   showIf?: {
     fieldId: string;
     equals: string | number | boolean;
@@ -111,11 +112,10 @@ export interface AiPromptConfig {
   expectedAnalysisBlocks?: string[]; 
   expectedRecommendations: string[];
 
-  // ---> EKSTENSI ULTRA KOMPREHENSIF (ADVANCED CONFIG) <---
   customSystemPrompt?: string; 
   negativePrompts?: string;    
   formatInstructions?: string; 
-  customScoringRubric?: string; // BARU: Rubrik Skor Matematik Eksak
+  customScoringRubric?: string; 
 }
 
 export interface FormTemplate {

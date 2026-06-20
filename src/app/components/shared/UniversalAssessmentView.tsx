@@ -6,7 +6,7 @@ import {
   ShieldCheck, Target, Sparkles, Activity, Route, ListChecks, 
   ChevronDown, AlertTriangle, Zap, TrendingUp, Lightbulb, 
   Banknote, Users, Search, FileText, Award, Shield, Building2, 
-  Briefcase, MessageSquare, Tag, Compass, Mic, MicOff
+  Briefcase, MessageSquare, Tag, Compass, Mic, MicOff, ShieldAlert
 } from 'lucide-react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip } from 'recharts';
 import { Input } from '@/components/ui/input';
@@ -285,17 +285,15 @@ export function UniversalAssessmentView({
           </div>
           
           {/* EXEC SUMMARY CARD */}
-          <div className="bg-white ring-1 ring-slate-200 p-6 sm:p-8 rounded-3xl shadow-sm h-full">
+          <div className="bg-white ring-1 ring-slate-200 p-6 sm:p-8 rounded-3xl shadow-sm h-full flex flex-col">
             <h3 className="text-slate-900 font-black uppercase tracking-widest text-xs mb-3 flex items-center gap-2">
               <Zap className="h-4 w-4 text-indigo-500"/> Executive Summary (AI)
             </h3>
-            <div className="text-slate-600 text-sm font-medium">
+            <div className="text-slate-600 text-sm font-medium flex-1">
               <TextToBullets text={aiResult?.executiveSummary || "Ringkasan eksekutif tidak tersedia."} colorClass="text-indigo-500" />
             </div>
           </div>
         </div>
-
-
 
         {/* DYNAMIC SCORING CARD BASED ON MODE */}
         {isPublic ? (
@@ -306,7 +304,7 @@ export function UniversalAssessmentView({
             
             {/* UPGRADE UI TIER READINESS (SPLIT TITLE & SUBTITLE) */}
             <div className="relative z-10 flex flex-col items-center gap-2 w-full">
-              <span className="text-sm font-black bg-white/20 backdrop-blur-md px-6 py-2 rounded-full ring-1 ring-white/30 text-center uppercase tracking-wider">
+              <span className="text-sm font-black bg-white/20 backdrop-blur-md px-6 py-2 rounded-full ring-1 ring-white/30 text-center uppercase tracking-wider text-balance">
                 {aiResult?.readinessLevel?.split('|')[0]?.trim() || "Belum Ditentukan"}
               </span>
               {aiResult?.readinessLevel?.includes('|') && (
@@ -315,7 +313,6 @@ export function UniversalAssessmentView({
                 </span>
               )}
             </div>
-            
           </div>
         ) : (
           <div className="w-full lg:w-[400px] shrink-0 p-6 rounded-3xl text-white relative overflow-hidden shadow-lg bg-slate-900 flex flex-col justify-center">
@@ -348,7 +345,7 @@ export function UniversalAssessmentView({
                 ) : (
                   <div className="flex flex-col justify-center items-center h-full">
                     <p className="text-5xl font-black text-white leading-none mb-3">{curatorData?.curatorScore}</p>
-                    <span className="inline-block text-[10px] font-black bg-white/20 px-2 py-1 rounded text-white text-center w-full uppercase">
+                    <span className="inline-block text-[10px] font-black bg-white/20 px-2 py-1 rounded text-white text-center w-full uppercase leading-tight">
                       {curatorData?.curatorLevel?.split('|')[0]?.trim() || "-"}
                     </span>
                   </div>
@@ -358,6 +355,78 @@ export function UniversalAssessmentView({
           </div>
         )}
       </div>
+
+      {/* ========================================================= */}
+      {/* 2.5 FITUR AUDIT FORENSIK ENTERPRISE (KHUSUS INTERNAL)      */}
+      {/* ========================================================= */}
+      {isInternal && (
+        <div className="w-full bg-slate-900 p-6 sm:p-8 rounded-3xl shadow-xl ring-1 ring-slate-800 relative overflow-hidden">
+          <div className="absolute right-0 top-0 opacity-5 pointer-events-none transform translate-x-10 -translate-y-10"><ShieldAlert size={200} /></div>
+          
+          <h3 className="text-sm font-black text-white uppercase tracking-widest mb-6 flex items-center gap-2 relative z-10">
+            <Search className="w-5 h-5 text-indigo-400"/> Audit Forensik & Integritas Data (AI)
+          </h3>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
+            {/* Panel 1: Confidence Score & Anomali */}
+            <div className="lg:col-span-1 flex flex-col gap-4">
+              
+              {/* Confidence Score */}
+              <div className="bg-slate-800/80 rounded-2xl p-5 border border-slate-700/50 flex items-center justify-between">
+                <div>
+                  <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400 mb-1">Kepercayaan Bukti Form</p>
+                  <p className="text-xs font-medium text-slate-500">Data Confidence Score</p>
+                </div>
+                <div className="text-right">
+                  {aiResult?.dataConfidenceScore !== undefined ? (
+                    <span className={`text-4xl font-black ${aiResult.dataConfidenceScore >= 80 ? 'text-emerald-400' : aiResult.dataConfidenceScore >= 50 ? 'text-amber-400' : 'text-rose-500'}`}>
+                      {aiResult.dataConfidenceScore}
+                    </span>
+                  ) : (
+                    <span className="text-2xl font-black text-slate-500">N/A</span>
+                  )}
+                </div>
+              </div>
+
+              {/* Contradictions / Lie Detector */}
+              <div className={`flex-1 rounded-2xl p-5 border ${aiResult?.contradictionsFound?.length > 0 ? 'bg-rose-950/30 border-rose-900/50' : 'bg-slate-800/50 border-slate-700/50'}`}>
+                <h4 className={`text-[10px] uppercase font-black tracking-widest mb-3 flex items-center gap-1.5 ${aiResult?.contradictionsFound?.length > 0 ? 'text-rose-400' : 'text-slate-400'}`}>
+                  <AlertTriangle size={14}/> Deteksi Anomali / Red Flags
+                </h4>
+                {aiResult?.contradictionsFound && aiResult.contradictionsFound.length > 0 ? (
+                  <ul className="space-y-3">
+                    {aiResult.contradictionsFound.map((anomaly: string, i: number) => (
+                      <li key={i} className="text-xs font-medium text-rose-200/90 leading-relaxed flex items-start gap-2">
+                        <span className="text-rose-500 mt-0.5">•</span> <span>{renderRichText(anomaly)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-xs text-slate-500 italic">Tidak ditemukan kontradiksi logika antar jawaban form maupun file fisik.</p>
+                )}
+              </div>
+            </div>
+
+            {/* Panel 2: Expert Debate (_internalReasoning) */}
+            <div className="lg:col-span-2 bg-slate-800/50 rounded-2xl p-5 sm:p-6 border border-slate-700/50 flex flex-col">
+              <h4 className="text-[10px] uppercase font-black tracking-widest text-indigo-300 mb-3 flex items-center gap-2">
+                <MessageSquare size={14}/> Logika Debat Pakar Internal (Reasoning)
+              </h4>
+              <div className="flex-1 overflow-y-auto max-h-[250px] custom-scrollbar pr-2 text-sm text-slate-300 font-medium leading-relaxed">
+                {aiResult?._internalReasoning ? (
+                  <TextToBullets text={aiResult._internalReasoning} colorClass="text-indigo-400" />
+                ) : (
+                  <div className="h-full flex flex-col items-center justify-center text-slate-500 space-y-2 opacity-50 py-8">
+                    <ShieldAlert className="w-8 h-8 mb-1" />
+                    <span className="text-xs font-bold uppercase tracking-widest">Debat Panel Disembunyikan</span>
+                    <span className="text-[10px] text-center max-w-xs">Data (_internalReasoning) dihapus oleh konfigurasi Backend (index.ts) sebelum dikirim ke Client.</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
 
       {/* 3. DYNAMIC ANALYSIS BLOCKS */}

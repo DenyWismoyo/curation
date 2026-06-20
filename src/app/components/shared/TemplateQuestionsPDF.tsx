@@ -42,7 +42,6 @@ const styles = StyleSheet.create({
   badgeReq: { fontSize: 7, fontWeight: 900, color: '#DC2626', backgroundColor: '#FEE2E2', padding: '2 4', borderRadius: 2, textTransform: 'uppercase' },
   badgeType: { fontSize: 7, fontWeight: 900, color: '#4B5563', backgroundColor: '#F3F4F6', padding: '2 4', borderRadius: 2, textTransform: 'uppercase' },
   
-  // PERBAIKAN: Hapus fontStyle: 'italic'
   fieldDesc: { fontSize: 9, color: '#6B7280', marginBottom: 6 },
   fieldId: { fontSize: 7, color: '#9CA3AF', fontFamily: 'Courier', marginBottom: 6 },
   
@@ -51,6 +50,7 @@ const styles = StyleSheet.create({
   optionItem: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 2 },
   optionBullet: { fontSize: 8, color: '#9CA3AF', marginRight: 4, marginTop: 1 },
   optionText: { fontSize: 9, color: '#374151' },
+  optionWeight: { fontSize: 8, color: '#4F46E5', fontWeight: 700, marginLeft: 4 }, // Style baru untuk bobot
 
   footer: { position: 'absolute', bottom: 30, left: 48, right: 48, borderTop: '1pt solid #E5E5E5', paddingTop: 12, flexDirection: 'row', justifyContent: 'space-between' },
   footerText: { fontSize: 8, color: '#999999', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1 },
@@ -84,12 +84,10 @@ export function TemplateQuestionsPDF({ template }: { template: FormTemplate }) {
           </View>
         </View>
 
-        {/* PERBAIKAN: Hapus fontStyle italic */}
         {template.steps.length === 0 ? (
           <Text style={{ fontSize: 10, color: '#6B7280' }}>Belum ada langkah/pertanyaan dalam form ini.</Text>
         ) : (
           template.steps.map((step, sIdx) => (
-            /* PERBAIKAN: Hapus wrap={false} di sini agar step yang panjang bisa pindah halaman */
             <View key={sIdx} style={styles.stepContainer}>
               
               <View style={styles.stepHeader}>
@@ -97,12 +95,10 @@ export function TemplateQuestionsPDF({ template }: { template: FormTemplate }) {
                 <Text style={styles.stepTitle}>{step.title}</Text>
               </View>
 
-              {/* PERBAIKAN: Hapus fontStyle italic */}
               {step.fields.length === 0 ? (
                 <Text style={{ fontSize: 9, color: '#9CA3AF', paddingLeft: 12 }}>Tidak ada pertanyaan.</Text>
               ) : (
                 step.fields.map((field, fIdx) => (
-                  /* wrap={false} di sini aman karena 1 pertanyaan pasti muat di 1 halaman */
                   <View key={fIdx} style={styles.fieldContainer} wrap={false}>
                     
                     <View style={styles.fieldHeader}>
@@ -116,15 +112,26 @@ export function TemplateQuestionsPDF({ template }: { template: FormTemplate }) {
                     <Text style={styles.fieldId}>Key: {field.id}</Text>
                     {field.description && <Text style={styles.fieldDesc}>{field.description}</Text>}
 
+                    {/* PERBAIKAN: Penanganan Opsi Berupa Objek vs Teks Biasa */}
                     {(field.type === 'radio' || field.type === 'checkbox' || field.type === 'select') && field.options && field.options.length > 0 && (
                       <View style={styles.optionsList}>
-                        <Text style={{ fontSize: 8, color: '#6B7280', marginBottom: 2, fontWeight: 700 }}>Pilihan:</Text>
-                        {field.options.map((opt, oIdx) => (
-                          <View key={oIdx} style={styles.optionItem}>
-                            <Text style={styles.optionBullet}>{field.type === 'radio' ? '○' : '□'}</Text>
-                            <Text style={styles.optionText}>{opt}</Text>
-                          </View>
-                        ))}
+                        <Text style={{ fontSize: 8, color: '#6B7280', marginBottom: 2, fontWeight: 700 }}>Pilihan (dan Bobot Penilaian):</Text>
+                        {field.options.map((opt, oIdx) => {
+                          // Deteksi tipe opt secara aman
+                          const isObj = typeof opt === 'object' && opt !== null;
+                          const optLabel = isObj ? opt.label : String(opt);
+                          const optWeight = isObj ? opt.weight : null;
+
+                          return (
+                            <View key={oIdx} style={styles.optionItem}>
+                              <Text style={styles.optionBullet}>{field.type === 'radio' ? '○' : '□'}</Text>
+                              <Text style={styles.optionText}>
+                                {optLabel}
+                                {optWeight !== null && <Text style={styles.optionWeight}>  [Bobot: {optWeight}]</Text>}
+                              </Text>
+                            </View>
+                          );
+                        })}
                       </View>
                     )}
 
