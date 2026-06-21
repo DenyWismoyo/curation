@@ -23,7 +23,6 @@ const cleanUndefinedAndNull = (obj: any): any => {
   return obj;
 };
 
-// withRetry diperkuat agar tidak mengulang (retry) jika error mutlak (seperti Safety Block / 400)
 const withRetry = async <T>(fn: () => Promise<T>, retries = 3, delayMs = 2000): Promise<T> => {
   try { return await fn(); }
   catch (error: any) {
@@ -36,12 +35,12 @@ const withRetry = async <T>(fn: () => Promise<T>, retries = 3, delayMs = 2000): 
 };
 
 // ============================================================================
-// FUNGSI 1: MEMBANGUN FORMULIR BERDASARKAN CONFIG (SINGLE-PASS GENERATION)
+// FUNGSI 1: MEMBANGUN FORMULIR BERDASARKAN CONFIG (SKALA ENTERPRISE AMAN)
 // ============================================================================
 export const generateFormTemplateFromAI = onCall(
   { 
     memory: "2GiB", 
-    timeoutSeconds: 300, 
+    timeoutSeconds: 540, 
     region: "asia-southeast2", 
     secrets: [geminiApiKeySecret], 
     cors: true 
@@ -66,19 +65,81 @@ export const generateFormTemplateFromAI = onCall(
       await templateRef.update({
         aiGenerationStatus: {
           phase: "BUILDING_FORM",
-          message: "AI sedang melakukan Deep Research sekaligus merancang struktur form dan skoring matriks...",
+          message: "AI sedang melakukan Deep Research sekaligus merancang instrumen audit...",
           updatedAt: new Date().toISOString()
         }
       });
 
-      // MENGGUNAKAN FLASH DENGAN KONFIGURASI JSON NATIVE YANG LEBIH STABIL
       const architectModel = genAI.getGenerativeModel({
-        model: "gemini-2.5-flash", 
+        model: "gemini-3.5-flash", // Atau gemini-1.5-pro
         generationConfig: {
-          temperature: 0.5, // Dikembalikan ke 0.5 agar output kuesioner lebih komprehensif dan maksimal
+          temperature: 0.6, 
           maxOutputTokens: 8192,
-          responseMimeType: "application/json"
-          // KITA MENGHAPUS responseSchema KARENA SCHEMA BERSARANG (NESTED) MEMBUAT AI BUG SYNTAX
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: SchemaType.OBJECT,
+            description: "PENTING: JAGA TOTAL OUTPUT AGAR TIDAK MELEBIHI 35 FIELDS KESELURUHAN UNTUK MENCEGAH TERPOTONG.",
+            required: ["researchNotes", "steps"],
+            properties: {
+              researchNotes: { 
+                type: SchemaType.STRING, 
+                description: "Tulis ringkasan taktis maksimal 2 kalimat." 
+              },
+              steps: {
+                type: SchemaType.ARRAY,
+                description: "Hasilkan 3 hingga 5 Langkah (Steps) yang menyeluruh dan mendalam.",
+                items: {
+                  type: SchemaType.OBJECT,
+                  required: ["stepNumber", "title", "fields"],
+                  properties: {
+                    stepNumber: { type: SchemaType.INTEGER },
+                    title: { type: SchemaType.STRING },
+                    description: { type: SchemaType.STRING, description: "Berikan pengantar naratif atau konteks untuk langkah ini." },
+                    fields: {
+                      type: SchemaType.ARRAY,
+                      description: "Hasilkan 5 hingga 8 pertanyaan per langkah secara efektif.",
+                      items: {
+                        type: SchemaType.OBJECT,
+                        required: ["id", "label", "type", "required", "gridSpan"],
+                        properties: {
+                          id: { type: SchemaType.STRING, description: "ID Unik camelCase." },
+                          label: { type: SchemaType.STRING, description: "Gunakan bahasa profesional atau tuliskan skenario studi kasus (maksimal 2 kalimat)." },
+                          type: { type: SchemaType.STRING, description: "HANYA: text, textarea, number, select, radio, checkbox, file, date" },
+                          required: { type: SchemaType.BOOLEAN },
+                          description: { type: SchemaType.STRING, description: "Tuliskan panduan cara menjawab atau konteks risiko." },
+                          placeholder: { type: SchemaType.STRING, description: "WAJIB ADA untuk tipe text/textarea/number. Berikan contoh jawaban." },
+                          validationRegex: { type: SchemaType.STRING, description: "Opsional. Pola Regex untuk memvalidasi input jika diperlukan." },
+                          gridSpan: { type: SchemaType.INTEGER, description: "Gunakan 1 atau 2." },
+                          fileAccept: { type: SchemaType.STRING, description: "Isi '.pdf' jika type adalah file." },
+                          options: {
+                            type: SchemaType.ARRAY,
+                            description: "MUTLAK WAJIB DIISI JIKA TYPE 'radio', 'select', atau 'checkbox'. Maksimal 4 opsi.",
+                            items: {
+                              type: SchemaType.OBJECT,
+                              required: ["label", "weight"],
+                              properties: {
+                                label: { type: SchemaType.STRING },
+                                weight: { type: SchemaType.INTEGER, description: "Angka 0 - 100" }
+                              }
+                            }
+                          },
+                          showIf: {
+                            type: SchemaType.OBJECT,
+                            description: "Opsional. JANGAN PERNAH merujuk ke ID field ini sendiri.",
+                            required: ["fieldId", "equals"],
+                            properties: {
+                              fieldId: { type: SchemaType.STRING, description: "ID dari pertanyaan SEBELUMNYA." },
+                              equals: { type: SchemaType.STRING, description: "Jawaban pemicu munculnya field ini." }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       });
 
@@ -89,44 +150,34 @@ export const generateFormTemplateFromAI = onCall(
       };
 
       let finalPrompt = buildMegaAgentPrompt(promptParams);
-      // KITA INJEKSIKAN PERINTAH KETAT AGAR STRUKTUR JSON SEMPURNA
+      
       finalPrompt += `
       
       ==================================================
-      🚨 ATURAN KETAT JSON (MUTLAK) 🚨
+      🚨 PROTOKOL ASESMEN KELAS ENTERPRISE & BATAS TOKEN (MUTLAK) 🚨
       ==================================================
-      1. OUTPUT WAJIB BERUPA JSON MURNI TANPA MARKDOWN BACKTICKS (\`\`\`json).
-      2. SELURUH NAMA PROPERTI/KEY WAJIB MENGGUNAKAN TANDA KUTIP GANDA (Contoh: "label": "Nama"). DILARANG KERAS menggunakan unquoted keys (seperti label: "Nama").
-      3. DILARANG meninggalkan trailing comma (koma di akhir array/objek sebelum tanda tutup).
-      4. Hasilkan kuesioner pertanyaan formulir yang komprehensif, mendalam, dan selengkap mungkin (Output Maksimal).
+      1. [SKALA & KEDALAMAN]: Jangan membuat kuesioner yang dangkal. Buatlah instrumen audit mendalam yang mengeskplorasi operasional, finansial, dan risiko.
+      2. [STUDI KASUS & SKENARIO]: Gunakan pertanyaan berbasis skenario/psikometri untuk mendeteksi insting peserta.
+      3. [RICH PLACEHOLDERS]: Untuk pertanyaan bertipe 'text', 'textarea', atau 'number', WAJIB menyediakan properti "placeholder" yang berisi contoh aktual jawaban.
+      4. [AGRESIF CONDITIONAL LOGIC]: Rangkai alur bercabang (showIf) secara cerdas. Jika pengguna memilih opsi 'Risiko Tinggi', munculkan field 'textarea' untuk justifikasi. Pastikan "showIf" merujuk ke ID pertanyaan SEBELUMNYA, DILARANG merujuk ke dirinya sendiri.
+      5. [OUTPUT LIMITATION]: BATAS OUTPUT TOKEN API ADALAH 8192. Anda HARUS meringkas total pertanyaan di seluruh form menjadi MAKSIMAL 30-35 pertanyaan saja untuk menghindari error JSON terpotong (Unexpected end of JSON input). Efisiensikan penggunaan kata pada 'options' dan 'description'.
       `;
 
-      console.log(`🏗️ [${templateId}] Merakit struktur form JSON menggunakan Gemini 2.5 Flash...`);
+      console.log(`🏗️ [${templateId}] Merakit struktur form JSON berskala masif...`);
       const result = await withRetry(() => architectModel.generateContent(finalPrompt));
       
       let rawText = result.response.text().trim();
-      
-      // PEMBERSIHAN MARKDOWN BACKTICKS
       if (rawText.startsWith('```json')) {
         rawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
-      } else if (rawText.startsWith('```')) {
-        rawText = rawText.replace(/```/g, '').trim();
       }
       
-      // 🔥 AUTO-FIXER: Mengoreksi bug syntax JSON yang sering dilakukan mesin AI secara otomatis
-      rawText = rawText.replace(/,\s*([\]}])/g, '$1'); // Menghapus koma gantung (trailing comma) di akhir elemen
-      rawText = rawText.replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":'); // Memaksa tanda kutip ganda pada key yang luput diketik AI
-
       const parsedObject = JSON.parse(rawText);
 
-      // 1. SIMPAN HASIL RISET (researchNotes) KE VECTOR DATABASE UNTUK MASA DEPAN
       if (parsedObject.researchNotes) {
-        console.log(`📚 [${templateId}] Mengekstrak researchNotes dan menyimpannya ke Vector Database...`);
         await storeTemplateResearchVector(templateId, trackName, parsedObject.researchNotes, API_KEY)
           .catch(e => console.error("Gagal merekam vector research formulir:", e));
       }
 
-      // 2. BERSIHKAN & SIMPAN STRUKTUR FORMULIR
       const finalStepsArray = parsedObject.steps || [];
       if (!Array.isArray(finalStepsArray) || finalStepsArray.length === 0) {
         throw new Error("Objek JSON berhasil terbentuk, tetapi array 'steps' kosong.");
@@ -162,12 +213,7 @@ export const generateFormTemplateFromAI = onCall(
   }
 );
 
-// ============================================================================
-// FUNGSI 2: AI CONFIGURATION ENHANCER (META-PROMPTING) & VECTOR RAG ENRICHMENT
-// ============================================================================
-// ============================================================================
-// FUNGSI 2: AI CONFIGURATION ENHANCER (META-PROMPTING) & VECTOR RAG ENRICHMENT
-// ============================================================================
+
 // ============================================================================
 // FUNGSI 2: AI CONFIGURATION ENHANCER (META-PROMPTING) & VECTOR RAG ENRICHMENT
 // ============================================================================
@@ -191,17 +237,15 @@ export const generateAIConfigResearch = onCall(
     const genAI = new GoogleGenerativeAI(API_KEY);
 
     try {
-      // MENGGUNAKAN FLASH 2.5 + STRICT SCHEMA & PENAHAN HALUSINASI PANJANG TEKS
       const model = genAI.getGenerativeModel({
         model: "gemini-2.5-flash", 
         generationConfig: {
-          temperature: 0.5, // Diturunkan agar AI lebih logis dan tidak terlalu berkhayal (menulis esai)
+          temperature: 0.5, 
           maxOutputTokens: 8192,
           responseMimeType: "application/json", 
           responseSchema: {
             type: SchemaType.OBJECT,
             description: "PENTING: TULIS DENGAN PADAT DAN RINGKAS. DILARANG KERAS menulis esai atau paragraf panjang pada field string.",
-            // REQUIRED memastikan AI tidak boleh berhenti sebelum kolom ini terisi semua
             required: [
               "aiPersona", "assessmentGoal", "gradingStrictness", "reportTone",
               "expectedMetrics", "expectedAnalysisBlocks", "expectedRecommendations",
