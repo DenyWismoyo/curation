@@ -264,5 +264,12 @@ export const FORM_ARCHETYPES: FormArchetype[] = [
     description: 'Kuis interaktif yang mengarahkan peserta pada profil karakter spesifik berdasarkan serangkaian keputusan insting.',
     suitableFor: 'Penjurusan minat bakat siswa, penempatan peran dalam tim (Role Fit), dan orientasi pegawai baru.',
     aiInstruction: 'Ini adalah KUIS ARCHETYPE. Susun pilihan ganda ("radio") di mana setiap jawaban memiliki bobot tersembunyi yang mengarah ke salah satu persona (misal: Sang Kreator, Sang Analis, Sang Pemimpin). AI harus mengakumulasi opsi yang paling banyak dipilih untuk merilis laporan profil persona yang komprehensif.'
+  },
+  {
+    id: 'health-behavior-ttm',
+    name: 'Asesmen Perubahan Perilaku (COM-B & TTM)',
+    description: 'Pemetaan psikologis komprehensif untuk mengukur kesiapan klien merubah gaya hidup, deteksi makan emosional, dan aktivitas fisik.',
+    suitableFor: 'Intervensi gaya hidup (Lifestyle Medicine), konseling gizi psikologis, personal training, dan terapi habituasi holistik.',
+    aiInstruction: 'Ini adalah instrumen PERUBAHAN PERILAKU (TTM). Gunakan kombinasi tipe "radio" berskala Likert untuk mengukur tingkat kesiapan perubahan (dari Pre-kontemplasi hingga Pemeliharaan). Gunakan tipe "radio" berbasis skenario untuk mendeteksi pemicu makan emosional atau hambatan olahraga. Hindari penggunaan "text" atau "textarea" untuk opini umum; paksa peserta memilih opsi yang paling mewakili respons psikologis mereka agar AI dapat mengukur metrik TTM dan COM-B secara presisi.'
   }
 ];

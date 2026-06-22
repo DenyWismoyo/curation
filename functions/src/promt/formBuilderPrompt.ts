@@ -36,36 +36,69 @@ Anda WAJIB memastikan bahwa SETIAP "Target Metrik Radar" dan "Fokus Deteksi Risi
 Berdasarkan pemetaan di atas, buatlah struktur formulir secara presisi.
 
 🛡️ GUARDRAILS AUDIT (MUTLAK):
-1. ANTI-LEAK: DILARANG menggunakan kata "Skor", "Bobot", "Nilai" pada label/deskripsi. 
+1. ANTI-LEAK: DILARANG menggunakan kata "Skor", "Bobot", "Nilai" pada label/deskripsi pertanyaan. Peserta tidak boleh tahu bobot di balik pilihan mereka.
 2. LOKALISASI BAHASA: Seluruh teks, label pertanyaan, deskripsi, hingga opsi jawaban WAJIB MENGGUNAKAN BAHASA INDONESIA YANG FORMAL DAN MUDAH DIPAHAMI. Nominal angka WAJIB menggunakan mata uang Rupiah (Rp).
 3. JSON STRING SAFETY: DILARANG KERAS menggunakan ENTER atau NEWLINE harfiah (\\n) di dalam teks value JSON. Gunakan spasi biasa untuk memisahkan kalimat.
 
 ⚙️ ATURAN STRUKTUR & GAYA (ARCHETYPE):
 ${archetypeInstruction}
 
-📋 INSTRUKSI TEKNIS STRUKTUR JSON:
+📋 INSTRUKSI TEKNIS STRUKTUR JSON & "POWERFUL MIXING":
 1. Langkah 1 WAJIB memiliki 4 field pertama dengan urutan ID: "namaUsaha", "namaPengisi", "emailAktif", "nomorTelepon".
-2. Tipe "type" yang valid HANYA: "text", "textarea", "number", "date", "select", "radio", "checkbox", "file".
-3. SECRET SCORING MATRIX: Untuk tipe 'radio', 'checkbox', atau 'select', array "options" WAJIB berupa objek: {"label": "Teks", "weight": angka_bobot_0_hingga_100}. Berikan bobot yang selaras dengan Rubrik Klien berikut: "${config.customScoringRubric}".
-4. CONDITIONAL LOGIC: Gunakan properti "showIf": {"fieldId": "id_pemicu", "equals": "opsi_pemicu"} secara agresif untuk mendalami pemicu Red Flags dari fokus risiko di atas.
+2. SINERGI TIPE INPUT (WAJIB DITERAPKAN): Anda memiliki senjata input ("text", "textarea", "number", "date", "select", "radio", "checkbox", "file"). Anda WAJIB menggabungkan mereka secara cerdas!
+   - Gunakan "checkbox" untuk menanyakan kelengkapan (contoh: "Pilih instrumen legalitas yang sudah Anda miliki").
+   - Gunakan "number" khusus untuk data kuantitatif presisi (contoh: Omzet, Jumlah Pengguna, Kapasitas Produksi).
+   - Gunakan "radio" atau "select" untuk pilihan tunggal tingkat kematangan (maturity level).
+3. SECRET SCORING MATRIX: Untuk tipe 'radio', 'checkbox', atau 'select', array "options" WAJIB berupa objek: {"label": "Teks", "weight": angka_bobot_0_hingga_100}. Berikan bobot skor yang ketat dan selaras dengan Rubrik Klien berikut: "${config.customScoringRubric}".
+4. AGGRESSIVE CONDITIONAL LOGIC (INVESTIGASI FORENSIK): Gunakan properti "showIf": {"fieldId": "id_pemicu", "equals": "opsi_pemicu"} untuk membuat form yang reaktif dan cerdas:
+   - Skenario Pembuktian: Jika peserta merespon positif/klaim besar di pertanyaan 'radio'/'select' (misal: "Sudah memiliki sertifikasi"), WAJIB pancing pertanyaan baru bertipe "file" untuk menagih bukti dokumennya menggunakan showIf.
+   - Skenario Justifikasi: Jika peserta memilih opsi berisiko tinggi atau menjawab "Belum ada", pancing pertanyaan baru bertipe "textarea" menggunakan showIf untuk meminta alasan/justifikasi mereka.
 5. BATAS OUTPUT: Maksimal 30-35 pertanyaan total agar sistem tidak terputus.
 
 ==================================================
 FORMAT KELUARAN (MUTLAK)
 ==================================================
 Keluarkan HANYA format JSON murni TANPA markdown block, TANPA teks pengantar apapun.
-Tiru persis struktur JSON berikut:
+Tiru persis struktur JSON berikut (termasuk cara penerapan showIf dan file):
 
 {
   "researchNotes": "Tuliskan ringkasan riset dalam satu paragraf lurus menggunakan Bahasa Indonesia tanpa enter.",
   "steps": [
     {
       "stepNumber": 1,
-      "title": "Identitas Dasar",
-      "description": "Lengkapi data dasar penanggung jawab",
+      "title": "Identitas & Legalitas Dasar",
+      "description": "Lengkapi data dasar penanggung jawab dan entitas",
       "fields": [
         {
           "id": "namaUsaha", "label": "Nama Entitas", "type": "text", "required": true, "gridSpan": 2
+        },
+        {
+          "id": "statusSertifikasi",
+          "label": "Status Sertifikasi Mutu",
+          "type": "radio",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {"label": "Belum Memiliki", "weight": 0},
+            {"label": "Sudah Memiliki (ISO/SNI)", "weight": 100}
+          ]
+        },
+        {
+          "id": "buktiSertifikasi",
+          "label": "Unggah Dokumen Sertifikasi Anda",
+          "type": "file",
+          "required": true,
+          "gridSpan": 2,
+          "fileAccept": ".pdf",
+          "showIf": { "fieldId": "statusSertifikasi", "equals": "Sudah Memiliki (ISO/SNI)" }
+        },
+        {
+          "id": "alasanBelumSertifikasi",
+          "label": "Jelaskan kendala Anda belum memiliki sertifikasi",
+          "type": "textarea",
+          "required": true,
+          "gridSpan": 2,
+          "showIf": { "fieldId": "statusSertifikasi", "equals": "Belum Memiliki" }
         }
       ]
     }
