@@ -1,4 +1,5 @@
 // src/types/curation.ts
+
 export type ViewState = 'landing' | 'track-select' | 'wizard' | 'processing' | 'dashboard';
 
 export interface CurationFormData {
@@ -116,6 +117,7 @@ export interface AiPromptConfig {
   negativePrompts?: string;    
   formatInstructions?: string; 
   customScoringRubric?: string; 
+  researchSourcesCited?: string[]; // <--- TAMBAHAN UNTUK RISET ENTERPRISE
 }
 
 export interface FormTemplate {

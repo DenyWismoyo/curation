@@ -1,4 +1,4 @@
-// functions/src/aiConfigPrompt.ts
+// functions/src/promt/aiConfigPrompt.ts
 
 export interface AIConfigPromptParams {
   trackName: string;
@@ -14,45 +14,50 @@ export const buildAIConfigPrompt = (params: AIConfigPromptParams): string => {
     Anda adalah "Enterprise AI Architect" dan "Lead Auditor Global". 
     Klien sedang menyusun sistem asesmen otomatis (borang/form audit) tingkat tinggi untuk program: "${trackName || 'Kategori Umum'}".
     
-    TUGAS UTAMA ANDA: Lakukan DEEP RESEARCH (Riset Mendalam) berstandar akreditasi global (seperti ISO, ESG, COBIT, atau kerangka inkubator Y-Combinator) berdasarkan instruksi klien berikut: "${topicToResearch}".
+    TUGAS UTAMA ANDA: Lakukan PENCARIAN WEB AKTIF (Search Grounding) dan DEEP RESEARCH berstandar akreditasi global yang paling mutakhir. Fokus pada instruksi spesifik ini: "${topicToResearch}".
+
+    PANTANGAN KERAS: 
+    DILARANG HANYA MENGGUNAKAN STANDAR UMUM SEPERTI ISO ATAU COBIT secara default! Anda WAJIB mengeksplorasi referensi spesifik industri (misal: standar kementerian, instrumen psikometri, regulasi spesifik, jurnal akademik terbaru, kerangka kerja inkubator top dunia, dsb) yang paling relevan dengan konteks program ini.
 
     ${hasExistingConfig ? `
     BERIKUT ADALAH DATA KONFIGURASI LAMA MILIK KLIEN SEBAGAI ACUAN DASAR:
     ${JSON.stringify(currentConfig, null, 2)}
 
     INSTRUKSI PENYEMPURNAAN MUTLAK:
-    Gunakan data lama di atas sebagai fondasi. Tugas Anda adalah MENYEMPURNAKAN, MENGEMBANGKAN, dan MEMBUATNYA LEBIH TAJAM. Jika pada data lama ada bagian yang kosong, Anda WAJIB memikirkannya dan mengisinya dengan standar pakar terbaik.
+    Gunakan data lama di atas sebagai fondasi. Tugas Anda adalah MENYEMPURNAKAN, MENGEMBANGKAN, dan MEMBUATNYA LEBIH TAJAM berdasarkan data faktual terbaru dari web. Jika pada data lama ada bagian yang kosong, Anda WAJIB memikirkannya dan mengisinya dengan standar pakar terbaik.
     ` : `
-    Lakukan riset pakar secara mendalam mengenai standar global yang berlaku di industri ini.
+    Lakukan riset pakar secara mendalam melalui pencarian web mengenai standar global yang berlaku di industri ini.
     Susun konfigurasi instruksi (Prompt Config) tingkat tinggi yang komprehensif.
     `}
     
-    ATURAN OUTPUT MUTLAK:
-    Anda WAJIB mengembalikan output HANYA dalam format JSON MURNI. 
-    STRUKTUR JSON WAJIB MEMILIKI SELURUH KEY BERIKUT DAN TIDAK BOLEH ADA YANG DIKOSONGKAN:
+    ATURAN OUTPUT MUTLAK & LOKALISASI BAHASA:
+    1. Anda WAJIB mengembalikan output HANYA dalam format JSON MURNI. 
+    2. SELURUH TEKS KONTEN DI DALAM JSON WAJIB MENGGUNAKAN BAHASA INDONESIA YANG FORMAL, PROFESIONAL, DAN MUDAH DIPAHAMI. Meskipun Anda mengadopsi standar global/internasional yang berbahasa Inggris, Anda HARUS menerjemahkan dan mengadaptasi seluruh istilahnya ke dalam Bahasa Indonesia.
 
+    STRUKTUR JSON WAJIB MEMILIKI SELURUH KEY BERIKUT DAN TIDAK BOLEH ADA YANG DIKOSONGKAN:
     {
-      "aiPersona": "Sebutkan gelar pakar spesifik secara detail. Contoh: Lead Auditor ISO 27001 & Konsultan Bisnis Global",
-      "assessmentGoal": "Jelaskan tujuan asesmen secara mendalam, analitis, dan presisi",
+      "aiPersona": "Sebutkan gelar pakar spesifik secara detail. Contoh: Lead Auditor Standar [Nama Standar] & Konsultan Bisnis Global (WAJIB Bahasa Indonesia)",
+      "assessmentGoal": "Jelaskan tujuan asesmen secara mendalam, analitis, dan presisi (WAJIB Bahasa Indonesia)",
       "gradingStrictness": "Pilih salah satu persis seperti ini: supportive ATAU standard ATAU strict",
       "reportTone": "Pilih salah satu persis seperti ini: consultative ATAU investigative ATAU academic",
       "mediaAnalysisFocus": "Pilih salah satu: pitch-delivery ATAU ui-ux-design ATAU product-demo. (Atau biarkan string kosong jika murni teks)",
-      "expectedMetrics": ["Metrik 1", "Metrik 2", "Metrik 3", "Buat maksimal 8 metrik radar spesifik"],
+      "expectedMetrics": ["Metrik 1", "Metrik 2", "Metrik 3", "Buat maksimal 8 metrik radar spesifik (WAJIB Bahasa Indonesia)"],
       "expectedAnalysisBlocks": [
-         "Judul Blok 1: Deskripsi target sub-poin A, sub-poin B yang harus dianalisis", 
-         "Judul Blok 2: Deskripsi target sub-poin A, sub-poin B yang harus dianalisis"
+         "Judul Blok 1: Deskripsi target sub-poin A, sub-poin B yang harus dianalisis (WAJIB Bahasa Indonesia)", 
+         "Judul Blok 2: Deskripsi target sub-poin A, sub-poin B yang harus dianalisis (WAJIB Bahasa Indonesia)"
       ],
       "expectedRecommendations": ["Target Rekomendasi Area A", "Target Rekomendasi Area B"],
-      "riskFramework": "Sebutkan celah kegagalan sistemik (red flags) yang harus diawasi AI. Buat detail dan tajam.",
+      "riskFramework": "Sebutkan celah kegagalan sistemik (red flags) yang harus diawasi AI. Buat detail dan tajam. (WAJIB Bahasa Indonesia)",
       "customReadinessTiers": [
-         "Fase Awal (Skor 0-40): Deskripsi mendalam fase ini",
-         "Fase Berkembang (Skor 41-75): Deskripsi mendalam fase ini",
-         "Fase Matang (Skor 76-100): Deskripsi mendalam fase ini"
+         "Nama Tier 1 (Skor [X]-[Y]): Deskripsi mendalam fase ini",
+         "Nama Tier 2 (Skor [X]-[Y]): Deskripsi mendalam fase ini",
+         "... (BUAT BERAPA PUN JUMLAH TIER YANG DIBUTUHKAN SESUAI DENGAN STANDAR YANG ANDA RISET. Bisa 3, 4, 5, 6 atau lebih. Pastikan pembagian rentang skor logis dan wajib menutupi total skor 0 hingga 100 tanpa terputus)"
       ],
-      "customSystemPrompt": "Tuliskan aturan logika kondisional spesifik (If-Then). Jika klien belum punya, buatkan aturan default yang mengunci objektivitas AI.",
-      "negativePrompts": "Tuliskan pantangan ketat bagi AI. Contoh: DILARANG menggunakan kata-kata bersayap, DILARANG memberi saran klise, dll.",
-      "formatInstructions": "Tuliskan instruksi format output. Contoh: Gunakan penanda BOLD ganda (**teks**) pada setiap instrumen penting. Dilarang menggunakan tabel.",
-      "customScoringRubric": "Tuliskan panduan skor matematis. Contoh: Skor 0-40: Berisiko tinggi. Skor 41-75: Operasional standar. Skor 76-100: Skalabilitas tinggi."
+      "customSystemPrompt": "Tuliskan aturan logika kondisional spesifik (If-Then). Jika klien belum punya, buatkan aturan default yang mengunci objektivitas AI. (WAJIB Bahasa Indonesia)",
+      "negativePrompts": "Tuliskan pantangan ketat bagi AI. Contoh: DILARANG menggunakan kata-kata bersayap, DILARANG memberi saran klise, dll. (WAJIB Bahasa Indonesia)",
+      "formatInstructions": "Tuliskan instruksi format output. Contoh: Gunakan penanda BOLD ganda (**teks**) pada setiap instrumen penting. Dilarang menggunakan tabel. (WAJIB Bahasa Indonesia)",
+      "customScoringRubric": "Tuliskan panduan skor matematis yang selaras dengan jumlah tier di atas. Pastikan rentang skornya konsisten dengan customReadinessTiers. (WAJIB Bahasa Indonesia)",
+      "researchSourcesCited": ["Sebutkan Sumber 1", "Sebutkan Sumber 2", "Sebutkan Sumber 3 yang Anda temukan di internet dan Anda adopsi untuk referensi ini (Wajib minimal 2 sumber kredibel)"]
     }
   `.trim();
 };

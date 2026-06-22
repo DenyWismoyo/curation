@@ -212,5 +212,57 @@ export const FORM_ARCHETYPES: FormArchetype[] = [
     description: 'Kuesioner dengan segmentasi demografi berlapis dan penyaringan responden (screening).',
     suitableFor: 'Penelitian skripsi/tesis, riset pasar (Product-Market Fit), dan jajak pendapat.',
     aiInstruction: 'Ini adalah SURVEI RISET. Buat logika bercabang (showIf) yang sangat rapi di awal untuk memisahkan profil responden (umur, profesi, dll). Gunakan tipe "radio" dengan skala persetujuan Likert (1-5) untuk menguji hipotesis penelitian.'
+  },
+  // ==========================================
+  // KELOMPOK 5: KONSELING, PSIKOLOGI & LIFE COACHING
+  // ==========================================
+  {
+    id: 'metaphorical-projection',
+    name: 'Konseling Berbasis Perumpamaan (Metaphorical Choice)',
+    description: 'Menggunakan skenario metaforis (perumpamaan visual/situasi) untuk menggali kondisi bawah sadar tanpa pertanyaan langsung yang mengintimidasi.',
+    suitableFor: 'Konseling kesehatan mental awal, pemetaan trauma tersembunyi, dan asesmen kepribadian proyektif.',
+    aiInstruction: 'Ini adalah formulir PROYEKSI METAFORIS. Gunakan input tipe "radio" atau "select" di mana setiap pilihan jawaban berupa perumpamaan (contoh: "Jika masalah Anda adalah cuaca, cuaca apakah itu?"). Instruksikan AI untuk membaca makna psikologis di balik metafora yang dipilih peserta. Hindari input "number" atau metrik kaku.'
+  },
+  {
+    id: 'cbt-cognitive-distortion',
+    name: 'Analisis Distorsi Kognitif (Pendekatan CBT)',
+    description: 'Memetakan pola pikir negatif otomatis (Automatic Negative Thoughts) melalui pilihan ganda berbasis reaksi terhadap situasi spesifik.',
+    suitableFor: 'Sesi pra-konseling kecemasan (anxiety), manajemen amarah, dan terapi perilaku kognitif dasar.',
+    aiInstruction: 'Ini adalah instrumen ANALISIS KOGNITIF. Berikan skenario pemicu stres, lalu gunakan "radio" berbobot dengan opsi jawaban yang mewakili distorsi kognitif berbeda (seperti *Catastrophizing*, *Black-and-White Thinking*, atau *Overgeneralization*). Gunakan "textarea" opsional jika peserta ingin menjelaskan konteks tambahan.'
+  },
+  {
+    id: 'behavioral-frequency-scale',
+    name: 'Skala Frekuensi Perilaku & Burnout',
+    description: 'Mengukur intensitas dan frekuensi gejala kelelahan mental atau fisik menggunakan skala frekuensi waktu yang presisi.',
+    suitableFor: 'Deteksi dini burnout karyawan, asesmen depresi situasional, dan evaluasi keseimbangan hidup (work-life balance).',
+    aiInstruction: 'Gunakan input tipe "radio" dengan skala frekuensi baku (contoh: "Tidak Pernah", "Beberapa Hari", "Hampir Setiap Hari"). DILARANG menggunakan pertanyaan terbuka ("text" atau "textarea") untuk metrik utama agar AI dapat mengakumulasi skor risiko dengan akurat. Terapkan logika "showIf" untuk memunculkan pertanyaan krisis jika skor frekuensi sangat tinggi.'
+  },
+  {
+    id: 'situational-relationship-dynamics',
+    name: 'Dinamika Resolusi Konflik (Konseling Pasangan)',
+    description: 'Memberikan skenario konflik domestik atau finansial dengan pilihan ganda untuk melihat gaya komunikasi dan resolusi pasangan.',
+    suitableFor: 'Konseling pranikah, mediasi konflik hubungan, dan evaluasi kecocokan (compatibility test).',
+    aiInstruction: 'Ini adalah formulir DINAMIKA HUBUNGAN. Pertanyaan harus berupa skenario konflik spesifik (misal: "Pasangan Anda lupa hari penting, apa respons pertama Anda?"). Opsi jawaban pada "radio" harus memetakan gaya komunikasi (Pasif-Agresif, Asertif, Menghindar, atau Meledak-ledak). Jangan gunakan unggahan "file".'
+  },
+  {
+    id: 'values-alignment-sort',
+    name: 'Penyelarasan Nilai Hidup (Core Values Sorting)',
+    description: 'Memaksa pengguna memilih dan mengorbankan prioritas hidup melalui pilihan ganda yang sulit (trade-offs) untuk menemukan nilai inti sejati.',
+    suitableFor: 'Pencarian jati diri (Quarter-Life Crisis), transisi karir (Career Pivot), dan life coaching.',
+    aiInstruction: 'Ini adalah formulir PRIORITAS NILAI. Gunakan pertanyaan pilihan ganda ("radio") yang memaksa peserta memilih antara dua nilai positif (contoh: "Keamanan Finansial" vs "Kebebasan Waktu"). AI bertugas menganalisis pola pilihan yang mendominasi untuk merumuskan kompas moral atau tujuan karir peserta.'
+  },
+  {
+    id: 'trauma-trigger-inventory',
+    name: 'Pemetaan Pemicu Emosional (Trauma-Informed)',
+    description: 'Inventarisasi kepekaan terhadap pemicu stres (triggers) sensorik atau emosional menggunakan pilihan ganda berlapis yang aman dan tidak memicu trauma ulang.',
+    suitableFor: 'Persiapan sesi terapi trauma (PTSD), konseling duka (Grief), dan pendampingan psikologis intensif.',
+    aiInstruction: 'Ini adalah formulir SENSITIF TRAUMA. DILARANG KERAS memaksa peserta menuliskan detail kejadian traumatis di "textarea". Gunakan "checkbox" atau "radio" berbobot rendah untuk membiarkan mereka memilih situasi apa yang memicu reaksi fisik (misal: suara keras, kritik, diabaikan). Berikan opsi "Lewati" pada setiap pertanyaan.'
+  },
+  {
+    id: 'career-archetype-quiz',
+    name: 'Kuis Pola Dasar Karir & Bakat (Archetype)',
+    description: 'Kuis interaktif yang mengarahkan peserta pada profil karakter spesifik berdasarkan serangkaian keputusan insting.',
+    suitableFor: 'Penjurusan minat bakat siswa, penempatan peran dalam tim (Role Fit), dan orientasi pegawai baru.',
+    aiInstruction: 'Ini adalah KUIS ARCHETYPE. Susun pilihan ganda ("radio") di mana setiap jawaban memiliki bobot tersembunyi yang mengarah ke salah satu persona (misal: Sang Kreator, Sang Analis, Sang Pemimpin). AI harus mengakumulasi opsi yang paling banyak dipilih untuk merilis laporan profil persona yang komprehensif.'
   }
 ];

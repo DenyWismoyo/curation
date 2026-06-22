@@ -3,7 +3,7 @@ import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { defineSecret } from "firebase-functions/params";
 import * as admin from "firebase-admin";
 import { getFirestore } from "firebase-admin/firestore";
-import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 import { buildMegaAgentPrompt } from "./promt/formBuilderPrompt";
 import { buildAIConfigPrompt } from "./promt/aiConfigPrompt";
@@ -32,6 +32,24 @@ const withRetry = async <T>(fn: () => Promise<T>, retries = 3, delayMs = 2000): 
     await new Promise(res => setTimeout(res, delayMs));
     return withRetry(fn, retries - 1, delayMs * 2);
   }
+};
+
+// Fungsi pembantu untuk mengekstrak JSON dari response yang mungkin mengandung teks tambahan/markdown
+const extractJSONFromText = (rawText: string): any => {
+  let cleanedText = rawText.trim();
+  // Coba cari pola markdown JSON ```json ... ```
+  const jsonMatch = cleanedText.match(/```json\s*([\s\S]*?)\s*```/);
+  if (jsonMatch && jsonMatch[1]) {
+    cleanedText = jsonMatch[1].trim();
+  } else {
+    // Bersihkan jika ada sisa backtick
+    cleanedText = cleanedText.replace(/```/g, '').trim();
+  }
+  
+  // Membersihkan control character (seperti enter harfiah) agar tidak membuat JSON.parse crash.
+  cleanedText = cleanedText.replace(/[\u0000-\u0019]+/g, " "); 
+  
+  return JSON.parse(cleanedText);
 };
 
 // ============================================================================
@@ -71,75 +89,12 @@ export const generateFormTemplateFromAI = onCall(
       });
 
       const architectModel = genAI.getGenerativeModel({
-        model: "gemini-3.5-flash", // Atau gemini-1.5-pro
+        model: "gemini-2.5-flash", 
+        tools: [{ googleSearch: {} } as any], 
         generationConfig: {
           temperature: 0.6, 
-          maxOutputTokens: 8192,
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: SchemaType.OBJECT,
-            description: "PENTING: JAGA TOTAL OUTPUT AGAR TIDAK MELEBIHI 35 FIELDS KESELURUHAN UNTUK MENCEGAH TERPOTONG.",
-            required: ["researchNotes", "steps"],
-            properties: {
-              researchNotes: { 
-                type: SchemaType.STRING, 
-                description: "Tulis ringkasan taktis maksimal 2 kalimat." 
-              },
-              steps: {
-                type: SchemaType.ARRAY,
-                description: "Hasilkan 3 hingga 5 Langkah (Steps) yang menyeluruh dan mendalam.",
-                items: {
-                  type: SchemaType.OBJECT,
-                  required: ["stepNumber", "title", "fields"],
-                  properties: {
-                    stepNumber: { type: SchemaType.INTEGER },
-                    title: { type: SchemaType.STRING },
-                    description: { type: SchemaType.STRING, description: "Berikan pengantar naratif atau konteks untuk langkah ini." },
-                    fields: {
-                      type: SchemaType.ARRAY,
-                      description: "Hasilkan 5 hingga 8 pertanyaan per langkah secara efektif.",
-                      items: {
-                        type: SchemaType.OBJECT,
-                        required: ["id", "label", "type", "required", "gridSpan"],
-                        properties: {
-                          id: { type: SchemaType.STRING, description: "ID Unik camelCase." },
-                          label: { type: SchemaType.STRING, description: "Gunakan bahasa profesional atau tuliskan skenario studi kasus (maksimal 2 kalimat)." },
-                          type: { type: SchemaType.STRING, description: "HANYA: text, textarea, number, select, radio, checkbox, file, date" },
-                          required: { type: SchemaType.BOOLEAN },
-                          description: { type: SchemaType.STRING, description: "Tuliskan panduan cara menjawab atau konteks risiko." },
-                          placeholder: { type: SchemaType.STRING, description: "WAJIB ADA untuk tipe text/textarea/number. Berikan contoh jawaban." },
-                          validationRegex: { type: SchemaType.STRING, description: "Opsional. Pola Regex untuk memvalidasi input jika diperlukan." },
-                          gridSpan: { type: SchemaType.INTEGER, description: "Gunakan 1 atau 2." },
-                          fileAccept: { type: SchemaType.STRING, description: "Isi '.pdf' jika type adalah file." },
-                          options: {
-                            type: SchemaType.ARRAY,
-                            description: "MUTLAK WAJIB DIISI JIKA TYPE 'radio', 'select', atau 'checkbox'. Maksimal 4 opsi.",
-                            items: {
-                              type: SchemaType.OBJECT,
-                              required: ["label", "weight"],
-                              properties: {
-                                label: { type: SchemaType.STRING },
-                                weight: { type: SchemaType.INTEGER, description: "Angka 0 - 100" }
-                              }
-                            }
-                          },
-                          showIf: {
-                            type: SchemaType.OBJECT,
-                            description: "Opsional. JANGAN PERNAH merujuk ke ID field ini sendiri.",
-                            required: ["fieldId", "equals"],
-                            properties: {
-                              fieldId: { type: SchemaType.STRING, description: "ID dari pertanyaan SEBELUMNYA." },
-                              equals: { type: SchemaType.STRING, description: "Jawaban pemicu munculnya field ini." }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
+          maxOutputTokens: 8192
+          // responseMimeType dihapus karena tidak bisa digunakan bersama googleSearch
         }
       });
 
@@ -161,17 +116,13 @@ export const generateFormTemplateFromAI = onCall(
       3. [RICH PLACEHOLDERS]: Untuk pertanyaan bertipe 'text', 'textarea', atau 'number', WAJIB menyediakan properti "placeholder" yang berisi contoh aktual jawaban.
       4. [AGRESIF CONDITIONAL LOGIC]: Rangkai alur bercabang (showIf) secara cerdas. Jika pengguna memilih opsi 'Risiko Tinggi', munculkan field 'textarea' untuk justifikasi. Pastikan "showIf" merujuk ke ID pertanyaan SEBELUMNYA, DILARANG merujuk ke dirinya sendiri.
       5. [OUTPUT LIMITATION]: BATAS OUTPUT TOKEN API ADALAH 8192. Anda HARUS meringkas total pertanyaan di seluruh form menjadi MAKSIMAL 30-35 pertanyaan saja untuk menghindari error JSON terpotong (Unexpected end of JSON input). Efisiensikan penggunaan kata pada 'options' dan 'description'.
+      6. [JSON SCHEMA INSTRUCTION]: Pastikan output JSON murni memiliki struktur dengan key "researchNotes" (string) dan "steps" (array of objects sesuai definisi di atas).
       `;
 
-      console.log(`🏗️ [${templateId}] Merakit struktur form JSON berskala masif...`);
+      console.log(`🏗️ [${templateId}] Merakit struktur form JSON berskala masif dengan Live Web Search...`);
       const result = await withRetry(() => architectModel.generateContent(finalPrompt));
       
-      let rawText = result.response.text().trim();
-      if (rawText.startsWith('```json')) {
-        rawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
-      }
-      
-      const parsedObject = JSON.parse(rawText);
+      const parsedObject = extractJSONFromText(result.response.text());
 
       if (parsedObject.researchNotes) {
         await storeTemplateResearchVector(templateId, trackName, parsedObject.researchNotes, API_KEY)
@@ -238,55 +189,11 @@ export const generateAIConfigResearch = onCall(
 
     try {
       const model = genAI.getGenerativeModel({
-        model: "gemini-2.5-flash", 
+        model: "gemini-2.5-pro", 
+        tools: [{ googleSearch: {} } as any], 
         generationConfig: {
-          temperature: 0.5, 
-          maxOutputTokens: 8192,
-          responseMimeType: "application/json", 
-          responseSchema: {
-            type: SchemaType.OBJECT,
-            description: "PENTING: TULIS DENGAN PADAT DAN RINGKAS. DILARANG KERAS menulis esai atau paragraf panjang pada field string.",
-            required: [
-              "aiPersona", "assessmentGoal", "gradingStrictness", "reportTone",
-              "expectedMetrics", "expectedAnalysisBlocks", "expectedRecommendations",
-              "riskFramework", "customReadinessTiers"
-            ],
-            properties: {
-              aiPersona: { type: SchemaType.STRING, description: "Maksimal 1 kalimat." },
-              assessmentGoal: { type: SchemaType.STRING, description: "Maksimal 2 kalimat." },
-              gradingStrictness: { type: SchemaType.STRING },
-              reportTone: { type: SchemaType.STRING },
-              mediaAnalysisFocus: { type: SchemaType.STRING },
-              expectedMetrics: { 
-                type: SchemaType.ARRAY, 
-                items: { type: SchemaType.STRING },
-                description: "WAJIB BUAT 5 HINGGA 8 METRIK. Tulis padat maksimal 1 kalimat per metrik." 
-              },
-              expectedAnalysisBlocks: { 
-                type: SchemaType.ARRAY, 
-                items: { type: SchemaType.STRING },
-                description: "WAJIB BUAT 3 HINGGA 5 BLOK. Tulis padat maksimal 1 kalimat per blok." 
-              },
-              expectedRecommendations: { 
-                type: SchemaType.ARRAY, 
-                items: { type: SchemaType.STRING },
-                description: "WAJIB BUAT 3 HINGGA 4 REKOMENDASI. Tulis padat dan dapat dieksekusi." 
-              },
-              riskFramework: { 
-                type: SchemaType.STRING, 
-                description: "MUTLAK: MAKSIMAL 3 KALIMAT SAJA. Sebutkan poin red flags utama. DILARANG menulis panjang lebar." 
-              },
-              customReadinessTiers: { 
-                type: SchemaType.ARRAY, 
-                items: { type: SchemaType.STRING },
-                description: "Wajib buat 3 tier (Fase Awal, Menengah, Matang)." 
-              },
-              customSystemPrompt: { type: SchemaType.STRING, description: "Maksimal 2 kalimat." },
-              negativePrompts: { type: SchemaType.STRING, description: "Maksimal 2 kalimat." },
-              formatInstructions: { type: SchemaType.STRING, description: "Maksimal 2 kalimat." },
-              customScoringRubric: { type: SchemaType.STRING, description: "Maksimal 3 kalimat." }
-            }
-          }
+          temperature: 0.4, 
+          maxOutputTokens: 8192
         }
       });
 
@@ -302,14 +209,9 @@ export const generateAIConfigResearch = onCall(
 
       const result = await withRetry(() => model.generateContent(systemPrompt));
       
-      let rawText = result.response.text().trim();
-      if (rawText.startsWith('```json')) {
-        rawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
-      }
+      const parsedConfig = extractJSONFromText(result.response.text());
 
-      const parsedConfig = JSON.parse(rawText);
-
-      await storeTemplateResearchVector(safeTemplateId, `Config Research: ${topicToResearch}`, rawText, API_KEY)
+      await storeTemplateResearchVector(safeTemplateId, `Config Research: ${topicToResearch}`, JSON.stringify(parsedConfig), API_KEY)
          .catch(e => console.error(`Gagal merekam Vector Config Research untuk Template [${safeTemplateId}]:`, e));
 
       return { success: true, aiPromptConfig: parsedConfig };
