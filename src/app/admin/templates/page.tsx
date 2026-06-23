@@ -8,7 +8,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { FormTemplate } from '@/types/curation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-// IMPORT SONNER UNTUK TOAST NOTIFICATION
 import { toast } from "sonner"; 
 import { 
   Plus, Save, Trash2, Settings2, LayoutGrid, CheckCircle2,
@@ -25,7 +24,7 @@ import { TabFormBuilder } from '@/app/components/admin/template-builder/TabFormB
 import { AdminTemplatePreview } from '@/app/components/admin/AdminTemplatePreview';
 import { TabLogs } from '@/app/components/admin/template-builder/TabLogs';
 
-// DEFINISI DEFAULT CONFIG UNTUK FALLBACK TEMPLATE LAMA
+// DEFINISI DEFAULT CONFIG UNTUK FALLBACK TEMPLATE LAMA (DIPERBARUI)
 const DEFAULT_AI_CONFIG = {
   aiPersona: "",
   assessmentGoal: "",
@@ -38,7 +37,16 @@ const DEFAULT_AI_CONFIG = {
   negativePrompts: "",
   formatInstructions: "",
   reportTone: "consultative" as const,
-  gradingStrictness: "standard" as const
+  gradingStrictness: "standard" as const,
+  // PENAMBAHAN PROPERTI MULTIPURPOSE
+  formPurpose: "assessment" as any,
+  customUiLabels: {
+    scoreLabel: "AI Readiness Score",
+    swotLabel: "Capability Matrix (SWOT)",
+    riskLabel: "Critical Risks & Mitigation Map",
+    roadmapLabel: "Rekomendasi Strategis",
+    executionLabel: "Action Plan Timeline"
+  }
 };
 
 function TemplateBuilderContent() {
@@ -380,6 +388,7 @@ function TemplateBuilderContent() {
     toast.info("File JSON sedang diunduh.");
   };
 
+  // DIPERBARUI: Fungsi createNewTemplate agar mendefinisikan label UI secara otomatis
   const createNewTemplate = () => {
     const newTemplate: FormTemplate = {
       id: `track_${Date.now()}`, 
@@ -402,7 +411,16 @@ function TemplateBuilderContent() {
         customScoringRubric: "",
         customSystemPrompt: "",
         negativePrompts: "",
-        formatInstructions: ""
+        formatInstructions: "",
+        // MENGINISIALISASI FIELD BARU SAAT MEMBUAT BARU
+        formPurpose: "assessment" as any,
+        customUiLabels: {
+          scoreLabel: "AI Readiness Score",
+          swotLabel: "Capability Matrix (SWOT)",
+          riskLabel: "Critical Risks & Mitigation Map",
+          roadmapLabel: "Rekomendasi Strategis",
+          executionLabel: "Action Plan Timeline"
+        }
       },
       steps: [{ stepNumber: 1, title: "Langkah 1", fields: [{ id: 'namaUsaha', label: 'Nama Entitas/Usaha', type: 'text', required: true, gridSpan: 2 }] }]
     };
@@ -802,7 +820,6 @@ function TemplateBuilderContent() {
         </div>
         <div className="flex flex-wrap items-center gap-2 shrink-0">
           
-          {/* TOMBOL IMPORT JSON KHUSUS OVERWRITE (DI DALAM EDITOR) */}
           <label className="hidden sm:flex items-center gap-2 px-3 h-10 bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl text-sm font-medium cursor-pointer transition-all">
             <Upload className="w-4 h-4 shrink-0" /> <span className="hidden sm:inline">Import JSON</span>
             <input type="file" accept=".json" onChange={importToCurrentTemplate} className="hidden" />

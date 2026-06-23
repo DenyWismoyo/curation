@@ -1,4 +1,4 @@
-// src/app/components/shared/UniversalPDFDocument.tsx
+// src/templates/UniversalPDFDocument.tsx
 'use client';
 
 import React from 'react';
@@ -8,10 +8,10 @@ import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/rendere
 Font.register({
   family: 'Inter',
   fonts: [
-    { src: '/fonts/Inter-Regular.ttf', fontWeight: 400 },
-    { src: '/fonts/Inter-Medium.ttf', fontWeight: 500 },
-    { src: '/fonts/Inter-Bold.ttf', fontWeight: 700 },
-    { src: '/fonts/Inter-Black.ttf', fontWeight: 900 }
+    { src: 'https://curation--teknopark-surakarta.asia-southeast1.hosted.app/fonts/Inter-Regular.ttf', fontWeight: 400 },
+    { src: 'https://curation--teknopark-surakarta.asia-southeast1.hosted.app/fonts/Inter-Medium.ttf', fontWeight: 500 },
+    { src: 'https://curation--teknopark-surakarta.asia-southeast1.hosted.app/fonts/Inter-Bold.ttf', fontWeight: 700 },
+    { src: 'https://curation--teknopark-surakarta.asia-southeast1.hosted.app/fonts/Inter-Black.ttf', fontWeight: 900 }
   ]
 });
 
@@ -124,7 +124,6 @@ const renderRichTextPdf = (str: string) => {
         </Text>
       );
     } else if (part.startsWith('*') && part.endsWith('*')) {
-      // Fake italic by using a lighter color or medium weight since italic font is strictly removed
       return (
         <Text key={index} style={{ fontWeight: 500, color: '#4B5563' }}>
           {part.slice(1, -1)}
@@ -135,14 +134,12 @@ const renderRichTextPdf = (str: string) => {
   });
 };
 
-// Fungsi ini memecah multi-line text menjadi komponen View secara aman
 const renderBullets = (text: string) => {
   if (!text) return <Text style={styles.bulletText}>-</Text>;
   const lines = text.split('\n').filter(line => line.trim().length > 0);
   return lines.map((line, idx) => {
     const cleanLine = line.replace(/^[-*\u2022]\s*/, '');
 
-    // Deteksi sub-judul markdown ## di PDF
     if (cleanLine.startsWith('###') || cleanLine.startsWith('##')) {
       return (
         <View key={idx} style={{ marginTop: 12, marginBottom: 4 }}>
@@ -171,14 +168,60 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
   const isCuratorWorksheet = role === 'curator';
   const totalScore = aiResult?.totalScore || 0;
 
-  // WATERMARK KHUSUS (Tanpa Email)
+  // =========================================================================
+  // LOGIKA TRANSLASI LABEL MULTIPURPOSE ENGINE (CHAMELEON LABELS)
+  // =========================================================================
+  const formPurpose = aiResult?.formPurpose || 'assessment';
+  const customUiLabels = aiResult?.customUiLabels || {};
+
+  const isCounseling = formPurpose === 'counseling';
+  const isMonitoring = formPurpose === 'monitoring';
+  const isConsultation = formPurpose === 'consultation';
+
+  const getLabel = (key: 'score' | 'swot' | 'risk' | 'roadmap' | 'execution') => {
+    if (customUiLabels[key + 'Label']) return customUiLabels[key + 'Label'];
+
+    switch(key) {
+      case 'score':
+        if (isCounseling) return 'Indeks Karakter/Stabilitas';
+        if (isMonitoring) return 'Persentase Capaian Target';
+        if (isConsultation) return 'Tingkat Urgensi Solusi';
+        return 'Readiness Index';
+      case 'swot':
+        if (isCounseling) return 'Pemetaan Karakter (SWOT)';
+        if (isMonitoring) return 'Matriks Kondisi Lapangan (SWOT)';
+        return 'Capability Matrix (SWOT)';
+      case 'risk':
+        if (isCounseling) return 'Pemicu Konflik & Pendampingan';
+        if (isMonitoring) return 'Hambatan Kritis Proyek & Mitigasi';
+        return 'Risk & Mitigation Map';
+      case 'roadmap':
+        if (isCounseling) return 'Rencana Pengembangan Personal';
+        if (isMonitoring) return 'Rencana Aksi Korektif';
+        return 'Strategic Recommendations';
+      case 'execution':
+        if (isCounseling) return 'Timeline Sesi & Intervensi';
+        if (isMonitoring) return 'Timeline Eksekusi Progres';
+        return 'Execution Timeline (Action Plan)';
+    }
+  };
+
+  // Label Dinamis Untuk Blok SWOT
+  const swotLabels = {
+    strengths: isCounseling ? 'Potensi Positif' : 'Strengths',
+    weaknesses: isCounseling ? 'Titik Buta (Blindspots)' : 'Weaknesses',
+    opportunities: isCounseling ? 'Peluang Terapi/Pertumbuhan' : 'Opportunities',
+    threats: isCounseling ? 'Pemicu Stres (Triggers)' : 'Threats'
+  };
+
+  // WATERMARK KHUSUS
   const SecurityWatermark = () => {
     if (role !== 'user') return null;
     return (
       <View style={styles.watermarkWrapper} fixed>
         <Text style={styles.watermarkText}>AI GENERATED DRAFT</Text>
         <Text style={styles.watermarkText}>UNVERIFIED</Text>
-        <Text style={styles.watermarkSub}>ISSUED TO: {downloadedBy?.name?.toUpperCase()}</Text>
+        <Text style={styles.watermarkSub}>ISSUED TO: {downloadedBy?.name?.toUpperCase() || 'SYSTEM'}</Text>
         <Text style={[styles.watermarkSub, { marginTop: 4 }]}>TIMESTAMP: {timeLogStr}</Text>
       </View>
     );
@@ -187,7 +230,7 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
   const PageHeader = ({ subtitle }: { subtitle: string }) => (
     <View style={styles.headerContainer} fixed>
       <View style={styles.headerLeft}>
-        <Text style={styles.systemTitle}>CSRS Analytics</Text>
+        <Text style={styles.systemTitle}>Smart Curation System</Text>
         <Text style={styles.docTitle}>{subtitle}</Text>
       </View>
       <View style={styles.headerRight}>
@@ -207,17 +250,16 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
   );
 
   return (
-    <Document title={`${formData?.namaUsaha || 'Asesmen'}_Report`}>
+    <Document title={`${formData?.namaUsaha || 'Laporan'}_Report`}>
       <Page size="A4" style={styles.page} wrap={true}>
-        {/* SISIPKAN WATERMARK DI SETIAP HALAMAN */}
         <SecurityWatermark />
         <PageHeader subtitle={isCuratorWorksheet ? "Field Worksheet" : "Executive Overview"} />
         
         <View style={styles.execBlock}>
           <View style={styles.scoreBox}>
-            <Text style={styles.scoreTitle}>Readiness Index</Text>
+            <Text style={styles.scoreTitle}>{getLabel('score')}</Text>
             <Text style={styles.scoreValue}>{totalScore}</Text>
-            <Text style={styles.scoreTier}>{aiResult?.readinessLevel || 'Standard'}</Text>
+            <Text style={styles.scoreTier}>{aiResult?.readinessLevel?.split('|')[0]?.trim() || 'Unclassified'}</Text>
           </View>
           <View style={styles.execSummary}>
             <Text style={styles.sectionTitle}>Executive Summary</Text>
@@ -225,7 +267,6 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
           </View>
         </View>
 
-        {/* DISCLAIMER HUKUM & UPGRADING STATEMENT */}
         {role === 'user' && (
           <View style={styles.disclaimerBox} wrap={false}>
             <Text style={styles.disclaimerTitle}>⚠ PENAFIAN HUKUM & PANDUAN PENGGUNAAN</Text>
@@ -233,17 +274,17 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
               Dokumen ini adalah draf komputasi algoritma Kecerdasan Buatan (AI) berdasarkan input mandiri. Laporan ini belum divalidasi secara faktual oleh kurator independen sehingga TIDAK MEMILIKI KEKUATAN HUKUM. Dokumen ini dilarang keras digunakan sebagai alat bukti legalitas, jaminan kelayakan finansial, agunan kredit, maupun klaim sepihak.
             </Text>
             <Text style={[styles.disclaimerText, { fontWeight: 700 }]}>
-              Meskipun bersifat tidak mengikat, hasil komputasi dalam dokumen ini dirancang sebagai instrumen pendukung keputusan strategis. Kami sangat merekomendasikan penggunaan laporan ini sebagai rujukan internal untuk agenda evaluasi berkelanjutan, peningkatan kapasitas (upgrading), mitigasi risiko, pemetaan skalabilitas, serta optimalisasi kualitas.
+              Meskipun bersifat tidak mengikat, hasil komputasi dalam dokumen ini dirancang sebagai instrumen pendukung keputusan strategis. Kami merekomendasikan penggunaan laporan ini sebagai rujukan internal untuk agenda evaluasi berkelanjutan, mitigasi risiko, pemetaan skalabilitas, serta optimalisasi kualitas.
             </Text>
             <Text style={styles.disclaimerLog}>
-              DIUNDUH OLEH: {downloadedBy?.name?.toUpperCase()} | LOG SISTEM: {timeLogStr} WIB
+              DIUNDUH OLEH: {downloadedBy?.name?.toUpperCase() || 'SYSTEM'} | LOG SISTEM: {timeLogStr} WIB
             </Text>
           </View>
         )}
 
         {aiResult?.fileAnalysisInsights && (
           <View style={[styles.section, { marginTop: role === 'user' ? 32 : 0 }]} wrap={false}>
-            <Text style={styles.sectionTitle}>Document Verification</Text>
+            <Text style={styles.sectionTitle}>Document / Data Verification</Text>
             <View style={styles.grid2Col}>
               <View style={styles.colHalf}>
                 <Text style={styles.label}>Quality Status</Text>
@@ -268,7 +309,7 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
 
             {isCuratorWorksheet && (
               <View style={styles.worksheetArea}>
-                <Text style={styles.worksheetLabel}>Validasi Fisik Berkas:</Text>
+                <Text style={styles.worksheetLabel}>Validasi Fisik Bukti:</Text>
               </View>
             )}
           </View>
@@ -319,13 +360,13 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Capability Matrix (SWOT)</Text>
+          <Text style={styles.sectionTitle}>{getLabel('swot')}</Text>
           <View style={styles.grid2Col}>
             {['strengths', 'weaknesses', 'opportunities', 'threats'].map((swotKey, idx) => {
               const items = aiResult?.swotAnalysis?.[swotKey] || [];
               if (items.length === 0) return null;
               
-              const title = swotKey === 'strengths' ? 'Strengths' : swotKey === 'weaknesses' ? 'Weaknesses' : swotKey === 'opportunities' ? 'Opportunities' : 'Threats';
+              const title = swotLabels[swotKey as keyof typeof swotLabels];
               
               return (
                 <View key={idx} style={isCuratorWorksheet ? styles.colFull : styles.colHalf} wrap={false}>
@@ -353,10 +394,10 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
 
         {aiResult?.riskAssessment?.criticalRisks && aiResult.riskAssessment.criticalRisks.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Risk & Mitigation Map</Text>
+            <Text style={styles.sectionTitle}>{getLabel('risk')}</Text>
             {aiResult.riskAssessment.criticalRisks.map((risk: string, idx: number) => (
               <View key={idx} style={{ marginBottom: 16, paddingBottom: 16, borderBottom: '1pt solid #F5F5F5' }} wrap={false}>
-                <Text style={styles.label}>Identified Risks</Text>
+                <Text style={styles.label}>Identified Issues</Text>
                 {renderBullets(risk)}
                 
                 <View style={{ marginTop: 8 }}>
@@ -364,17 +405,17 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
                   {renderBullets(aiResult.riskAssessment.mitigationStrategies?.[idx] || '-')}
                 </View>
                 
-                {isCuratorWorksheet && <View style={styles.worksheetArea}><Text style={styles.worksheetLabel}>Tanggapan Kurator:</Text></View>}
+                {isCuratorWorksheet && <View style={styles.worksheetArea}><Text style={styles.worksheetLabel}>Tanggapan Lapangan:</Text></View>}
               </View>
             ))}
           </View>
         )}
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Strategic Recommendations</Text>
+          <Text style={styles.sectionTitle}>{getLabel('roadmap')}</Text>
           
           <View style={{ marginBottom: 24, paddingBottom: 16, borderBottom: '2pt solid #000000' }} wrap={false}>
-            <Text style={styles.label}>Recommended Incubation Route</Text>
+            <Text style={styles.label}>Rute Pengembangan Disarankan</Text>
             <Text style={{ fontSize: 16, fontWeight: 900, color: '#000000', marginTop: 4 }}>{aiResult?.incubationRoute}</Text>
           </View>
 
@@ -387,7 +428,7 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
           
           {aiResult?.nextActionSteps && aiResult.nextActionSteps.length > 0 && (
              <View style={{ marginTop: 24 }}>
-               <Text style={[styles.label, { marginBottom: 16, borderBottom: '1pt solid #E5E5E5', paddingBottom: 8 }]}>Execution Timeline (Action Plan)</Text>
+               <Text style={[styles.label, { marginBottom: 16, borderBottom: '1pt solid #E5E5E5', paddingBottom: 8 }]}>{getLabel('execution')}</Text>
                {aiResult.nextActionSteps.map((step: any, idx: number) => (
                  <View key={idx} style={{ flexDirection: 'row', marginBottom: 12 }} wrap={false}>
                    <View style={{ width: 80, borderRight: '1pt solid #000000', paddingRight: 12, marginRight: 12 }}>
