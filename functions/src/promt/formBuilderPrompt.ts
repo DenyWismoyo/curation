@@ -14,9 +14,19 @@ export const buildMegaAgentPrompt = (params: FormBuilderPromptParams): string =>
   const risks = config.riskFramework || 'Deteksi potensi kegagalan operasional';
   const sources = config.researchSourcesCited?.join(', ') || 'Standar industri global terbaik';
 
+  // AMBIL PURPOSE AGAR AI TAHU CONTEXT PEMBUATAN FORM
+  const purpose = config.formPurpose || 'assessment';
+  const purposeContext = 
+    purpose === 'counseling' ? "KUESIONER PSIKOLOGI / HR / KONSELING (Fokus pada empati, perilaku, dan mental)" :
+    purpose === 'monitoring' ? "FORMULIR MONITORING / MONEV PROYEK (Fokus pada metrik progres, angka target, dan hambatan logistik)" :
+    purpose === 'consultation' ? "FORMULIR KONSULTASI PAKAR (Fokus pada identifikasi akar masalah dan pengumpulan fakta spesifik)" : 
+    "KUESIONER AUDIT BISNIS & STANDAR MUTU (Due Diligence)";
+
   return `
 Anda adalah entitas super gabungan dari [Profesor Riset Standar Global] dan [Chief Information Architect].
 Tugas Anda merancang instrumen asesmen tingkat Enterprise untuk program: "${trackName}".
+
+DOMAIN & FOKUS SISTEM INI ADALAH: ${purposeContext}
 
 Tujuan Asesmen Utama: "${config.assessmentGoal || 'Evaluasi mendalam pemetaan kualitas.'}"
 Target Metrik Radar yang Harus Diukur: [${metrics}]

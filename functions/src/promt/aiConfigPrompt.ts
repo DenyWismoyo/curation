@@ -36,6 +36,14 @@ export const buildAIConfigPrompt = (params: AIConfigPromptParams): string => {
 
     STRUKTUR JSON WAJIB MEMILIKI SELURUH KEY BERIKUT DAN TIDAK BOLEH ADA YANG DIKOSONGKAN:
     {
+      "formPurpose": "Pilih SALAH SATU secara presisi berdasarkan konteks program ini: 'assessment', 'counseling', 'monitoring', atau 'consultation'.",
+      "customUiLabels": {
+        "scoreLabel": "Buat label UI yang cocok (contoh: 'AI Readiness Score', 'Indeks Kesehatan', atau 'Persentase Capaian')",
+        "swotLabel": "Buat label UI untuk blok SWOT (contoh: 'Capability Matrix' atau 'Pemetaan Karakter')",
+        "riskLabel": "Buat label UI untuk risiko (contoh: 'Peta Mitigasi' atau 'Pemicu Konflik')",
+        "roadmapLabel": "Buat label UI untuk rekomendasi (contoh: 'Strategi' atau 'Rencana Terapi')",
+        "executionLabel": "Buat label UI untuk timeline (contoh: 'Action Plan', 'Jadwal Intervensi', atau 'Sprint Progres')"
+      },
       "aiPersona": "Sebutkan gelar pakar spesifik secara detail. Contoh: Lead Auditor Standar [Nama Standar] & Konsultan Bisnis Global (WAJIB Bahasa Indonesia)",
       "assessmentGoal": "Jelaskan tujuan asesmen secara mendalam, analitis, dan presisi (WAJIB Bahasa Indonesia)",
       "gradingStrictness": "Pilih salah satu persis seperti ini: supportive ATAU standard ATAU strict",

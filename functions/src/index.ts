@@ -28,7 +28,6 @@ const geminiApiKeySecret = defineSecret("GEMINI_API_KEY");
 const smtpEmailSecret = defineSecret("SMTP_EMAIL");
 const smtpPasswordSecret = defineSecret("SMTP_PASSWORD");
 
-// PERBAIKAN: withRetry diperkuat agar tidak mengulang (retry) jika error mutlak (seperti Safety Block / 400)
 const withRetry = async <T>(fn: () => Promise<T>, retries = 3, delayMs = 2000): Promise<T> => {
   try { return await fn(); }
   catch (error: any) {
@@ -136,7 +135,6 @@ export const processCurationAssessment = onCall(
          }
       } catch (err) { console.warn("RAG Vector search dilewati."); }
 
-      // FORMAT DATA LEBIH RAPI UNTUK AI
       const textData: Record<string, any> = {};
       for (const key in formData) {
         const val = formData[key];
@@ -158,12 +156,10 @@ export const processCurationAssessment = onCall(
       const customTiers = aiPromptConfig.customReadinessTiers || [];
       const tiersString = customTiers.length > 0 ? customTiers.map((t: string) => `"${t}"`).join(', ') : '"Pra-Inkubasi", "Siap Akselerasi", "Lulus Investasi"';
 
-      // PROSES DYNAMIC TAGS JIKA ADA
       let finalSystemPrompt = aiPromptConfig.customSystemPrompt || '';
       finalSystemPrompt = finalSystemPrompt.replace(/{{namaUsaha}}/g, formData.namaUsaha || 'Entitas Terkait');
       finalSystemPrompt = finalSystemPrompt.replace(/{{sektorIndustri}}/g, formData.sektorIndustri || 'Sektor Usaha');
 
-      // INJEKSI ADVANCED PROMPT
       const mainPromptText = buildAssessmentPrompt({
         aiPersona: aiPromptConfig.aiPersona || "AHLI ANALISIS DAN DUE DILIGENCE KELAS DUNIA",
         trackContext: trackType,
@@ -184,8 +180,6 @@ export const processCurationAssessment = onCall(
       parts.unshift({ text: mainPromptText });
 
       const isPro = aiModelType === 'pro';
-      
-      // PERBAIKAN: Upgrade otak engine utama menjadi Gemini 3.1 Pro Preview
       const modelName = isPro ? 'gemini-3.1-pro-preview' : 'gemini-2.5-flash';
       
       const systemPrompt = getSystemPrompt(isPro);
@@ -256,15 +250,15 @@ export const processCurationAssessment = onCall(
 
       const result = await withRetry(() => unifiedModel.generateContent({ contents: [{ role: "user", parts }] }));
       
-      // PERBAIKAN: Lebih aman saat parsing JSON
       let rawText = result.response.text().trim();
       if (rawText.startsWith('```json')) {
         rawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
       }
       const aiResultJson = JSON.parse(rawText);
 
-      // Hapus _internalReasoning agar tidak disimpan ke database dan memakan memori
-      //if(aiResultJson._internalReasoning) delete aiResultJson._internalReasoning;
+      // INJEKSI DATA DOMAIN & UI LABELS KE HASIL AI SEBELUM DISIMPAN
+      aiResultJson.formPurpose = aiPromptConfig.formPurpose || 'assessment';
+      aiResultJson.customUiLabels = aiPromptConfig.customUiLabels || {};
 
       let assessmentId = "";
       await db.runTransaction(async (transaction) => {

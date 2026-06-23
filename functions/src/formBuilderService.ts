@@ -53,7 +53,7 @@ const extractJSONFromText = (rawText: string): any => {
 };
 
 // ============================================================================
-// FUNGSI 1: MEMBANGUN FORMULIR BERDASARKAN CONFIG (SKALA ENTERPRISE AMAN)
+// FUNGSI 1: MEMBANGUN FORMULIR BERDASARKAN CONFIG (MENGGUNAKAN 2.5-FLASH)
 // ============================================================================
 export const generateFormTemplateFromAI = onCall(
   { 
@@ -88,6 +88,7 @@ export const generateFormTemplateFromAI = onCall(
         }
       });
 
+      // MENGGUNAKAN 2.5 FLASH DENGAN GOOGLE SEARCH
       const architectModel = genAI.getGenerativeModel({
         model: "gemini-2.5-flash", 
         tools: [{ googleSearch: {} } as any], 
@@ -119,7 +120,7 @@ export const generateFormTemplateFromAI = onCall(
       6. [JSON SCHEMA INSTRUCTION]: Pastikan output JSON murni memiliki struktur dengan key "researchNotes" (string) dan "steps" (array of objects sesuai definisi di atas).
       `;
 
-      console.log(`🏗️ [${templateId}] Merakit struktur form JSON berskala masif dengan Live Web Search...`);
+      console.log(`🏗️ [${templateId}] Merakit struktur form JSON berskala masif dengan Live Web Search (Gemini 2.5 Flash)...`);
       const result = await withRetry(() => architectModel.generateContent(finalPrompt));
       
       const parsedObject = extractJSONFromText(result.response.text());
@@ -166,7 +167,7 @@ export const generateFormTemplateFromAI = onCall(
 
 
 // ============================================================================
-// FUNGSI 2: AI CONFIGURATION ENHANCER (META-PROMPTING) & VECTOR RAG ENRICHMENT
+// FUNGSI 2: AI CONFIGURATION ENHANCER (MENGGUNAKAN 2.5-PRO)
 // ============================================================================
 export const generateAIConfigResearch = onCall(
   { 
@@ -188,6 +189,7 @@ export const generateAIConfigResearch = onCall(
     const genAI = new GoogleGenerativeAI(API_KEY);
 
     try {
+      // MENGGUNAKAN 2.5 PRO DENGAN GOOGLE SEARCH UNTUK RISET BERAT
       const model = genAI.getGenerativeModel({
         model: "gemini-2.5-pro", 
         tools: [{ googleSearch: {} } as any], 
@@ -207,6 +209,7 @@ export const generateAIConfigResearch = onCall(
         hasExistingConfig
       });
 
+      console.log(`🔍 [${safeTemplateId}] Menjalankan riset konfigurasi menggunakan Gemini 2.5 Pro...`);
       const result = await withRetry(() => model.generateContent(systemPrompt));
       
       const parsedConfig = extractJSONFromText(result.response.text());

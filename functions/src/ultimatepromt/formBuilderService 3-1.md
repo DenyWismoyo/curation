@@ -23,7 +23,7 @@ const cleanUndefinedAndNull = (obj: any): any => {
   return obj;
 };
 
-// PERBAIKAN: withRetry diperkuat agar tidak mengulang (retry) jika error mutlak (seperti Safety Block / 400)
+// withRetry diperkuat agar tidak mengulang (retry) jika error mutlak (seperti Safety Block / 400)
 const withRetry = async <T>(fn: () => Promise<T>, retries = 3, delayMs = 2000): Promise<T> => {
   try { return await fn(); }
   catch (error: any) {
@@ -98,7 +98,7 @@ export const generateFormTemplateFromAI = onCall(
         }
       });
 
-      // PERBAIKAN: Mengganti model yang salah (gemini-3.5-flash) menjadi gemini-3.1-pro-preview
+      // Mengganti model menggunakan gemini-3.1-pro-preview
       const architectModel = genAI.getGenerativeModel({
         model: "gemini-3.1-pro-preview", 
         generationConfig: {
@@ -130,7 +130,7 @@ export const generateFormTemplateFromAI = onCall(
           console.log(`🏗️ [${templateId}] Merakit struktur form JSON - Percobaan ${attempt}`);
           const result = await withRetry(() => architectModel.generateContent(finalPrompt));
           
-          // PERBAIKAN: Optimasi parsing, memanfaatkan native JSON response
+          // Optimasi parsing, memanfaatkan native JSON response
           let rawText = result.response.text().trim();
           // Fallback pembersihan ringan jika API sesekali masih membungkus tag markdown
           if (rawText.startsWith('```json')) {
@@ -186,7 +186,7 @@ export const generateFormTemplateFromAI = onCall(
 export const generateAIConfigResearch = onCall(
   { 
     memory: "1GiB", 
-    timeoutSeconds: 300, // PERBAIKAN: Diperpanjang menjadi 300 detik (5 menit) untuk reasoning
+    timeoutSeconds: 300, // Diperpanjang menjadi 300 detik (5 menit) untuk reasoning
     region: "asia-southeast2", 
     secrets: [geminiApiKeySecret], 
     cors: true 
@@ -224,7 +224,7 @@ export const generateAIConfigResearch = onCall(
 
       const result = await withRetry(() => model.generateContent(systemPrompt));
       
-      // PERBAIKAN: Optimasi parsing, memanfaatkan native JSON response
+      // Optimasi parsing, memanfaatkan native JSON response
       let rawText = result.response.text().trim();
       if (rawText.startsWith('```json')) {
         rawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();

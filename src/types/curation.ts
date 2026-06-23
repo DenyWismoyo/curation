@@ -29,17 +29,11 @@ export interface CustomAnalysisBlock {
 export interface AIResult {
   readinessLevel: string;
   totalScore: number;
-  
-  // ---> TAMBAHAN ENTERPRISE-GRADE <---
   dataConfidenceScore: number; 
   contradictionsFound: string[];
-  // -----------------------------------
-  
   incubationRoute: string;
   executiveSummary: string;
-  
   customAnalysisBlocks: CustomAnalysisBlock[];
-  
   fileAnalysisInsights?: {
     documentQuality: string;
     keyFindingsFromFiles: string[];
@@ -61,6 +55,9 @@ export interface AIResult {
     timeframe: string;
     task: string;
   }[];
+  // Menyimpan purpose & label di level hasil untuk dibaca UniversalAssessmentView
+  formPurpose?: FormDomainPurpose;
+  customUiLabels?: CustomUiLabels;
 }
 
 export interface CurationHistory {
@@ -82,7 +79,7 @@ export interface FormField {
   required: boolean;      
   placeholder?: string;   
   description?: string;   
-  options?: any[]; // Bisa berisi string[] atau { label: string, weight: number }[]
+  options?: any[]; 
   fileAccept?: string;    
   gridSpan?: 1 | 2;       
   showIf?: {
@@ -97,6 +94,16 @@ export interface FormStep {
   icon?: string;          
   description?: string;
   fields: FormField[];    
+}
+
+export type FormDomainPurpose = 'assessment' | 'counseling' | 'monitoring' | 'consultation' | 'custom';
+
+export interface CustomUiLabels {
+  scoreLabel?: string;
+  swotLabel?: string;
+  riskLabel?: string;
+  roadmapLabel?: string;
+  executionLabel?: string;
 }
 
 export interface AiPromptConfig {
@@ -117,7 +124,11 @@ export interface AiPromptConfig {
   negativePrompts?: string;    
   formatInstructions?: string; 
   customScoringRubric?: string; 
-  researchSourcesCited?: string[]; // <--- TAMBAHAN UNTUK RISET ENTERPRISE
+  researchSourcesCited?: string[];
+  
+  // Fitur Multipurpose Engine
+  formPurpose?: FormDomainPurpose; 
+  customUiLabels?: CustomUiLabels;
 }
 
 export interface FormTemplate {
