@@ -5,9 +5,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { FormTemplate, FormDomainPurpose } from '@/types/curation';
 import { AIPromptPresets } from '@/data/aiPromptTemplates';
-import { DomainPresets } from '@/data/domainPresets'; // <--- TAMBAHKAN IMPORT INI
+import { DomainPresets } from '@/data/domainPresets';
 import { Sparkles, Plus, Trash2, Lightbulb, ChevronDown, Bot, Loader2, Search, Settings, Layout } from 'lucide-react';
 import { getFunctions, httpsCallable } from 'firebase/functions';
+import { getAuth } from 'firebase/auth'; // <-- IMPORT AUTH DITAMBAHKAN
 
 const GuidePanel = ({ title, colorTheme, children }: { title: string, colorTheme: 'amber' | 'indigo' | 'rose' | 'emerald' | 'slate', children: React.ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,7 +19,6 @@ const GuidePanel = ({ title, colorTheme, children }: { title: string, colorTheme
     emerald: 'bg-emerald-100/50 text-emerald-800 border-emerald-200',
     slate: 'bg-slate-100 text-slate-700 border-slate-200'
   };
-  
   const themeClass = themes[colorTheme];
 
   return (
@@ -38,7 +38,7 @@ const GuidePanel = ({ title, colorTheme, children }: { title: string, colorTheme
       </div>
     </div>
   );
-};
+}
 
 interface TabAIConfigProps {
   template: FormTemplate;
@@ -68,6 +68,16 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
   ) || [];
 
   const handleAutoResearchConfig = async () => {
+    // --- START VALIDASI SUPER ADMIN ---
+    const auth = getAuth();
+    const currentUserEmail = auth.currentUser?.email?.toLowerCase();
+    
+    if (currentUserEmail !== 'deny.wismoyo@gmail.com') {
+      alert("🔒 AKSES DITOLAK: Fitur Auto-Research AI ini dikunci eksklusif hanya untuk DENY.WISMOYO@GMAIL.COM.");
+      return;
+    }
+    // --- END VALIDASI ---
+
     if (!template.trackName && !customTopic) {
       alert("Mohon ketikkan Standar/Konteks Referensi di kolom hijau terlebih dahulu.");
       return;
@@ -105,7 +115,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
       }
     }
   };
-  
+
   const applyAIPreset = (presetId: string) => {
     if (!presetId) return;
     const preset = AIPromptPresets.find(p => p.id === presetId);
@@ -269,7 +279,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
         </div>
       </div>
 
-{/* DYNAMIC PURPOSE ENGINE CONFIGURATION */}
+      {/* DYNAMIC PURPOSE ENGINE CONFIGURATION */}
       <div className="p-6 bg-slate-50 border border-slate-200 rounded-3xl space-y-4">
         <div className="flex items-center justify-between">
           <h4 className="font-black text-slate-900 flex items-center gap-2 text-md">
@@ -366,9 +376,9 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
             className={`h-10 px-4 font-bold rounded-xl shadow-sm transition-all duration-300 whitespace-nowrap ${isGeneratingConfig ? 'bg-emerald-400 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-700 text-white'}`}
           >
             {isGeneratingConfig ? (
-               <span className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin"/> Menganalisis...</span>
+              <span className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin"/> Menganalisis...</span>
             ) : (
-               <span className="flex items-center gap-2"><Sparkles className="w-4 h-4"/> Sempurnakan AI</span>
+              <span className="flex items-center gap-2"><Sparkles className="w-4 h-4"/> Sempurnakan AI</span>
             )}
           </Button>
         </div>
@@ -386,7 +396,6 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
               className="rounded-xl h-11 bg-slate-50 font-medium border-slate-200" 
             />
           </div>
-
           <div className="space-y-2">
             <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Tujuan / Fokus Analisis Utama</label>
             <Textarea 
@@ -408,7 +417,6 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
               <option value="strict">Standar Audit Eksternal (Sangat Ketat & Mencari Celah)</option>
             </select>
           </div>
-
           <div className="space-y-2">
             <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Gaya Bahasa Laporan (Tone)</label>
             <select value={template.aiPromptConfig?.reportTone || 'consultative'} onChange={e => updateConfig('reportTone', e.target.value)} className="w-full bg-slate-50 border border-slate-200 h-11 rounded-xl text-sm px-3 font-bold text-slate-700 focus:outline-none">
@@ -443,7 +451,6 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
               Setiap blok yang Anda buat di sini akan menjadi kartu analisis spesifik terstruktur di halaman hasil dashboard.
             </p>
           </div>
-
           <div className="space-y-4">
             {(template.aiPromptConfig?.expectedAnalysisBlocks || []).map((item, idx) => {
               const { title, subs } = parseAnalysisBlock(item);
@@ -500,7 +507,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
               <Textarea 
                 value={template.aiPromptConfig?.riskFramework || ''} 
                 onChange={e => updateConfig('riskFramework', e.target.value)} 
-                placeholder="Petunjuk khusus penanganan red flags atau kelemahan kritis subjek..." 
+                placeholder="Petunjuk khusus penanganan red flags atau kelemahan kritis subjek..."
                 className="rounded-xl bg-white border-slate-200 min-h-[100px] text-sm font-medium" 
               />
             </div>
@@ -517,7 +524,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
               <Textarea 
                 value={template.aiPromptConfig?.customScoringRubric || ''} 
                 onChange={e => updateConfig('customScoringRubric', e.target.value)} 
-                placeholder="Definisikan kriteria pemberian nilai matematis dari 0 sampai 100..." 
+                placeholder="Definisikan kriteria pemberian nilai matematis dari 0 sampai 100..."
                 className="rounded-2xl bg-white border-amber-200 min-h-[100px] text-sm font-medium" 
               />
             </div>
@@ -527,7 +534,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
               <Textarea 
                 value={template.aiPromptConfig?.customSystemPrompt || ''} 
                 onChange={e => updateConfig('customSystemPrompt', e.target.value)} 
-                placeholder="Gunakan {{namaUsaha}} untuk memanggil variabel dinamis secara reaktif..." 
+                placeholder="Gunakan {{namaUsaha}} untuk memanggil variabel dinamis secara reaktif..."
                 className="rounded-2xl bg-white border-indigo-200 min-h-[120px] text-sm font-medium" 
               />
             </div>
@@ -537,7 +544,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
               <Textarea 
                 value={template.aiPromptConfig?.negativePrompts || ''} 
                 onChange={e => updateConfig('negativePrompts', e.target.value)} 
-                placeholder="Sebutkan hal-hal yang dilarang keras dikeluarkan dalam kalimat narasi AI..." 
+                placeholder="Sebutkan hal-hal yang dilarang keras dikeluarkan dalam kalimat narasi AI..."
                 className="rounded-2xl bg-white border-rose-200 min-h-[100px] text-sm font-medium" 
               />
             </div>
@@ -547,13 +554,12 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
               <Textarea 
                 value={template.aiPromptConfig?.formatInstructions || ''} 
                 onChange={e => updateConfig('formatInstructions', e.target.value)} 
-                placeholder="Aturan cetak huruf tebal atau penataan paragraf..." 
+                placeholder="Aturan cetak huruf tebal atau penataan paragraf..."
                 className="rounded-2xl bg-white border-emerald-200 min-h-[100px] text-sm font-medium" 
               />
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );

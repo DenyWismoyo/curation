@@ -12,11 +12,12 @@ import {
 import { FORM_ARCHETYPES } from '@/data/templateform';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { getFirestore, doc, onSnapshot, updateDoc } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth'; // <-- IMPORT AUTH DITAMBAHKAN
 
 interface TabFormBuilderProps {
   template: FormTemplate;
   onChange: (updatedTemplate: FormTemplate) => void;
-  onAutoSave?: (templateToSave?: FormTemplate) => Promise<void>; 
+  onAutoSave?: (templateToSave?: FormTemplate) => Promise<void>;
 }
 
 export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilderProps) {
@@ -68,6 +69,16 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
 
   // TRIGGER GENERATE AI SECARA ASYNCHRONOUS
   const handleGenerateFormByAI = async () => {
+    // --- START VALIDASI SUPER ADMIN ---
+    const auth = getAuth();
+    const currentUserEmail = auth.currentUser?.email?.toLowerCase();
+    
+    if (currentUserEmail !== 'deny.wismoyo@gmail.com') {
+      alert("🔒 AKSES DITOLAK: Fitur AI Form Builder Enterprise ini menggunakan komputasi tingkat tinggi dan saat ini dikunci eksklusif hanya untuk DENY.WISMOYO@GMAIL.COM guna mencegah penyalahgunaan kuota token.");
+      return;
+    }
+    // --- END VALIDASI ---
+
     if (!template.aiPromptConfig?.assessmentGoal) {
       alert("Mohon isi 'Tujuan Asesmen Utama' di Tab AI Config terlebih dahulu agar AI memahami tujuan pembuatan form.");
       return;
@@ -83,9 +94,9 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
 
     try {
       const functions = getFunctions(undefined, 'asia-southeast2');
-      const generateFormFn = httpsCallable(functions, 'generateFormTemplateFromAI', { timeout: 300000 });
+      const generateFormFn = httpsCallable(functions, 'generateFormTemplateFromAI', { timeout: 900000 });
       const archetypeConfig = FORM_ARCHETYPES.find(a => a.id === selectedArchetypeId);
-
+      
       generateFormFn({
         templateId: template.id,
         trackName: template.trackName || "Evaluasi Umum",
@@ -194,6 +205,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
       {/* UI BANNER AI DESIGNER & CONTROLLER */}
       <div className="flex flex-col p-6 bg-indigo-50/70 rounded-3xl ring-1 ring-indigo-100/80 border border-indigo-200/40 gap-5 relative overflow-hidden shadow-sm">
         <div className="absolute top-0 left-0 w-1.5 h-full bg-indigo-500"></div>
+        
         <div className="flex justify-between items-start gap-4">
           <div>
             <h4 className="font-black text-indigo-900 flex items-center gap-2 text-lg">
@@ -246,7 +258,6 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
               </div>
             )}
           </div>
-
           <Button
             onClick={handleGenerateFormByAI}
             disabled={isGenerating}
@@ -269,6 +280,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
       ) : (
         template.steps.map((step, sIdx) => {
           const isExpanded = expandedSteps.includes(sIdx);
+          
           return (
             <div key={`step-${sIdx}`} className="bg-white rounded-[2rem] ring-1 ring-slate-200/80 shadow-sm overflow-hidden transition-all duration-300">
               <div 
@@ -308,6 +320,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                 <div className="p-4 sm:p-6 bg-slate-50/40 space-y-6 border-t border-slate-100">
                   {step.fields?.map((field, fIdx) => {
                     const isPrimaryIdentity = ['namaUsaha', 'namaPengisi', 'emailAktif', 'nomorTelepon'].includes(field.id);
+                    
                     return (
                       <div key={`field-${sIdx}-${fIdx}`} className={`p-4 sm:p-5 rounded-2xl ring-1 shadow-sm flex flex-col md:flex-row gap-5 relative transition-all ${isPrimaryIdentity ? 'bg-indigo-50/20 ring-indigo-100/60' : 'bg-white ring-slate-200/70 hover:ring-indigo-200'}`}>
                         <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -369,7 +382,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                                   <option value="always">Tampilkan Selalu</option>
                                   <option value="conditional">Tampilkan Kondisional...</option>
                                 </select>
-
+                                
                                 {field.showIf && (
                                   <>
                                     <select
@@ -446,6 +459,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                               </Button>
                             </div>
                           )}
+
                         </div>
                         
                         <div className="flex md:flex-col gap-1 items-center justify-center pt-3 md:pt-0 md:pl-3 border-t md:border-t-0 md:border-l border-slate-100 shrink-0">
@@ -463,6 +477,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
           );
         })
       )}
+
       <Button onClick={addStep} className="w-full bg-slate-900 text-white hover:bg-slate-800 h-12 font-bold text-sm rounded-xl shadow-md mt-4"><Plus className="h-4 w-4 mr-1.5" /> Tambah Seksi Langkah Baru</Button>
 
       {/* DIALOG MODAL CONFIRM DELETE STEP */}

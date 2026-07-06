@@ -3,8 +3,7 @@ import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { defineSecret } from "firebase-functions/params";
 import * as admin from "firebase-admin";
 import { getFirestore } from "firebase-admin/firestore";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-
+import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 import { buildMegaAgentPrompt } from "./promt/formBuilderPrompt";
 import { buildAIConfigPrompt } from "./promt/aiConfigPrompt";
 import { storeTemplateResearchVector } from "./vectorService";
@@ -16,126 +15,262 @@ const cleanUndefinedAndNull = (obj: any): any => {
   if (obj !== null && typeof obj === 'object') {
     return Object.fromEntries(
       Object.entries(obj)
-        .filter(([_, v]) => v != null && v !== "") 
+        .filter(([_, v]) => v != null && v !== "")
         .map(([k, v]) => [k, cleanUndefinedAndNull(v)])
     );
   }
   return obj;
 };
 
+// Auto-Retry Handler
 const withRetry = async <T>(fn: () => Promise<T>, retries = 3, delayMs = 2000): Promise<T> => {
   try { return await fn(); }
   catch (error: any) {
     if (error.status === 400 || (error.message && error.message.includes('SAFETY'))) throw error;
     if (retries <= 1) throw error;
-    console.warn(`⏳ API Gemini sibuk, mencoba ulang... (${retries} percobaan tersisa)`);
+    console.warn(`  API Gemini sibuk, mencoba ulang... (${retries} percobaan tersisa)`);
     await new Promise(res => setTimeout(res, delayMs));
     return withRetry(fn, retries - 1, delayMs * 2);
   }
 };
 
-// Fungsi pembantu untuk mengekstrak JSON dari response yang mungkin mengandung teks tambahan/markdown
-const extractJSONFromText = (rawText: string): any => {
-  let cleanedText = rawText.trim();
-  // Coba cari pola markdown JSON ```json ... ```
-  const jsonMatch = cleanedText.match(/```json\s*([\s\S]*?)\s*```/);
-  if (jsonMatch && jsonMatch[1]) {
-    cleanedText = jsonMatch[1].trim();
-  } else {
-    // Bersihkan jika ada sisa backtick
-    cleanedText = cleanedText.replace(/```/g, '').trim();
-  }
-  
-  // Membersihkan control character (seperti enter harfiah) agar tidak membuat JSON.parse crash.
-  cleanedText = cleanedText.replace(/[\u0000-\u0019]+/g, " "); 
-  
-  return JSON.parse(cleanedText);
-};
-
 // ============================================================================
-// FUNGSI 1: MEMBANGUN FORMULIR BERDASARKAN CONFIG (MENGGUNAKAN 2.5-FLASH)
+// FUNGSI 1: MEMBANGUN FORMULIR BERDASARKAN CONFIG (ULTIMATE MULTI-AGENT)
 // ============================================================================
 export const generateFormTemplateFromAI = onCall(
-  { 
-    memory: "2GiB", 
-    timeoutSeconds: 540, 
-    region: "asia-southeast2", 
-    secrets: [geminiApiKeySecret], 
-    cors: true 
+  {
+    memory: "2GiB",
+    timeoutSeconds: 900, // Timeout 15 Menit
+    region: "asia-southeast2",
+    secrets: [geminiApiKeySecret],
+    cors: true
   },
   async (request) => {
     if (!request.auth) throw new HttpsError("unauthenticated", "Akses ditolak. Silakan login terlebih dahulu.");
     
+    // --- START GEMBOK MUTLAK SERVER-SIDE ---
+    const userEmail = request.auth.token.email?.toLowerCase();
+    if (userEmail !== 'deny.wismoyo@gmail.com') {
+      throw new HttpsError(
+        "permission-denied", 
+        "SECURITY BREACH: Akses ditolak secara paksa oleh server. Fitur ini eksklusif hanya untuk DENY.WISMOYO@GMAIL.COM"
+      );
+    }
+    // --- END GEMBOK MUTLAK ---
+
     const data = request.data as any;
     const { templateId, trackName, aiPromptConfig, archetypeInstruction } = data;
-
+    
     if (!templateId) {
-      throw new HttpsError("invalid-argument", "ID Template wajib disertakan untuk manajemen auto-save latar belakang.");
+      throw new HttpsError("invalid-argument", "ID Template wajib disertakan.");
     }
 
     const db = getFirestore(admin.app(), "curation");
     const templateRef = db.collection("form_templates").doc(templateId);
-
     const API_KEY = geminiApiKeySecret.value();
     const genAI = new GoogleGenerativeAI(API_KEY);
 
     try {
+      // ---------------------------------------------------------
+      // FASE 1: LIVE SEARCH GROUNDING & BLUEPRINT MASTERPLAN
+      // ---------------------------------------------------------
       await templateRef.update({
         aiGenerationStatus: {
-          phase: "BUILDING_FORM",
-          message: "AI sedang melakukan Deep Research sekaligus merancang instrumen audit...",
+          phase: "RESEARCHING",
+          message: "Tahap 1: Agen Riset menyusun masterplan sektoral industri...",
           updatedAt: new Date().toISOString()
         }
       });
 
-      // MENGGUNAKAN 2.5 FLASH DENGAN GOOGLE SEARCH
-      const architectModel = genAI.getGenerativeModel({
-        model: "gemini-2.5-flash", 
+      const masterModel = genAI.getGenerativeModel({
+        model: "gemini-3.1-pro-preview",
         tools: [{ googleSearch: {} } as any], 
         generationConfig: {
-          temperature: 0.6, 
-          maxOutputTokens: 8192
-          // responseMimeType dihapus karena tidak bisa digunakan bersama googleSearch
+          temperature: 0.5,
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: SchemaType.OBJECT,
+            required: ["researchNotes", "stepOutlines"],
+            properties: {
+              researchNotes: { type: SchemaType.STRING },
+              stepOutlines: {
+                type: SchemaType.ARRAY,
+                items: {
+                  type: SchemaType.OBJECT,
+                  required: ["title", "description", "focusArea", "expertPersona"],
+                  properties: {
+                    title: { type: SchemaType.STRING },
+                    description: { type: SchemaType.STRING },
+                    focusArea: { type: SchemaType.STRING },
+                    expertPersona: { type: SchemaType.STRING }
+                  }
+                }
+              }
+            }
+          }
         }
       });
 
-      const promptParams = {
-        trackName: trackName || "Asesmen Umum",
-        config: aiPromptConfig || {},
-        archetypeInstruction: archetypeInstruction || ""
-      };
-
-      let finalPrompt = buildMegaAgentPrompt(promptParams);
+      const goal = aiPromptConfig?.assessmentGoal || "Evaluasi mendalam pemetaan kualitas.";
+      const metrics = aiPromptConfig?.expectedMetrics?.join(', ') || 'Metrik standar';
       
-      finalPrompt += `
-      
-      ==================================================
-      🚨 PROTOKOL ASESMEN KELAS ENTERPRISE & BATAS TOKEN (MUTLAK) 🚨
-      ==================================================
-      1. [SKALA & KEDALAMAN]: Jangan membuat kuesioner yang dangkal. Buatlah instrumen audit mendalam yang mengeskplorasi operasional, finansial, dan risiko.
-      2. [STUDI KASUS & SKENARIO]: Gunakan pertanyaan berbasis skenario/psikometri untuk mendeteksi insting peserta.
-      3. [RICH PLACEHOLDERS]: Untuk pertanyaan bertipe 'text', 'textarea', atau 'number', WAJIB menyediakan properti "placeholder" yang berisi contoh aktual jawaban.
-      4. [AGRESIF CONDITIONAL LOGIC]: Rangkai alur bercabang (showIf) secara cerdas. Jika pengguna memilih opsi 'Risiko Tinggi', munculkan field 'textarea' untuk justifikasi. Pastikan "showIf" merujuk ke ID pertanyaan SEBELUMNYA, DILARANG merujuk ke dirinya sendiri.
-      5. [OUTPUT LIMITATION]: BATAS OUTPUT TOKEN API ADALAH 8192. Anda HARUS meringkas total pertanyaan di seluruh form menjadi MAKSIMAL 30-35 pertanyaan saja untuk menghindari error JSON terpotong (Unexpected end of JSON input). Efisiensikan penggunaan kata pada 'options' dan 'description'.
-      6. [JSON SCHEMA INSTRUCTION]: Pastikan output JSON murni memiliki struktur dengan key "researchNotes" (string) dan "steps" (array of objects sesuai definisi di atas).
+      const masterPrompt = `
+        Anda adalah Chief Research Officer tingkat Enterprise. Lakukan web search untuk regulasi program: "${trackName || "Asesmen Umum"}".
+        Tujuan: "${goal}". Target Metrik: [${metrics}].
+        TUGAS: Pecah asesmen menjadi 5 hingga 8 Seksi (stepOutlines). Langkah pertama WAJIB dialokasikan untuk "Identitas & Legalitas Dasar". Tentukan 'expertPersona' spesifik per seksi.
       `;
 
-      console.log(`🏗️ [${templateId}] Merakit struktur form JSON berskala masif dengan Live Web Search (Gemini 2.5 Flash)...`);
-      const result = await withRetry(() => architectModel.generateContent(finalPrompt));
+      const masterResult = await withRetry(() => masterModel.generateContent(masterPrompt));
+      const blueprint = JSON.parse(masterResult.response.text().trim());
+
+      await storeTemplateResearchVector(templateId, trackName, blueprint.researchNotes, API_KEY)
+        .catch(e => console.error("Gagal merekam vector research:", e));
+
+      // ---------------------------------------------------------
+      // FASE 2: DYNAMIC PERSONA & ASYNCHRONOUS BATCHING
+      // ---------------------------------------------------------
+      await templateRef.update({
+        aiGenerationStatus: {
+          phase: "BUILDING_FORM",
+          message: `Tahap 2: Meracik ${blueprint.stepOutlines.length} Seksi secara Paralel...`,
+          updatedAt: new Date().toISOString()
+        }
+      });
+
+      const sectionModel = genAI.getGenerativeModel({
+        model: "gemini-3.1-pro-preview",
+        generationConfig: {
+          temperature: 0.3,
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: SchemaType.ARRAY,
+            items: {
+              type: SchemaType.OBJECT,
+              required: ["id", "label", "type", "required", "gridSpan"],
+              properties: {
+                id: { type: SchemaType.STRING },
+                label: { type: SchemaType.STRING },
+                type: { type: SchemaType.STRING }, 
+                required: { type: SchemaType.BOOLEAN },
+                placeholder: { type: SchemaType.STRING },
+                description: { type: SchemaType.STRING },
+                gridSpan: { type: SchemaType.INTEGER },
+                fileAccept: { type: SchemaType.STRING },
+                options: {
+                  type: SchemaType.ARRAY,
+                  items: {
+                    type: SchemaType.OBJECT,
+                    required: ["label", "weight"],
+                    properties: { label: { type: SchemaType.STRING }, weight: { type: SchemaType.INTEGER } }
+                  }
+                },
+                showIf: {
+                  type: SchemaType.OBJECT,
+                  required: ["fieldId", "equals"],
+                  properties: { fieldId: { type: SchemaType.STRING }, equals: { type: SchemaType.STRING } }
+                }
+              }
+            }
+          }
+        }
+      });
+
+      const promptParams = { trackName: trackName || "Asesmen Umum", config: aiPromptConfig || {}, archetypeInstruction: archetypeInstruction || "" };
+      const baseInstructions = buildMegaAgentPrompt(promptParams);
+      let rawFinalSteps: any[] = [];
+      const batchSize = 3; 
+
+      for (let i = 0; i < blueprint.stepOutlines.length; i += batchSize) {
+        const batch = blueprint.stepOutlines.slice(i, i + batchSize);
+        
+        await templateRef.update({
+          "aiGenerationStatus.message": `Sedang menyusun Kuesioner Batch ${Math.ceil(i/batchSize) + 1} (Seksi ${i + 1} - ${i + batch.length})...`
+        });
+
+        const batchPromises = batch.map(async (step: any, indexInBatch: number) => {
+          const absoluteIndex = i + indexInBatch;
+          const isFirstStep = absoluteIndex === 0;
+          
+          const sectionPrompt = `
+            ${baseInstructions}
+            HASIL RISET STANDAR TERBARU: ${blueprint.researchNotes}
+            
+            ROLEPLAY MUTLAK: Anda saat ini berperan sebagai "${step.expertPersona}". 
+            Rancang 8-12 pertanyaan spesifik HANYA UNTUK Seksi ${absoluteIndex + 1}: "${step.title}".
+            
+            ${isFirstStep ? `
+            ATURAN SEKSI PERTAMA: 4 Field pertama WAJIB ber-ID persis: "namaUsaha", "namaPengisi", "emailAktif", "nomorTelepon". Tipe data text/email/number.
+            ` : `
+            ATURAN ANTI-DUPLIKASI MUTLAK: DILARANG KERAS menanyakan kembali Identitas Dasar. Anda TIDAK BOLEH memunculkan field dengan ID "namaUsaha", "namaPengisi", "emailAktif", "nomorTelepon", atau variasi sejenisnya di seksi ini! Langsung fokus ke investigasi sesuai konteks seksi.
+            `}
+          `;
+
+          try {
+            const sectionResult = await withRetry(() => sectionModel.generateContent(sectionPrompt));
+            const fieldsArray = JSON.parse(sectionResult.response.text().trim());
+            return { stepNumber: absoluteIndex + 1, title: step.title, description: step.description, fields: fieldsArray };
+          } catch (error) {
+            console.error(`Gagal meracik seksi ${absoluteIndex + 1}:`, error);
+            return { stepNumber: absoluteIndex + 1, title: step.title, description: "Gagal memuat otomatis.", fields: [] };
+          }
+        });
+
+        const batchResults = await Promise.all(batchPromises);
+        rawFinalSteps.push(...batchResults);
+      }
+
+      // ---------------------------------------------------------
+      // PROGRAMMATIC DEDUPLICATION (HARDCODE FILTER)
+      // ---------------------------------------------------------
+      // Filter mutlak agar tidak ada ID duplikat secara paksa oleh sistem
+      const seenIds = new Set<string>();
+      const deduplicatedSteps = rawFinalSteps.map(step => {
+        const uniqueFields = [];
+        for (const field of step.fields) {
+          if (!seenIds.has(field.id)) {
+            seenIds.add(field.id);
+            uniqueFields.push(field);
+          } else {
+            console.warn(`[Auto-Fix] Menghapus duplikasi ID mutlak: ${field.id} di Seksi ${step.stepNumber}`);
+          }
+        }
+        return { ...step, fields: uniqueFields };
+      });
+
+      // ---------------------------------------------------------
+      // FASE 3: AI SELF-CORRECTION (SHOW-IF VALIDATOR)
+      // ---------------------------------------------------------
+      await templateRef.update({
+        aiGenerationStatus: {
+          phase: "BUILDING_FORM",
+          message: "Tahap 3: Agen Validator memverifikasi integritas logika bercabang (Self-Healing)...",
+          updatedAt: new Date().toISOString()
+        }
+      });
+
+      const validatorModel = genAI.getGenerativeModel({
+        model: "gemini-2.5-flash", 
+        generationConfig: {
+          temperature: 0.1,
+          responseMimeType: "application/json"
+        }
+      });
+
+      const validationPrompt = `
+        Anda adalah "Lead Quality Assurance". Berikut adalah JSON formulir yang sudah bersih dari ID duplikat.
+        Tugas utama Anda HANYA memverifikasi properti "showIf":
+        1. Pastikan "fieldId" di dalam "showIf" merujuk pada "id" yang BENAR-BENAR ADA di array fields sebelumnya.
+        2. Jika merujuk pada ID yang tidak ada atau referensi ke depan (referencing future fields), hapus properti "showIf" tersebut.
+        3. Kembalikan array JSON utuh tanpa merubah struktur lain.
+        
+        DATA FORMULIR MENTAH:
+        ${JSON.stringify(deduplicatedSteps)}
+      `;
+
+      const validationResult = await withRetry(() => validatorModel.generateContent(validationPrompt));
+      const validatedSteps = JSON.parse(validationResult.response.text().trim());
       
-      const parsedObject = extractJSONFromText(result.response.text());
-
-      if (parsedObject.researchNotes) {
-        await storeTemplateResearchVector(templateId, trackName, parsedObject.researchNotes, API_KEY)
-          .catch(e => console.error("Gagal merekam vector research formulir:", e));
-      }
-
-      const finalStepsArray = parsedObject.steps || [];
-      if (!Array.isArray(finalStepsArray) || finalStepsArray.length === 0) {
-        throw new Error("Objek JSON berhasil terbentuk, tetapi array 'steps' kosong.");
-      }
-
-      const cleanedSteps = cleanUndefinedAndNull(finalStepsArray);
+      const cleanedSteps = cleanUndefinedAndNull(validatedSteps);
 
       await templateRef.update({
         steps: cleanedSteps,
@@ -143,20 +278,19 @@ export const generateFormTemplateFromAI = onCall(
         lastUpdated: new Date().toISOString(),
         aiGenerationStatus: {
           phase: "COMPLETED",
-          message: "Formulir berstandar Enterprise berhasil dibuat dan disimpan otomatis!",
+          message: `Sukses! Formulir skala Enterprise (${cleanedSteps.length} seksi) telah tervalidasi dan siap digunakan.`,
           updatedAt: new Date().toISOString()
         }
       });
 
-      console.log(`✅ [${templateId}] Auto-Save dan Vector Database Sukses Berjalan!`);
       return { success: true, steps: cleanedSteps };
 
     } catch (error: any) {
-      console.error(`💥 Fatal Error pada Latar Belakang Template [${templateId}]:`, error);
+      console.error(`Fatal Error pada Form Builder:`, error);
       await templateRef.update({
         aiGenerationStatus: {
           phase: "FAILED",
-          message: `Kendala AI: ${error.message || "Gagal memproses struktur data formulir."}`,
+          message: `Kendala Sistem: ${error.message}`,
           updatedAt: new Date().toISOString()
         }
       });
@@ -165,43 +299,51 @@ export const generateFormTemplateFromAI = onCall(
   }
 );
 
-
 // ============================================================================
-// FUNGSI 2: AI CONFIGURATION ENHANCER (MENGGUNAKAN 2.5-PRO)
+// FUNGSI 2: AI CONFIGURATION ENHANCER
 // ============================================================================
 export const generateAIConfigResearch = onCall(
-  { 
-    memory: "1GiB", 
+  {
+    memory: "1GiB",
     timeoutSeconds: 300, 
-    region: "asia-southeast2", 
-    secrets: [geminiApiKeySecret], 
-    cors: true 
+    region: "asia-southeast2",
+    secrets: [geminiApiKeySecret],
+    cors: true
   },
   async (request) => {
     if (!request.auth) throw new HttpsError("unauthenticated", "Akses ditolak.");
     
+    // --- START GEMBOK MUTLAK SERVER-SIDE ---
+    const userEmail = request.auth.token.email?.toLowerCase();
+    if (userEmail !== 'deny.wismoyo@gmail.com') {
+      throw new HttpsError(
+        "permission-denied", 
+        "SECURITY BREACH: Akses ditolak secara paksa oleh server. Fitur ini eksklusif hanya untuk DENY.WISMOYO@GMAIL.COM"
+      );
+    }
+    // --- END GEMBOK MUTLAK ---
+
     const data = request.data as any;
-    const { templateId, trackName, customTopic, currentConfig } = data; 
+    const { templateId, trackName, customTopic, currentConfig } = data;
     const topicToResearch = customTopic || trackName || "Asesmen Bisnis Umum";
     const safeTemplateId = templateId || `research_config_${Date.now()}`;
-
     const API_KEY = geminiApiKeySecret.value();
     const genAI = new GoogleGenerativeAI(API_KEY);
 
     try {
-      // MENGGUNAKAN 2.5 PRO DENGAN GOOGLE SEARCH UNTUK RISET BERAT
       const model = genAI.getGenerativeModel({
-        model: "gemini-2.5-pro", 
+        model: "gemini-3.1-pro-preview",
         tools: [{ googleSearch: {} } as any], 
         generationConfig: {
-          temperature: 0.4, 
-          maxOutputTokens: 8192
+          temperature: 0.7,
+          maxOutputTokens: 8192,
+          responseMimeType: "application/json",
         }
       });
 
-      const hasExistingConfig = currentConfig && Object.keys(currentConfig).length > 0 && 
-                                (currentConfig.expectedMetrics?.length > 0 || currentConfig.assessmentGoal);
-
+      const hasExistingConfig = currentConfig && Object.keys(currentConfig).length > 0 &&
+                                 (currentConfig.expectedMetrics?.length > 0 || currentConfig.assessmentGoal);
+      
       const systemPrompt = buildAIConfigPrompt({
         trackName,
         topicToResearch,
@@ -209,18 +351,21 @@ export const generateAIConfigResearch = onCall(
         hasExistingConfig
       });
 
-      console.log(`🔍 [${safeTemplateId}] Menjalankan riset konfigurasi menggunakan Gemini 2.5 Pro...`);
       const result = await withRetry(() => model.generateContent(systemPrompt));
+      let rawText = result.response.text().trim();
       
-      const parsedConfig = extractJSONFromText(result.response.text());
+      if (rawText.startsWith('```json')) {
+        rawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
+      }
+      
+      const parsedConfig = JSON.parse(rawText);
 
-      await storeTemplateResearchVector(safeTemplateId, `Config Research: ${topicToResearch}`, JSON.stringify(parsedConfig), API_KEY)
-         .catch(e => console.error(`Gagal merekam Vector Config Research untuk Template [${safeTemplateId}]:`, e));
+      await storeTemplateResearchVector(safeTemplateId, `Config Research: ${topicToResearch}`, rawText, API_KEY)
+        .catch(e => console.error(`Gagal merekam Vector:`, e));
 
       return { success: true, aiPromptConfig: parsedConfig };
 
     } catch (error: any) {
-      console.error("Gagal melakukan Auto-Research AI Config:", error);
       throw new HttpsError("internal", error.message || "Gagal melakukan auto-research.");
     }
   }

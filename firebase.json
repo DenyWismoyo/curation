@@ -8,7 +8,7 @@
   "functions": [
     {
       "source": "functions",
-      "codebase": "default",
+      "codebase": "curation",
       "disallowLegacyRuntimeConfig": true,
       "ignore": [
         "node_modules",

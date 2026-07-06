@@ -72,7 +72,7 @@ export const sendAssessmentEmail = async (
           </div>
 
           <p style="margin-top: 40px; font-size: 12px; color: #94a3b8; text-align: center; border-top: 1px solid #f1f5f9; padding-top: 20px;">
-            * Tautan di atas bersifat permanen dan rahasia. Anda dapat membagikannya kepada investor atau mitra bisnis Anda jika diperlukan.<br><br>
+            * Terimakasih Telah Berpartisipasi.<br><br>
             © ${new Date().getFullYear()} CSRS Analytics
           </p>
         </div>

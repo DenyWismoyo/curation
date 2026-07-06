@@ -271,5 +271,12 @@ export const FORM_ARCHETYPES: FormArchetype[] = [
     description: 'Pemetaan psikologis komprehensif untuk mengukur kesiapan klien merubah gaya hidup, deteksi makan emosional, dan aktivitas fisik.',
     suitableFor: 'Intervensi gaya hidup (Lifestyle Medicine), konseling gizi psikologis, personal training, dan terapi habituasi holistik.',
     aiInstruction: 'Ini adalah instrumen PERUBAHAN PERILAKU (TTM). Gunakan kombinasi tipe "radio" berskala Likert untuk mengukur tingkat kesiapan perubahan (dari Pre-kontemplasi hingga Pemeliharaan). Gunakan tipe "radio" berbasis skenario untuk mendeteksi pemicu makan emosional atau hambatan olahraga. Hindari penggunaan "text" atau "textarea" untuk opini umum; paksa peserta memilih opsi yang paling mewakili respons psikologis mereka agar AI dapat mengukur metrik TTM dan COM-B secara presisi.'
-  }
+  },
+  {
+    id: 'pns-merit-assessment',
+    name: 'Asesmen Merit & Wawancara PNS',
+    description: 'Instrumen evaluasi kinerja berbasis cascading SKP, perilaku BerAKHLAK, dan pemetaan matriks talenta (9-Box Grid).',
+    suitableFor: 'Evaluasi kinerja rutin ASN, wawancara promosi/mutasi, penilaian kompetensi manajerial, dan manajemen talenta di unit kerja atau UPT.',
+    aiInstruction: 'Ini adalah formulir ASESMEN PNS & SISTEM MERIT. Gunakan kombinasi input "radio" berbobot (0-100) untuk mengukur implementasi Core Values BerAKHLAK dan persentase pencapaian RHK/SKP. Terapkan logika bercabang (showIf) untuk meminta justifikasi ("textarea") wajib JIKA capaian kinerja di bawah ekspektasi. Wajibkan penggunaan input unggah dokumen ("file") sebagai bukti fisik validasi SKP Tahunan dan riwayat sertifikasi Diklat kompetensi.'
+  },
 ];
