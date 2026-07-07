@@ -112,14 +112,31 @@ export const generateFormTemplateFromAI = onCall(
         }
       });
 
+      // --- LOGIKA DINAMIS RESEARCH PROMPT (Penyempurnaan Domain) ---
       const goal = aiPromptConfig?.assessmentGoal || "Evaluasi mendalam pemetaan kualitas.";
       const metrics = aiPromptConfig?.expectedMetrics?.join(', ') || 'Metrik standar';
+      const purpose = aiPromptConfig?.formPurpose || 'assessment';
+      
+      let frameworkExamples = "ISO, COBIT, ESG, TRL, SNI, Y-Combinator Metrics"; // Default Audit Bisnis
+      if (purpose === 'counseling') {
+        frameworkExamples = "DSM-5, CBT Framework, Skala Psikometri Big Five, WHO-DAS, Skala Beck";
+      } else if (purpose === 'monitoring') {
+        frameworkExamples = "PMBOK, PRINCE2, Logical Framework Approach (LFA), Agile/Scrum Metrics, OKR";
+      } else if (purpose === 'consultation') {
+        frameworkExamples = "McKinsey 7S, SWOT, PESTLE, Lean Six Sigma, Design Thinking";
+      }
       
       const masterPrompt = `
         Anda adalah Chief Research Officer tingkat Enterprise. Lakukan web search untuk regulasi program: "${trackName || "Asesmen Umum"}".
         Tujuan: "${goal}". Target Metrik: [${metrics}].
-        TUGAS: Pecah asesmen menjadi 5 hingga 8 Seksi (stepOutlines). Langkah pertama WAJIB dialokasikan untuk "Identitas & Legalitas Dasar". Tentukan 'expertPersona' spesifik per seksi.
+        FOKUS DOMAIN: Kuesioner ini dirancang untuk fungsi "${purpose}".
+        
+        TUGAS UTAMA:
+        1. Lakukan pencarian web untuk 3 kerangka teori/framework standar global yang paling relevan untuk domain tersebut (Sebagai referensi/contoh: ${frameworkExamples}).
+        2. Pecah asesmen menjadi 5 hingga 8 Seksi (stepOutlines) berdasarkan framework tersebut. Langkah pertama WAJIB dialokasikan untuk "Identitas & Legalitas Dasar". 
+        3. Tentukan 'expertPersona' spesifik per seksi.
       `;
+      // --- END LOGIKA DINAMIS ---
 
       const masterResult = await withRetry(() => masterModel.generateContent(masterPrompt));
       const blueprint = JSON.parse(masterResult.response.text().trim());
@@ -140,7 +157,6 @@ export const generateFormTemplateFromAI = onCall(
         }
       });
 
-      // PERUBAHAN KRITIS: Model diubah menjadi 2.5-flash dan temperature diturunkan ke 0.2
       const sectionModel = genAI.getGenerativeModel({
         model: "gemini-2.5-flash",
         generationConfig: {
@@ -179,6 +195,7 @@ export const generateFormTemplateFromAI = onCall(
         }
       });
 
+      // archetypeInstruction di sini akan menerima "Mix" dari Textarea + Checkbox di UI!
       const promptParams = { trackName: trackName || "Asesmen Umum", config: aiPromptConfig || {}, archetypeInstruction: archetypeInstruction || "" };
       const baseInstructions = buildMegaAgentPrompt(promptParams);
       let rawFinalSteps: any[] = [];

@@ -142,6 +142,8 @@ export interface FormTemplate {
   steps: FormStep[]; 
   aiPromptConfig?: AiPromptConfig;
   folder?: string;
+  formBuilderInstruction?: string;
+  preferredQuestionTypes?: string[];
 }
 
 export interface AssessmentPayload {
