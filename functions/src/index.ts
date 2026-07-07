@@ -354,12 +354,14 @@ export const processCurationAssessment = onCall(
               totalScore: Number(aiResultJson.totalScore || 0),
               readinessLevel: String(aiResultJson.readinessLevel || 'Belum Ditentukan'),
               trackType: String(updatedDocData.trackType || 'Evaluasi Umum'),
-              assessmentUrl: `[https://curation--teknopark-surakarta.asia-southeast1.hosted.app/result/$](https://curation--teknopark-surakarta.asia-southeast1.hosted.app/result/$){assessmentId}`
+              assessmentUrl: `https://curation--teknopark-surakarta.asia-southeast1.hosted.app/result/${assessmentId}`
             }).catch(e => console.error(e));
           });
         }
 
-        if (aiResultJson.totalScore && aiResultJson.totalScore >= 80) {
+        // PERBAIKAN DI SINI: Syarat >= 80 telah DIHAPUS. 
+        // Kini semua data asesmen akan diserap dan direkam ke dalam Vector Database.
+        if (aiResultJson.totalScore !== undefined && aiResultJson.totalScore !== null) {
           import("./vectorService").then(({ generateAndStoreVectorEmbedding }) => {
             generateAndStoreVectorEmbedding(assessmentId, updatedDocData, API_KEY).catch(e => console.error(e));
           });

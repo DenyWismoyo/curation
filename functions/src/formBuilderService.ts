@@ -35,7 +35,7 @@ const withRetry = async <T>(fn: () => Promise<T>, retries = 3, delayMs = 2000): 
 };
 
 // ============================================================================
-// FUNGSI 1: MEMBANGUN FORMULIR BERDASARKAN CONFIG (ULTIMATE MULTI-AGENT)
+// FUNGSI 1: MEMBANGUN FORMULIR BERDASARKAN CONFIG (HYBRID MULTI-AGENT)
 // ============================================================================
 export const generateFormTemplateFromAI = onCall(
   {
@@ -73,6 +73,7 @@ export const generateFormTemplateFromAI = onCall(
     try {
       // ---------------------------------------------------------
       // FASE 1: LIVE SEARCH GROUNDING & BLUEPRINT MASTERPLAN
+      // (MENGGUNAKAN 3.1 PRO PREVIEW KARENA BUTUH PENALARAN & INTERNET)
       // ---------------------------------------------------------
       await templateRef.update({
         aiGenerationStatus: {
@@ -123,11 +124,13 @@ export const generateFormTemplateFromAI = onCall(
       const masterResult = await withRetry(() => masterModel.generateContent(masterPrompt));
       const blueprint = JSON.parse(masterResult.response.text().trim());
 
+      // [VECTOR RAG] Menyimpan hasil riset Fase 1 ke Vector Database
       await storeTemplateResearchVector(templateId, trackName, blueprint.researchNotes, API_KEY)
-        .catch(e => console.error("Gagal merekam vector research:", e));
+        .catch(e => console.error("Gagal merekam vector research (Fase 1):", e));
 
       // ---------------------------------------------------------
       // FASE 2: DYNAMIC PERSONA & ASYNCHRONOUS BATCHING
+      // (DOWNGRADE KE GEMINI-2.5-FLASH UNTUK EFISIENSI BIAYA MAKSIMAL)
       // ---------------------------------------------------------
       await templateRef.update({
         aiGenerationStatus: {
@@ -137,10 +140,11 @@ export const generateFormTemplateFromAI = onCall(
         }
       });
 
+      // PERUBAHAN KRITIS: Model diubah menjadi 2.5-flash dan temperature diturunkan ke 0.2
       const sectionModel = genAI.getGenerativeModel({
-        model: "gemini-3.1-pro-preview",
+        model: "gemini-2.5-flash",
         generationConfig: {
-          temperature: 0.3,
+          temperature: 0.2, // Flash butuh temperature rendah agar taat pada JSON Schema
           responseMimeType: "application/json",
           responseSchema: {
             type: SchemaType.ARRAY,
@@ -222,7 +226,6 @@ export const generateFormTemplateFromAI = onCall(
       // ---------------------------------------------------------
       // PROGRAMMATIC DEDUPLICATION (HARDCODE FILTER)
       // ---------------------------------------------------------
-      // Filter mutlak agar tidak ada ID duplikat secara paksa oleh sistem
       const seenIds = new Set<string>();
       const deduplicatedSteps = rawFinalSteps.map(step => {
         const uniqueFields = [];
@@ -331,6 +334,7 @@ export const generateAIConfigResearch = onCall(
     const genAI = new GoogleGenerativeAI(API_KEY);
 
     try {
+      // TETAP MENGGUNAKAN 3.1 PRO PREVIEW (KARENA BUTUH GOOGLE SEARCH)
       const model = genAI.getGenerativeModel({
         model: "gemini-3.1-pro-preview",
         tools: [{ googleSearch: {} } as any], 
@@ -360,8 +364,10 @@ export const generateAIConfigResearch = onCall(
       
       const parsedConfig = JSON.parse(rawText);
 
+      // [VECTOR RAG] Menyimpan struktur config utuh (rawText) ke Vector Database
+      // Membantu AI di masa depan memahami standar metrik industri ini
       await storeTemplateResearchVector(safeTemplateId, `Config Research: ${topicToResearch}`, rawText, API_KEY)
-        .catch(e => console.error(`Gagal merekam Vector:`, e));
+        .catch(e => console.error(`Gagal merekam Vector AI Config:`, e));
 
       return { success: true, aiPromptConfig: parsedConfig };
 
