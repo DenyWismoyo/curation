@@ -1,4 +1,4 @@
-// functions/src/promt/aiConfigPrompt.ts
+// src/promt/aiConfigPrompt.ts
 
 export interface AIConfigPromptParams {
   trackName: string;
@@ -51,8 +51,9 @@ export const buildAIConfigPrompt = (params: AIConfigPromptParams): string => {
       "mediaAnalysisFocus": "Pilih salah satu: pitch-delivery ATAU ui-ux-design ATAU product-demo. (Atau biarkan string kosong jika murni teks)",
       "expectedMetrics": ["Metrik 1", "Metrik 2", "Metrik 3", "Buat maksimal 8 metrik radar spesifik (WAJIB Bahasa Indonesia)"],
       "expectedAnalysisBlocks": [
-         "Judul Blok 1: Deskripsi target sub-poin A, sub-poin B yang harus dianalisis (WAJIB Bahasa Indonesia)", 
-         "Judul Blok 2: Deskripsi target sub-poin A, sub-poin B yang harus dianalisis (WAJIB Bahasa Indonesia)"
+         "Judul Blok 1: WAJIB jabarkan 2-3 sub-poin indikator spesifik yang akan dievaluasi pada blok ini", 
+         "Judul Blok 2: WAJIB jabarkan 2-3 sub-poin indikator spesifik yang akan dievaluasi pada blok ini",
+         "ATURAN MUTLAK BLOK ANALISIS: String HARUS dipisah tanda titik dua (:). Sebelah kiri adalah Judul, sebelah kanan adalah sub-poin! DILARANG KERAS mengosongkan sub-poin setelah titik dua!"
       ],
       "expectedRecommendations": ["Target Rekomendasi Area A", "Target Rekomendasi Area B"],
       "riskFramework": "Sebutkan celah kegagalan sistemik (red flags) yang harus diawasi AI. Buat detail dan tajam. (WAJIB Bahasa Indonesia)",

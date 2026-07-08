@@ -1,4 +1,5 @@
 // functions/src/index.ts
+
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { defineSecret } from "firebase-functions/params";
 import * as admin from "firebase-admin";
@@ -15,7 +16,7 @@ import { buildAssessmentPrompt, getSystemPrompt } from "./promt/promptTemplate";
 // ============================================================================
 export { generatePDFReport } from "./documentGenerator";
 export { matchBusinessWithIndustry } from "./vectorService";
-export { generateFormTemplateFromAI, generateAIConfigResearch } from "./formBuilderService";
+export { generateFormTemplateFromAI } from "./formBuilderService";
 
 // ============================================================================
 // INISIALISASI FIREBASE
@@ -33,6 +34,7 @@ const withRetry = async <T>(fn: () => Promise<T>, retries = 4, delayMs = 3000): 
   catch (error: any) {
     if (error.status === 400 || (error.message && error.message.includes('SAFETY'))) throw error;
     if (retries <= 1) throw error;
+    
     console.warn(`  API Gemini sibuk (${error.message}). Mencoba ulang dalam ${delayMs}ms...`);
     await new Promise(res => setTimeout(res, delayMs));
     return withRetry(fn, retries - 1, delayMs * 2);
@@ -155,7 +157,7 @@ export const processCurationAssessment = onCall(
          const embedResult = await withRetry(() => embedModel.embedContent(ragQuery));
          const vectorQuery = db.collection('business_vectors')
            .findNearest('embedding', admin.firestore.FieldValue.vector(embedResult.embedding.values), { limit: 2, distanceMeasure: 'COSINE' });
-         
+           
          const vectorSnap = await vectorQuery.get();
          if (!vectorSnap.empty) {
             fewShotContext = `\n[KONTEKS RAG INDUSTRI]: Gunakan profil bisnis serupa yang pernah dievaluasi ini sebagai pembanding kalibrasi: ` +
@@ -212,6 +214,7 @@ export const processCurationAssessment = onCall(
       const modelName = isPro ? 'gemini-3.1-pro-preview' : 'gemini-2.5-flash';
       
       const systemPrompt = getSystemPrompt(isPro);
+
       const unifiedModel = genAI.getGenerativeModel({
         model: modelName,
         systemInstruction: systemPrompt,
@@ -223,14 +226,14 @@ export const processCurationAssessment = onCall(
             required: ["_internalReasoning", "readinessLevel", "totalScore", "incubationRoute", "executiveSummary", "customAnalysisBlocks", "fileAnalysisInsights", "metrics", "swotAnalysis", "recommendations", "riskAssessment", "nextActionSteps"],
             properties: {
               _internalReasoning: { 
-                type: SchemaType.STRING, 
-                description: "RUANG BERPIKIR AI: Gunakan field ini untuk berpikir langkah-demi-langkah, mencari korelasi antar jawaban form, dan mensintesis kekuatan/kelemahan utama SEBELUM memberikan skor final." 
-              },
+                 type: SchemaType.STRING, 
+                 description: "RUANG BERPIKIR AI: Gunakan field ini untuk berpikir langkah-demi-langkah, mencari korelasi antar jawaban form, dan mensintesis kekuatan/kelemahan utama SEBELUM memberikan skor final." 
+               },
               executiveSummary: { type: SchemaType.STRING },
               readinessLevel: { 
-                type: SchemaType.STRING, 
-                description: `Format WAJIB: '[Nama Tier/Kuadran Utama] | [3-5 kata sifat spesifik yang menggambarkan entitas ini]'. DILARANG KERAS memasukkan deskripsi panjang atau angka rentang skor ke dalam field ini.` 
-              },
+                 type: SchemaType.STRING, 
+                 description: `Format WAJIB: '[Nama Tier/Kuadran Utama] | [3-5 kata sifat spesifik yang menggambarkan entitas ini]'. DILARANG KERAS memasukkan deskripsi panjang atau angka rentang skor ke dalam field ini.` 
+               },
               totalScore: { type: SchemaType.INTEGER },
               incubationRoute: { type: SchemaType.STRING },
               customAnalysisBlocks: {
@@ -240,7 +243,20 @@ export const processCurationAssessment = onCall(
                   required: ["title", "iconType", "metrics"],
                   properties: {
                     title: { type: SchemaType.STRING }, iconType: { type: SchemaType.STRING },
-                    metrics: { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, required: ["label", "value"], properties: { label: { type: SchemaType.STRING }, value: { type: SchemaType.STRING } } } }
+                    metrics: { 
+                      type: SchemaType.ARRAY, 
+                      items: { 
+                        type: SchemaType.OBJECT, 
+                        required: ["label", "value"], 
+                        properties: { 
+                          label: { type: SchemaType.STRING }, 
+                          value: { 
+                            type: SchemaType.STRING,
+                            description: "WAJIB diisi dengan narasi analitis dan deskriptif minimal 2-3 kalimat. DILARANG KERAS menjawab hanya dengan satu kata atau label singkat (seperti 'Tinggi', 'Valid', 'Selaras'). Jelaskan secara utuh berdasarkan fakta formulir."
+                          } 
+                        } 
+                      } 
+                    }
                   }
                 }
               },
@@ -283,6 +299,7 @@ export const processCurationAssessment = onCall(
       if (rawText.startsWith('```json')) {
         rawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
       }
+
       const aiResultJson = JSON.parse(rawText);
 
       // INJEKSI DATA DOMAIN & UI LABELS KE HASIL AI SEBELUM DISIMPAN
@@ -346,6 +363,7 @@ export const processCurationAssessment = onCall(
 
         const smtpEmail = smtpEmailSecret.value();
         const smtpPassword = smtpPasswordSecret.value();
+
         if (smtpEmail && smtpPassword && updatedDocData.userEmail) {
           import("./emailService").then(({ sendAssessmentEmail }) => {
             sendAssessmentEmail(smtpEmail, smtpPassword, {
@@ -354,7 +372,7 @@ export const processCurationAssessment = onCall(
               totalScore: Number(aiResultJson.totalScore || 0),
               readinessLevel: String(aiResultJson.readinessLevel || 'Belum Ditentukan'),
               trackType: String(updatedDocData.trackType || 'Evaluasi Umum'),
-              assessmentUrl: `https://curation--teknopark-surakarta.asia-southeast1.hosted.app/result/${assessmentId}`
+              assessmentUrl: `[https://curation--teknopark-surakarta.asia-southeast1.hosted.app/result/$](https://curation--teknopark-surakarta.asia-southeast1.hosted.app/result/$){assessmentId}`
             }).catch(e => console.error(e));
           });
         }
@@ -375,16 +393,16 @@ export const processCurationAssessment = onCall(
       throw new HttpsError("internal", error.message || "Gagal memproses analisis AI.");
     } finally {
       // Membersihkan Cache Memory Secara Paksa
-      for (const tmpFile of tempLocalFiles) { 
-        try { if (fs.existsSync(tmpFile)) fs.unlinkSync(tmpFile); } catch (e) {} 
-      }
-      for (const geminiFile of uploadedGeminiFiles) { 
-        try { 
-          await withRetry(() => fileManager.deleteFile(geminiFile.name), 2, 2000); 
-        } catch (e) {
+      for (const tmpFile of tempLocalFiles) {
+         try { if (fs.existsSync(tmpFile)) fs.unlinkSync(tmpFile); } catch (e) {}
+       }
+      for (const geminiFile of uploadedGeminiFiles) {
+         try {
+           await withRetry(() => fileManager.deleteFile(geminiFile.name), 2, 2000);
+         } catch (e) {
           console.warn(`Pembersihan file di cloud gemini dilewati akibat 503`);
-        } 
-      }
+        }
+       }
     }
   }
 );

@@ -1,52 +1,11 @@
 // src/app/components/admin/template-builder/TabFormBuilder.tsx
 'use client';
-
 import React, { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import { FormTemplate, FormStep, FormField, FieldType } from '@/types/curation';
-import { 
-  ChevronUp, ChevronDown, Trash2, Sparkles, ArrowUp, 
-  ArrowDown, Plus, Bot, Loader2, GitBranch, Save, AlertTriangle 
-} from 'lucide-react';
-import { getFunctions, httpsCallable } from 'firebase/functions';
+import { ChevronUp, ChevronDown, Trash2, Sparkles, ArrowUp, ArrowDown, Plus, GitBranch, Save, Loader2, Bot } from 'lucide-react';
 import { getFirestore, doc, onSnapshot, updateDoc } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
-
-// 1. Kamus Aturan Checkbox untuk Meta-Prompting AI
-const QUESTION_TYPE_OPTIONS = [
-  { 
-    id: 'radio_weight', 
-    label: 'Skoring Ganda Berbobot', 
-    icon: '🎯',
-    rule: 'WAJIB maksimalkan penggunaan tipe "radio" atau "select" dengan array "options" berbobot (weight 0-100) untuk keperluan kalkulasi nilai otomatis.' 
-  },
-  { 
-    id: 'conditional_logic', 
-    label: 'Logika Bercabang (ShowIf)', 
-    icon: '🔀',
-    rule: 'TERAPKAN INTEROGASI BERLAPIS: Gunakan properti "showIf". Jika peserta merespon klaim besar pada opsi radio/select, WAJIB pancing pertanyaan baru bertipe "file" atau "textarea" untuk menagih bukti.' 
-  },
-  { 
-    id: 'file_upload', 
-    label: 'Upload Bukti', 
-    icon: '📄',
-    rule: 'WAJIB sertakan tipe input "file" untuk menagih unggahan dokumen bukti (legalitas, laporan, portofolio, dll) guna menekan potensi manipulasi data.' 
-  },
-  { 
-    id: 'number_metric', 
-    label: 'Angka & Nominal', 
-    icon: '🔢',
-    rule: 'Gunakan tipe "number" secara spesifik untuk menangkap data kuantitatif presisi (seperti Omzet, Jumlah Karyawan, Biaya, Persentase) agar data tidak tercampur teks.' 
-  },
-  { 
-    id: 'text_justification', 
-    label: 'Teks Analisa / Alasan', 
-    icon: '✍️',
-    rule: 'Gunakan tipe "textarea" secara strategis untuk menuntut penjelasan, justifikasi, keluhan, atau uraian deskriptif yang mendalam dari peserta.' 
-  }
-];
 
 interface TabFormBuilderProps {
   template: FormTemplate;
@@ -58,30 +17,23 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
   const [expandedSteps, setExpandedSteps] = useState<number[]>([0]);
   const [stepToDelete, setStepToDelete] = useState<number | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [dbStatus, setDbStatus] = useState<{ phase: string; message: string } | null>(null);
 
-  // REALTIME SNAPSHOT LISTENER
+  // REALTIME SNAPSHOT LISTENER (Hanya untuk sinkronisasi state loading & data baru)
   useEffect(() => {
     if (!template.id) return;
-    
     const db = getFirestore();
     const unsubscribe = onSnapshot(doc(db, "form_templates", template.id), (snapshot) => {
       if (snapshot.exists()) {
         const docData = snapshot.data();
         const status = docData.aiGenerationStatus;
-        
         if (status) {
-          setDbStatus({ phase: status.phase, message: status.message });
-          
           if (status.phase === 'RESEARCHING' || status.phase === 'BUILDING_FORM') {
             setIsGenerating(true);
-          } else if (status.phase === 'COMPLETED') {
+          } else if (status.phase === 'COMPLETED' || status.phase === 'FAILED') {
             setIsGenerating(false);
-            if (docData.steps) {
+            if (status.phase === 'COMPLETED' && docData.steps) {
               onChange({ ...template, steps: docData.steps });
             }
-          } else if (status.phase === 'FAILED') {
-            setIsGenerating(false);
           }
         }
       }
@@ -97,70 +49,6 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
       });
     });
     return fields;
-  };
-
-  // HANDLER TOGGLE CHECKBOX
-  const toggleQuestionType = (typeId: string) => {
-    const currentTypes = template.preferredQuestionTypes || [];
-    const newTypes = currentTypes.includes(typeId) 
-      ? currentTypes.filter(id => id !== typeId)
-      : [...currentTypes, typeId];
-    onChange({ ...template, preferredQuestionTypes: newTypes });
-  };
-
-  // TRIGGER GENERATE AI SECARA ASYNCHRONOUS
-  const handleGenerateFormByAI = async () => {
-    // --- START VALIDASI SUPER ADMIN ---
-    const auth = getAuth();
-    const currentUserEmail = auth.currentUser?.email?.toLowerCase();
-    
-    if (currentUserEmail !== 'deny.wismoyo@gmail.com') {
-      alert("  AKSES DITOLAK: Fitur AI Form Builder Enterprise ini menggunakan komputasi tingkat tinggi dan saat ini dikunci eksklusif hanya untuk DENY.WISMOYO@GMAIL.COM guna mencegah penyalahgunaan kuota token.");
-      return;
-    }
-    // --- END VALIDASI ---
-
-    if (!template.aiPromptConfig?.assessmentGoal) {
-      alert("Mohon isi 'Tujuan Asesmen Utama' di Tab AI Config terlebih dahulu agar AI memahami tujuan pembuatan form.");
-      return;
-    }
-
-    if (template.steps?.length > 0) {
-      const confirmOverwrite = confirm("PERINGATAN: Proses ini akan menghapus dan menimpa seluruh langkah form Anda saat ini. Lanjutkan?");
-      if (!confirmOverwrite) return;
-    }
-
-    // KOMPILASI INSTRUKSI DARI TEXTAREA + CHECKBOX
-    let finalInstruction = template.formBuilderInstruction || "Rancang kuesioner penilaian secara sistematis.";
-    if (template.preferredQuestionTypes && template.preferredQuestionTypes.length > 0) {
-      const selectedRules = template.preferredQuestionTypes.map(id => {
-        const opt = QUESTION_TYPE_OPTIONS.find(o => o.id === id);
-        return opt ? `- ${opt.rule}` : '';
-      }).filter(Boolean).join('\n');
-      
-      finalInstruction += `\n\nATURAN KOMPOSISI PERTANYAAN MUTLAK (WAJIB DIPATUHI):\n${selectedRules}`;
-    }
-
-    setIsGenerating(true);
-    setDbStatus({ phase: "STARTING", message: "Menginisialisasi pipeline Multi-Agent AI..." });
-    
-    try {
-      const functions = getFunctions(undefined, 'asia-southeast2');
-      const generateFormFn = httpsCallable(functions, 'generateFormTemplateFromAI', { timeout: 900000 });
-      
-      generateFormFn({
-        templateId: template.id,
-        trackName: template.trackName || "Evaluasi Umum",
-        aiPromptConfig: template.aiPromptConfig,
-        archetypeInstruction: finalInstruction 
-      }).catch((asyncError) => {
-        console.error("Error latar belakang Cloud Function:", asyncError);
-        setIsGenerating(false);
-      });
-    } catch (error: any) {
-      console.error("Gagal memicu fungsi AI:", error);
-      setIsGenerating(false);
-    }
   };
 
   const handleManualSave = async () => {
@@ -238,105 +126,40 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
     onChange({ ...template, steps: newSteps });
   };
 
+  if (isGenerating) {
+    return (
+      <div className="flex flex-col items-center justify-center p-20 bg-indigo-50/50 border border-dashed border-indigo-200 rounded-[2rem] text-center space-y-4">
+        <Loader2 className="w-12 h-12 text-indigo-500 animate-spin" />
+        <h3 className="font-black text-xl text-indigo-900">Sistem AI Sedang Meracik Formulir...</h3>
+        <p className="text-sm font-medium text-indigo-600/70">Silakan pantau progress di tab System Logs atau tab Otak AI.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
-      {/* CARD RUNTIME MONITORING STATUS MULTI-AGENT */}
-      {dbStatus && (dbStatus.phase === 'RESEARCHING' || dbStatus.phase === 'BUILDING_FORM' || dbStatus.phase === 'FAILED') && (
-        <div className={`p-4 rounded-2xl border flex items-center gap-4 transition-all duration-300 ${dbStatus.phase === 'FAILED' ? 'bg-rose-50 border-rose-200 text-rose-900' : 'bg-amber-50 border-amber-200 text-amber-900'}`}>
-          {dbStatus.phase === 'FAILED' ? <AlertTriangle className="w-5 h-5 animate-bounce text-rose-600 shrink-0"/> : <Loader2 className="w-5 h-5 animate-spin text-amber-600 shrink-0" />}
-          <div className="flex-1 text-sm">
-            <span className="font-black block uppercase tracking-wider text-[11px] opacity-70">Sistem Monitoring Latar Belakang ({dbStatus.phase})</span>
-            <p className="font-medium mt-0.5">{dbStatus.message}</p>
-          </div>
-        </div>
-      )}
-
-      {/* UI BANNER AI DESIGNER & CONTROLLER */}
-      <div className="flex flex-col p-6 bg-indigo-50/70 rounded-3xl ring-1 ring-indigo-100/80 border border-indigo-200/40 gap-5 relative overflow-hidden shadow-sm">
-        <div className="absolute top-0 left-0 w-1.5 h-full bg-indigo-500"></div>
-        
-        <div className="flex justify-between items-start gap-4 mb-2">
+      {/* HEADER VISUAL EDITOR */}
+      <div className="flex justify-between items-center bg-white p-4 rounded-3xl ring-1 ring-slate-200 shadow-sm mb-6">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 bg-slate-100 text-slate-600 rounded-xl"><Bot className="w-5 h-5"/></div>
           <div>
-            <h4 className="font-black text-indigo-900 flex items-center gap-2 text-lg">
-              <Bot className="w-6 h-6 text-indigo-600" /> AI Form Builder Enterprise
-            </h4>
-            <p className="text-xs text-indigo-700/80 font-medium mt-1 max-w-xl leading-relaxed">
-              Didukung Agen Riset Internasional. Memformulasikan pertanyaan, matriks nilai, dan validasi dokumen secara dinamis berdasarkan instruksi Anda.
-            </p>
+            <h4 className="font-black text-slate-800 text-sm">Visual Editor Formulir</h4>
+            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Hasil Generasi Otak AI</p>
           </div>
-          <Button onClick={handleManualSave} disabled={isGenerating} size="sm" variant="outline" className="bg-white hover:bg-slate-50 border-slate-200 font-bold hidden sm:flex gap-2 rounded-xl h-10 shadow-sm">
-            <Save className="w-4 h-4 text-slate-500" /> Simpan Form
-          </Button>
         </div>
-
-        {/* --- DYNAMIC INSTRUCTION AREA --- */}
-        <div className="w-full space-y-4">
-          <div className="flex justify-between items-end mb-2">
-            <label className="text-[10px] font-black text-indigo-950 uppercase tracking-wider">
-              Komposisi Tipe Pertanyaan (Checklist AI):
-            </label>
-          </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 mb-4">
-            {QUESTION_TYPE_OPTIONS.map((opt) => {
-              const isChecked = (template.preferredQuestionTypes || []).includes(opt.id);
-              return (
-                <label 
-                  key={opt.id} 
-                  className={`flex flex-col items-center justify-center p-3 rounded-xl border-2 cursor-pointer transition-all duration-200 text-center ${
-                    isChecked 
-                      ? 'border-indigo-600 bg-indigo-50 text-indigo-700 shadow-sm' 
-                      : 'border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:border-slate-300'
-                  }`}
-                >
-                  <input 
-                    type="checkbox" 
-                    className="sr-only" 
-                    checked={isChecked}
-                    onChange={() => toggleQuestionType(opt.id)}
-                  />
-                  <span className="text-xl mb-1">{opt.icon}</span>
-                  <span className="text-[10px] font-bold leading-tight">{opt.label}</span>
-                </label>
-              );
-            })}
-          </div>
-
-          <label className="text-[10px] font-black text-indigo-950 uppercase tracking-wider block mt-4">
-            Instruksi Khusus Pembentukan Kuesioner (Opsional):
-          </label>
-          <Textarea
-            value={template.formBuilderInstruction || ''}
-            onChange={e => onChange({ ...template, formBuilderInstruction: e.target.value })}
-            placeholder="Ketik instruksi tambahan untuk AI. Contoh: 'Wajibkan semua isian berupa angka menggunakan format Rupiah. Jika peserta memilih PT, gunakan fitur showIf untuk menanyakan Akta Notaris...'"
-            className="min-h-[100px] bg-white border-indigo-200 text-sm font-medium leading-relaxed rounded-xl shadow-sm"
-          />
-        </div>
-
-        <div className="flex w-full pt-2">
-          <Button
-            onClick={handleGenerateFormByAI}
-            disabled={isGenerating}
-            className={`w-full font-bold h-12 px-6 rounded-xl shadow-md transition-all text-sm duration-300 ${isGenerating ? 'bg-indigo-400 cursor-wait text-white' : 'bg-indigo-600 hover:bg-indigo-700 text-white hover:-translate-y-0.5'}`}
-          >
-            {isGenerating ? (
-              <span className="flex items-center gap-2"><Loader2 className="w-5 h-5 animate-spin" /> Sedang Diproses AI...</span>
-            ) : (
-              <span className="flex items-center gap-2"><Sparkles className="w-5 h-5" /> Mulai Generate Form</span>
-            )}
-          </Button>
-        </div>
+        <Button onClick={handleManualSave} variant="outline" className="bg-slate-900 text-white hover:bg-slate-800 font-bold hidden sm:flex gap-2 rounded-xl h-10 shadow-sm">
+          <Save className="w-4 h-4" /> Simpan Form
+        </Button>
       </div>
 
       {/* RENDER FORM STEPS & FIELD CONFIGURATOR */}
       {(!template.steps || template.steps.length === 0) ? (
         <div className="text-center p-12 bg-white rounded-3xl ring-1 ring-slate-200 border border-dashed border-slate-300">
-          <p className="text-slate-400 font-bold text-sm">Belum ada langkah formulir yang dibuat. Klik tombol di atas untuk rancangan instan AI.</p>
+          <p className="text-slate-400 font-bold text-sm">Belum ada langkah formulir yang dibuat. Silakan kembali ke tab <b className="text-slate-700">Otak AI</b> dan tekan tombol <b>Generate</b>.</p>
         </div>
       ) : (
         template.steps.map((step, sIdx) => {
           const isExpanded = expandedSteps.includes(sIdx);
-          
           return (
             <div key={`step-${sIdx}`} className="bg-white rounded-[2rem] ring-1 ring-slate-200/80 shadow-sm overflow-hidden transition-all duration-300">
               <div 
@@ -371,12 +194,10 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                   {isExpanded ? <ChevronUp className="w-5 h-5 text-slate-400" /> : <ChevronDown className="w-5 h-5 text-slate-400" />}
                 </div>
               </div>
-
               {isExpanded && (
                 <div className="p-4 sm:p-6 bg-slate-50/40 space-y-6 border-t border-slate-100">
                   {step.fields?.map((field, fIdx) => {
                     const isPrimaryIdentity = ['namaUsaha', 'namaPengisi', 'emailAktif', 'nomorTelepon'].includes(field.id);
-                    
                     return (
                       <div key={`field-${sIdx}-${fIdx}`} className={`p-4 sm:p-5 rounded-2xl ring-1 shadow-sm flex flex-col md:flex-row gap-5 relative transition-all ${isPrimaryIdentity ? 'bg-indigo-50/20 ring-indigo-100/60' : 'bg-white ring-slate-200/70 hover:ring-indigo-200'}`}>
                         <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -384,7 +205,6 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Label Pertanyaan</label>
                             <Input value={field.label} onChange={e => updateField(sIdx, fIdx, 'label', e.target.value)} className="bg-white border-slate-200 h-10 rounded-xl font-bold text-slate-800 text-sm" />
                           </div>
-                          
                           <div className="space-y-1">
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tipe Input</label>
                             <select value={field.type} disabled={isPrimaryIdentity} onChange={e => updateField(sIdx, fIdx, 'type', e.target.value as FieldType)} className="w-full border border-slate-200 h-10 rounded-xl text-xs px-3 bg-white text-slate-800 font-medium">
@@ -398,7 +218,6 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                               <option value="file">Upload Dokumen</option>
                             </select>
                           </div>
-
                           <div className="space-y-1">
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex justify-between items-center">
                               <span>Key Database (ID)</span>
@@ -406,7 +225,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                             </label>
                             <Input value={field.id} disabled={isPrimaryIdentity} onChange={e => updateField(sIdx, fIdx, 'id', e.target.value.replace(/[^a-zA-Z0-9_]/g, ''))} className="bg-white border-slate-200 text-indigo-700 h-10 rounded-xl text-xs font-mono" />
                           </div>
-
+                          
                           <div className="flex items-center gap-5 pt-1 md:col-span-2">
                             <label className="flex items-center gap-2 text-xs font-bold text-slate-600 cursor-pointer select-none">
                               <input type="checkbox" checked={field.required} disabled={isPrimaryIdentity} onChange={e => updateField(sIdx, fIdx, 'required', e.target.checked)} className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
@@ -471,7 +290,6 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                                   const isObj = typeof opt === 'object' && opt !== null;
                                   const optLabel = isObj ? opt.label : String(opt);
                                   const optWeight = isObj ? opt.weight : 0;
-
                                   return (
                                     <div key={optIdx} className="flex items-center gap-2 bg-white p-2 border border-slate-200 rounded-lg shadow-sm">
                                       <Input 
@@ -532,8 +350,8 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
           );
         })
       )}
-
-      <Button onClick={addStep} className="w-full bg-slate-900 text-white hover:bg-slate-800 h-12 font-bold text-sm rounded-xl shadow-md mt-4"><Plus className="h-4 w-4 mr-1.5" /> Tambah Seksi Langkah Baru</Button>
+      
+      <Button onClick={addStep} className="w-full bg-slate-200 text-slate-700 hover:bg-slate-300 h-12 font-bold text-sm rounded-xl mt-4 border-dashed border-2 border-slate-300"><Plus className="h-4 w-4 mr-1.5" /> Tambah Seksi Langkah Baru (Manual)</Button>
 
       {/* DIALOG MODAL CONFIRM DELETE STEP */}
       {stepToDelete !== null && (

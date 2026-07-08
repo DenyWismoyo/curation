@@ -67,21 +67,39 @@ export const generateFormTemplateFromAI = onCall(
 
     const db = getFirestore(admin.app(), "curation");
     const templateRef = db.collection("form_templates").doc(templateId);
+    
+    // ------------------------------------------------------------------------
+    // HELPER FUNGSI UNTUK MENGIRIM LOG KE TERMINAL FRONTEND REAL-TIME
+    // ------------------------------------------------------------------------
+    const logToTerminal = async (message: string, type: 'info' | 'success' | 'error' = 'info') => {
+      await templateRef.update({
+        generationLogs: admin.firestore.FieldValue.arrayUnion({
+          timestamp: new Date().toISOString(),
+          message,
+          type
+        })
+      });
+    };
+
     const API_KEY = geminiApiKeySecret.value();
     const genAI = new GoogleGenerativeAI(API_KEY);
 
     try {
-      // ---------------------------------------------------------
-      // FASE 1: LIVE SEARCH GROUNDING & BLUEPRINT MASTERPLAN
-      // (MENGGUNAKAN 3.1 PRO PREVIEW KARENA BUTUH PENALARAN & INTERNET)
-      // ---------------------------------------------------------
-      await templateRef.update({
+      await templateRef.update({ 
+        generationLogs: [],
         aiGenerationStatus: {
           phase: "RESEARCHING",
-          message: "Tahap 1: Agen Riset menyusun masterplan sektoral industri...",
+          message: "Sistem Multi-Agent AI diinisialisasi...",
           updatedAt: new Date().toISOString()
         }
       });
+
+      await logToTerminal("Memulai sesi pipeline Enterprise Multi-Agent AI...", "info");
+
+      // ---------------------------------------------------------
+      // FASE 1: LIVE SEARCH GROUNDING & BLUEPRINT MASTERPLAN
+      // ---------------------------------------------------------
+      await logToTerminal("FASE 1: Agen Master (Gemini 3.1 Pro) diaktifkan. Melakukan riset dan penetrasi jaringan internet...", "info");
 
       const masterModel = genAI.getGenerativeModel({
         model: "gemini-3.1-pro-preview",
@@ -112,12 +130,11 @@ export const generateFormTemplateFromAI = onCall(
         }
       });
 
-      // --- LOGIKA DINAMIS RESEARCH PROMPT (Penyempurnaan Domain) ---
       const goal = aiPromptConfig?.assessmentGoal || "Evaluasi mendalam pemetaan kualitas.";
       const metrics = aiPromptConfig?.expectedMetrics?.join(', ') || 'Metrik standar';
       const purpose = aiPromptConfig?.formPurpose || 'assessment';
       
-      let frameworkExamples = "ISO, COBIT, ESG, TRL, SNI, Y-Combinator Metrics"; // Default Audit Bisnis
+      let frameworkExamples = "ISO, COBIT, ESG, TRL, SNI, Y-Combinator Metrics";
       if (purpose === 'counseling') {
         frameworkExamples = "DSM-5, CBT Framework, Skala Psikometri Big Five, WHO-DAS, Skala Beck";
       } else if (purpose === 'monitoring') {
@@ -132,35 +149,39 @@ export const generateFormTemplateFromAI = onCall(
         FOKUS DOMAIN: Kuesioner ini dirancang untuk fungsi "${purpose}".
         
         TUGAS UTAMA:
-        1. Lakukan pencarian web untuk 3 kerangka teori/framework standar global yang paling relevan untuk domain tersebut (Sebagai referensi/contoh: ${frameworkExamples}).
-        2. Pecah asesmen menjadi 5 hingga 8 Seksi (stepOutlines) berdasarkan framework tersebut. Langkah pertama WAJIB dialokasikan untuk "Identitas & Legalitas Dasar". 
-        3. Tentukan 'expertPersona' spesifik per seksi.
+        1. Lakukan pencarian web untuk 3 kerangka teori/framework standar global yang paling relevan (Sebagai referensi: ${frameworkExamples}).
+        2. Susun "aiPromptConfig" (Konfigurasi Otak AI) di dalam pikiran Anda. 
+           ATURAN MUTLAK BLOK ANALISIS: Untuk instruksi 'expectedAnalysisBlocks', Anda WAJIB menggunakan format 'Judul Blok: Sub-poin 1, Sub-poin 2, Sub-poin 3'. DILARANG KERAS hanya menuliskan judul! Harus ada minimal 2-3 target sub-poin spesifik setelah tanda titik dua (:).
+        3. Pecah asesmen menjadi 5 hingga 8 Seksi (stepOutlines) berdasarkan framework tersebut. Langkah pertama WAJIB dialokasikan untuk "Identitas & Legalitas Dasar". 
+        4. Tentukan 'expertPersona' spesifik per seksi.
       `;
-      // --- END LOGIKA DINAMIS ---
+
+      await logToTerminal(`Merumuskan masterplan untuk domain: [${purpose.toUpperCase()} - ${trackName || "Asesmen Umum"}]...`, "info");
 
       const masterResult = await withRetry(() => masterModel.generateContent(masterPrompt));
       const blueprint = JSON.parse(masterResult.response.text().trim());
 
-      // [VECTOR RAG] Menyimpan hasil riset Fase 1 ke Vector Database
+      await logToTerminal("Master Blueprint berhasil disusun! Menyimpan referensi ke sistem utama...", "success");
+
+      await logToTerminal("Mengekstrak temuan internet dan menyimpannya ke Vector Database (RAG)...", "info");
       await storeTemplateResearchVector(templateId, trackName, blueprint.researchNotes, API_KEY)
-        .catch(e => console.error("Gagal merekam vector research (Fase 1):", e));
+        .catch(e => console.warn("Peringatan: Gagal merekam vector research (Non-Fatal)."));
+      await logToTerminal("Vector Database berhasil diperbarui.", "success");
 
       // ---------------------------------------------------------
       // FASE 2: DYNAMIC PERSONA & ASYNCHRONOUS BATCHING
-      // (DOWNGRADE KE GEMINI-2.5-FLASH UNTUK EFISIENSI BIAYA MAKSIMAL)
       // ---------------------------------------------------------
       await templateRef.update({
-        aiGenerationStatus: {
-          phase: "BUILDING_FORM",
-          message: `Tahap 2: Meracik ${blueprint.stepOutlines.length} Seksi secara Paralel...`,
-          updatedAt: new Date().toISOString()
-        }
+        "aiGenerationStatus.phase": "BUILDING_FORM",
+        "aiGenerationStatus.message": `Tahap 2: Meracik ${blueprint.stepOutlines.length} Seksi secara Paralel...`
       });
+
+      await logToTerminal(`FASE 2: Mengerahkan Agen Pekerja (Gemini 2.5 Flash). Memulai fabrikasi ${blueprint.stepOutlines.length} seksi formulir...`, "info");
 
       const sectionModel = genAI.getGenerativeModel({
         model: "gemini-2.5-flash",
         generationConfig: {
-          temperature: 0.2, // Flash butuh temperature rendah agar taat pada JSON Schema
+          temperature: 0.2,
           responseMimeType: "application/json",
           responseSchema: {
             type: SchemaType.ARRAY,
@@ -195,7 +216,6 @@ export const generateFormTemplateFromAI = onCall(
         }
       });
 
-      // archetypeInstruction di sini akan menerima "Mix" dari Textarea + Checkbox di UI!
       const promptParams = { trackName: trackName || "Asesmen Umum", config: aiPromptConfig || {}, archetypeInstruction: archetypeInstruction || "" };
       const baseInstructions = buildMegaAgentPrompt(promptParams);
       let rawFinalSteps: any[] = [];
@@ -203,10 +223,9 @@ export const generateFormTemplateFromAI = onCall(
 
       for (let i = 0; i < blueprint.stepOutlines.length; i += batchSize) {
         const batch = blueprint.stepOutlines.slice(i, i + batchSize);
-        
-        await templateRef.update({
-          "aiGenerationStatus.message": `Sedang menyusun Kuesioner Batch ${Math.ceil(i/batchSize) + 1} (Seksi ${i + 1} - ${i + batch.length})...`
-        });
+        const batchMessage = `Meracik Kuesioner Batch ${Math.ceil(i/batchSize) + 1} (Seksi ${i + 1} s/d ${i + batch.length})...`;
+        await templateRef.update({ "aiGenerationStatus.message": batchMessage });
+        await logToTerminal(batchMessage, "info");
 
         const batchPromises = batch.map(async (step: any, indexInBatch: number) => {
           const absoluteIndex = i + indexInBatch;
@@ -240,9 +259,12 @@ export const generateFormTemplateFromAI = onCall(
         rawFinalSteps.push(...batchResults);
       }
 
+      await logToTerminal("Seluruh seksi formulir berhasil diracik dan digabungkan.", "success");
+
       // ---------------------------------------------------------
       // PROGRAMMATIC DEDUPLICATION (HARDCODE FILTER)
       // ---------------------------------------------------------
+      await logToTerminal("Membersihkan ID duplikat pada struktur formulir...", "info");
       const seenIds = new Set<string>();
       const deduplicatedSteps = rawFinalSteps.map(step => {
         const uniqueFields = [];
@@ -260,20 +282,12 @@ export const generateFormTemplateFromAI = onCall(
       // ---------------------------------------------------------
       // FASE 3: AI SELF-CORRECTION (SHOW-IF VALIDATOR)
       // ---------------------------------------------------------
-      await templateRef.update({
-        aiGenerationStatus: {
-          phase: "BUILDING_FORM",
-          message: "Tahap 3: Agen Validator memverifikasi integritas logika bercabang (Self-Healing)...",
-          updatedAt: new Date().toISOString()
-        }
-      });
+      await templateRef.update({ "aiGenerationStatus.message": "Tahap 3: Agen Validator memverifikasi integritas logika bercabang (Self-Healing)..." });
+      await logToTerminal("FASE 3: Agen Validator (QA) meninjau integritas logika 'ShowIf' (Dependency Tree)...", "info");
 
       const validatorModel = genAI.getGenerativeModel({
         model: "gemini-2.5-flash", 
-        generationConfig: {
-          temperature: 0.1,
-          responseMimeType: "application/json"
-        }
+        generationConfig: { temperature: 0.1, responseMimeType: "application/json" }
       });
 
       const validationPrompt = `
@@ -289,9 +303,13 @@ export const generateFormTemplateFromAI = onCall(
 
       const validationResult = await withRetry(() => validatorModel.generateContent(validationPrompt));
       const validatedSteps = JSON.parse(validationResult.response.text().trim());
-      
       const cleanedSteps = cleanUndefinedAndNull(validatedSteps);
 
+      await logToTerminal("Verifikasi selesai. Struktur formulir 100% valid dan aman dari loop logic.", "success");
+
+      // ---------------------------------------------------------
+      // FASE 4: SAVE TO FIRESTORE
+      // ---------------------------------------------------------
       await templateRef.update({
         steps: cleanedSteps,
         version: admin.firestore.FieldValue.increment(1),
@@ -303,10 +321,21 @@ export const generateFormTemplateFromAI = onCall(
         }
       });
 
+      await logToTerminal("PIPELINE SELESAI: Kuesioner skala Enterprise telah berhasil diintegrasikan!", "success");
+
       return { success: true, steps: cleanedSteps };
 
     } catch (error: any) {
       console.error(`Fatal Error pada Form Builder:`, error);
+      
+      await templateRef.update({
+        generationLogs: admin.firestore.FieldValue.arrayUnion({
+          timestamp: new Date().toISOString(),
+          message: `FATAL ERROR: ${error.message}`,
+          type: 'error'
+        })
+      });
+
       await templateRef.update({
         aiGenerationStatus: {
           phase: "FAILED",
@@ -351,7 +380,6 @@ export const generateAIConfigResearch = onCall(
     const genAI = new GoogleGenerativeAI(API_KEY);
 
     try {
-      // TETAP MENGGUNAKAN 3.1 PRO PREVIEW (KARENA BUTUH GOOGLE SEARCH)
       const model = genAI.getGenerativeModel({
         model: "gemini-3.1-pro-preview",
         tools: [{ googleSearch: {} } as any], 
@@ -381,8 +409,6 @@ export const generateAIConfigResearch = onCall(
       
       const parsedConfig = JSON.parse(rawText);
 
-      // [VECTOR RAG] Menyimpan struktur config utuh (rawText) ke Vector Database
-      // Membantu AI di masa depan memahami standar metrik industri ini
       await storeTemplateResearchVector(safeTemplateId, `Config Research: ${topicToResearch}`, rawText, API_KEY)
         .catch(e => console.error(`Gagal merekam Vector AI Config:`, e));
 

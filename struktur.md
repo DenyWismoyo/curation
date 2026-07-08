@@ -7,8 +7,6 @@ curation/ (Root Directory)
 │   │   │   └── promptTemplate.ts
 │   │   ├── templates
 │   │   │   └── UniversalPDFDocument.tsx
-│   │   ├── ultimatepromt
-│   │   │   └── formBuilderService 3-1.md
 │   │   ├── documentGenerator.ts
 │   │   ├── emailService.ts
 │   │   ├── formBuilderService.ts
