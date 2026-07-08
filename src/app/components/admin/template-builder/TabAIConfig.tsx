@@ -132,7 +132,8 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
         templateId: template.id,
         trackName: template.trackName || "Evaluasi Umum",
         customTopic: template.trackName,
-        archetypeInstruction: finalInstruction 
+        archetypeInstruction: finalInstruction,
+        aiPromptConfig: template.aiPromptConfig // ✅ FIX: MENGIRIMKAN KONFIGURASI KE BACKEND
       }).catch((asyncError) => {
         console.error("Error latar belakang Cloud Function:", asyncError);
         setIsGenerating(false);
