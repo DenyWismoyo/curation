@@ -499,7 +499,7 @@ export function UniversalAssessmentView({
         </div>
       )}
 
-      {aiResult?.metrics && aiResult.metrics.length > 0 && (
+{aiResult?.metrics && aiResult.metrics.length > 0 && (
         <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-3xl ring-1 ring-slate-200 shadow-sm w-full">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0"><Activity className="h-5 w-5"/></div>
@@ -510,7 +510,13 @@ export function UniversalAssessmentView({
           </div>
           <div className="flex flex-col lg:flex-row gap-10 xl:gap-16 items-center">
             <div className="w-full lg:w-2/5 flex flex-col items-center shrink-0">
-              <div className="w-full h-[320px] sm:h-[400px] relative">
+              
+              {/* PENYESUAIAN KETINGGIAN DINAMIS: Makin banyak data, radar chart makin melebar (mencegah teks tertumpuk) */}
+              <div className={`w-full relative ${
+                radarData.length > 12 ? 'h-[550px] sm:h-[650px]' : 
+                radarData.length > 7  ? 'h-[420px] sm:h-[500px]' : 
+                'h-[320px] sm:h-[400px]'
+              }`}>
                 <ResponsiveContainer width="100%" height="100%">
                   <RadarChart cx="50%" cy="50%" outerRadius="65%" data={radarData}>
                     <PolarGrid stroke="#e2e8f0" strokeDasharray="3 3" />

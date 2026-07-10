@@ -151,6 +151,12 @@ export const generateFormTemplateFromAI = onCall(
         ? JSON.stringify(aiPromptConfig, null, 2) 
         : "Belum ada konfigurasi awal, rumuskan dari nol.";
 
+// AMBIL NILAI KUSTOM VOLUME DARI FRONTEND (Fallback ke angka default)
+      const targetMetricCount = aiPromptConfig?.targetMetricCount || 8;
+      const targetBlockCount = aiPromptConfig?.targetBlockCount || 6;
+      const targetTierCount = aiPromptConfig?.targetTierCount || 4;
+      const targetRecCount = aiPromptConfig?.targetRecommendationCount || 5;
+
       const masterPrompt = `
         Anda adalah Chief Research Officer tingkat Enterprise. Topik program/asesmen: "${trackName || "Asesmen Umum"}".
         
@@ -161,14 +167,19 @@ export const generateFormTemplateFromAI = onCall(
         ${currentConfigStr}
         
         Tugas: Lakukan web search untuk standar industri terbaik, lalu SEMPURNAKAN draf tersebut ke dalam properti "aiPromptConfig".
+        
+        ATURAN KETAT VOLUME OUTPUT & SKALABILITAS (WAJIB DIPATUHI SECARA PRESISI):
+        - expectedMetrics: Pertahankan data yang ada, lalu wajib kembangkan/tambahkan hingga jumlahnya TEPAT ${targetMetricCount} metrik evaluasi komprehensif.
+        - expectedAnalysisBlocks: Pertahankan blok yang ada, lalu wajib kembangkan/ciptakan sisanya hingga mencapai TEPAT ${targetBlockCount} kartu blok analisis.
+        - customReadinessTiers: Rancang dan buatkan TEPAT ${targetTierCount} tingkatan (tiers) status kematangan.
+        - expectedRecommendations: Pertahankan data yang ada, lalu wajib kembangkan hingga mencapai TEPAT ${targetRecCount} fokus area rekomendasi strategis.
+        
         - ANALISIS AUDIENS: Tentukan apakah targetnya PERUSAHAAN (B2B) atau INDIVIDU (B2C).
-        - Jika Perusahaan: Adopsi ISO, ESG, COBIT, dll. Jika Individu (psikologi, gaya hidup): Adopsi DSM-5, Skala Psikometri, atau wellness framework (ABAIKAN ESG/ISO).
-        - ATURAN MUTLAK BLOK ANALISIS (expectedAnalysisBlocks): WAJIB format 'Judul Blok: Sub-poin 1, Sub-poin 2'. DILARANG mengosongkan deskripsi setelah titik dua (:).
+        - Jika Perusahaan: Adopsi ISO, ESG, COBIT, dll. Jika Individu: Adopsi DSM-5, dll.
+        - ATURAN MUTLAK BLOK ANALISIS: WAJIB format 'Judul Blok: Sub-poin 1, Sub-poin 2'. DILARANG mengosongkan deskripsi setelah titik dua (:).
         
         LANGKAH 2: PEMBUATAN KERANGKA FORMULIR (stepOutlines)
-        Berdasarkan "aiPromptConfig" yang BARU SAJA Anda sempurnakan, susun 5 hingga 8 Seksi (stepOutlines) kuesioner yang 100% sejajar dengan metrik tersebut.
-        - ATURAN SEKSI PERTAMA: WAJIB untuk "Profil & Identitas Dasar". JIKA targetnya INDIVIDU, DILARANG meminta NIB/Legalitas Badan Hukum.
-        - Tentukan 'expertPersona' spesifik per seksi.
+        Berdasarkan "aiPromptConfig" yang BARU SAJA Anda sempurnakan, susun 5 hingga 8 Seksi kuesioner yang 100% sejajar dengan metrik tersebut.
       `;
 
       await logToTerminal(`Merumuskan penyempurnaan Otak AI & Masterplan untuk domain: [${trackName || "Asesmen Umum"}]...`, "info");

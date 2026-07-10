@@ -55,7 +55,6 @@ export interface AIResult {
     timeframe: string;
     task: string;
   }[];
-  // Menyimpan purpose & label di level hasil untuk dibaca UniversalAssessmentView
   formPurpose?: FormDomainPurpose;
   customUiLabels?: CustomUiLabels;
 }
@@ -115,6 +114,12 @@ export interface AiPromptConfig {
   mediaAnalysisFocus?: 'pitch-delivery' | 'ui-ux-design' | 'product-demo';
   riskFramework?: string;
 
+  // FITUR BARU: Variabel kontrol skala/volume output AI
+  targetMetricCount?: number;
+  targetBlockCount?: number;
+  targetTierCount?: number;
+  targetRecommendationCount?: number;
+
   customReadinessTiers?: string[];
   expectedMetrics: string[];
   expectedAnalysisBlocks?: string[]; 
@@ -126,7 +131,6 @@ export interface AiPromptConfig {
   customScoringRubric?: string; 
   researchSourcesCited?: string[];
   
-  // Fitur Multipurpose Engine
   formPurpose?: FormDomainPurpose; 
   customUiLabels?: CustomUiLabels;
 }

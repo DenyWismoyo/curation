@@ -32,7 +32,6 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
   const [presetSearchTerm, setPresetSearchTerm] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // REALTIME SNAPSHOT LISTENER
   useEffect(() => {
     if (!template.id) return;
     const db = getFirestore();
@@ -95,11 +94,10 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
     }
   };
 
-  // --- UNIFIED GENERATE HANDLER ---
   const handleGenerateUnified = async () => {
     const auth = getAuth();
     if (auth.currentUser?.email?.toLowerCase() !== 'deny.wismoyo@gmail.com') {
-      alert("AKSES DITOLAK: Fitur Auto-Research AI ini dikunci eksklusif hanya untuk DENY.WISMOYO@GMAIL.COM.");
+      alert("AKSES DITOLAK: Fitur Auto-Research AI ini dikunci eksklusif hanya untuk Administrator Utama.");
       return;
     }
 
@@ -133,7 +131,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
         trackName: template.trackName || "Evaluasi Umum",
         customTopic: template.trackName,
         archetypeInstruction: finalInstruction,
-        aiPromptConfig: template.aiPromptConfig // ✅ FIX: MENGIRIMKAN KONFIGURASI KE BACKEND
+        aiPromptConfig: template.aiPromptConfig 
       }).catch((asyncError) => {
         console.error("Error latar belakang Cloud Function:", asyncError);
         setIsGenerating(false);
@@ -195,7 +193,6 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
 
   return (
     <div className="bg-white p-6 md:p-8 rounded-3xl ring-1 ring-slate-200 shadow-sm space-y-8">
-       {/* CARD RUNTIME MONITORING STATUS MULTI-AGENT */}
        {dbStatus && (dbStatus.phase === 'RESEARCHING' || dbStatus.phase === 'BUILDING_FORM' || dbStatus.phase === 'FAILED') && (
         <div className={`p-4 rounded-2xl border flex items-center gap-4 transition-all duration-300 ${dbStatus.phase === 'FAILED' ? 'bg-rose-50 border-rose-200 text-rose-900' : 'bg-indigo-50 border-indigo-200 text-indigo-900'}`}>
           {dbStatus.phase === 'FAILED' ? <AlertTriangle className="w-5 h-5 animate-bounce text-rose-600 shrink-0"/> : <Loader2 className="w-5 h-5 animate-spin text-indigo-600 shrink-0" />}
@@ -206,7 +203,6 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
         </div>
       )}
 
-      {/* HEADER & PRESET BROWSER */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-6 border-b border-slate-100">
         <div className="flex items-start gap-4">
           <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl shrink-0"><Sparkles className="w-6 h-6"/></div>
@@ -245,7 +241,6 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
         </div>
       </div>
 
-      {/* DYNAMIC PURPOSE ENGINE CONFIGURATION */}
       <div className="p-6 bg-slate-50 border border-slate-200 rounded-3xl space-y-4">
         <h4 className="font-black text-slate-900 flex items-center gap-2 text-md"><Settings className="w-5 h-5 text-indigo-600" /> Pengaturan Modul Dashboard</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -283,7 +278,6 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
         </div>
       </div>
 
-      {/* GENERATOR COMMAND CENTER (NEW UNIFIED SECTION) */}
       <div className="p-6 md:p-8 bg-gradient-to-br from-indigo-900 to-slate-900 rounded-[2rem] shadow-xl relative overflow-hidden text-white border border-indigo-800">
         <div className="absolute top-0 right-0 opacity-10 pointer-events-none transform translate-x-10 -translate-y-10"><Bot size={200} /></div>
         
@@ -291,7 +285,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
           <div>
             <h4 className="font-black text-xl sm:text-2xl flex items-center gap-2 mb-2"><Sparkles className="w-6 h-6 text-indigo-400"/> Eksekusi Generasi End-to-End</h4>
             <p className="text-sm text-indigo-200 font-medium max-w-2xl leading-relaxed">
-              Tekan tombol di bawah untuk meminta AI (Gemini 3.1 Pro + Web Search) menyempurnakan metrik Anda, membuat rubrik, dan meracik seluruh kuesioner ke dalam Tab Form Builder secara otonom.
+              Tekan tombol di bawah untuk meminta AI menyempurnakan metrik Anda, meracik volume kuesioner, dan membangun seluruh Seksi Form secara otonom.
             </p>
           </div>
 
@@ -329,8 +323,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
         </div>
       </div>
 
-      {/* PARAMETER DASAR */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-4">
         <div className="space-y-6">
           <h4 className="font-black text-slate-900 border-l-4 border-indigo-600 pl-3">Instruksi Dasar & Karakter AI</h4>
           <div className="space-y-2">
@@ -342,6 +335,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
             <Textarea value={template.aiPromptConfig?.assessmentGoal || ''} onChange={e => updateConfig('assessmentGoal', e.target.value)} placeholder="Jelaskan secara mendalam fokus utama pengolahan data oleh AI..." className="rounded-xl bg-slate-50 border-slate-200 min-h-[100px] font-medium text-sm leading-relaxed" />
           </div>
         </div>
+        
         <div className="space-y-6">
           <h4 className="font-black text-slate-900 border-l-4 border-emerald-600 pl-3">Sifat & Perilaku Penilaian</h4>
           <div className="space-y-2">
@@ -361,14 +355,36 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
             </select>
           </div>
         </div>
+
+        {/* KOLOM BARU KHUSUS KONTROL JUMLAH / VOLUME KEPADATAN */}
+        <div className="space-y-6">
+          <h4 className="font-black text-slate-900 border-l-4 border-blue-500 pl-3">Skala Kepadatan Output</h4>
+          <div className="space-y-3 p-4 bg-blue-50/50 rounded-2xl ring-1 ring-blue-100">
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold text-blue-900 uppercase tracking-widest">Target Metrik Radar</label>
+              <Input type="number" min={3} max={20} value={template.aiPromptConfig?.targetMetricCount || 8} onChange={e => updateConfig('targetMetricCount', parseInt(e.target.value))} className="bg-white border-blue-200 font-bold" />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold text-blue-900 uppercase tracking-widest">Target Blok Analisis</label>
+              <Input type="number" min={2} max={15} value={template.aiPromptConfig?.targetBlockCount || 6} onChange={e => updateConfig('targetBlockCount', parseInt(e.target.value))} className="bg-white border-blue-200 font-bold" />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold text-blue-900 uppercase tracking-widest">Jumlah Tingkatan (Tiers)</label>
+              <Input type="number" min={2} max={10} value={template.aiPromptConfig?.targetTierCount || 4} onChange={e => updateConfig('targetTierCount', parseInt(e.target.value))} className="bg-white border-blue-200 font-bold" />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold text-blue-900 uppercase tracking-widest">Target Rekomendasi</label>
+              <Input type="number" min={2} max={15} value={template.aiPromptConfig?.targetRecommendationCount || 5} onChange={e => updateConfig('targetRecommendationCount', parseInt(e.target.value))} className="bg-white border-blue-200 font-bold" />
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* ARRAYS & ADVANCED BLOCKS */}
       <div className="space-y-4 p-6 bg-slate-50/80 rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden">
         <div className="absolute top-0 left-0 w-1.5 h-full bg-indigo-500"></div>
         <div className="mb-4">
           <h4 className="font-black text-slate-900 text-lg uppercase tracking-tight">Manajemen Blok Analisis Laporan</h4>
-          <p className="text-xs text-slate-500 font-medium mt-1">Setiap blok akan menjadi kartu analisis spesifik terstruktur di halaman hasil dashboard.</p>
+          <p className="text-xs text-slate-500 font-medium mt-1">Sistem AI akan mengekspansi list ini untuk memenuhi Target Jumlah Blok Analisis yang Anda tentukan di atas.</p>
         </div>
         <div className="space-y-4">
           {(template.aiPromptConfig?.expectedAnalysisBlocks || []).map((item, idx) => {
@@ -390,7 +406,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
             )
           })}
           <Button type="button" variant="outline" onClick={() => addArrayItem('expectedAnalysisBlocks', 'Judul Blok Baru: Analisis sub poin pertama')} className="w-full border-dashed border-2 border-indigo-200 text-indigo-700 hover:bg-indigo-50 font-bold rounded-2xl h-12 shadow-sm">
-            <Plus className="w-5 h-5 mr-2"/> Tambah Kartu Blok Analisis
+            <Plus className="w-5 h-5 mr-2"/> Tambah Kartu Blok Secara Manual
           </Button>
         </div>
       </div>
@@ -413,7 +429,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
                   ))}
                 </div>
               </div>
-              <Button type="button" variant="outline" onClick={() => addArrayItem(config.key, '')} className="w-full mt-3 border-dashed border-2 border-slate-300 text-slate-500 hover:bg-slate-100 rounded-xl h-10 font-bold text-xs"><Plus className="h-4 w-4" /> Tambah {config.defaultItem}</Button>
+              <Button type="button" variant="outline" onClick={() => addArrayItem(config.key, '')} className="w-full mt-3 border-dashed border-2 border-slate-300 text-slate-500 hover:bg-slate-100 rounded-xl h-10 font-bold text-xs"><Plus className="h-4 w-4" /> Tambah Manual</Button>
             </div>
           ))}
           <div className="space-y-3 p-5 bg-slate-50/80 rounded-2xl border border-slate-200 md:col-span-2">
@@ -422,14 +438,10 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
           </div>
       </div>
 
-      {/* ========================================================================= */}
-      {/* 🚀 BAGIAN ADVANCED PROMPTING YANG DITAMBAHKAN KEMBALI 🚀 */}
-      {/* ========================================================================= */}
       <div className="md:col-span-2 space-y-6 pt-8 border-t border-slate-100">
         <div className="flex flex-col mb-4">
           <h4 className="font-black text-slate-900 border-l-4 border-rose-500 pl-3 text-lg">Advanced Prompting (Ultra-Kustomisasi Aturan)</h4>
         </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2 p-6 bg-amber-50/40 rounded-3xl border border-amber-100 shadow-sm md:col-span-2">
             <label className="text-[12px] font-black text-amber-900 uppercase tracking-widest block mb-1">Custom Scoring Rubric (Panduan Kuantifikasi Angka)</label>
@@ -440,7 +452,6 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
               className="rounded-2xl bg-white border-amber-200 min-h-[100px] text-sm font-medium focus-visible:ring-amber-500" 
             />
           </div>
-
           <div className="space-y-2 p-6 bg-indigo-50/40 rounded-3xl border border-indigo-100 shadow-sm md:col-span-2">
             <label className="text-[12px] font-black text-indigo-900 uppercase tracking-widest block mb-1">Custom System Rules & Aturan If-Then</label>
             <Textarea 
@@ -450,7 +461,6 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
               className="rounded-2xl bg-white border-indigo-200 min-h-[120px] text-sm font-medium focus-visible:ring-indigo-500" 
             />
           </div>
-
           <div className="space-y-2 p-6 bg-rose-50/40 rounded-3xl border border-rose-100 shadow-sm">
             <label className="text-[12px] font-black text-rose-900 uppercase tracking-widest block mb-1">Negative Prompts (Pantangan Mutlak AI)</label>
             <Textarea 
@@ -460,7 +470,6 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
               className="rounded-2xl bg-white border-rose-200 min-h-[100px] text-sm font-medium focus-visible:ring-rose-500" 
             />
           </div>
-
           <div className="space-y-2 p-6 bg-emerald-50/40 rounded-3xl border border-emerald-100 shadow-sm">
             <label className="text-[12px] font-black text-emerald-900 uppercase tracking-widest block mb-1">Format Teks & Markdown Output Instructions</label>
             <Textarea 
@@ -472,8 +481,6 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
           </div>
         </div>
       </div>
-      {/* ========================================================================= */}
-
     </div>
   );
 }

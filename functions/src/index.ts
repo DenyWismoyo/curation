@@ -42,7 +42,7 @@ const withRetry = async <T>(fn: () => Promise<T>, retries = 4, delayMs = 3000): 
 };
 
 // ============================================================================
-// CLOUD FUNCTION: ASESMEN AI UTAMA
+// CLOUD FUNCTION: ASESMEN AI UTAMA (MULTI-AGENT ARCHITECTURE)
 // ============================================================================
 export const processCurationAssessment = onCall(
   {
@@ -67,7 +67,6 @@ export const processCurationAssessment = onCall(
     let corporateEntityName = null;
     let allowedDocTemplates: string[] = [];
     const aiPromptConfig = data.aiPromptConfig || {};
-    const aiModelType = data.aiModelType || 'pro';
     const storageFilePaths = data.storageFilePaths || [];
 
     // Validasi Token Organisasi
@@ -114,16 +113,13 @@ export const processCurationAssessment = onCall(
             
             const [metadata] = await bucket.file(filePath).getMetadata();
             
-            // Menggunakan withRetry untuk mencegah 503 saat Upload
             const uploadResult = await withRetry(() => fileManager.uploadFile(tempFilePath, {
               mimeType: metadata.contentType || 'application/pdf',
               displayName: "Dokumen Lampiran"
             }), 4, 3000);
 
-            // Menggunakan withRetry untuk mencegah 503 saat Read Status
             let fileState = await withRetry(() => fileManager.getFile(uploadResult.file.name), 4, 3000);
             
-            // Batas Polling Maksimal agar tidak terjebak Infinite Loop
             let pollingAttempts = 0;
             while (fileState.state === "PROCESSING" && pollingAttempts < 20) {
               await new Promise(r => setTimeout(r, 5000));
@@ -133,15 +129,14 @@ export const processCurationAssessment = onCall(
 
             if (fileState.state === "FAILED" || fileState.state === "PROCESSING") {
               console.warn(`File ${fileName} ditolak oleh Gemini. File diabaikan untuk menjaga stabilitas asesmen.`);
-              continue; // LOMPATI FILE INI, JANGAN MENGHENTIKAN PROGRAM UTAMA
+              continue; 
             }
 
             uploadedGeminiFiles.push(uploadResult.file);
             parts.push({ fileData: { mimeType: uploadResult.file.mimeType, fileUri: uploadResult.file.uri } });
             
           } catch (fileErr: any) {
-            console.warn(`[FAIL-SAFE] Gagal mengunggah file ke Gemini API (503). Menyelamatkan proses evaluasi tanpa berkas ini.`, fileErr);
-            // Tetap berlanjut meskipun file gagal diproses
+            console.warn(`[FAIL-SAFE] Gagal mengunggah file ke Gemini API. Menyelamatkan proses evaluasi tanpa berkas ini.`, fileErr);
           }
         }
       }
@@ -210,102 +205,179 @@ export const processCurationAssessment = onCall(
       
       parts.unshift({ text: mainPromptText });
       
-      const isPro = aiModelType === 'pro';
-      const modelName = isPro ? 'gemini-3.1-pro-preview' : 'gemini-2.5-flash';
-      
-      const systemPrompt = getSystemPrompt(isPro);
+      const systemPrompt = getSystemPrompt(true);
 
-      const unifiedModel = genAI.getGenerativeModel({
-        model: modelName,
+      // ======================================================================
+      // FASE 1: MASTER ASSESSOR (GEMINI 3.1 PRO PREVIEW)
+      // ======================================================================
+      console.log(`[FASE 1] Menjalankan Master Assessor (Gemini 3.1 Pro)...`);
+      
+      const masterModel = genAI.getGenerativeModel({
+        model: "gemini-3.1-pro-preview",
         systemInstruction: systemPrompt,
         generationConfig: {
-          maxOutputTokens: 8192,
+          temperature: 0.2,
+          maxOutputTokens: 4096, 
           responseMimeType: "application/json",
           responseSchema: {
             type: SchemaType.OBJECT,
-            required: ["_internalReasoning", "readinessLevel", "totalScore", "incubationRoute", "executiveSummary", "customAnalysisBlocks", "fileAnalysisInsights", "metrics", "swotAnalysis", "recommendations", "riskAssessment", "nextActionSteps"],
+            required: ["_internalReasoning", "readinessLevel", "totalScore", "dataConfidenceScore", "contradictionsFound", "incubationRoute", "executiveSummary", "swotAnalysis", "riskAssessment", "outlines"],
             properties: {
-              _internalReasoning: { 
-                 type: SchemaType.STRING, 
-                 description: "RUANG BERPIKIR AI: Gunakan field ini untuk berpikir langkah-demi-langkah, mencari korelasi antar jawaban form, dan mensintesis kekuatan/kelemahan utama SEBELUM memberikan skor final." 
-               },
+              _internalReasoning: { type: SchemaType.STRING, description: "Berpikir analitis sebelum menentukan skor" },
               executiveSummary: { type: SchemaType.STRING },
-              readinessLevel: { 
-                 type: SchemaType.STRING, 
-                 description: `Format WAJIB: '[Nama Tier/Kuadran Utama] | [3-5 kata sifat spesifik yang menggambarkan entitas ini]'. DILARANG KERAS memasukkan deskripsi panjang atau angka rentang skor ke dalam field ini.` 
-               },
+              readinessLevel: { type: SchemaType.STRING },
               totalScore: { type: SchemaType.INTEGER },
+              dataConfidenceScore: { type: SchemaType.INTEGER },
+              contradictionsFound: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
               incubationRoute: { type: SchemaType.STRING },
-              customAnalysisBlocks: {
-                type: SchemaType.ARRAY,
-                items: {
-                  type: SchemaType.OBJECT,
-                  required: ["title", "iconType", "metrics"],
-                  properties: {
-                    title: { type: SchemaType.STRING }, iconType: { type: SchemaType.STRING },
-                    metrics: { 
-                      type: SchemaType.ARRAY, 
-                      items: { 
-                        type: SchemaType.OBJECT, 
-                        required: ["label", "value"], 
-                        properties: { 
-                          label: { type: SchemaType.STRING }, 
-                          value: { 
-                            type: SchemaType.STRING,
-                            description: "WAJIB diisi dengan narasi analitis dan deskriptif minimal 2-3 kalimat. DILARANG KERAS menjawab hanya dengan satu kata atau label singkat (seperti 'Tinggi', 'Valid', 'Selaras'). Jelaskan secara utuh berdasarkan fakta formulir."
-                          } 
-                        } 
-                      } 
-                    }
-                  }
-                }
-              },
-              fileAnalysisInsights: {
-                type: SchemaType.OBJECT,
-                required: ["documentQuality", "keyFindingsFromFiles", "discrepancies"],
-                properties: { documentQuality: { type: SchemaType.STRING }, keyFindingsFromFiles: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } }, discrepancies: { type: SchemaType.STRING } }
-              },
-              metrics: {
-                type: SchemaType.ARRAY,
-                items: { type: SchemaType.OBJECT, required: ["label", "score", "description"], properties: { label: { type: SchemaType.STRING }, score: { type: SchemaType.INTEGER }, description: { type: SchemaType.STRING } } }
-              },
               swotAnalysis: {
                 type: SchemaType.OBJECT,
-                required: ["strengths", "weaknesses", "opportunities", "threats"],
                 properties: { strengths: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } }, weaknesses: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } }, opportunities: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } }, threats: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } } }
-              },
-              recommendations: {
-                type: SchemaType.ARRAY,
-                items: { type: SchemaType.OBJECT, required: ["title", "content"], properties: { title: { type: SchemaType.STRING }, content: { type: SchemaType.STRING } } }
               },
               riskAssessment: {
                 type: SchemaType.OBJECT,
-                required: ["criticalRisks", "mitigationStrategies"],
                 properties: { criticalRisks: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } }, mitigationStrategies: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } } }
               },
-              nextActionSteps: {
-                type: SchemaType.ARRAY,
-                items: { type: SchemaType.OBJECT, required: ["timeframe", "task"], properties: { timeframe: { type: SchemaType.STRING }, task: { type: SchemaType.STRING } } }
+              outlines: {
+                type: SchemaType.OBJECT,
+                description: "Kerangka output yang kelak akan diekspansi narasinya",
+                properties: {
+                  blocksToElaborate: { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, properties: { title: { type: SchemaType.STRING }, iconType: { type: SchemaType.STRING }, metricsLabel: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } } } } },
+                  metricsToElaborate: { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, properties: { label: { type: SchemaType.STRING }, score: { type: SchemaType.INTEGER } } } },
+                  recommendationsToElaborate: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } }
+                }
               }
             }
           }
         }
       });
 
-      // Panggil Model Utama Menggunakan Retry Protection
-      const result = await withRetry(() => unifiedModel.generateContent({ contents: [{ role: "user", parts }] }));
-      
-      let rawText = result.response.text().trim();
-      if (rawText.startsWith('```json')) {
-        rawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
-      }
+      const masterPromptOverride = `
+        ${parts[0].text}
+        
+        PERHATIAN TUGAS MASTER (SANGAT PENTING):
+        Guna menghemat komputasi Anda, JANGAN tulis narasi paragraf pada bagian: "Custom Analysis Blocks", "Metrics Array", dan "Action Plan".
+        Tugas Anda HANYA mencatat Judul Blok & Sub (blocksToElaborate), Label & Skor (metricsToElaborate), dan Judul Rekomendasi (recommendationsToElaborate) ke dalam array "outlines" di format JSON! Narasi detailnya akan diselesaikan oleh asisten Anda.
+      `;
 
-      const aiResultJson = JSON.parse(rawText);
-
-      // INJEKSI DATA DOMAIN & UI LABELS KE HASIL AI SEBELUM DISIMPAN
-      aiResultJson.formPurpose = aiPromptConfig.formPurpose || 'assessment';
-      aiResultJson.customUiLabels = aiPromptConfig.customUiLabels || {};
+      const masterParts = [{ text: masterPromptOverride }, ...parts.slice(1)];
+      const masterResult = await withRetry(() => masterModel.generateContent({ contents: [{ role: "user", parts: masterParts }] }));
       
+      let masterRawText = masterResult.response.text().trim();
+      if (masterRawText.startsWith('```')) masterRawText = masterRawText.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
+      
+      const masterJson = JSON.parse(masterRawText);
+      const outlines = masterJson.outlines;
+
+      // ======================================================================
+      // FASE 2: WORKER AGENTS (GEMINI 2.5 FLASH) - PARALLEL EXECUTION
+      // ======================================================================
+      console.log(`[FASE 2] Mengerahkan Worker Agents (Gemini 2.5 Flash) secara paralel...`);
+
+      const getWorkerModel = (schema: any) => genAI.getGenerativeModel({
+        model: "gemini-2.5-flash",
+        systemInstruction: "Anda adalah AI Content Elaborator. Tugas Anda menjabarkan data mentah menjadi narasi analitis berparagraf yang TEBAL, TAJAM, dan KOMPREHENSIF berdasarkan data profil subjek. DILARANG menggunakan awalan bullet (*, -, •) pada kalimat. Gunakan baris baru (newline) murni.",
+        generationConfig: { temperature: 0.4, responseMimeType: "application/json", responseSchema: schema }
+      });
+
+      // -- WORKER A: Analisis Blok --
+      const workerABlocks = async () => {
+        if (!outlines?.blocksToElaborate || outlines.blocksToElaborate.length === 0) return [];
+        try {
+          const schemaA = {
+            type: SchemaType.ARRAY,
+            items: { type: SchemaType.OBJECT, required: ["title", "iconType", "metrics"], properties: { title: { type: SchemaType.STRING }, iconType: { type: SchemaType.STRING }, metrics: { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, required: ["label", "value"], properties: { label: { type: SchemaType.STRING }, value: { type: SchemaType.STRING, description: "Narasi tebal 3-5 kalimat komprehensif" } } } } } }
+          };
+          const promptA = `JABARKAN narasi analitis yang panjang dan mendalam untuk kerangka blok ini berdasarkan data subjek: ${dataString}. Kerangka Blok: ${JSON.stringify(outlines.blocksToElaborate)}. PENTING: Tiap 'value' WAJIB diisi 3-5 kalimat narasi yang membedah korelasi dari jawaban peserta!`;
+          const res = await withRetry(() => getWorkerModel(schemaA).generateContent(promptA));
+          return JSON.parse(res.response.text().replace(/^```(json)?/gi, '').replace(/```$/g, '').trim());
+        } catch (e) { console.error("Worker A Gagal:", e); return []; }
+      };
+
+      // -- WORKER B: Metrik Radar --
+      const workerBMetrics = async () => {
+        if (!outlines?.metricsToElaborate || outlines.metricsToElaborate.length === 0) return [];
+        try {
+          const schemaB = {
+            type: SchemaType.ARRAY,
+            items: { type: SchemaType.OBJECT, required: ["label", "score", "description"], properties: { label: { type: SchemaType.STRING }, score: { type: SchemaType.INTEGER }, description: { type: SchemaType.STRING, description: "Narasi tebal 2-4 kalimat" } } }
+          };
+          const promptB = `JABARKAN justifikasi evaluasi naratif untuk masing-masing pilar metrik ini. Mengapa metrik ini mendapatkan skor tersebut? Data Subjek: ${dataString}. Skor Total Akhir Subjek: ${masterJson.totalScore}/100. Kerangka Metrik & Skor: ${JSON.stringify(outlines.metricsToElaborate)}`;
+          const res = await withRetry(() => getWorkerModel(schemaB).generateContent(promptB));
+          return JSON.parse(res.response.text().replace(/^```(json)?/gi, '').replace(/```$/g, '').trim());
+        } catch (e) { console.error("Worker B Gagal:", e); return []; }
+      };
+
+      // -- WORKER C: Action Plan & Timeline --
+      const workerCRecommendations = async () => {
+        if (!outlines?.recommendationsToElaborate || outlines.recommendationsToElaborate.length === 0) return { recommendations: [], nextActionSteps: [] };
+        try {
+          const schemaC = {
+            type: SchemaType.OBJECT,
+            required: ["recommendations", "nextActionSteps"],
+            properties: {
+              recommendations: { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, required: ["title", "content"], properties: { title: { type: SchemaType.STRING }, content: { type: SchemaType.STRING, description: "Penjelasan strategi taktis & mendalam" } } } },
+              nextActionSteps: { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, required: ["timeframe", "task"], properties: { timeframe: { type: SchemaType.STRING }, task: { type: SchemaType.STRING, description: "Langkah eksekusi spesifik" } } } }
+            }
+          };
+          const promptC = `Buat Rencana Tindakan (Action Plan) TAKTIS DAN MENDALAM berdasarkan fokus rekomendasi ini: ${JSON.stringify(outlines.recommendationsToElaborate)}. Pastikan solusi Anda secara langsung menargetkan kelemahan berikut: ${JSON.stringify(masterJson.swotAnalysis.weaknesses)}.`;
+          const res = await withRetry(() => getWorkerModel(schemaC).generateContent(promptC));
+          return JSON.parse(res.response.text().replace(/^```(json)?/gi, '').replace(/```$/g, '').trim());
+        } catch (e) { console.error("Worker C Gagal:", e); return { recommendations: [], nextActionSteps: [] }; }
+      };
+
+      // -- WORKER D: Analisis File Forensik --
+      const workerDFiles = async () => {
+        if (!storageFilePaths || storageFilePaths.length === 0 || uploadedGeminiFiles.length === 0) return undefined;
+        try {
+          const schemaD = {
+            type: SchemaType.OBJECT,
+            required: ["documentQuality", "keyFindingsFromFiles", "discrepancies"],
+            properties: { documentQuality: { type: SchemaType.STRING }, keyFindingsFromFiles: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } }, discrepancies: { type: SchemaType.STRING } }
+          };
+          const promptD = `Lakukan analisis FORENSIK terhadap dokumen yang dilampirkan pengguna ini. Bandingkan isinya dengan klaim teks berikut dan cari kesenjangannya: ${dataString}.`;
+          const fileParts = [{ text: promptD }, ...parts.slice(1)];
+          const res = await withRetry(() => getWorkerModel(schemaD).generateContent({ contents: [{ role: "user", parts: fileParts }] }));
+          return JSON.parse(res.response.text().replace(/^```(json)?/gi, '').replace(/```$/g, '').trim());
+        } catch (e) { console.error("Worker D Gagal:", e); return undefined; }
+      };
+
+      // Eksekusi Paralel Keempat Pekerja (Hanya memakan waktu setara worker terlambat)
+      const [finalBlocks, finalMetrics, finalRecommendations, finalFiles] = await Promise.all([
+        workerABlocks(),
+        workerBMetrics(),
+        workerCRecommendations(),
+        workerDFiles()
+      ]);
+
+      // ======================================================================
+      // FASE 3: ASSEMBLER (MERGE KESELURUHAN DATA)
+      // ======================================================================
+      console.log(`[FASE 3] Menyatukan seluruh data dan menyimpannya ke database...`);
+      
+      const aiResultJson = {
+        _internalReasoning: masterJson._internalReasoning,
+        executiveSummary: masterJson.executiveSummary,
+        readinessLevel: masterJson.readinessLevel,
+        totalScore: masterJson.totalScore,
+        dataConfidenceScore: masterJson.dataConfidenceScore,
+        contradictionsFound: masterJson.contradictionsFound || [],
+        incubationRoute: masterJson.incubationRoute,
+        swotAnalysis: masterJson.swotAnalysis,
+        riskAssessment: masterJson.riskAssessment,
+        
+        // Hasil dari Flash
+        customAnalysisBlocks: finalBlocks || [],
+        metrics: finalMetrics || [],
+        recommendations: finalRecommendations?.recommendations || [],
+        nextActionSteps: finalRecommendations?.nextActionSteps || [],
+        fileAnalysisInsights: finalFiles,
+
+        // Properti Kustom
+        formPurpose: aiPromptConfig.formPurpose || 'assessment',
+        customUiLabels: aiPromptConfig.customUiLabels || {}
+      };
+
       let assessmentId = "";
 
       await db.runTransaction(async (transaction) => {
@@ -372,13 +444,11 @@ export const processCurationAssessment = onCall(
               totalScore: Number(aiResultJson.totalScore || 0),
               readinessLevel: String(aiResultJson.readinessLevel || 'Belum Ditentukan'),
               trackType: String(updatedDocData.trackType || 'Evaluasi Umum'),
-              assessmentUrl: `[https://curation--teknopark-surakarta.asia-southeast1.hosted.app/result/$](https://curation--teknopark-surakarta.asia-southeast1.hosted.app/result/$){assessmentId}`
+              assessmentUrl: `https://curation--teknopark-surakarta.asia-southeast1.hosted.app/result/${assessmentId}`
             }).catch(e => console.error(e));
           });
         }
 
-        // PERBAIKAN DI SINI: Syarat >= 80 telah DIHAPUS. 
-        // Kini semua data asesmen akan diserap dan direkam ke dalam Vector Database.
         if (aiResultJson.totalScore !== undefined && aiResultJson.totalScore !== null) {
           import("./vectorService").then(({ generateAndStoreVectorEmbedding }) => {
             generateAndStoreVectorEmbedding(assessmentId, updatedDocData, API_KEY).catch(e => console.error(e));
@@ -392,7 +462,6 @@ export const processCurationAssessment = onCall(
       console.error("Cloud Function Error:", error);
       throw new HttpsError("internal", error.message || "Gagal memproses analisis AI.");
     } finally {
-      // Membersihkan Cache Memory Secara Paksa
       for (const tmpFile of tempLocalFiles) {
          try { if (fs.existsSync(tmpFile)) fs.unlinkSync(tmpFile); } catch (e) {}
        }
