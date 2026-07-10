@@ -225,7 +225,14 @@ export const generateFormTemplateFromAI = onCall(
                 placeholder: { type: SchemaType.STRING }, description: { type: SchemaType.STRING },
                 gridSpan: { type: SchemaType.INTEGER }, fileAccept: { type: SchemaType.STRING },
                 options: { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, properties: { label: { type: SchemaType.STRING }, weight: { type: SchemaType.INTEGER } } } },
-                showIf: { type: SchemaType.OBJECT, properties: { fieldId: { type: SchemaType.STRING }, equals: { type: SchemaType.STRING } } }
+                showIf: { 
+  type: SchemaType.OBJECT, 
+  required: ["fieldId", "equals"], // <-- Tambahkan required di sini
+  properties: { 
+    fieldId: { type: SchemaType.STRING }, 
+    equals: { type: SchemaType.STRING } 
+  } 
+}
               }
             }
           }
@@ -320,16 +327,17 @@ export const generateFormTemplateFromAI = onCall(
         generationConfig: { temperature: 0.1, responseMimeType: "application/json" }
       });
 
-      const validationPrompt = `
-        Anda adalah "Lead Quality Assurance". Berikut adalah JSON formulir yang sudah bersih dari ID duplikat.
-        Tugas utama Anda HANYA memverifikasi properti "showIf":
-        1. Pastikan "fieldId" di dalam "showIf" merujuk pada "id" yang BENAR-BENAR ADA di array fields sebelumnya.
-        2. Jika merujuk pada ID yang tidak ada atau referensi ke depan (referencing future fields), hapus properti "showIf" tersebut.
-        3. Kembalikan array JSON utuh tanpa merubah struktur lain.
-        
-        DATA FORMULIR MENTAH:
-        ${JSON.stringify(deduplicatedSteps)}
-      `;
+const validationPrompt = `
+  Anda adalah "Lead Quality Assurance". Berikut adalah JSON formulir yang sudah bersih dari ID duplikat.
+  Tugas utama Anda HANYA memverifikasi properti "showIf":
+  1. Pastikan "fieldId" di dalam "showIf" merujuk pada "id" yang BENAR-BENAR ADA di array fields sebelumnya.
+  2. WAJIB pastikan "showIf" memiliki properti "equals". Jika "equals" hilang atau kosong, Anda WAJIB memperbaikinya dengan mengambil salah satu "label" dari opsi jawaban (options) field pemicu tersebut.
+  3. Jika merujuk pada ID yang tidak ada atau referensi ke depan (referencing future fields), hapus properti "showIf" tersebut.
+  4. Kembalikan array JSON utuh tanpa merubah struktur lain.
+  
+  DATA FORMULIR MENTAH:
+  ${JSON.stringify(deduplicatedSteps)}
+`;
 
       const validationResult = await withRetry(() => validatorModel.generateContent(validationPrompt));
       let validJsonText = validationResult.response.text().trim();

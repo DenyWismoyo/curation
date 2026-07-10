@@ -63,6 +63,7 @@ ${archetypeInstruction}
 4. AGGRESSIVE CONDITIONAL LOGIC (INVESTIGASI FORENSIK): Gunakan properti "showIf": {"fieldId": "id_pemicu", "equals": "opsi_pemicu"} untuk membuat form yang reaktif dan cerdas:
    - Skenario Pembuktian: Jika peserta merespon positif/klaim besar di pertanyaan 'radio'/'select' (misal: "Sudah memiliki sertifikasi"), WAJIB pancing pertanyaan baru bertipe "file" untuk menagih bukti dokumennya menggunakan showIf.
    - Skenario Justifikasi: Jika peserta memilih opsi berisiko tinggi atau menjawab "Belum ada", pancing pertanyaan baru bertipe "textarea" menggunakan showIf untuk meminta alasan/justifikasi mereka.
+   - ATURAN MUTLAK KONDISIONAL: Nilai properti "equals" WAJIB diisi dan SAMA PERSIS dengan string "label" pada opsi jawaban yang memicunya.
 5. SKALA ENTERPRISE: Rangkai 10 hingga 15 pertanyaan berbobot dan tajam secara leluasa khusus untuk seksi ini. Tidak perlu menahan diri, gali informasi target sedalam-dalamnya.
 
 ==================================================

@@ -103,22 +103,32 @@ export function useCuration() {
       const storageFilePaths: string[] = []; 
       const uploadPromises: Promise<void>[] = [];
       
+      // ==============================================================
+      // PEMBUATAN NAMA FOLDER DINAMIS (Berdasarkan Nama Usaha & Waktu)
+      // ==============================================================
+      const rawNamaUsaha = finalData.namaUsaha || 'Tanpa_Nama';
+      // Bersihkan spasi dan karakter khusus agar URL storage valid
+      const safeNamaUsaha = rawNamaUsaha.replace(/[^a-zA-Z0-9]/g, '_'); 
+      const folderPath = `curation_files/${safeNamaUsaha}_${Date.now()}`;
+
       for (const key in dbData) {
         const value = dbData[key];
         if (value instanceof File) {
-          const filePath = `curation_files/${Date.now()}_${value.name.replace(/\s+/g, '_')}`;
+          const safeFileName = value.name.replace(/\s+/g, '_');
+          // Simpan dengan format folder dinamis
+          const filePath = `${folderPath}/${safeFileName}`; 
           const storageRef = ref(storage, filePath);
           
           const uploadTask = uploadBytes(storageRef, value).then(async (snapshot) => {
             const downloadUrl = await getDownloadURL(snapshot.ref);
-            dbData[key] = downloadUrl; // Untuk ditampilkan di frontend (PDF Viewer dll)
-            storageFilePaths.push(filePath); // Path internal GCP untuk dikirim ke Backend
+            dbData[key] = downloadUrl; 
+            storageFilePaths.push(filePath); 
           });
           uploadPromises.push(uploadTask);
         }
       }
 
-      // Tunggu hingga semua file terupload ke Storage
+      // Tunggu hingga semua file terupload ke Storage Folder
       await Promise.all(uploadPromises);
       
       // Panggil Cloud Function

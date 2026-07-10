@@ -1,5 +1,4 @@
 // functions/src/index.ts
-
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { defineSecret } from "firebase-functions/params";
 import * as admin from "firebase-admin";
@@ -28,14 +27,14 @@ const geminiApiKeySecret = defineSecret("GEMINI_API_KEY");
 const smtpEmailSecret = defineSecret("SMTP_EMAIL");
 const smtpPasswordSecret = defineSecret("SMTP_PASSWORD");
 
-// FUNGSI RETRY EXPONENTIAL BACKOFF TINGKAT TINGGI (Kebal 503 Service Unavailable)
+// FUNGSI RETRY EXPONENTIAL BACKOFF TINGKAT TINGGI (Kebal 503 & JSON Error)
 const withRetry = async <T>(fn: () => Promise<T>, retries = 4, delayMs = 3000): Promise<T> => {
   try { return await fn(); }
   catch (error: any) {
     if (error.status === 400 || (error.message && error.message.includes('SAFETY'))) throw error;
     if (retries <= 1) throw error;
     
-    console.warn(`  API Gemini sibuk (${error.message}). Mencoba ulang dalam ${delayMs}ms...`);
+    console.warn(`  Proses API/JSON gagal (${error.message}). Mencoba ulang (Sisa percobaan: ${retries - 1})...`);
     await new Promise(res => setTimeout(res, delayMs));
     return withRetry(fn, retries - 1, delayMs * 2);
   }
@@ -66,6 +65,7 @@ export const processCurationAssessment = onCall(
     const tokenUsed = data.tokenUsed;
     let corporateEntityName = null;
     let allowedDocTemplates: string[] = [];
+    
     const aiPromptConfig = data.aiPromptConfig || {};
     const storageFilePaths = data.storageFilePaths || [];
 
@@ -101,20 +101,38 @@ export const processCurationAssessment = onCall(
       const bucket = admin.storage().bucket();
 
       // ----------------------------------------------------------------------
-      // PEMROSESAN FILE MULTIMODAL DENGAN SOFT-FAIL BYPASS
+      // PEMROSESAN FILE MULTIMODAL (ANTI-CRASH UNTUK ZIP/RAR)
       // ----------------------------------------------------------------------
       if (storageFilePaths && storageFilePaths.length > 0) {
         for (const filePath of storageFilePaths) {
           try {
-            const fileName = path.basename(filePath);
+            const fileName = path.basename(filePath); 
+            
+            const [metadata] = await bucket.file(filePath).getMetadata();
+            const mimeType = metadata.contentType || 'application/octet-stream';
+
+            const isSupported = 
+              mimeType === 'application/pdf' ||
+              mimeType.startsWith('image/') ||
+              mimeType.startsWith('video/') ||
+              mimeType.startsWith('audio/') ||
+              mimeType.startsWith('text/');
+
+            if (!isSupported || fileName.toLowerCase().endsWith('.zip') || fileName.toLowerCase().endsWith('.rar') || fileName.toLowerCase().endsWith('.docx') || fileName.toLowerCase().endsWith('.xlsx')) {
+              console.warn(`[FILTER] File dilewati. Format tidak didukung Gemini: ${fileName} (${mimeType})`);
+              
+              parts.push({ 
+                text: `[SYSTEM NOTE]: Pengguna telah melampirkan berkas bukti bernama "${fileName}". Karena formatnya berupa arsip/dokumen khusus, visi sistem tidak dapat membacanya secara otomatis. Namun, secara administratif BUKTI TELAH DILAMPIRKAN. Anggap klaim pengguna tervalidasi untuk menjaga 'dataConfidenceScore'.` 
+              });
+              continue; 
+            }
+
             const tempFilePath = path.join(os.tmpdir(), `gemini_${Date.now()}_${fileName}`);
             await bucket.file(filePath).download({ destination: tempFilePath });
             tempLocalFiles.push(tempFilePath);
             
-            const [metadata] = await bucket.file(filePath).getMetadata();
-            
             const uploadResult = await withRetry(() => fileManager.uploadFile(tempFilePath, {
-              mimeType: metadata.contentType || 'application/pdf',
+              mimeType: mimeType, 
               displayName: "Dokumen Lampiran"
             }), 4, 3000);
 
@@ -128,7 +146,7 @@ export const processCurationAssessment = onCall(
             }
 
             if (fileState.state === "FAILED" || fileState.state === "PROCESSING") {
-              console.warn(`File ${fileName} ditolak oleh Gemini. File diabaikan untuk menjaga stabilitas asesmen.`);
+              console.warn(`File ${fileName} ditolak oleh Gemini.`);
               continue; 
             }
 
@@ -136,7 +154,7 @@ export const processCurationAssessment = onCall(
             parts.push({ fileData: { mimeType: uploadResult.file.mimeType, fileUri: uploadResult.file.uri } });
             
           } catch (fileErr: any) {
-            console.warn(`[FAIL-SAFE] Gagal mengunggah file ke Gemini API. Menyelamatkan proses evaluasi tanpa berkas ini.`, fileErr);
+            console.warn(`[FAIL-SAFE] Gagal mengunggah file ke Gemini API.`, fileErr);
           }
         }
       }
@@ -155,7 +173,7 @@ export const processCurationAssessment = onCall(
            
          const vectorSnap = await vectorQuery.get();
          if (!vectorSnap.empty) {
-            fewShotContext = `\n[KONTEKS RAG INDUSTRI]: Gunakan profil bisnis serupa yang pernah dievaluasi ini sebagai pembanding kalibrasi: ` +
+            fewShotContext = `\n[KONTEKS RAG INDUSTRI]: Gunakan profil bisnis serupa yang pernah dievaluasi ini sebagai pembanding kalibrasi: ` + 
               vectorSnap.docs.map(d => `(${d.data().namaUsaha} | Kesiapan: ${d.data().readinessLevel} | Skor: ${d.data().score})`).join(", ");
          }
       } catch (err) { console.warn("RAG Vector search dilewati karena error minor."); }
@@ -204,7 +222,6 @@ export const processCurationAssessment = onCall(
       });
       
       parts.unshift({ text: mainPromptText });
-      
       const systemPrompt = getSystemPrompt(true);
 
       // ======================================================================
@@ -258,15 +275,18 @@ export const processCurationAssessment = onCall(
         PERHATIAN TUGAS MASTER (SANGAT PENTING):
         Guna menghemat komputasi Anda, JANGAN tulis narasi paragraf pada bagian: "Custom Analysis Blocks", "Metrics Array", dan "Action Plan".
         Tugas Anda HANYA mencatat Judul Blok & Sub (blocksToElaborate), Label & Skor (metricsToElaborate), dan Judul Rekomendasi (recommendationsToElaborate) ke dalam array "outlines" di format JSON! Narasi detailnya akan diselesaikan oleh asisten Anda.
+        PASTIKAN OUTPUT JSON VALID. DILARANG MENGGUNAKAN NEWLINE HARFIAH DI DALAM STRING (GUNAKAN '\\n').
       `;
 
       const masterParts = [{ text: masterPromptOverride }, ...parts.slice(1)];
-      const masterResult = await withRetry(() => masterModel.generateContent({ contents: [{ role: "user", parts: masterParts }] }));
       
-      let masterRawText = masterResult.response.text().trim();
-      if (masterRawText.startsWith('```')) masterRawText = masterRawText.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
+      const masterJson = await withRetry(async () => {
+        const masterResult = await masterModel.generateContent({ contents: [{ role: "user", parts: masterParts }] });
+        let masterRawText = masterResult.response.text().trim();
+        if (masterRawText.startsWith('```')) masterRawText = masterRawText.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
+        return JSON.parse(masterRawText);
+      });
       
-      const masterJson = JSON.parse(masterRawText);
       const outlines = masterJson.outlines;
 
       // ======================================================================
@@ -276,7 +296,7 @@ export const processCurationAssessment = onCall(
 
       const getWorkerModel = (schema: any) => genAI.getGenerativeModel({
         model: "gemini-2.5-flash",
-        systemInstruction: "Anda adalah AI Content Elaborator. Tugas Anda menjabarkan data mentah menjadi narasi analitis berparagraf yang TEBAL, TAJAM, dan KOMPREHENSIF berdasarkan data profil subjek. DILARANG menggunakan awalan bullet (*, -, •) pada kalimat. Gunakan baris baru (newline) murni.",
+        systemInstruction: "Anda adalah AI Content Elaborator. Tugas Anda menjabarkan data menjadi narasi berparagraf. OUTPUT WAJIB BERUPA JSON VALID. JIKA INGIN PINDAH BARIS, GUNAKAN '\\n' (SLASH N), DILARANG KERAS MENGGUNAKAN ENTER/NEWLINE HARFIAH.",
         generationConfig: { temperature: 0.4, responseMimeType: "application/json", responseSchema: schema }
       });
 
@@ -289,8 +309,13 @@ export const processCurationAssessment = onCall(
             items: { type: SchemaType.OBJECT, required: ["title", "iconType", "metrics"], properties: { title: { type: SchemaType.STRING }, iconType: { type: SchemaType.STRING }, metrics: { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, required: ["label", "value"], properties: { label: { type: SchemaType.STRING }, value: { type: SchemaType.STRING, description: "Narasi tebal 3-5 kalimat komprehensif" } } } } } }
           };
           const promptA = `JABARKAN narasi analitis yang panjang dan mendalam untuk kerangka blok ini berdasarkan data subjek: ${dataString}. Kerangka Blok: ${JSON.stringify(outlines.blocksToElaborate)}. PENTING: Tiap 'value' WAJIB diisi 3-5 kalimat narasi yang membedah korelasi dari jawaban peserta!`;
-          const res = await withRetry(() => getWorkerModel(schemaA).generateContent(promptA));
-          return JSON.parse(res.response.text().replace(/^```(json)?/gi, '').replace(/```$/g, '').trim());
+          
+          return await withRetry(async () => {
+            const res = await getWorkerModel(schemaA).generateContent(promptA);
+            let text = res.response.text().trim();
+            if (text.startsWith('```')) text = text.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
+            return JSON.parse(text);
+          });
         } catch (e) { console.error("Worker A Gagal:", e); return []; }
       };
 
@@ -303,8 +328,13 @@ export const processCurationAssessment = onCall(
             items: { type: SchemaType.OBJECT, required: ["label", "score", "description"], properties: { label: { type: SchemaType.STRING }, score: { type: SchemaType.INTEGER }, description: { type: SchemaType.STRING, description: "Narasi tebal 2-4 kalimat" } } }
           };
           const promptB = `JABARKAN justifikasi evaluasi naratif untuk masing-masing pilar metrik ini. Mengapa metrik ini mendapatkan skor tersebut? Data Subjek: ${dataString}. Skor Total Akhir Subjek: ${masterJson.totalScore}/100. Kerangka Metrik & Skor: ${JSON.stringify(outlines.metricsToElaborate)}`;
-          const res = await withRetry(() => getWorkerModel(schemaB).generateContent(promptB));
-          return JSON.parse(res.response.text().replace(/^```(json)?/gi, '').replace(/```$/g, '').trim());
+          
+          return await withRetry(async () => {
+            const res = await getWorkerModel(schemaB).generateContent(promptB);
+            let text = res.response.text().trim();
+            if (text.startsWith('```')) text = text.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
+            return JSON.parse(text);
+          });
         } catch (e) { console.error("Worker B Gagal:", e); return []; }
       };
 
@@ -320,15 +350,20 @@ export const processCurationAssessment = onCall(
               nextActionSteps: { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, required: ["timeframe", "task"], properties: { timeframe: { type: SchemaType.STRING }, task: { type: SchemaType.STRING, description: "Langkah eksekusi spesifik" } } } }
             }
           };
-          const promptC = `Buat Rencana Tindakan (Action Plan) TAKTIS DAN MENDALAM berdasarkan fokus rekomendasi ini: ${JSON.stringify(outlines.recommendationsToElaborate)}. Pastikan solusi Anda secara langsung menargetkan kelemahan berikut: ${JSON.stringify(masterJson.swotAnalysis.weaknesses)}.`;
-          const res = await withRetry(() => getWorkerModel(schemaC).generateContent(promptC));
-          return JSON.parse(res.response.text().replace(/^```(json)?/gi, '').replace(/```$/g, '').trim());
+          const promptC = `Buat Rencana Tindakan (Action Plan) TAKTIS DAN MENDALAM berdasarkan fokus rekomendasi ini: ${JSON.stringify(outlines.recommendationsToElaborate)}. Pastikan solusi Anda secara langsung menargetkan kelemahan berikut: ${JSON.stringify(masterJson.swotAnalysis?.weaknesses || [])}.`;
+          
+          return await withRetry(async () => {
+            const res = await getWorkerModel(schemaC).generateContent(promptC);
+            let text = res.response.text().trim();
+            if (text.startsWith('```')) text = text.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
+            return JSON.parse(text);
+          });
         } catch (e) { console.error("Worker C Gagal:", e); return { recommendations: [], nextActionSteps: [] }; }
       };
 
       // -- WORKER D: Analisis File Forensik --
       const workerDFiles = async () => {
-        if (!storageFilePaths || storageFilePaths.length === 0 || uploadedGeminiFiles.length === 0) return undefined;
+        if (!storageFilePaths || storageFilePaths.length === 0 || uploadedGeminiFiles.length === 0) return null; // HARUS NULL UNTUK FIRESTORE
         try {
           const schemaD = {
             type: SchemaType.OBJECT,
@@ -336,13 +371,19 @@ export const processCurationAssessment = onCall(
             properties: { documentQuality: { type: SchemaType.STRING }, keyFindingsFromFiles: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } }, discrepancies: { type: SchemaType.STRING } }
           };
           const promptD = `Lakukan analisis FORENSIK terhadap dokumen yang dilampirkan pengguna ini. Bandingkan isinya dengan klaim teks berikut dan cari kesenjangannya: ${dataString}.`;
+          
           const fileParts = [{ text: promptD }, ...parts.slice(1)];
-          const res = await withRetry(() => getWorkerModel(schemaD).generateContent({ contents: [{ role: "user", parts: fileParts }] }));
-          return JSON.parse(res.response.text().replace(/^```(json)?/gi, '').replace(/```$/g, '').trim());
-        } catch (e) { console.error("Worker D Gagal:", e); return undefined; }
+          
+          return await withRetry(async () => {
+            const res = await getWorkerModel(schemaD).generateContent({ contents: [{ role: "user", parts: fileParts }] });
+            let text = res.response.text().trim();
+            if (text.startsWith('```')) text = text.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
+            return JSON.parse(text);
+          });
+        } catch (e) { console.error("Worker D Gagal:", e); return null; }
       };
 
-      // Eksekusi Paralel Keempat Pekerja (Hanya memakan waktu setara worker terlambat)
+      // Eksekusi Paralel Keempat Pekerja 
       const [finalBlocks, finalMetrics, finalRecommendations, finalFiles] = await Promise.all([
         workerABlocks(),
         workerBMetrics(),
@@ -351,35 +392,32 @@ export const processCurationAssessment = onCall(
       ]);
 
       // ======================================================================
-      // FASE 3: ASSEMBLER (MERGE KESELURUHAN DATA)
+      // FASE 3: ASSEMBLER & TRANSACTION
       // ======================================================================
       console.log(`[FASE 3] Menyatukan seluruh data dan menyimpannya ke database...`);
       
       const aiResultJson = {
-        _internalReasoning: masterJson._internalReasoning,
-        executiveSummary: masterJson.executiveSummary,
-        readinessLevel: masterJson.readinessLevel,
-        totalScore: masterJson.totalScore,
-        dataConfidenceScore: masterJson.dataConfidenceScore,
+        _internalReasoning: masterJson._internalReasoning || "",
+        executiveSummary: masterJson.executiveSummary || "",
+        readinessLevel: masterJson.readinessLevel || "Belum Ditentukan",
+        totalScore: masterJson.totalScore || 0,
+        dataConfidenceScore: masterJson.dataConfidenceScore || 0,
         contradictionsFound: masterJson.contradictionsFound || [],
-        incubationRoute: masterJson.incubationRoute,
-        swotAnalysis: masterJson.swotAnalysis,
-        riskAssessment: masterJson.riskAssessment,
-        
-        // Hasil dari Flash
+        incubationRoute: masterJson.incubationRoute || "",
+        swotAnalysis: masterJson.swotAnalysis || {},
+        riskAssessment: masterJson.riskAssessment || {},
         customAnalysisBlocks: finalBlocks || [],
         metrics: finalMetrics || [],
         recommendations: finalRecommendations?.recommendations || [],
         nextActionSteps: finalRecommendations?.nextActionSteps || [],
-        fileAnalysisInsights: finalFiles,
-
-        // Properti Kustom
+        fileAnalysisInsights: finalFiles || null,
         formPurpose: aiPromptConfig.formPurpose || 'assessment',
         customUiLabels: aiPromptConfig.customUiLabels || {}
       };
 
       let assessmentId = "";
-
+      
+      // 1. JALANKAN TRANSACTION DATABASE UTAMA DULU
       await db.runTransaction(async (transaction) => {
         if (tokenUsed && typeof tokenUsed === 'string' && tokenUsed.includes('-')) {
           const lastDashIndex = tokenUsed.lastIndexOf('-');
@@ -427,51 +465,94 @@ export const processCurationAssessment = onCall(
         };
         
         transaction.set(newAssessmentRef, updatedDocData);
-
-        import("./documentGenerator").then(({ generateInternalPDF }) => {
-          generateInternalPDF(assessmentId, updatedDocData, 'user').catch(e => console.error(e));
-          generateInternalPDF(assessmentId, updatedDocData, 'curator').catch(e => console.error(e));
-        });
-
-        const smtpEmail = smtpEmailSecret.value();
-        const smtpPassword = smtpPasswordSecret.value();
-
-        if (smtpEmail && smtpPassword && updatedDocData.userEmail) {
-          import("./emailService").then(({ sendAssessmentEmail }) => {
-            sendAssessmentEmail(smtpEmail, smtpPassword, {
-              targetEmail: String(updatedDocData.userEmail),
-              namaUsaha: String(updatedDocData.namaUsaha || 'Bisnis Anda'),
-              totalScore: Number(aiResultJson.totalScore || 0),
-              readinessLevel: String(aiResultJson.readinessLevel || 'Belum Ditentukan'),
-              trackType: String(updatedDocData.trackType || 'Evaluasi Umum'),
-              assessmentUrl: `https://curation--teknopark-surakarta.asia-southeast1.hosted.app/result/${assessmentId}`
-            }).catch(e => console.error(e));
-          });
-        }
-
-        if (aiResultJson.totalScore !== undefined && aiResultJson.totalScore !== null) {
-          import("./vectorService").then(({ generateAndStoreVectorEmbedding }) => {
-            generateAndStoreVectorEmbedding(assessmentId, updatedDocData, API_KEY).catch(e => console.error(e));
-          });
-        }
       });
 
+      // ======================================================================
+      // 2. BACKGROUND TASKS BERJALAN DAN DITUNGGU (AWAIT)
+      // Ini perbaikan krusial agar Vector, PDF, & Email berhasil tersimpan
+      // ======================================================================
+      const updatedDocDataForBg = {
+         namaUsaha: formData.namaUsaha || 'Tanpa Nama',
+         trackType: trackType,
+         score: aiResultJson.totalScore || 0,
+         readinessLevel: aiResultJson.readinessLevel || 'Belum Ditentukan',
+         formData: formData,
+         aiResult: aiResultJson,
+         userEmail: formData.email || userEmail
+      };
+
+      console.log("[BACKGROUND] Mengeksekusi Vector Database, Pembuatan PDF, dan Email...");
+      
+      await Promise.allSettled([
+        // Eksekusi Vector Service
+        (async () => {
+          if (aiResultJson.totalScore !== undefined && aiResultJson.totalScore !== null) {
+            try {
+                const { generateAndStoreVectorEmbedding } = await import("./vectorService");
+                await generateAndStoreVectorEmbedding(assessmentId, updatedDocDataForBg, API_KEY);
+                console.log(`[SUCCESS] Vector berhasil disimpan untuk ${assessmentId}`);
+            } catch (err) {
+                console.error(`[ERROR] Gagal menyimpan Vector:`, err);
+            }
+          }
+        })(),
+        
+        // Eksekusi Generate PDF
+        (async () => {
+           try {
+             const { generateInternalPDF } = await import("./documentGenerator");
+             await generateInternalPDF(assessmentId, updatedDocDataForBg, 'user');
+             await generateInternalPDF(assessmentId, updatedDocDataForBg, 'curator');
+             console.log(`[SUCCESS] PDF berhasil digenerate untuk ${assessmentId}`);
+           } catch (err) {
+             console.error(`[ERROR] Gagal membuat PDF:`, err);
+           }
+        })(),
+        
+        // Eksekusi Email
+        (async () => {
+          const smtpEmail = smtpEmailSecret.value();
+          const smtpPassword = smtpPasswordSecret.value();
+          if (smtpEmail && smtpPassword && updatedDocDataForBg.userEmail) {
+            try {
+                const { sendAssessmentEmail } = await import("./emailService");
+                await sendAssessmentEmail(smtpEmail, smtpPassword, {
+                  targetEmail: String(updatedDocDataForBg.userEmail),
+                  namaUsaha: String(updatedDocDataForBg.namaUsaha),
+                  totalScore: Number(aiResultJson.totalScore || 0),
+                  readinessLevel: String(aiResultJson.readinessLevel),
+                  trackType: String(updatedDocDataForBg.trackType),
+                  assessmentUrl: `https://curation--teknopark-surakarta.asia-southeast1.hosted.app/result/${assessmentId}`
+                });
+                console.log(`[SUCCESS] Email berhasil dikirim ke ${updatedDocDataForBg.userEmail}`);
+            } catch (err) {
+                console.error(`[ERROR] Gagal mengirim Email:`, err);
+            }
+          }
+        })()
+      ]);
+
+      console.log(`[SELESAI] Semua proses cloud function selesai untuk ID: ${assessmentId}`);
+      
+      // 3. KEMBALIKAN HASIL KE FRONTEND SETELAH SEMUANYA SELESAI
       return { assessmentId, aiResult: aiResultJson };
       
     } catch (error: any) {
       console.error("Cloud Function Error:", error);
       throw new HttpsError("internal", error.message || "Gagal memproses analisis AI.");
     } finally {
+      // Cleanup file sementara di server
       for (const tmpFile of tempLocalFiles) {
-         try { if (fs.existsSync(tmpFile)) fs.unlinkSync(tmpFile); } catch (e) {}
-       }
+         try { if (fs.existsSync(tmpFile)) fs.unlinkSync(tmpFile); } catch (e) {} 
+      }
+      // Cleanup file di memori Gemini
       for (const geminiFile of uploadedGeminiFiles) {
-         try {
-           await withRetry(() => fileManager.deleteFile(geminiFile.name), 2, 2000);
+         try { 
+           await withRetry(() => fileManager.deleteFile(geminiFile.name), 2, 2000); 
          } catch (e) {
-          console.warn(`Pembersihan file di cloud gemini dilewati akibat 503`);
-        }
-       }
+          console.warn(`Pembersihan file di cloud gemini dilewati`);
+         } 
+      }
     }
   }
 );

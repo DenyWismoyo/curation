@@ -13,7 +13,7 @@ export async function processAIAssessment(
   
   const functions = getFunctions(app, 'asia-southeast2');
   
-  // KEMBALI KE METODE STABIL: Timeout diatur ke 9 Menit karena menunggu AI selesai
+  // Timeout diatur ke 9 Menit karena menunggu proses Evaluasi AI selesai
   const processCuration = httpsCallable(functions, 'processCurationAssessment', {
     timeout: 540000 
   });
@@ -21,7 +21,6 @@ export async function processAIAssessment(
   console.log("Mengirim payload data ke Cloud Function...");
 
   try {
-    // KIRIM DATA & TUNGGU HASIL SECARA LANGSUNG DARI SERVER
     const result = await processCuration({
       formData,
       trackType,

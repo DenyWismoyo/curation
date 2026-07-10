@@ -1,4 +1,4 @@
-// src/components/shared/TemplateQuestionsPDF.tsx
+// src/app/components/shared/TemplateQuestionsPDF.tsx
 'use client';
 
 import React from 'react';
@@ -9,10 +9,10 @@ import { FormTemplate } from '@/types/curation';
 Font.register({
   family: 'Inter',
   fonts: [
-    { src: '/fonts/Inter-Regular.ttf', fontWeight: 400 },
-    { src: '/fonts/Inter-Medium.ttf', fontWeight: 500 },
-    { src: '/fonts/Inter-Bold.ttf', fontWeight: 700 },
-    { src: '/fonts/Inter-Black.ttf', fontWeight: 900 }
+    { src: 'https://curation--teknopark-surakarta.asia-southeast1.hosted.app/fonts/Inter-Regular.ttf', fontWeight: 400 },
+    { src: 'https://curation--teknopark-surakarta.asia-southeast1.hosted.app/fonts/Inter-Medium.ttf', fontWeight: 500 },
+    { src: 'https://curation--teknopark-surakarta.asia-southeast1.hosted.app/fonts/Inter-Bold.ttf', fontWeight: 700 },
+    { src: 'https://curation--teknopark-surakarta.asia-southeast1.hosted.app/fonts/Inter-Black.ttf', fontWeight: 900 }
   ]
 });
 
@@ -37,20 +37,35 @@ const styles = StyleSheet.create({
   // Field (Pertanyaan)
   fieldContainer: { marginBottom: 12, paddingBottom: 12, borderBottom: '1pt solid #E5E7EB', paddingLeft: 12 },
   fieldHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 },
-  fieldLabel: { fontSize: 10, fontWeight: 700, color: '#111827', flex: 1, paddingRight: 16 },
-  badgeContainer: { flexDirection: 'row', gap: 4 },
+  fieldLabel: { fontSize: 10, fontWeight: 700, color: '#111827', flex: 1, paddingRight: 16, lineHeight: 1.4 },
+  
+  badgeContainer: { flexDirection: 'row', gap: 4, flexWrap: 'wrap', justifyContent: 'flex-end', width: 120 },
   badgeReq: { fontSize: 7, fontWeight: 900, color: '#DC2626', backgroundColor: '#FEE2E2', padding: '2 4', borderRadius: 2, textTransform: 'uppercase' },
   badgeType: { fontSize: 7, fontWeight: 900, color: '#4B5563', backgroundColor: '#F3F4F6', padding: '2 4', borderRadius: 2, textTransform: 'uppercase' },
+  badgeGrid: { fontSize: 7, fontWeight: 900, color: '#059669', backgroundColor: '#D1FAE5', padding: '2 4', borderRadius: 2, textTransform: 'uppercase' },
   
-  fieldDesc: { fontSize: 9, color: '#6B7280', marginBottom: 6 },
+  fieldDesc: { fontSize: 9, color: '#6B7280', marginBottom: 6, lineHeight: 1.4 },
   fieldId: { fontSize: 7, color: '#9CA3AF', fontFamily: 'Courier', marginBottom: 6 },
   
+  // Fitur Baru: Logika Kondisional (Show If)
+  conditionalBox: { 
+    backgroundColor: '#EEF2FF', 
+    padding: '6 8', 
+    borderRadius: 4, 
+    marginTop: 6, 
+    borderLeft: '2pt solid #4F46E5',
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  conditionalText: { fontSize: 8, color: '#4338CA', fontWeight: 700 },
+  conditionalHighlight: { fontWeight: 900, color: '#312E81' },
+
   // Options (Pilihan)
   optionsList: { marginTop: 4, paddingLeft: 8 },
-  optionItem: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 2 },
+  optionItem: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 3 },
   optionBullet: { fontSize: 8, color: '#9CA3AF', marginRight: 4, marginTop: 1 },
   optionText: { fontSize: 9, color: '#374151' },
-  optionWeight: { fontSize: 8, color: '#4F46E5', fontWeight: 700, marginLeft: 4 }, // Style baru untuk bobot
+  optionWeight: { fontSize: 8, color: '#4F46E5', fontWeight: 900, marginLeft: 4 },
 
   footer: { position: 'absolute', bottom: 30, left: 48, right: 48, borderTop: '1pt solid #E5E5E5', paddingTop: 12, flexDirection: 'row', justifyContent: 'space-between' },
   footerText: { fontSize: 8, color: '#999999', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1 },
@@ -58,7 +73,7 @@ const styles = StyleSheet.create({
 
 export function TemplateQuestionsPDF({ template }: { template: FormTemplate }) {
   const printDateObj = new Date();
-  const dateStr = printDateObj.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+  const dateStr = printDateObj.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 
   const formatFieldType = (type: string) => {
     const types: Record<string, string> = {
@@ -79,23 +94,23 @@ export function TemplateQuestionsPDF({ template }: { template: FormTemplate }) {
           <Text style={styles.docDesc}>{template.trackDescription || 'Tidak ada deskripsi template.'}</Text>
           <View style={styles.metaRow}>
             <View style={styles.metaBadge}><Text style={styles.metaText}>Status: {template.isActive ? 'AKTIF' : 'DRAFT'}</Text></View>
-            <View style={styles.metaBadge}><Text style={styles.metaText}>Total: {template.steps.length} Langkah</Text></View>
-            <View style={styles.metaBadge}><Text style={styles.metaText}>{dateStr}</Text></View>
+            <View style={styles.metaBadge}><Text style={styles.metaText}>Total: {template.steps?.length || 0} Langkah</Text></View>
+            <View style={styles.metaBadge}><Text style={styles.metaText}>{dateStr} WIB</Text></View>
           </View>
         </View>
 
-        {template.steps.length === 0 ? (
+        {!template.steps || template.steps.length === 0 ? (
           <Text style={{ fontSize: 10, color: '#6B7280' }}>Belum ada langkah/pertanyaan dalam form ini.</Text>
         ) : (
           template.steps.map((step, sIdx) => (
             <View key={sIdx} style={styles.stepContainer}>
               
-              <View style={styles.stepHeader}>
-                <Text style={styles.stepNumber}>STEP {step.stepNumber}</Text>
+              <View style={styles.stepHeader} wrap={false}>
+                <Text style={styles.stepNumber}>SEKSI {step.stepNumber}</Text>
                 <Text style={styles.stepTitle}>{step.title}</Text>
               </View>
 
-              {step.fields.length === 0 ? (
+              {!step.fields || step.fields.length === 0 ? (
                 <Text style={{ fontSize: 9, color: '#9CA3AF', paddingLeft: 12 }}>Tidak ada pertanyaan.</Text>
               ) : (
                 step.fields.map((field, fIdx) => (
@@ -106,18 +121,30 @@ export function TemplateQuestionsPDF({ template }: { template: FormTemplate }) {
                       <View style={styles.badgeContainer}>
                         {field.required && <Text style={styles.badgeReq}>Wajib</Text>}
                         <Text style={styles.badgeType}>{formatFieldType(field.type)}</Text>
+                        {field.gridSpan === 2 && <Text style={styles.badgeGrid}>Lebar Penuh</Text>}
                       </View>
                     </View>
                     
-                    <Text style={styles.fieldId}>Key: {field.id}</Text>
+                    <Text style={styles.fieldId}>ID DB: {field.id}</Text>
                     {field.description && <Text style={styles.fieldDesc}>{field.description}</Text>}
 
-                    {/* PERBAIKAN: Penanganan Opsi Berupa Objek vs Teks Biasa */}
+                    {/* FITUR BARU: RENDER LOGIKA BERCABANG (SHOW IF) */}
+                    {field.showIf && field.showIf.fieldId && (
+                      <View style={styles.conditionalBox}>
+                        <Text style={styles.conditionalText}>
+                          {`>> LOGIKA CABANG: Muncul JIKA pertanyaan `}
+                          <Text style={styles.conditionalHighlight}>[{field.showIf.fieldId}]</Text> 
+                          {` dijawab: `}
+                          <Text style={styles.conditionalHighlight}>"{field.showIf.equals}"</Text>
+                        </Text>
+                      </View>
+                    )}
+
+                    {/* RENDER OPSI JAWABAN & BOBOT SCORING */}
                     {(field.type === 'radio' || field.type === 'checkbox' || field.type === 'select') && field.options && field.options.length > 0 && (
                       <View style={styles.optionsList}>
-                        <Text style={{ fontSize: 8, color: '#6B7280', marginBottom: 2, fontWeight: 700 }}>Pilihan (dan Bobot Penilaian):</Text>
+                        <Text style={{ fontSize: 8, color: '#6B7280', marginBottom: 4, fontWeight: 700 }}>Parameter Pilihan & Bobot Nilai:</Text>
                         {field.options.map((opt, oIdx) => {
-                          // Deteksi tipe opt secara aman
                           const isObj = typeof opt === 'object' && opt !== null;
                           const optLabel = isObj ? opt.label : String(opt);
                           const optWeight = isObj ? opt.weight : null;
@@ -127,7 +154,7 @@ export function TemplateQuestionsPDF({ template }: { template: FormTemplate }) {
                               <Text style={styles.optionBullet}>{field.type === 'radio' ? '○' : '□'}</Text>
                               <Text style={styles.optionText}>
                                 {optLabel}
-                                {optWeight !== null && <Text style={styles.optionWeight}>  [Bobot: {optWeight}]</Text>}
+                                {optWeight !== null && <Text style={styles.optionWeight}>   [Skor: {optWeight}]</Text>}
                               </Text>
                             </View>
                           );
@@ -136,8 +163,10 @@ export function TemplateQuestionsPDF({ template }: { template: FormTemplate }) {
                     )}
 
                     {field.type === 'file' && field.fileAccept && (
-                      <View style={styles.optionsList}>
-                        <Text style={{ fontSize: 8, color: '#6B7280', fontWeight: 700 }}>Format diterima: <Text style={{ fontWeight: 400 }}>{field.fileAccept}</Text></Text>
+                      <View style={[styles.optionsList, { marginTop: 6 }]}>
+                        <Text style={{ fontSize: 8, color: '#6B7280', fontWeight: 700 }}>
+                          Format dokumen diizinkan: <Text style={{ fontWeight: 400, color: '#374151' }}>{field.fileAccept}</Text>
+                        </Text>
                       </View>
                     )}
 
