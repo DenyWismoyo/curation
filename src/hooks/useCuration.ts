@@ -95,7 +95,6 @@ export function useCuration() {
     const tokenUsed = finalData.token;
     delete finalData.token;
 
-    setFormData(finalData as CurationFormData);
     setViewState('processing');
     
     try {
@@ -103,33 +102,47 @@ export function useCuration() {
       const storageFilePaths: string[] = []; 
       const uploadPromises: Promise<void>[] = [];
       
-      // ==============================================================
-      // PEMBUATAN NAMA FOLDER DINAMIS (Berdasarkan Nama Usaha & Waktu)
-      // ==============================================================
       const rawNamaUsaha = finalData.namaUsaha || 'Tanpa_Nama';
-      // Bersihkan spasi dan karakter khusus agar URL storage valid
       const safeNamaUsaha = rawNamaUsaha.replace(/[^a-zA-Z0-9]/g, '_'); 
       const folderPath = `curation_files/${safeNamaUsaha}_${Date.now()}`;
 
       for (const key in dbData) {
         const value = dbData[key];
+        
+        // SKENARIO 1: File Baru (Belum pernah diunggah)
         if (value instanceof File) {
           const safeFileName = value.name.replace(/\s+/g, '_');
-          // Simpan dengan format folder dinamis
           const filePath = `${folderPath}/${safeFileName}`; 
           const storageRef = ref(storage, filePath);
           
           const uploadTask = uploadBytes(storageRef, value).then(async (snapshot) => {
             const downloadUrl = await getDownloadURL(snapshot.ref);
-            dbData[key] = downloadUrl; 
+            dbData[key] = downloadUrl; // Ganti File mentah dengan URL String
             storageFilePaths.push(filePath); 
           });
           uploadPromises.push(uploadTask);
+        } 
+        // SKENARIO 2: Bypass File (Sudah pernah terunggah tapi AI gagal/timeout sebelumnya)
+        else if (typeof value === 'string' && value.includes('firebasestorage.googleapis.com')) {
+          try {
+            // Ekstrak letak path storage asli dari dalam URL Firebase
+            const urlObj = new URL(value);
+            const pathPart = urlObj.pathname.split('/o/')[1];
+            if (pathPart) {
+              const decodedPath = decodeURIComponent(pathPart.split('?')[0]);
+              storageFilePaths.push(decodedPath);
+            }
+          } catch (e) {
+            console.error("Gagal mengekstrak path dari URL Storage:", e);
+          }
         }
       }
 
-      // Tunggu hingga semua file terupload ke Storage Folder
+      // Tunggu hingga semua file (yang baru) terupload ke Storage
       await Promise.all(uploadPromises);
+      
+      // KRUSIAL: Update Form Data dengan URL, agar bisa otomatis diselamatkan oleh LocalStorage
+      setFormData(dbData as CurationFormData);
       
       // Panggil Cloud Function
       const { assessmentId, aiResult } = await processAIAssessment(
@@ -141,11 +154,9 @@ export function useCuration() {
       );
       
       setAiResult(aiResult);
-      
-      // Simpan referensi ke local history (assessmentId dari backend)
       saveToHistory(dbData, aiResult, selectedTemplate.trackName, assessmentId);
 
-      // Bersihkan session cache
+      // Bersihkan session cache karena sudah berhasil
       if (typeof window !== 'undefined') {
         sessionStorage.removeItem('active_token');
         sessionStorage.removeItem('active_model');
@@ -157,13 +168,14 @@ export function useCuration() {
       if (typeof window !== 'undefined' && window.parent !== window) {
         window.parent.postMessage({
           type: 'CURATION_COMPLETED',
-          payload: { namaUsaha: finalData.namaUsaha, track: selectedTemplate?.trackName }
+          payload: { namaUsaha: dbData.namaUsaha, track: selectedTemplate?.trackName }
         }, '*');
       }
 
     } catch (error: any) {
       console.error("Terjadi kesalahan saat memproses data:", error);
       alert(error.message || "Gagal memproses AI. Pastikan Token benar.");
+      // Kembalikan ke layar wizard. Berkat 'setFormData(dbData)' di atas, memori file sudah aman.
       setViewState('wizard'); 
     }
   };
