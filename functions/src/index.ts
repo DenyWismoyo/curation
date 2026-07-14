@@ -1,5 +1,5 @@
 // functions/src/index.ts
-import { onCall, HttpsError, onRequest } from "firebase-functions/v2/https";
+import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { defineSecret } from "firebase-functions/params";
 import * as admin from "firebase-admin";
 import { getFirestore } from "firebase-admin/firestore";
@@ -10,15 +10,13 @@ import * as path from "path";
 import * as fs from "fs";
 import { buildAssessmentPrompt, getSystemPrompt } from "./promt/promptTemplate";
 
+
 // ============================================================================
 // EXPORT FUNGSI MODULAR
 // ============================================================================
 export { generatePDFReport } from "./documentGenerator";
 export { matchBusinessWithIndustry } from "./vectorService";
 export { generateFormTemplateFromAI } from "./formBuilderService";
-
-// IMPORT LAYANAN DOKU
-import { getDokuB2BToken, generateDokuQRIS } from "./dokuService"; 
 
 // ============================================================================
 // INISIALISASI FIREBASE
@@ -30,10 +28,6 @@ const geminiApiKeySecret = defineSecret("GEMINI_API_KEY");
 const smtpEmailSecret = defineSecret("SMTP_EMAIL");
 const smtpPasswordSecret = defineSecret("SMTP_PASSWORD");
 
-// SECRETS DOKU (Wajib diset di terminal: firebase functions:secrets:set ...)
-const dokuClientIdSecret = defineSecret("DOKU_CLIENT_ID");
-const dokuSecretKeySecret = defineSecret("DOKU_SECRET_KEY");
-const dokuPrivateKeySecret = defineSecret("DOKU_PRIVATE_KEY");
 
 // FUNGSI RETRY EXPONENTIAL BACKOFF TINGKAT TINGGI (Kebal 503 & JSON Error)
 const withRetry = async <T>(fn: () => Promise<T>, retries = 4, delayMs = 3000): Promise<T> => {
@@ -51,7 +45,8 @@ const withRetry = async <T>(fn: () => Promise<T>, retries = 4, delayMs = 3000): 
 // ============================================================================
 // CLOUD FUNCTION: ASESMEN AI UTAMA (MULTI-AGENT ARCHITECTURE)
 // ============================================================================
-export const processCurationAssessment = onCall({
+export const processCurationAssessment = onCall(
+  {
     memory: "2GiB",
     timeoutSeconds: 540,
     region: "asia-southeast2",
@@ -76,7 +71,7 @@ export const processCurationAssessment = onCall({
     const aiPromptConfig = data.aiPromptConfig || {};
     const storageFilePaths = data.storageFilePaths || [];
 
-    // Validasi Token Organisasi / Pembelian Mandiri
+    // Validasi Token Organisasi
     if (tokenUsed && typeof tokenUsed === 'string' && tokenUsed.includes('-')) {
       const lastDashIndex = tokenUsed.lastIndexOf('-');
       const corpId = tokenUsed.substring(0, lastDashIndex).replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
@@ -110,7 +105,7 @@ export const processCurationAssessment = onCall({
       if (storageFilePaths && storageFilePaths.length > 0) {
         for (const filePath of storageFilePaths) {
           try {
-            const fileName = path.basename(filePath);
+            const fileName = path.basename(filePath); 
             const [metadata] = await bucket.file(filePath).getMetadata();
             const mimeType = metadata.contentType || 'application/octet-stream';
 
@@ -162,18 +157,17 @@ export const processCurationAssessment = onCall({
 
       let fewShotContext = "";
       try {
-        const embedModel = genAI.getGenerativeModel({ model: "text-embedding-004" });
-        const ragQuery = `Track: ${trackType}, Data Bisnis: ${JSON.stringify(formData)}`;
-        const embedResult = await withRetry(() => embedModel.embedContent(ragQuery));
-
-        const vectorQuery = db.collection('business_vectors')
-          .findNearest('embedding', admin.firestore.FieldValue.vector(embedResult.embedding.values), { limit: 2, distanceMeasure: 'COSINE' });
-          
-        const vectorSnap = await vectorQuery.get();
-        if (!vectorSnap.empty) {
-          fewShotContext = `\n[KONTEKS RAG INDUSTRI]: Gunakan profil bisnis serupa yang pernah dievaluasi ini sebagai pembanding kalibrasi: ` + 
-            vectorSnap.docs.map(d => `(${d.data().namaUsaha} | Kesiapan: ${d.data().readinessLevel} | Skor: ${d.data().score})`).join(", ");
-        }
+         const embedModel = genAI.getGenerativeModel({ model: "text-embedding-004" });
+         const ragQuery = `Track: ${trackType}, Data Bisnis: ${JSON.stringify(formData)}`;
+         const embedResult = await withRetry(() => embedModel.embedContent(ragQuery));
+         const vectorQuery = db.collection('business_vectors')
+           .findNearest('embedding', admin.firestore.FieldValue.vector(embedResult.embedding.values), { limit: 2, distanceMeasure: 'COSINE' });
+           
+         const vectorSnap = await vectorQuery.get();
+         if (!vectorSnap.empty) {
+            fewShotContext = `\n[KONTEKS RAG INDUSTRI]: Gunakan profil bisnis serupa yang pernah dievaluasi ini sebagai pembanding kalibrasi: ` + 
+              vectorSnap.docs.map(d => `(${d.data().namaUsaha} | Kesiapan: ${d.data().readinessLevel} | Skor: ${d.data().score})`).join(", ");
+         }
       } catch (err) { }
 
       const textData: Record<string, any> = {};
@@ -223,7 +217,7 @@ export const processCurationAssessment = onCall({
       const systemPrompt = getSystemPrompt(true);
 
       // ======================================================================
-      // FASE 1: MASTER ASSESSOR
+      // FASE 1: MASTER ASSESSOR (PEMBARUAN: RINGKASAN EKSEKUTIF PADAT & POIN)
       // ======================================================================
       console.log(`[FASE 1] Menjalankan Master Assessor (Gemini 3.1 Pro)...`);
       
@@ -268,6 +262,7 @@ export const processCurationAssessment = onCall({
            "- **Kesiapan Teknis:** Infrastruktur cloud telah memadai namun belum teruji beban puncak.\\n- **Kepatuhan:** Belum memiliki audit keamanan sertifikasi ISO.\\n- **Potensi:** Skalabilitas tinggi jika CI/CD dioptimalkan."
         3. TIDAK PERLU menjabarkan metrik atau rencana tindakan mendetail. Hemat komputasi Anda!
       `;
+
       const masterParts = [{ text: masterPromptOverride }, ...parts.slice(1)];
       
       const masterJson = await withRetry(async () => {
@@ -278,21 +273,24 @@ export const processCurationAssessment = onCall({
       });
 
       // ======================================================================
-      // FASE 2: WORKER AGENTS 
+      // FASE 2: WORKER AGENTS (PEMBARUAN: PENULISAN LEBIH PADAT & TAKTIS)
       // ======================================================================
       console.log(`[FASE 2] Mengerahkan Worker Agents (Gemini 2.5 Flash) secara paralel...`);
+
       const getWorkerModel = (schema: any) => genAI.getGenerativeModel({
         model: "gemini-2.5-flash",
         systemInstruction: "Anda adalah AI Content Elaborator untuk eksekutif (C-Level). Tugas Anda mengekstrak wawasan dari data mentah menjadi narasi yang SANGAT PADAT, profesional, taktis, dan tidak bertele-tele. Hindari kata-kata bunga. OUTPUT WAJIB BERUPA JSON VALID. DILARANG KERAS MENGGUNAKAN ENTER/NEWLINE HARFIAH (GUNAKAN '\\n').",
         generationConfig: { temperature: 0.4, responseMimeType: "application/json", responseSchema: schema }
       });
 
+      // -- WORKER A: Analisis Blok Terkunci --
       const workerABlocks = async () => {
         try {
           const schemaA = {
             type: SchemaType.ARRAY,
             items: { type: SchemaType.OBJECT, required: ["title", "iconType", "metrics"], properties: { title: { type: SchemaType.STRING }, iconType: { type: SchemaType.STRING }, metrics: { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, required: ["label", "value"], properties: { label: { type: SchemaType.STRING }, value: { type: SchemaType.STRING, description: "Narasi ringkas, padat, profesional, 2-3 kalimat" } } } } } }
           };
+          
           const promptA = `JABARKAN narasi analitis HANYA untuk kerangka blok standar ini: ${JSON.stringify(aiPromptConfig.expectedAnalysisBlocks)}. \n\nDILARANG MERUBAH JUDUL BLOK ATAU MENCIPTAKAN BLOK BARU! \n\nData subjek: ${dataString}. \n\nPENTING: Sesuaikan narasi Anda dengan temuan kelemahan/kekuatan dari Master Assessor berikut ini: ${JSON.stringify(masterJson.swotAnalysis)}. \n\nINSTRUKSI PENULISAN: Pastikan tiap 'value' hanya berisi 2-3 kalimat yang SANGAT PADAT, tajam, dan langsung menyorot inti masalah! Jangan bertele-tele.`;
           
           return await withRetry(async () => {
@@ -304,12 +302,14 @@ export const processCurationAssessment = onCall({
         } catch (e) { console.error("Worker A Gagal:", e); return []; }
       };
 
+      // -- WORKER B: Metrik Radar Terkunci --
       const workerBMetrics = async () => {
         try {
           const schemaB = {
             type: SchemaType.ARRAY,
             items: { type: SchemaType.OBJECT, required: ["label", "score", "description"], properties: { label: { type: SchemaType.STRING }, score: { type: SchemaType.INTEGER }, description: { type: SchemaType.STRING, description: "Justifikasi padat 1-2 kalimat" } } }
           };
+          
           const promptB = `Berikan justifikasi evaluasi naratif dan skor (0-100) HANYA untuk daftar metrik pilar baku ini: ${JSON.stringify(aiPromptConfig.expectedMetrics)}. \n\nDILARANG MENCIPTAKAN METRIK DI LUAR DAFTAR TERSEBUT. \n\nData Subjek: ${dataString}. \n\nPENTING: Master Assessor telah menetapkan Skor Akhir subjek ini adalah ${masterJson.totalScore}/100. Pastikan nilai (score) yang Anda berikan pada setiap pilar metrik ini logis dan jika dirata-rata selaras dengan Skor Akhir Master! \n\nINSTRUKSI PENULISAN: Tulis bagian 'description' dengan SANGAT SINGKAT (maksimal 1-2 kalimat padat yang profesional).`;
           
           return await withRetry(async () => {
@@ -321,6 +321,7 @@ export const processCurationAssessment = onCall({
         } catch (e) { console.error("Worker B Gagal:", e); return []; }
       };
 
+      // -- WORKER C: Action Plan & Timeline Terkunci --
       const workerCRecommendations = async () => {
         try {
           const schemaC = {
@@ -331,6 +332,7 @@ export const processCurationAssessment = onCall({
               nextActionSteps: { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, required: ["timeframe", "task"], properties: { timeframe: { type: SchemaType.STRING }, task: { type: SchemaType.STRING, description: "Tindakan langsung (to-the-point)" } } } }
             }
           };
+          
           const promptC = `Buat Rencana Tindakan (Action Plan) TAKTIS DAN MENDALAM HANYA untuk area rekomendasi standar ini: ${JSON.stringify(aiPromptConfig.expectedRecommendations)}. \n\nData form subjek: ${dataString}. \n\nFokuskan rencana perbaikan pada risiko utama ini: ${JSON.stringify(masterJson.riskAssessment.criticalRisks)} dan kelemahan ini: ${JSON.stringify(masterJson.swotAnalysis.weaknesses)}. \n\nINSTRUKSI PENULISAN: Gunakan kalimat perintah langsung. Buat uraian taktis yang padat, profesional, dan menghindari penjelasan teoritis yang tidak perlu.`;
           
           return await withRetry(async () => {
@@ -342,6 +344,7 @@ export const processCurationAssessment = onCall({
         } catch (e) { console.error("Worker C Gagal:", e); return { recommendations: [], nextActionSteps: [] }; }
       };
 
+      // -- WORKER D: Analisis File Forensik --
       const workerDFiles = async () => {
         if (!storageFilePaths || storageFilePaths.length === 0 || uploadedGeminiFiles.length === 0) return null;
         try {
@@ -351,6 +354,7 @@ export const processCurationAssessment = onCall({
             properties: { documentQuality: { type: SchemaType.STRING }, keyFindingsFromFiles: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } }, discrepancies: { type: SchemaType.STRING } }
           };
           const promptD = `Lakukan analisis FORENSIK terhadap dokumen yang dilampirkan pengguna ini. Bandingkan isinya dengan klaim teks berikut dan cari kesenjangannya: ${dataString}. Sampaikan secara singkat dan tegas.`;
+          
           const fileParts = [{ text: promptD }, ...parts.slice(1)];
           
           return await withRetry(async () => {
@@ -363,7 +367,10 @@ export const processCurationAssessment = onCall({
       };
 
       const [finalBlocks, finalMetrics, finalRecommendations, finalFiles] = await Promise.all([
-        workerABlocks(), workerBMetrics(), workerCRecommendations(), workerDFiles()
+        workerABlocks(),
+        workerBMetrics(),
+        workerCRecommendations(),
+        workerDFiles()
       ]);
 
       // ======================================================================
@@ -429,11 +436,11 @@ export const processCurationAssessment = onCall({
           readinessLevel: aiResultJson.readinessLevel || 'Belum Ditentukan',
           formData: formData,
           aiResult: aiResultJson,
-          tokenUsed: tokenUsed || null,
-          allowedDocumentTemplates: allowedDocTemplates,
+          tokenUsed: tokenUsed || null, 
+          allowedDocumentTemplates: allowedDocTemplates, 
           documentGenerationQuota: tokenUsed ? 1 : 0, 
-          hasPaidForDocument: false,
-          status: "COMPLETED",
+          hasPaidForDocument: false, 
+          status: "COMPLETED", 
           createdAt: admin.firestore.FieldValue.serverTimestamp(),
           completedAt: admin.firestore.FieldValue.serverTimestamp()
         };
@@ -460,6 +467,7 @@ export const processCurationAssessment = onCall({
             } catch (err) { }
           }
         })(),
+        
         (async () => {
            try {
              const { generateInternalPDF } = await import("./documentGenerator");
@@ -467,6 +475,7 @@ export const processCurationAssessment = onCall({
              await generateInternalPDF(assessmentId, updatedDocDataForBg, 'curator');
            } catch (err) { }
         })(),
+        
         (async () => {
           const smtpEmail = smtpEmailSecret.value();
           const smtpPassword = smtpPasswordSecret.value();
@@ -479,7 +488,7 @@ export const processCurationAssessment = onCall({
                   totalScore: Number(aiResultJson.totalScore || 0),
                   readinessLevel: String(aiResultJson.readinessLevel),
                   trackType: String(updatedDocDataForBg.trackType),
-                  assessmentUrl: `[https://curation--teknopark-surakarta.asia-southeast1.hosted.app/result/$](https://curation--teknopark-surakarta.asia-southeast1.hosted.app/result/$){assessmentId}`
+                  assessmentUrl: `https://curation--teknopark-surakarta.asia-southeast1.hosted.app/result/${assessmentId}`
                 });
             } catch (err) { }
           }
@@ -495,124 +504,10 @@ export const processCurationAssessment = onCall({
          try { if (fs.existsSync(tmpFile)) fs.unlinkSync(tmpFile); } catch (e) {} 
       }
       for (const geminiFile of uploadedGeminiFiles) {
-         try { await withRetry(() => fileManager.deleteFile(geminiFile.name), 2, 2000); } catch (e) {} 
+         try { 
+           await withRetry(() => fileManager.deleteFile(geminiFile.name), 2, 2000); 
+         } catch (e) {} 
       }
     }
   }
 );
-
-// ============================================================================
-// CLOUD FUNCTION: MENCETAK QRIS DOKU (DIPANGGIL DARI FRONTEND)
-// ============================================================================
-export const createQRISPayment = onCall({
-    memory: "512MiB",
-    region: "asia-southeast2",
-    secrets: [dokuClientIdSecret, dokuSecretKeySecret, dokuPrivateKeySecret],
-    cors: true
-  },
-  async (request) => {
-    if (!request.auth) throw new HttpsError("unauthenticated", "Anda harus login.");
-
-    const { templateId, templateName, price } = request.data;
-    if (!templateId || !price) throw new HttpsError("invalid-argument", "Data order tidak lengkap.");
-
-    const clientId = dokuClientIdSecret.value();
-    const secretKey = dokuSecretKeySecret.value();
-    const privateKey = dokuPrivateKeySecret.value().replace(/\\n/g, '\n');
-
-    try {
-      const accessToken = await getDokuB2BToken(clientId, privateKey);
-      const invoiceNumber = `INV-${templateId.substring(0, 5).toUpperCase()}-${Date.now()}`;
-      
-      const qrisData = await generateDokuQRIS(
-        clientId, 
-        secretKey, 
-        accessToken, 
-        invoiceNumber, 
-        price
-      );
-
-      // Simpan log PENDING ke Firestore
-      await db.collection("transactions").doc(invoiceNumber).set({
-        invoiceNumber,
-        userId: request.auth.uid,
-        templateId,
-        templateName,
-        amount: price,
-        status: 'PENDING',
-        createdAt: admin.firestore.FieldValue.serverTimestamp()
-      });
-
-      return { 
-        invoiceNumber: invoiceNumber,
-        qrContent: qrisData.qrContent 
-      };
-
-    } catch (error: any) {
-      console.error("Gagal generate QRIS:", error);
-      throw new HttpsError("internal", "Gagal menghubungi layanan pembayaran.");
-    }
-  }
-);
-
-// ============================================================================
-// CLOUD FUNCTION: DOKU WEBHOOK NOTIFIKASI
-// ============================================================================
-export const dokuWebhook = onRequest({
-  region: "asia-southeast2",
-  secrets: [dokuSecretKeySecret]
-}, async (req, res) => {
-  if (req.method !== 'POST') {
-    res.status(405).send('Method Not Allowed');
-    return;
-  }
-
-  try {
-    const orderData = req.body.order;
-    
-    // Verifikasi pembayaran sukses
-    if (orderData && req.body.transaction && req.body.transaction.status === 'SUCCESS') {
-      
-      const transactionDoc = await db.collection("transactions").doc(orderData.invoice_number).get();
-      if (!transactionDoc.exists) {
-        res.status(404).send("Invoice tidak dikenali.");
-        return;
-      }
-      
-      const transactionData = transactionDoc.data();
-      
-      if (transactionData?.status !== 'SUCCESS') {
-        // Update Transaksi
-        await db.collection("transactions").doc(orderData.invoice_number).update({
-          status: 'SUCCESS',
-          paidAt: admin.firestore.FieldValue.serverTimestamp()
-        });
-
-        // Generate Token B2C
-        const generatedToken = `B2C-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-        
-        await db.collection('corporate_tokens').doc('B2C').set({
-          corporateName: 'Individual B2C Package',
-          modelType: 'pro',
-          createdAt: new Date().toISOString(),
-          allowedTemplates: [transactionData?.templateId], 
-          tokens: {
-            [generatedToken.split('-')[1]]: { 
-              isUsed: false, 
-              usedAt: null, 
-              usedByNamaUsaha: null,
-              purchasedByUid: transactionData?.userId 
-            }
-          }
-        }, { merge: true });
-
-        console.log(`Pembayaran QRIS berhasil [${orderData.invoice_number}]. Token B2C Generated: ${generatedToken}`);
-      }
-    }
-
-    res.status(200).send("OK");
-  } catch (error) {
-    console.error("Webhook Error:", error);
-    res.status(500).send("Internal Server Error");
-  }
-});
