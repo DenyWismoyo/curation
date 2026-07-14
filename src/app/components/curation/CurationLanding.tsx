@@ -2,7 +2,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ShieldCheck, ArrowRight, History, Clock, Activity, ChevronRight, Loader2, LogOut, LayoutDashboard } from 'lucide-react';
+import { 
+  ShieldCheck, ArrowRight, History, Clock, Activity, 
+  ChevronRight, Loader2, LogOut, LayoutDashboard, Sparkles 
+} from 'lucide-react';
+import { PricingPackages } from '@/app/components/payment/PricingPackages';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { CurationHistory } from '@/types/curation';
@@ -16,8 +20,8 @@ interface Props {
   onStart: () => void;
   history: CurationHistory[];
   onLoadHistory: (item: CurationHistory) => void;
-  user: User | null; 
-  role: 'user' | 'admin_csrs' | null; 
+  user: User | null;
+  role: 'user' | 'admin_csrs' | null;
   onLogin: () => void;
   onLogout: () => void;
 }
@@ -26,6 +30,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
   const [tokenInput, setTokenInput] = useState('');
   const [isValidating, setIsValidating] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
 
   const handleValidateAndStart = async () => {
     setErrorMsg('');
@@ -73,14 +78,12 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
       sessionStorage.setItem('active_token', cleanToken);
       sessionStorage.setItem('active_model', batchData.modelType);
       
-      // --- TAMBAHAN FILTERING ---
-      // Simpan allowedTemplates ke session jika ada, jika tidak ada hapus session-nya
+      // Simpan allowedTemplates ke session jika ada
       if (batchData.allowedTemplates && Array.isArray(batchData.allowedTemplates) && batchData.allowedTemplates.length > 0) {
         sessionStorage.setItem('active_allowed_templates', JSON.stringify(batchData.allowedTemplates));
       } else {
         sessionStorage.removeItem('active_allowed_templates');
       }
-      // --------------------------
 
       onStart();
     } catch (error) {
@@ -113,12 +116,12 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
       <motion.div 
         animate={{ scale: [1, 1.05, 1], opacity: [0.4, 0.6, 0.4] }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-[-10%] left-[-5%] w-[40vw] h-[40vw] bg-indigo-200/40 rounded-full blur-[120px] pointer-events-none" 
+        className="absolute top-[-10%] left-[-5%] w-[40vw] h-[40vw] bg-indigo-200/40 rounded-full blur-[120px] pointer-events-none"
       />
       <motion.div 
         animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }}
         transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-        className="absolute bottom-[-10%] right-[-5%] w-[30vw] h-[30vw] bg-blue-200/40 rounded-full blur-[120px] pointer-events-none" 
+        className="absolute bottom-[-10%] right-[-5%] w-[30vw] h-[30vw] bg-blue-200/40 rounded-full blur-[120px] pointer-events-none"
       />
 
       <div className="max-w-7xl w-full flex flex-col lg:flex-row gap-12 lg:gap-20 items-center relative z-10">
@@ -135,7 +138,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
           </motion.div>
           
           <motion.div variants={fadeUpVariants} className="space-y-6">
-            {/* Judul Utama */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 leading-[1.15] text-balance">
               Smart Curation <br className="hidden sm:block"/> 
               <span className="text-indigo-600 bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-600">
@@ -143,9 +145,8 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
               </span>
             </h1>
             
-            {/* Deskripsi */}
             <p className="text-base sm:text-lg text-slate-500 max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed text-balance">
-              Mesin komputasi analitik berbasis kecerdasan buatan untuk memetakan maturitas, skalabilitas, dan profil kelayakan entitas—dari purwarupa riset hingga ekosistem korporasi—menuju akselerasi global.
+              Mesin komputasi analitik berbasis kecerdasan buatan untuk memetakan maturitas, skalabilitas, dan profil kelayakan entitas dari purwarupa riset hingga ekosistem korporasi menuju akselerasi global.
             </p>
           </motion.div>
 
@@ -195,7 +196,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                 </Link>
               )}
 
-              {/* Input Token */}
+              {/* Input Token B2B */}
               <div className="pt-2">
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest ml-1 mb-2">
                   Mulai Asesmen (Input Token)
@@ -246,11 +247,25 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                 )}
               </AnimatePresence>
 
+              {/* INJEKSI TOMBOL KATALOG B2C */}
+              <div className="pt-6 mt-6 border-t border-slate-200/60">
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 text-center sm:text-left">
+                  Atau Pilih Asesmen Mandiri
+                </p>
+                <Button 
+                  onClick={() => setIsPricingModalOpen(true)}
+                  variant="outline"
+                  className="w-full h-14 rounded-2xl border-indigo-200 bg-indigo-50/50 text-indigo-700 hover:bg-indigo-100 font-bold text-base shadow-sm transition-all"
+                >
+                  <Sparkles className="w-5 h-5 mr-2" /> Jelajahi Katalog Modul
+                </Button>
+              </div>
+
             </motion.div>
           )}
         </motion.div>
 
-        {/* Kolom Kanan: History Cards (Hanya Muncul Jika User Sudah Login & Punya Riwayat) */}
+        {/* Kolom Kanan: History Cards */}
         {user && history.length > 0 && (
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
@@ -260,7 +275,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
           >
             <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-white/60 pointer-events-none"></div>
             
-            {/* Indikator Live Sync (Animasi Berkedip) */}
+            {/* Indikator Live Sync */}
             <div className="flex items-center justify-between mb-6 relative z-10">
               <h3 className="text-sm font-black text-slate-800 flex items-center gap-2">
                 <History className="h-5 w-5 text-indigo-600" /> Riwayat Kurasi Anda
@@ -282,7 +297,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                   variants={historyItemVariants}
                   whileHover={{ y: -4, scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  key={item.id || idx} // Prioritaskan ID dokumen
+                  key={item.id || idx}
                   onClick={() => onLoadHistory(item)} 
                   className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 cursor-pointer group transition-shadow hover:shadow-md hover:shadow-indigo-500/5"
                 >
@@ -316,6 +331,14 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
             </motion.div>
           </motion.div>
         )}
+
+        {/* MODAL PRICING PACKAGES */}
+        <PricingPackages 
+          isOpen={isPricingModalOpen}
+          onClose={() => setIsPricingModalOpen(false)}
+          user={user}
+          onLoginRequest={onLogin}
+        />
 
       </div>
     </div>

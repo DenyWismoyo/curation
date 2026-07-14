@@ -143,6 +143,11 @@ export interface FormTemplate {
   isActive: boolean;      
   version: number;
   lastUpdated: string;
+  isDisplayedOnLanding?: boolean; // Tampil/Sembunyi di Landing Page B2C
+  isPaid?: boolean;               // Toggle Berbayar / Gratis
+  trialQuota?: number;            // Input kuota trial (0 = Tanpa Trial)
+  price?: number;
+  discountPercentage?: number;
   steps: FormStep[]; 
   aiPromptConfig?: AiPromptConfig;
   folder?: string;

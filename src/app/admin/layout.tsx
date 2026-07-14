@@ -7,7 +7,8 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { 
   LayoutDashboard, Settings, KeyRound, LogOut, Menu, X, ShieldCheck, 
-  PanelLeftClose, PanelLeftOpen 
+  PanelLeftClose, PanelLeftOpen, 
+  Tags
 } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -43,6 +44,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: 'Dasbor Utama', path: '/admin', icon: LayoutDashboard },
     { name: 'Manajemen Token', path: '/admin/tokens', icon: KeyRound },
     { name: 'Template Form', path: '/admin/templates', icon: Settings },
+    { name: 'Harga & Monetisasi', path: '/admin/pricing', icon: Tags }, // <-- MENU BARU
   ];
 
   return (
