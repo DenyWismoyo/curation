@@ -1,12 +1,13 @@
-// src/app/components/curation/CurationLanding.tsx
+// src/components/curation/CurationLanding.tsx
 'use client';
 
 import React, { useState } from 'react';
 import { 
   ShieldCheck, ArrowRight, History, Clock, Activity, 
-  ChevronRight, Loader2, LogOut, LayoutDashboard, Sparkles 
+  ChevronRight, Loader2, LogOut, LayoutDashboard, Sparkles, Compass 
 } from 'lucide-react';
 import { PricingPackages } from '@/app/components/payment/PricingPackages';
+import { SystemCapabilitiesModal } from './SystemCapabilitiesModal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { CurationHistory } from '@/types/curation';
@@ -30,7 +31,10 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
   const [tokenInput, setTokenInput] = useState('');
   const [isValidating, setIsValidating] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  
+  // State untuk kontrol Modal
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
+  const [isCapabilitiesModalOpen, setIsCapabilitiesModalOpen] = useState(false);
 
   const handleValidateAndStart = async () => {
     setErrorMsg('');
@@ -74,16 +78,22 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
         return;
       }
 
-      // Token Valid
+      // -------------------------------------------------------------
+      // LOGIKA FILTERING DINAMIS (Corporate vs B2C)
+      // -------------------------------------------------------------
       sessionStorage.setItem('active_token', cleanToken);
       sessionStorage.setItem('active_model', batchData.modelType);
       
-      // Simpan allowedTemplates ke session jika ada
-      if (batchData.allowedTemplates && Array.isArray(batchData.allowedTemplates) && batchData.allowedTemplates.length > 0) {
-        sessionStorage.setItem('active_allowed_templates', JSON.stringify(batchData.allowedTemplates));
+      // PRIORITAS 1: Cek apakah ada izin spesifik di dalam token itu sendiri (Untuk B2C Eceran)
+      // PRIORITAS 2: Jika tidak ada, gunakan izin global milik Batch (Untuk Corporate)
+      const allowedTpls = tokenData.allowedTemplates || batchData.allowedTemplates;
+      
+      if (allowedTpls && Array.isArray(allowedTpls) && allowedTpls.length > 0) {
+        sessionStorage.setItem('active_allowed_templates', JSON.stringify(allowedTpls));
       } else {
         sessionStorage.removeItem('active_allowed_templates');
       }
+      // -------------------------------------------------------------
 
       onStart();
     } catch (error) {
@@ -148,6 +158,34 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
             <p className="text-base sm:text-lg text-slate-500 max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed text-balance">
               Mesin komputasi analitik berbasis kecerdasan buatan untuk memetakan maturitas, skalabilitas, dan profil kelayakan entitas dari purwarupa riset hingga ekosistem korporasi menuju akselerasi global.
             </p>
+
+            {/* --- TOMBOL PEMICU MODAL KAPABILITAS (PREMIUM BANNER) --- */}
+            <div className="pt-4 flex justify-center lg:justify-start">
+              <div 
+                onClick={() => setIsCapabilitiesModalOpen(true)}
+                className="group relative cursor-pointer overflow-hidden rounded-[1.25rem] bg-slate-900 p-[2px] transition-all duration-300 hover:shadow-2xl hover:shadow-indigo-500/30 hover:-translate-y-1 w-full max-w-sm sm:max-w-md"
+              >
+                {/* Efek Gradient Animasi di Belakang */}
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-500 opacity-40 group-hover:opacity-100 transition-opacity duration-500 animate-pulse"></div>
+                
+                <div className="relative flex items-center justify-between gap-4 rounded-xl bg-slate-900 px-5 py-4 transition-all">
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-indigo-500/20 text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-colors duration-300">
+                      <Compass className="h-6 w-6" />
+                    </div>
+                    <div className="text-left">
+                      <h4 className="text-base font-black text-white leading-tight mb-0.5">Apa itu CSRS?</h4>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest line-clamp-1">Pelajari Solusi & Cara Kerjanya</p>
+                    </div>
+                  </div>
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/10 text-white group-hover:bg-white group-hover:text-slate-900 transition-colors duration-300">
+                    <ArrowRight className="h-4 w-4" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* -------------------------------------------------------- */}
+
           </motion.div>
 
           {/* LOGIC LOGIN & TOKEN INPUT */}
@@ -196,7 +234,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                 </Link>
               )}
 
-              {/* Input Token B2B */}
+              {/* Input Token B2B / B2C */}
               <div className="pt-2">
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest ml-1 mb-2">
                   Mulai Asesmen (Input Token)
@@ -207,7 +245,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                     <Input 
                       value={tokenInput}
                       onChange={(e) => setTokenInput(e.target.value.toUpperCase())}
-                      placeholder="Misal: KUKM1-ABCDEF"
+                      placeholder="Misal: B2C-ABCDEF"
                       className="relative h-14 rounded-2xl bg-white/80 backdrop-blur-sm border-slate-200/60 shadow-sm text-center sm:text-left font-mono font-bold text-lg focus-visible:ring-0 focus-visible:border-indigo-400 transition-all"
                       disabled={isValidating}
                     />
@@ -247,7 +285,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                 )}
               </AnimatePresence>
 
-              {/* INJEKSI TOMBOL KATALOG B2C */}
+              {/* TOMBOL KATALOG B2C */}
               <div className="pt-6 mt-6 border-t border-slate-200/60">
                 <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 text-center sm:text-left">
                   Atau Pilih Asesmen Mandiri
@@ -338,6 +376,12 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
           onClose={() => setIsPricingModalOpen(false)}
           user={user}
           onLoginRequest={onLogin}
+        />
+
+        {/* MODAL KAPABILITAS SISTEM */}
+        <SystemCapabilitiesModal 
+          isOpen={isCapabilitiesModalOpen}
+          onClose={() => setIsCapabilitiesModalOpen(false)}
         />
 
       </div>

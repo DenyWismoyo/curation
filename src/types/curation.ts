@@ -146,8 +146,12 @@ export interface FormTemplate {
   isDisplayedOnLanding?: boolean; // Tampil/Sembunyi di Landing Page B2C
   isPaid?: boolean;               // Toggle Berbayar / Gratis
   trialQuota?: number;            // Input kuota trial (0 = Tanpa Trial)
-  price?: number;
-  discountPercentage?: number;
+  price?: number;                 // Harga (Rp)
+  discountPercentage?: number;    // Persentase Diskon (0 - 100)
+  discountExpiry?: string;        // Batas waktu promo diskon (Format ISO String)
+  isBestSeller?: boolean;         // Toggle "Best Seller / Terpopuler"
+  userCount?: number;             // Dummy jumlah pengguna (Social Proof)
+  customUSPs?: string[];          // Keunggulan tambahan khusus modul ini
   steps: FormStep[]; 
   aiPromptConfig?: AiPromptConfig;
   folder?: string;

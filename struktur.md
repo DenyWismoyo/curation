@@ -29,6 +29,8 @@ curation/ (Root Directory)
     │   │   │   └── page.tsx
     │   │   ├── tokens
     │   │   │   └── page.tsx
+    │   │   ├── pricing
+    │   │   │   └── page.tsx
     │   │   ├── layout.tsx
     │   │   └── page.tsx
     │   ├── assessment
@@ -55,6 +57,8 @@ curation/ (Root Directory)
     │   │   │   ├── DynamicWizard.tsx
     │   │   │   ├── PublicExportPDF.tsx
     │   │   │   └── ReviewAndConfirm.tsx
+    │   │   ├── payment
+    │   │   │   └── PricingPackages.tsx
     │   │   ├── curator
     │   │   │   ├── CuratorAssessmentDetail.tsx
     │   │   │   └── PDFReportTemplate.tsx
