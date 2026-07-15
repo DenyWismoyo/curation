@@ -22,7 +22,7 @@ interface Props {
   history: CurationHistory[];
   onLoadHistory: (item: CurationHistory) => void;
   user: User | null;
-  role: 'user' | 'admin_csrs' | null;
+  role: 'user' | 'admin_omnifit' | 'admin_csrs' | null;
   onLogin: () => void;
   onLogout: () => void;
 }
@@ -149,9 +149,9 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
           
           <motion.div variants={fadeUpVariants} className="space-y-6">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 leading-[1.15] text-balance">
-              Smart Curation <br className="hidden sm:block"/> 
+              Omnifit Platform <br className="hidden sm:block"/> 
               <span className="text-indigo-600 bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-600">
-                & Readiness System
+                Smart Assessment System
               </span>
             </h1>
             
@@ -174,7 +174,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                       <Compass className="h-6 w-6" />
                     </div>
                     <div className="text-left">
-                      <h4 className="text-base font-black text-white leading-tight mb-0.5">Apa itu CSRS?</h4>
+                      <h4 className="text-base font-black text-white leading-tight mb-0.5">Apa itu Omnifit?</h4>
                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest line-clamp-1">Pelajari Solusi & Cara Kerjanya</p>
                     </div>
                   </div>
@@ -226,10 +226,10 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
               </div>
 
               {/* Tampilkan Tombol Admin Khusus Jika Memiliki Role Admin */}
-              {role === 'admin_csrs' && (
+              {(role === 'admin_csrs' || role === 'admin_omnifit') && (
                 <Link href="/admin" className="block w-full">
                   <Button variant="outline" className="w-full h-12 rounded-xl border-indigo-200 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold gap-2">
-                    <LayoutDashboard size={18} /> Ke Dasbor Admin CSRS
+                    <LayoutDashboard size={18} /> Ke Dasbor Admin Omnifit
                   </Button>
                 </Link>
               )}

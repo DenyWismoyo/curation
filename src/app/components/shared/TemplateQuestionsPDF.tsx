@@ -18,7 +18,6 @@ Font.register({
 
 const styles = StyleSheet.create({
   page: { padding: '48 48 64 48', fontFamily: 'Inter', backgroundColor: '#FFFFFF' },
-  
   // Header
   headerContainer: { borderBottom: '2pt solid #000000', paddingBottom: 16, marginBottom: 24 },
   systemTitle: { fontSize: 8, color: '#666666', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 4 },
@@ -27,23 +26,21 @@ const styles = StyleSheet.create({
   metaRow: { flexDirection: 'row', gap: 12, marginTop: 12 },
   metaBadge: { backgroundColor: '#F3F4F6', padding: '4 8', borderRadius: 4 },
   metaText: { fontSize: 8, fontWeight: 900, color: '#374151', textTransform: 'uppercase' },
-
+  
   // Step (Langkah)
   stepContainer: { marginTop: 24, marginBottom: 12 },
   stepHeader: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#F9FAFB', padding: '8 12', borderLeft: '3pt solid #4F46E5', marginBottom: 12 },
   stepNumber: { fontSize: 10, fontWeight: 900, color: '#4F46E5', marginRight: 8 },
   stepTitle: { fontSize: 12, fontWeight: 900, color: '#111827', textTransform: 'uppercase' },
-
+  
   // Field (Pertanyaan)
   fieldContainer: { marginBottom: 12, paddingBottom: 12, borderBottom: '1pt solid #E5E7EB', paddingLeft: 12 },
   fieldHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 },
   fieldLabel: { fontSize: 10, fontWeight: 700, color: '#111827', flex: 1, paddingRight: 16, lineHeight: 1.4 },
-  
   badgeContainer: { flexDirection: 'row', gap: 4, flexWrap: 'wrap', justifyContent: 'flex-end', width: 120 },
   badgeReq: { fontSize: 7, fontWeight: 900, color: '#DC2626', backgroundColor: '#FEE2E2', padding: '2 4', borderRadius: 2, textTransform: 'uppercase' },
   badgeType: { fontSize: 7, fontWeight: 900, color: '#4B5563', backgroundColor: '#F3F4F6', padding: '2 4', borderRadius: 2, textTransform: 'uppercase' },
   badgeGrid: { fontSize: 7, fontWeight: 900, color: '#059669', backgroundColor: '#D1FAE5', padding: '2 4', borderRadius: 2, textTransform: 'uppercase' },
-  
   fieldDesc: { fontSize: 9, color: '#6B7280', marginBottom: 6, lineHeight: 1.4 },
   fieldId: { fontSize: 7, color: '#9CA3AF', fontFamily: 'Courier', marginBottom: 6 },
   
@@ -59,14 +56,14 @@ const styles = StyleSheet.create({
   },
   conditionalText: { fontSize: 8, color: '#4338CA', fontWeight: 700 },
   conditionalHighlight: { fontWeight: 900, color: '#312E81' },
-
+  
   // Options (Pilihan)
   optionsList: { marginTop: 4, paddingLeft: 8 },
   optionItem: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 3 },
   optionBullet: { fontSize: 8, color: '#9CA3AF', marginRight: 4, marginTop: 1 },
   optionText: { fontSize: 9, color: '#374151' },
   optionWeight: { fontSize: 8, color: '#4F46E5', fontWeight: 900, marginLeft: 4 },
-
+  
   footer: { position: 'absolute', bottom: 30, left: 48, right: 48, borderTop: '1pt solid #E5E5E5', paddingTop: 12, flexDirection: 'row', justifyContent: 'space-between' },
   footerText: { fontSize: 8, color: '#999999', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1 },
 });
@@ -89,9 +86,10 @@ export function TemplateQuestionsPDF({ template }: { template: FormTemplate }) {
       <Page size="A4" style={styles.page} wrap={true}>
         
         <View style={styles.headerContainer} fixed>
-          <Text style={styles.systemTitle}>CSRS Form Architecture</Text>
+          <Text style={styles.systemTitle}>Omnifit Form Architecture</Text>
           <Text style={styles.docTitle}>{template.trackName}</Text>
           <Text style={styles.docDesc}>{template.trackDescription || 'Tidak ada deskripsi template.'}</Text>
+          
           <View style={styles.metaRow}>
             <View style={styles.metaBadge}><Text style={styles.metaText}>Status: {template.isActive ? 'AKTIF' : 'DRAFT'}</Text></View>
             <View style={styles.metaBadge}><Text style={styles.metaText}>Total: {template.steps?.length || 0} Langkah</Text></View>
@@ -148,10 +146,10 @@ export function TemplateQuestionsPDF({ template }: { template: FormTemplate }) {
                           const isObj = typeof opt === 'object' && opt !== null;
                           const optLabel = isObj ? opt.label : String(opt);
                           const optWeight = isObj ? opt.weight : null;
-
+                          
                           return (
                             <View key={oIdx} style={styles.optionItem}>
-                              <Text style={styles.optionBullet}>{field.type === 'radio' ? '○' : '□'}</Text>
+                              <Text style={styles.optionBullet}>{field.type === 'radio' ? '○' : '☐'}</Text>
                               <Text style={styles.optionText}>
                                 {optLabel}
                                 {optWeight !== null && <Text style={styles.optionWeight}>   [Skor: {optWeight}]</Text>}
@@ -169,7 +167,6 @@ export function TemplateQuestionsPDF({ template }: { template: FormTemplate }) {
                         </Text>
                       </View>
                     )}
-
                   </View>
                 ))
               )}

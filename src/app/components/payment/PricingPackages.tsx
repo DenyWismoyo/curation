@@ -55,7 +55,7 @@ const CountdownTimer = ({ targetDateIso }: { targetDateIso: string }) => {
       </span>
     </div>
   );
-};
+}
 
 interface PricingPackagesProps {
   isOpen: boolean;
@@ -85,7 +85,6 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest }: Prici
       );
       const snap = await getDocs(q);
       const data: FormTemplate[] = [];
-
       snap.forEach(doc => data.push({ id: doc.id, ...doc.data() } as FormTemplate));
       
       data.sort((a, b) => {
@@ -124,11 +123,12 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest }: Prici
       const hargaText = isDiscountActive 
         ? `~Rp ${pkg.price?.toLocaleString('id-ID')}~ -> *Rp ${finalPrice.toLocaleString('id-ID')}* (Diskon ${pkg.discountPercentage}%)`
         : `*Rp ${pkg.price?.toLocaleString('id-ID')}*`;
-      
+        
       const bookingCode = `BKG-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
 
-      const message = `Halo Admin CSRS,%0A%0ASaya ingin *MENGAMANKAN AKSES* untuk modul asesmen:%0A*Modul:* ${pkg.trackName}%0A*Kode Booking:* ${bookingCode}%0A*Harga:* ${hargaText}%0A%0A*Data Akun Saya:*%0A- Nama: ${user.displayName}%0A- Email: ${user.email}%0A%0AMohon instruksi pembayaran. Terima kasih.`;
-      
+      // PERUBAHAN BRANDING: Sapaan Admin Omnifit
+      const message = `Halo Admin Omnifit,%0A%0ASaya ingin *MENGAMANKAN AKSES* untuk modul asesmen:%0A*Modul:* ${pkg.trackName}%0A*Kode Booking:* ${bookingCode}%0A*Harga:* ${hargaText}%0A%0A*Data Akun Saya:*%0A- Nama: ${user.displayName}%0A- Email: ${user.email}%0A%0AMohon instruksi pembayaran. Terima kasih.`;
+        
       const waUrl = `https://wa.me/${adminWhatsApp}?text=${message}`;
       window.open(waUrl, '_blank');
 
@@ -204,7 +204,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest }: Prici
                         }`}
                       >
                         {pkg.isBestSeller && (
-                          <div className="absolute top-6 right-[-40px] bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[10px] font-black uppercase tracking-widest px-12 py-1.5 shadow-md z-10 rotate-45 flex items-center justify-center"> 
+                          <div className="absolute top-6 right-[-40px] bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[10px] font-black uppercase tracking-widest px-12 py-1.5 shadow-md z-10 rotate-45 flex items-center justify-center">
                             Terpopuler
                           </div>
                         )}
@@ -301,6 +301,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest }: Prici
                 {/* --- BANNER REQUEST CUSTOM FORM --- */}
                 <div className="mt-10 bg-slate-900 rounded-[2rem] p-8 lg:p-10 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl relative overflow-hidden group">
                   <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none transition-all group-hover:scale-150 group-hover:bg-indigo-500/30"></div>
+                  
                   <div className="relative z-10 max-w-2xl text-center md:text-left">
                     <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-500/20 text-indigo-300 rounded-full text-[10px] font-black uppercase tracking-widest ring-1 ring-indigo-500/30 mb-4">
                       <Sparkles className="w-3.5 h-3.5" /> Enterprise & Corporate
@@ -310,9 +311,11 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest }: Prici
                       Jika Anda mewakili Korporasi, Institusi, atau Tim Curator yang memiliki kebutuhan matriks evaluasi khusus, tim kami siap merancang formulir secara eksklusif dan privat khusus untuk kebutuhan Anda.
                     </p>
                   </div>
+
                   <div className="relative z-10 shrink-0 w-full md:w-auto">
+                    {/* PERUBAHAN BRANDING: Sapaan Admin Omnifit */}
                     <a
-                      href="https://wa.me/6285777117587?text=Halo%20Admin%20CSRS,%20saya%20tertarik%20untuk%20berdiskusi%20mengenai%20pembuatan%20modul%20asesmen%20custom."
+                      href="https://wa.me/6285777117587?text=Halo%20Admin%20Omnifit,%20saya%20tertarik%20untuk%20berdiskusi%20mengenai%20pembuatan%20modul%20asesmen%20custom."
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center justify-center gap-2 w-full md:w-auto px-8 py-4 bg-[#25D366] hover:bg-[#1ebd5a] text-white rounded-2xl font-bold transition-all shadow-lg shadow-[#25D366]/20"

@@ -18,7 +18,6 @@ Font.register({
 
 const styles = StyleSheet.create({
   page: { padding: '48 48 64 48', fontFamily: 'Inter', backgroundColor: '#FFFFFF' },
-  
   // Header
   headerContainer: { borderBottom: '3pt solid #000000', paddingBottom: 16, marginBottom: 24, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' },
   systemTitle: { fontSize: 8, color: '#4F46E5', fontWeight: 900, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 4 },
@@ -26,16 +25,13 @@ const styles = StyleSheet.create({
   docDesc: { fontSize: 12, color: '#4B5563', marginTop: 4, fontWeight: 500 },
   headerRight: { textAlign: 'right' },
   metaText: { fontSize: 8, color: '#6B7280', fontFamily: 'Courier', marginBottom: 2 },
-  
   // Grid System
   grid2Col: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 24 },
   colHalf: { width: '48%', backgroundColor: '#F8FAFC', padding: 16, border: '1pt solid #E2E8F0', borderRadius: 8 },
-  
   sectionTitle: { fontSize: 10, fontWeight: 900, color: '#000000', textTransform: 'uppercase', letterSpacing: 1, borderBottom: '1pt solid #E2E8F0', paddingBottom: 6, marginBottom: 12 },
   label: { fontSize: 8, fontWeight: 900, color: '#64748B', textTransform: 'uppercase', marginBottom: 2 },
   value: { fontSize: 11, fontWeight: 700, color: '#0F172A', marginBottom: 10 },
   valueHighlight: { fontSize: 11, fontWeight: 900, color: '#4F46E5', marginBottom: 10 },
-
   // Lists
   listSection: { marginBottom: 20 },
   listTitleContainer: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
@@ -44,20 +40,16 @@ const styles = StyleSheet.create({
   bulletRow: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 6, paddingLeft: 12 },
   bullet: { fontSize: 10, color: '#4F46E5', marginRight: 6 },
   bulletText: { fontSize: 10, color: '#334155', lineHeight: 1.4, flex: 1 },
-
   // Special/Advanced Config Boxes
   advancedBox: { backgroundColor: '#F8FAFC', borderLeft: '4pt solid #4F46E5', padding: 12, marginTop: 12 },
   advancedLabel: { fontSize: 9, fontWeight: 900, color: '#312E81', textTransform: 'uppercase', marginBottom: 4 },
   advancedText: { fontSize: 10, color: '#334155', lineHeight: 1.5, fontWeight: 500 },
-
   negativeBox: { backgroundColor: '#FEF2F2', borderLeft: '4pt solid #E11D48', padding: 12, marginTop: 12 },
   negativeLabel: { fontSize: 9, fontWeight: 900, color: '#9F1239', textTransform: 'uppercase', marginBottom: 4 },
   negativeText: { fontSize: 10, color: '#881337', lineHeight: 1.5, fontWeight: 500 },
-
   riskBox: { backgroundColor: '#FFFBEB', borderLeft: '4pt solid #F59E0B', padding: 12, marginTop: 12 },
   riskLabel: { fontSize: 9, fontWeight: 900, color: '#B45309', textTransform: 'uppercase', marginBottom: 4 },
   riskText: { fontSize: 10, color: '#92400E', lineHeight: 1.5, fontWeight: 500 },
-
   footer: { position: 'absolute', bottom: 30, left: 48, right: 48, borderTop: '1pt solid #E5E5E5', paddingTop: 12, flexDirection: 'row', justifyContent: 'space-between' },
   footerText: { fontSize: 8, color: '#94A3B8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1 },
 });
@@ -76,7 +68,7 @@ export function AIPromptBlueprintPDF({ template }: { template: FormTemplate }) {
         {/* Header */}
         <View style={styles.headerContainer} fixed>
           <View>
-            <Text style={styles.systemTitle}>System Architecture</Text>
+            <Text style={styles.systemTitle}>Omnifit Architecture</Text>
             <Text style={styles.docTitle}>AI Prompt Blueprint</Text>
             <Text style={styles.docDesc}>{template.trackName}</Text>
           </View>
@@ -128,7 +120,7 @@ export function AIPromptBlueprintPDF({ template }: { template: FormTemplate }) {
           ) : (
             (ai.expectedMetrics as string[]).map((m, i) => (
               <View key={i} style={styles.bulletRow} wrap={false}>
-                <Text style={styles.bullet}>■</Text>
+                <Text style={styles.bullet}>•</Text>
                 <Text style={styles.bulletText}>{m}</Text>
               </View>
             ))
@@ -146,7 +138,7 @@ export function AIPromptBlueprintPDF({ template }: { template: FormTemplate }) {
           ) : (
             (ai.customReadinessTiers as string[]).map((t, i) => (
               <View key={i} style={styles.bulletRow} wrap={false}>
-                <Text style={[styles.bullet, { color: '#9333EA' }]}>■</Text>
+                <Text style={[styles.bullet, { color: '#9333EA' }]}>•</Text>
                 <Text style={styles.bulletText}>{t}</Text>
               </View>
             ))
@@ -163,7 +155,7 @@ export function AIPromptBlueprintPDF({ template }: { template: FormTemplate }) {
           ) : (
             (ai.expectedAnalysisBlocks as string[]).map((b, i) => (
               <View key={i} style={styles.bulletRow} wrap={false}>
-                <Text style={styles.bullet}>■</Text>
+                <Text style={styles.bullet}>•</Text>
                 <Text style={styles.bulletText}>{b}</Text>
               </View>
             ))
@@ -180,7 +172,7 @@ export function AIPromptBlueprintPDF({ template }: { template: FormTemplate }) {
           ) : (
             (ai.expectedRecommendations as string[]).map((r, i) => (
               <View key={i} style={styles.bulletRow} wrap={false}>
-                <Text style={[styles.bullet, { color: '#E11D48' }]}>→</Text>
+                <Text style={[styles.bullet, { color: '#E11D48' }]}>•</Text>
                 <Text style={styles.bulletText}>{r}</Text>
               </View>
             ))

@@ -77,20 +77,22 @@ const styles = StyleSheet.create({
   scoreValue: { fontSize: 42, fontWeight: 900, color: '#000000', marginBottom: 4 },
   scoreTier: { fontSize: 9, fontWeight: 900, color: '#000000', textTransform: 'uppercase' },
   execSummary: { flex: 1, justifyContent: 'center' },
-  
+
   // --- TIPOGRAFI & GRID ---
   label: { fontSize: 8, fontWeight: 700, color: '#666666', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 },
   value: { fontSize: 10, color: '#000000', fontWeight: 400, marginBottom: 16, lineHeight: 1.5 },
+  
   grid2Col: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
   colHalf: { width: '48%', marginBottom: 8 },
   colFull: { width: '100%', marginBottom: 8 },
-  
+
   // --- LIST METRIK & BULLETS ---
   metricRow: { flexDirection: 'row', borderBottom: '1pt solid #F5F5F5', paddingVertical: 12, alignItems: 'flex-start' },
   metricScoreBox: { width: 40 },
   metricScore: { fontSize: 14, fontWeight: 900, color: '#000000' },
   metricContent: { flex: 1, paddingLeft: 12 },
   metricTitle: { fontSize: 10, fontWeight: 900, color: '#000000', textTransform: 'uppercase', marginBottom: 4 },
+  
   bulletRow: { flexDirection: 'row', marginBottom: 6, paddingRight: 16 },
   bulletDot: { width: 12, fontSize: 10, color: '#000000', fontWeight: 900 },
   bulletText: { flex: 1, fontSize: 10, color: '#333333', lineHeight: 1.5, textAlign: 'justify' },
@@ -104,8 +106,9 @@ const styles = StyleSheet.create({
   footerText: { fontSize: 8, color: '#999999', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1 },
 });
 
+// Update role typing for Omnifit support
 export interface ExportRole {
-  role: 'user' | 'admin_csrs' | 'curator';
+  role: 'user' | 'admin_omnifit' | 'admin_csrs' | 'curator';
   trackType: string;
   formData: any;
   aiResult: any;
@@ -116,6 +119,7 @@ export interface ExportRole {
 const renderRichTextPdf = (str: string) => {
   if (!str) return null;
   const parts = str.split(/(\*\*.*?\*\*|\*.*?\*)/g);
+  
   return parts.map((part, index) => {
     if (part.startsWith('**') && part.endsWith('**')) {
       return (
@@ -130,16 +134,17 @@ const renderRichTextPdf = (str: string) => {
         </Text>
       );
     }
-    return part;
+    return part; 
   });
-};
+}
 
 const renderBullets = (text: string) => {
   if (!text) return <Text style={styles.bulletText}>-</Text>;
   const lines = text.split('\n').filter(line => line.trim().length > 0);
+  
   return lines.map((line, idx) => {
     const cleanLine = line.replace(/^[-*\u2022]\s*/, '');
-
+    
     if (cleanLine.startsWith('###') || cleanLine.startsWith('##')) {
       return (
         <View key={idx} style={{ marginTop: 12, marginBottom: 4 }}>
@@ -152,20 +157,22 @@ const renderBullets = (text: string) => {
 
     return (
       <View key={idx} style={styles.bulletRow}>
-        <Text style={styles.bulletDot}>■</Text>
+        <Text style={styles.bulletDot}>•</Text>
         <Text style={styles.bulletText}>{renderRichTextPdf(cleanLine)}</Text>
       </View>
     );
   });
-};
+}
 
 export function UniversalPDFDocument({ role, trackType, formData, aiResult, downloadedBy }: ExportRole) {
   const printDateObj = new Date();
   const dateStr = printDateObj.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
   const timeLogStr = printDateObj.toLocaleString('id-ID'); 
-  
-  const isInternal = role === 'admin_csrs' || role === 'curator';
+
+  // Include admin_omnifit evaluation
+  const isInternal = role === 'admin_csrs' || role === 'admin_omnifit' || role === 'curator';
   const isCuratorWorksheet = role === 'curator';
+
   const totalScore = aiResult?.totalScore || 0;
 
   // =========================================================================
@@ -173,14 +180,14 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
   // =========================================================================
   const formPurpose = aiResult?.formPurpose || 'assessment';
   const customUiLabels = aiResult?.customUiLabels || {};
-
+  
   const isCounseling = formPurpose === 'counseling';
   const isMonitoring = formPurpose === 'monitoring';
   const isConsultation = formPurpose === 'consultation';
 
   const getLabel = (key: 'score' | 'swot' | 'risk' | 'roadmap' | 'execution') => {
     if (customUiLabels[key + 'Label']) return customUiLabels[key + 'Label'];
-
+    
     switch(key) {
       case 'score':
         if (isCounseling) return 'Indeks Karakter/Stabilitas';
@@ -230,7 +237,7 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
   const PageHeader = ({ subtitle }: { subtitle: string }) => (
     <View style={styles.headerContainer} fixed>
       <View style={styles.headerLeft}>
-        <Text style={styles.systemTitle}>Smart Curation System</Text>
+        <Text style={styles.systemTitle}>Omnifit Platform</Text>
         <Text style={styles.docTitle}>{subtitle}</Text>
       </View>
       <View style={styles.headerRight}>
@@ -299,10 +306,10 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
             </View>
             
             {aiResult.fileAnalysisInsights.keyFindingsFromFiles && (
-              <View style={{ marginTop: 16 }}> 
-                <Text style={styles.label}>Key Findings</Text>
+              <View style={{ marginTop: 16 }}>
+                 <Text style={styles.label}>Key Findings</Text>
                 {aiResult.fileAnalysisInsights.keyFindingsFromFiles.map((find: string, idx: number) => (
-                  <View key={idx} style={styles.bulletRow}><Text style={styles.bulletDot}>■</Text><Text style={styles.bulletText}>{renderRichTextPdf(find)}</Text></View>
+                  <View key={idx} style={styles.bulletRow}><Text style={styles.bulletDot}>•</Text><Text style={styles.bulletText}>{renderRichTextPdf(find)}</Text></View>
                 ))}
               </View>
             )}
@@ -322,12 +329,14 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
               {aiResult.customAnalysisBlocks.map((block: any, bIdx: number) => (
                 <View key={bIdx} style={isCuratorWorksheet ? styles.colFull : styles.colHalf} wrap={false}>
                   <Text style={[styles.label, { color: '#000000', fontSize: 9 }]}>{block.title}</Text>
+                  
                   {block.metrics?.map((m: any, mIdx: number) => (
                     <View key={mIdx} style={{ marginBottom: 12, marginTop: 4 }}>
                       <Text style={styles.label}>{m.label}</Text>
                       {renderBullets(m.value)}
                     </View>
                   ))}
+
                   {isCuratorWorksheet && <View style={styles.worksheetArea}><Text style={styles.worksheetLabel}>Catatan Lapangan:</Text></View>}
                 </View>
               ))}
@@ -353,6 +362,7 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
               <View style={styles.metricContent}>
                 <Text style={styles.metricTitle}>{metric.label}</Text>
                 {renderBullets(metric.description)}
+                
                 {isCuratorWorksheet && <View style={styles.worksheetArea}><Text style={styles.worksheetLabel}>Kalibrasi Nilai:</Text></View>}
               </View>
             </View>
@@ -377,13 +387,13 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
                       <Text style={styles.bulletText}>{renderRichTextPdf(item)}</Text>
                     </View>
                   ))}
+                  
                   {isCuratorWorksheet && <View style={styles.worksheetArea}><Text style={styles.worksheetLabel}>Validasi Fakta:</Text></View>}
                 </View>
               );
             })}
           </View>
         </View>
-
         <PageFooter />
       </Page>
 
@@ -429,6 +439,7 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
           {aiResult?.nextActionSteps && aiResult.nextActionSteps.length > 0 && (
              <View style={{ marginTop: 24 }}>
                <Text style={[styles.label, { marginBottom: 16, borderBottom: '1pt solid #E5E5E5', paddingBottom: 8 }]}>{getLabel('execution')}</Text>
+               
                {aiResult.nextActionSteps.map((step: any, idx: number) => (
                  <View key={idx} style={{ flexDirection: 'row', marginBottom: 12 }} wrap={false}>
                    <View style={{ width: 80, borderRight: '1pt solid #000000', paddingRight: 12, marginRight: 12 }}>
@@ -481,7 +492,6 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
           <PageFooter />
         </Page>
       )}
-
     </Document>
   );
 }

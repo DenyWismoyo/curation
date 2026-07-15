@@ -35,7 +35,7 @@ export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false, o
         "Kuesioner sering kali terlalu kaku dan tidak relevan dengan konteks atau model bisnis pengguna.",
         "Hasil evaluasi hanya berupa angka mati tanpa panduan langkah selanjutnya yang jelas."
       ],
-      solutionTitle: "Solusi Cerdas Platform CSRS",
+      solutionTitle: "Solusi Cerdas Platform Omnifit",
       solutions: [
         { title: "Akses Fleksibel (24/7)", desc: "Pilih dan pesan modul evaluasi secara mandiri melalui katalog pintar kapan saja. Otorisasi berjalan instan." },
         { title: "Formulir Interaktif AI", desc: "Pertanyaan beradaptasi secara dinamis dengan jawaban Anda, layaknya sedang diwawancarai langsung oleh ahli." },
@@ -112,7 +112,7 @@ export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false, o
               <Sparkles className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight leading-none">Tentang CSRS</h2>
+              <h2 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight leading-none">Tentang Omnifit</h2>
               <p className="text-[10px] sm:text-xs text-slate-500 font-bold hidden sm:block mt-1">Solusi & Kapabilitas Ekosistem</p>
             </div>
           </div>
@@ -217,7 +217,7 @@ export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false, o
                     {/* CTA WhatsApp: Ahli & Korporasi */}
                     {(activeCluster === 'expert' || activeCluster === 'corporate') && (
                       <a 
-                        href="https://wa.me/6285777117587?text=Halo%20Tim%20CSRS,%20saya%20tertarik%20untuk%20berdiskusi%20mengenai%20kemitraan%20platform%20asesmen." 
+                        href="https://wa.me/6285777117587?text=Halo%20Tim%20Omnifit,%20saya%20tertarik%20untuk%20berdiskusi%20mengenai%20kemitraan%20platform%20asesmen." 
                         target="_blank" 
                         rel="noopener noreferrer"
                         className="inline-flex items-center justify-center gap-2 w-full px-6 py-4 bg-[#25D366] hover:bg-[#1ebd5a] text-white rounded-xl font-bold transition-all shadow-lg shadow-[#25D366]/20"
@@ -271,7 +271,7 @@ export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false, o
                 </div>
                 <div className="bg-slate-800/80 p-6 lg:p-8 rounded-3xl ring-1 ring-slate-700/50 backdrop-blur-sm space-y-4">
                   <h4 className="text-sm lg:text-base font-black text-indigo-300 uppercase tracking-widest flex items-center gap-2">
-                    <Target className="w-5 h-5" /> Transformasi Bersama CSRS
+                    <Target className="w-5 h-5" /> Transformasi Bersama Omnifit
                   </h4>
                   <p className="text-sm lg:text-base text-slate-200 font-medium leading-relaxed">
                     Platform kami dirancang untuk mengambil alih seluruh beban kerja repetitif tersebut. Sehingga Anda dapat berfokus penuh pada hal yang paling esensial: <span className="text-white font-black underline decoration-indigo-500 decoration-2 underline-offset-4">memberikan pendampingan strategis, validasi mendalam, dan merumuskan solusi.</span>

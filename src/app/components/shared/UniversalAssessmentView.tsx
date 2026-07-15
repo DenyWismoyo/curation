@@ -28,7 +28,7 @@ const renderRichText = (str: string) => {
     }
     return part; 
   });
-};
+}
 
 export const TextToBullets = ({ text, colorClass = "text-indigo-500" }: { text: string, colorClass?: string }) => {
   if (!text) return <span className="italic text-slate-400">Tidak ada deskripsi.</span>;
@@ -43,14 +43,14 @@ export const TextToBullets = ({ text, colorClass = "text-indigo-500" }: { text: 
       {lines.map((line, idx) => {
         const cleanLine = line.replace(/^[\-\*\•]\s*/, '').trim();
         
-        if (cleanLine.startsWith('###') || cleanLine.startsWith('##') || (cleanLine === cleanLine.toUpperCase() && cleanLine.length > 5)) {
-           return (
-             <li key={idx} className="block mt-5 mb-1 list-none">
-                <strong className="text-slate-900 font-black text-sm uppercase tracking-wide border-b border-slate-100 pb-1.5 w-full block">
-                  {renderRichText(cleanLine.replace(/^#+\s*/, ''))}
-                </strong>
-             </li>
-           );
+        if (cleanLine.startsWith('###') || cleanLine.startsWith('##') || (cleanLine === cleanLine.toUpperCase() && cleanLine.length > 5)) { 
+          return (
+            <li key={idx} className="block mt-5 mb-1 list-none">
+               <strong className="text-slate-900 font-black text-sm uppercase tracking-wide border-b border-slate-100 pb-1.5 w-full block">
+                 {renderRichText(cleanLine.replace(/^#+\s*/, ''))}
+               </strong>
+            </li>
+          );
         }
 
         return (
@@ -62,10 +62,11 @@ export const TextToBullets = ({ text, colorClass = "text-indigo-500" }: { text: 
       })}
     </ul>
   );
-};
+}
 
 const InsightAccordion = ({ id, title, icon: Icon, content }: any) => {
   const [isOpen, setIsOpen] = useState(id === 'rec-0');
+  
   return (
     <div className="bg-white ring-1 ring-slate-100 rounded-3xl overflow-hidden shadow-sm transition-all duration-300">
       <button onClick={() => setIsOpen(!isOpen)} className="w-full flex items-center justify-between p-5 sm:p-6 text-left bg-white hover:bg-slate-50 transition-colors">
@@ -84,7 +85,7 @@ const InsightAccordion = ({ id, title, icon: Icon, content }: any) => {
       </div>
     </div>
   );
-};
+}
 
 const renderDynamicIcon = (type: string) => {
   switch (type?.toLowerCase()) {
@@ -96,7 +97,7 @@ const renderDynamicIcon = (type: string) => {
     case 'shield': return <Shield className="w-4 h-4" />;
     case 'target': default: return <Target className="w-4 h-4" />;
   }
-};
+}
 
 const borderColors = ['ring-indigo-200', 'ring-emerald-200', 'ring-amber-200', 'ring-blue-200', 'ring-rose-200'];
 const textColors = ['text-indigo-600', 'text-emerald-600', 'text-amber-600', 'text-blue-600', 'text-rose-600'];
@@ -104,6 +105,7 @@ const textColors = ['text-indigo-600', 'text-emerald-600', 'text-amber-600', 'te
 // ========================================================
 // 2. INTERFACES (Props)
 // ========================================================
+
 export interface CuratorDataProps {
   isEditing: boolean;
   curatorScore: number;
@@ -147,10 +149,11 @@ export interface UniversalAssessmentProps {
 // ========================================================
 // 3. MAIN COMPONENT
 // ========================================================
+
 export function UniversalAssessmentView({ 
   mode, trackType, programName, corporateEntity, formData, aiResult, headerActions, curatorData, pdfRef
 }: UniversalAssessmentProps) {
-
+  
   const isPublic = mode === 'dashboard';
   const isInternal = mode === 'curator' || mode === 'admin';
   const isEditing = curatorData?.isEditing || false;
@@ -162,14 +165,14 @@ export function UniversalAssessmentView({
   // LOKALISASI LAYER: Translasi komponen bunglon dinamis
   const formPurpose = aiResult?.formPurpose || 'assessment';
   const customUiLabels = aiResult?.customUiLabels || {};
-
+  
   const isCounseling = formPurpose === 'counseling';
   const isMonitoring = formPurpose === 'monitoring';
   const isConsultation = formPurpose === 'consultation';
 
   const getLabel = (key: 'score' | 'swot' | 'risk' | 'roadmap' | 'execution') => {
     if (customUiLabels[key + 'Label']) return customUiLabels[key + 'Label'];
-
+    
     switch(key) {
       case 'score':
         if (isCounseling) return 'Indeks Kepribadian / Kesiapan Mentoring';
@@ -262,12 +265,13 @@ export function UniversalAssessmentView({
             <FileText className="w-5 h-5 text-indigo-600"/> Catatan & Kesimpulan Lapangan Peninjau Eksternal <span className="text-rose-500">*</span>
           </h3>
           <p className="text-xs text-slate-500 mb-4 font-medium">Ringkasan peninjauan langsung hasil verifikasi fisik, wawancara mendalam, dan fakta objektif.</p>
+          
           {isEditing ? (
             <div className="relative">
               <Textarea 
-                value={curatorData.curatorNotes} 
-                onChange={(e) => curatorData.setCuratorNotes && curatorData.setCuratorNotes(e.target.value)} 
-                placeholder="Isi catatan peninjau di sini..." 
+                value={curatorData.curatorNotes}
+                onChange={(e) => curatorData.setCuratorNotes && curatorData.setCuratorNotes(e.target.value)}
+                placeholder="Isi catatan peninjau di sini..."
                 className="min-h-[140px] bg-slate-50 rounded-2xl border-slate-200 text-sm font-medium focus-visible:ring-indigo-500 pb-12"
               />
               {curatorData.voiceDictation && (
@@ -289,6 +293,7 @@ export function UniversalAssessmentView({
       )}
 
       <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 w-full">
+        
         <div className="flex-1 flex flex-col gap-6">
           <div>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight text-balance mb-3">
@@ -299,6 +304,7 @@ export function UniversalAssessmentView({
                 {formData?.namaUsaha || formData?.namaPengisi || formData?.namaProyek || "Subjek Terkait"}
               </p>
               <span className="bg-slate-100 text-slate-500 font-bold text-xs sm:text-sm px-3 py-1.5 rounded-lg uppercase tracking-widest ring-1 ring-slate-200">{trackType}</span>
+              
               {programName && (
                 <span className="bg-emerald-50 text-emerald-600 font-bold text-xs sm:text-sm px-3 py-1.5 rounded-lg uppercase tracking-widest ring-1 ring-emerald-200 flex items-center gap-1.5">
                    <Building2 className="w-3.5 h-3.5" /> {programName}
@@ -319,6 +325,7 @@ export function UniversalAssessmentView({
 
         <div className={`w-full lg:w-[360px] shrink-0 p-8 rounded-3xl text-white relative overflow-hidden flex flex-col justify-center items-center shadow-lg ${isHighTier ? 'bg-gradient-to-br from-[#0f3d32] to-emerald-800' : 'bg-gradient-to-br from-slate-900 to-indigo-900'}`}>
           <div className="absolute inset-0 bg-gradient-to-tr from-black/20 to-transparent opacity-30 mix-blend-overlay"></div>
+          
           <p className="relative z-10 text-white/70 text-xs font-black uppercase tracking-widest mb-2 flex items-center gap-2"><ShieldCheck className="h-4 w-4"/> {getLabel('score')}</p>
           <span className="relative z-10 text-[100px] font-black leading-none tracking-tighter drop-shadow-md mb-4">{Math.min(aiScore, 100)}</span>
           
@@ -338,11 +345,13 @@ export function UniversalAssessmentView({
       {isInternal && (
         <div className="w-full bg-slate-900 p-6 sm:p-8 rounded-3xl shadow-xl ring-1 ring-slate-800 relative overflow-hidden">
           <div className="absolute right-0 top-0 opacity-5 pointer-events-none transform translate-x-10 -translate-y-10"><ShieldAlert size={200} /></div>
+          
           <h3 className="text-sm font-black text-white uppercase tracking-widest mb-6 flex items-center gap-2 relative z-10">
             <Search className="w-5 h-5 text-indigo-400"/> Validasi Silang Logika & Integritas Pengisian Data (AI)
           </h3>
-
+          
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
+            
             <div className="lg:col-span-1 flex flex-col gap-4">
               <div className="bg-slate-800/80 rounded-2xl p-5 border border-slate-700/50 flex items-center justify-between">
                 <div>
@@ -359,7 +368,7 @@ export function UniversalAssessmentView({
                   )}
                 </div>
               </div>
-
+              
               <div className={`flex-1 rounded-2xl p-5 border ${aiResult?.contradictionsFound?.length > 0 ? 'bg-rose-950/30 border-rose-900/50' : 'bg-slate-800/50 border-slate-700/50'}`}>
                 <h4 className={`text-[10px] uppercase font-black tracking-widest mb-3 flex items-center gap-1.5 ${aiResult?.contradictionsFound?.length > 0 ? 'text-rose-400' : 'text-slate-400'}`}>
                   <AlertTriangle size={14}/> Deteksi Kontradiksi Pernyataan
@@ -368,7 +377,7 @@ export function UniversalAssessmentView({
                   <ul className="space-y-3">
                     {aiResult.contradictionsFound.map((anomaly: string, i: number) => (
                       <li key={i} className="text-xs font-medium text-rose-200/90 leading-relaxed flex items-start gap-2">
-                        <span className="text-rose-500 mt-0.5">•</span> <span>{renderRichText(anomaly)}</span>
+                        <span className="text-rose-500 mt-0.5">●</span> <span>{renderRichText(anomaly)}</span>
                       </li>
                     ))}
                   </ul>
@@ -393,6 +402,7 @@ export function UniversalAssessmentView({
                 )}
               </div>
             </div>
+
           </div>
         </div>
       )}
@@ -420,7 +430,7 @@ export function UniversalAssessmentView({
                      ))}
                    </div>
                  </div>
-
+                 
                  {isInternal && curatorData && (
                     <div className="pt-4 border-t border-slate-100 mt-auto">
                       <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 flex items-center gap-1.5">
@@ -428,8 +438,8 @@ export function UniversalAssessmentView({
                       </h4>
                       {isEditing ? (
                         <Textarea 
-                          value={curatorData.customBlockNotes?.[block.title] || ''} 
-                          onChange={(e) => curatorData.setCustomBlockNotes && curatorData.setCustomBlockNotes(block.title, e.target.value)} 
+                          value={curatorData.customBlockNotes?.[block.title] || ''}
+                          onChange={(e) => curatorData.setCustomBlockNotes && curatorData.setCustomBlockNotes(block.title, e.target.value)}
                           placeholder={`Validasi aspek ${block.title}...`}
                           className="bg-indigo-50/40 border-indigo-100 text-xs h-24 rounded-xl" 
                         />
@@ -447,12 +457,14 @@ export function UniversalAssessmentView({
           {aiResult?.fileAnalysisInsights && (
             <div className="bg-slate-900 text-white p-6 sm:p-8 rounded-3xl shadow-md md:col-span-2 lg:col-span-2 relative flex flex-col justify-between overflow-hidden">
               <div className="absolute right-0 top-0 opacity-10 pointer-events-none"><FileText size={160} className="transform translate-x-8 -translate-y-8"/></div>
+              
               <div>
                 <h3 className="text-xs font-black uppercase tracking-widest mb-4 flex items-center gap-2 text-indigo-300"><Search className="w-4 h-4"/> Hasil Validasi Dokumen Unggahan</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10 mb-6">
                   <div>
                     <p className="text-[10px] uppercase text-slate-400 font-bold mb-1">Status Keaslian & Kualitas</p>
                     <div className="text-sm text-slate-200"><TextToBullets text={aiResult.fileAnalysisInsights.documentQuality} colorClass="text-emerald-400" /></div>
+                    
                     {aiResult.fileAnalysisInsights.discrepancies && (
                       <>
                         <p className="text-[10px] uppercase text-slate-400 font-bold mt-4 mb-1 text-rose-300">Kesenjangan Bukti Fisik</p>
@@ -466,7 +478,7 @@ export function UniversalAssessmentView({
                       <ul className="space-y-2">
                         {aiResult.fileAnalysisInsights.keyFindingsFromFiles.map((find: string, i: number) => (
                           <li key={i} className="text-sm text-slate-300 flex items-start gap-2">
-                            <span className="text-indigo-400 mt-0.5">•</span> <span className="leading-snug">{renderRichText(find)}</span>
+                            <span className="text-indigo-400 mt-0.5">●</span> <span className="leading-snug">{renderRichText(find)}</span>
                           </li>
                         ))}
                       </ul>
@@ -482,8 +494,8 @@ export function UniversalAssessmentView({
                   </h4>
                   {isEditing ? (
                     <Textarea 
-                      value={curatorData.documentNotes} 
-                      onChange={(e) => curatorData.setDocumentNotes && curatorData.setDocumentNotes(e.target.value)} 
+                      value={curatorData.documentNotes}
+                      onChange={(e) => curatorData.setDocumentNotes && curatorData.setDocumentNotes(e.target.value)}
                       placeholder="Catatan keabsahan dokumen..."
                       className="bg-slate-800 border-slate-700 text-white text-xs h-20 rounded-xl" 
                     />
@@ -499,7 +511,7 @@ export function UniversalAssessmentView({
         </div>
       )}
 
-{aiResult?.metrics && aiResult.metrics.length > 0 && (
+      {aiResult?.metrics && aiResult.metrics.length > 0 && (
         <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-3xl ring-1 ring-slate-200 shadow-sm w-full">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0"><Activity className="h-5 w-5"/></div>
@@ -508,6 +520,7 @@ export function UniversalAssessmentView({
               <p className="text-sm text-slate-500 font-medium">Visualisasi perbandingan parameter kuantitatif</p>
             </div>
           </div>
+          
           <div className="flex flex-col lg:flex-row gap-10 xl:gap-16 items-center">
             <div className="w-full lg:w-2/5 flex flex-col items-center shrink-0">
               
@@ -528,6 +541,7 @@ export function UniversalAssessmentView({
                 </ResponsiveContainer>
               </div>
             </div>
+            
             <div className="w-full lg:w-3/5 grid grid-cols-1 sm:grid-cols-2 gap-4">
               {aiResult.metrics.map((item: any, idx: number) => (
                 <div key={idx} className="bg-slate-50 p-5 rounded-2xl ring-1 ring-slate-100 flex flex-col">
@@ -551,7 +565,7 @@ export function UniversalAssessmentView({
                 <ShieldCheck className="w-4 h-4 text-emerald-600"/> Catatan Kalibrasi Angka Lapangan
               </h4>
               {isEditing ? (
-                <Textarea
+                <Textarea 
                   value={curatorData.metricsNotes}
                   onChange={(e) => curatorData.setMetricsNotes && curatorData.setMetricsNotes(e.target.value)}
                   placeholder="Justifikasi penyesuaian pilar matriks..."
@@ -593,8 +607,8 @@ export function UniversalAssessmentView({
                 <ul className="list-disc list-inside text-amber-800/80 text-sm font-medium space-y-2.5">
                   {aiResult.swotAnalysis.threats?.map((t: string, i: number) => <li key={i}>{renderRichText(t)}</li>)}
                 </ul>
+            </div>
           </div>
-        </div>
 
           {isInternal && curatorData && (
             <div className="bg-white p-6 sm:p-8 rounded-3xl ring-1 ring-slate-200 shadow-sm">
@@ -602,7 +616,7 @@ export function UniversalAssessmentView({
                 <ShieldCheck className="w-4 h-4 text-emerald-600"/> {getLabel('swot')} Peninjau
               </h4>
               {isEditing ? (
-                <Textarea
+                <Textarea 
                   value={curatorData.swotNotes}
                   onChange={(e) => curatorData.setSwotNotes && curatorData.setSwotNotes(e.target.value)}
                   placeholder="Tambahkan variabel eksternal atau dinamika khusus..."
@@ -652,6 +666,7 @@ export function UniversalAssessmentView({
               <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0"><Sparkles className="h-5 w-5"/></div>
               <h3 className="font-black text-slate-900 text-xl sm:text-2xl tracking-tight">{getLabel('roadmap')}</h3>
             </div>
+            
             <div className="flex flex-col gap-3">
               {aiResult.recommendations.map((rec: any, idx: number) => (
                  <InsightAccordion key={idx} id={`rec-${idx}`} title={rec?.title} icon={Briefcase} content={rec?.content} />
@@ -663,14 +678,14 @@ export function UniversalAssessmentView({
         <div className={`${(!aiResult?.recommendations || aiResult.recommendations.length === 0) ? 'lg:col-span-3' : 'lg:col-span-1'} flex flex-col gap-6`}>
           <div className={`p-6 sm:p-8 rounded-3xl text-center ring-1 shadow-sm ${isHighTier ? 'bg-emerald-50 ring-emerald-200/60 text-emerald-900' : 'bg-indigo-50 ring-indigo-200/60 text-indigo-900'}`}>
             <Route className={`mx-auto mb-3 h-8 w-8 ${isHighTier ? 'text-emerald-500' : 'text-indigo-500'}`} />
-            <p className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-1.5">Rekomendasi Jalur Ekosistem Lanjutan</p>
+            <p className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-1.5">Rute Pengembangan Disarankan</p>
             {isEditing && curatorData ? (
               <Input 
-                value={curatorData.curatorRoute} 
-                onChange={(e) => curatorData.setCuratorRoute && curatorData.setCuratorRoute(e.target.value)} 
-                className="bg-white font-black text-center h-10 border-slate-300 rounded-xl text-slate-900 mt-2" 
-                placeholder="Tentukan Jalur Akhir..." 
-              />
+                 value={curatorData.curatorRoute} 
+                 onChange={(e) => curatorData.setCuratorRoute && curatorData.setCuratorRoute(e.target.value)} 
+                 className="bg-white font-black text-center h-10 border-slate-300 rounded-xl text-slate-900 mt-2" 
+                 placeholder="Tentukan Jalur Akhir..."
+               />
             ) : (
               <h4 className="text-xl sm:text-2xl font-black leading-tight tracking-tight text-balance">
                 {isInternal ? (curatorData?.curatorRoute || aiResult?.incubationRoute) : aiResult?.incubationRoute}
