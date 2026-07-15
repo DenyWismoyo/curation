@@ -20,7 +20,7 @@ const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 // Inisialisasi layanan Firebase
 const db = getFirestore(app, "curation"); 
 const storage = getStorage(app);
-const functions = getFunctions(app);
+const functions = getFunctions(app, "asia-southeast2");
 
 // Inisialisasi Auth untuk Login Google
 const auth = getAuth(app);

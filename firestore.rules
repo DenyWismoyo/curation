@@ -2,7 +2,100 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    
+    // ======================================================================
+    // HELPER FUNCTIONS (FUNGSI BANTUAN KEAMANAN)
+    // ======================================================================
+    
+    // Cek apakah pengguna sudah melakukan login
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Cek apakah pengguna adalah Super Admin (sinkron dengan pengamanan di backend)
+    function isSuperAdmin() {
+      return request.auth != null && request.auth.token.email == 'deny.wismoyo@gmail.com';
+    }
+
+    // ======================================================================
+    // 1. KOLEKSI USERS (LOGIN & ROLE)
+    // ======================================================================
+    match /users/{userId} {
+      // Pengguna hanya bisa membaca dan memperbarui data profilnya sendiri
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // ======================================================================
+    // 2. KOLEKSI UTAMA APLIKASI
+    // ======================================================================
+    
+    // Hasil Kurasi / Asesmen
+    match /assessments/{assessmentId} {
+      // User hanya bisa membaca hasil asesmen miliknya sendiri. Super Admin bisa membaca semua.
+      allow read: if isAuthenticated() && (request.auth.uid == resource.data.userId || isSuperAdmin());
+      // Pembuatan dokumen diizinkan jika login (Cloud Functions juga menembus ini otomatis)
+      allow create: if isAuthenticated();
+      // Hanya Super Admin yang boleh mengubah/menghapus secara manual lewat frontend
+      allow update, delete: if isSuperAdmin();
+    }
+
+    // Template Form Builder AI
+    match /form_templates/{document=**} {
+      // User yang login diizinkan membaca agar bisa merender form di halaman depan
+      // Serta memungkinkan frontend mendengarkan onSnapshot secara realtime
+      allow read: if isAuthenticated(); 
+      // HANYA Super Admin yang boleh mengubah atau menyimpan struktur form
+      allow write: if isSuperAdmin();
+    }
+
+    // ======================================================================
+    // 3. KOLEKSI MANAJEMEN B2B, TAGS, & KURATOR (KHUSUS ADMIN)
+    // ======================================================================
+    
+    match /corporate_tokens/{document=**} {
+      // User perlu read agar sistem frontend bisa memvalidasi token saat mereka mengetik kode
+      allow read: if isAuthenticated();
+      allow write: if isSuperAdmin();
+    }
+    
+    match /corporate_tags/{document=**} {
+      allow read: if isAuthenticated();
+      allow write: if isSuperAdmin();
+    }
+    
+    match /curator_tokens/{document=**} {
+      allow read: if isAuthenticated();
+      allow write: if isSuperAdmin();
+    }
+    
+    match /template_folders/{document=**} {
+      allow read: if isAuthenticated();
+      allow write: if isSuperAdmin();
+    }
+
+    // ======================================================================
+    // 4. KOLEKSI AI RAG (VECTOR DATABASE)
+    // ======================================================================
+    
+    match /business_vectors/{document=**} {
+      // Membaca vector diizinkan untuk kebutuhan query matchmaking di client
+      allow read: if isAuthenticated(); 
+      // Write dikunci mutlak. Hanya Firebase Admin SDK (Cloud Functions) yang menembus ini.
+      allow write: if false; 
+    }
+    
+    match /template_research_vectors/{document=**} {
+      // Data masterplan riset form builder bersifat rahasia, hanya untuk Super Admin
+      allow read: if isSuperAdmin();
+      // Write dikunci mutlak. Hanya Firebase Admin SDK (Cloud Functions) yang menembus ini.
+      allow write: if false;
+    }
+
+    // ======================================================================
+    // 5. ATURAN DEFAULT (KUNCI KEAMANAN FALLBACK)
+    // ======================================================================
     match /{document=**} {
+      // Mengunci semua koleksi yang tidak dideklarasikan secara eksplisit di atas
       allow read, write: if false;
     }
   }

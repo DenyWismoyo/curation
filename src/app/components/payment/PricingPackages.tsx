@@ -1,9 +1,9 @@
 // src/app/components/payment/PricingPackages.tsx
 'use client';
-
 import React, { useState, useEffect } from 'react';
 import { collection, getDocs, query, where } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { db, functions } from '@/lib/firebase'; // Pastikan `functions` sudah diexport di firebase.ts Anda
+import { httpsCallable } from 'firebase/functions';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, Sparkles, CheckCircle2, ArrowRight, Loader2, LayoutGrid, ShieldCheck, MessageCircle, Clock, Users 
@@ -55,7 +55,7 @@ const CountdownTimer = ({ targetDateIso }: { targetDateIso: string }) => {
       </span>
     </div>
   );
-}
+};
 
 interface PricingPackagesProps {
   isOpen: boolean;
@@ -110,6 +110,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest }: Prici
     setProcessingId(pkg.id);
     
     try {
+      // JIKA MODUL GRATIS: Langsung alihkan ke halaman asesmen
       if (!pkg.isPaid || pkg.price === 0) {
         toast.success(`Memulai asesmen ${pkg.trackName}...`);
         const autoToken = `FREE-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
@@ -119,21 +120,24 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest }: Prici
         return;
       }
 
-      const adminWhatsApp = "6285777117587";
-      const hargaText = isDiscountActive 
-        ? `~Rp ${pkg.price?.toLocaleString('id-ID')}~ -> *Rp ${finalPrice.toLocaleString('id-ID')}* (Diskon ${pkg.discountPercentage}%)`
-        : `*Rp ${pkg.price?.toLocaleString('id-ID')}*`;
-        
-      const bookingCode = `BKG-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+      // JIKA BERBAYAR: Panggil integrasi Xendit melalui Cloud Function
+      const createInvoice = httpsCallable(functions, 'createPaymentInvoice');
+      const response = await createInvoice({
+        packageId: pkg.id,
+        packageName: pkg.trackName,
+        finalPrice: finalPrice,
+        userEmail: user.email,
+        userName: user.displayName || 'Pengguna',
+      });
 
-      // PERUBAHAN BRANDING: Sapaan Admin Omnifit
-      const message = `Halo Admin Omnifit,%0A%0ASaya ingin *MENGAMANKAN AKSES* untuk modul asesmen:%0A*Modul:* ${pkg.trackName}%0A*Kode Booking:* ${bookingCode}%0A*Harga:* ${hargaText}%0A%0A*Data Akun Saya:*%0A- Nama: ${user.displayName}%0A- Email: ${user.email}%0A%0AMohon instruksi pembayaran. Terima kasih.`;
-        
-      const waUrl = `https://wa.me/${adminWhatsApp}?text=${message}`;
-      window.open(waUrl, '_blank');
+      const data = response.data as { checkoutUrl: string };
+      
+      toast.loading("Mengarahkan ke gerbang pembayaran...");
+      // Redirect ke URL pembayaran Xendit
+      window.location.href = data.checkoutUrl;
 
     } catch (error: any) {
-      toast.error(error.message || "Terjadi kesalahan.");
+      toast.error(error.message || "Terjadi kesalahan saat memproses pembayaran.");
     } finally {
       setProcessingId(null);
     }
@@ -170,6 +174,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest }: Prici
         {/* KONTEN (PRICING CARDS) */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-10 custom-scrollbar">
           <div className="max-w-[1400px] mx-auto w-full pb-20">
+            
             {loading ? (
               <div className="flex flex-col items-center justify-center py-32 text-slate-400">
                 <Loader2 className="w-10 h-10 animate-spin mb-4 text-indigo-600" />
@@ -185,6 +190,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest }: Prici
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
                   {packages.map((pkg) => {
+                    
                     let isDiscountActive = Boolean(pkg.isPaid && (pkg.discountPercentage || 0) > 0);
                     if (isDiscountActive && pkg.discountExpiry) {
                       if (new Date(pkg.discountExpiry).getTime() < new Date().getTime()) {
@@ -284,11 +290,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest }: Prici
                               <>Mulai Sekarang <ArrowRight className="w-5 h-5 ml-2" /></>
                             ) : (
                               <>
-                                {isDiscountActive ? (
-                                  <>Klaim Diskon {pkg.discountPercentage}% <MessageCircle className="w-5 h-5 ml-2" /></>
-                                ) : (
-                                  <>Amankan Akses Sekarang <MessageCircle className="w-5 h-5 ml-2" /></>
-                                )}
+                                Bayar & Mulai Akses <ArrowRight className="w-5 h-5 ml-2" />
                               </>
                             )}
                           </Button>
@@ -311,9 +313,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest }: Prici
                       Jika Anda mewakili Korporasi, Institusi, atau Tim Curator yang memiliki kebutuhan matriks evaluasi khusus, tim kami siap merancang formulir secara eksklusif dan privat khusus untuk kebutuhan Anda.
                     </p>
                   </div>
-
                   <div className="relative z-10 shrink-0 w-full md:w-auto">
-                    {/* PERUBAHAN BRANDING: Sapaan Admin Omnifit */}
                     <a
                       href="https://wa.me/6285777117587?text=Halo%20Admin%20Omnifit,%20saya%20tertarik%20untuk%20berdiskusi%20mengenai%20pembuatan%20modul%20asesmen%20custom."
                       target="_blank"

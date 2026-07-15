@@ -164,7 +164,7 @@ export interface AssessmentPayload {
   isConfirmedEarnest?: boolean;
 }
 
-export type ExportRole = 'public' | 'admin' | 'curator';
+export type ExportRole = 'public' | 'admin' | 'assessor' | 'curator';
 
 export interface UniversalPDFProps {
   role: ExportRole;

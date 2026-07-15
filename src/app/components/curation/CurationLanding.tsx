@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import { 
   ShieldCheck, ArrowRight, History, Clock, Activity, 
-  ChevronRight, Loader2, LogOut, LayoutDashboard, Sparkles, Compass 
+  ChevronRight, Loader2, LogOut, LayoutDashboard, Sparkles, Compass, ClipboardCheck 
 } from 'lucide-react';
 import { PricingPackages } from '@/app/components/payment/PricingPackages';
 import { SystemCapabilitiesModal } from './SystemCapabilitiesModal';
@@ -22,7 +22,8 @@ interface Props {
   history: CurationHistory[];
   onLoadHistory: (item: CurationHistory) => void;
   user: User | null;
-  role: 'user' | 'admin_omnifit' | 'admin_csrs' | null;
+  // UPDATE: Menambahkan 'assessor' ke tipe data role
+  role: 'user' | 'admin_omnifit' | 'admin_csrs' | 'assessor' | null;
   onLogin: () => void;
   onLogout: () => void;
 }
@@ -230,6 +231,15 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                 <Link href="/admin" className="block w-full">
                   <Button variant="outline" className="w-full h-12 rounded-xl border-indigo-200 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold gap-2">
                     <LayoutDashboard size={18} /> Ke Dasbor Admin Omnifit
+                  </Button>
+                </Link>
+              )}
+
+              {/* UPDATE: Tampilkan Tombol Asesor Khusus Jika Memiliki Role Asesor */}
+              {(role === 'assessor') && (
+                <Link href="/assessor" className="block w-full">
+                  <Button variant="outline" className="w-full h-12 rounded-xl border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold gap-2">
+                    <ClipboardCheck size={18} /> Ke Ruang Kerja Asesor
                   </Button>
                 </Link>
               )}

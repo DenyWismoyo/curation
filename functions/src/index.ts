@@ -10,13 +10,14 @@ import * as path from "path";
 import * as fs from "fs";
 import { buildAssessmentPrompt, getSystemPrompt } from "./promt/promptTemplate";
 
-
 // ============================================================================
 // EXPORT FUNGSI MODULAR
 // ============================================================================
 export { generatePDFReport } from "./documentGenerator";
 export { matchBusinessWithIndustry } from "./vectorService";
 export { generateFormTemplateFromAI } from "./formBuilderService";
+// 🟢 TAMBAHAN BARU: Export fungsi Xendit
+export { createPaymentInvoice, xenditWebhook } from "./paymentService";
 
 // ============================================================================
 // INISIALISASI FIREBASE

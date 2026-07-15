@@ -10,10 +10,6 @@ export interface EmailData {
   assessmentUrl: string;
 }
 
-/**
- * Fungsi untuk mengirim email notifikasi hasil asesmen.
- * Didesain aman (terbungkus try-catch) agar kegagalan email tidak merusak proses sistem utama.
- */
 export const sendAssessmentEmail = async (
   smtpEmail: string,
   smtpPassword: string,
@@ -29,14 +25,15 @@ export const sendAssessmentEmail = async (
     });
 
     const mailOptions = {
-      from: `"CSRS Notification" <${smtpEmail}>`,
+      // REBRANDING: Nama Pengirim Email
+      from: `"Omnifit Notification" <${smtpEmail}>`,
       to: data.targetEmail,
       subject: `🚀 Laporan Hasil Asesmen AI: ${data.namaUsaha}`,
       html: `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; border: 1px solid #e2e8f0; border-radius: 20px; background-color: #ffffff;">
           <div style="text-align: center; margin-bottom: 20px;">
-            <h1 style="color: #4f46e5; margin: 0; font-size: 24px; font-weight: 900;">C S R S</h1>
-            <p style="color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; margin-top: 5px;">Smart Curation System</p>
+            <h1 style="color: #4f46e5; margin: 0; font-size: 24px; font-weight: 900;">O M N I F I T</h1>
+            <p style="color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; margin-top: 5px;">Smart Assessment System</p>
           </div>
           
           <h2 style="color: #0f172a; font-size: 20px;">Halo, Tim ${data.namaUsaha}!</h2>
@@ -73,7 +70,7 @@ export const sendAssessmentEmail = async (
 
           <p style="margin-top: 40px; font-size: 12px; color: #94a3b8; text-align: center; border-top: 1px solid #f1f5f9; padding-top: 20px;">
             * Terimakasih Telah Berpartisipasi.<br><br>
-            © ${new Date().getFullYear()} CSRS Analytics
+            © ${new Date().getFullYear()} Omnifit Analytics
           </p>
         </div>
       `,

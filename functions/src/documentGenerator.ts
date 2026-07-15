@@ -20,7 +20,6 @@ export const generatePDFReport = onCall(
   async (request) => {
     if (!request.auth) throw new HttpsError("unauthenticated", "Anda harus login.");
 
-    // Kita tambahkan assessmentId, templateVersion, dan forceRegenerate
     const { role, payload, assessmentId, templateVersion = 1, forceRegenerate = false } = request.data as any;
     
     if (!role || !payload || !assessmentId) {
@@ -30,16 +29,16 @@ export const generatePDFReport = onCall(
     const db = getFirestore(admin.app(), "curation");
     const docRef = db.collection("assessments").doc(assessmentId);
     
-    // Nama file statis: menimpa file lama jika di-generate ulang
     const bucket = admin.storage().bucket();
     const fileName = `pdf_exports/${assessmentId}_${role}.pdf`;
     const file = bucket.file(fileName);
 
-    // Sanitasi nama file agar aman saat diunduh
     const safeEntityName = payload?.formData?.namaUsaha 
       ? String(payload.formData.namaUsaha).replace(/[^a-zA-Z0-9]/gi, '_') 
       : assessmentId;
-    const downloadFileName = `Laporan_CSRS_${safeEntityName}_${role}.pdf`;
+      
+    // REBRANDING: Mengubah penamaan file unduhan
+    const downloadFileName = `Laporan_Omnifit_${safeEntityName}_${role}.pdf`;
 
     try {
       const docSnap = await docRef.get();
@@ -51,14 +50,12 @@ export const generatePDFReport = onCall(
       const existingPdf = docData?.generatedPdfs?.[role];
       const isUpToDate = existingPdf && existingPdf.version === templateVersion;
 
-      // Jika PDF sudah ada, versinya sama, dan tidak dipaksa regenerate -> Kembalikan URL lama!
       if (isUpToDate && !forceRegenerate) {
         console.log(`[CACHE HIT] Mengembalikan PDF lama untuk ${assessmentId} (${role})`);
         
         const [downloadUrl] = await file.getSignedUrl({
           action: 'read',
-          expires: Date.now() + 2 * 60 * 60 * 1000, // 2 Jam
-          // Memaksa browser untuk langsung mengunduh file
+          expires: Date.now() + 2 * 60 * 60 * 1000, 
           responseDisposition: `attachment; filename="${downloadFileName}"`,
         });
         
@@ -87,7 +84,7 @@ export const generatePDFReport = onCall(
         writeStream.on('error', reject);
       });
 
-      // 3. UPDATE DATABASE (Catat bahwa PDF versi ini sudah dibuat)
+      // 3. UPDATE DATABASE 
       await docRef.set({
          generatedPdfs: {
             [role]: {
@@ -96,13 +93,12 @@ export const generatePDFReport = onCall(
                generatedAt: new Date().toISOString()
             }
          }
-      }, { merge: true }); // merge: true memastikan data lama tidak terhapus
+      }, { merge: true }); 
 
       // 4. KEMBALIKAN URL
       const [downloadUrl] = await file.getSignedUrl({
         action: 'read',
         expires: Date.now() + 2 * 60 * 60 * 1000,
-        // Memaksa browser untuk langsung mengunduh file
         responseDisposition: `attachment; filename="${downloadFileName}"`,
       });
 
@@ -117,9 +113,8 @@ export const generatePDFReport = onCall(
 
 /**
  * FUNGSI 2: FUNGSI INTERNAL (OTOMATISASI BACKGROUND)
- * Pre-computing PDF secara diam-diam. Dipanggil oleh Firestore Trigger setelah AI selesai.
  */
-export const generateInternalPDF = async (assessmentId: string, docData: any, role: string = 'founder') => {
+export const generateInternalPDF = async (assessmentId: string, docData: any, role: string = 'user') => {
   const bucket = admin.storage().bucket();
   const fileName = `pdf_exports/${assessmentId}_${role}.pdf`;
   const file = bucket.file(fileName);
@@ -127,13 +122,14 @@ export const generateInternalPDF = async (assessmentId: string, docData: any, ro
   try {
     console.log(`[BACKGROUND TASK] Mulai pre-computing PDF untuk ${assessmentId} (${role})`);
     
-    // Pastikan kita meneruskan downloadedBy jika ada (bisa kosong jika dari background)
     const documentElement = React.createElement(UniversalPDFDocument, {
-      role: role as 'user' | 'admin_csrs' | 'curator',
+      // REBRANDING: Menambahkan support untuk admin_omnifit
+      role: role as 'user'  | 'admin_csrs' | 'curator',
       trackType: docData.trackType || "Evaluasi Umum",
       formData: docData.formData || {},
       aiResult: docData.aiResult || {},
-      downloadedBy: { name: "Sistem Otomatis", email: "system@csrs.app" },
+      // REBRANDING: Mengubah alamat email sistem default
+      downloadedBy: { name: "Sistem Otomatis", email: "system@omnifit.cloud" },
     });
 
     const pdfStream = await ReactPDF.renderToStream(documentElement as any);
@@ -147,13 +143,12 @@ export const generateInternalPDF = async (assessmentId: string, docData: any, ro
       writeStream.on('error', reject);
     });
 
-    // Update database untuk mencatat cache PDF
     const db = getFirestore(admin.app(), "curation");
     await db.collection("assessments").doc(assessmentId).set({
        generatedPdfs: {
           [role]: {
              filePath: fileName,
-             version: 1, // Default version = 1
+             version: 1,
              generatedAt: new Date().toISOString(),
              isPrecomputed: true
           }
