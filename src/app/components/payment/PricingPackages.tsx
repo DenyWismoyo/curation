@@ -1,61 +1,17 @@
 // src/app/components/payment/PricingPackages.tsx
 'use client';
+
 import React, { useState, useEffect } from 'react';
 import { collection, getDocs, query, where } from 'firebase/firestore';
-import { db, functions } from '@/lib/firebase'; // Pastikan `functions` sudah diexport di firebase.ts Anda
-import { httpsCallable } from 'firebase/functions';
+import { db } from '@/lib/firebase';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  X, Sparkles, CheckCircle2, ArrowRight, Loader2, LayoutGrid, ShieldCheck, MessageCircle, Clock, Users 
+  X, Sparkles, CheckCircle2, ArrowRight, Loader2, LayoutGrid, ShieldCheck, MessageCircle, Users 
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { FormTemplate } from '@/types/curation';
 import { User } from 'firebase/auth';
 import { toast } from 'sonner';
-
-// KOMPONEN TIMER COUNTDOWN
-const CountdownTimer = ({ targetDateIso }: { targetDateIso: string }) => {
-  const [timeLeft, setTimeLeft] = useState<{ d: number, h: number, m: number, s: number } | null>(null);
-
-  useEffect(() => {
-    const target = new Date(targetDateIso).getTime();
-    
-    const interval = setInterval(() => {
-      const now = new Date().getTime();
-      const distance = target - now;
-
-      if (distance < 0) {
-        setTimeLeft(null);
-        clearInterval(interval);
-      } else {
-        setTimeLeft({
-          d: Math.floor(distance / (1000 * 60 * 60 * 24)),
-          h: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-          m: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
-          s: Math.floor((distance % (1000 * 60)) / 1000)
-        });
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [targetDateIso]);
-
-  if (!timeLeft) return null;
-
-  const isUrgent = timeLeft.d === 0 && timeLeft.h < 3;
-
-  return (
-    <div className={`flex items-center gap-1.5 mt-2 px-3 py-1.5 rounded-lg border ${
-      isUrgent ? 'bg-red-50 text-red-600 border-red-200 animate-pulse' : 'bg-rose-50 text-rose-600 border-rose-100'
-    }`}>
-      <Clock className="w-3.5 h-3.5 shrink-0" />
-      <span className="text-[10px] font-black uppercase tracking-widest">
-        {isUrgent ? 'Promo Segera Hangus: ' : 'Promo Berakhir: '}
-        {timeLeft.d}h {timeLeft.h}j {timeLeft.m}m {timeLeft.s}d
-      </span>
-    </div>
-  );
-};
 
 interface PricingPackagesProps {
   isOpen: boolean;
@@ -67,7 +23,6 @@ interface PricingPackagesProps {
 export function PricingPackages({ isOpen, onClose, user, onLoginRequest }: PricingPackagesProps) {
   const [packages, setPackages] = useState<FormTemplate[]>([]);
   const [loading, setLoading] = useState(true);
-  const [processingId, setProcessingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -100,47 +55,27 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest }: Prici
     }
   };
 
-  const handleCheckout = async (pkg: FormTemplate, finalPrice: number, isDiscountActive: boolean) => {
+const handleStartDecoy = (pkg: FormTemplate) => {
     if (!user) {
       toast.info("Silakan masuk dengan akun Google Anda terlebih dahulu untuk melanjutkan.");
       onLoginRequest();
       return;
     }
 
-    setProcessingId(pkg.id);
-    
-    try {
-      // JIKA MODUL GRATIS: Langsung alihkan ke halaman asesmen
-      if (!pkg.isPaid || pkg.price === 0) {
-        toast.success(`Memulai asesmen ${pkg.trackName}...`);
-        const autoToken = `FREE-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-        sessionStorage.setItem('active_token', autoToken);
-        sessionStorage.setItem('active_allowed_templates', JSON.stringify([pkg.id]));
-        window.location.href = '/assessment'; 
-        return;
-      }
+    // HAPUS BARIS INI: toast.success(`Mempersiapkan ruang kerja asesmen...`);
 
-      // JIKA BERBAYAR: Panggil integrasi Xendit melalui Cloud Function
-      const createInvoice = httpsCallable(functions, 'createPaymentInvoice');
-      const response = await createInvoice({
-        packageId: pkg.id,
-        packageName: pkg.trackName,
-        finalPrice: finalPrice,
-        userEmail: user.email,
-        userName: user.displayName || 'Pengguna',
-      });
-
-      const data = response.data as { checkoutUrl: string };
-      
-      toast.loading("Mengarahkan ke gerbang pembayaran...");
-      // Redirect ke URL pembayaran Xendit
-      window.location.href = data.checkoutUrl;
-
-    } catch (error: any) {
-      toast.error(error.message || "Terjadi kesalahan saat memproses pembayaran.");
-    } finally {
-      setProcessingId(null);
+    // JIKA MODUL GRATIS: Berikan token FREE
+    if (!pkg.isPaid || pkg.price === 0) {
+      const autoToken = `FREE-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+      sessionStorage.setItem('active_token', autoToken);
+    } else {
+      // JIKA BERBAYAR: Berikan token TRIAL (DECOY STRATEGY)
+      const trialToken = `TRIAL-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+      sessionStorage.setItem('active_token', trialToken);
     }
+
+    sessionStorage.setItem('active_allowed_templates', JSON.stringify([pkg.id]));
+    window.location.href = '/assessment';
   };
 
   if (!isOpen) return null;
@@ -154,7 +89,6 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest }: Prici
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
         className="fixed inset-0 z-[100] bg-slate-50 flex flex-col w-full h-[100dvh] overflow-hidden"
       >
-        {/* HEADER MODAL */}
         <div className="bg-white h-16 sm:h-20 px-4 sm:px-8 border-b border-slate-200 flex items-center justify-between shrink-0 shadow-sm z-10">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-indigo-600 text-white rounded-lg flex items-center justify-center shrink-0">
@@ -165,13 +99,11 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest }: Prici
           <button 
             onClick={onClose} 
             className="w-10 h-10 flex items-center justify-center text-slate-500 hover:bg-slate-100 rounded-full transition-colors shrink-0"
-            title="Tutup Katalog"
           >
             <X className="w-6 h-6" />
           </button>
         </div>
 
-        {/* KONTEN (PRICING CARDS) */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-10 custom-scrollbar">
           <div className="max-w-[1400px] mx-auto w-full pb-20">
             
@@ -190,18 +122,6 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest }: Prici
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
                   {packages.map((pkg) => {
-                    
-                    let isDiscountActive = Boolean(pkg.isPaid && (pkg.discountPercentage || 0) > 0);
-                    if (isDiscountActive && pkg.discountExpiry) {
-                      if (new Date(pkg.discountExpiry).getTime() < new Date().getTime()) {
-                        isDiscountActive = false; 
-                      }
-                    }
-
-                    const finalPrice = isDiscountActive 
-                      ? (pkg.price || 0) - ((pkg.price || 0) * (pkg.discountPercentage! / 100))
-                      : (pkg.price || 0);
-
                     return (
                       <div 
                         key={pkg.id} 
@@ -243,39 +163,8 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest }: Prici
                         </div>
 
                         <div className="pt-6 border-t border-slate-100 mt-auto">
-                          <div className="mb-5">
-                            {!pkg.isPaid || pkg.price === 0 ? (
-                              <span className="text-3xl font-black text-emerald-600">Gratis</span>
-                            ) : (
-                              <div>
-                                {isDiscountActive && (
-                                  <div className="flex items-center gap-2 mb-1">
-                                    <span className="text-sm font-bold text-slate-400 line-through">
-                                      Rp {pkg.price?.toLocaleString('id-ID')}
-                                    </span>
-                                    <span className="text-[10px] font-black text-white bg-rose-500 px-2 py-0.5 rounded uppercase tracking-wider">
-                                      Hemat {pkg.discountPercentage}%
-                                    </span>
-                                  </div>
-                                )}
-                                
-                                <div className="flex items-baseline gap-1">
-                                  <span className={`text-xl font-bold ${isDiscountActive ? 'text-rose-400' : 'text-slate-400'}`}>Rp</span>
-                                  <span className={`text-4xl font-black tracking-tight ${isDiscountActive ? 'text-rose-600' : 'text-slate-900'}`}>
-                                    {finalPrice.toLocaleString('id-ID')}
-                                  </span>
-                                </div>
-                                
-                                {isDiscountActive && pkg.discountExpiry && (
-                                  <CountdownTimer targetDateIso={pkg.discountExpiry} />
-                                )}
-                              </div>
-                            )}
-                          </div>
-
                           <Button 
-                            onClick={() => handleCheckout(pkg, finalPrice, isDiscountActive)}
-                            disabled={processingId !== null}
+                            onClick={() => handleStartDecoy(pkg)}
                             className={`w-full h-14 rounded-2xl font-bold text-base shadow-md transition-all group-hover:shadow-xl mt-2 ${
                               !pkg.isPaid || pkg.price === 0 
                                 ? 'bg-slate-900 text-white hover:bg-slate-800' 
@@ -284,15 +173,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest }: Prici
                                 : 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-emerald-200'
                             }`}
                           >
-                            {processingId === pkg.id ? (
-                              <Loader2 className="w-5 h-5 animate-spin" />
-                            ) : !pkg.isPaid || pkg.price === 0 ? (
-                              <>Mulai Sekarang <ArrowRight className="w-5 h-5 ml-2" /></>
-                            ) : (
-                              <>
-                                Bayar & Mulai Akses <ArrowRight className="w-5 h-5 ml-2" />
-                              </>
-                            )}
+                            Mulai Diagnosa Sekarang <ArrowRight className="w-5 h-5 ml-2" />
                           </Button>
                         </div>
                       </div>
@@ -300,7 +181,6 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest }: Prici
                   })}
                 </div>
 
-                {/* --- BANNER REQUEST CUSTOM FORM --- */}
                 <div className="mt-10 bg-slate-900 rounded-[2rem] p-8 lg:p-10 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl relative overflow-hidden group">
                   <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none transition-all group-hover:scale-150 group-hover:bg-indigo-500/30"></div>
                   

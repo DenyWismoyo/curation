@@ -2,12 +2,19 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ArrowRight, Sparkles, Check, Trash2, ClipboardCheck } from 'lucide-react';
+import { ChevronLeft, ArrowRight, Sparkles, Check, Trash2, ClipboardCheck, Lock, Loader2, CreditCard, X } from 'lucide-react';
 import { FormTemplate, FormField } from '@/types/curation';
 import { DynamicField } from './DynamicField';
 import { ReviewAndConfirm } from './ReviewAndConfirm';
 import * as LucideIcons from 'lucide-react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
+
+// IMPORT UNTUK PAYWALL XENDIT
+import { useAuth } from '@/contexts/AuthContext';
+import { httpsCallable } from 'firebase/functions';
+import { functions } from '@/lib/firebase';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
 
 const renderMarkdownText = (str: string) => {
   if (typeof str !== 'string') return str;
@@ -29,11 +36,21 @@ interface DynamicWizardProps {
 }
 
 export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardProps) {
+  const { user } = useAuth(); // Ambil data user untuk pembayaran
   const CACHE_KEY = `curation_draft_dynamic_${template.id}`;
   const totalSteps = template.steps.length;
+  
+  // STRATEGI DECOY: Hitung titik Paywall (Tepat di tengah form)
+  const paywallStep = Math.ceil(totalSteps / 2);
+
   const [step, setStep] = useState(1);
   const [saveStatus, setSaveStatus] = useState('');
   const [isReviewMode, setIsReviewMode] = useState(false);
+  
+  // State untuk Paywall
+  const [isTrialSession, setIsTrialSession] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
   const [formData, setFormData] = useState<any>(() => {
     if (typeof window !== 'undefined') {
@@ -45,10 +62,18 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
     return {};
   });
 
+  useEffect(() => {
+    // Cek apakah user menggunakan token TRIAL
+    const activeToken = sessionStorage.getItem('active_token');
+    if (activeToken && activeToken.startsWith('TRIAL-')) {
+      setIsTrialSession(true);
+    }
+  }, []);
+
   const currentStepData = template.steps[step - 1];
-  const StepIcon = currentStepData.icon && (LucideIcons as any)[currentStepData.icon] 
-                    ? (LucideIcons as any)[currentStepData.icon] 
-                    : Sparkles;
+  const StepIcon = currentStepData.icon && (LucideIcons as any)[currentStepData.icon]
+                     ? (LucideIcons as any)[currentStepData.icon]
+                     : Sparkles;
 
   // Auto-Save ke LocalStorage
   useEffect(() => {
@@ -83,28 +108,64 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
     }
   };
 
-  // FITUR ENTERPRISE: LOGIKA BERCABANG (CONDITIONAL LOGIC CHECKER)
   const isFieldVisible = (field: FormField) => {
-    if (!field.showIf) return true; // Jika tidak ada aturan showIf, tampilkan
+    if (!field.showIf) return true;
     const targetValue = formData[field.showIf.fieldId];
-    
-    // Perbandingan (Jika field target adalah array checkbox, periksa apakah includes)
     if (Array.isArray(targetValue)) {
       return targetValue.includes(field.showIf.equals);
     }
     return targetValue === field.showIf.equals;
   };
 
-  // VALIDASI TOMBOL NEXT (Hanya memvalidasi field yang SEDANG TERLIHAT / VISIBLE)
   const isStepValid = () => {
     const visibleFields = currentStepData.fields.filter(isFieldVisible);
     const requiredFields = visibleFields.filter(f => f.required);
-    
     for (const field of requiredFields) {
       const val = formData[field.id];
       if (!val || (Array.isArray(val) && val.length === 0)) return false;
     }
     return true;
+  };
+
+  // FUNGSI CHECKOUT XENDIT DARI DALAM PAYWALL
+  const handleCheckoutPaywall = async () => {
+    if (!user) {
+      toast.error("Terjadi kesalahan sesi. Silakan muat ulang halaman.");
+      return;
+    }
+
+    setIsProcessingPayment(true);
+    try {
+      // Kalkulasi Ulang Harga Diskon
+      let isDiscountActive = Boolean(template.isPaid && (template.discountPercentage || 0) > 0);
+      if (isDiscountActive && template.discountExpiry) {
+        if (new Date(template.discountExpiry).getTime() < new Date().getTime()) {
+          isDiscountActive = false; 
+        }
+      }
+      const finalPrice = isDiscountActive 
+        ? (template.price || 0) - ((template.price || 0) * (template.discountPercentage! / 100))
+        : (template.price || 0);
+
+      // Panggil Firebase Function untuk Xendit
+      const createInvoice = httpsCallable(functions, 'createPaymentInvoice');
+      const response = await createInvoice({
+        packageId: template.id,
+        packageName: template.trackName,
+        finalPrice: finalPrice,
+        userEmail: user.email,
+        userName: user.displayName || 'Pengguna',
+      });
+
+      const data = response.data as { checkoutUrl: string };
+      
+      toast.loading("Mengarahkan ke gerbang pembayaran...");
+      window.location.href = data.checkoutUrl;
+
+    } catch (error: any) {
+      toast.error(error.message || "Terjadi kesalahan saat memproses pembayaran.");
+      setIsProcessingPayment(false);
+    }
   };
 
   const formVariants: Variants = {
@@ -137,7 +198,7 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
   return (
     <div className="flex-1 w-full flex flex-col lg:flex-row max-w-[1920px] mx-auto min-h-[calc(100vh-5.5rem)] relative pb-24 lg:pb-0 bg-white">
       
-      <div className="w-full lg:w-[380px] xl:w-[420px] lg:border-r border-slate-200 bg-white/90 lg:bg-[#FAFAFA] backdrop-blur-xl lg:h-[calc(100vh-5.5rem)] sticky top-0 z-40 lg:z-30 p-4 lg:p-10 xl:p-12 flex flex-col justify-between overflow-y-auto custom-scrollbar border-b lg:border-b-0">
+      <div className="w-full lg:w-[380px] xl:w-[420px] lg:border-r border-slate-200 bg-white/90 lg:bg-[#FAFAFA] backdrop-blur-xl lg:h-[calc(100vh-5.5rem)] sticky top-0 z-30 p-4 lg:p-10 xl:p-12 flex flex-col justify-between overflow-y-auto custom-scrollbar border-b lg:border-b-0">
         <div className="flex lg:hidden items-center justify-between w-full">
           <button onClick={() => step > 1 ? setStep(step - 1) : onBack()} className="p-2 -ml-2 text-slate-500 hover:text-indigo-600 active:scale-95 transition-transform"><ChevronLeft size={24} /></button>
           <div className="flex-1 px-4">
@@ -195,8 +256,7 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
                   {renderMarkdownText(currentStepData.title)}
                 </h2>
                 {currentStepData.description && <p className="text-slate-500 text-sm sm:text-base mb-8 leading-relaxed max-w-2xl">{renderMarkdownText(currentStepData.description)}</p>}
-
-                {/* PENERAPAN VISIBILITY BERDASARKAN CONDITIONAL LOGIC */}
+                
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-8">
                   {currentStepData.fields.filter(isFieldVisible).map((field, idx) => (
                     <motion.div key={field.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.05 }} className={field.type === 'textarea' || field.type === 'file' ? 'lg:col-span-2' : ''}>
@@ -207,21 +267,104 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
               </motion.div>
             </AnimatePresence>
 
-            <div className="fixed bottom-0 left-0 right-0 p-4 sm:p-6 bg-white/70 backdrop-blur-2xl border-t border-slate-200/50 shadow-[0_-10px_40px_rgba(0,0,0,0.03)] z-50 lg:static lg:bg-transparent lg:border-t lg:border-slate-100 lg:shadow-none lg:p-0 lg:mt-16 lg:pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="fixed bottom-0 left-0 right-0 p-4 sm:p-6 bg-white/70 backdrop-blur-2xl border-t border-slate-200/50 shadow-[0_-10px_40px_rgba(0,0,0,0.03)] z-40 lg:static lg:bg-transparent lg:border-t lg:border-slate-100 lg:shadow-none lg:p-0 lg:mt-16 lg:pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
                <p className="text-xs text-slate-400 font-medium hidden sm:block">Pastikan kolom bertanda <span className="text-rose-500">*</span> terisi.</p>
                <button 
                  onClick={() => {
-                    if (step < totalSteps) { setStep(step + 1); window.scrollTo({ top: 0, behavior: 'smooth' }); } 
-                    else { setIsReviewMode(true); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+                   // CEK PAYWALL
+                   if (isTrialSession && step === paywallStep) {
+                     setShowPaywall(true);
+                   } else if (step < totalSteps) { 
+                     setStep(step + 1); 
+                     window.scrollTo({ top: 0, behavior: 'smooth' }); 
+                   } else { 
+                     setIsReviewMode(true); 
+                     window.scrollTo({ top: 0, behavior: 'smooth' }); 
+                   }
                  }} 
                  disabled={!isStepValid()}
                  className="w-full sm:w-auto py-4 px-8 bg-slate-900 text-white font-bold rounded-2xl hover:bg-indigo-600 transition-all shadow-lg shadow-slate-900/20 hover:shadow-indigo-600/30 flex items-center justify-center gap-2 text-base active:scale-[0.98] disabled:opacity-50 group"
                >
-                  {step < totalSteps ? <>Langkah Selanjutnya <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" /></> : <>Tinjau & Konfirmasi <ClipboardCheck size={18} className="group-hover:scale-110 transition-transform" /></>}
+                  {isTrialSession && step === paywallStep ? (
+                    <>Buka Akses Lanjutan <Lock size={18} className="group-hover:scale-110 transition-transform text-amber-400" /></>
+                  ) : step < totalSteps ? (
+                    <>Langkah Selanjutnya <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" /></>
+                  ) : (
+                    <>Tinjau & Konfirmasi <ClipboardCheck size={18} className="group-hover:scale-110 transition-transform" /></>
+                  )}
                </button>
             </div>
          </div>
       </div>
+
+      {/* OVERLAY PAYWALL MODAL */}
+      <AnimatePresence>
+        {showPaywall && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md"
+          >
+            <motion.div 
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              className="bg-white max-w-lg w-full rounded-[2rem] shadow-2xl overflow-hidden relative"
+            >
+              <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-br from-indigo-600 to-blue-700"></div>
+              <button 
+                onClick={() => setShowPaywall(false)}
+                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-white/20 hover:bg-white/40 text-white rounded-full transition-colors z-10"
+              >
+                <X size={18} />
+              </button>
+
+              <div className="relative pt-12 px-8 pb-8 text-center">
+                <div className="w-20 h-20 bg-white rounded-full shadow-xl flex items-center justify-center mx-auto mb-6 ring-4 ring-indigo-50">
+                  <Lock className="w-10 h-10 text-indigo-600" />
+                </div>
+                <h3 className="text-2xl font-black text-slate-900 mb-3">Satu Langkah Lagi!</h3>
+                <p className="text-slate-500 font-medium text-sm leading-relaxed mb-8">
+                  Data awal Anda telah tersimpan dengan aman. Untuk membuka matriks evaluasi lanjutan dan terhubung dengan mesin komputasi AI kami, silakan amankan akses premium Anda.
+                </p>
+
+                <div className="bg-slate-50 p-4 rounded-2xl ring-1 ring-slate-200 mb-8 text-left">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Modul Akses</p>
+                  <p className="font-bold text-slate-900 mb-4">{template.trackName}</p>
+                  
+                  <div className="flex items-center justify-between border-t border-slate-200 pt-3">
+                    <span className="text-sm font-bold text-slate-500">Biaya Investasi</span>
+                    <span className="text-lg font-black text-indigo-600">
+                      {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(
+                        (template.discountPercentage && template.discountPercentage > 0) 
+                          ? (template.price || 0) - ((template.price || 0) * (template.discountPercentage / 100))
+                          : (template.price || 0)
+                      )}
+                    </span>
+                  </div>
+                </div>
+
+                <Button 
+                  onClick={handleCheckoutPaywall}
+                  disabled={isProcessingPayment}
+                  className="w-full h-14 rounded-2xl bg-slate-900 hover:bg-indigo-600 text-white font-bold text-base shadow-xl shadow-slate-900/20 hover:shadow-indigo-600/30 transition-all flex items-center justify-center gap-2"
+                >
+                  {isProcessingPayment ? (
+                    <><Loader2 className="w-5 h-5 animate-spin" /> Mengalihkan...</>
+                  ) : (
+                    <><CreditCard className="w-5 h-5" /> Amankan Akses Sekarang</>
+                  )}
+                </Button>
+                <p className="text-[10px] font-medium text-slate-400 mt-4">
+                  Sistem akan mengarahkan Anda ke gerbang pembayaran aman Xendit.
+                </p>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 }

@@ -75,12 +75,13 @@ export default function CustomerDashboard() {
   };
 
   // Fungsi Pintu Tol (Langsung by-pass login form)
-  const handleStartAssessment = (tokenCode: string, packageId: string) => {
+const handleStartAssessment = (tokenCode: string, packageId: string) => {
     sessionStorage.setItem('active_token', tokenCode);
     sessionStorage.setItem('active_allowed_templates', JSON.stringify([packageId]));
     sessionStorage.setItem('active_model', 'flash'); // Default AI Model
     
-    toast.loading("Mempersiapkan ruang kerja AI...");
+    // HAPUS BARIS INI: toast.loading("Mempersiapkan ruang kerja AI...");
+
     router.push('/assessment');
   };
 

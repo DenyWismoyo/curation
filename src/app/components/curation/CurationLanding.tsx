@@ -226,7 +226,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                 </button>
               </div>
 
-              {/* Tampilkan Tombol Admin Khusus Jika Memiliki Role Admin */}
+{/* Tampilkan Tombol Admin Khusus Jika Memiliki Role Admin */}
               {(role === 'admin_csrs' || role === 'admin_omnifit') && (
                 <Link href="/admin" className="block w-full">
                   <Button variant="outline" className="w-full h-12 rounded-xl border-indigo-200 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold gap-2">
@@ -243,6 +243,14 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                   </Button>
                 </Link>
               )}
+
+              {/* ===== TAMBAHKAN TOMBOL BRANKAS MODUL PELANGGAN DI SINI ===== */}
+              <Link href="/dashboard" className="block w-full">
+                <Button variant="outline" className="w-full h-12 rounded-xl border-sky-200 bg-sky-50 text-sky-700 hover:bg-sky-100 font-bold gap-2 shadow-sm transition-all">
+                  <ShieldCheck size={18} /> Buka Brankas Modul Saya
+                </Button>
+              </Link>
+              {/* ============================================================= */}
 
               {/* Input Token B2B / B2C */}
               <div className="pt-2">

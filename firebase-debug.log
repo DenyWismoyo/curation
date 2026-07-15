@@ -1,17 +1,17 @@
-[debug] [2026-07-15T08:39:46.155Z] ----------------------------------------------------------------------
-[debug] [2026-07-15T08:39:46.157Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\ASUS\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only functions
-[debug] [2026-07-15T08:39:46.158Z] CLI Version:   15.22.4
-[debug] [2026-07-15T08:39:46.158Z] Platform:      win32
-[debug] [2026-07-15T08:39:46.158Z] Node Version:  v24.13.1
-[debug] [2026-07-15T08:39:46.158Z] Detected Agent: unknown
-[debug] [2026-07-15T08:39:46.158Z] Time:          Wed Jul 15 2026 15:39:46 GMT+0700 (Western Indonesia Time)
-[debug] [2026-07-15T08:39:46.158Z] ----------------------------------------------------------------------
+[debug] [2026-07-15T09:16:16.902Z] ----------------------------------------------------------------------
+[debug] [2026-07-15T09:16:16.906Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\ASUS\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only functions
+[debug] [2026-07-15T09:16:16.906Z] CLI Version:   15.22.4
+[debug] [2026-07-15T09:16:16.906Z] Platform:      win32
+[debug] [2026-07-15T09:16:16.906Z] Node Version:  v24.13.1
+[debug] [2026-07-15T09:16:16.907Z] Detected Agent: unknown
+[debug] [2026-07-15T09:16:16.907Z] Time:          Wed Jul 15 2026 16:16:16 GMT+0700 (Western Indonesia Time)
+[debug] [2026-07-15T09:16:16.907Z] ----------------------------------------------------------------------
 [debug] 
-[debug] [2026-07-15T08:39:48.974Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2026-07-15T08:39:48.975Z] > authorizing via signed-in user (deny.wismoyo@gmail.com)
-[debug] [2026-07-15T08:39:48.975Z] [iam] checking project teknopark-surakarta for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
-[debug] [2026-07-15T08:39:48.977Z] Checked if tokens are valid: false, expires at: 1784105065552
-[debug] [2026-07-15T08:39:48.977Z] Checked if tokens are valid: false, expires at: 1784105065552
-[debug] [2026-07-15T08:39:48.977Z] > refreshing access token with scopes: []
-[debug] [2026-07-15T08:39:48.980Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
-[debug] [2026-07-15T08:39:48.980Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-07-15T09:16:19.464Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-07-15T09:16:19.464Z] > authorizing via signed-in user (deny.wismoyo@gmail.com)
+[debug] [2026-07-15T09:16:19.465Z] [iam] checking project teknopark-surakarta for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2026-07-15T09:16:19.466Z] Checked if tokens are valid: true, expires at: 1784108388236
+[debug] [2026-07-15T09:16:19.466Z] Checked if tokens are valid: true, expires at: 1784108388236
+[debug] [2026-07-15T09:16:19.466Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions [none]
+[debug] [2026-07-15T09:16:19.466Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions  x-goog-user-project=teknopark-surakarta
+[debug] [2026-07-15T09:16:19.467Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
