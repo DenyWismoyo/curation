@@ -5,7 +5,10 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { AlertCircle, CheckCircle2, ArrowLeft, Sparkles, KeyRound, FileCheck2, AlertTriangle } from 'lucide-react';
+import { AlertCircle, CheckCircle2, ArrowLeft, AlertTriangle } from 'lucide-react';
+
+// IMPORT CUSTOM ICONS
+import { DocExportIcon, AdminShieldIcon, AiSparkIcon } from '@/components/icon';
 
 export interface ReviewAndConfirmProps {
   answers: Record<string, any>;
@@ -20,14 +23,17 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
   const [token, setToken] = useState<string>(''); 
   const [tokenError, setTokenError] = useState<string>('');
   const [activeSessionToken, setActiveSessionToken] = useState<string | null>(null);
-  
+
   // State untuk menampilkan Modal Konfirmasi
   const [showModal, setShowModal] = useState<boolean>(false); 
 
-  // Ambil token dari session storage saat komponen dimuat
+  // Ambil token dari session storage dan LAKUKAN AUTO-FILL
   useEffect(() => {
     const sessionToken = sessionStorage.getItem('active_token');
     setActiveSessionToken(sessionToken);
+    if (sessionToken) {
+      setToken(sessionToken); 
+    }
   }, []);
 
   const isFormValid = selfScore !== '' && selfScore >= 1 && selfScore <= 10 && isConfirmed && token.trim().length >= 3;
@@ -37,7 +43,7 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
     setTokenError('');
     const inputTokenClean = token.trim().toUpperCase();
 
-    // Validasi Kedua: Cocokkan token input dengan token di session
+    // Validasi: Cocokkan token input dengan token di session
     if (!activeSessionToken) {
       setTokenError('Sesi tidak valid atau telah berakhir. Harap kembali ke halaman utama.');
       return;
@@ -49,7 +55,6 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
     }
 
     if (isFormValid) {
-      // Jika validasi sukses, jangan langsung submit, tapi TAMPILKAN MODAL
       setShowModal(true);
     }
   };
@@ -58,10 +63,15 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
   const handleFinalSubmit = () => {
     setShowModal(false);
     const inputTokenClean = token.trim().toUpperCase();
+    
+    // MENCEGAH ERROR BACKEND: Jangan kirim token decoy/trial ke Firebase Functions
+    const isDecoy = inputTokenClean.startsWith('FREE-') || inputTokenClean.startsWith('TRIAL-') || inputTokenClean.startsWith('RESUME-');
+    const finalToken = isDecoy ? '' : inputTokenClean;
+
     onSubmit({
       selfScore: Number(selfScore),
       isConfirmedEarnest: isConfirmed,
-      token: inputTokenClean
+      token: finalToken
     });
   };
 
@@ -80,7 +90,7 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
           </p>
         </div>
         <div className="hidden sm:flex w-16 h-16 bg-slate-50 rounded-2xl ring-1 ring-slate-100 items-center justify-center shrink-0">
-          <FileCheck2 className="w-8 h-8 text-indigo-600" />
+          <DocExportIcon size={32} className="text-indigo-600" />
         </div>
       </div>
 
@@ -110,7 +120,7 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
             {/* Input Token Konfirmasi */}
             <div className="space-y-3 bg-white p-5 rounded-2xl ring-1 ring-slate-200/60 hover:ring-indigo-200 transition-all md:col-span-2">
               <Label htmlFor="token-input" className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                <KeyRound className="w-4 h-4 text-indigo-600" /> Konfirmasi Token Akses <span className="text-red-500">*</span>
+                <AdminShieldIcon size={16} className="text-indigo-600" /> Konfirmasi Token Akses <span className="text-red-500">*</span>
               </Label>
               <p className="text-xs text-slate-500 font-medium">
                 Masukkan kembali kode token yang Anda gunakan di awal untuk memverifikasi keamanan pengiriman.
@@ -192,6 +202,7 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
               <span>Harap lengkapi Token, Skor Keyakinan, dan centang Pernyataan untuk melanjutkan.</span>
             </div>
           )}
+
         </div>
 
         {/* Footer Actions */}
@@ -206,7 +217,7 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
           </Button>
           
           <Button 
-            onClick={handlePreSubmit} // Panggil fungsi validasi dan tampilkan modal
+            onClick={handlePreSubmit}
             disabled={!isFormValid || isSubmitting}
             className="w-full sm:w-auto h-12 px-8 rounded-xl bg-slate-900 hover:bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-600/20 transition-all duration-300"
           >
@@ -216,15 +227,14 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
               </span>
             ) : (
               <span className="flex items-center gap-2">
-                Analisis dengan AI <Sparkles className="w-4 h-4 ml-1" />
+                Analisis dengan AI <AiSparkIcon size={16} className="ml-1" />
               </span>
             )}
           </Button>
         </div>
-
       </div>
 
-      {/* MODAL KONFIRMASI (Tampil jika showModal === true) */}
+      {/* MODAL KONFIRMASI */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white rounded-[2rem] shadow-2xl max-w-md w-full ring-1 ring-slate-200 overflow-hidden animate-in zoom-in-95 duration-200 relative">
@@ -261,7 +271,6 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
           </div>
         </div>
       )}
-
     </div>
   );
 }

@@ -3,15 +3,25 @@
 
 import React, { useState } from 'react';
 import { 
-  ShieldCheck, Target, Sparkles, Activity, Route, ListChecks, 
-  ChevronDown, AlertTriangle, Zap, TrendingUp, Lightbulb, 
-  Banknote, Users, Search, FileText, Award, Shield, Building2, 
-  Briefcase, MessageSquare, Tag, Compass, Mic, MicOff, ShieldAlert
+  ChevronDown, AlertTriangle, Mic, MicOff 
 } from 'lucide-react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip } from 'recharts';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { CurationFormData, AIResult } from '@/types/curation';
+
+// IMPORT CUSTOM ICONS (Menggantikan dominasi Lucide)
+import { 
+  AiSparkIcon, 
+  AILensIcon, 
+  AdminShieldIcon, 
+  InfinityWorkflowIcon, 
+  GlobalTargetIcon, 
+  DocExportIcon, 
+  TechCardIcon, 
+  BrainIcon, 
+  EcosystemIcon 
+} from '@/components/icon';
 
 // ========================================================
 // 1. HELPER COMPONENTS (UPGRADED RICH TEXT PARSER)
@@ -89,13 +99,13 @@ const InsightAccordion = ({ id, title, icon: Icon, content }: any) => {
 
 const renderDynamicIcon = (type: string) => {
   switch (type?.toLowerCase()) {
-    case 'finance': return <Banknote className="w-4 h-4" />;
-    case 'users': return <Users className="w-4 h-4" />;
-    case 'idea': return <Lightbulb className="w-4 h-4" />;
-    case 'award': return <Award className="w-4 h-4" />;
-    case 'document': return <FileText className="w-4 h-4" />;
-    case 'shield': return <Shield className="w-4 h-4" />;
-    case 'target': default: return <Target className="w-4 h-4" />;
+    case 'finance': return <TechCardIcon size={16} />;
+    case 'users': return <EcosystemIcon size={16} />;
+    case 'idea': return <AiSparkIcon size={16} />;
+    case 'award': return <BrainIcon size={16} />;
+    case 'document': return <DocExportIcon size={16} />;
+    case 'shield': return <AdminShieldIcon size={16} />;
+    case 'target': default: return <GlobalTargetIcon size={16} />;
   }
 }
 
@@ -162,7 +172,6 @@ export function UniversalAssessmentView({
   const finalScore = isInternal ? (curatorData?.curatorScore || 0) : aiScore;
   const isHighTier = finalScore >= 75;
 
-  // LOKALISASI LAYER: Translasi komponen bunglon dinamis
   const formPurpose = aiResult?.formPurpose || 'assessment';
   const customUiLabels = aiResult?.customUiLabels || {};
   
@@ -175,17 +184,17 @@ export function UniversalAssessmentView({
     
     switch(key) {
       case 'score':
-        if (isCounseling) return 'Indeks Kepribadian / Kesiapan Mentoring';
-        if (isMonitoring) return 'Persentase Capaian Target (KPI)';
+        if (isCounseling) return 'Indeks Kepribadian';
+        if (isMonitoring) return 'Persentase Capaian Target';
         if (isConsultation) return 'Tingkat Urgensi Solusi';
         return 'AI Readiness Score';
       case 'swot':
-        if (isCounseling) return 'Pemetaan Karakter & Pola Perilaku (SWOT)';
+        if (isCounseling) return 'Pemetaan Karakter (SWOT)';
         if (isMonitoring) return 'Matriks Kondisi Lapangan (SWOT)';
         return 'Capability Matrix (SWOT)';
       case 'risk':
-        if (isCounseling) return 'Pemicu Konflik & Strategi Penanganan';
-        if (isMonitoring) return 'Hambatan Proyek & Alternatif Mitigasi';
+        if (isCounseling) return 'Pemicu Konflik & Penanganan';
+        if (isMonitoring) return 'Hambatan & Alternatif Mitigasi';
         return 'Critical Risks & Mitigation Map';
       case 'roadmap':
         if (isCounseling) return 'Rekomendasi Rencana Pendampingan';
@@ -215,9 +224,13 @@ export function UniversalAssessmentView({
 
       {isPublic && (
         <div className="bg-gradient-to-br from-amber-50 to-orange-50/40 border border-amber-200/80 p-5 sm:p-6 rounded-3xl shadow-sm relative overflow-hidden">
-          <div className="absolute right-0 top-0 opacity-[0.03] pointer-events-none transform translate-x-6 -translate-y-6"><Shield size={160} /></div>
+          <div className="absolute right-0 top-0 opacity-[0.03] pointer-events-none transform translate-x-6 -translate-y-6">
+            <AdminShieldIcon size={160} />
+          </div>
           <div className="flex flex-col lg:flex-row gap-4 items-start relative z-10">
-            <div className="bg-amber-100/80 p-3 rounded-2xl shrink-0 text-amber-600 ring-1 ring-amber-200 shadow-inner"><AlertTriangle className="w-7 h-7" /></div>
+            <div className="bg-amber-100/80 p-3 rounded-2xl shrink-0 text-amber-600 ring-1 ring-amber-200 shadow-inner">
+              <AdminShieldIcon size={28} />
+            </div>
             <div className="flex-1 w-full space-y-3">
               <div className="flex items-center gap-2">
                 <span className="bg-amber-100/80 text-amber-800 text-[10px] font-black px-3 py-1 rounded-md uppercase tracking-widest ring-1 ring-amber-200">Status Laporan</span>
@@ -232,7 +245,7 @@ export function UniversalAssessmentView({
       {isInternal && curatorData && (
         <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm ring-1 ring-slate-200 w-full">
           <h3 className="text-xs font-black uppercase text-slate-500 tracking-widest mb-4 flex items-center gap-2">
-            <Tag className="w-4 h-4 text-indigo-500"/> Kustomisasi Quick Tags
+            <TechCardIcon size={16} className="text-indigo-500"/> Kustomisasi Quick Tags
           </h3>
           <div className="flex flex-wrap items-center gap-2.5">
             {isEditing ? (
@@ -262,7 +275,7 @@ export function UniversalAssessmentView({
       {isInternal && curatorData && (
         <div className={`p-6 sm:p-8 rounded-3xl shadow-sm ring-1 transition-all w-full ${isEditing ? 'bg-white ring-indigo-500 shadow-indigo-100 ring-2' : 'bg-white ring-slate-200'}`}>
           <h3 className="font-black text-slate-900 text-lg mb-2 flex items-center gap-2">
-            <FileText className="w-5 h-5 text-indigo-600"/> Catatan & Kesimpulan Lapangan Peninjau Eksternal <span className="text-rose-500">*</span>
+            <DocExportIcon size={20} className="text-indigo-600"/> Catatan & Kesimpulan Lapangan Peninjau Eksternal <span className="text-rose-500">*</span>
           </h3>
           <p className="text-xs text-slate-500 mb-4 font-medium">Ringkasan peninjauan langsung hasil verifikasi fisik, wawancara mendalam, dan fakta objektif.</p>
           
@@ -307,7 +320,7 @@ export function UniversalAssessmentView({
               
               {programName && (
                 <span className="bg-emerald-50 text-emerald-600 font-bold text-xs sm:text-sm px-3 py-1.5 rounded-lg uppercase tracking-widest ring-1 ring-emerald-200 flex items-center gap-1.5">
-                   <Building2 className="w-3.5 h-3.5" /> {programName}
+                   <EcosystemIcon size={14} /> {programName}
                 </span>
               )}
             </div>
@@ -315,7 +328,7 @@ export function UniversalAssessmentView({
           
           <div className="bg-white ring-1 ring-slate-200 p-6 sm:p-8 rounded-3xl shadow-sm h-full flex flex-col">
             <h3 className="text-slate-900 font-black uppercase tracking-widest text-xs mb-3 flex items-center gap-2">
-              <Zap className="h-4 w-4 text-indigo-500"/> Ringkasan Eksekutif Utama (AI)
+              <AiSparkIcon size={16} className="text-indigo-500"/> Ringkasan Eksekutif Utama (AI)
             </h3>
             <div className="text-slate-600 text-sm font-medium flex-1">
               <TextToBullets text={aiResult?.executiveSummary || "Ringkasan analisis tidak tersedia."} colorClass="text-indigo-500" />
@@ -326,7 +339,9 @@ export function UniversalAssessmentView({
         <div className={`w-full lg:w-[360px] shrink-0 p-8 rounded-3xl text-white relative overflow-hidden flex flex-col justify-center items-center shadow-lg ${isHighTier ? 'bg-gradient-to-br from-[#0f3d32] to-emerald-800' : 'bg-gradient-to-br from-slate-900 to-indigo-900'}`}>
           <div className="absolute inset-0 bg-gradient-to-tr from-black/20 to-transparent opacity-30 mix-blend-overlay"></div>
           
-          <p className="relative z-10 text-white/70 text-xs font-black uppercase tracking-widest mb-2 flex items-center gap-2"><ShieldCheck className="h-4 w-4"/> {getLabel('score')}</p>
+          <p className="relative z-10 text-white/70 text-xs font-black uppercase tracking-widest mb-2 flex items-center gap-2">
+            <AiSparkIcon size={16}/> {getLabel('score')}
+          </p>
           <span className="relative z-10 text-[100px] font-black leading-none tracking-tighter drop-shadow-md mb-4">{Math.min(aiScore, 100)}</span>
           
           <div className="relative z-10 flex flex-col items-center gap-2 w-full">
@@ -344,10 +359,12 @@ export function UniversalAssessmentView({
 
       {isInternal && (
         <div className="w-full bg-slate-900 p-6 sm:p-8 rounded-3xl shadow-xl ring-1 ring-slate-800 relative overflow-hidden">
-          <div className="absolute right-0 top-0 opacity-5 pointer-events-none transform translate-x-10 -translate-y-10"><ShieldAlert size={200} /></div>
+          <div className="absolute right-0 top-0 opacity-5 pointer-events-none transform translate-x-10 -translate-y-10">
+            <AdminShieldIcon size={200} />
+          </div>
           
           <h3 className="text-sm font-black text-white uppercase tracking-widest mb-6 flex items-center gap-2 relative z-10">
-            <Search className="w-5 h-5 text-indigo-400"/> Validasi Silang Logika & Integritas Pengisian Data (AI)
+            <AILensIcon size={20} className="text-indigo-400"/> Validasi Silang Logika & Integritas Pengisian Data (AI)
           </h3>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
@@ -371,7 +388,7 @@ export function UniversalAssessmentView({
               
               <div className={`flex-1 rounded-2xl p-5 border ${aiResult?.contradictionsFound?.length > 0 ? 'bg-rose-950/30 border-rose-900/50' : 'bg-slate-800/50 border-slate-700/50'}`}>
                 <h4 className={`text-[10px] uppercase font-black tracking-widest mb-3 flex items-center gap-1.5 ${aiResult?.contradictionsFound?.length > 0 ? 'text-rose-400' : 'text-slate-400'}`}>
-                  <AlertTriangle size={14}/> Deteksi Kontradiksi Pernyataan
+                  <AILensIcon size={14}/> Deteksi Kontradiksi Pernyataan
                 </h4>
                 {aiResult?.contradictionsFound && aiResult.contradictionsFound.length > 0 ? (
                   <ul className="space-y-3">
@@ -389,14 +406,14 @@ export function UniversalAssessmentView({
 
             <div className="lg:col-span-2 bg-slate-800/50 rounded-2xl p-5 sm:p-6 border border-slate-700/50 flex flex-col">
               <h4 className="text-[10px] uppercase font-black tracking-widest text-indigo-300 mb-3 flex items-center gap-2">
-                <MessageSquare size={14}/> Logika Pertimbangan Otak AI (Internal Reasoning)
+                <BrainIcon size={14}/> Logika Pertimbangan Otak AI (Internal Reasoning)
               </h4>
               <div className="flex-1 overflow-y-auto max-h-[250px] custom-scrollbar pr-2 text-sm text-slate-300 font-medium leading-relaxed">
                 {aiResult?._internalReasoning ? (
                   <TextToBullets text={aiResult._internalReasoning} colorClass="text-indigo-400" />
                 ) : (
                   <div className="h-full flex flex-col items-center justify-center text-slate-500 space-y-2 opacity-50 py-8">
-                    <ShieldAlert className="w-8 h-8 mb-1" />
+                    <AdminShieldIcon size={32} className="mb-1" />
                     <span className="text-xs font-bold uppercase tracking-widest">Informasi Disembunyikan</span>
                   </div>
                 )}
@@ -434,7 +451,7 @@ export function UniversalAssessmentView({
                  {isInternal && curatorData && (
                     <div className="pt-4 border-t border-slate-100 mt-auto">
                       <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 flex items-center gap-1.5">
-                        <ShieldCheck size={14} className="text-emerald-500" /> Tanggapan Ahli Ahli
+                        <AdminShieldIcon size={14} className="text-emerald-500" /> Tanggapan Ahli Ahli
                       </h4>
                       {isEditing ? (
                         <Textarea 
@@ -456,10 +473,14 @@ export function UniversalAssessmentView({
 
           {aiResult?.fileAnalysisInsights && (
             <div className="bg-slate-900 text-white p-6 sm:p-8 rounded-3xl shadow-md md:col-span-2 lg:col-span-2 relative flex flex-col justify-between overflow-hidden">
-              <div className="absolute right-0 top-0 opacity-10 pointer-events-none"><FileText size={160} className="transform translate-x-8 -translate-y-8"/></div>
+              <div className="absolute right-0 top-0 opacity-10 pointer-events-none">
+                <DocExportIcon size={160} className="transform translate-x-8 -translate-y-8"/>
+              </div>
               
               <div>
-                <h3 className="text-xs font-black uppercase tracking-widest mb-4 flex items-center gap-2 text-indigo-300"><Search className="w-4 h-4"/> Hasil Validasi Dokumen Unggahan</h3>
+                <h3 className="text-xs font-black uppercase tracking-widest mb-4 flex items-center gap-2 text-indigo-300">
+                  <AILensIcon size={16}/> Hasil Validasi Dokumen Unggahan
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10 mb-6">
                   <div>
                     <p className="text-[10px] uppercase text-slate-400 font-bold mb-1">Status Keaslian & Kualitas</p>
@@ -490,7 +511,7 @@ export function UniversalAssessmentView({
               {isInternal && curatorData && (
                 <div className="pt-4 border-t border-slate-800 relative z-10 mt-auto">
                   <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 flex items-center gap-1.5">
-                    <ShieldCheck size={14} className="text-emerald-400" /> Hasil Konfirmasi Otentisitas Berkas
+                    <AdminShieldIcon size={14} className="text-emerald-400" /> Hasil Konfirmasi Otentisitas Berkas
                   </h4>
                   {isEditing ? (
                     <Textarea 
@@ -514,7 +535,9 @@ export function UniversalAssessmentView({
       {aiResult?.metrics && aiResult.metrics.length > 0 && (
         <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-3xl ring-1 ring-slate-200 shadow-sm w-full">
           <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0"><Activity className="h-5 w-5"/></div>
+            <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0">
+              <AILensIcon size={20} />
+            </div>
             <div>
               <h3 className="font-black text-slate-900 text-xl tracking-tight">Pilar Pemetaan Komparatif</h3>
               <p className="text-sm text-slate-500 font-medium">Visualisasi perbandingan parameter kuantitatif</p>
@@ -523,8 +546,6 @@ export function UniversalAssessmentView({
           
           <div className="flex flex-col lg:flex-row gap-10 xl:gap-16 items-center">
             <div className="w-full lg:w-2/5 flex flex-col items-center shrink-0">
-              
-              {/* PENYESUAIAN KETINGGIAN DINAMIS: Makin banyak data, radar chart makin melebar (mencegah teks tertumpuk) */}
               <div className={`w-full relative ${
                 radarData.length > 12 ? 'h-[550px] sm:h-[650px]' : 
                 radarData.length > 7  ? 'h-[420px] sm:h-[500px]' : 
@@ -562,7 +583,7 @@ export function UniversalAssessmentView({
           {isInternal && curatorData && (
             <div className="mt-8 pt-6 border-t border-slate-100">
               <h4 className="text-xs font-black uppercase tracking-widest text-slate-900 mb-2 flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-600"/> Catatan Kalibrasi Angka Lapangan
+                <AdminShieldIcon size={16} className="text-emerald-600"/> Catatan Kalibrasi Angka Lapangan
               </h4>
               {isEditing ? (
                 <Textarea 
@@ -585,25 +606,33 @@ export function UniversalAssessmentView({
         <div className="w-full">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <div className="bg-emerald-50/80 p-6 rounded-3xl ring-1 ring-emerald-200/60 shadow-sm">
-                <h4 className="text-emerald-900 font-black flex items-center gap-2 mb-4"><TrendingUp className="h-5 w-5"/> {isCounseling ? 'Potensi Diri Sisi Unggul' : 'Strengths'}</h4>
+                <h4 className="text-emerald-900 font-black flex items-center gap-2 mb-4">
+                  <GlobalTargetIcon size={20} /> {isCounseling ? 'Potensi Diri Sisi Unggul' : 'Strengths'}
+                </h4>
                 <ul className="list-disc list-inside text-emerald-800/80 text-sm font-medium space-y-2.5">
                   {aiResult.swotAnalysis.strengths?.map((s: string, i: number) => <li key={i}>{renderRichText(s)}</li>)}
                 </ul>
             </div>
             <div className="bg-rose-50/80 p-6 rounded-3xl ring-1 ring-rose-200/60 shadow-sm">
-                <h4 className="text-rose-900 font-black flex items-center gap-2 mb-4"><Activity className="h-5 w-5"/> {isCounseling ? 'Titik Buta / Kendala Batin' : 'Weaknesses'}</h4>
+                <h4 className="text-rose-900 font-black flex items-center gap-2 mb-4">
+                  <AILensIcon size={20} /> {isCounseling ? 'Titik Buta / Kendala Batin' : 'Weaknesses'}
+                </h4>
                 <ul className="list-disc list-inside text-rose-800/80 text-sm font-medium space-y-2.5">
                   {aiResult.swotAnalysis.weaknesses?.map((w: string, i: number) => <li key={i}>{renderRichText(w)}</li>)}
                 </ul>
             </div>
             <div className="bg-blue-50/80 p-6 rounded-3xl ring-1 ring-blue-200/60 shadow-sm">
-                <h4 className="text-blue-900 font-black flex items-center gap-2 mb-4"><Lightbulb className="h-5 w-5"/> {isCounseling ? 'Peluang Ruang Terapi' : 'Opportunities'}</h4>
+                <h4 className="text-blue-900 font-black flex items-center gap-2 mb-4">
+                  <AiSparkIcon size={20} /> {isCounseling ? 'Peluang Ruang Terapi' : 'Opportunities'}
+                </h4>
                 <ul className="list-disc list-inside text-blue-800/80 text-sm font-medium space-y-2.5">
                   {aiResult.swotAnalysis.opportunities?.map((o: string, i: number) => <li key={i}>{renderRichText(o)}</li>)}
                 </ul>
             </div>
             <div className="bg-amber-50/80 p-6 rounded-3xl ring-1 ring-amber-200/60 shadow-sm">
-                <h4 className="text-amber-900 font-black flex items-center gap-2 mb-4"><AlertTriangle className="h-5 w-5"/> {isCounseling ? 'Faktor Pemicu Stres (Triggers)' : 'Threats'}</h4>
+                <h4 className="text-amber-900 font-black flex items-center gap-2 mb-4">
+                  <AdminShieldIcon size={20} /> {isCounseling ? 'Faktor Pemicu Stres (Triggers)' : 'Threats'}
+                </h4>
                 <ul className="list-disc list-inside text-amber-800/80 text-sm font-medium space-y-2.5">
                   {aiResult.swotAnalysis.threats?.map((t: string, i: number) => <li key={i}>{renderRichText(t)}</li>)}
                 </ul>
@@ -613,7 +642,7 @@ export function UniversalAssessmentView({
           {isInternal && curatorData && (
             <div className="bg-white p-6 sm:p-8 rounded-3xl ring-1 ring-slate-200 shadow-sm">
               <h4 className="text-xs font-black uppercase tracking-widest text-slate-900 mb-2 flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-600"/> {getLabel('swot')} Peninjau
+                <AdminShieldIcon size={16} className="text-emerald-600"/> {getLabel('swot')} Peninjau
               </h4>
               {isEditing ? (
                 <Textarea 
@@ -635,7 +664,9 @@ export function UniversalAssessmentView({
       {aiResult?.riskAssessment?.criticalRisks && aiResult.riskAssessment.criticalRisks.length > 0 && (
         <div className="p-6 sm:p-8 rounded-3xl ring-1 ring-rose-200 bg-rose-50/30 w-full">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-rose-100 text-rose-600 rounded-xl flex items-center justify-center shrink-0"><AlertTriangle className="h-5 w-5"/></div>
+            <div className="w-10 h-10 bg-rose-100 text-rose-600 rounded-xl flex items-center justify-center shrink-0">
+              <AdminShieldIcon size={20} />
+            </div>
             <h3 className="font-black text-slate-900 text-xl tracking-tight">{getLabel('risk')}</h3>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -648,7 +679,9 @@ export function UniversalAssessmentView({
                   </div>
                 </div>
                 <div className="p-4">
-                  <h4 className="text-[10px] font-black uppercase tracking-widest text-emerald-600 mb-1 flex items-center gap-1.5"><ShieldCheck size={12}/> Strategi Tindakan Penyelamatan</h4>
+                  <h4 className="text-[10px] font-black uppercase tracking-widest text-emerald-600 mb-1 flex items-center gap-1.5">
+                    <AdminShieldIcon size={12}/> Strategi Tindakan Penyelamatan
+                  </h4>
                   <div className="text-sm font-medium text-slate-600">
                     <TextToBullets text={aiResult.riskAssessment.mitigationStrategies?.[idx]} colorClass="text-emerald-500" />
                   </div>
@@ -663,13 +696,15 @@ export function UniversalAssessmentView({
         {aiResult?.recommendations && aiResult.recommendations.length > 0 && (
           <div className="lg:col-span-2 p-6 sm:p-8 lg:p-10 bg-white ring-1 ring-slate-200 rounded-3xl shadow-sm">
             <div className="flex items-center gap-3 mb-6 sm:mb-8">
-              <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0"><Sparkles className="h-5 w-5"/></div>
+              <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0">
+                <AiSparkIcon size={20} />
+              </div>
               <h3 className="font-black text-slate-900 text-xl sm:text-2xl tracking-tight">{getLabel('roadmap')}</h3>
             </div>
             
             <div className="flex flex-col gap-3">
               {aiResult.recommendations.map((rec: any, idx: number) => (
-                 <InsightAccordion key={idx} id={`rec-${idx}`} title={rec?.title} icon={Briefcase} content={rec?.content} />
+                 <InsightAccordion key={idx} id={`rec-${idx}`} title={rec?.title} icon={TechCardIcon} content={rec?.content} />
               ))}
             </div>
           </div>
@@ -677,7 +712,9 @@ export function UniversalAssessmentView({
         
         <div className={`${(!aiResult?.recommendations || aiResult.recommendations.length === 0) ? 'lg:col-span-3' : 'lg:col-span-1'} flex flex-col gap-6`}>
           <div className={`p-6 sm:p-8 rounded-3xl text-center ring-1 shadow-sm ${isHighTier ? 'bg-emerald-50 ring-emerald-200/60 text-emerald-900' : 'bg-indigo-50 ring-indigo-200/60 text-indigo-900'}`}>
-            <Route className={`mx-auto mb-3 h-8 w-8 ${isHighTier ? 'text-emerald-500' : 'text-indigo-500'}`} />
+            <div className="flex justify-center mb-3">
+              <InfinityWorkflowIcon size={32} className={isHighTier ? 'text-emerald-500' : 'text-indigo-500'} />
+            </div>
             <p className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-1.5">Rute Pengembangan Disarankan</p>
             {isEditing && curatorData ? (
               <Input 
@@ -695,7 +732,9 @@ export function UniversalAssessmentView({
           
           {aiResult?.nextActionSteps && aiResult.nextActionSteps.length > 0 && (
             <div className="flex-1 bg-white ring-1 ring-slate-200 p-6 sm:p-8 shadow-sm flex flex-col rounded-3xl">
-              <h3 className="font-black text-slate-900 text-lg tracking-tight mb-6 flex items-center gap-2"><ListChecks className="h-5 w-5 text-indigo-600"/> {getLabel('execution')}</h3>
+              <h3 className="font-black text-slate-900 text-lg tracking-tight mb-6 flex items-center gap-2">
+                <InfinityWorkflowIcon size={20} className="text-indigo-600"/> {getLabel('execution')}
+              </h3>
               <div className="relative border-l-2 border-slate-100 ml-3 space-y-5 pb-2">
                 {aiResult.nextActionSteps.map((step: any, idx: number) => {
                   const isUrgent = step?.timeframe?.includes('30') || step?.timeframe?.includes('1') || false;

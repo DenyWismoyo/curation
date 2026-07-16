@@ -6,6 +6,9 @@ import { useRouter } from 'next/navigation';
 import { useCuration } from '@/hooks/useCuration';
 import { DynamicTrackSelector } from '@/app/components/curation/DynamicTrackSelector';
 
+// IMPORT CUSTOM ICON
+import { BrainIcon } from '@/components/icon';
+
 export default function AssessmentIndexPage() {
   const router = useRouter();
   const { state } = useCuration();
@@ -16,12 +19,10 @@ export default function AssessmentIndexPage() {
   useEffect(() => {
     const activeToken = sessionStorage.getItem('active_token');
     if (!activeToken) {
-      // Jika tidak ada token di session, tendang kembali ke landing page
       router.replace('/');
     } else {
       setIsAuthorized(true);
       
-      // --- TAMBAHAN FILTERING ---
       const savedAllowed = sessionStorage.getItem('active_allowed_templates');
       if (savedAllowed) {
         try {
@@ -30,24 +31,24 @@ export default function AssessmentIndexPage() {
           console.error('Gagal memparsing allowed templates dari session');
         }
       }
-      // --------------------------
     }
   }, [router]);
 
-  // --- TAMBAHAN FILTERING: Filter template sebelum dikirim ke Selector ---
   const filteredTemplates = useMemo(() => {
     if (!allowedTemplates || allowedTemplates.length === 0) {
-      return state.templates; // Jika tidak ada batasan, tampilkan semua
+      return state.templates; 
     }
     return state.templates.filter(t => allowedTemplates.includes(t.id));
   }, [state.templates, allowedTemplates]);
-  // -----------------------------------------------------------------------
 
-  // Layar Loading saat mengambil daftar template dari Firebase atau sedang mengecek authorisasi
+  // UI Loading Menggunakan Custom BrainIcon
   if (state.isLoadingTemplates || !isAuthorized) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50">
-        <div className="w-10 h-10 border-[4px] border-indigo-100 border-t-indigo-600 rounded-full animate-spin mb-4" />
+        <div className="w-14 h-14 mb-4 relative flex items-center justify-center">
+          <div className="absolute inset-0 rounded-full border-[4px] border-indigo-100 border-t-indigo-600 animate-spin" />
+          <BrainIcon size={24} className="text-indigo-600 animate-pulse" />
+        </div>
         <p className="text-slate-500 font-medium tracking-wide">
           {!isAuthorized ? 'Memverifikasi Akses...' : 'Memuat Katalog Modul...'}
         </p>
@@ -60,8 +61,8 @@ export default function AssessmentIndexPage() {
       <DynamicTrackSelector 
         templates={filteredTemplates} 
         onBack={() => {
-          sessionStorage.removeItem('active_token'); // Hapus token jika batal
-          sessionStorage.removeItem('active_allowed_templates'); // Bersihkan filter sesi
+          sessionStorage.removeItem('active_token'); 
+          sessionStorage.removeItem('active_allowed_templates'); 
           router.push('/');
         }} 
       />

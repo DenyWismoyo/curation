@@ -4,9 +4,19 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  X, Sparkles, CheckCircle2, 
-  Users, Briefcase, Building2, AlertTriangle, ArrowRight, XOctagon, TrendingUp, Target
+  X, CheckCircle2, AlertTriangle, ArrowRight, XOctagon 
 } from 'lucide-react';
+
+// IMPORT CUSTOM ICONS
+import { 
+  EcosystemIcon, 
+  AILensIcon, 
+  AdminShieldIcon, 
+  AiSparkIcon,
+  GlobalTargetIcon,
+  BrainIcon,
+  TechCardIcon
+} from '@/components/icon';
 
 interface Props {
   isOpen: boolean;
@@ -23,7 +33,7 @@ export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false, o
       id: "personal",
       title: "Pengguna Mandiri",
       subtitle: "Pelaku UMKM, Startup, & Individu",
-      icon: Users,
+      icon: EcosystemIcon, // CUSTOM ICON
       color: "text-sky-600",
       bg: "bg-sky-50",
       ring: "ring-sky-200",
@@ -47,7 +57,7 @@ export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false, o
       id: "expert",
       title: "Tim Ahli & Profesional",
       subtitle: "Asesor, Konselor, & Fasilitator",
-      icon: Briefcase,
+      icon: AILensIcon, // CUSTOM ICON
       color: "text-emerald-600",
       bg: "bg-emerald-50",
       ring: "ring-emerald-200",
@@ -71,7 +81,7 @@ export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false, o
       id: "corporate",
       title: "Korporasi & Institusi",
       subtitle: "Pemerintah, HR Enterprise, & Lembaga",
-      icon: Building2,
+      icon: AdminShieldIcon, // CUSTOM ICON
       color: "text-indigo-600",
       bg: "bg-indigo-50",
       ring: "ring-indigo-200",
@@ -109,7 +119,7 @@ export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false, o
         <div className="bg-white h-16 sm:h-20 px-4 sm:px-8 border-b border-slate-200 flex items-center justify-between shrink-0 shadow-sm z-20">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-indigo-600 text-white rounded-lg flex items-center justify-center shrink-0">
-              <Sparkles className="w-4 h-4" />
+              <TechCardIcon className="w-4 h-4" />
             </div>
             <div>
               <h2 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight leading-none">Tentang Omnifit</h2>
@@ -192,7 +202,7 @@ export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false, o
                 <div className="bg-slate-900 p-6 sm:p-8 lg:p-10 rounded-[2rem] shadow-xl flex flex-col relative overflow-hidden ring-1 ring-slate-800 group">
                   <div className={`absolute bottom-0 right-0 w-40 h-40 ${activeClusterData.color.replace('text', 'bg')}/20 rounded-full blur-3xl -mr-10 -mb-10 pointer-events-none transition-all group-hover:scale-150`}></div>
                   <div className="inline-flex items-center gap-3 mb-8 relative z-10">
-                    <div className={`p-3 ${activeClusterData.activeBg} text-white rounded-2xl`}><Sparkles className="w-6 h-6"/></div>
+                    <div className={`p-3 ${activeClusterData.activeBg} text-white rounded-2xl`}><AiSparkIcon size={24}/></div>
                     <h3 className="text-xl sm:text-2xl font-black text-white leading-tight">{activeClusterData.solutionTitle}</h3>
                   </div>
                   <ul className="space-y-6 flex-1 relative z-10">
@@ -238,7 +248,7 @@ export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false, o
                         }}
                         className="inline-flex items-center justify-center gap-2 w-full px-6 py-4 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl font-bold transition-all shadow-lg shadow-indigo-500/20"
                       >
-                        <Sparkles className="w-5 h-5" />
+                        <TechCardIcon className="w-5 h-5" />
                         Pilih Modul Asesmen Mandiri
                       </button>
                     )}
@@ -257,7 +267,7 @@ export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false, o
 
             <div className="bg-slate-900 rounded-[2rem] p-6 sm:p-8 lg:p-10 text-white relative overflow-hidden mt-8 shadow-xl">
               <div className="absolute top-0 right-0 opacity-5 pointer-events-none transform translate-x-10 -translate-y-10">
-                <TrendingUp size={240} />
+                <BrainIcon size={240} />
               </div>
               <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                 <div className="space-y-4">
@@ -271,7 +281,7 @@ export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false, o
                 </div>
                 <div className="bg-slate-800/80 p-6 lg:p-8 rounded-3xl ring-1 ring-slate-700/50 backdrop-blur-sm space-y-4">
                   <h4 className="text-sm lg:text-base font-black text-indigo-300 uppercase tracking-widest flex items-center gap-2">
-                    <Target className="w-5 h-5" /> Transformasi Bersama Omnifit
+                    <GlobalTargetIcon size={20} /> Transformasi Bersama Omnifit
                   </h4>
                   <p className="text-sm lg:text-base text-slate-200 font-medium leading-relaxed">
                     Platform kami dirancang untuk mengambil alih seluruh beban kerja repetitif tersebut. Sehingga Anda dapat berfokus penuh pada hal yang paling esensial: <span className="text-white font-black underline decoration-indigo-500 decoration-2 underline-offset-4">memberikan pendampingan strategis, validasi mendalam, dan merumuskan solusi.</span>

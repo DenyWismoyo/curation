@@ -2,12 +2,21 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Image from 'next/image'; // <-- Import komponen Image dari Next.js
+import Image from 'next/image'; 
 import { 
-  ShieldCheck, ArrowRight, History, Clock, Activity, 
-  ChevronRight, Loader2, LogOut, LayoutDashboard, Sparkles, Compass, ClipboardCheck,
-  FileEdit, MessageSquarePlus 
+  ArrowRight, History, Clock, 
+  ChevronRight, Loader2, LogOut, LayoutDashboard, Sparkles, ClipboardCheck,
+  MessageSquarePlus, Box
 } from 'lucide-react';
+// IMPORT CUSTOM ICON ANDA DI SINI
+import { 
+  EcosystemIcon, 
+  TechCardIcon, 
+  AdminShieldIcon, 
+  DocExportIcon, 
+  BrainIcon 
+} from '@/components/icon'; 
+
 import { PricingPackages } from '@/app/components/payment/PricingPackages';
 import { SystemCapabilitiesModal } from './SystemCapabilitiesModal';
 import { FeedbackModal } from './FeedbackModal';
@@ -90,7 +99,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
     fetchDrafts();
   }, []);
 
-  // DETEKSI SHARE LINK (DEEP LINKING) DARI URL
+  // DETEKSI SHARE LINK DARI URL
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
@@ -114,16 +123,16 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
     let currentToken = sessionStorage.getItem('active_token');
     
     if (!currentToken) {
-       if (!draft.isPaid || draft.price === 0) {
-         currentToken = `FREE-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-         sessionStorage.setItem('active_token', currentToken);
+       const savedToken = localStorage.getItem('omnifit_last_token');
+       
+       if (savedToken) {
+         currentToken = savedToken;
        } else {
-         toast.info('Sesi Akses Berakhir', { 
-           description: 'Silakan masukkan kembali Kode Token Anda di kolom utama sebelum melanjutkan draf modul berbayar ini.' 
-         });
-         window.scrollTo({ top: 0, behavior: 'smooth' });
-         return;
+         currentToken = (!draft.isPaid || draft.price === 0) 
+           ? `FREE-${Math.random().toString(36).substring(2, 8).toUpperCase()}` 
+           : `TRIAL-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
        }
+       sessionStorage.setItem('active_token', currentToken);
     }
     
     sessionStorage.setItem('active_allowed_templates', JSON.stringify([draft.templateId]));
@@ -174,6 +183,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
       }
 
       sessionStorage.setItem('active_token', cleanToken);
+      localStorage.setItem('omnifit_last_token', cleanToken);
       sessionStorage.setItem('active_model', batchData.modelType);
       
       const allowedTpls = tokenData.allowedTemplates || batchData.allowedTemplates;
@@ -243,7 +253,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
           animate="visible"
           className="flex-1 space-y-8 text-center lg:text-left w-full"
         >
-          {/* IMPLEMENTASI LOGO NEXT.JS */}
+          {/* IMPLEMENTASI LOGO */}
           <motion.div variants={fadeUpVariants} className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-[1.5rem] shadow-xl shadow-slate-200/50 ring-1 ring-slate-100 mb-2 overflow-hidden">
             <Image 
               src="/logo.png" 
@@ -263,22 +273,24 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
               </span>
             </h1>
             
-            {/* DESKRIPSI BARU: Lebih Universal & Elegan */}
             <p className="text-base sm:text-lg text-slate-500 max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed text-balance">
               Platform analitik berbasis kecerdasan buatan untuk mendiagnosa akar masalah, memetakan potensi tersembunyi, dan merumuskan cetak biru solusi yang presisi—dirancang adaptif untuk pengembangan personal, konseling, hingga akselerasi ekosistem bisnis.
             </p>
 
-            <div className="pt-4 flex justify-center lg:justify-start">
+            {/* SEKSI ACTION BANNER */}
+            <div className="pt-4 flex flex-col gap-4 max-w-sm sm:max-w-md mx-auto lg:mx-0">
+              
+              {/* BANNER 1: Apa itu Omnifit? */}
               <div 
                 onClick={() => setIsCapabilitiesModalOpen(true)}
-                className="group relative cursor-pointer overflow-hidden rounded-[1.25rem] bg-slate-900 p-[2px] transition-all duration-300 hover:shadow-2xl hover:shadow-indigo-500/30 hover:-translate-y-1 w-full max-w-sm sm:max-w-md"
+                className="group relative cursor-pointer overflow-hidden rounded-[1.25rem] bg-slate-900 p-[2px] transition-all duration-300 hover:shadow-2xl hover:shadow-indigo-500/30 hover:-translate-y-1 w-full"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-500 opacity-40 group-hover:opacity-100 transition-opacity duration-500 animate-pulse"></div>
                 
                 <div className="relative flex items-center justify-between gap-4 rounded-xl bg-slate-900 px-5 py-4 transition-all">
                   <div className="flex items-center gap-4">
                     <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-indigo-500/20 text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-colors duration-300">
-                      <Compass className="h-6 w-6" />
+                      <EcosystemIcon className="h-6 w-6" />
                     </div>
                     <div className="text-left">
                       <h4 className="text-base font-black text-white leading-tight mb-0.5">Apa itu Omnifit?</h4>
@@ -290,6 +302,61 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                   </div>
                 </div>
               </div>
+
+              {/* BANNER 2: JELAJAHI KATALOG MODUL DENGAN KOMPOSISI IKON KAYA */}
+              <div 
+                onClick={() => setIsPricingModalOpen(true)}
+                className="group relative cursor-pointer overflow-hidden rounded-[1.25rem] bg-indigo-600 p-[2px] transition-all duration-300 hover:shadow-[0_0_40px_rgba(79,70,229,0.5)] hover:-translate-y-1 w-full shadow-lg shadow-indigo-600/10"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-pink-500 to-blue-500 opacity-60 group-hover:opacity-100 transition-opacity duration-500 animate-pulse"></div>
+                <div className="absolute -inset-x-20 inset-y-0 bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:animate-[shimmer_2s_infinite] pointer-events-none" />
+
+                <div className="relative flex items-center justify-between gap-5 rounded-xl bg-white px-5 py-4 transition-all group-hover:bg-white/95">
+                  <div className="flex items-center gap-4 flex-1 min-w-0">
+                    
+                    {/* KOMPOSISI IKON KAYA (Bento-box style mini illustration) */}
+                    <div className="relative h-14 w-16 shrink-0 mr-2">
+                      {/* Ikon Latar (Berputar & Kabur) */}
+                      <div className="absolute top-0 right-0 h-10 w-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center rotate-6 group-hover:rotate-12 group-hover:scale-105 transition-all duration-500">
+                        <Box className="w-5 h-5 text-blue-300" />
+                      </div>
+                      
+                      {/* Ikon Utama Custom (Di depan, warna tajam) */}
+                      <div className="absolute bottom-0 left-0 h-11 w-11 rounded-xl bg-indigo-600 shadow-lg shadow-indigo-600/30 flex items-center justify-center -rotate-6 group-hover:rotate-0 group-hover:scale-110 transition-all duration-500 z-10">
+                        <TechCardIcon className="w-6 h-6 text-white" />
+                      </div>
+                      
+                      {/* Ikon Sparkles Melayang (Aksen AI) */}
+                      <div className="absolute -top-1 -left-1 h-6 w-6 rounded-full bg-amber-100 border border-amber-200 flex items-center justify-center shadow-sm group-hover:-translate-y-1.5 transition-transform duration-500 delay-75 z-20">
+                        <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                      </div>
+                    </div>
+                    
+                    {/* TIPOGRAFI & BADGE */}
+                    <div className="text-left flex-1">
+                      <h4 className="text-base sm:text-[17px] font-black text-slate-900 group-hover:text-indigo-700 transition-colors leading-tight mb-1.5">
+                        Jelajahi Katalog Modul
+                      </h4>
+                      <div className="flex items-center gap-2">
+                        {/* Lencana (Badge) kecil */}
+                        <span className="inline-flex items-center justify-center px-1.5 py-0.5 rounded flex-shrink-0 bg-indigo-50 border border-indigo-100 text-[9px] font-black text-indigo-600 uppercase tracking-widest">
+                          AI Powered
+                        </span>
+                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest line-clamp-1">
+                          Pilih & Mulai
+                        </p>
+                      </div>
+                    </div>
+
+                  </div>
+                  
+                  {/* TOMBOL ANAK PANAH */}
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-50 text-indigo-500 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300 shadow-sm ring-1 ring-indigo-100 group-hover:ring-indigo-500">
+                    <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+              </div>
+
             </div>
           </motion.div>
 
@@ -346,7 +413,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
 
               <Link href="/dashboard" className="block w-full">
                 <Button variant="outline" className="w-full h-12 rounded-xl border-sky-200 bg-sky-50 text-sky-700 hover:bg-sky-100 font-bold gap-2 shadow-sm transition-all">
-                  <ShieldCheck size={18} /> Buka Brankas Modul Saya
+                  <AdminShieldIcon size={18} /> Buka Brankas Modul Saya
                 </Button>
               </Link>
 
@@ -360,7 +427,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                     <Input 
                       value={tokenInput}
                       onChange={(e) => setTokenInput(e.target.value.toUpperCase())}
-                      placeholder="Misal: B2C-ABCDEF"
+                      placeholder="" 
                       className="relative h-14 rounded-2xl bg-white/80 backdrop-blur-sm border-slate-200/60 shadow-sm text-center sm:text-left font-mono font-bold text-lg focus-visible:ring-0 focus-visible:border-indigo-400 transition-all"
                       disabled={isValidating}
                     />
@@ -399,26 +466,13 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                 )}
               </AnimatePresence>
 
-              <div className="pt-6 mt-6 border-t border-slate-200/60">
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 text-center sm:text-left">
-                  Atau Pilih Asesmen Mandiri
-                </p>
-                <Button 
-                  onClick={() => setIsPricingModalOpen(true)}
-                  variant="outline"
-                  className="w-full h-14 rounded-2xl border-indigo-200 bg-indigo-50/50 text-indigo-700 hover:bg-indigo-100 font-bold text-base shadow-sm transition-all"
-                >
-                  <Sparkles className="w-5 h-5 mr-2" /> Jelajahi Katalog Modul
-                </Button>
-              </div>
-
             </motion.div>
           )}
         </motion.div>
 
         {/* Kolom Kanan: Draft & History Cards */}
         {user && (history.length > 0 || drafts.length > 0) && (
-          <div className="w-full max-w-md flex flex-col gap-6 lg:gap-8 mx-auto lg:mx-0">
+          <div className="w-full max-w-md flex flex-col gap-6 lg:gap-8 mx-auto lg:mx-0 shrink-0">
             
             {/* DRAFTS SECTION */}
             {drafts.length > 0 && (
@@ -432,7 +486,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                 
                 <div className="flex items-center justify-between mb-6 relative z-10">
                   <h3 className="text-sm font-black text-slate-800 flex items-center gap-2">
-                    <FileEdit className="h-5 w-5 text-amber-500" /> Draf Belum Selesai
+                    <DocExportIcon className="h-5 w-5 text-amber-500" /> Draf Belum Selesai
                   </h3>
                 </div>
                 
@@ -522,7 +576,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                       <div className="flex items-center justify-between pt-3 border-t border-slate-50">
                         <div className="flex items-center gap-1.5">
                           <div className="p-1 bg-emerald-50 rounded-full">
-                            <Activity size={12} className="text-emerald-500"/>
+                            <BrainIcon size={16} className="text-emerald-500"/>
                           </div>
                           <p className="text-xs font-bold text-slate-600">Skor AI: {item.score}</p>
                         </div>

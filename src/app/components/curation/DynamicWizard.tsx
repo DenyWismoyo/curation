@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ArrowRight, Sparkles, Check, Trash2, ClipboardCheck, Lock, Loader2, CreditCard, X } from 'lucide-react';
+import { ChevronLeft, ArrowRight, Check, Trash2, Loader2, X } from 'lucide-react';
 import { FormTemplate, FormField } from '@/types/curation';
 import { DynamicField } from './DynamicField';
 import { ReviewAndConfirm } from './ReviewAndConfirm';
@@ -15,6 +15,9 @@ import { httpsCallable } from 'firebase/functions';
 import { functions } from '@/lib/firebase';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+
+// IMPORT CUSTOM ICONS
+import { AiSparkIcon, AdminShieldIcon, DocExportIcon, TechCardIcon } from '@/components/icon';
 
 const renderMarkdownText = (str: string) => {
   if (typeof str !== 'string') return str;
@@ -71,9 +74,11 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
   }, []);
 
   const currentStepData = template.steps[step - 1];
+  
+  // Gunakan AiSparkIcon sebagai default jika icon di form builder kosong/salah ketik
   const StepIcon = currentStepData.icon && (LucideIcons as any)[currentStepData.icon]
                      ? (LucideIcons as any)[currentStepData.icon]
-                     : Sparkles;
+                     : AiSparkIcon;
 
   // Auto-Save ke LocalStorage
   useEffect(() => {
@@ -231,7 +236,7 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
           </div>
 
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mt-12 p-6 xl:p-8 bg-indigo-50/50 rounded-3xl ring-1 ring-indigo-100/50">
-             <Sparkles className="text-indigo-500 mb-4" size={24}/>
+             <AiSparkIcon className="text-indigo-500 mb-4" size={24}/>
              <h4 className="font-black text-indigo-900 mb-2">Informasi Form</h4>
              <p className="text-sm text-indigo-800/80 font-medium leading-relaxed">
                Data Anda disimpan secara lokal. Pastikan kolom dengan tanda (*) diisi agar bisa melanjutkan.
@@ -286,11 +291,11 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
                  className="w-full sm:w-auto py-4 px-8 bg-slate-900 text-white font-bold rounded-2xl hover:bg-indigo-600 transition-all shadow-lg shadow-slate-900/20 hover:shadow-indigo-600/30 flex items-center justify-center gap-2 text-base active:scale-[0.98] disabled:opacity-50 group"
                >
                   {isTrialSession && step === paywallStep ? (
-                    <>Buka Akses Lanjutan <Lock size={18} className="group-hover:scale-110 transition-transform text-amber-400" /></>
+                    <>Buka Akses Lanjutan <AdminShieldIcon size={18} className="group-hover:scale-110 transition-transform text-amber-400" /></>
                   ) : step < totalSteps ? (
                     <>Langkah Selanjutnya <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" /></>
                   ) : (
-                    <>Tinjau & Konfirmasi <ClipboardCheck size={18} className="group-hover:scale-110 transition-transform" /></>
+                    <>Tinjau & Konfirmasi <DocExportIcon size={18} className="group-hover:scale-110 transition-transform" /></>
                   )}
                </button>
             </div>
@@ -322,7 +327,7 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
 
               <div className="relative pt-12 px-8 pb-8 text-center">
                 <div className="w-20 h-20 bg-white rounded-full shadow-xl flex items-center justify-center mx-auto mb-6 ring-4 ring-indigo-50">
-                  <Lock className="w-10 h-10 text-indigo-600" />
+                  <AdminShieldIcon className="w-10 h-10 text-indigo-600" />
                 </div>
                 <h3 className="text-2xl font-black text-slate-900 mb-3">Satu Langkah Lagi!</h3>
                 <p className="text-slate-500 font-medium text-sm leading-relaxed mb-8">
@@ -353,7 +358,7 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
                   {isProcessingPayment ? (
                     <><Loader2 className="w-5 h-5 animate-spin" /> Mengalihkan...</>
                   ) : (
-                    <><CreditCard className="w-5 h-5" /> Amankan Akses Sekarang</>
+                    <><TechCardIcon size={20} className="text-white" /> Amankan Akses Sekarang</>
                   )}
                 </Button>
                 <p className="text-[10px] font-medium text-slate-400 mt-4">

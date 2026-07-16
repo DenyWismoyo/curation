@@ -6,8 +6,10 @@ import { useRouter } from 'next/navigation';
 import { DynamicWizard } from '@/app/components/curation/DynamicWizard';
 import { CurationDashboard } from '@/app/components/curation/CurationDashboard';
 import { useCuration } from '@/hooks/useCuration';
-import { ShieldCheck, Sparkles, Loader2, Activity } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+
+// IMPORT CUSTOM ICONS
+import { AiSparkIcon, BrainIcon, AdminShieldIcon } from '@/components/icon';
 
 // ========================================================
 // KOMPONEN: SKELETON DASHBOARD LOADING INTERAKTIF
@@ -29,7 +31,7 @@ function InteractiveDashboardLoading({ formData, trackName }: { formData: Record
     const interval = setInterval(() => {
       index = (index + 1) % phases.length;
       setLoadingText(phases[index]);
-    }, 4000); // Ganti teks setiap 4 detik
+    }, 4000); 
 
     return () => clearInterval(interval);
   }, []);
@@ -45,7 +47,8 @@ function InteractiveDashboardLoading({ formData, trackName }: { formData: Record
           className="bg-slate-900/90 backdrop-blur-xl p-4 rounded-2xl shadow-2xl ring-1 ring-white/20 flex items-center gap-4"
         >
           <div className="w-10 h-10 bg-indigo-500/20 rounded-full flex items-center justify-center shrink-0">
-            <Loader2 className="w-5 h-5 text-indigo-400 animate-spin" />
+            {/* Custom Icon: MENGGANTIKAN LOADER BIASA DENGAN BRAIN ICON */}
+            <BrainIcon size={20} className="text-indigo-400 animate-pulse" />
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-[10px] font-black uppercase tracking-widest text-indigo-400 mb-0.5">AI SEDANG BEKERJA</p>
@@ -95,7 +98,7 @@ function InteractiveDashboardLoading({ formData, trackName }: { formData: Record
             <div className="flex-1 flex flex-col justify-between">
               <div>
                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight mb-3">
-                  CSRS Assessment Report
+                  System Assessment Report
                 </h1>
                 <div className="flex flex-wrap items-center gap-2 mb-8">
                   {/* Nama Startup (Data Real) */}
@@ -125,7 +128,8 @@ function InteractiveDashboardLoading({ formData, trackName }: { formData: Record
             {/* Skor Panel Skeleton */}
             <div className="w-full lg:w-[340px] shrink-0 p-8 rounded-3xl bg-slate-900 relative overflow-hidden flex flex-col justify-center items-center shadow-lg">
               <p className="text-slate-500 text-xs font-black uppercase tracking-widest mb-4 flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4"/> AI Readiness Score
+                {/* Custom Icon AiSparkIcon Menggantikan ShieldCheck */}
+                <AiSparkIcon size={16}/> AI Readiness Score
               </p>
               <div className="w-24 h-24 mb-6 border-4 border-slate-700 border-t-indigo-500 rounded-full animate-spin" />
               <div className="h-8 w-40 bg-slate-800 rounded-full animate-pulse" />
@@ -254,7 +258,10 @@ export default function AssessmentPage({ params }: { params: Promise<{ trackId: 
   if (state.isLoadingTemplates) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50">
-        <div className="w-10 h-10 border-[4px] border-indigo-100 border-t-indigo-600 rounded-full animate-spin mb-4" />
+        <div className="w-14 h-14 mb-4 relative flex items-center justify-center">
+          <div className="absolute inset-0 rounded-full border-[4px] border-indigo-100 border-t-indigo-600 animate-spin" />
+          <BrainIcon size={24} className="text-indigo-600 animate-pulse" />
+        </div>
         <p className="text-slate-500 font-medium tracking-wide">Mengkalibrasi Modul Asesmen...</p>
       </div>
     );

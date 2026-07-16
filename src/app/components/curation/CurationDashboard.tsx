@@ -3,8 +3,7 @@
 
 import React, { useState } from 'react';
 import { 
-  RotateCcw, Wand2, FileText, 
-  Loader2, ChevronDown, Lock, ShoppingCart 
+  RotateCcw, Loader2, ChevronDown, Lock, ShoppingCart 
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
@@ -14,6 +13,9 @@ import { UniversalAssessmentView } from '@/app/components/shared/UniversalAssess
 import { DocumentPresets } from '@/data/documentPromptTemplates'; 
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { app } from '@/lib/firebase';
+
+// IMPORT CUSTOM ICONS
+import { AiSparkIcon, DocExportIcon } from '@/components/icon';
 
 interface Props {
   assessmentId?: string;
@@ -35,7 +37,6 @@ export function CurationDashboard({
   
   const [isGeneratingDoc, setIsGeneratingDoc] = useState(false);
 
-  // LOGIKA FILTERING TEMPLATE DOKUMEN BERDASARKAN ATURAN BATCH TOKEN
   const filteredDocumentPresets = allowedDocumentTemplates && allowedDocumentTemplates.length > 0 
     ? DocumentPresets.filter(preset => allowedDocumentTemplates.includes(preset.id))
     : DocumentPresets;
@@ -101,17 +102,16 @@ export function CurationDashboard({
             </Button>
             
             <div className="flex w-full sm:w-auto gap-3 flex-col lg:flex-row">
-              {/* TOMBOL AI AUTO-DRAFT WORD */}
+              {/* TOMBOL AI AUTO-DRAFT WORD (MENGGUNAKAN AiSparkIcon) */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button disabled={isGeneratingDoc} className={`gap-2 font-bold rounded-xl h-10 px-4 shadow-sm w-full sm:w-auto text-white ${canGenerateDocument ? 'bg-blue-600 hover:bg-blue-700' : 'bg-amber-500 hover:bg-amber-600'}`}>
-                    {isGeneratingDoc ? <Loader2 className="w-4 h-4 animate-spin" /> : canGenerateDocument ? <Wand2 className="w-4 h-4" /> : <ShoppingCart className="w-4 h-4" />}
+                    {isGeneratingDoc ? <Loader2 className="w-4 h-4 animate-spin" /> : canGenerateDocument ? <AiSparkIcon size={16} /> : <ShoppingCart className="w-4 h-4" />}
                     {isGeneratingDoc ? 'Sedang Menulis...' : canGenerateDocument ? (documentGenerationQuota > 0 ? `AI Auto-Draft (${documentGenerationQuota} Kuota)` : 'AI Auto-Draft Word') : 'Beli Akses Dokumen'}
                     <ChevronDown className="w-4 h-4 opacity-50" />
                   </Button>
                 </DropdownMenuTrigger>
                 
-                {/* PENAMBAHAN BG-WHITE DAN BORDER AGAR TIDAK TRANSPARAN */}
                 <DropdownMenuContent className="w-72 rounded-2xl p-2 bg-white shadow-xl border border-slate-200" align="end">
                   <div className="px-2 py-1.5 mb-1 flex justify-between items-center border-b border-slate-100 pb-2">
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Pilih Format Draf (Word)</p>
@@ -128,7 +128,8 @@ export function CurationDashboard({
                         className="cursor-pointer font-bold text-slate-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl py-3 px-3 flex items-start gap-3 mt-1"
                       >
                         <div className="mt-0.5 shrink-0 w-6 h-6 rounded-md bg-blue-100 text-blue-600 flex items-center justify-center">
-                          <FileText className="w-3.5 h-3.5" />
+                          {/* MENGGUNAKAN DocExportIcon */}
+                          <DocExportIcon size={16} />
                         </div>
                         <div className="flex flex-col gap-0.5">
                           <span>{preset.name}</span>
@@ -140,9 +141,6 @@ export function CurationDashboard({
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              {/* FUNGSI UPLOAD LOGO TELAH DIHAPUS */}
-              
-              {/* KOMPONEN PUBLIC EXPORT PDF DENGAN SMART CACHE ID */}
               <PublicExportPDF 
                 assessmentId={assessmentId || ''} 
                 trackType={trackType} 

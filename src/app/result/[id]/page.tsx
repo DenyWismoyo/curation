@@ -1,3 +1,4 @@
+// src/app/result/[id]/page.tsx
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -5,11 +6,10 @@ import { useParams, useRouter } from 'next/navigation';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
-// Pastikan path import ini sesuai dengan lokasi file CurationDashboard Anda.
-// Jika error, coba hapus '/app' menjadi: '@/components/curation/CurationDashboard'
 import { CurationDashboard } from '@/app/components/curation/CurationDashboard'; 
 
-import { Loader2, Share2, Home } from 'lucide-react';
+// IMPORT CUSTOM ICONS
+import { BrainIcon, DocExportIcon, EcosystemIcon } from '@/components/icon';
 
 export default function SharedResultPage() {
   const params = useParams();
@@ -46,7 +46,10 @@ export default function SharedResultPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50">
-        <Loader2 className="w-10 h-10 text-indigo-600 animate-spin mb-4" />
+        <div className="w-14 h-14 mb-4 relative flex items-center justify-center">
+          <div className="absolute inset-0 rounded-full border-[4px] border-indigo-100 border-t-indigo-600 animate-spin" />
+          <BrainIcon size={24} className="text-indigo-600 animate-pulse" />
+        </div>
         <h2 className="text-xl font-black text-slate-900 tracking-tight">Memuat Data Analitik...</h2>
         <p className="text-sm font-medium text-slate-500 mt-2">Menarik data dari server aman.</p>
       </div>
@@ -56,16 +59,16 @@ export default function SharedResultPage() {
   if (error || !data) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 px-6 text-center">
-        <div className="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mb-6">
-          <Share2 className="w-8 h-8" />
+        <div className="w-20 h-20 bg-rose-50 text-rose-500 rounded-[2rem] shadow-sm ring-1 ring-rose-100 flex items-center justify-center mb-6">
+          <DocExportIcon size={36} />
         </div>
         <h2 className="text-2xl font-black text-slate-900 mb-2">Laporan Tidak Tersedia</h2>
         <p className="text-slate-500 font-medium mb-8 max-w-md">{error}</p>
         <button 
           onClick={() => router.push('/')} 
-          className="flex items-center gap-2 px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold transition-all"
+          className="flex items-center gap-2 px-6 py-3 bg-slate-900 hover:bg-indigo-600 text-white rounded-xl font-bold shadow-xl shadow-slate-900/20 hover:shadow-indigo-600/30 transition-all"
         >
-          <Home className="w-4 h-4" /> Kembali ke Beranda
+          <EcosystemIcon className="w-5 h-5 text-white" /> Kembali ke Beranda
         </button>
       </div>
     );
@@ -81,7 +84,7 @@ export default function SharedResultPage() {
         aiResult={data.aiResult || {}}
         programName={data.corporateEntity || ''}
         
-        // Data Monetisasi & Pembatasan Template (Disertai nilai fallback agar TS tidak error)
+        // Data Monetisasi & Pembatasan Template
         documentGenerationQuota={data.documentGenerationQuota || 0}
         hasPaidForDocument={data.hasPaidForDocument || false}
         allowedDocumentTemplates={data.allowedDocumentTemplates || []}

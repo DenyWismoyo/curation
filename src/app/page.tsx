@@ -11,6 +11,9 @@ import { CurationDashboard } from '@/app/components/curation/CurationDashboard';
 import { useAuth } from '@/contexts/AuthContext';
 import { CurationHistory } from '@/types/curation';
 
+// IMPORT CUSTOM ICON
+import { BrainIcon } from '@/components/icon';
+
 export default function Home() {
   const router = useRouter();
   const { state, actions } = useCuration();
@@ -99,10 +102,15 @@ export default function Home() {
     }
   };
 
+  // UI LOADING MENGGUNAKAN CUSTOM BRAIN ICON
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA]">
-        <div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#FAFAFA]">
+        <div className="w-14 h-14 mb-4 relative flex items-center justify-center">
+          <div className="absolute inset-0 rounded-full border-[4px] border-indigo-100 border-t-indigo-600 animate-spin" />
+          <BrainIcon size={24} className="text-indigo-600 animate-pulse" />
+        </div>
+        <p className="text-slate-500 font-medium tracking-wide">Memuat Sistem...</p>
       </div>
     );
   }

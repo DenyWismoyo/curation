@@ -5,7 +5,10 @@ import React, { useRef, useState } from 'react';
 import { FormField } from '@/types/curation';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { UploadCloud, File, X, Check } from 'lucide-react';
+import { X, Check } from 'lucide-react';
+
+// IMPORT CUSTOM ICON
+import { DocExportIcon } from '@/components/icon';
 
 const renderMarkdownText = (str: string) => {
   if (typeof str !== 'string') return str;
@@ -30,7 +33,6 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragActive, setDragActive] = useState(false);
 
-  // Helper untuk mendapatkan label dari opsi (bisa berupa string atau objek {label, weight})
   const getOptionLabel = (opt: any): string => {
     return typeof opt === 'object' && opt !== null ? opt.label : String(opt);
   };
@@ -130,7 +132,10 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
             {value ? (
               <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex items-center justify-between shadow-sm">
                 <div className="flex items-center gap-3 overflow-hidden">
-                  <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center shrink-0"><File size={20} /></div>
+                  <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center shrink-0">
+                    {/* CUSTOM ICON UNTUK FILE YANG SUDAH DIUNGGAH */}
+                    <DocExportIcon size={20} />
+                  </div>
                   <div className="truncate">
                     <p className="text-sm font-bold text-emerald-900 truncate">{value.name || (typeof value === 'string' ? value.split('/').pop() : 'Dokumen Terlampir')}</p>
                     <p className="text-xs text-emerald-600 font-medium">Siap diunggah</p>
@@ -143,7 +148,10 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
                 className={`relative border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-2 ${dragActive ? 'border-indigo-500 bg-indigo-50' : 'border-slate-300 bg-slate-50 hover:bg-slate-100'}`}
                 onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop} onClick={() => fileInputRef.current?.click()}
               >
-                <div className="w-12 h-12 bg-white rounded-full shadow-sm ring-1 ring-slate-200 flex items-center justify-center text-indigo-500 mb-2"><UploadCloud size={24} /></div>
+                <div className="w-12 h-12 bg-white rounded-full shadow-sm ring-1 ring-slate-200 flex items-center justify-center text-indigo-500 mb-2">
+                  {/* CUSTOM ICON UNTUK AREA DRAG & DROP */}
+                  <DocExportIcon size={24} />
+                </div>
                 <p className="text-sm font-bold text-slate-700"><span className="text-indigo-600">Klik untuk unggah</span> atau seret file ke sini</p>
                 <p className="text-xs font-medium text-slate-400 mt-1 uppercase tracking-wider">Mendukung format: {field.fileAccept ? field.fileAccept.replace(/,/g, ', ') : 'Semua Format'}</p>
                 <input ref={fileInputRef} type="file" accept={field.fileAccept} className="hidden" onChange={(e) => { if (e.target.files && e.target.files[0]) onChange(e.target.files[0]); }} />

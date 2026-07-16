@@ -1,10 +1,14 @@
+// src/app/components/shared/PWAInstallPrompt.tsx
 'use client';
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Download, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+
+// IMPORT CUSTOM ICON
+import { TechCardIcon } from '@/components/icon';
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
@@ -111,7 +115,8 @@ export function PWAInstallPrompt() {
                 size="sm"
                 className="h-8 rounded-xl px-4 bg-slate-900 text-white font-bold text-xs hover:bg-indigo-600 shadow-md shadow-slate-900/10 hover:shadow-indigo-600/20 transition-all flex items-center gap-1.5 w-fit"
               >
-                <Download className="w-3 h-3" />
+                {/* MENGGUNAKAN TECH CARD ICON SEBAGAI PENGGANTI DOWNLOAD */}
+                <TechCardIcon size={12} />
                 Pasang
               </Button>
             </div>
