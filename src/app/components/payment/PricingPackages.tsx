@@ -5,10 +5,11 @@ import React, { useState, useEffect } from 'react';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { motion, AnimatePresence } from 'framer-motion';
-import * as LucideIcons from 'lucide-react'; // <-- Import seluruh Icon
+import * as LucideIcons from 'lucide-react'; 
 import { 
   X, Sparkles, CheckCircle2, ArrowRight, Loader2, LayoutGrid, ShieldCheck, 
-  MessageCircle, Users, Target, BrainCircuit, Route, Activity, Compass 
+  MessageCircle, Users, Target, BrainCircuit, Route, Activity, Compass,
+  Share2, Star // <-- Import ikon Star
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { FormTemplate } from '@/types/curation';
@@ -134,11 +135,41 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
     window.location.href = '/assessment';
   };
 
-  // Mencegah error key empty string dengan fallback .trim() dan key cadangan
+  // FUNGSI SHARE DENGAN WEB SHARE API (UNTUK HP) & CLIPBOARD (UNTUK DESKTOP)
+  const handleSharePackage = async (e: React.MouseEvent, pkg: FormTemplate) => {
+    e.stopPropagation(); 
+    if (typeof window === 'undefined') return;
+
+    const shareUrl = `${window.location.origin}/?buy=${pkg.id}`;
+    const shareData = {
+      title: `Omnifit: ${pkg.trackName}`,
+      text: `Mari deteksi dini potensi dan akar masalah Anda dengan modul asesmen "${pkg.trackName}" di platform Omnifit. Coba sekarang!`,
+      url: shareUrl,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (error: any) {
+        if (error.name !== 'AbortError') {
+          console.error('Error sharing:', error);
+        }
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        toast.success("Link berhasil disalin ke clipboard!", {
+          description: "Silakan paste (Ctrl+V) link tersebut ke WhatsApp atau media sosial Anda."
+        });
+      } catch (error) {
+        toast.error("Gagal menyalin link.");
+      }
+    }
+  };
+
   const categories = ['Semua', ...Array.from(new Set(packages.map(p => p.category?.trim()).filter(Boolean)))];
   const filteredPackages = packages.filter(pkg => activeCategory === 'Semua' || pkg.category === activeCategory);
 
-  // Ambil tema untuk modal drawer
   const drawerTheme = checkoutPackage ? getCategoryTheme(checkoutPackage.trackName, checkoutPackage.category || '') : getCategoryTheme('', '');
   const DrawerIcon = checkoutPackage?.trackIcon && (LucideIcons as any)[checkoutPackage.trackIcon] ? (LucideIcons as any)[checkoutPackage.trackIcon] : LayoutGrid;
 
@@ -223,14 +254,29 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                             pkg.isBestSeller ? 'ring-amber-400 shadow-[0_8px_30px_rgb(245,158,11,0.12)]' : `ring-slate-200 hover:${theme.ring} shadow-sm hover:shadow-xl`
                           }`}
                         >
-                          {pkg.isBestSeller && (
-                            <div className="absolute top-6 right-[-40px] bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[10px] font-black uppercase tracking-widest px-12 py-1.5 shadow-md z-10 rotate-45 flex items-center justify-center">
-                              Terpopuler
-                            </div>
-                          )}
                           <div className="flex-1">
-                            <div className={`w-14 h-14 ${theme.bg} ${theme.text} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-sm ring-1 ${theme.ring}`}>
-                              <IconComponent className="w-7 h-7" />
+                            {/* Header Kartu: Icon Modul, Badge & Tombol Share */}
+                            <div className="flex items-start justify-between mb-6">
+                              <div className={`w-14 h-14 ${theme.bg} ${theme.text} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm ring-1 ${theme.ring}`}>
+                                <IconComponent className="w-7 h-7" />
+                              </div>
+                              
+                              <div className="flex items-center gap-2">
+                                {/* BADGE STAR UNTUK TERPOPULER */}
+                                {pkg.isBestSeller && (
+                                  <div className="flex items-center gap-1.5 bg-gradient-to-r from-amber-400 to-orange-500 text-white px-3 py-1.5 rounded-full shadow-sm ring-1 ring-orange-300/50">
+                                    <Star className="w-3.5 h-3.5 fill-white" />
+                                    <span className="text-[10px] font-black uppercase tracking-widest">Terpopuler</span>
+                                  </div>
+                                )}
+                                <button
+                                  onClick={(e) => handleSharePackage(e, pkg)}
+                                  className={`p-2.5 rounded-full transition-all duration-300 bg-slate-50 text-slate-400 hover:${theme.bg} hover:${theme.text} hover:ring-1 hover:${theme.ring} active:scale-95`}
+                                  title="Bagikan ke WhatsApp/Sosmed"
+                                >
+                                  <Share2 className="w-4 h-4" />
+                                </button>
+                              </div>
                             </div>
                             
                             <h3 className="text-xl lg:text-2xl font-black text-slate-900 leading-snug mb-4 pr-8">

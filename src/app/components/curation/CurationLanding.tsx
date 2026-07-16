@@ -2,6 +2,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image'; // <-- Import komponen Image dari Next.js
 import { 
   ShieldCheck, ArrowRight, History, Clock, Activity, 
   ChevronRight, Loader2, LogOut, LayoutDashboard, Sparkles, Compass, ClipboardCheck,
@@ -210,7 +211,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
   return (
     <div className="w-full min-h-screen flex items-center justify-center bg-[#FAFAFA] py-12 px-6 lg:px-12 relative overflow-hidden">
       
-      {/* FLOATING FEEDBACK BUTTON - HANYA MUNCUL JIKA MODAL LAIN TERTUTUP */}
+      {/* FLOATING FEEDBACK BUTTON */}
       {!isPricingModalOpen && !isCapabilitiesModalOpen && (
         <button 
           onClick={() => setIsFeedbackModalOpen(true)}
@@ -242,8 +243,16 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
           animate="visible"
           className="flex-1 space-y-8 text-center lg:text-left w-full"
         >
-          <motion.div variants={fadeUpVariants} className="inline-flex items-center justify-center p-3.5 bg-slate-900 rounded-2xl shadow-lg shadow-slate-900/10 ring-1 ring-slate-800">
-            <ShieldCheck className="h-8 w-8 text-white" />
+          {/* IMPLEMENTASI LOGO NEXT.JS */}
+          <motion.div variants={fadeUpVariants} className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-[1.5rem] shadow-xl shadow-slate-200/50 ring-1 ring-slate-100 mb-2 overflow-hidden">
+            <Image 
+              src="/logo.png" 
+              alt="Omnifit Logo" 
+              width={80} 
+              height={80} 
+              className="w-full h-full object-contain p-2"
+              priority
+            />
           </motion.div>
           
           <motion.div variants={fadeUpVariants} className="space-y-6">
@@ -254,8 +263,9 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
               </span>
             </h1>
             
+            {/* DESKRIPSI BARU: Lebih Universal & Elegan */}
             <p className="text-base sm:text-lg text-slate-500 max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed text-balance">
-              Mesin komputasi analitik berbasis kecerdasan buatan untuk memetakan maturitas, skalabilitas, dan profil kelayakan entitas dari purwarupa riset hingga ekosistem korporasi menuju akselerasi global.
+              Platform analitik berbasis kecerdasan buatan untuk mendiagnosa akar masalah, memetakan potensi tersembunyi, dan merumuskan cetak biru solusi yang presisi—dirancang adaptif untuk pengembangan personal, konseling, hingga akselerasi ekosistem bisnis.
             </p>
 
             <div className="pt-4 flex justify-center lg:justify-start">

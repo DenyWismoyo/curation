@@ -3,93 +3,70 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronLeft, ArrowRight, LayoutGrid, Search, Sparkles, AlertCircle, ShieldCheck, HardDrive } from 'lucide-react';
+import { 
+  ChevronLeft, ArrowRight, LayoutGrid, ShieldCheck, HardDrive, 
+  X, Target, Lock, Lightbulb, Mail, Zap, UserCheck, Sparkles
+} from 'lucide-react';
 import { FormTemplate } from '@/types/curation';
 import * as LucideIcons from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from '@/components/ui/button';
 
 interface DynamicTrackSelectorProps {
   templates: FormTemplate[];
   onBack?: () => void;
 }
 
-// MESIN DETEKSI TEMA KATEGORI
-const getCategoryTheme = (title: string, desc: string) => {
-  const text = `${title} ${desc}`.toLowerCase();
+// MESIN DETEKSI TEMA KATEGORI (Selaras dengan PricingPackages)
+const getCategoryTheme = (title: string, category: string) => {
+  const text = `${title} ${category}`.toLowerCase();
   
-  if (text.includes('koperasi') || text.includes('kelurahan') || text.includes('komunitas') || text.includes('hijau') || text.includes('sampah')) {
-    return {
-      gradient: 'bg-gradient-to-br from-white to-emerald-50/40 hover:to-emerald-100/60',
-      iconWrap: 'bg-emerald-50 text-emerald-600 group-hover:bg-emerald-500 group-hover:text-white group-hover:shadow-emerald-500/30',
-      title: 'group-hover:text-emerald-900',
-      watermark: 'text-emerald-500/5 group-hover:text-emerald-500/10',
-      line: 'bg-emerald-500',
-      shadow: 'hover:shadow-[0_20px_40px_-15px_rgba(16,185,129,0.15)]',
-      border: 'ring-slate-200/80 hover:ring-emerald-200',
-      arrowWrap: 'group-hover:bg-emerald-100',
-      arrow: 'group-hover:text-emerald-600'
+  if (text.includes('koperasi') || text.includes('kelurahan') || text.includes('komunitas') || text.includes('hijau') || text.includes('sampah') || text.includes('properti')) {
+    return { 
+      bg: 'bg-emerald-50', text: 'text-emerald-600', ring: 'ring-emerald-200',
+      hoverRing: 'hover:ring-emerald-300', hoverText: 'group-hover:text-emerald-600', hoverBg: 'group-hover:bg-emerald-50'
+    };
+  }
+  if (text.includes('pemerintah') || text.includes('skp') || text.includes('kecamatan') || text.includes('layanan') || text.includes('disposisi') || text.includes('anak') || text.includes('parenting')) {
+    return { 
+      bg: 'bg-amber-50', text: 'text-amber-600', ring: 'ring-amber-200',
+      hoverRing: 'hover:ring-amber-300', hoverText: 'group-hover:text-amber-600', hoverBg: 'group-hover:bg-amber-50'
+    };
+  }
+  if (text.includes('riset') || text.includes('akademik') || text.includes('perguruan') || text.includes('techno park') || text.includes('inkubasi') || text.includes('gen z') || text.includes('gen-z') || text.includes('talent')) {
+    return { 
+      bg: 'bg-sky-50', text: 'text-sky-600', ring: 'ring-sky-200',
+      hoverRing: 'hover:ring-sky-300', hoverText: 'group-hover:text-sky-600', hoverBg: 'group-hover:bg-sky-50'
+    };
+  }
+  if (text.includes('kesehatan') || text.includes('medis') || text.includes('psikologi') || text.includes('mental')) {
+    return { 
+      bg: 'bg-rose-50', text: 'text-rose-600', ring: 'ring-rose-200',
+      hoverRing: 'hover:ring-rose-300', hoverText: 'group-hover:text-rose-600', hoverBg: 'group-hover:bg-rose-50'
     };
   }
   
-  if (text.includes('pemerintah') || text.includes('skp') || text.includes('kecamatan') || text.includes('layanan') || text.includes('disposisi')) {
-    return {
-      gradient: 'bg-gradient-to-br from-white to-amber-50/40 hover:to-amber-100/60',
-      iconWrap: 'bg-amber-50 text-amber-600 group-hover:bg-amber-500 group-hover:text-white group-hover:shadow-amber-500/30',
-      title: 'group-hover:text-amber-900',
-      watermark: 'text-amber-500/5 group-hover:text-amber-500/10',
-      line: 'bg-amber-500',
-      shadow: 'hover:shadow-[0_20px_40px_-15px_rgba(245,158,11,0.15)]',
-      border: 'ring-slate-200/80 hover:ring-amber-200',
-      arrowWrap: 'group-hover:bg-amber-100',
-      arrow: 'group-hover:text-amber-600'
-    };
-  }
-
-  if (text.includes('riset') || text.includes('akademik') || text.includes('perguruan') || text.includes('techno park') || text.includes('inkubasi')) {
-    return {
-      gradient: 'bg-gradient-to-br from-white to-sky-50/40 hover:to-sky-100/60',
-      iconWrap: 'bg-sky-50 text-sky-600 group-hover:bg-sky-500 group-hover:text-white group-hover:shadow-sky-500/30',
-      title: 'group-hover:text-sky-900',
-      watermark: 'text-sky-500/5 group-hover:text-sky-500/10',
-      line: 'bg-sky-500',
-      shadow: 'hover:shadow-[0_20px_40px_-15px_rgba(14,165,233,0.15)]',
-      border: 'ring-slate-200/80 hover:ring-sky-200',
-      arrowWrap: 'group-hover:bg-sky-100',
-      arrow: 'group-hover:text-sky-600'
-    };
-  }
-  
-  return {
-    gradient: 'bg-gradient-to-br from-white to-indigo-50/40 hover:to-indigo-100/60',
-    iconWrap: 'bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white group-hover:shadow-indigo-500/30',
-    title: 'group-hover:text-indigo-900',
-    watermark: 'text-indigo-500/5 group-hover:text-indigo-500/10',
-    line: 'bg-indigo-600',
-    shadow: 'hover:shadow-[0_20px_40px_-15px_rgba(79,70,229,0.15)]',
-    border: 'ring-slate-200/80 hover:ring-indigo-200',
-    arrowWrap: 'group-hover:bg-indigo-100',
-    arrow: 'group-hover:text-indigo-600'
+  return { 
+    bg: 'bg-indigo-50', text: 'text-indigo-600', ring: 'ring-indigo-200',
+    hoverRing: 'hover:ring-indigo-300', hoverText: 'group-hover:text-indigo-600', hoverBg: 'group-hover:bg-indigo-50'
   };
 };
 
 export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelectorProps) {
   const router = useRouter();
-  const [searchTerm, setSearchTerm] = useState('');
   
   // State untuk mengontrol Pop-up (Modal) konfirmasi
   const [selectedTrack, setSelectedTrack] = useState<FormTemplate | null>(null);
 
+  // Hanya ambil template yang berstatus aktif
   const activeTemplates = templates.filter(t => t.isActive);
-  const filteredTemplates = activeTemplates.filter(t => 
-    t.trackName.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    t.trackDescription.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
-  // Fungsi ini HANYA memunculkan pop-up, bukan langsung pindah
+  // Fungsi memunculkan modal drawer
   const handleSelectTrack = (template: FormTemplate) => {
     setSelectedTrack(template);
   };
 
-  // Fungsi ini dipanggil ketika user setuju pada Pop-up
+  // Fungsi saat user setuju pada Modal
   const confirmSelection = () => {
     if (!selectedTrack) return;
     
@@ -110,43 +87,22 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
     }
   };
 
+  // Ambil tema untuk modal drawer jika ada track yang dipilih
+  const drawerTheme = selectedTrack ? getCategoryTheme(selectedTrack.trackName, selectedTrack.category || '') : getCategoryTheme('', '');
+  const DrawerIcon = selectedTrack?.trackIcon && (LucideIcons as any)[selectedTrack.trackIcon] ? (LucideIcons as any)[selectedTrack.trackIcon] : LayoutGrid;
+
   return (
-    <div className="min-h-screen bg-slate-50/50 py-8 px-6 lg:py-16 lg:px-12 flex flex-col items-center">
-      <div className="max-w-[1400px] w-full space-y-10 lg:space-y-16">
+    <div className="min-h-screen bg-slate-50/50 py-8 px-6 lg:py-12 flex flex-col items-center">
+      <div className="max-w-[1200px] w-full space-y-8">
         
-        {/* ================= HEADER SECTION ================= */}
-        <div className="space-y-8 animate-in fade-in slide-in-from-top-8 duration-700 ease-out relative z-20">
+        {/* ================= HEADER KEMBALI ================= */}
+        <div className="animate-in fade-in slide-in-from-top-4 duration-500 ease-out relative z-20">
           <button 
             onClick={handleBack} 
             className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-indigo-600 transition-all w-fit px-4 py-2.5 -ml-4 rounded-xl hover:bg-white hover:shadow-sm ring-1 ring-transparent hover:ring-slate-200 active:scale-95"
           >
             <ChevronLeft className="h-4 w-4" /> Kembali
           </button>
-          
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
-            <div className="space-y-4 flex-1">
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 text-balance flex items-center gap-3">
-                Model Bisnis <Sparkles className="h-8 w-8 lg:h-10 lg:w-10 text-indigo-500" />
-              </h2>
-              <p className="text-slate-500 text-base sm:text-lg max-w-2xl font-medium leading-relaxed text-balance">
-                Pilih kategori yang mendeskripsikan model operasi bisnis Anda. Matriks AI akan menyesuaikan secara dinamis.
-              </p>
-            </div>
-
-            {/* PENCARIAN */}
-            <div className="w-full lg:w-[380px] relative shrink-0 group">
-              <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none transition-colors group-focus-within:text-indigo-600">
-                <Search className="h-5 w-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
-              </div>
-              <input
-                type="text"
-                placeholder="Cari model atau kata kunci..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 pr-4 py-4 bg-white border-none ring-1 ring-slate-200/80 rounded-2xl text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-600 focus:outline-none shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300"
-              />
-            </div>
-          </div>
         </div>
 
         {/* ================= GRID SECTION ================= */}
@@ -156,54 +112,48 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
             <p className="font-black text-2xl text-slate-900 mb-2">Katalog Belum Tersedia</p>
             <p className="text-base font-medium">Silakan hubungi administrator untuk menerbitkan modul asesmen.</p>
           </div>
-        ) : filteredTemplates.length === 0 ? (
-          <div className="py-24 text-center text-slate-500">
-            <p className="font-bold text-xl text-slate-900">Pencarian Tidak Ditemukan</p>
-            <p className="text-sm mt-2">Coba gunakan kata kunci lain.</p>
-          </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
-            {filteredTemplates.map((template, index) => {
+            {activeTemplates.map((template, index) => {
               const IconComponent = template.trackIcon && (LucideIcons as any)[template.trackIcon] 
                                      ? (LucideIcons as any)[template.trackIcon] 
                                      : LayoutGrid;
               
-              const theme = getCategoryTheme(template.trackName, template.trackDescription);
+              const theme = getCategoryTheme(template.trackName, template.category || '');
               
               return (
                 <div 
                   key={template.id} 
                   onClick={() => handleSelectTrack(template)}
-                  style={{ animationFillMode: 'both', animationDelay: `${index * 100}ms` }}
-                  className={`animate-in fade-in slide-in-from-bottom-12 duration-700 ease-out group relative cursor-pointer rounded-[2rem] p-8 ring-1 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-500 hover:-translate-y-2 flex flex-col justify-between overflow-hidden h-full min-h-[300px] ${theme.gradient} ${theme.border} ${theme.shadow}`}
+                  style={{ animationFillMode: 'both', animationDelay: `${index * 50}ms` }}
+                  className={`animate-in fade-in slide-in-from-bottom-8 duration-500 ease-out bg-white rounded-3xl p-6 lg:p-8 ring-1 ring-slate-200 ${theme.hoverRing} flex flex-col transition-all duration-300 relative group overflow-hidden cursor-pointer hover:shadow-xl shadow-sm min-h-[280px]`}
                 >
-                  <div className={`absolute -bottom-8 -right-8 w-48 h-48 transform group-hover:scale-110 group-hover:-rotate-6 transition-all duration-700 ease-out pointer-events-none ${theme.watermark}`}>
-                    <IconComponent className="w-full h-full" strokeWidth={1.5} />
+                  {/* Background Watermark Icon */}
+                  <div className={`absolute -bottom-10 -right-10 w-48 h-48 transform group-hover:scale-110 group-hover:-rotate-12 transition-all duration-700 ease-out pointer-events-none opacity-5 ${theme.text}`}>
+                    <IconComponent className="w-full h-full" strokeWidth={1} />
                   </div>
                   
-                  <div className="relative z-10 flex flex-col flex-1">
-                    <div className={`w-16 h-16 rounded-[1.25rem] ring-1 ring-white/50 flex items-center justify-center mb-8 transition-all duration-500 shadow-sm group-hover:scale-110 ${theme.iconWrap}`}>
-                      <IconComponent className="h-8 w-8" />
+                  <div className="flex-1 relative z-10">
+                    <div className={`w-14 h-14 ${theme.bg} ${theme.text} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-sm ring-1 ${theme.ring}`}>
+                      <IconComponent className="w-7 h-7" />
                     </div>
                     
-                    <h3 className={`text-2xl font-black mb-3 text-slate-900 leading-tight transition-colors duration-300 ${theme.title}`}>
+                    <h3 className="text-xl lg:text-2xl font-black text-slate-900 leading-snug mb-3 pr-4">
                       {template.trackName}
                     </h3>
-                    <p className="text-base text-slate-500 font-medium leading-relaxed text-balance line-clamp-3">
+                    <p className="text-sm text-slate-500 font-medium leading-relaxed line-clamp-3">
                       {template.trackDescription}
                     </p>
                   </div>
 
-                  <div className="relative z-10 mt-10 flex items-center justify-between border-t border-slate-100/50 pt-6 transition-colors duration-300">
-                    <span className={`text-sm font-bold text-slate-400 transition-colors duration-300 ${theme.arrow}`}>
+                  <div className="relative z-10 pt-6 mt-6 flex items-center justify-between border-t border-slate-100">
+                    <span className={`text-sm font-bold text-slate-400 transition-colors ${theme.hoverText}`}>
                       Mulai Asesmen
                     </span>
-                    <div className={`w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center transition-all duration-500 group-hover:translate-x-2 ${theme.arrowWrap}`}>
-                      <ArrowRight className={`h-5 w-5 text-slate-400 transition-colors ${theme.arrow}`} />
+                    <div className={`w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center transition-all duration-300 ${theme.hoverBg} group-hover:translate-x-1`}>
+                      <ArrowRight className={`w-5 h-5 text-slate-400 transition-colors ${theme.hoverText}`} />
                     </div>
                   </div>
-                  
-                  <div className={`absolute bottom-0 left-0 h-1.5 w-0 group-hover:w-full transition-all duration-700 ease-out ${theme.line}`} />
                 </div>
               );
             })}
@@ -211,67 +161,165 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
         )}
       </div>
 
-      {/* ================= MODAL KONFIRMASI (POP-UP) ================= */}
-      {selectedTrack && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-6 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
-          <div 
-            className="bg-white w-full max-w-lg rounded-[2rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.2)] overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-4 duration-300"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Header Pop-up */}
-            <div className="bg-indigo-600 p-6 md:p-8 flex items-start gap-4">
-              <div className="bg-white/20 p-3 rounded-2xl shrink-0">
-                <AlertCircle className="w-8 h-8 text-white" />
-              </div>
-              <div>
-                <h3 className="text-xl md:text-2xl font-black text-white mb-1">Persetujuan Asesmen</h3>
-                <p className="text-indigo-100 font-medium text-sm md:text-base leading-snug">
-                  Modul: {selectedTrack.trackName}
-                </p>
-              </div>
-            </div>
-
-            {/* Konten Peraturan */}
-            <div className="p-6 md:p-8 space-y-6">
-              <p className="text-slate-600 font-medium text-sm md:text-base leading-relaxed">
-                Sebelum memulai pengisian data, mohon perhatikan pedoman berikut agar hasil kurasi AI bekerja maksimal:
-              </p>
-
-              <div className="space-y-4">
-                <div className="flex gap-4 p-4 rounded-2xl bg-amber-50 ring-1 ring-amber-100 text-amber-900">
-                  <ShieldCheck className="w-6 h-6 shrink-0 text-amber-500" />
-                  <p className="text-sm font-semibold">Semua data dan dokumen yang diinput harus sesuai dengan kondisi entitas Anda yang sebenarnya.</p>
+      {/* ================= MODAL SLIDING DRAWER ================= */}
+      <AnimatePresence>
+        {selectedTrack && (
+          <>
+            <motion.div 
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={() => setSelectedTrack(null)}
+              className="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-[200]"
+            />
+            
+            <motion.div 
+              initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed top-0 right-0 h-[100dvh] w-full max-w-md bg-white z-[210] shadow-2xl flex flex-col border-l border-slate-100"
+            >
+              {/* Header Drawer */}
+              <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-white/80 backdrop-blur-md shrink-0">
+                <div>
+                  <h3 className="font-black text-xl text-slate-900">Persiapan Asesmen</h3>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                    {selectedTrack.category || 'Asesmen Mandiri'}
+                  </p>
                 </div>
+                <button 
+                  onClick={() => setSelectedTrack(null)} 
+                  className="p-2 bg-slate-50 hover:bg-slate-100 rounded-full text-slate-500 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Body Drawer */}
+              <div className="p-6 flex-1 overflow-y-auto custom-scrollbar">
                 
-                <div className="flex gap-4 p-4 rounded-2xl bg-emerald-50 ring-1 ring-emerald-100 text-emerald-900">
-                  <HardDrive className="w-6 h-6 shrink-0 text-emerald-500" />
+                {/* Header Modul */}
+                <div className="flex items-start gap-4 mb-8">
+                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 shadow-sm ring-1 ${drawerTheme.bg} ${drawerTheme.text} ${drawerTheme.ring}`}>
+                    <DrawerIcon className="w-8 h-8" />
+                  </div>
                   <div>
-                    <p className="text-sm font-semibold mb-1">Aman Ter-Cache Lokal</p>
-                    <p className="text-sm opacity-90">Jika ada berkas yang belum disiapkan, Anda bisa melengkapinya nanti. Form ini menyimpan progres Anda secara otomatis. Data tidak akan hilang saat direfresh.</p>
+                    <h4 className="text-xl sm:text-2xl font-black text-slate-900 leading-tight">
+                      {selectedTrack.trackName}
+                    </h4>
                   </div>
                 </div>
+
+                <div className="space-y-6">
+                  
+                  {/* KOTAK EKSPEKTASI HASIL (Berwarna Sesuai Tema) */}
+                  <div className={`${drawerTheme.bg} p-6 rounded-3xl ring-1 ${drawerTheme.ring} bg-opacity-40`}>
+                    <h5 className={`text-[11px] font-black ${drawerTheme.text} uppercase tracking-widest mb-5 flex items-center gap-2`}>
+                      <Sparkles className="w-4 h-4" /> Apa yang akan Anda dapatkan?
+                    </h5>
+                    <ul className="space-y-5">
+                      <li className="flex items-start gap-3.5">
+                        <div className="w-9 h-9 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm text-slate-600 ring-1 ring-slate-200">
+                          <Zap className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-slate-900 mb-1">Analisis Instan & Mendalam</p>
+                          <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                            Laporan pemetaan komprehensif akan langsung disajikan dalam hitungan menit setelah Anda menyelesaikan pengisian.
+                          </p>
+                        </div>
+                      </li>
+                      <li className="flex items-start gap-3.5">
+                        <div className="w-9 h-9 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm text-slate-600 ring-1 ring-slate-200">
+                          <Mail className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-slate-900 mb-1">Salinan Terkirim ke Email</p>
+                          <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                            Akses hasil Anda kapan saja. Tautan dasbor dan salinan dokumen akan otomatis dikirimkan ke kotak masuk Anda.
+                          </p>
+                        </div>
+                      </li>
+                      <li className="flex items-start gap-3.5">
+                        <div className="w-9 h-9 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm text-slate-600 ring-1 ring-slate-200">
+                          <UserCheck className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-slate-900 mb-1">Fondasi Konsultasi Lanjutan</p>
+                          <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                            Menjadi langkah awal dan <span className="italic">baseline</span> data objektif yang sangat berharga sebelum Anda melangkah ke sesi konsultasi bersama ahli.
+                          </p>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+
+                  {/* KOTAK PANDUAN PENGISIAN (Warna Netral) */}
+                  <div className="bg-slate-50 p-6 rounded-3xl ring-1 ring-slate-200">
+                    <h5 className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-5 flex items-center gap-2">
+                      <ShieldCheck className="w-4 h-4" /> Panduan Sebelum Memulai
+                    </h5>
+                    <ul className="space-y-5">
+                      <li className="flex items-start gap-3.5">
+                        <div className="w-9 h-9 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm text-slate-500 ring-1 ring-slate-200">
+                          <Target className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-slate-800 mb-1">Jawab Secara Objektif</p>
+                          <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                            Sistem AI kami membutuhkan data yang jujur dan apa adanya untuk merumuskan cetak biru yang paling akurat dan tepat sasaran.
+                          </p>
+                        </div>
+                      </li>
+                      <li className="flex items-start gap-3.5">
+                        <div className="w-9 h-9 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm text-slate-500 ring-1 ring-slate-200">
+                          <Lock className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-slate-800 mb-1">Privasi Sepenuhnya Terjaga</p>
+                          <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                            Jangan ragu membagikan kendala nyata. Seluruh data yang dimasukkan diproses dalam ekosistem yang tertutup dan aman.
+                          </p>
+                        </div>
+                      </li>
+                      <li className="flex items-start gap-3.5">
+                        <div className="w-9 h-9 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm text-slate-500 ring-1 ring-slate-200">
+                          <HardDrive className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-slate-800 mb-1">Progres Tersimpan Otomatis</p>
+                          <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                            Tidak perlu terburu-buru. Anda dapat menutup halaman kapan saja dan melanjutkannya nanti tanpa takut kehilangan data.
+                          </p>
+                        </div>
+                      </li>
+                      <li className="flex items-start gap-3.5">
+                        <div className="w-9 h-9 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm text-slate-500 ring-1 ring-slate-200">
+                          <Lightbulb className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-slate-800 mb-1">Nikmati Prosesnya</p>
+                          <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                            Instrumen ini dirancang interaktif layaknya berkonsultasi dengan ahlinya. Ikuti alurnya dan temukan wawasan baru.
+                          </p>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+
+                </div>
               </div>
 
-              {/* Tombol Aksi */}
-              <div className="flex flex-col-reverse md:flex-row gap-3 pt-4">
-                <button 
-                  onClick={() => setSelectedTrack(null)}
-                  className="w-full md:w-auto px-6 py-3.5 rounded-xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors focus:ring-4 focus:ring-slate-100"
-                >
-                  Batal
-                </button>
-                <button 
+              {/* Footer Drawer */}
+              <div className="p-6 border-t border-slate-100 bg-white shrink-0">
+                <Button 
                   onClick={confirmSelection}
-                  className="w-full flex-1 px-6 py-3.5 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-600/20 transition-all focus:ring-4 focus:ring-indigo-100 flex items-center justify-center gap-2 group"
+                  className="w-full h-14 rounded-2xl bg-slate-900 text-white font-bold text-base hover:bg-indigo-600 shadow-xl shadow-slate-900/10 transition-all flex items-center justify-center gap-2 group"
                 >
-                  Mengerti & Lanjutkan
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </button>
+                  Mulai Pengisian Sekarang <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Button>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
