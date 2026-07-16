@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconProps } from './types';
+import { IconProps } from '@/types/curation';
 
 export const EcoBirdIcon: React.FC<IconProps> = ({ 
   size = 24, 
