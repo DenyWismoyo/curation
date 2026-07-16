@@ -40,11 +40,25 @@ service cloud.firestore {
       allow update: if isSuperAdmin() || isAssessor();
     }
     
+    // Aturan untuk Ulasan & Feedback
+    match /feedbacks/{document=**} {
+      // Mengizinkan siapapun (termasuk user yang belum login) untuk mengirim ulasan
+      allow create: if true; 
+      // Hanya Super Admin yang diizinkan untuk membaca, memperbarui, dan menghapus ulasan
+      allow read, update, delete: if isSuperAdmin(); 
+    }
+    
     match /corporate_tags/{document=**} { allow read: if isAuthenticated(); allow write: if isSuperAdmin(); }
     match /curator_tokens/{document=**} { allow read: if isAuthenticated(); allow write: if isSuperAdmin(); }
     match /template_folders/{document=**} { allow read: if isAuthenticated(); allow write: if isSuperAdmin(); }
     match /business_vectors/{document=**} { allow read: if isAuthenticated(); allow write: if false; }
     match /template_research_vectors/{document=**} { allow read: if isSuperAdmin(); allow write: if false; }
+    
+    // Aturan untuk Brankas Dashboard Pelanggan
+    match /transactions/{transactionId} {
+      allow read: if isAuthenticated() && (request.auth.uid == resource.data.userId || isSuperAdmin());
+      allow write: if false; 
+    }
     
     match /{document=**} { allow read, write: if false; }
   }

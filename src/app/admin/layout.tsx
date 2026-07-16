@@ -8,14 +8,13 @@ import Link from 'next/link';
 import { 
   LayoutDashboard, Settings, KeyRound, LogOut, Menu, X, ShieldCheck, 
   PanelLeftClose, PanelLeftOpen, 
-  Tags, UserCheck
+  Tags, UserCheck, MessageSquareShare // <-- Icon Baru
 } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { user, role, loading, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
-  
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
@@ -40,21 +39,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
-  // DIUBAH: Menambahkan menu baru 'Manajemen Asesor'
+  // DIUBAH: Menambahkan menu 'Ulasan & Feedback'
   const menuItems = [
     { name: 'Dasbor Utama', path: '/admin', icon: LayoutDashboard },
     { name: 'Manajemen Token', path: '/admin/tokens', icon: KeyRound },
     { name: 'Manajemen Asesor', path: '/admin/assessors', icon: UserCheck },
     { name: 'Template Form', path: '/admin/templates', icon: Settings },
     { name: 'Harga & Monetisasi', path: '/admin/pricing', icon: Tags },
+    { name: 'Ulasan & Feedback', path: '/admin/feedback', icon: MessageSquareShare }, // <-- Menu Baru
   ];
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50 font-sans text-slate-900">
       
-      {/* ==================================================== */}
-      {/* MOBILE SIDEBAR (Drawer melayang, hanya di HP)    */}
-      {/* ==================================================== */}
+      {/* MOBILE SIDEBAR */}
       {isMobileMenuOpen && (
         <div className="md:hidden fixed inset-0 z-50 flex">
           <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)} />
@@ -66,6 +64,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               </div>
               <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-slate-400 hover:bg-slate-100 rounded-xl"><X size={20}/></button>
             </div>
+            
             <nav className="flex-1 py-6 px-4 space-y-2 overflow-y-auto">
               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 px-3">Menu Utama</p>
               {menuItems.map((item) => (
@@ -81,73 +80,69 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
       )}
 
-      {/* ==================================================== */}
-      {/* DESKTOP SIDEBAR (Berdampingan fisik, bukan melayang) */}
-      {/* ==================================================== */}
+      {/* DESKTOP SIDEBAR */}
       <aside 
         className={`hidden md:flex flex-col bg-white border-r border-slate-200 shrink-0 transition-all duration-300 relative
         ${isSidebarCollapsed ? 'w-20' : 'w-72'}`}
       >
-         <div className="h-20 flex items-center px-6 border-b border-slate-100 justify-between shrink-0">
-           <div className={`flex items-center gap-3 overflow-hidden ${isSidebarCollapsed ? 'justify-center w-full px-0' : ''}`}>
-             <div className="w-8 h-8 bg-indigo-600 text-white rounded-lg flex items-center justify-center shrink-0">
-               <ShieldCheck className="w-5 h-5" />
-             </div>
-             {!isSidebarCollapsed && (
-               <div className="whitespace-nowrap">
-                 <h1 className="text-lg font-black tracking-tight leading-none">CSRS</h1>
-                 <p className="text-[9px] uppercase tracking-widest text-indigo-500 font-black">Admin</p>
-               </div>
-             )}
-           </div>
-           
-           {!isSidebarCollapsed && (
-             <button onClick={() => setIsSidebarCollapsed(true)} className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 shrink-0" title="Tutup Sidebar">
-               <PanelLeftClose size={18} />
-             </button>
-           )}
-         </div>
-
-         <nav className="flex-1 py-6 px-3 space-y-2 overflow-y-auto custom-scrollbar">
-           {!isSidebarCollapsed && <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 px-3">Menu Utama</p>}
-           {menuItems.map((item) => {
-             const isActive = pathname === item.path;
-             return (
-               <Link 
-                 key={item.path}
-                 href={item.path} 
-                 title={isSidebarCollapsed ? item.name : ''}
-                 className={`flex items-center gap-3 px-3 py-3 rounded-xl font-bold transition-all ${
-                   isActive ? 'bg-indigo-50 text-indigo-700' : 'text-slate-500 hover:bg-slate-50 hover:text-indigo-600'
-                 } ${isSidebarCollapsed ? 'justify-center' : ''}`}
-               >
-                 <item.icon size={20} className={isActive ? 'text-indigo-600' : 'text-slate-400 shrink-0'} /> 
-                 {!isSidebarCollapsed && <span className="whitespace-nowrap">{item.name}</span>}
-               </Link>
-             );
-           })}
-         </nav>
-
-         <div className="p-4 border-t border-slate-100 shrink-0">
-           {isSidebarCollapsed && (
-             <button onClick={() => setIsSidebarCollapsed(false)} className="w-full flex items-center justify-center p-3 rounded-xl text-slate-400 hover:bg-slate-100 transition-colors mb-2" title="Buka Sidebar">
-               <PanelLeftOpen size={20} />
-             </button>
-           )}
-           <button 
-             onClick={() => { logout(); router.push('/'); }} 
-             title={isSidebarCollapsed ? "Keluar" : ""}
-             className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-rose-600 hover:bg-rose-50 font-bold transition-colors ${isSidebarCollapsed ? 'justify-center' : ''}`}
-           >
-             <LogOut size={20} className="shrink-0" />
-             {!isSidebarCollapsed && <span>Keluar</span>}
-           </button>
-         </div>
+        <div className="h-20 flex items-center px-6 border-b border-slate-100 justify-between shrink-0">
+          <div className={`flex items-center gap-3 overflow-hidden ${isSidebarCollapsed ? 'justify-center w-full px-0' : ''}`}>
+            <div className="w-8 h-8 bg-indigo-600 text-white rounded-lg flex items-center justify-center shrink-0">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            {!isSidebarCollapsed && (
+              <div className="whitespace-nowrap">
+                <h1 className="text-lg font-black tracking-tight leading-none">CSRS</h1>
+                <p className="text-[9px] uppercase tracking-widest text-indigo-500 font-black">Admin</p>
+              </div>
+            )}
+          </div>
+          
+          {!isSidebarCollapsed && (
+            <button onClick={() => setIsSidebarCollapsed(true)} className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 shrink-0" title="Tutup Sidebar">
+              <PanelLeftClose size={18} />
+            </button>
+          )}
+        </div>
+        
+        <nav className="flex-1 py-6 px-3 space-y-2 overflow-y-auto custom-scrollbar">
+          {!isSidebarCollapsed && <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 px-3">Menu Utama</p>}
+          {menuItems.map((item) => {
+            const isActive = pathname === item.path;
+            return (
+              <Link 
+                key={item.path}
+                href={item.path} 
+                title={isSidebarCollapsed ? item.name : ''}
+                className={`flex items-center gap-3 px-3 py-3 rounded-xl font-bold transition-all ${
+                  isActive ? 'bg-indigo-50 text-indigo-700' : 'text-slate-500 hover:bg-slate-50 hover:text-indigo-600'
+                } ${isSidebarCollapsed ? 'justify-center' : ''}`}
+              >
+                <item.icon size={20} className={isActive ? 'text-indigo-600' : 'text-slate-400 shrink-0'} /> 
+                {!isSidebarCollapsed && <span className="whitespace-nowrap">{item.name}</span>}
+              </Link>
+            );
+          })}
+        </nav>
+        
+        <div className="p-4 border-t border-slate-100 shrink-0">
+          {isSidebarCollapsed && (
+            <button onClick={() => setIsSidebarCollapsed(false)} className="w-full flex items-center justify-center p-3 rounded-xl text-slate-400 hover:bg-slate-100 transition-colors mb-2" title="Buka Sidebar">
+              <PanelLeftOpen size={20} />
+            </button>
+          )}
+          <button 
+            onClick={() => { logout(); router.push('/'); }} 
+            title={isSidebarCollapsed ? "Keluar" : ""}
+            className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-rose-600 hover:bg-rose-50 font-bold transition-colors ${isSidebarCollapsed ? 'justify-center' : ''}`}
+          >
+            <LogOut size={20} className="shrink-0" />
+            {!isSidebarCollapsed && <span>Keluar</span>}
+          </button>
+        </div>
       </aside>
 
-      {/* ==================================================== */}
-      {/* KONTEN UTAMA (Sisa layar, men-scroll isinya sendiri) */}
-      {/* ==================================================== */}
+      {/* KONTEN UTAMA */}
       <main className="flex-1 min-w-0 flex flex-col h-screen overflow-hidden">
         
         {/* Header Khusus Mobile */}

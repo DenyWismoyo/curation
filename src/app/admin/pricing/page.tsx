@@ -9,11 +9,12 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from "sonner";
 import { 
-  Save, LayoutGrid, Loader2, Store, Eye, EyeOff, Tag, Users, Flame, ListChecks, Search, KeyRound, Copy, Check
+  Save, LayoutGrid, Loader2, Store, Eye, EyeOff, Tag, Users, Flame, ListChecks, Search, KeyRound, Copy, Check, Share2
 } from 'lucide-react';
 import { FormTemplate } from '@/types/curation';
 
 type PricingFormState = {
+  category: string;
   isDisplayedOnLanding: boolean;
   isPaid: boolean;
   trialQuota: string;
@@ -31,11 +32,9 @@ export default function PricingManagerPage() {
   const [isSaving, setIsSaving] = useState<string | null>(null);
   const [isGeneratingToken, setIsGeneratingToken] = useState<string | null>(null); 
   const [searchTerm, setSearchTerm] = useState('');
-
-  // State untuk menyimpan token yang di-generate agar tampil di UI
+  
   const [generatedTokens, setGeneratedTokens] = useState<Record<string, string>>({});
   const [copiedTokens, setCopiedTokens] = useState<Record<string, boolean>>({});
-
   const [formStates, setFormStates] = useState<Record<string, PricingFormState>>({});
 
   useEffect(() => {
@@ -57,12 +56,13 @@ export default function PricingManagerPage() {
         let formattedDate = '';
         if (tpl.discountExpiry) {
           const d = new Date(tpl.discountExpiry);
-          if (!isNaN(d.getTime())) {
-             formattedDate = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+          if (!isNaN(d.getTime())) { 
+            formattedDate = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
           }
         }
 
         initialStates[docSnap.id] = {
+          category: tpl.category || 'Umum',
           isDisplayedOnLanding: tpl.isDisplayedOnLanding || false,
           isPaid: tpl.isPaid || false,
           trialQuota: tpl.trialQuota ? tpl.trialQuota.toString() : '0',
@@ -122,6 +122,7 @@ export default function PricingManagerPage() {
     }
 
     return (
+      state.category !== (tpl.category || 'Umum') ||
       state.isDisplayedOnLanding !== (tpl.isDisplayedOnLanding || false) ||
       state.isPaid !== (tpl.isPaid || false) ||
       state.trialQuota !== (tpl.trialQuota?.toString() || '0') ||
@@ -140,6 +141,7 @@ export default function PricingManagerPage() {
     
     try {
       const payload: any = {
+        category: state.category,
         isDisplayedOnLanding: state.isDisplayedOnLanding,
         isPaid: state.isPaid,
         trialQuota: parseInt(state.trialQuota || '0', 10),
@@ -171,6 +173,7 @@ export default function PricingManagerPage() {
         if (checkIsChanged(t.id, t)) {
           const state = formStates[t.id];
           const payload: any = {
+            category: state.category,
             isDisplayedOnLanding: state.isDisplayedOnLanding,
             isPaid: state.isPaid,
             trialQuota: parseInt(state.trialQuota || '0', 10),
@@ -193,6 +196,7 @@ export default function PricingManagerPage() {
         if (checkIsChanged(t.id, t)) {
           const state = formStates[t.id];
           const payload: any = {
+            category: state.category,
             isDisplayedOnLanding: state.isDisplayedOnLanding,
             isPaid: state.isPaid,
             trialQuota: parseInt(state.trialQuota || '0', 10),
@@ -251,6 +255,7 @@ export default function PricingManagerPage() {
       toast.success(`Token berhasil dibuat!`, {
         description: `Kode: ${fullToken} (Akses Modul: ${templateName})`
       });
+
     } catch (error) {
       console.error("Gagal generate token B2C:", error);
       toast.error("Gagal membuat token akses.");
@@ -266,6 +271,16 @@ export default function PricingManagerPage() {
     setTimeout(() => {
       setCopiedTokens(prev => ({ ...prev, [id]: false }));
     }, 2000);
+  };
+
+  const handleCopyShareLink = (templateId: string) => {
+    if (typeof window !== 'undefined') {
+      const link = `${window.location.origin}/?buy=${templateId}`;
+      navigator.clipboard.writeText(link);
+      toast.success("Link Beli berhasil disalin!", {
+        description: "Bagikan link ini agar pelanggan langsung diarahkan ke modul ini."
+      });
+    }
   };
 
   const formatRupiah = (angka: number | string) => {
@@ -338,7 +353,7 @@ export default function PricingManagerPage() {
         )}
       </div>
 
-      {/* Konten Utama - Menggunakan Flex/Grid Layout daripada Tabel */}
+      {/* Konten Utama - Menggunakan Flex/Grid Layout */}
       <div className="w-full">
         {loading ? (
           <div className="py-20 text-center text-slate-500 flex justify-center items-center gap-3 font-medium bg-white rounded-3xl shadow-sm ring-1 ring-slate-200">
@@ -361,7 +376,6 @@ export default function PricingManagerPage() {
               const discountPerc = parseInt(state.discountPercentage || '0', 10);
               const finalPrice = originalPrice - (originalPrice * (discountPerc / 100));
 
-              // Penanda visual jika tayang di katalog (Lebih responsif berbasis Border Card)
               const highlightCardClass = state.isDisplayedOnLanding 
                 ? 'border-l-[4px] border-l-emerald-500 border-t border-r border-b border-slate-200 bg-emerald-50/20 hover:bg-emerald-50/40 shadow-sm' 
                 : 'border border-slate-200 bg-white/70 hover:bg-white opacity-80 hover:opacity-100 shadow-sm';
@@ -384,6 +398,17 @@ export default function PricingManagerPage() {
                     </div>
                     
                     <div className="space-y-3">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">Kategori Modul</label>
+                        <Input 
+                          type="text" 
+                          placeholder="Misal: Enterprise, Startup" 
+                          value={state.category}
+                          onChange={(e) => handleInputChange(template.id, 'category', e.target.value)}
+                          className="h-9 text-xs font-bold bg-white border-slate-200 shadow-sm focus-visible:ring-indigo-500"
+                        />
+                      </div>
+
                       <button 
                         onClick={() => handleToggle(template.id, 'isDisplayedOnLanding')}
                         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] uppercase tracking-widest font-bold transition-all border ${
@@ -395,7 +420,7 @@ export default function PricingManagerPage() {
                       </button>
                       
                       <div className="bg-orange-50/50 p-3 rounded-xl border border-orange-100/50 space-y-3">
-                        <SwitchToggle checked={state.isBestSeller} onChange={() => handleToggle(template.id, 'isBestSeller')} label="🔥 Tandai Best Seller" />
+                        <SwitchToggle checked={state.isBestSeller} onChange={() => handleToggle(template.id, 'isBestSeller')} label="Tandai Best Seller" />
                         <div className="flex items-center gap-2">
                           <Users className="w-3.5 h-3.5 text-orange-400" />
                           <Input 
@@ -422,7 +447,7 @@ export default function PricingManagerPage() {
                         type="text" value={state.price}
                         onChange={(e) => handleInputChange(template.id, 'price', e.target.value)}
                         disabled={!state.isPaid}
-                        className={`pl-9 h-10 font-bold text-sm rounded-xl transition-all ${!state.isPaid ? 'bg-slate-50 opacity-50 border-slate-200 text-slate-400' : 'bg-white border-slate-200 shadow-sm'}`}
+                        className={`pl-9 h-10 font-bold text-sm rounded-xl transition-all ${!state.isPaid ? 'bg-slate-50 opacity-50 border-slate-200 text-slate-400' : 'bg-white border-slate-200 shadow-sm focus-visible:ring-indigo-500'}`}
                       />
                     </div>
 
@@ -434,7 +459,7 @@ export default function PricingManagerPage() {
                             <Input 
                               type="text" value={state.discountPercentage}
                               onChange={(e) => handleInputChange(template.id, 'discountPercentage', e.target.value)}
-                              className="pl-8 pr-7 h-9 font-bold text-sm bg-white border-rose-200 text-rose-700"
+                              className="pl-8 pr-7 h-9 font-bold text-sm bg-white border-rose-200 text-rose-700 focus-visible:ring-rose-500"
                             />
                             <span className="absolute right-3 top-1/2 -translate-y-1/2 font-bold text-rose-500">%</span>
                           </div>
@@ -467,7 +492,7 @@ export default function PricingManagerPage() {
                       placeholder="Sesi Konsultasi Eksklusif 30 Menit&#10;Prioritas Validasi Dokumen"
                       value={state.customUSPs}
                       onChange={(e) => handleInputChange(template.id, 'customUSPs', e.target.value)}
-                      className="text-xs bg-white resize-y min-h-[120px] shadow-sm border-slate-200"
+                      className="text-xs bg-white resize-y min-h-[120px] shadow-sm border-slate-200 focus-visible:ring-indigo-500"
                     />
                     <p className="text-[9px] text-slate-400 font-medium">Tekan Enter untuk memisahkan setiap poin.</p>
                   </div>
@@ -489,6 +514,16 @@ export default function PricingManagerPage() {
                     </Button>
                     
                     <Button
+                      onClick={() => handleCopyShareLink(template.id)}
+                      variant="outline"
+                      className="w-full h-10 rounded-xl font-bold border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 hover:text-blue-800 transition-all text-xs flex items-center justify-center gap-1.5 shadow-sm"
+                      title="Salin link direct untuk dikirim ke customer"
+                    >
+                      <Share2 className="w-3.5 h-3.5" />
+                      Copy Link Share
+                    </Button>
+
+                    <Button
                       onClick={() => handleGenerateB2CToken(template.id, template.trackName)}
                       disabled={isGeneratingToken === template.id}
                       variant="outline"
@@ -499,7 +534,6 @@ export default function PricingManagerPage() {
                       Generate Token B2C
                     </Button>
 
-                    {/* KOTAK PENAMPIL TOKEN HASIL GENERATE */}
                     {generatedTokens[template.id] && (
                       <div className="w-full flex items-center justify-between p-2.5 bg-emerald-100/50 rounded-xl border border-emerald-300 mt-1 animate-in zoom-in-95 duration-200 shadow-sm">
                         <span className="font-mono text-[12px] font-black text-emerald-900 tracking-tight truncate">

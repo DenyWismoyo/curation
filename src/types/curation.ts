@@ -152,6 +152,7 @@ export interface FormTemplate {
   isBestSeller?: boolean;         // Toggle "Best Seller / Terpopuler"
   userCount?: number;             // Dummy jumlah pengguna (Social Proof)
   customUSPs?: string[];          // Keunggulan tambahan khusus modul ini
+  category?: string;
   steps: FormStep[]; 
   aiPromptConfig?: AiPromptConfig;
   folder?: string;
