@@ -14,6 +14,9 @@ import { CurationHistory } from '@/types/curation';
 // IMPORT CUSTOM ICON
 import { BrainIcon } from '@/components/icon';
 
+// IMPORT CUSTOM HOOK MOBILE BACK
+import { useMobileBack } from '@/hooks/useMobileBack';
+
 export default function Home() {
   const router = useRouter();
   const { state, actions } = useCuration();
@@ -30,14 +33,11 @@ export default function Home() {
     }
 
     // KUNCI UTAMA: Kita query menggunakan 'userId' agar benar-benar melekat dengan Google Auth UID.
-    // Ini menghilangkan risiko gagal muat jika user salah mengetik email di form.
     const q = query(
       collection(db, 'assessments'),
       where('userId', '==', user.uid)
     );
 
-    // onSnapshot mendengarkan perubahan secara Live. Jika AI selesai di latar belakang, 
-    // atau jika Anda mengerjakan di Localhost, data akan otomatis muncul di Produksi.
     const unsubscribe = onSnapshot(q, (snap) => {
       const historyData: CurationHistory[] = [];
       
@@ -64,8 +64,18 @@ export default function Home() {
     return () => unsubscribe();
   }, [user]);
 
+  // ==========================================
+  // IMPLEMENTASI MOBILE BACK HANDLER UNTUK DASHBOARD
+  // ==========================================
+  const isDashboardActive = state.viewState === 'dashboard' && !!state.aiResult;
+
+  useMobileBack(isDashboardActive, () => {
+    actions.restart();
+    router.push('/');
+  });
+
   // 2. TAMPILKAN DASHBOARD LOKAL JIKA USER BARU SAJA MENYELESAIKAN ASESMEN BARU
-  if (state.viewState === 'dashboard' && state.aiResult) {
+  if (isDashboardActive) {
     return (
       <CurationDashboard
         trackType={state.selectedTemplate?.trackName || 'Model Bisnis'}
@@ -88,7 +98,7 @@ export default function Home() {
     if (!exists) combinedHistory.push(localItem);
   });
 
-  // Urutkan selalu dari yang paling baru di paling atas (Di-handle oleh Javascript agar tidak terkena error Firestore Missing Index)
+  // Urutkan selalu dari yang paling baru di paling atas
   combinedHistory.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   // 4. HANDLER KLIK RIWAYAT (Menggunakan Shareable Link Baru)

@@ -1,4 +1,3 @@
-// src/app/curator/dashboard/page.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -9,8 +8,10 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { LogOut, ShieldCheck, Search, Users, Activity, CheckCircle2, Clock, MapPin, Eye, Tag, X, Plus, Loader2, Edit3 } from 'lucide-react';
-
 import { CuratorAssessmentDetail } from '@/app/components/curator/CuratorAssessmentDetail';
+
+// IMPORT CUSTOM HOOK MOBILE BACK
+import { useMobileBack } from '@/hooks/useMobileBack';
 
 interface CuratorSession {
   token: string;
@@ -26,11 +27,16 @@ export default function CuratorDashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   
   const [selectedAssessment, setSelectedAssessment] = useState<any>(null);
-
   const [masterTags, setMasterTags] = useState<string[]>([]);
   const [isLoadingTags, setIsLoadingTags] = useState(false);
   const [isManageTagsOpen, setIsManageTagsOpen] = useState(false);
   const [newTagInput, setNewTagInput] = useState('');
+
+  // ==========================================
+  // MOBILE BACK HANDLERS (SWIPE)
+  // ==========================================
+  useMobileBack(!!selectedAssessment, () => setSelectedAssessment(null));
+  useMobileBack(isManageTagsOpen, () => setIsManageTagsOpen(false));
 
   useEffect(() => {
     const sessionData = localStorage.getItem('curatorSession');
@@ -81,6 +87,7 @@ export default function CuratorDashboard() {
         } else {
           setMasterTags([]); 
         }
+
       } catch (error) {
         console.error("Gagal menarik data untuk kurator:", error);
       } finally {
@@ -88,6 +95,7 @@ export default function CuratorDashboard() {
         setIsLoadingTags(false);
       }
     };
+
     fetchDashboardData();
   }, [session]);
 
@@ -215,6 +223,7 @@ export default function CuratorDashboard() {
                   className="pl-9 h-10 bg-slate-50 border-slate-200 rounded-xl"
                 />
               </div>
+
               <Button 
                 onClick={() => setIsManageTagsOpen(true)} 
                 variant="outline" 

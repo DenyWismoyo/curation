@@ -1,4 +1,3 @@
-// src/app/assessor/page.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -13,11 +12,12 @@ import {
   Users, KeyRound, Search, CheckCircle2, Copy, Plus, 
   Loader2, ShieldCheck, Edit3, Briefcase, FileSignature, Settings2, Eye
 } from 'lucide-react';
-
 import { AssessorManualEditor } from '@/app/components/assessor/AssessorManualEditor';
 import { AssessorTemplateBuilder } from '@/app/components/assessor/AssessorTemplateBuilder';
-// IMPORT KOMPONEN PREVIEW YANG BARU
 import { AssessorTemplatePreview } from '@/app/components/assessor/AssessorTemplatePreview';
+
+// IMPORT CUSTOM HOOK MOBILE BACK
+import { useMobileBack } from '@/hooks/useMobileBack';
 
 interface AssessorAllocation {
   id: string; 
@@ -34,17 +34,23 @@ export default function AssessorDashboardPage() {
   const [assessments, setAssessments] = useState<any[]>([]);
   const [activeTemplate, setActiveTemplate] = useState<any>(null); 
   const [loading, setLoading] = useState(true);
-  
+
   const [generateQty, setGenerateQty] = useState(1);
   const [isGenerating, setIsGenerating] = useState(false);
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
-  
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedAssessment, setSelectedAssessment] = useState<any | null>(null);
   
+  const [selectedAssessment, setSelectedAssessment] = useState<any | null>(null);
   const [isCustomizingTemplate, setIsCustomizingTemplate] = useState(false); 
-  // STATE BARU UNTUK PREVIEW
   const [isPreviewingTemplate, setIsPreviewingTemplate] = useState(false);
+
+  // ==========================================
+  // MOBILE BACK HANDLERS (SWIPE)
+  // ==========================================
+  useMobileBack(!!selectedAssessment, () => setSelectedAssessment(null));
+  useMobileBack(isCustomizingTemplate, () => setIsCustomizingTemplate(false));
+  useMobileBack(isPreviewingTemplate, () => setIsPreviewingTemplate(false));
+
 
   useEffect(() => {
     if (user?.email) {
@@ -115,6 +121,7 @@ export default function AssessorDashboardPage() {
     setIsGenerating(true);
     try {
       const newTokens = { ...(allocation.tokens || {}) };
+      
       for (let i = 0; i < generateQty; i++) {
         const randomStr = Math.random().toString(36).substring(2, 8).toUpperCase();
         newTokens[randomStr] = { isUsed: false, usedAt: null, usedByNamaUsaha: null };
@@ -165,9 +172,9 @@ export default function AssessorDashboardPage() {
 
   const generatedTokensArray = Object.entries(allocation.tokens || {}).reverse();
   const currentGeneratedCount = generatedTokensArray.length;
-  
+
   const filteredAssessments = assessments.filter(a => 
-    a.namaUsaha?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    a.namaUsaha?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     a.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -184,6 +191,7 @@ export default function AssessorDashboardPage() {
           </p>
         </div>
         <div className="flex flex-wrap gap-4">
+          
           {/* TOMBOL KONTROL MODUL AI */}
           {activeTemplate && (
              <div className="flex gap-2">
@@ -244,8 +252,8 @@ export default function AssessorDashboardPage() {
             </div>
           </Card>
 
-          <Card className="bg-white rounded-3xl border-none ring-1 ring-slate-200 shadow-sm overflow-hidden flex flex-col h-[400px]">
-             <div className="p-4 border-b border-slate-100 bg-slate-50/50">
+          <Card className="bg-white rounded-3xl border-none ring-1 ring-slate-200 shadow-sm overflow-hidden flex flex-col h-[400px]"> 
+            <div className="p-4 border-b border-slate-100 bg-slate-50/50">
               <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest">Daftar Kode Akses</h3>
             </div>
             <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
@@ -270,8 +278,8 @@ export default function AssessorDashboardPage() {
 
         {/* KOLOM KANAN: DAFTAR PESERTA */}
         <div className="lg:col-span-2 space-y-4">
-          <Card className="bg-white rounded-3xl border-none ring-1 ring-slate-200 shadow-sm overflow-hidden flex flex-col h-[calc(100vh-180px)] min-h-[600px]">
-             <div className="p-5 sm:p-6 border-b border-slate-100 flex flex-col sm:flex-row gap-4 justify-between items-center bg-white sticky top-0 z-10">
+          <Card className="bg-white rounded-3xl border-none ring-1 ring-slate-200 shadow-sm overflow-hidden flex flex-col h-[calc(100vh-180px)] min-h-[600px]"> 
+            <div className="p-5 sm:p-6 border-b border-slate-100 flex flex-col sm:flex-row gap-4 justify-between items-center bg-white sticky top-0 z-10">
               <div>
                 <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
                   <Briefcase className="w-5 h-5 text-indigo-600" /> Hasil Pengisian Pendaftar

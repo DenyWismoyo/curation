@@ -1,4 +1,3 @@
-// src/app/assessor/layout.tsx
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
@@ -10,6 +9,9 @@ import {
   PanelLeftClose, PanelLeftOpen, ClipboardCheck
 } from 'lucide-react';
 
+// IMPORT CUSTOM HOOK MOBILE BACK
+import { useMobileBack } from '@/hooks/useMobileBack';
+
 export default function AssessorLayout({ children }: { children: React.ReactNode }) {
   const { user, role, loading, logout } = useAuth();
   const router = useRouter();
@@ -17,6 +19,11 @@ export default function AssessorLayout({ children }: { children: React.ReactNode
   
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+  // ==========================================
+  // MOBILE BACK HANDLER (SWIPE)
+  // ==========================================
+  useMobileBack(isMobileMenuOpen, () => setIsMobileMenuOpen(false));
 
   useEffect(() => {
     // Kini TypeScript sudah mengenali 'assessor' tanpa error
@@ -136,7 +143,7 @@ export default function AssessorLayout({ children }: { children: React.ReactNode
 
       {/* MAIN CONTENT AREA */}
       <main className="flex-1 min-w-0 flex flex-col h-screen overflow-hidden">
-        
+         
         {/* Header Mobile */}
         <div className="md:hidden bg-white/80 backdrop-blur-md border-b border-slate-200 p-4 flex justify-between items-center shrink-0 z-10">
           <button onClick={() => setIsMobileMenuOpen(true)} className="p-2 -ml-2 text-slate-600 hover:bg-slate-100 rounded-xl">
@@ -156,7 +163,7 @@ export default function AssessorLayout({ children }: { children: React.ReactNode
             {children}
           </div>
         </div>
-        
+       
       </main>
     </div>
   );

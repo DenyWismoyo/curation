@@ -28,10 +28,10 @@ service cloud.firestore {
       allow create: if isAuthenticated();
       allow delete: if isSuperAdmin();
     }
-
-    match /form_templates/{document=**} {
-      allow read: if isAuthenticated();
-      allow write: if isSuperAdmin();
+match /form_templates/{document=**} {
+      // allow read: if isAuthenticated(); // HAPUS ATAU KOMENTAR BARIS INI
+      allow read: if true; // TAMBAHKAN BARIS INI: Akses baca publik
+      allow write: if isSuperAdmin(); // [cite: 7]
     }
 
     match /corporate_tokens/{document=**} {

@@ -1,13 +1,14 @@
-// src/app/components/curation/CurationLanding.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Image from 'next/image'; 
+import Image from 'next/image';
+
 import { 
   ArrowRight, History, Clock, 
   ChevronRight, Loader2, LogOut, LayoutDashboard, Sparkles, ClipboardCheck,
   MessageSquarePlus, Box
 } from 'lucide-react';
+
 // IMPORT CUSTOM ICON ANDA DI SINI
 import { 
   EcosystemIcon, 
@@ -15,7 +16,7 @@ import {
   AdminShieldIcon, 
   DocExportIcon, 
   BrainIcon 
-} from '@/components/icon'; 
+} from '@/components/icon';
 
 import { PricingPackages } from '@/app/components/payment/PricingPackages';
 import { SystemCapabilitiesModal } from './SystemCapabilitiesModal';
@@ -29,6 +30,9 @@ import { motion, AnimatePresence, Variants } from 'framer-motion';
 import Link from 'next/link';
 import { User } from 'firebase/auth';
 import { toast } from 'sonner';
+
+// IMPORT CUSTOM HOOK
+import { useMobileBack } from '@/hooks/useMobileBack';
 
 interface Props {
   onStart: () => void;
@@ -58,6 +62,25 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
   const [autoOpenPackageId, setAutoOpenPackageId] = useState<string | null>(null);
   const [drafts, setDrafts] = useState<DraftItem[]>([]);
+
+  // ==========================================
+  // IMPLEMENTASI MOBILE BACK HANDLER (SWIPE)
+  // ==========================================
+  
+  const closePricingModal = () => {
+    setIsPricingModalOpen(false);
+    setAutoOpenPackageId(null);
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('buy');
+      window.history.replaceState({}, '', url.toString());
+    }
+  };
+
+  useMobileBack(isPricingModalOpen, closePricingModal);
+  useMobileBack(isCapabilitiesModalOpen, () => setIsCapabilitiesModalOpen(false));
+  useMobileBack(isFeedbackModalOpen, () => setIsFeedbackModalOpen(false));
+
 
   // DETEKSI DRAF DARI LOCAL STORAGE
   useEffect(() => {
@@ -274,7 +297,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
             </h1>
             
             <p className="text-base sm:text-lg text-slate-500 max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed text-balance">
-              Platform analitik berbasis kecerdasan buatan untuk mendiagnosa akar masalah, memetakan potensi tersembunyi, dan merumuskan cetak biru solusi yang presisi—dirancang adaptif untuk pengembangan personal, konseling, hingga akselerasi ekosistem bisnis.
+              Platform analitik berbasis kecerdasan buatan untuk mendiagnosa akar masalah, memetakan potensi tersembunyi, dan merumuskan cetak biru solusi yang presisi dirancang adaptif untuk pengembangan personal, konseling, hingga akselerasi ekosistem bisnis.
             </p>
 
             {/* SEKSI ACTION BANNER */}
@@ -303,7 +326,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                 </div>
               </div>
 
-              {/* BANNER 2: JELAJAHI KATALOG MODUL DENGAN KOMPOSISI IKON KAYA */}
+              {/* BANNER 2: JELAJAHI KATALOG MODUL */}
               <div 
                 onClick={() => setIsPricingModalOpen(true)}
                 className="group relative cursor-pointer overflow-hidden rounded-[1.25rem] bg-indigo-600 p-[2px] transition-all duration-300 hover:shadow-[0_0_40px_rgba(79,70,229,0.5)] hover:-translate-y-1 w-full shadow-lg shadow-indigo-600/10"
@@ -314,19 +337,16 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                 <div className="relative flex items-center justify-between gap-5 rounded-xl bg-white px-5 py-4 transition-all group-hover:bg-white/95">
                   <div className="flex items-center gap-4 flex-1 min-w-0">
                     
-                    {/* KOMPOSISI IKON KAYA (Bento-box style mini illustration) */}
+                    {/* KOMPOSISI IKON KAYA */}
                     <div className="relative h-14 w-16 shrink-0 mr-2">
-                      {/* Ikon Latar (Berputar & Kabur) */}
                       <div className="absolute top-0 right-0 h-10 w-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center rotate-6 group-hover:rotate-12 group-hover:scale-105 transition-all duration-500">
                         <Box className="w-5 h-5 text-blue-300" />
                       </div>
                       
-                      {/* Ikon Utama Custom (Di depan, warna tajam) */}
                       <div className="absolute bottom-0 left-0 h-11 w-11 rounded-xl bg-indigo-600 shadow-lg shadow-indigo-600/30 flex items-center justify-center -rotate-6 group-hover:rotate-0 group-hover:scale-110 transition-all duration-500 z-10">
                         <TechCardIcon className="w-6 h-6 text-white" />
                       </div>
                       
-                      {/* Ikon Sparkles Melayang (Aksen AI) */}
                       <div className="absolute -top-1 -left-1 h-6 w-6 rounded-full bg-amber-100 border border-amber-200 flex items-center justify-center shadow-sm group-hover:-translate-y-1.5 transition-transform duration-500 delay-75 z-20">
                         <Sparkles className="w-3.5 h-3.5 text-amber-500" />
                       </div>
@@ -338,7 +358,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                         Jelajahi Katalog Modul
                       </h4>
                       <div className="flex items-center gap-2">
-                        {/* Lencana (Badge) kecil */}
                         <span className="inline-flex items-center justify-center px-1.5 py-0.5 rounded flex-shrink-0 bg-indigo-50 border border-indigo-100 text-[9px] font-black text-indigo-600 uppercase tracking-widest">
                           AI Powered
                         </span>
@@ -347,7 +366,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                         </p>
                       </div>
                     </div>
-
                   </div>
                   
                   {/* TOMBOL ANAK PANAH */}
@@ -402,7 +420,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                   </Button>
                 </Link>
               )}
-
+              
               {(role === 'assessor') && (
                 <Link href="/assessor" className="block w-full">
                   <Button variant="outline" className="w-full h-12 rounded-xl border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold gap-2">
@@ -453,6 +471,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                   </Button>
                 </div>
               </div>
+
               <AnimatePresence>
                 {errorMsg && (
                   <motion.p 
@@ -465,7 +484,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                   </motion.p>
                 )}
               </AnimatePresence>
-
             </motion.div>
           )}
         </motion.div>
@@ -589,20 +607,13 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                 </motion.div>
               </motion.div>
             )}
+
           </div>
         )}
 
         <PricingPackages 
           isOpen={isPricingModalOpen}
-          onClose={() => {
-            setIsPricingModalOpen(false);
-            setAutoOpenPackageId(null);
-            if (typeof window !== 'undefined') {
-              const url = new URL(window.location.href);
-              url.searchParams.delete('buy');
-              window.history.replaceState({}, '', url.toString());
-            }
-          }}
+          onClose={closePricingModal}
           user={user}
           onLoginRequest={onLogin}
           autoOpenPackageId={autoOpenPackageId} 
@@ -619,6 +630,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
           onClose={() => setIsFeedbackModalOpen(false)}
           user={user}
         />
+
       </div>
     </div>
   );

@@ -1,4 +1,3 @@
-// src/app/assessment/[trackId]/page.tsx
 'use client';
 
 import React, { use, useEffect, useState } from 'react';
@@ -10,6 +9,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 // IMPORT CUSTOM ICONS
 import { AiSparkIcon, BrainIcon, AdminShieldIcon } from '@/components/icon';
+
+// IMPORT CUSTOM HOOK MOBILE BACK
+import { useMobileBack } from '@/hooks/useMobileBack';
+
 
 // ========================================================
 // KOMPONEN: SKELETON DASHBOARD LOADING INTERAKTIF
@@ -198,7 +201,6 @@ function InteractiveDashboardLoading({ formData, trackName }: { formData: Record
   );
 }
 
-
 // ========================================================
 // MAIN PAGE COMPONENT
 // ========================================================
@@ -210,6 +212,16 @@ export default function AssessmentPage({ params }: { params: Promise<{ trackId: 
   
   // Panggil state global
   const { state, actions } = useCuration();
+
+  // ==========================================
+  // MOBILE BACK HANDLER UNTUK DASHBOARD AI
+  // ==========================================
+  const isDashboardActive = state.viewState === 'dashboard' && !!state.aiResult;
+  useMobileBack(isDashboardActive, () => {
+    actions.restart();
+    router.push('/assessment');
+  });
+
 
   // TENTUKAN TEMPLATE BERDASARKAN SLUG
   const template = state.templates.find((t) => {
@@ -284,7 +296,7 @@ export default function AssessmentPage({ params }: { params: Promise<{ trackId: 
   // ========================================================
   // LAYAR 2: DASHBOARD HASIL AI (Selesai)
   // ========================================================
-  if (state.viewState === 'dashboard' && state.aiResult) {
+  if (isDashboardActive) {
     return (
       <CurationDashboard 
         trackType={template.trackName}
