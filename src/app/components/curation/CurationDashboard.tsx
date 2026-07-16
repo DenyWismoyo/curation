@@ -37,6 +37,7 @@ export function CurationDashboard({
   
   const [isGeneratingDoc, setIsGeneratingDoc] = useState(false);
 
+  // Logika tetap dipertahankan untuk kemudahan rilis di masa depan
   const filteredDocumentPresets = allowedDocumentTemplates && allowedDocumentTemplates.length > 0 
     ? DocumentPresets.filter(preset => allowedDocumentTemplates.includes(preset.id))
     : DocumentPresets;
@@ -102,7 +103,17 @@ export function CurationDashboard({
             </Button>
             
             <div className="flex w-full sm:w-auto gap-3 flex-col lg:flex-row">
-              {/* TOMBOL AI AUTO-DRAFT WORD (MENGGUNAKAN AiSparkIcon) */}
+              
+              {/* TOMBOL AI AUTO-DRAFT WORD (DINONAKTIFKAN SEMENTARA - TAHAP PENGEMBANGAN) */}
+              <Button 
+                disabled
+                className="gap-2 font-bold rounded-xl h-10 px-4 shadow-inner w-full sm:w-auto text-slate-400 bg-slate-200/60 border border-slate-200 cursor-not-allowed"
+              >
+                <AiSparkIcon size={16} className="grayscale opacity-50" />
+                AI Auto-Draft (Tahap Pengembangan)
+              </Button>
+
+              {/* KODE ASLI DROPDOWN AI AUTO-DRAFT (DISIMPAN UNTUK RILIS NANTI) 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button disabled={isGeneratingDoc} className={`gap-2 font-bold rounded-xl h-10 px-4 shadow-sm w-full sm:w-auto text-white ${canGenerateDocument ? 'bg-blue-600 hover:bg-blue-700' : 'bg-amber-500 hover:bg-amber-600'}`}>
@@ -128,7 +139,6 @@ export function CurationDashboard({
                         className="cursor-pointer font-bold text-slate-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl py-3 px-3 flex items-start gap-3 mt-1"
                       >
                         <div className="mt-0.5 shrink-0 w-6 h-6 rounded-md bg-blue-100 text-blue-600 flex items-center justify-center">
-                          {/* MENGGUNAKAN DocExportIcon */}
                           <DocExportIcon size={16} />
                         </div>
                         <div className="flex flex-col gap-0.5">
@@ -140,6 +150,7 @@ export function CurationDashboard({
                   )}
                 </DropdownMenuContent>
               </DropdownMenu>
+              */}
 
               <PublicExportPDF 
                 assessmentId={assessmentId || ''} 
