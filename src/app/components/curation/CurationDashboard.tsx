@@ -15,7 +15,7 @@ import { getFunctions, httpsCallable } from 'firebase/functions';
 import { app } from '@/lib/firebase';
 
 // IMPORT CUSTOM ICONS
-import { AiSparkIcon, DocExportIcon } from '@/components/icon';
+import { AiSparkIcon, DocExportIcon } from '@/types';
 
 interface Props {
   assessmentId?: string;

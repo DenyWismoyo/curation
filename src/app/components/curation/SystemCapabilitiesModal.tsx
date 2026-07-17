@@ -16,7 +16,7 @@ import {
   GlobalTargetIcon,
   BrainIcon,
   TechCardIcon
-} from '@/components/icon';
+} from '@/types';
 
 interface Props {
   isOpen: boolean;

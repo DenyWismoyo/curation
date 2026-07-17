@@ -21,7 +21,7 @@ import {
   TechCardIcon, 
   BrainIcon, 
   EcosystemIcon 
-} from '@/components/icon';
+} from '@/types';
 
 // ========================================================
 // 1. HELPER COMPONENTS (UPGRADED RICH TEXT PARSER)

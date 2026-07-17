@@ -22,7 +22,7 @@ import {
   AdminShieldIcon,
   DocExportIcon,
   AiSparkIcon
-} from '@/components/icon';
+} from '@/types';
 
 interface DynamicTrackSelectorProps {
   templates: FormTemplate[];

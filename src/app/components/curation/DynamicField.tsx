@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { X, Check } from 'lucide-react';
 
 // IMPORT CUSTOM ICON
-import { DocExportIcon } from '@/components/icon';
+import { DocExportIcon } from '@/types';
 
 const renderMarkdownText = (str: string) => {
   if (typeof str !== 'string') return str;

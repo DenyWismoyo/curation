@@ -8,7 +8,7 @@ import { useCuration } from '@/hooks/useCuration';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // IMPORT CUSTOM ICONS
-import { AiSparkIcon, BrainIcon, AdminShieldIcon } from '@/components/icon';
+import { AiSparkIcon, BrainIcon, AdminShieldIcon } from '@/types';
 
 // IMPORT CUSTOM HOOK MOBILE BACK
 import { useMobileBack } from '@/hooks/useMobileBack';

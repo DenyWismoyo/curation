@@ -7,7 +7,7 @@ import { useCuration } from '@/hooks/useCuration';
 import { DynamicTrackSelector } from '@/app/components/curation/DynamicTrackSelector';
 
 // IMPORT CUSTOM ICON
-import { BrainIcon } from '@/components/icon';
+import { BrainIcon } from '@/types';
 
 export default function AssessmentIndexPage() {
   const router = useRouter();

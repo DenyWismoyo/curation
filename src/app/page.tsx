@@ -12,7 +12,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { CurationHistory } from '@/types/curation';
 
 // IMPORT CUSTOM ICON
-import { BrainIcon } from '@/components/icon';
+import { BrainIcon } from '@/types';
 
 // IMPORT CUSTOM HOOK MOBILE BACK
 import { useMobileBack } from '@/hooks/useMobileBack';

@@ -190,3 +190,15 @@ export interface IconProps extends React.SVGProps<SVGSVGElement> {
   size?: number | string;
   className?: string;
 }
+
+export interface LandingPartner {
+  id: string;
+  name: string;
+  logoUrl: string; // URL gambar logo (bisa dari Firebase Storage atau link eksternal)
+  targetUrl?: string; // Link jika logo diklik
+  category: 'powered_by' | 'mitra_strategis' | 'klien'; // Pengelompokan
+  isActive: boolean; // Toggle tampil/sembunyi
+  order: number; // Urutan tampilan
+  createdAt: string;
+  updatedAt?: string;
+}

@@ -8,7 +8,8 @@ import Link from 'next/link';
 import { 
   LayoutDashboard, Settings, KeyRound, LogOut, Menu, X, ShieldCheck, 
   PanelLeftClose, PanelLeftOpen, 
-  Tags, UserCheck, MessageSquareShare // <-- Icon Baru
+  Tags, UserCheck, MessageSquareShare, // <-- Icon Baru
+  Handshake
 } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -47,6 +48,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: 'Template Form', path: '/admin/templates', icon: Settings },
     { name: 'Harga & Monetisasi', path: '/admin/pricing', icon: Tags },
     { name: 'Ulasan & Feedback', path: '/admin/feedback', icon: MessageSquareShare }, // <-- Menu Baru
+    { name: 'Mitra & Kerjasama', path: '/admin/partners', icon: Handshake }, // <-- Menu Baru Ditambahkan
   ];
 
   return (

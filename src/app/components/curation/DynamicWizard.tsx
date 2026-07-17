@@ -17,7 +17,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 
 // IMPORT CUSTOM ICONS
-import { AiSparkIcon, AdminShieldIcon, DocExportIcon, TechCardIcon } from '@/components/icon';
+import { AiSparkIcon, AdminShieldIcon, DocExportIcon, TechCardIcon } from '@/types';
 
 const renderMarkdownText = (str: string) => {
   if (typeof str !== 'string') return str;

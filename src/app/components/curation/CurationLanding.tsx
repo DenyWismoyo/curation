@@ -1,26 +1,10 @@
+// src/components/curation/CurationLanding.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-
-import { 
-  ArrowRight, History, Clock, 
-  ChevronRight, Loader2, LogOut, LayoutDashboard, Sparkles, ClipboardCheck,
-  MessageSquarePlus, Box
-} from 'lucide-react';
-
-// IMPORT CUSTOM ICON ANDA DI SINI
-import { 
-  EcosystemIcon, 
-  TechCardIcon, 
-  AdminShieldIcon, 
-  DocExportIcon, 
-  BrainIcon 
-} from '@/components/icon';
-
-import { PricingPackages } from '@/app/components/payment/PricingPackages';
-import { SystemCapabilitiesModal } from './SystemCapabilitiesModal';
-import { FeedbackModal } from './FeedbackModal';
+import { ArrowRight, History, Clock, ChevronRight, Loader2, LogOut, LayoutDashboard, Sparkles, ClipboardCheck, MessageSquarePlus, Box, Handshake } from 'lucide-react';
+import { EcosystemIcon, TechCardIcon, AdminShieldIcon, DocExportIcon, BrainIcon, GlobalTargetIcon } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { CurationHistory } from '@/types/curation';
@@ -30,9 +14,30 @@ import { motion, AnimatePresence, Variants } from 'framer-motion';
 import Link from 'next/link';
 import { User } from 'firebase/auth';
 import { toast } from 'sonner';
-
-// IMPORT CUSTOM HOOK
 import { useMobileBack } from '@/hooks/useMobileBack';
+
+// ==========================================
+// IMPLEMENTASI LAZY LOADING (DYNAMIC IMPORT)
+// ==========================================
+import dynamic from 'next/dynamic';
+
+// Komponen modal yang berat di-load secara dinamis.
+// SSR dimatikan (ssr: false) agar tidak membebani render awal di server dan murni dijalankan saat di-klik user.
+const PricingPackages = dynamic(
+  () => import('@/app/components/payment/PricingPackages').then((mod) => mod.PricingPackages),
+  { ssr: false }
+);
+
+const SystemCapabilitiesModal = dynamic(
+  () => import('./SystemCapabilitiesModal').then((mod) => mod.SystemCapabilitiesModal),
+  { ssr: false }
+);
+
+const FeedbackModal = dynamic(
+  () => import('./FeedbackModal').then((mod) => mod.FeedbackModal),
+  { ssr: false }
+);
+// ==========================================
 
 interface Props {
   onStart: () => void;
@@ -56,17 +61,13 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
   const [isValidating, setIsValidating] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
-  // State untuk kontrol Modal & Draft
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
   const [isCapabilitiesModalOpen, setIsCapabilitiesModalOpen] = useState(false);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
   const [autoOpenPackageId, setAutoOpenPackageId] = useState<string | null>(null);
+
   const [drafts, setDrafts] = useState<DraftItem[]>([]);
 
-  // ==========================================
-  // IMPLEMENTASI MOBILE BACK HANDLER (SWIPE)
-  // ==========================================
-  
   const closePricingModal = () => {
     setIsPricingModalOpen(false);
     setAutoOpenPackageId(null);
@@ -81,8 +82,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
   useMobileBack(isCapabilitiesModalOpen, () => setIsCapabilitiesModalOpen(false));
   useMobileBack(isFeedbackModalOpen, () => setIsFeedbackModalOpen(false));
 
-
-  // DETEKSI DRAF DARI LOCAL STORAGE
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
@@ -118,16 +117,13 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
         console.error("Gagal memuat draf lokal:", error);
       }
     };
-
     fetchDrafts();
   }, []);
 
-  // DETEKSI SHARE LINK DARI URL
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
       const buyId = urlParams.get('buy');
-      
       if (buyId) {
         setAutoOpenPackageId(buyId);
         setIsPricingModalOpen(true);
@@ -135,7 +131,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
     }
   }, []);
 
-  // FUNGSI MELANJUTKAN DRAF
   const handleResumeDraft = (draft: DraftItem) => {
     if (!user) {
        toast.error("Otorisasi Diperlukan", { description: "Silakan masuk (login) menggunakan Akun Google Anda terlebih dahulu untuk melanjutkan draf." });
@@ -147,22 +142,20 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
     
     if (!currentToken) {
        const savedToken = localStorage.getItem('omnifit_last_token');
-       
        if (savedToken) {
          currentToken = savedToken;
        } else {
-         currentToken = (!draft.isPaid || draft.price === 0) 
-           ? `FREE-${Math.random().toString(36).substring(2, 8).toUpperCase()}` 
-           : `TRIAL-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+         currentToken = (!draft.isPaid || draft.price === 0)
+             ? `FREE-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
+             : `TRIAL-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
        }
        sessionStorage.setItem('active_token', currentToken);
     }
     
     sessionStorage.setItem('active_allowed_templates', JSON.stringify([draft.templateId]));
-    onStart(); 
+    onStart();
   };
 
-  // FUNGSI MEMULAI ASESMEN VIA TOKEN
   const handleValidateAndStart = async () => {
     setErrorMsg('');
     const cleanToken = tokenInput.trim().toUpperCase();
@@ -171,7 +164,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
       setErrorMsg('Harap masukkan kode token Anda.');
       return;
     }
-
     if (!cleanToken.includes('-')) {
       setErrorMsg('Format token tidak valid. Gunakan format PREFIX-KODE (contoh: KUKM1-XXXXXX)');
       return;
@@ -210,7 +202,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
       sessionStorage.setItem('active_model', batchData.modelType);
       
       const allowedTpls = tokenData.allowedTemplates || batchData.allowedTemplates;
-      
       if (allowedTpls && Array.isArray(allowedTpls) && allowedTpls.length > 0) {
         sessionStorage.setItem('active_allowed_templates', JSON.stringify(allowedTpls));
       } else {
@@ -276,16 +267,8 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
           animate="visible"
           className="flex-1 space-y-8 text-center lg:text-left w-full"
         >
-          {/* IMPLEMENTASI LOGO */}
           <motion.div variants={fadeUpVariants} className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-[1.5rem] shadow-xl shadow-slate-200/50 ring-1 ring-slate-100 mb-2 overflow-hidden">
-            <Image 
-              src="/logo.png" 
-              alt="Omnifit Logo" 
-              width={80} 
-              height={80} 
-              className="w-full h-full object-contain p-2"
-              priority
-            />
+            <Image src="/logo.png" alt="Omnifit Logo" width={80} height={80} className="w-full h-full object-contain p-2" priority />
           </motion.div>
           
           <motion.div variants={fadeUpVariants} className="space-y-6">
@@ -303,13 +286,8 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
             {/* SEKSI ACTION BANNER */}
             <div className="pt-4 flex flex-col gap-4 max-w-sm sm:max-w-md mx-auto lg:mx-0">
               
-              {/* BANNER 1: Apa itu Omnifit? */}
-              <div 
-                onClick={() => setIsCapabilitiesModalOpen(true)}
-                className="group relative cursor-pointer overflow-hidden rounded-[1.25rem] bg-slate-900 p-[2px] transition-all duration-300 hover:shadow-2xl hover:shadow-indigo-500/30 hover:-translate-y-1 w-full"
-              >
+              <div onClick={() => setIsCapabilitiesModalOpen(true)} className="group relative cursor-pointer overflow-hidden rounded-[1.25rem] bg-slate-900 p-[2px] transition-all duration-300 hover:shadow-2xl hover:shadow-indigo-500/30 hover:-translate-y-1 w-full">
                 <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-500 opacity-40 group-hover:opacity-100 transition-opacity duration-500 animate-pulse"></div>
-                
                 <div className="relative flex items-center justify-between gap-4 rounded-xl bg-slate-900 px-5 py-4 transition-all">
                   <div className="flex items-center gap-4">
                     <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-indigo-500/20 text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-colors duration-300">
@@ -326,65 +304,75 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                 </div>
               </div>
 
-              {/* BANNER 2: JELAJAHI KATALOG MODUL */}
-              <div 
-                onClick={() => setIsPricingModalOpen(true)}
-                className="group relative cursor-pointer overflow-hidden rounded-[1.25rem] bg-indigo-600 p-[2px] transition-all duration-300 hover:shadow-[0_0_40px_rgba(79,70,229,0.5)] hover:-translate-y-1 w-full shadow-lg shadow-indigo-600/10"
-              >
+              <div onClick={() => setIsPricingModalOpen(true)} className="group relative cursor-pointer overflow-hidden rounded-[1.25rem] bg-indigo-600 p-[2px] transition-all duration-300 hover:shadow-[0_0_40px_rgba(79,70,229,0.5)] hover:-translate-y-1 w-full shadow-lg shadow-indigo-600/10">
                 <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-pink-500 to-blue-500 opacity-60 group-hover:opacity-100 transition-opacity duration-500 animate-pulse"></div>
                 <div className="absolute -inset-x-20 inset-y-0 bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:animate-[shimmer_2s_infinite] pointer-events-none" />
-
                 <div className="relative flex items-center justify-between gap-5 rounded-xl bg-white px-5 py-4 transition-all group-hover:bg-white/95">
                   <div className="flex items-center gap-4 flex-1 min-w-0">
-                    
-                    {/* KOMPOSISI IKON KAYA */}
                     <div className="relative h-14 w-16 shrink-0 mr-2">
-                      <div className="absolute top-0 right-0 h-10 w-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center rotate-6 group-hover:rotate-12 group-hover:scale-105 transition-all duration-500">
-                        <Box className="w-5 h-5 text-blue-300" />
-                      </div>
-                      
-                      <div className="absolute bottom-0 left-0 h-11 w-11 rounded-xl bg-indigo-600 shadow-lg shadow-indigo-600/30 flex items-center justify-center -rotate-6 group-hover:rotate-0 group-hover:scale-110 transition-all duration-500 z-10">
-                        <TechCardIcon className="w-6 h-6 text-white" />
-                      </div>
-                      
-                      <div className="absolute -top-1 -left-1 h-6 w-6 rounded-full bg-amber-100 border border-amber-200 flex items-center justify-center shadow-sm group-hover:-translate-y-1.5 transition-transform duration-500 delay-75 z-20">
-                        <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                      </div>
+                      <div className="absolute top-0 right-0 h-10 w-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center rotate-6 group-hover:rotate-12 group-hover:scale-105 transition-all duration-500"><Box className="w-5 h-5 text-blue-300" /></div>
+                      <div className="absolute bottom-0 left-0 h-11 w-11 rounded-xl bg-indigo-600 shadow-lg shadow-indigo-600/30 flex items-center justify-center -rotate-6 group-hover:rotate-0 group-hover:scale-110 transition-all duration-500 z-10"><TechCardIcon className="w-6 h-6 text-white" /></div>
+                      <div className="absolute -top-1 -left-1 h-6 w-6 rounded-full bg-amber-100 border border-amber-200 flex items-center justify-center shadow-sm group-hover:-translate-y-1.5 transition-transform duration-500 delay-75 z-20"><Sparkles className="w-3.5 h-3.5 text-amber-500" /></div>
                     </div>
-                    
-                    {/* TIPOGRAFI & BADGE */}
                     <div className="text-left flex-1">
-                      <h4 className="text-base sm:text-[17px] font-black text-slate-900 group-hover:text-indigo-700 transition-colors leading-tight mb-1.5">
-                        Jelajahi Katalog Modul
-                      </h4>
+                      <h4 className="text-base sm:text-[17px] font-black text-slate-900 group-hover:text-indigo-700 transition-colors leading-tight mb-1.5">Jelajahi Katalog Modul</h4>
                       <div className="flex items-center gap-2">
-                        <span className="inline-flex items-center justify-center px-1.5 py-0.5 rounded flex-shrink-0 bg-indigo-50 border border-indigo-100 text-[9px] font-black text-indigo-600 uppercase tracking-widest">
-                          AI Powered
-                        </span>
-                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest line-clamp-1">
-                          Pilih & Mulai
-                        </p>
+                        <span className="inline-flex items-center justify-center px-1.5 py-0.5 rounded flex-shrink-0 bg-indigo-50 border border-indigo-100 text-[9px] font-black text-indigo-600 uppercase tracking-widest">AI Powered</span>
+                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest line-clamp-1">Pilih & Mulai</p>
                       </div>
                     </div>
                   </div>
-                  
-                  {/* TOMBOL ANAK PANAH */}
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-50 text-indigo-500 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300 shadow-sm ring-1 ring-indigo-100 group-hover:ring-indigo-500">
                     <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
               </div>
 
+              {/* SEKSI MITRA */}
+              <Link href="/mitra" className="block w-full">
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="group relative cursor-pointer overflow-hidden rounded-[1.25rem] bg-white border border-slate-200 p-[2px] transition-all duration-500 hover:shadow-[0_8px_30px_rgb(79,70,229,0.12)] hover:border-indigo-300 w-full"
+                >
+                  <motion.div
+                    animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
+                    transition={{ duration: 6, ease: 'linear', repeat: Infinity }}
+                    className="absolute inset-0 bg-[linear-gradient(270deg,rgba(79,70,229,0.08),rgba(236,72,153,0.08),rgba(59,130,246,0.08))] bg-[length:200%_200%] opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  />
+
+                  <div className="relative flex items-center justify-between gap-4 rounded-xl bg-white px-5 py-4 transition-all group-hover:bg-white/95">
+                    <div className="flex items-center gap-4">
+                      <div className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-slate-50 border border-slate-100 group-hover:bg-indigo-50 group-hover:border-indigo-200 transition-colors duration-500">
+                        <GlobalTargetIcon className="h-6 w-6 text-slate-400 group-hover:text-indigo-600 transition-colors duration-500" />
+                        <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-emerald-400 rounded-full border-2 border-white animate-pulse shadow-sm"></div>
+                      </div>
+                      
+                      <div className="text-left">
+                        <h4 className="text-sm font-black text-slate-900 group-hover:text-indigo-700 transition-colors leading-tight mb-0.5">Ekosistem Kemitraan</h4>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest line-clamp-1">Dipercaya Institusi Unggulan</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <div className="hidden sm:flex -space-x-2 mr-1">
+                        <motion.div animate={{ y: [0, -2, 0] }} transition={{ duration: 2.5, repeat: Infinity, delay: 0 }} className="w-7 h-7 rounded-full border-2 border-white bg-indigo-100 flex items-center justify-center text-[8px] font-black text-indigo-600 z-30 shadow-sm">IT</motion.div>
+                        <motion.div animate={{ y: [0, -2, 0] }} transition={{ duration: 2.5, repeat: Infinity, delay: 0.3 }} className="w-7 h-7 rounded-full border-2 border-white bg-emerald-100 flex items-center justify-center text-[8px] font-black text-emerald-600 z-20 shadow-sm">GOV</motion.div>
+                        <motion.div animate={{ y: [0, -2, 0] }} transition={{ duration: 2.5, repeat: Infinity, delay: 0.6 }} className="w-7 h-7 rounded-full border-2 border-white bg-amber-100 flex items-center justify-center text-[8px] font-black text-amber-600 z-10 shadow-sm">EDU</motion.div>
+                      </div>
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-50 text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500 group-hover:-rotate-45 shadow-sm">
+                        <ArrowRight className="h-4 w-4" />
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              </Link>
             </div>
           </motion.div>
 
           {!user ? (
              <motion.div variants={fadeUpVariants} className="w-full max-w-md mx-auto lg:mx-0 space-y-4 pt-4">
-               <Button 
-                 size="lg" 
-                 onClick={onLogin}
-                 className="w-full shadow-md bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:text-indigo-600 h-14 rounded-2xl text-base font-bold transition-all flex items-center justify-center gap-3"
-               >
+               <Button size="lg" onClick={onLogin} className="w-full shadow-md bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:text-indigo-600 h-14 rounded-2xl text-base font-bold transition-all flex items-center justify-center gap-3">
                  <svg className="w-5 h-5" viewBox="0 0 24 24">
                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
@@ -397,7 +385,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
              </motion.div>
           ) : (
             <motion.div variants={fadeUpVariants} className="w-full max-w-md mx-auto lg:mx-0 space-y-4 pt-4">
-              
               <div className="flex items-center justify-between bg-white px-4 py-3 rounded-2xl ring-1 ring-slate-200 shadow-sm">
                 <div className="flex items-center gap-3 overflow-hidden">
                   <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold shrink-0">
@@ -501,19 +488,12 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                 className="w-full bg-white/60 backdrop-blur-3xl border border-white/40 p-6 sm:p-8 rounded-[2rem] shadow-xl shadow-amber-500/5 relative"
               >
                 <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-white/60 pointer-events-none"></div>
-                
                 <div className="flex items-center justify-between mb-6 relative z-10">
                   <h3 className="text-sm font-black text-slate-800 flex items-center gap-2">
                     <DocExportIcon className="h-5 w-5 text-amber-500" /> Draf Belum Selesai
                   </h3>
                 </div>
-                
-                <motion.div 
-                  variants={staggerContainer}
-                  initial="hidden"
-                  animate="visible"
-                  className="max-h-[300px] overflow-y-auto pr-2 custom-scrollbar flex flex-col gap-3 relative z-10"
-                >
+                <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="max-h-[300px] overflow-y-auto pr-2 custom-scrollbar flex flex-col gap-3 relative z-10">
                   {drafts.map((draft, idx) => (
                     <motion.div 
                       variants={historyItemVariants}
@@ -528,11 +508,9 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                           Tersimpan Lokal
                         </span>
                       </div>
-                      
                       <h4 className="font-bold text-slate-900 text-base group-hover:text-amber-600 truncate mb-1 transition-colors">
                         {draft.trackName}
                       </h4>
-                      
                       <p className="text-xs font-bold text-slate-400 group-hover:text-amber-500 flex items-center gap-1.5 transition-colors">
                         Lanjutkan Asesmen <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
                       </p>
@@ -551,7 +529,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                 className="w-full bg-white/60 backdrop-blur-3xl border border-white/40 p-6 sm:p-8 rounded-[2rem] shadow-2xl shadow-slate-200/40 relative"
               >
                 <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-white/60 pointer-events-none"></div>
-                
                 <div className="flex items-center justify-between mb-6 relative z-10">
                   <h3 className="text-sm font-black text-slate-800 flex items-center gap-2">
                     <History className="h-5 w-5 text-indigo-600" /> Riwayat Kurasi Anda
@@ -561,13 +538,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                     <span className="text-[9px] font-black text-emerald-600 uppercase tracking-wider">Live Sync</span>
                   </div>
                 </div>
-                
-                <motion.div 
-                  variants={staggerContainer}
-                  initial="hidden"
-                  animate="visible"
-                  className="max-h-[400px] overflow-y-auto pr-2 custom-scrollbar flex flex-col gap-3 relative z-10"
-                >
+                <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="max-h-[400px] overflow-y-auto pr-2 custom-scrollbar flex flex-col gap-3 relative z-10">
                   {history.map((item, idx) => (
                     <motion.div 
                       variants={historyItemVariants}
@@ -586,11 +557,9 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                           {new Date(item.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                         </span>
                       </div>
-                      
                       <h4 className="font-bold text-slate-900 text-base group-hover:text-indigo-600 truncate mb-3 transition-colors">
                         {item.namaUsaha}
                       </h4>
-                      
                       <div className="flex items-center justify-between pt-3 border-t border-slate-50">
                         <div className="flex items-center gap-1.5">
                           <div className="p-1 bg-emerald-50 rounded-full">
@@ -607,29 +576,36 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                 </motion.div>
               </motion.div>
             )}
-
           </div>
         )}
 
-        <PricingPackages 
-          isOpen={isPricingModalOpen}
-          onClose={closePricingModal}
-          user={user}
-          onLoginRequest={onLogin}
-          autoOpenPackageId={autoOpenPackageId} 
-        />
-
-        <SystemCapabilitiesModal 
-          isOpen={isCapabilitiesModalOpen}
-          onClose={() => setIsCapabilitiesModalOpen(false)}
-        />
+        {/* ========================================== */}
+        {/* MERENDER KOMPONEN MODAL YANG DI-LAZY LOAD */}
+        {/* ========================================== */}
+        {isPricingModalOpen && (
+          <PricingPackages 
+            isOpen={isPricingModalOpen} 
+            onClose={closePricingModal} 
+            user={user}
+            onLoginRequest={onLogin}
+            autoOpenPackageId={autoOpenPackageId} 
+          />
+        )}
         
-        {/* Render Modal Feedback */}
-        <FeedbackModal 
-          isOpen={isFeedbackModalOpen}
-          onClose={() => setIsFeedbackModalOpen(false)}
-          user={user}
-        />
+        {isCapabilitiesModalOpen && (
+          <SystemCapabilitiesModal 
+            isOpen={isCapabilitiesModalOpen}
+            onClose={() => setIsCapabilitiesModalOpen(false)}
+          />
+        )}
+        
+        {isFeedbackModalOpen && (
+          <FeedbackModal 
+            isOpen={isFeedbackModalOpen}
+            onClose={() => setIsFeedbackModalOpen(false)}
+            user={user}
+          />
+        )}
 
       </div>
     </div>

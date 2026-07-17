@@ -9,7 +9,7 @@ import { db } from '@/lib/firebase';
 import { CurationDashboard } from '@/app/components/curation/CurationDashboard'; 
 
 // IMPORT CUSTOM ICONS
-import { BrainIcon, DocExportIcon, EcosystemIcon } from '@/components/icon';
+import { BrainIcon, DocExportIcon, EcosystemIcon } from '@/types';
 
 export default function SharedResultPage() {
   const params = useParams();

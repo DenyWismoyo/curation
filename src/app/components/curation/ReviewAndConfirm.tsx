@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { AlertCircle, CheckCircle2, ArrowLeft, AlertTriangle } from 'lucide-react';
 
 // IMPORT CUSTOM ICONS
-import { DocExportIcon, AdminShieldIcon, AiSparkIcon } from '@/components/icon';
+import { DocExportIcon, AdminShieldIcon, AiSparkIcon } from '@/types';
 
 export interface ReviewAndConfirmProps {
   answers: Record<string, any>;

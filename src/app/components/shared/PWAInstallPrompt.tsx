@@ -8,7 +8,7 @@ import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 // IMPORT CUSTOM ICON
-import { TechCardIcon } from '@/components/icon';
+import { TechCardIcon } from '@/types';
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
