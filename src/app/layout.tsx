@@ -7,8 +7,8 @@ import { Toaster } from 'sonner';
 
 // IMPORT KOMPONEN PWA PROMPT
 import { PWAInstallPrompt } from '@/app/components/shared/PWAInstallPrompt';
-// IMPORT KOMPONEN WIDGET OPENCLAW
-import { OpenClawWidget } from '@/app/components/shared/OpenClawWidget';
+// IMPORT KOMPONEN WIDGET OMNIAI
+import { GlobalFloatingWidget } from '@/app/components/shared/GlobalFloatingWidget';
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -60,14 +60,14 @@ export default function RootLayout({
         `}
       >
         <AuthProvider>
-          {children}
+        {children}
           
           <Toaster position="top-right" richColors />
-          
           <PWAInstallPrompt />
+
           
-          {/* RENDER OPENCLAW CO-PILOT WIDGET */}
-          <OpenClawWidget />
+          {/* WIDGET GABUNGAN AI & FEEDBACK */}
+          <GlobalFloatingWidget />
           
         </AuthProvider>
       </body>

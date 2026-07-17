@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, History, Clock, ChevronRight, Loader2, LogOut, LayoutDashboard, Sparkles, ClipboardCheck, MessageSquarePlus, Box, Handshake } from 'lucide-react';
+import { ArrowRight, History, Clock, ChevronRight, Loader2, LogOut, LayoutDashboard, Sparkles, ClipboardCheck, Box, Handshake } from 'lucide-react';
 import { EcosystemIcon, TechCardIcon, AdminShieldIcon, DocExportIcon, BrainIcon, GlobalTargetIcon } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,11 +24,6 @@ import dynamic from 'next/dynamic';
 
 const SystemCapabilitiesModal = dynamic(
   () => import('./SystemCapabilitiesModal').then((mod) => mod.SystemCapabilitiesModal),
-  { ssr: false }
-);
-
-const FeedbackModal = dynamic(
-  () => import('./FeedbackModal').then((mod) => mod.FeedbackModal),
   { ssr: false }
 );
 // ==========================================
@@ -52,18 +47,14 @@ interface DraftItem {
 
 export function CurationLanding({ onStart, history, onLoadHistory, user, role, onLogin, onLogout }: Props) {
   const router = useRouter();
-  
   const [tokenInput, setTokenInput] = useState('');
   const [isValidating, setIsValidating] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-  
+
   const [isCapabilitiesModalOpen, setIsCapabilitiesModalOpen] = useState(false);
-  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
-  
   const [drafts, setDrafts] = useState<DraftItem[]>([]);
 
   useMobileBack(isCapabilitiesModalOpen, () => setIsCapabilitiesModalOpen(false));
-  useMobileBack(isFeedbackModalOpen, () => setIsFeedbackModalOpen(false));
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -100,6 +91,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
         console.error("Gagal memuat draf lokal:", error);
       }
     };
+
     fetchDrafts();
   }, []);
 
@@ -129,7 +121,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
          currentToken = savedToken;
        } else {
          currentToken = (!draft.isPaid || draft.price === 0) 
-             ? `FREE-${Math.random().toString(36).substring(2, 8).toUpperCase()}` 
+             ? `FREE-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
              : `TRIAL-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
        }
        sessionStorage.setItem('active_token', currentToken);
@@ -193,7 +185,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
       }
 
       onStart();
-
     } catch (error) {
       console.error("Error validating token:", error);
       setErrorMsg('Terjadi kesalahan pada server saat memvalidasi token.');
@@ -220,17 +211,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
   return (
     <div className="w-full min-h-screen flex items-center justify-center bg-[#FAFAFA] py-12 px-6 lg:px-12 relative overflow-hidden">
       
-      {/* FLOATING FEEDBACK BUTTON */}
-      {!isCapabilitiesModalOpen && (
-        <button 
-          onClick={() => setIsFeedbackModalOpen(true)}
-          className="fixed bottom-6 right-6 z-40 bg-white/90 backdrop-blur-md border border-slate-200 shadow-[0_8px_30px_rgb(0,0,0,0.12)] text-slate-600 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 px-4 py-3.5 rounded-full font-bold text-sm flex items-center gap-2.5 transition-all group"
-        >
-          <MessageSquarePlus className="w-5 h-5 group-hover:scale-110 transition-transform" />
-          <span className="hidden sm:block">Beri Ulasan</span>
-        </button>
-      )}
-
       {/* Animated Ornaments */}
       <motion.div 
         animate={{ scale: [1, 1.05, 1], opacity: [0.4, 0.6, 0.4] }}
@@ -456,9 +436,9 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                   </motion.p>
                 )}
               </AnimatePresence>
+
             </motion.div>
           )}
-
         </motion.div>
 
         {/* Kolom Kanan: Draft & History Cards */}
@@ -479,6 +459,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                     <DocExportIcon className="h-5 w-5 text-amber-500" /> Draf Belum Selesai
                   </h3>
                 </div>
+
                 <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="max-h-[300px] overflow-y-auto pr-2 custom-scrollbar flex flex-col gap-3 relative z-10">
                   {drafts.map((draft, idx) => (
                     <motion.div 
@@ -524,6 +505,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                     <span className="text-[9px] font-black text-emerald-600 uppercase tracking-wider">Live Sync</span>
                   </div>
                 </div>
+
                 <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="max-h-[400px] overflow-y-auto pr-2 custom-scrollbar flex flex-col gap-3 relative z-10">
                   {history.map((item, idx) => (
                     <motion.div 
@@ -576,15 +558,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
             isLoggedIn={!!user}
           />
         )}
-        
-        {isFeedbackModalOpen && (
-          <FeedbackModal 
-            isOpen={isFeedbackModalOpen}
-            onClose={() => setIsFeedbackModalOpen(false)}
-            user={user}
-          />
-        )}
-
       </div>
     </div>
   );
