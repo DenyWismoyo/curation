@@ -19,6 +19,7 @@ export { generateFormTemplateFromAI } from "./formBuilderService";
 // 🟢 TAMBAHAN BARU: Export fungsi Xendit
 export { createPaymentInvoice, xenditWebhook } from "./paymentService";
 export { chatWithOmniAi } from "./omniAiService";
+export { generateActionPlanChecklist } from "./actionPlanService";
 
 // ============================================================================
 // INISIALISASI FIREBASE

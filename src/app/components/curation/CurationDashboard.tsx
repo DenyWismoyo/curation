@@ -10,7 +10,8 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { CurationFormData, AIResult } from '@/types/curation';
 import { PublicExportPDF } from './PublicExportPDF';
 import { UniversalAssessmentView } from '@/app/components/shared/UniversalAssessmentView';
-import { DocumentPresets } from '@/data/documentPromptTemplates'; 
+import { DocumentPresets } from '@/data/documentPromptTemplates';
+
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { app } from '@/lib/firebase';
 
@@ -24,7 +25,7 @@ interface Props {
   aiResult: AIResult | any;
   programName?: string;
   documentGenerationQuota?: number;
-  hasPaidForDocument?: boolean;     
+  hasPaidForDocument?: boolean;       
   allowedDocumentTemplates?: string[]; 
   onRestart: () => void;
 }
@@ -34,7 +35,6 @@ export function CurationDashboard({
   documentGenerationQuota = 0, hasPaidForDocument = false, allowedDocumentTemplates, 
   onRestart 
 }: Props) {
-  
   const [isGeneratingDoc, setIsGeneratingDoc] = useState(false);
 
   // Logika tetap dipertahankan untuk kemudahan rilis di masa depan
@@ -49,12 +49,14 @@ export function CurationDashboard({
       alert("Kuota gratis Anda habis. Fitur ini memerlukan pembayaran mandiri untuk diakses kembali.");
       return;
     }
+
     if (!assessmentId) return alert("ID Laporan tidak valid.");
 
     setIsGeneratingDoc(true);
     try {
       const functions = getFunctions(app, 'asia-southeast2');
       const generateDocFn = httpsCallable(functions, 'generateDocumentDraft');
+      
       const response = await generateDocFn({ assessmentId, docTitle, promptTemplate });
       const data = response.data as { htmlContent: string };
       
@@ -66,16 +68,19 @@ export function CurationDashboard({
           h2 { font-size: 14pt; color: #312e81; margin-top: 18pt; margin-bottom: 8pt; }
           h3 { font-size: 12pt; color: #4338ca; font-weight: bold; margin-top: 12pt; }
         </style></head><body>`;
+      
       const postHtml = `</body></html>`;
       const fullHtml = preHtml + data.htmlContent + postHtml;
 
       const blob = new Blob(['\ufeff', fullHtml], { type: 'application/msword' });
       const url = URL.createObjectURL(blob);
+      
       const safeEntityName = (formData?.namaUsaha || 'Entitas').replace(/[^a-z0-9]/gi, '_').toLowerCase();
       
       const link = document.createElement('a');
       link.href = url;
       link.download = `Draft_${docTitle.replace(/[^a-z0-9]/gi, '_').substring(0, 20)}_${safeEntityName}.doc`;
+      
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -92,6 +97,7 @@ export function CurationDashboard({
     <div className="min-h-screen bg-slate-50 py-8 px-4 sm:py-12 sm:px-6 lg:px-12 animate-in fade-in duration-700">
       <UniversalAssessmentView
         mode="dashboard"
+        assessmentId={assessmentId} // KUNCI PERBAIKAN: Melemparkan ID ke Universal View
         trackType={trackType}
         programName={programName}
         formData={formData}

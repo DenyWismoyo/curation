@@ -3,7 +3,7 @@
 export type ViewState = 'landing' | 'track-select' | 'wizard' | 'processing' | 'dashboard';
 
 export interface CurationFormData {
-  [key: string]: any; 
+  [key: string]: any;
 }
 
 export interface DynamicMetric {
@@ -24,6 +24,15 @@ export interface CustomAnalysisBlock {
     label: string;
     value: string;
   }[];
+}
+
+// 1. TAMBAHAN BARU: Interface untuk Action Plan Checklist
+export interface ActionItem {
+  id: string;
+  task: string;
+  description: string;
+  timeframe: string;
+  isCompleted: boolean;
 }
 
 export interface AIResult {
@@ -57,6 +66,9 @@ export interface AIResult {
   }[];
   formPurpose?: FormDomainPurpose;
   customUiLabels?: CustomUiLabels;
+  
+  // 2. TAMBAHAN BARU: Field untuk menyimpan hasil generate Action Plan
+  customActionPlan?: ActionItem[]; 
 }
 
 export interface CurationHistory {
@@ -109,28 +121,24 @@ export interface AiPromptConfig {
   aiPersona?: string;
   reportTone?: 'investigative' | 'consultative' | 'academic';
   gradingStrictness?: 'supportive' | 'standard' | 'strict';
-  
   assessmentGoal?: string;
   mediaAnalysisFocus?: 'pitch-delivery' | 'ui-ux-design' | 'product-demo';
   riskFramework?: string;
-
-  // FITUR BARU: Variabel kontrol skala/volume output AI
+  
   targetMetricCount?: number;
   targetBlockCount?: number;
   targetTierCount?: number;
   targetRecommendationCount?: number;
-
+  
   customReadinessTiers?: string[];
   expectedMetrics: string[];
   expectedAnalysisBlocks?: string[]; 
   expectedRecommendations: string[];
-
   customSystemPrompt?: string; 
   negativePrompts?: string;    
   formatInstructions?: string; 
   customScoringRubric?: string; 
   researchSourcesCited?: string[];
-  
   formPurpose?: FormDomainPurpose; 
   customUiLabels?: CustomUiLabels;
 }
@@ -143,15 +151,15 @@ export interface FormTemplate {
   isActive: boolean;      
   version: number;
   lastUpdated: string;
-  isDisplayedOnLanding?: boolean; // Tampil/Sembunyi di Landing Page B2C
-  isPaid?: boolean;               // Toggle Berbayar / Gratis
-  trialQuota?: number;            // Input kuota trial (0 = Tanpa Trial)
-  price?: number;                 // Harga (Rp)
-  discountPercentage?: number;    // Persentase Diskon (0 - 100)
-  discountExpiry?: string;        // Batas waktu promo diskon (Format ISO String)
-  isBestSeller?: boolean;         // Toggle "Best Seller / Terpopuler"
-  userCount?: number;             // Dummy jumlah pengguna (Social Proof)
-  customUSPs?: string[];          // Keunggulan tambahan khusus modul ini
+  isDisplayedOnLanding?: boolean; 
+  isPaid?: boolean;               
+  trialQuota?: number;            
+  price?: number;                 
+  discountPercentage?: number;    
+  discountExpiry?: string;        
+  isBestSeller?: boolean;         
+  userCount?: number;             
+  customUSPs?: string[];          
   category?: string;
   steps: FormStep[]; 
   aiPromptConfig?: AiPromptConfig;
@@ -175,15 +183,14 @@ export interface UniversalPDFProps {
   curatorNotes?: string | null;
   corporateEntity?: string;
   timestamp: string;
-  watermarkText?: string; 
+  watermarkText?: string;
 }
 
 export interface AssessmentData { 
   documentGenerationQuota?: number;
   hasPaidForDocument?: boolean;
-  allowedDocumentTemplates?: string[]; 
+  allowedDocumentTemplates?: string[];
 }
-
 
 import React from 'react';
 export interface IconProps extends React.SVGProps<SVGSVGElement> {
@@ -194,14 +201,14 @@ export interface IconProps extends React.SVGProps<SVGSVGElement> {
 export interface LandingPartner {
   id: string;
   name: string;
-  logoUrl: string; // URL gambar logo atau foto ahli
-  storagePath?: string; // Path asli di Firebase Storage untuk keperluan hapus file
-  targetUrl?: string; // Link tujuan jika diklik
+  logoUrl: string; 
+  storagePath?: string; 
+  targetUrl?: string; 
   category: 'powered_by' | 'mitra_strategis' | 'klien' | 'testimoni_ahli';
-  role?: string; // Khusus Testimoni Ahli (Jabatan/Gelar)
-  message?: string; // Khusus Testimoni Ahli (Isi Testimoni)
-  isActive: boolean; // Toggle tampil/sembunyi
-  order: number; // Urutan tampilan
+  role?: string; 
+  message?: string; 
+  isActive: boolean; 
+  order: number; 
   createdAt: string;
-  updatedAt?: string; // <-- Di sinilah tempat penambahan tipe datanya
+  updatedAt?: string; 
 }
