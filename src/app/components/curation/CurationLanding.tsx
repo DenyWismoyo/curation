@@ -1,8 +1,9 @@
-// src/components/curation/CurationLanding.tsx
+// src/app/components/curation/CurationLanding.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { ArrowRight, History, Clock, ChevronRight, Loader2, LogOut, LayoutDashboard, Sparkles, ClipboardCheck, MessageSquarePlus, Box, Handshake } from 'lucide-react';
 import { EcosystemIcon, TechCardIcon, AdminShieldIcon, DocExportIcon, BrainIcon, GlobalTargetIcon } from '@/types';
 import { Button } from '@/components/ui/button';
@@ -20,13 +21,6 @@ import { useMobileBack } from '@/hooks/useMobileBack';
 // IMPLEMENTASI LAZY LOADING (DYNAMIC IMPORT)
 // ==========================================
 import dynamic from 'next/dynamic';
-
-// Komponen modal yang berat di-load secara dinamis.
-// SSR dimatikan (ssr: false) agar tidak membebani render awal di server dan murni dijalankan saat di-klik user.
-const PricingPackages = dynamic(
-  () => import('@/app/components/payment/PricingPackages').then((mod) => mod.PricingPackages),
-  { ssr: false }
-);
 
 const SystemCapabilitiesModal = dynamic(
   () => import('./SystemCapabilitiesModal').then((mod) => mod.SystemCapabilitiesModal),
@@ -57,28 +51,17 @@ interface DraftItem {
 }
 
 export function CurationLanding({ onStart, history, onLoadHistory, user, role, onLogin, onLogout }: Props) {
+  const router = useRouter();
+  
   const [tokenInput, setTokenInput] = useState('');
   const [isValidating, setIsValidating] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-
-  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
+  
   const [isCapabilitiesModalOpen, setIsCapabilitiesModalOpen] = useState(false);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
-  const [autoOpenPackageId, setAutoOpenPackageId] = useState<string | null>(null);
-
+  
   const [drafts, setDrafts] = useState<DraftItem[]>([]);
 
-  const closePricingModal = () => {
-    setIsPricingModalOpen(false);
-    setAutoOpenPackageId(null);
-    if (typeof window !== 'undefined') {
-      const url = new URL(window.location.href);
-      url.searchParams.delete('buy');
-      window.history.replaceState({}, '', url.toString());
-    }
-  };
-
-  useMobileBack(isPricingModalOpen, closePricingModal);
   useMobileBack(isCapabilitiesModalOpen, () => setIsCapabilitiesModalOpen(false));
   useMobileBack(isFeedbackModalOpen, () => setIsFeedbackModalOpen(false));
 
@@ -120,16 +103,16 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
     fetchDrafts();
   }, []);
 
+  // Redirect link pembagian lama ke halaman katalog baru
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
       const buyId = urlParams.get('buy');
       if (buyId) {
-        setAutoOpenPackageId(buyId);
-        setIsPricingModalOpen(true);
+        router.push(`/katalog?buy=${buyId}`);
       }
     }
-  }, []);
+  }, [router]);
 
   const handleResumeDraft = (draft: DraftItem) => {
     if (!user) {
@@ -145,8 +128,8 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
        if (savedToken) {
          currentToken = savedToken;
        } else {
-         currentToken = (!draft.isPaid || draft.price === 0)
-             ? `FREE-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
+         currentToken = (!draft.isPaid || draft.price === 0) 
+             ? `FREE-${Math.random().toString(36).substring(2, 8).toUpperCase()}` 
              : `TRIAL-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
        }
        sessionStorage.setItem('active_token', currentToken);
@@ -164,6 +147,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
       setErrorMsg('Harap masukkan kode token Anda.');
       return;
     }
+
     if (!cleanToken.includes('-')) {
       setErrorMsg('Format token tidak valid. Gunakan format PREFIX-KODE (contoh: KUKM1-XXXXXX)');
       return;
@@ -209,6 +193,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
       }
 
       onStart();
+
     } catch (error) {
       console.error("Error validating token:", error);
       setErrorMsg('Terjadi kesalahan pada server saat memvalidasi token.');
@@ -236,7 +221,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
     <div className="w-full min-h-screen flex items-center justify-center bg-[#FAFAFA] py-12 px-6 lg:px-12 relative overflow-hidden">
       
       {/* FLOATING FEEDBACK BUTTON */}
-      {!isPricingModalOpen && !isCapabilitiesModalOpen && (
+      {!isCapabilitiesModalOpen && (
         <button 
           onClick={() => setIsFeedbackModalOpen(true)}
           className="fixed bottom-6 right-6 z-40 bg-white/90 backdrop-blur-md border border-slate-200 shadow-[0_8px_30px_rgb(0,0,0,0.12)] text-slate-600 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 px-4 py-3.5 rounded-full font-bold text-sm flex items-center gap-2.5 transition-all group"
@@ -280,7 +265,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
             </h1>
             
             <p className="text-base sm:text-lg text-slate-500 max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed text-balance">
-              Platform analitik berbasis kecerdasan buatan untuk mendiagnosa akar masalah, memetakan potensi tersembunyi, dan merumuskan cetak biru solusi yang presisi dirancang adaptif untuk pengembangan personal, konseling, hingga akselerasi ekosistem bisnis.
+              Platform analitik berbasis kecerdasan buatan untuk mendiagnosa akar masalah, memetakan potensi tersembunyi, dan merumuskan cetak biru solusi yang presisi — dirancang adaptif untuk pengembangan personal, konseling, hingga akselerasi ekosistem bisnis.
             </p>
 
             {/* SEKSI ACTION BANNER */}
@@ -304,43 +289,44 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                 </div>
               </div>
 
-              <div onClick={() => setIsPricingModalOpen(true)} className="group relative cursor-pointer overflow-hidden rounded-[1.25rem] bg-indigo-600 p-[2px] transition-all duration-300 hover:shadow-[0_0_40px_rgba(79,70,229,0.5)] hover:-translate-y-1 w-full shadow-lg shadow-indigo-600/10">
-                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-pink-500 to-blue-500 opacity-60 group-hover:opacity-100 transition-opacity duration-500 animate-pulse"></div>
-                <div className="absolute -inset-x-20 inset-y-0 bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:animate-[shimmer_2s_infinite] pointer-events-none" />
-                <div className="relative flex items-center justify-between gap-5 rounded-xl bg-white px-5 py-4 transition-all group-hover:bg-white/95">
-                  <div className="flex items-center gap-4 flex-1 min-w-0">
-                    <div className="relative h-14 w-16 shrink-0 mr-2">
-                      <div className="absolute top-0 right-0 h-10 w-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center rotate-6 group-hover:rotate-12 group-hover:scale-105 transition-all duration-500"><Box className="w-5 h-5 text-blue-300" /></div>
-                      <div className="absolute bottom-0 left-0 h-11 w-11 rounded-xl bg-indigo-600 shadow-lg shadow-indigo-600/30 flex items-center justify-center -rotate-6 group-hover:rotate-0 group-hover:scale-110 transition-all duration-500 z-10"><TechCardIcon className="w-6 h-6 text-white" /></div>
-                      <div className="absolute -top-1 -left-1 h-6 w-6 rounded-full bg-amber-100 border border-amber-200 flex items-center justify-center shadow-sm group-hover:-translate-y-1.5 transition-transform duration-500 delay-75 z-20"><Sparkles className="w-3.5 h-3.5 text-amber-500" /></div>
-                    </div>
-                    <div className="text-left flex-1">
-                      <h4 className="text-base sm:text-[17px] font-black text-slate-900 group-hover:text-indigo-700 transition-colors leading-tight mb-1.5">Jelajahi Katalog Modul</h4>
-                      <div className="flex items-center gap-2">
-                        <span className="inline-flex items-center justify-center px-1.5 py-0.5 rounded flex-shrink-0 bg-indigo-50 border border-indigo-100 text-[9px] font-black text-indigo-600 uppercase tracking-widest">AI Powered</span>
-                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest line-clamp-1">Pilih & Mulai</p>
+              <Link href="/katalog" className="block w-full">
+                <div className="group relative cursor-pointer overflow-hidden rounded-[1.25rem] bg-indigo-600 p-[2px] transition-all duration-300 hover:shadow-[0_0_40px_rgba(79,70,229,0.5)] hover:-translate-y-1 w-full shadow-lg shadow-indigo-600/10">
+                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-pink-500 to-blue-500 opacity-60 group-hover:opacity-100 transition-opacity duration-500 animate-pulse"></div>
+                  <div className="absolute -inset-x-20 inset-y-0 bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:animate-[shimmer_2s_infinite] pointer-events-none" />
+                  <div className="relative flex items-center justify-between gap-5 rounded-xl bg-white px-5 py-4 transition-all group-hover:bg-white/95">
+                    <div className="flex items-center gap-4 flex-1 min-w-0">
+                      <div className="relative h-14 w-16 shrink-0 mr-2">
+                        <div className="absolute top-0 right-0 h-10 w-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center rotate-6 group-hover:rotate-12 group-hover:scale-105 transition-all duration-500"><Box className="w-5 h-5 text-blue-300" /></div>
+                        <div className="absolute bottom-0 left-0 h-11 w-11 rounded-xl bg-indigo-600 shadow-lg shadow-indigo-600/30 flex items-center justify-center -rotate-6 group-hover:rotate-0 group-hover:scale-110 transition-all duration-500 z-10"><TechCardIcon className="w-6 h-6 text-white" /></div>
+                        <div className="absolute -top-1 -left-1 h-6 w-6 rounded-full bg-amber-100 border border-amber-200 flex items-center justify-center shadow-sm group-hover:-translate-y-1.5 transition-transform duration-500 delay-75 z-20"><Sparkles className="w-3.5 h-3.5 text-amber-500" /></div>
+                      </div>
+                      <div className="text-left flex-1">
+                        <h4 className="text-base sm:text-[17px] font-black text-slate-900 group-hover:text-indigo-700 transition-colors leading-tight mb-1.5">Jelajahi Katalog Modul</h4>
+                        <div className="flex items-center gap-2">
+                          <span className="inline-flex items-center justify-center px-1.5 py-0.5 rounded flex-shrink-0 bg-indigo-50 border border-indigo-100 text-[9px] font-black text-indigo-600 uppercase tracking-widest">AI Powered</span>
+                          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest line-clamp-1">Pilih & Mulai</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-50 text-indigo-500 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300 shadow-sm ring-1 ring-indigo-100 group-hover:ring-indigo-500">
-                    <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-50 text-indigo-500 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300 shadow-sm ring-1 ring-indigo-100 group-hover:ring-indigo-500">
+                      <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                    </div>
                   </div>
                 </div>
-              </div>
+              </Link>
 
               {/* SEKSI MITRA */}
               <Link href="/mitra" className="block w-full">
-                <motion.div
+                <motion.div 
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   className="group relative cursor-pointer overflow-hidden rounded-[1.25rem] bg-white border border-slate-200 p-[2px] transition-all duration-500 hover:shadow-[0_8px_30px_rgb(79,70,229,0.12)] hover:border-indigo-300 w-full"
                 >
-                  <motion.div
+                  <motion.div 
                     animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
                     transition={{ duration: 6, ease: 'linear', repeat: Infinity }}
                     className="absolute inset-0 bg-[linear-gradient(270deg,rgba(79,70,229,0.08),rgba(236,72,153,0.08),rgba(59,130,246,0.08))] bg-[length:200%_200%] opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                   />
-
                   <div className="relative flex items-center justify-between gap-4 rounded-xl bg-white px-5 py-4 transition-all group-hover:bg-white/95">
                     <div className="flex items-center gap-4">
                       <div className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-slate-50 border border-slate-100 group-hover:bg-indigo-50 group-hover:border-indigo-200 transition-colors duration-500">
@@ -353,7 +339,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest line-clamp-1">Dipercaya Institusi Unggulan</p>
                       </div>
                     </div>
-
                     <div className="flex items-center gap-3">
                       <div className="hidden sm:flex -space-x-2 mr-1">
                         <motion.div animate={{ y: [0, -2, 0] }} transition={{ duration: 2.5, repeat: Infinity, delay: 0 }} className="w-7 h-7 rounded-full border-2 border-white bg-indigo-100 flex items-center justify-center text-[8px] font-black text-indigo-600 z-30 shadow-sm">IT</motion.div>
@@ -473,6 +458,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
               </AnimatePresence>
             </motion.div>
           )}
+
         </motion.div>
 
         {/* Kolom Kanan: Draft & History Cards */}
@@ -582,20 +568,12 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
         {/* ========================================== */}
         {/* MERENDER KOMPONEN MODAL YANG DI-LAZY LOAD */}
         {/* ========================================== */}
-        {isPricingModalOpen && (
-          <PricingPackages 
-            isOpen={isPricingModalOpen} 
-            onClose={closePricingModal} 
-            user={user}
-            onLoginRequest={onLogin}
-            autoOpenPackageId={autoOpenPackageId} 
-          />
-        )}
         
         {isCapabilitiesModalOpen && (
           <SystemCapabilitiesModal 
             isOpen={isCapabilitiesModalOpen}
             onClose={() => setIsCapabilitiesModalOpen(false)}
+            isLoggedIn={!!user}
           />
         )}
         

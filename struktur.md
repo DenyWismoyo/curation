@@ -1,41 +1,85 @@
-curation/ (Root Directory)
 ├── functions
-│   ├── src
-│   │   ├── promt
-│   │   │   ├── aiConfigPrompt.ts
-│   │   │   ├── formBuilderPrompt.ts
-│   │   │   └── promptTemplate.ts
-│   │   ├── templates
-│   │   │   └── UniversalPDFDocument.tsx
-│   │   ├── documentGenerator.ts
-│   │   ├── emailService.ts
-│   │   ├── formBuilderService.ts
-│   │   ├── index.ts
-│   │   ├── pdfGenerator.ts
-│   │   └── vectorService.ts
-│   ├── .eslintrc.js
-│   ├── .gitignore
-│   ├── package-lock.json
-│   ├── package.json
-│   ├── tsconfig.dev.json
-│   └── tsconfig.json
+│   └── src
+│       ├── promt
+│       │   ├── aiConfigPrompt.ts
+│       │   ├── formBuilderPrompt.ts
+│       │   └── promptTemplate.ts
+│       ├── templates
+│       │   └── UniversalPDFDocument.tsx
+│       ├── documentGenerator.ts
+│       ├── emailService.ts
+│       ├── formBuilderService.ts
+│       ├── index.ts
+│       ├── paymentService.ts
+│       ├── pdfGenerator.ts
+│       └── vectorService.ts
+├── public
+│   ├── docs
+│   │   ├── assessor.md
+│   │   ├── curator.md
+│   │   ├── dashboard.md
+│   │   ├── katalog.md
+│   │   ├── landing.md
+│   │   └── mitra.md
+│   ├── fonts
+│   │   ├── Inter-Black.ttf
+│   │   ├── Inter-Bold.ttf
+│   │   ├── Inter-ExtraBold.ttf
+│   │   ├── Inter-ExtraLight.ttf
+│   │   ├── Inter-Italic.ttf
+│   │   ├── Inter-Light.ttf
+│   │   ├── Inter-Medium.ttf
+│   │   ├── Inter-Regular.ttf
+│   │   ├── Inter-SemiBold.ttf
+│   │   └── Inter-Thin.ttf
+│   ├── file.svg
+│   ├── globe.svg
+│   ├── icon-192x192.png
+│   ├── icon-512x512.png
+│   ├── logo.png
+│   ├── next.svg
+│   ├── vercel.svg
+│   └── window.svg
 └── src
     ├── app
-    │   ├── admin
+    │   ├── (public)
     │   │   ├── assessment
+    │   │   │   ├── [trackId]
+    │   │   │   │   └── page.tsx
+    │   │   │   └── page.tsx
+    │   │   ├── dashboard
+    │   │   │   └── page.tsx
+    │   │   ├── katalog
+    │   │   │   └── page.tsx
+    │   │   ├── mitra
+    │   │   │   └── page.tsx
+    │   │   ├── result
     │   │   │   └── [id]
     │   │   │       └── page.tsx
+    │   │   └── page.tsx
+    │   ├── admin
+    │   │   ├── assessors
+    │   │   │   └── page.tsx
+    │   │   ├── feedback
+    │   │   │   └── page.tsx
+    │   │   ├── manage-assessment
+    │   │   │   └── [id]
+    │   │   │       └── page.tsx
+    │   │   ├── partners
+    │   │   │   └── page.tsx
+    │   │   ├── pricing
+    │   │   │   └── page.tsx
     │   │   ├── templates
     │   │   │   └── page.tsx
     │   │   ├── tokens
     │   │   │   └── page.tsx
-    │   │   ├── pricing
-    │   │   │   └── page.tsx
     │   │   ├── layout.tsx
     │   │   └── page.tsx
-    │   ├── assessment
-    │   │   ├── [trackId]
-    │   │   │   └── page.tsx
+    │   ├── api
+    │   │   └── openclaw
+    │   │       └── route.ts
+    │   ├── assessor
+    │   │   ├── layout.tsx
     │   │   └── page.tsx
     │   ├── components
     │   │   ├── admin
@@ -49,21 +93,29 @@ curation/ (Root Directory)
     │   │   │   ├── AdminTemplatePreview.tsx
     │   │   │   ├── AdminTokenExportPDF.tsx
     │   │   │   └── TemplateExportPDFButton.tsx
+    │   │   ├── assessor
+    │   │   │   ├── AssessorManualEditor.tsx
+    │   │   │   ├── AssessorTemplateBuilder.tsx
+    │   │   │   └── AssessorTemplatePreview.tsx
     │   │   ├── curation
     │   │   │   ├── CurationDashboard.tsx
     │   │   │   ├── CurationLanding.tsx
     │   │   │   ├── DynamicField.tsx
     │   │   │   ├── DynamicTrackSelector.tsx
     │   │   │   ├── DynamicWizard.tsx
+    │   │   │   ├── FeedbackModal.tsx
     │   │   │   ├── PublicExportPDF.tsx
-    │   │   │   └── ReviewAndConfirm.tsx
-    │   │   ├── payment
-    │   │   │   └── PricingPackages.tsx
+    │   │   │   ├── ReviewAndConfirm.tsx
+    │   │   │   └── SystemCapabilitiesModal.tsx
     │   │   ├── curator
     │   │   │   ├── CuratorAssessmentDetail.tsx
     │   │   │   └── PDFReportTemplate.tsx
+    │   │   ├── payment
+    │   │   │   └── PricingPackages.tsx
     │   │   └── shared
     │   │       ├── AIPromptBlueprintPDF.tsx
+    │   │       ├── OpenClawWidget.tsx
+    │   │       ├── PWAInstallPrompt.tsx
     │   │       ├── TemplateQuestionsPDF.tsx
     │   │       ├── UniversalAssessmentView.tsx
     │   │       └── UniversalPDFDocument.tsx
@@ -74,14 +126,33 @@ curation/ (Root Directory)
     │   │   ├── dashboard
     │   │   │   └── page.tsx
     │   │   └── page.tsx
-    │   ├── result
-    │   │   └── [id]
-    │   │       └── page.tsx
     │   ├── favicon.ico
     │   ├── globals.css
     │   ├── layout.tsx
-    │   └── page.tsx
+    │   └── manifest.ts
     ├── components
+    │   ├── icon
+    │   │   ├── AbstractHexaIcon.tsx
+    │   │   ├── AdminShieldIcon.tsx
+    │   │   ├── AILensIcon.tsx
+    │   │   ├── AiSparkIcon.tsx
+    │   │   ├── AppModuleIcons.tsx
+    │   │   ├── BadgeIcons.tsx
+    │   │   ├── BioCrescentIcon.tsx
+    │   │   ├── BrainIcon.tsx
+    │   │   ├── DigitalSwanIcon.tsx
+    │   │   ├── DividerIcons.tsx
+    │   │   ├── DocExportIcon.tsx
+    │   │   ├── EcoBirdIcon.tsx
+    │   │   ├── EcosystemIcon.tsx
+    │   │   ├── FlowingWavesIcon.tsx
+    │   │   ├── GlobalTargetIcon.tsx
+    │   │   ├── HexagonIcons.tsx
+    │   │   ├── InfinityWorkflowIcon.tsx
+    │   │   ├── SoaringLeafIcon.tsx
+    │   │   ├── TechCardIcon.tsx
+    │   │   ├── TenantHierarchyIcon.tsx
+    │   │   └── WaveSplashIcon.tsx
     │   └── ui
     │       ├── button.tsx
     │       ├── card.tsx
@@ -103,6 +174,7 @@ curation/ (Root Directory)
     │   └── templateform.tsx
     ├── hooks
     │   ├── useCuration.ts
+    │   ├── useMobileBack.ts
     │   └── usePDFExport.ts
     ├── lib
     │   ├── firebase-admin.ts
@@ -111,4 +183,5 @@ curation/ (Root Directory)
     ├── services
     │   └── ai.service.ts
     └── types
-        └── curation.ts
+        ├── curation.ts
+        └── index.ts

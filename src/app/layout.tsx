@@ -7,6 +7,8 @@ import { Toaster } from 'sonner';
 
 // IMPORT KOMPONEN PWA PROMPT
 import { PWAInstallPrompt } from '@/app/components/shared/PWAInstallPrompt';
+// IMPORT KOMPONEN WIDGET OPENCLAW
+import { OpenClawWidget } from '@/app/components/shared/OpenClawWidget';
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -20,7 +22,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
-  userScalable: false, // Mencegah zoom tidak disengaja di mobile
+  userScalable: false, 
 };
 
 // METADATA DENGAN TAMBAHAN MANIFEST PWA
@@ -60,13 +62,12 @@ export default function RootLayout({
         <AuthProvider>
           {children}
           
-          {/* RENDER TOASTER GLOBAL DI SINI */}
-          {/* richColors: membuat toast success berwarna hijau, error merah, dll */}
-          {/* position: posisi munculnya toast (bisa diganti top-center, bottom-right, dll) */}
           <Toaster position="top-right" richColors />
           
-          {/* RENDER POP-UP INSTALASI PWA */}
           <PWAInstallPrompt />
+          
+          {/* RENDER OPENCLAW CO-PILOT WIDGET */}
+          <OpenClawWidget />
           
         </AuthProvider>
       </body>

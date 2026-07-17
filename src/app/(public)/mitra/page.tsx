@@ -18,28 +18,22 @@ import {
   FlowingWavesIcon,
   BrainIcon,
   AILensIcon,
-  AppModuleTealIcon // Menggunakan icon yang sama dengan shared component
+  AppModuleTealIcon
 } from '@/types';
 
-// IMPORT KEBUTUHAN UNTUK PAYMENT/MODUL
+// IMPORT KEBUTUHAN AUTH
 import { useAuth } from '@/contexts/AuthContext';
-import { PricingPackages } from '@/app/components/payment/PricingPackages';
 
 export default function EkosistemMitraPage() {
   const router = useRouter();
-  
-  // STATE UNTUK AUTH & PRICING MODAL
+
+  // STATE UNTUK AUTH
   const { user, loginWithGoogle } = useAuth();
-  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
 
   // STATE UNTUK DATA KONTEN MITRA
   const [partners, setPartners] = useState<any[]>([]);
   const [testimonials, setTestimonials] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const closePricingModal = () => {
-    setIsPricingModalOpen(false);
-  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -64,7 +58,6 @@ export default function EkosistemMitraPage() {
         setLoading(false);
       }
     };
-
     fetchData();
   }, []);
 
@@ -85,17 +78,14 @@ export default function EkosistemMitraPage() {
     hidden: { opacity: 0, y: 40 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
   };
-
   const staggerContainer: Variants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
   };
-
   const itemVariant: Variants = {
     hidden: { opacity: 0, scale: 0.95, y: 20 },
     visible: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
   };
-
   const flipVariant: Variants = {
     hidden: { opacity: 0, rotateY: -90, scale: 0.9 },
     visible: { 
@@ -109,9 +99,9 @@ export default function EkosistemMitraPage() {
   // Komponen Helper untuk Grid Logo
   const renderLogoGrid = (data: any[], isFeatured = false) => (
     <motion.div 
-      variants={staggerContainer} 
-      initial="hidden" 
-      whileInView="visible" 
+      variants={staggerContainer}
+      initial="hidden"
+      whileInView="visible"
       viewport={{ once: true, margin: "-50px" }}
       className={`grid gap-4 sm:gap-6 ${isFeatured ? 'grid-cols-2 md:grid-cols-3' : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5'}`}
     >
@@ -135,10 +125,8 @@ export default function EkosistemMitraPage() {
   // Komponen Helper untuk Kartu Testimoni Pakar
   const ExpertCard = ({ expert }: { expert: any }) => (
     <div className="w-full flex-col h-full relative overflow-hidden bg-white rounded-[2rem] border border-slate-100/60 shadow-[0_4px_20px_rgb(0,0,0,0.02)] hover:shadow-[0_8px_30px_rgb(79,70,229,0.08)] transition-all duration-500 group flex">
-      {/* Background Gradient Super Halus */}
       <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-indigo-50/40 pointer-events-none transition-opacity duration-500 group-hover:opacity-100 opacity-50"></div>
       
-      {/* Watermark Logo dengan CSS Masking */}
       <div 
         className="absolute -bottom-10 -right-10 w-56 h-56 opacity-10 group-hover:opacity-25 group-hover:scale-110 transition-all duration-700 pointer-events-none"
         style={{ 
@@ -148,7 +136,7 @@ export default function EkosistemMitraPage() {
       >
         <BrainIcon size={224} className="w-full h-full grayscale group-hover:grayscale-0 transition-all duration-700" />
       </div>
-
+      
       <div className="p-6 sm:p-8 flex flex-col h-full relative z-10">
         <Quote className="w-8 h-8 text-indigo-100 mb-5 group-hover:text-indigo-400 transition-colors duration-500" />
         <p className="text-slate-700 font-medium leading-relaxed text-sm sm:text-base italic flex-1 mb-8">
@@ -172,16 +160,16 @@ export default function EkosistemMitraPage() {
       
       {/* TOMBOL KEMBALI FLOATING (KIRI ATAS) */}
       <button 
-        onClick={() => router.push('/')} 
+        onClick={() => router.push('/')}
         className="fixed top-6 left-4 sm:left-6 z-50 flex items-center justify-center w-12 h-12 bg-white/70 backdrop-blur-xl border border-white/50 rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:bg-white hover:scale-105 transition-all group"
         title="Kembali ke Beranda"
       >
         <ChevronLeft size={20} className="text-slate-500 group-hover:text-indigo-600 group-hover:-translate-x-0.5 transition-transform" />
       </button>
 
-      {/* FLOATING BUTTON MODUL (KANAN BAWAH) */}
+      {/* FLOATING BUTTON MODUL (KANAN BAWAH) -> KE ROUTE KATALOG */}
       <motion.button 
-        onClick={() => setIsPricingModalOpen(true)}
+        onClick={() => router.push('/katalog')}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-50 flex items-center justify-center w-14 h-14 bg-indigo-600/90 backdrop-blur-xl border border-indigo-500/50 rounded-full shadow-[0_8px_30px_rgb(79,70,229,0.3)] hover:bg-indigo-500 transition-all group"
@@ -194,7 +182,7 @@ export default function EkosistemMitraPage() {
         
         {/* HERO SECTION */}
         <motion.section 
-          initial="hidden" animate="visible" variants={fadeUp} 
+          initial="hidden" animate="visible" variants={fadeUp}
           className="text-center max-w-4xl mx-auto mb-24 lg:mb-32 px-6"
         >
           <div className="inline-flex items-center justify-center mb-8 relative">
@@ -255,7 +243,7 @@ export default function EkosistemMitraPage() {
               )}
             </div>
 
-            {/* 4. TESTIMONI PAKAR (GRID 2 CARD) */}
+            {/* 4. TESTIMONI PAKAR */}
             {expertTestimonials.length > 0 && (
               <section className="pt-16 pb-16 bg-white border-y border-slate-100 overflow-hidden">
                 <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="text-center mb-16 px-6">
@@ -265,15 +253,14 @@ export default function EkosistemMitraPage() {
                   <h2 className="text-3xl font-black text-slate-900">Testimoni</h2>
                   <p className="text-sm font-medium text-slate-500 mt-2">Perspektif pakar industri terhadap platform kami.</p>
                 </motion.div>
-
+                
                 <div className="max-w-[1000px] mx-auto px-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
-                    {/* Mengambil 2 testimoni teratas */}
                     {expertTestimonials.slice(0, 2).map((expert, idx) => (
                       <motion.div 
                         key={idx} 
-                        initial={{ opacity: 0, y: 30 }} 
-                        whileInView={{ opacity: 1, y: 0 }} 
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: "-50px" }}
                         transition={{ duration: 0.6, delay: idx * 0.2 }}
                       >
@@ -285,7 +272,7 @@ export default function EkosistemMitraPage() {
               </section>
             )}
 
-            {/* 5. TESTIMONI PENGGUNA (GRID 3 CARD DENGAN ANIMASI FLIP) */}
+            {/* 5. TESTIMONI PENGGUNA */}
             {testimonials.length > 0 && (
               <section className="max-w-[1200px] mx-auto px-6 pt-16">
                 <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="mb-12">
@@ -294,14 +281,14 @@ export default function EkosistemMitraPage() {
                   </h2>
                   <p className="text-sm font-medium text-slate-500 text-center sm:text-left">Pengalaman pengguna ekosistem di lapangan.</p>
                 </motion.div>
-
+                
                 <motion.div 
-                  variants={staggerContainer} 
-                  initial="hidden" 
-                  whileInView="visible" 
+                  variants={staggerContainer}
+                  initial="hidden"
+                  whileInView="visible"
                   viewport={{ once: true, margin: "-50px" }}
                   className="grid grid-cols-1 md:grid-cols-3 gap-6"
-                  style={{ perspective: '1000px' }} // Properti penting untuk efek 3D flip
+                  style={{ perspective: '1000px' }}
                 >
                   {testimonials.map((item, index) => (
                     <motion.div key={index} variants={flipVariant} className="bg-white p-8 rounded-[2rem] border border-slate-100 hover:border-indigo-100 hover:shadow-[0_8px_30px_rgb(79,70,229,0.06)] transition-all duration-500 flex flex-col justify-between h-full">
@@ -339,18 +326,19 @@ export default function EkosistemMitraPage() {
           </div>
         )}
 
-        {/* CALL TO ACTION BAWAH (MINIMALIST) */}
+        {/* CALL TO ACTION BAWAH -> KE ROUTE KATALOG */}
         {!loading && (
           <motion.div 
-            initial="hidden" 
-            whileInView="visible" 
-            viewport={{ once: true, margin: "0px 0px -100px 0px" }} 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "0px 0px -100px 0px" }}
             variants={fadeUp}
             className="mt-32 max-w-[1200px] mx-auto px-6 relative overflow-hidden bg-slate-900 rounded-[3rem] p-10 sm:p-16 lg:p-24 text-center flex flex-col items-center justify-center shadow-2xl"
           >
             <div className="absolute inset-0 opacity-5 pointer-events-none flex items-center justify-center transform scale-150">
               <FlowingWavesIcon size={800} />
             </div>
+            
             <div className="relative z-10 space-y-6 max-w-2xl">
               <h3 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white leading-tight">
                 Siap Mengakselerasi?
@@ -358,8 +346,8 @@ export default function EkosistemMitraPage() {
               <p className="text-base text-slate-400 font-medium leading-relaxed pb-4">
                 Bergabunglah dengan ekosistem kami. Akses infrastruktur AI mutakhir untuk analisis data yang lebih presisi dan terukur.
               </p>
-              {/* Tombol Bawah -> Buka Pricing Modal */}
-              <button onClick={() => setIsPricingModalOpen(true)} className="bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-4 rounded-2xl font-bold text-base transition-all shadow-lg shadow-indigo-600/20 flex items-center gap-3 mx-auto active:scale-95 group">
+              
+              <button onClick={() => router.push('/katalog')} className="bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-4 rounded-2xl font-bold text-base transition-all shadow-lg shadow-indigo-600/20 flex items-center gap-3 mx-auto active:scale-95 group">
                 Jelajahi Modul Sekarang
                 <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center group-hover:translate-x-1 transition-transform animate-shimmer">
                   <ArrowRight size={14} />
@@ -368,16 +356,8 @@ export default function EkosistemMitraPage() {
             </div>
           </motion.div>
         )}
-      </main>
 
-      {/* RENDER MODAL KATALOG HARGA DI SINI */}
-      <PricingPackages 
-        isOpen={isPricingModalOpen}
-        onClose={closePricingModal}
-        user={user}
-        onLoginRequest={loginWithGoogle}
-      />
-      
+      </main>
     </div>
   );
 }

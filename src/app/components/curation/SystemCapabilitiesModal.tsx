@@ -3,6 +3,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import { 
   X, CheckCircle2, AlertTriangle, ArrowRight, XOctagon 
 } from 'lucide-react';
@@ -22,10 +23,10 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   isLoggedIn?: boolean;
-  onOpenPricing?: () => void;
 }
 
-export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false, onOpenPricing }: Props) {
+export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false }: Props) {
+  const router = useRouter();
   const [activeCluster, setActiveCluster] = useState<'personal' | 'expert' | 'corporate'>('expert');
 
   const platformClusters = {
@@ -33,7 +34,7 @@ export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false, o
       id: "personal",
       title: "Pengguna Mandiri",
       subtitle: "Pelaku UMKM, Startup, & Individu",
-      icon: EcosystemIcon, // CUSTOM ICON
+      icon: EcosystemIcon,
       color: "text-sky-600",
       bg: "bg-sky-50",
       ring: "ring-sky-200",
@@ -57,7 +58,7 @@ export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false, o
       id: "expert",
       title: "Tim Ahli & Profesional",
       subtitle: "Asesor, Konselor, & Fasilitator",
-      icon: AILensIcon, // CUSTOM ICON
+      icon: AILensIcon,
       color: "text-emerald-600",
       bg: "bg-emerald-50",
       ring: "ring-emerald-200",
@@ -81,7 +82,7 @@ export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false, o
       id: "corporate",
       title: "Korporasi & Institusi",
       subtitle: "Pemerintah, HR Enterprise, & Lembaga",
-      icon: AdminShieldIcon, // CUSTOM ICON
+      icon: AdminShieldIcon,
       color: "text-indigo-600",
       bg: "bg-indigo-50",
       ring: "ring-indigo-200",
@@ -96,7 +97,7 @@ export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false, o
       solutionTitle: "Pusat Kendali Enterprise Terpadu",
       solutions: [
         { title: "Personalisasi Matriks (Custom Framework)", desc: "Rancang aturan skor, tingkat keketatan, dan gaya bahasa pelaporan AI agar selaras dengan budaya institusi." },
-        { title: "Otomatisasi Alur Kerja (End-to-End)", desc: "Satu pintu terintegrasi—dari pengisian form, unggah dokumen, hingga draf SK atau rekomendasi." },
+        { title: "Otomatisasi Alur Kerja (End-to-End)", desc: "Satu pintu terintegrasi dari pengisian form, unggah dokumen, hingga draf SK atau rekomendasi." },
         { title: "Integritas Data Tertinggi", desc: "Dilengkapi mekanisme penyaringan berbasis AI untuk menekan celah fraud & menjaga akurasi profil entitas." },
         { title: "Skalabilitas Auto-Scaling", desc: "Arsitektur serverless kami menjamin kelancaran sistem meski diakses ribuan pengguna secara bersamaan." }
       ]
@@ -143,7 +144,7 @@ export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false, o
                 Masa Depan Evaluasi & Kurasi Data
               </h3>
               <p className="text-sm sm:text-base font-medium text-slate-600 leading-relaxed text-balance">
-                Platform asesmen cerdas yang dirancang untuk beradaptasi dengan segala bentuk kebutuhan evaluasi. Kami memproses informasi secara <span className="font-bold text-indigo-600">real-time</span> untuk menghasilkan wawasan analitik sekelas konsultan ahli—cepat, presisi, dan bebas birokrasi.
+                Platform asesmen cerdas yang dirancang untuk beradaptasi dengan segala bentuk kebutuhan evaluasi. Kami memproses informasi secara <span className="font-bold text-indigo-600">real-time</span> untuk menghasilkan wawasan analitik sekelas konsultan ahli — cepat, presisi, dan bebas birokrasi.
               </p>
             </div>
             
@@ -152,6 +153,7 @@ export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false, o
                 const cluster = platformClusters[key];
                 const isActive = activeCluster === key;
                 const Icon = cluster.icon;
+                
                 return (
                   <button
                     key={key}
@@ -185,10 +187,12 @@ export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false, o
               >
                 <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-[2rem] ring-1 ring-rose-200 shadow-sm flex flex-col relative overflow-hidden group">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-rose-50 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-all group-hover:scale-150 group-hover:bg-rose-100"></div>
+                  
                   <div className="inline-flex items-center gap-3 mb-8 relative z-10">
                     <div className="p-3 bg-rose-100 text-rose-600 rounded-2xl"><AlertTriangle className="w-6 h-6"/></div>
                     <h3 className="text-xl sm:text-2xl font-black text-slate-900 leading-tight">{activeClusterData.problemTitle}</h3>
                   </div>
+
                   <ul className="space-y-6 flex-1 relative z-10">
                     {activeClusterData.problems.map((problem, i) => (
                       <li key={i} className="flex items-start gap-4">
@@ -201,10 +205,12 @@ export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false, o
 
                 <div className="bg-slate-900 p-6 sm:p-8 lg:p-10 rounded-[2rem] shadow-xl flex flex-col relative overflow-hidden ring-1 ring-slate-800 group">
                   <div className={`absolute bottom-0 right-0 w-40 h-40 ${activeClusterData.color.replace('text', 'bg')}/20 rounded-full blur-3xl -mr-10 -mb-10 pointer-events-none transition-all group-hover:scale-150`}></div>
+                  
                   <div className="inline-flex items-center gap-3 mb-8 relative z-10">
                     <div className={`p-3 ${activeClusterData.activeBg} text-white rounded-2xl`}><AiSparkIcon size={24}/></div>
                     <h3 className="text-xl sm:text-2xl font-black text-white leading-tight">{activeClusterData.solutionTitle}</h3>
                   </div>
+
                   <ul className="space-y-6 flex-1 relative z-10">
                     {activeClusterData.solutions.map((solution, i) => (
                       <li key={i} className="flex items-start gap-4">
@@ -239,12 +245,12 @@ export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false, o
                       </a>
                     )}
 
-                    {/* CTA Pricing: Pengguna Mandiri & SUDAH LOGIN */}
+                    {/* CTA Pricing: Pengguna Mandiri & SUDAH LOGIN -> Push Router ke Halaman /katalog */}
                     {(activeCluster === 'personal' && isLoggedIn) && (
                       <button 
                         onClick={() => {
-                          onClose(); // Tutup modal ini
-                          if (onOpenPricing) onOpenPricing(); // Buka modal pricing
+                          onClose();
+                          router.push('/katalog');
                         }}
                         className="inline-flex items-center justify-center gap-2 w-full px-6 py-4 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl font-bold transition-all shadow-lg shadow-indigo-500/20"
                       >
@@ -259,7 +265,6 @@ export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false, o
                         Anda harus <span className="font-bold text-white">masuk (login)</span> di halaman utama terlebih dahulu untuk dapat memilih dan membeli modul asesmen.
                       </p>
                     )}
-
                   </div>
                 </div>
               </motion.div>
@@ -269,6 +274,7 @@ export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false, o
               <div className="absolute top-0 right-0 opacity-5 pointer-events-none transform translate-x-10 -translate-y-10">
                 <BrainIcon size={240} />
               </div>
+              
               <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                 <div className="space-y-4">
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-rose-500/20 text-rose-300 rounded-full text-[10px] font-black uppercase tracking-widest ring-1 ring-rose-500/30 mb-2">
@@ -279,6 +285,7 @@ export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false, o
                     Dalam pelaksanaan program pendampingan, konseling, maupun pelatihan, para ahli sering kali terjebak dalam administrasi. Membaca data dan menghitung skor secara manual tidak hanya memakan waktu, tapi juga rentan akan bias dan menghambat laju pengambilan keputusan.
                   </p>
                 </div>
+                
                 <div className="bg-slate-800/80 p-6 lg:p-8 rounded-3xl ring-1 ring-slate-700/50 backdrop-blur-sm space-y-4">
                   <h4 className="text-sm lg:text-base font-black text-indigo-300 uppercase tracking-widest flex items-center gap-2">
                     <GlobalTargetIcon size={20} /> Transformasi Bersama Omnifit

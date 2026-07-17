@@ -1,32 +1,19 @@
 // src/app/components/shared/UniversalAssessmentView.tsx
 'use client';
 
-import React, { useState } from 'react';
-import { 
-  ChevronDown, AlertTriangle, Mic, MicOff 
-} from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ChevronDown, AlertTriangle, Mic, MicOff } from 'lucide-react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip } from 'recharts';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { CurationFormData, AIResult } from '@/types/curation';
 
-// IMPORT CUSTOM ICONS (Menggantikan dominasi Lucide)
-import { 
-  AiSparkIcon, 
-  AILensIcon, 
-  AdminShieldIcon, 
-  InfinityWorkflowIcon, 
-  GlobalTargetIcon, 
-  DocExportIcon, 
-  TechCardIcon, 
-  BrainIcon, 
-  EcosystemIcon 
-} from '@/types';
+// IMPORT CUSTOM ICONS
+import { AiSparkIcon, AILensIcon, AdminShieldIcon, InfinityWorkflowIcon, GlobalTargetIcon, DocExportIcon, TechCardIcon, BrainIcon, EcosystemIcon } from '@/types';
 
 // ========================================================
-// 1. HELPER COMPONENTS (UPGRADED RICH TEXT PARSER)
+// 1. HELPER COMPONENTS
 // ========================================================
-
 const renderRichText = (str: string) => {
   if (!str) return null;
   const parts = str.split(/(\*\*.*?\*\*|\*.*?\*)/g);
@@ -38,21 +25,18 @@ const renderRichText = (str: string) => {
     }
     return part; 
   });
-}
+};
 
 export const TextToBullets = ({ text, colorClass = "text-indigo-500" }: { text: string, colorClass?: string }) => {
   if (!text) return <span className="italic text-slate-400">Tidak ada deskripsi.</span>;
   const lines = text.split('\n').filter(line => line.trim().length > 0);
-  
   if (lines.length === 1 && !lines[0].includes('-')) {
     return <p className="leading-relaxed">{renderRichText(text)}</p>;
   }
-
   return (
     <ul className="space-y-2 mt-2">
       {lines.map((line, idx) => {
-        const cleanLine = line.replace(/^[\-\*\•]\s*/, '').trim();
-        
+        const cleanLine = line.replace(/^[\-\*\ ]\s*/, '').trim();
         if (cleanLine.startsWith('###') || cleanLine.startsWith('##') || (cleanLine === cleanLine.toUpperCase() && cleanLine.length > 5)) { 
           return (
             <li key={idx} className="block mt-5 mb-1 list-none">
@@ -62,21 +46,19 @@ export const TextToBullets = ({ text, colorClass = "text-indigo-500" }: { text: 
             </li>
           );
         }
-
         return (
           <li key={idx} className="flex items-start gap-2.5">
-            <span className={`mt-1 flex-shrink-0 text-[10px] ${colorClass}`}>●</span>
+            <span className={`mt-1 flex-shrink-0 text-[10px] ${colorClass}`}> </span>
             <span className="leading-relaxed">{renderRichText(cleanLine)}</span>
           </li>
         );
       })}
     </ul>
   );
-}
+};
 
 const InsightAccordion = ({ id, title, icon: Icon, content }: any) => {
   const [isOpen, setIsOpen] = useState(id === 'rec-0');
-  
   return (
     <div className="bg-white ring-1 ring-slate-100 rounded-3xl overflow-hidden shadow-sm transition-all duration-300">
       <button onClick={() => setIsOpen(!isOpen)} className="w-full flex items-center justify-between p-5 sm:p-6 text-left bg-white hover:bg-slate-50 transition-colors">
@@ -95,7 +77,7 @@ const InsightAccordion = ({ id, title, icon: Icon, content }: any) => {
       </div>
     </div>
   );
-}
+};
 
 const renderDynamicIcon = (type: string) => {
   switch (type?.toLowerCase()) {
@@ -107,7 +89,7 @@ const renderDynamicIcon = (type: string) => {
     case 'shield': return <AdminShieldIcon size={16} />;
     case 'target': default: return <GlobalTargetIcon size={16} />;
   }
-}
+};
 
 const borderColors = ['ring-indigo-200', 'ring-emerald-200', 'ring-amber-200', 'ring-blue-200', 'ring-rose-200'];
 const textColors = ['text-indigo-600', 'text-emerald-600', 'text-amber-600', 'text-blue-600', 'text-rose-600'];
@@ -115,7 +97,6 @@ const textColors = ['text-indigo-600', 'text-emerald-600', 'text-amber-600', 'te
 // ========================================================
 // 2. INTERFACES (Props)
 // ========================================================
-
 export interface CuratorDataProps {
   isEditing: boolean;
   curatorScore: number;
@@ -159,11 +140,9 @@ export interface UniversalAssessmentProps {
 // ========================================================
 // 3. MAIN COMPONENT
 // ========================================================
-
 export function UniversalAssessmentView({ 
-  mode, trackType, programName, corporateEntity, formData, aiResult, headerActions, curatorData, pdfRef
+  mode, trackType, programName, corporateEntity, formData, aiResult, headerActions, curatorData, pdfRef 
 }: UniversalAssessmentProps) {
-  
   const isPublic = mode === 'dashboard';
   const isInternal = mode === 'curator' || mode === 'admin';
   const isEditing = curatorData?.isEditing || false;
@@ -174,7 +153,6 @@ export function UniversalAssessmentView({
 
   const formPurpose = aiResult?.formPurpose || 'assessment';
   const customUiLabels = aiResult?.customUiLabels || {};
-  
   const isCounseling = formPurpose === 'counseling';
   const isMonitoring = formPurpose === 'monitoring';
   const isConsultation = formPurpose === 'consultation';
@@ -211,9 +189,29 @@ export function UniversalAssessmentView({
     subject: m?.label || `Metrik ${idx+1}`, shortLabel: `D${idx + 1}`, A: m?.score || 0, fullMark: 100
   })) || [];
 
+  // =========================================================================
+  // INTEGRASI OPENCLAW (BROADCAST DATA ASESMEN KE SESSION STORAGE)
+  // =========================================================================
+  useEffect(() => {
+    if (typeof window !== 'undefined' && aiResult) {
+      const activeDataPayload = {
+        subjek: formData?.namaUsaha || formData?.namaPengisi || 'Proyek Tanpa Nama',
+        skor_akhir: aiResult.totalScore,
+        level_kesiapan: aiResult.readinessLevel,
+        swot: aiResult.swotAnalysis,
+        risiko: aiResult.riskAssessment?.criticalRisks,
+      };
+      // Simpan hanya data krusial untuk menghemat token Gemini
+      sessionStorage.setItem('openclaw_active_data', JSON.stringify(activeDataPayload));
+    }
+    return () => {
+      if (typeof window !== 'undefined') sessionStorage.removeItem('openclaw_active_data');
+    };
+  }, [formData, aiResult]);
+
   return (
     <div ref={pdfRef} className="w-full space-y-6 sm:space-y-8 animate-in fade-in duration-500">
-      
+       
       {headerActions && (
         <div className="flex flex-col sm:flex-row justify-end items-start sm:items-center gap-4">
           <div className="flex w-full sm:w-auto gap-3 flex-col sm:flex-row ml-auto">
@@ -306,7 +304,7 @@ export function UniversalAssessmentView({
       )}
 
       <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 w-full">
-        
+         
         <div className="flex-1 flex flex-col gap-6">
           <div>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight text-balance mb-3">
@@ -368,7 +366,7 @@ export function UniversalAssessmentView({
           </h3>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
-            
+             
             <div className="lg:col-span-1 flex flex-col gap-4">
               <div className="bg-slate-800/80 rounded-2xl p-5 border border-slate-700/50 flex items-center justify-between">
                 <div>
@@ -394,7 +392,7 @@ export function UniversalAssessmentView({
                   <ul className="space-y-3">
                     {aiResult.contradictionsFound.map((anomaly: string, i: number) => (
                       <li key={i} className="text-xs font-medium text-rose-200/90 leading-relaxed flex items-start gap-2">
-                        <span className="text-rose-500 mt-0.5">●</span> <span>{renderRichText(anomaly)}</span>
+                        <span className="text-rose-500 mt-0.5"> </span> <span>{renderRichText(anomaly)}</span>
                       </li>
                     ))}
                   </ul>
@@ -419,7 +417,6 @@ export function UniversalAssessmentView({
                 )}
               </div>
             </div>
-
           </div>
         </div>
       )}
@@ -499,7 +496,7 @@ export function UniversalAssessmentView({
                       <ul className="space-y-2">
                         {aiResult.fileAnalysisInsights.keyFindingsFromFiles.map((find: string, i: number) => (
                           <li key={i} className="text-sm text-slate-300 flex items-start gap-2">
-                            <span className="text-indigo-400 mt-0.5">●</span> <span className="leading-snug">{renderRichText(find)}</span>
+                            <span className="text-indigo-400 mt-0.5"> </span> <span className="leading-snug">{renderRichText(find)}</span>
                           </li>
                         ))}
                       </ul>
@@ -718,10 +715,10 @@ export function UniversalAssessmentView({
             <p className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-1.5">Rute Pengembangan Disarankan</p>
             {isEditing && curatorData ? (
               <Input 
-                 value={curatorData.curatorRoute} 
-                 onChange={(e) => curatorData.setCuratorRoute && curatorData.setCuratorRoute(e.target.value)} 
-                 className="bg-white font-black text-center h-10 border-slate-300 rounded-xl text-slate-900 mt-2" 
-                 placeholder="Tentukan Jalur Akhir..."
+                  value={curatorData.curatorRoute}
+                  onChange={(e) => curatorData.setCuratorRoute && curatorData.setCuratorRoute(e.target.value)}
+                  className="bg-white font-black text-center h-10 border-slate-300 rounded-xl text-slate-900 mt-2"
+                  placeholder="Tentukan Jalur Akhir..."
                />
             ) : (
               <h4 className="text-xl sm:text-2xl font-black leading-tight tracking-tight text-balance">
@@ -756,7 +753,6 @@ export function UniversalAssessmentView({
           )}
         </div>
       </div>
-
     </div>
   );
 }
