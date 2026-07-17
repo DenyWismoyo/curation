@@ -194,11 +194,14 @@ export interface IconProps extends React.SVGProps<SVGSVGElement> {
 export interface LandingPartner {
   id: string;
   name: string;
-  logoUrl: string; // URL gambar logo (bisa dari Firebase Storage atau link eksternal)
-  targetUrl?: string; // Link jika logo diklik
-  category: 'powered_by' | 'mitra_strategis' | 'klien'; // Pengelompokan
+  logoUrl: string; // URL gambar logo atau foto ahli
+  storagePath?: string; // Path asli di Firebase Storage untuk keperluan hapus file
+  targetUrl?: string; // Link tujuan jika diklik
+  category: 'powered_by' | 'mitra_strategis' | 'klien' | 'testimoni_ahli';
+  role?: string; // Khusus Testimoni Ahli (Jabatan/Gelar)
+  message?: string; // Khusus Testimoni Ahli (Isi Testimoni)
   isActive: boolean; // Toggle tampil/sembunyi
   order: number; // Urutan tampilan
   createdAt: string;
-  updatedAt?: string;
+  updatedAt?: string; // <-- Di sinilah tempat penambahan tipe datanya
 }

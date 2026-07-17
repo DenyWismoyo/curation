@@ -28,6 +28,7 @@ interface LandingPartner {
   isActive: boolean;
   order: number;
   createdAt: string;
+  updatedAt?: string; // <-- Tipe ditambahkan di dalam Interface
 }
 
 export default function AdminPartnersPage() {
@@ -43,7 +44,6 @@ export default function AdminPartnersPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingStoragePath, setEditingStoragePath] = useState<string | null>(null);
   const [existingLogoUrl, setExistingLogoUrl] = useState<string | null>(null);
-
   const [name, setName] = useState('');
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [targetUrl, setTargetUrl] = useState('');
@@ -51,7 +51,7 @@ export default function AdminPartnersPage() {
   const [role, setRole] = useState('');
   const [message, setMessage] = useState('');
   const [order, setOrder] = useState<number>(1);
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -110,6 +110,7 @@ export default function AdminPartnersPage() {
 
       // 2. Siapkan Payload Data
       const partnerId = isEditing && editingId ? editingId : `partner_${Date.now()}`;
+      
       const partnerData: Partial<LandingPartner> = {
         name: name.trim(),
         logoUrl: finalLogoUrl,
@@ -117,7 +118,7 @@ export default function AdminPartnersPage() {
         targetUrl: targetUrl.trim(),
         category,
         order: Number(order),
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString() // <-- Di sini kita memberikan nilainya (bukan tipenya)
       };
 
       // Tambahkan field khusus jika kategori adalah testimoni_ahli
@@ -199,6 +200,7 @@ export default function AdminPartnersPage() {
 
   const handleDeletePartner = async (partner: LandingPartner) => {
     if (!confirm(`Hapus permanen data "${partner.name}" dari sistem?`)) return;
+
     try {
       await deleteDoc(doc(db, 'landing_partners', partner.id));
       if (partner.storagePath) {
@@ -274,7 +276,7 @@ export default function AdminPartnersPage() {
             <Input 
               value={name} 
               onChange={e => setName(e.target.value)} 
-              placeholder={isExpert ? "Misal: Dr. Budi Santoso" : "Misal: Solo Techno Park"} 
+              placeholder={isExpert ? "Misal: Dr. Budi Santoso" : "Misal: Solo Techno Park"}
               className={`h-12 rounded-xl font-semibold ${isEditing ? 'bg-amber-50/30' : 'bg-slate-50'}`} 
             />
           </div>
@@ -287,7 +289,7 @@ export default function AdminPartnersPage() {
               <Input 
                 value={role} 
                 onChange={e => setRole(e.target.value)} 
-                placeholder="Misal: Kepala Dinas / Pakar AI" 
+                placeholder="Misal: Kepala Dinas / Pakar AI"
                 className={`h-12 rounded-xl font-medium text-sm ${isEditing ? 'bg-amber-50/30' : 'bg-slate-50'}`} 
               />
             </div>
@@ -325,7 +327,7 @@ export default function AdminPartnersPage() {
               <Textarea 
                 value={message} 
                 onChange={e => setMessage(e.target.value)} 
-                placeholder="Tuliskan ulasan atau pendapat ahli tentang platform ini..." 
+                placeholder="Tuliskan ulasan atau pendapat ahli tentang platform ini..."
                 className={`min-h-[100px] rounded-xl text-sm font-medium resize-y ${isEditing ? 'bg-amber-50/30' : 'bg-slate-50'}`} 
               />
             </div>
@@ -339,7 +341,7 @@ export default function AdminPartnersPage() {
               <Input 
                 value={targetUrl} 
                 onChange={e => setTargetUrl(e.target.value)} 
-                placeholder={isExpert ? "Link profil LinkedIn ahli (opsional)" : "https://..."} 
+                placeholder={isExpert ? "Link profil LinkedIn ahli (opsional)" : "https://..."}
                 className={`h-12 rounded-xl text-sm font-medium ${isEditing ? 'bg-amber-50/30' : 'bg-slate-50'}`} 
               />
             </div>
