@@ -1,12 +1,11 @@
 // src/app/result/[id]/page.tsx
 'use client';
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-
-import { CurationDashboard } from '@/app/components/curation/CurationDashboard'; 
+import { CurationDashboard } from '@/app/components/curation/CurationDashboard';
+import { useAuth } from '@/contexts/AuthContext';
 
 // IMPORT CUSTOM ICONS
 import { BrainIcon, DocExportIcon, EcosystemIcon } from '@/types';
@@ -14,6 +13,9 @@ import { BrainIcon, DocExportIcon, EcosystemIcon } from '@/types';
 export default function SharedResultPage() {
   const params = useParams();
   const router = useRouter();
+  
+  // AMBIL IDENTITAS PENGGUNA DARI KONTEKS AUTENTIKASI
+  const { user, role } = useAuth(); 
   
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -24,24 +26,44 @@ export default function SharedResultPage() {
       if (!params.id) return;
       
       try {
+        // 1. Tarik Data Publik (Dapat diakses oleh siapa saja yang memiliki link)
         const docRef = doc(db, 'assessments', params.id as string);
         const docSnap = await getDoc(docRef);
-
+        
         if (docSnap.exists()) {
-          setData(docSnap.data());
+          let combinedData = docSnap.data();
+          
+          // 2. CEK KEWENANGAN: Sesuaikan dengan role baru (admin_csrs & assessor)
+          const isInternalStaff = user && (role === 'admin_csrs' || role === 'assessor');
+          
+          // Pengecekan Super Admin (Opsional, jika Anda menggunakan email spesifik di frontend)
+          const isSuperAdmin = user?.email === 'deny.wismoyo@gmail.com';
+          
+          if (isInternalStaff || isSuperAdmin) {
+             // 3. JIKA INTERNAL/ADMIN: Tarik data rahasia dari sub-collection 'internal/details'
+             const internalDocRef = doc(db, 'assessments', params.id as string, 'internal', 'details');
+             const internalSnap = await getDoc(internalDocRef);
+             
+             if (internalSnap.exists()) {
+                // Gabungkan data publik dan data rahasia agar Dashboard menampilkan seluruh matriks
+                combinedData.aiResult = { ...combinedData.aiResult, ...internalSnap.data() };
+             }
+          }
+          
+          setData(combinedData);
         } else {
           setError('Dokumen hasil kurasi tidak ditemukan atau tautan tidak valid.');
         }
       } catch (err) {
         console.error("Gagal menarik data:", err);
-        setError('Terjadi kesalahan saat memuat data. Periksa koneksi Anda.');
+        setError('Terjadi kesalahan saat memuat data. Periksa koneksi atau hak akses Anda.');
       } finally {
         setLoading(false);
       }
     };
-
+    
     fetchResult();
-  }, [params.id]);
+  }, [params.id, user, role]);
 
   if (loading) {
     return (
@@ -90,7 +112,7 @@ export default function SharedResultPage() {
         allowedDocumentTemplates={data.allowedDocumentTemplates || []}
         
         // Fungsi Restart
-        onRestart={() => router.push('/')} 
+        onRestart={() => router.push('/')}
       />
     </div>
   );

@@ -33,6 +33,13 @@ export interface ActionItem {
   description: string;
   timeframe: string;
   isCompleted: boolean;
+  contextualTip?: string; // NEW: Tips praktis/motivasi harian
+  searchKeyword?: string; // NEW: Kata kunci pencarian resource
+  subTasks?: {
+    id: string;
+    text: string;
+    isCompleted: boolean;
+  }[];
 }
 
 export interface AIResult {
@@ -66,7 +73,6 @@ export interface AIResult {
   }[];
   formPurpose?: FormDomainPurpose;
   customUiLabels?: CustomUiLabels;
-  
   // 2. TAMBAHAN BARU: Field untuk menyimpan hasil generate Action Plan
   customActionPlan?: ActionItem[]; 
 }

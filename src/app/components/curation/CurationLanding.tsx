@@ -4,12 +4,11 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, History, Clock, ChevronRight, Loader2, LogOut, LayoutDashboard, Sparkles, ClipboardCheck, Box, Handshake } from 'lucide-react';
+import { ArrowRight, History, Clock, ChevronRight, Loader2, LogOut, LayoutDashboard, Sparkles, ClipboardCheck, Box, Handshake, KeyRound } from 'lucide-react';
 import { EcosystemIcon, TechCardIcon, AdminShieldIcon, DocExportIcon, BrainIcon, GlobalTargetIcon } from '@/types';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { CurationHistory } from '@/types/curation';
-import { doc, getDoc, collection, getDocs, query, where } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import Link from 'next/link';
@@ -21,7 +20,6 @@ import { useMobileBack } from '@/hooks/useMobileBack';
 // IMPLEMENTASI LAZY LOADING (DYNAMIC IMPORT)
 // ==========================================
 import dynamic from 'next/dynamic';
-
 const SystemCapabilitiesModal = dynamic(
   () => import('./SystemCapabilitiesModal').then((mod) => mod.SystemCapabilitiesModal),
   { ssr: false }
@@ -47,10 +45,6 @@ interface DraftItem {
 
 export function CurationLanding({ onStart, history, onLoadHistory, user, role, onLogin, onLogout }: Props) {
   const router = useRouter();
-  const [tokenInput, setTokenInput] = useState('');
-  const [isValidating, setIsValidating] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
-
   const [isCapabilitiesModalOpen, setIsCapabilitiesModalOpen] = useState(false);
   const [drafts, setDrafts] = useState<DraftItem[]>([]);
 
@@ -58,7 +52,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-
     const fetchDrafts = async () => {
       try {
         const q = query(collection(db, 'form_templates'), where('isActive', '==', true));
@@ -69,7 +62,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
           isPaid: document.data().isPaid,
           price: document.data().price
         }));
-
         const foundDrafts: DraftItem[] = [];
         for (let i = 0; i < localStorage.length; i++) {
           const key = localStorage.key(i);
@@ -91,7 +83,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
         console.error("Gagal memuat draf lokal:", error);
       }
     };
-
     fetchDrafts();
   }, []);
 
@@ -112,7 +103,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
        onLogin();
        return;
     }
-
     let currentToken = sessionStorage.getItem('active_token');
     
     if (!currentToken) {
@@ -120,7 +110,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
        if (savedToken) {
          currentToken = savedToken;
        } else {
-         currentToken = (!draft.isPaid || draft.price === 0) 
+         currentToken = (!draft.isPaid || draft.price === 0)
              ? `FREE-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
              : `TRIAL-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
        }
@@ -129,68 +119,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
     
     sessionStorage.setItem('active_allowed_templates', JSON.stringify([draft.templateId]));
     onStart();
-  };
-
-  const handleValidateAndStart = async () => {
-    setErrorMsg('');
-    const cleanToken = tokenInput.trim().toUpperCase();
-
-    if (!cleanToken) {
-      setErrorMsg('Harap masukkan kode token Anda.');
-      return;
-    }
-
-    if (!cleanToken.includes('-')) {
-      setErrorMsg('Format token tidak valid. Gunakan format PREFIX-KODE (contoh: KUKM1-XXXXXX)');
-      return;
-    }
-
-    const [corpId, tokenCode] = cleanToken.split('-');
-    setIsValidating(true);
-
-    try {
-      const docRef = doc(db, 'corporate_tokens', corpId);
-      const docSnap = await getDoc(docRef);
-
-      if (!docSnap.exists()) {
-        setErrorMsg('Token tidak ditemukan atau prefix salah.');
-        setIsValidating(false);
-        return;
-      }
-
-      const batchData = docSnap.data();
-      const tokenData = batchData.tokens[tokenCode];
-
-      if (!tokenData) {
-        setErrorMsg('Kode token tidak valid atau tidak terdaftar.');
-        setIsValidating(false);
-        return;
-      }
-
-      if (tokenData.isUsed) {
-        setErrorMsg('Token ini sudah terpakai pada: ' + (tokenData.usedAt ? new Date(tokenData.usedAt).toLocaleDateString('id-ID') : 'Waktu tidak diketahui'));
-        setIsValidating(false);
-        return;
-      }
-
-      sessionStorage.setItem('active_token', cleanToken);
-      localStorage.setItem('omnifit_last_token', cleanToken);
-      sessionStorage.setItem('active_model', batchData.modelType);
-      
-      const allowedTpls = tokenData.allowedTemplates || batchData.allowedTemplates;
-      if (allowedTpls && Array.isArray(allowedTpls) && allowedTpls.length > 0) {
-        sessionStorage.setItem('active_allowed_templates', JSON.stringify(allowedTpls));
-      } else {
-        sessionStorage.removeItem('active_allowed_templates');
-      }
-
-      onStart();
-    } catch (error) {
-      console.error("Error validating token:", error);
-      setErrorMsg('Terjadi kesalahan pada server saat memvalidasi token.');
-    } finally {
-      setIsValidating(false);
-    }
   };
 
   const fadeUpVariants: Variants = {
@@ -270,7 +198,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
               </div>
 
               <Link href="/katalog" className="block w-full">
-                <div className="group relative cursor-pointer overflow-hidden rounded-[1.25rem] bg-indigo-600 p-[2px] transition-all duration-300 hover:shadow-[0_0_40px_rgba(79,70,229,0.5)] hover:-translate-y-1 w-full shadow-lg shadow-indigo-600/10">
+                <div className="group relative cursor-pointer overflow-hidden rounded-[1.25rem] bg-indigo-600 p-[2px] transition-all duration-300 hover:-translate-y-1 w-full shadow-lg shadow-indigo-600/10">
                   <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-pink-500 to-blue-500 opacity-60 group-hover:opacity-100 transition-opacity duration-500 animate-pulse"></div>
                   <div className="absolute -inset-x-20 inset-y-0 bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:animate-[shimmer_2s_infinite] pointer-events-none" />
                   <div className="relative flex items-center justify-between gap-5 rounded-xl bg-white px-5 py-4 transition-all group-hover:bg-white/95">
@@ -387,58 +315,28 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                 </Button>
               </Link>
 
+              {/* AREA PINTASAN TOKEN BARU */}
               <div className="pt-2">
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest ml-1 mb-2">
-                  Mulai Asesmen (Input Token)
-                </label>
-                <div className="flex flex-col sm:flex-row gap-3 relative">
-                  <div className="relative flex-1 group">
-                    <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-blue-500 rounded-2xl blur opacity-0 group-focus-within:opacity-30 transition duration-500"></div>
-                    <Input 
-                      value={tokenInput}
-                      onChange={(e) => setTokenInput(e.target.value.toUpperCase())}
-                      placeholder="" 
-                      className="relative h-14 rounded-2xl bg-white/80 backdrop-blur-sm border-slate-200/60 shadow-sm text-center sm:text-left font-mono font-bold text-lg focus-visible:ring-0 focus-visible:border-indigo-400 transition-all"
-                      disabled={isValidating}
-                    />
-                  </div>
-                  
+                <Link href="/token" className="block w-full">
                   <Button 
-                    size="lg" 
-                    onClick={handleValidateAndStart}
-                    disabled={isValidating}
-                    className="relative w-full sm:w-auto shrink-0 shadow-lg shadow-indigo-600/20 bg-slate-900 hover:bg-indigo-600 text-white rounded-2xl h-14 px-8 text-base transition-all duration-300 overflow-hidden"
+                    size="lg"
+                    className="w-full shadow-lg shadow-indigo-600/20 bg-slate-900 hover:bg-indigo-600 text-white rounded-2xl h-14 px-8 text-base font-bold transition-all duration-300 flex items-center justify-between group"
                   >
-                    <AnimatePresence mode="wait">
-                      {isValidating ? (
-                        <motion.div key="loading" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex items-center gap-2">
-                          <Loader2 className="h-5 w-5 animate-spin" /> Memvalidasi
-                        </motion.div>
-                      ) : (
-                        <motion.div key="idle" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex items-center gap-2">
-                          Mulai <ArrowRight className="h-5 w-5" />
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                    <div className="flex items-center gap-3">
+                      <KeyRound className="w-5 h-5 text-indigo-400 group-hover:text-white transition-colors" />
+                      Mulai Asesmen (Input Token)
+                    </div>
+                    <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                   </Button>
-                </div>
+                </Link>
+                <p className="text-xs text-slate-500 font-medium text-center mt-3">
+                  Punya kode akses dari institusi Anda? Masukkan di sini.
+                </p>
               </div>
-
-              <AnimatePresence>
-                {errorMsg && (
-                  <motion.p 
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="text-red-500 text-sm font-medium text-left ml-1 bg-red-50 p-3 rounded-xl border border-red-100 overflow-hidden"
-                  >
-                    * {errorMsg}
-                  </motion.p>
-                )}
-              </AnimatePresence>
 
             </motion.div>
           )}
+
         </motion.div>
 
         {/* Kolom Kanan: Draft & History Cards */}
@@ -459,7 +357,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                     <DocExportIcon className="h-5 w-5 text-amber-500" /> Draf Belum Selesai
                   </h3>
                 </div>
-
                 <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="max-h-[300px] overflow-y-auto pr-2 custom-scrollbar flex flex-col gap-3 relative z-10">
                   {drafts.map((draft, idx) => (
                     <motion.div 
@@ -505,7 +402,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                     <span className="text-[9px] font-black text-emerald-600 uppercase tracking-wider">Live Sync</span>
                   </div>
                 </div>
-
                 <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="max-h-[400px] overflow-y-auto pr-2 custom-scrollbar flex flex-col gap-3 relative z-10">
                   {history.map((item, idx) => (
                     <motion.div 
@@ -558,6 +454,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
             isLoggedIn={!!user}
           />
         )}
+
       </div>
     </div>
   );

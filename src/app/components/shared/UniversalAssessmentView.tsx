@@ -1,23 +1,17 @@
 // src/app/components/shared/UniversalAssessmentView.tsx
 'use client';
-
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, AlertTriangle, Mic, MicOff } from 'lucide-react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip } from 'recharts';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { CurationFormData, AIResult } from '@/types/curation';
-
-// IMPORT CUSTOM ICONS
 import { AiSparkIcon, AILensIcon, AdminShieldIcon, InfinityWorkflowIcon, GlobalTargetIcon, DocExportIcon, TechCardIcon, BrainIcon, EcosystemIcon } from '@/types';
-
-// IMPORT CUSTOM COMPONENT ACTION PLAN BUILDER
 import { ActionPlanBuilder } from '../curation/ActionPlanBuilder';
 
 // ========================================================
 // 1. HELPER COMPONENTS
 // ========================================================
-
 const renderRichText = (str: string) => {
   if (!str) return null;
   const parts = str.split(/(\*\*.*?\*\*|\*.*?\*)/g);
@@ -33,18 +27,14 @@ const renderRichText = (str: string) => {
 
 export const TextToBullets = ({ text, colorClass = "text-indigo-500" }: { text: string, colorClass?: string }) => {
   if (!text) return <span className="italic text-slate-400">Tidak ada deskripsi.</span>;
-
   const lines = text.split('\n').filter(line => line.trim().length > 0);
-  
   if (lines.length === 1 && !lines[0].includes('-')) {
     return <p className="leading-relaxed">{renderRichText(text)}</p>;
   }
-
   return (
     <ul className="space-y-2 mt-2">
       {lines.map((line, idx) => {
         const cleanLine = line.replace(/^[\-\*\ ]\s*/, '').trim();
-        
         if (cleanLine.startsWith('###') || cleanLine.startsWith('##') || (cleanLine === cleanLine.toUpperCase() && cleanLine.length > 5)) {
            return (
             <li key={idx} className="block mt-5 mb-1 list-none">
@@ -54,7 +44,6 @@ export const TextToBullets = ({ text, colorClass = "text-indigo-500" }: { text: 
             </li>
           );
         }
-
         return (
           <li key={idx} className="flex items-start gap-2.5">
             <span className={`mt-1 flex-shrink-0 text-[10px] ${colorClass}`}>●</span>
@@ -106,7 +95,6 @@ const textColors = ['text-indigo-600', 'text-emerald-600', 'text-amber-600', 'te
 // ========================================================
 // 2. INTERFACES (Props)
 // ========================================================
-
 export interface CuratorDataProps {
   isEditing: boolean;
   curatorScore: number;
@@ -145,28 +133,25 @@ export interface UniversalAssessmentProps {
   headerActions?: React.ReactNode; 
   curatorData?: CuratorDataProps;
   pdfRef?: React.RefObject<HTMLDivElement>;
-  assessmentId?: string; // Ditambahkan untuk fitur Action Plan Builder
+  assessmentId?: string;
 }
 
 // ========================================================
 // 3. MAIN COMPONENT
 // ========================================================
-
 export function UniversalAssessmentView({ 
   mode, trackType, programName, corporateEntity, formData, aiResult, headerActions, curatorData, pdfRef, assessmentId 
 }: UniversalAssessmentProps) {
-  
   const isPublic = mode === 'dashboard';
   const isInternal = mode === 'curator' || mode === 'admin';
   const isEditing = curatorData?.isEditing || false;
-
+  
   const aiScore = aiResult?.totalScore || 0;
   const finalScore = isInternal ? (curatorData?.curatorScore || 0) : aiScore;
   const isHighTier = finalScore >= 75;
 
   const formPurpose = aiResult?.formPurpose || 'assessment';
   const customUiLabels = aiResult?.customUiLabels || {};
-
   const isCounseling = formPurpose === 'counseling';
   const isMonitoring = formPurpose === 'monitoring';
   const isConsultation = formPurpose === 'consultation';
@@ -215,11 +200,8 @@ export function UniversalAssessmentView({
         swot: aiResult.swotAnalysis,
         risiko: aiResult.riskAssessment?.criticalRisks,
       };
-      
-      // Simpan hanya data krusial untuk menghemat token Gemini
       sessionStorage.setItem('openclaw_active_data', JSON.stringify(activeDataPayload));
     }
-
     return () => {
       if (typeof window !== 'undefined') sessionStorage.removeItem('openclaw_active_data');
     };
@@ -227,8 +209,7 @@ export function UniversalAssessmentView({
 
   return (
     <div ref={pdfRef} className="w-full space-y-6 sm:space-y-8 animate-in fade-in duration-500">
-      
-      {/* HEADER ACTIONS (PDF EXPORT, DLL) */}
+       
       {headerActions && (
         <div className="flex flex-col sm:flex-row justify-end items-start sm:items-center gap-4">
           <div className="flex w-full sm:w-auto gap-3 flex-col sm:flex-row ml-auto">
@@ -237,7 +218,6 @@ export function UniversalAssessmentView({
         </div>
       )}
 
-      {/* BANNER DISCLAIMER AI */}
       {isPublic && (
         <div className="bg-gradient-to-br from-amber-50 to-orange-50/40 border border-amber-200/80 p-5 sm:p-6 rounded-3xl shadow-sm relative overflow-hidden">
           <div className="absolute right-0 top-0 opacity-[0.03] pointer-events-none transform translate-x-6 -translate-y-6">
@@ -258,7 +238,6 @@ export function UniversalAssessmentView({
         </div>
       )}
 
-      {/* BAGIAN KURATOR: TAGGING */}
       {isInternal && curatorData && (
         <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm ring-1 ring-slate-200 w-full">
           <h3 className="text-xs font-black uppercase text-slate-500 tracking-widest mb-4 flex items-center gap-2">
@@ -289,7 +268,6 @@ export function UniversalAssessmentView({
         </div>
       )}
 
-      {/* BAGIAN KURATOR: CATATAN LAPANGAN UTAMA */}
       {isInternal && curatorData && (
         <div className={`p-6 sm:p-8 rounded-3xl shadow-sm ring-1 transition-all w-full ${isEditing ? 'bg-white ring-indigo-500 shadow-indigo-100 ring-2' : 'bg-white ring-slate-200'}`}>
           <h3 className="font-black text-slate-900 text-lg mb-2 flex items-center gap-2">
@@ -323,9 +301,7 @@ export function UniversalAssessmentView({
         </div>
       )}
 
-      {/* HEADLINE & EXECUTIVE SUMMARY */}
       <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 w-full">
-          
         <div className="flex-1 flex flex-col gap-6">
           <div>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight text-balance mb-3">
@@ -355,7 +331,6 @@ export function UniversalAssessmentView({
           </div>
         </div>
 
-        {/* SKOR DAN TIER (WIDGET KANAN) */}
         <div className={`w-full lg:w-[360px] shrink-0 p-8 rounded-3xl text-white relative overflow-hidden flex flex-col justify-center items-center shadow-lg ${isHighTier ? 'bg-gradient-to-br from-[#0f3d32] to-emerald-800' : 'bg-gradient-to-br from-slate-900 to-indigo-900'}`}>
           <div className="absolute inset-0 bg-gradient-to-tr from-black/20 to-transparent opacity-30 mix-blend-overlay"></div>
           
@@ -377,7 +352,6 @@ export function UniversalAssessmentView({
         </div>
       </div>
 
-      {/* TINGKAT KONSISTENSI JAWABAN (HANYA INTERNAL/KURATOR/ADMIN) */}
       {isInternal && (
         <div className="w-full bg-slate-900 p-6 sm:p-8 rounded-3xl shadow-xl ring-1 ring-slate-800 relative overflow-hidden">
           <div className="absolute right-0 top-0 opacity-5 pointer-events-none transform translate-x-10 -translate-y-10">
@@ -389,8 +363,7 @@ export function UniversalAssessmentView({
           </h3>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
-            
-            <div className="lg:col-span-1 flex flex-col gap-4">
+             <div className="lg:col-span-1 flex flex-col gap-4">
               <div className="bg-slate-800/80 rounded-2xl p-5 border border-slate-700/50 flex items-center justify-between">
                 <div>
                   <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400 mb-1">Tingkat Konsistensi Jawaban</p>
@@ -444,8 +417,8 @@ export function UniversalAssessmentView({
         </div>
       )}
 
-      {/* CUSTOM BLOCKS & FILE ANALYSIS (KARTU GRID) */}
-      {aiResult?.customAnalysisBlocks && aiResult.customAnalysisBlocks.length > 0 && (
+      {/* DISEMBUNYIKAN DARI PUBLIK: CUSTOM BLOCKS & FILE ANALYSIS */}
+      {isInternal && aiResult?.customAnalysisBlocks && aiResult.customAnalysisBlocks.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
           {aiResult.customAnalysisBlocks.map((block: any, idx: number) => { 
             const ringColor = borderColors[idx % borderColors.length];
@@ -469,7 +442,6 @@ export function UniversalAssessmentView({
                    </div>
                  </div>
                  
-                 {/* BAGIAN KURATOR: REVIEW BLOK ANALISIS */}
                  {isInternal && curatorData && (
                     <div className="pt-4 border-t border-slate-100 mt-auto">
                       <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 flex items-center gap-1.5">
@@ -493,8 +465,8 @@ export function UniversalAssessmentView({
              )
           })}
 
-          {/* DOKUMEN FORENSIK AI */}
-          {aiResult?.fileAnalysisInsights && (
+          {/* DISEMBUNYIKAN DARI PUBLIK: DOKUMEN FORENSIK AI */}
+          {isInternal && aiResult?.fileAnalysisInsights && (
             <div className="bg-slate-900 text-white p-6 sm:p-8 rounded-3xl shadow-md md:col-span-2 lg:col-span-2 relative flex flex-col justify-between overflow-hidden">
               <div className="absolute right-0 top-0 opacity-10 pointer-events-none">
                 <DocExportIcon size={160} className="transform translate-x-8 -translate-y-8"/>
@@ -531,7 +503,6 @@ export function UniversalAssessmentView({
                 </div>
               </div>
 
-              {/* BAGIAN KURATOR: REVIEW DOKUMEN */}
               {isInternal && curatorData && (
                 <div className="pt-4 border-t border-slate-800 relative z-10 mt-auto">
                   <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 flex items-center gap-1.5">
@@ -556,8 +527,8 @@ export function UniversalAssessmentView({
         </div>
       )}
 
-      {/* METRIK KOMPARATIF RADAR CHART */}
-      {aiResult?.metrics && aiResult.metrics.length > 0 && (
+      {/* DISEMBUNYIKAN DARI PUBLIK: METRIK KOMPARATIF RADAR CHART */}
+      {isInternal && aiResult?.metrics && aiResult.metrics.length > 0 && (
         <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-3xl ring-1 ring-slate-200 shadow-sm w-full">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0">
@@ -605,7 +576,6 @@ export function UniversalAssessmentView({
             </div>
           </div>
 
-          {/* BAGIAN KURATOR: KALIBRASI METRIK */}
           {isInternal && curatorData && (
             <div className="mt-8 pt-6 border-t border-slate-100">
               <h4 className="text-xs font-black uppercase tracking-widest text-slate-900 mb-2 flex items-center gap-2">
@@ -628,8 +598,8 @@ export function UniversalAssessmentView({
         </div>
       )}
 
-      {/* SWOT ANALYSIS */}
-      {aiResult?.swotAnalysis && (
+      {/* DISEMBUNYIKAN DARI PUBLIK: SWOT ANALYSIS */}
+      {isInternal && aiResult?.swotAnalysis && (
         <div className="w-full">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <div className="bg-emerald-50/80 p-6 rounded-3xl ring-1 ring-emerald-200/60 shadow-sm">
@@ -666,7 +636,6 @@ export function UniversalAssessmentView({
             </div>
           </div>
 
-          {/* BAGIAN KURATOR: VALIDASI SWOT */}
           {isInternal && curatorData && (
             <div className="bg-white p-6 sm:p-8 rounded-3xl ring-1 ring-slate-200 shadow-sm">
               <h4 className="text-xs font-black uppercase tracking-widest text-slate-900 mb-2 flex items-center gap-2">
@@ -689,7 +658,7 @@ export function UniversalAssessmentView({
         </div>
       )}
 
-      {/* CRITICAL RISKS MAP */}
+      {/* TETAP DITAMPILKAN: CRITICAL RISKS MAP */}
       {aiResult?.riskAssessment?.criticalRisks && aiResult.riskAssessment.criticalRisks.length > 0 && (
         <div className="p-6 sm:p-8 rounded-3xl ring-1 ring-rose-200 bg-rose-50/30 w-full">
           <div className="flex items-center gap-3 mb-6">
@@ -721,9 +690,8 @@ export function UniversalAssessmentView({
         </div>
       )}
 
-      {/* ACTION PLAN & RECOMMENDATIONS */}
+      {/* TETAP DITAMPILKAN: ACTION PLAN & RECOMMENDATIONS */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
-        {/* REKOMENDASI (ACCORDION) */}
         {aiResult?.recommendations && aiResult.recommendations.length > 0 && (
           <div className="lg:col-span-2 p-6 sm:p-8 lg:p-10 bg-white ring-1 ring-slate-200 rounded-3xl shadow-sm">
             <div className="flex items-center gap-3 mb-6 sm:mb-8">
@@ -741,7 +709,6 @@ export function UniversalAssessmentView({
           </div>
         )}
         
-        {/* JALUR INKUBASI & ACTION PLAN STATIS */}
         <div className={`${(!aiResult?.recommendations || aiResult.recommendations.length === 0) ? 'lg:col-span-3' : 'lg:col-span-1'} flex flex-col gap-6`}>
           <div className={`p-6 sm:p-8 rounded-3xl text-center ring-1 shadow-sm ${isHighTier ? 'bg-emerald-50 ring-emerald-200/60 text-emerald-900' : 'bg-indigo-50 ring-indigo-200/60 text-indigo-900'}`}>
             <div className="flex justify-center mb-3">
@@ -753,8 +720,8 @@ export function UniversalAssessmentView({
                   value={curatorData.curatorRoute}
                   onChange={(e) => curatorData.setCuratorRoute && curatorData.setCuratorRoute(e.target.value)}
                   className="bg-white font-black text-center h-10 border-slate-300 rounded-xl text-slate-900 mt-2"
-                  placeholder="Tentukan Jalur Akhir..."
-               />
+                  placeholder="Tentukan Jalur Akhir..." 
+              />
             ) : (
               <h4 className="text-xl sm:text-2xl font-black leading-tight tracking-tight text-balance">
                 {isInternal ? (curatorData?.curatorRoute || aiResult?.incubationRoute) : aiResult?.incubationRoute}
@@ -789,19 +756,15 @@ export function UniversalAssessmentView({
         </div>
       </div>
 
-      {/* ======================================================== */}
-      {/* INTEGRASI KOMPONEN ACTION PLAN BUILDER (CHECKLIST AI)  */}
-      {/* ======================================================== */}
       {assessmentId && isPublic && (
         <div className="w-full mt-8">
         <ActionPlanBuilder 
             assessmentId={assessmentId} 
             initialData={aiResult?.customActionPlan} 
-            aiResult={aiResult} // <-- HANYA MENGIRIM INI SEKARANG
+            aiResult={aiResult}
           />
         </div>
       )}
-
     </div>
   );
 }

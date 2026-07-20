@@ -6,10 +6,9 @@ import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as LucideIcons from 'lucide-react'; 
-
 import { 
   X, Sparkles, CheckCircle2, ArrowRight, Loader2,
-  MessageCircle, Users, Share2, Star 
+  MessageCircle, Users, Share2, Star, Copy, Check 
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { FormTemplate } from '@/types/curation';
@@ -26,7 +25,7 @@ import {
   GlobalTargetIcon, 
   AdminShieldIcon,
   AiSparkIcon
-} from '@/types'; 
+} from '@/types';
 
 interface PricingPackagesProps {
   isOpen: boolean;
@@ -78,13 +77,16 @@ const getCategoryTheme = (title: string, category: string) => {
     pill: 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100',
     gradient: 'from-indigo-50/50 to-white'
   };
-};
+}
 
 export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpenPackageId }: PricingPackagesProps) {
   const [packages, setPackages] = useState<FormTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState<string>('Semua');
   const [checkoutPackage, setCheckoutPackage] = useState<FormTemplate | null>(null);
+  
+  // State untuk UI animasi saat Link di-copy
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -120,6 +122,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
            toast.error("Modul yang Anda cari tidak tersedia atau belum tayang.");
         }
       }
+
     } catch (error) {
       console.error("Gagal memuat katalog:", error);
     } finally {
@@ -146,11 +149,32 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
     window.location.href = '/assessment';
   };
 
+  // FUNGSI COPY LINK (Bisa untuk List dan Laci)
+  const handleCopyLink = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    if (typeof window === 'undefined') return;
+    
+    // Rute yang benar: /katalog?buy=ID
+    const shareUrl = `${window.location.origin}/katalog?buy=${id}`;
+    
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopiedId(id);
+      toast.success("Tautan Modul Disalin!", {
+        description: "Tautan siap dibagikan ke partisipan atau jaringan kolega Anda."
+      });
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch (error) {
+      toast.error("Gagal menyalin tautan.");
+    }
+  };
+
+  // FUNGSI SHARE NATIVE DEVICE
   const handleSharePackage = async (e: React.MouseEvent, pkg: FormTemplate) => {
     e.stopPropagation(); 
     if (typeof window === 'undefined') return;
 
-    const shareUrl = `${window.location.origin}/?buy=${pkg.id}`;
+    const shareUrl = `${window.location.origin}/katalog?buy=${pkg.id}`;
     const shareData = {
       title: `Omnifit: ${pkg.trackName}`,
       text: `Mari deteksi dini potensi dan akar masalah Anda dengan modul asesmen "${pkg.trackName}" di platform Omnifit. Coba sekarang!`,
@@ -164,14 +188,8 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
         if (error.name !== 'AbortError') console.error('Error sharing:', error);
       }
     } else {
-      try {
-        await navigator.clipboard.writeText(shareUrl);
-        toast.success("Link berhasil disalin ke clipboard!", {
-          description: "Silakan paste (Ctrl+V) link tersebut ke WhatsApp atau media sosial Anda."
-        });
-      } catch (error) {
-        toast.error("Gagal menyalin link.");
-      }
+      // Fallback ke fungsi Copy Link jika device tidak mendukung Share API Nativ
+      handleCopyLink(e, pkg.id);
     }
   };
 
@@ -179,6 +197,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
   const filteredPackages = packages.filter(pkg => activeCategory === 'Semua' || pkg.category === activeCategory);
 
   const drawerTheme = checkoutPackage ? getCategoryTheme(checkoutPackage.trackName, checkoutPackage.category || '') : getCategoryTheme('', '');
+  
   const DrawerIcon = checkoutPackage?.trackIcon && (LucideIcons as any)[checkoutPackage.trackIcon] 
     ? (LucideIcons as any)[checkoutPackage.trackIcon] 
     : AppModuleTealIcon;
@@ -256,6 +275,8 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                           const IconComponent = pkg.trackIcon && (LucideIcons as any)[pkg.trackIcon] 
                             ? (LucideIcons as any)[pkg.trackIcon] 
                             : AppModuleTealIcon;
+                          
+                          const isCopied = copiedId === pkg.id;
 
                           return (
                             <motion.div
@@ -303,24 +324,26 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                               </div>
 
                               {/* Kanan: CTA Minimalis & Share */}
-                              <div className="flex items-center gap-2 shrink-0 z-10">
+                              <div className="flex items-center gap-1 sm:gap-2 shrink-0 z-10">
                                 <button
-                                  onClick={(e) => handleSharePackage(e, pkg)}
-                                  className={`p-2 rounded-full text-slate-400 hover:${theme.text} hover:${theme.bg} transition-colors hidden sm:flex`}
-                                  title="Bagikan Modul"
+                                  onClick={(e) => handleCopyLink(e, pkg.id)}
+                                  className={`p-2 rounded-full transition-colors flex ${
+                                    isCopied ? 'bg-emerald-100 text-emerald-600' : `text-slate-400 hover:${theme.text} hover:${theme.bg}`
+                                  }`}
+                                  title={isCopied ? "Tersalin!" : "Salin Tautan"}
                                 >
-                                  <Share2 className="w-4 h-4" />
+                                  {isCopied ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
                                 </button>
                                 
                                 <Button
                                   size="sm"
-                                  className={`h-9 px-5 rounded-xl text-xs font-bold shadow-sm transition-all group-hover:shadow-md ${
+                                  className={`h-9 px-4 sm:px-5 rounded-xl text-xs font-bold shadow-sm transition-all group-hover:shadow-md ${
                                     !pkg.isPaid || pkg.price === 0 
                                       ? 'bg-slate-900 text-white hover:bg-slate-800' 
                                       : theme.btn
                                   }`}
                                 >
-                                  Mulai
+                                  Buka
                                 </Button>
                               </div>
                             </motion.div>
@@ -342,10 +365,11 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                           Rancang formulir matriks asesmen eksklusif dan terintegrasi untuk kebutuhan Korporasi atau Institusi Anda.
                         </p>
                       </div>
+
                       <div className="relative z-10 shrink-0 w-full md:w-auto">
-                        <a
-                          href="https://wa.me/6285777117587?text=Halo%20Admin%20Omnifit,%20saya%20tertarik%20untuk%20berdiskusi%20mengenai%20pembuatan%20modul%20asesmen%20custom."
-                          target="_blank"
+                        <a 
+                          href="https://wa.me/6285777117587?text=Halo%20Admin%20Omnifit,%20saya%20tertarik%20untuk%20berdiskusi%20mengenai%20pembuatan%20modul%20asesmen%20custom." 
+                          target="_blank" 
                           rel="noopener noreferrer"
                           className="inline-flex items-center justify-center gap-2 w-full md:w-auto px-6 py-3 bg-[#25D366] hover:bg-[#1ebd5a] text-white rounded-xl text-sm font-bold transition-all shadow-md"
                         >
@@ -363,7 +387,6 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
       </AnimatePresence>
 
       {/* LACI (DRAWER) KONFIRMASI CHECKOUT MODUL */}
-      {/* ... (Tidak ada perubahan di bagian Laci, tetap sama seperti sebelumnya) ... */}
       <AnimatePresence>
         {checkoutPackage && (
           <React.Fragment key="checkout-drawer-fragment">
@@ -380,6 +403,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
               className="fixed top-0 right-0 h-[100dvh] w-full max-w-md bg-white z-[210] shadow-2xl flex flex-col border-l border-slate-100"
             >
+              {/* Header Laci */}
               <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-white/80 backdrop-blur-md">
                 <div>
                   <h3 className="font-black text-xl text-slate-900">Ringkasan Modul</h3>
@@ -390,6 +414,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                 </button>
               </div>
 
+              {/* Body Laci */}
               <div className="p-6 flex-1 overflow-y-auto custom-scrollbar">
                  <div className="flex items-start gap-4 mb-6">
                   <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 shadow-sm ring-1 ${drawerTheme.bg} ${drawerTheme.text} ${drawerTheme.ring}`}>
@@ -402,6 +427,33 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                 </div>
 
                 <div className="space-y-6">
+                  {/* === AREA FITUR BARU: SHARE BOX === */}
+                  <div className="bg-slate-50 p-4 rounded-3xl ring-1 ring-slate-200">
+                    <h5 className="text-[11px] font-black text-slate-600 uppercase tracking-widest mb-3 flex items-center gap-2">
+                      <Share2 size={14} className="text-slate-400" /> Tautkan & Bagikan Modul
+                    </h5>
+                    <div className="flex items-center gap-2 bg-white p-1.5 rounded-xl border border-slate-200 shadow-sm">
+                      <div className="flex-1 truncate px-2 text-xs font-mono font-medium text-slate-500 select-all">
+                        {`${window.location.origin}/katalog?buy=${checkoutPackage.id}`}
+                      </div>
+                      <Button
+                        onClick={(e) => handleCopyLink(e, checkoutPackage.id)}
+                        className={`h-8 px-4 rounded-lg text-xs font-bold transition-all shrink-0 ${
+                          copiedId === checkoutPackage.id 
+                            ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' 
+                            : 'bg-slate-900 text-white hover:bg-indigo-600'
+                        }`}
+                      >
+                        {copiedId === checkoutPackage.id ? (
+                          <><Check className="w-3.5 h-3.5 mr-1" /> Disalin</>
+                        ) : (
+                          <><Copy className="w-3.5 h-3.5 mr-1" /> Salin</>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                  {/* ================================== */}
+
                   <div className={`${drawerTheme.bg} p-5 rounded-3xl ring-1 ${drawerTheme.ring} bg-opacity-40`}>
                     <h5 className={`text-[11px] font-black ${drawerTheme.text} uppercase tracking-widest mb-4 flex items-center gap-2`}>
                       <AiSparkIcon size={16} /> Nilai Tambah Untuk Anda
@@ -465,6 +517,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                 </div>
               </div>
 
+              {/* Footer Laci */}
               <div className="p-6 border-t border-slate-100 bg-white shrink-0">
                 <Button 
                   onClick={() => {
@@ -476,6 +529,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                   Mulai Sesi Sekarang <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </div>
+
             </motion.div>
           </React.Fragment>
         )}

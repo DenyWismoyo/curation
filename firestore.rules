@@ -4,19 +4,19 @@ service cloud.firestore {
   match /databases/{database}/documents {
     
     function isAuthenticated() { return request.auth != null; }
-    function isSuperAdmin() { return request.auth != null && request.auth.token.email == 'deny.wismoyo@gmail.com'; }
+    function isSuperAdmin() { return request.auth != null && request.auth.token.email == 'deny.wismoyo@gmail.com'; } //[cite: 7]
     
     // FUNGSI PINTAR: Mengecek hak asesor baik dari dokumen UID maupun dokumen Email
     function isAssessor() {
       return isAuthenticated() && (
         (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'assessor') ||
         (exists(/databases/$(database)/documents/users/$(request.auth.token.email)) && get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role == 'assessor')
-      );
+      ); //[cite: 7]
     }
 
     // Mengizinkan user membaca data profilnya jika ID dokumennya adalah UID atau Email-nya
     match /users/{userId} {
-      allow read, write: if isAuthenticated() && (request.auth.uid == userId || request.auth.token.email == userId || isSuperAdmin());
+      allow read, write: if isAuthenticated() && (request.auth.uid == userId || request.auth.token.email == userId || isSuperAdmin()); //[cite: 7]
     }
 
     match /assessments/{assessmentId} {
@@ -24,42 +24,52 @@ service cloud.firestore {
         request.auth.uid == resource.data.userId || 
         isSuperAdmin() || 
         isAssessor()
-      );
-      allow create: if isAuthenticated();
-      allow delete: if isSuperAdmin();
+      ); //[cite: 7]
+      allow create: if isAuthenticated(); //[cite: 7]
+      allow delete: if isSuperAdmin(); //[cite: 7]
     }
-match /form_templates/{document=**} {
-      // allow read: if isAuthenticated(); // HAPUS ATAU KOMENTAR BARIS INI
-      allow read: if true; // TAMBAHKAN BARIS INI: Akses baca publik
-      allow write: if isSuperAdmin(); // [cite: 7]
+
+    match /form_templates/{document=**} {
+      allow read: if true; // Akses baca publik (dibutuhkan untuk CurationLanding)[cite: 7]
+      allow write: if isSuperAdmin(); //[cite: 7]
     }
 
     match /corporate_tokens/{document=**} {
-      allow read: if isAuthenticated();
-      allow create, delete: if isSuperAdmin();
-      allow update: if isSuperAdmin() || isAssessor();
+      allow read: if isAuthenticated(); //[cite: 7]
+      allow create, delete: if isSuperAdmin(); //[cite: 7]
+      allow update: if isSuperAdmin() || isAssessor(); //[cite: 7]
     }
     
     // Aturan untuk Ulasan & Feedback
     match /feedbacks/{document=**} {
       // Mengizinkan siapapun (termasuk user yang belum login) untuk mengirim ulasan
-      allow create: if true; 
+      allow create: if true;  //[cite: 7]
       // Hanya Super Admin yang diizinkan untuk membaca, memperbarui, dan menghapus ulasan
-      allow read, update, delete: if isSuperAdmin(); 
+      allow read, update, delete: if isSuperAdmin();  //[cite: 7]
+    }
+
+    // ==========================================
+    // ATURAN BARU: KOLEKSI MITRA & EKOSISTEM
+    // ==========================================
+    match /landing_partners/{document=**} {
+      // Mengizinkan SIAPA SAJA (publik) untuk membaca data mitra agar bisa tampil di Landing Page
+      allow read: if true; 
+      // HANYA Admin yang diizinkan untuk menambah, mengubah, atau menghapus data mitra
+      allow write: if isSuperAdmin();
     }
     
-    match /corporate_tags/{document=**} { allow read: if isAuthenticated(); allow write: if isSuperAdmin(); }
-    match /curator_tokens/{document=**} { allow read: if isAuthenticated(); allow write: if isSuperAdmin(); }
-    match /template_folders/{document=**} { allow read: if isAuthenticated(); allow write: if isSuperAdmin(); }
-    match /business_vectors/{document=**} { allow read: if isAuthenticated(); allow write: if false; }
-    match /template_research_vectors/{document=**} { allow read: if isSuperAdmin(); allow write: if false; }
+    match /corporate_tags/{document=**} { allow read: if isAuthenticated(); allow write: if isSuperAdmin(); } //[cite: 7]
+    match /curator_tokens/{document=**} { allow read: if isAuthenticated(); allow write: if isSuperAdmin(); } //[cite: 7]
+    match /template_folders/{document=**} { allow read: if isAuthenticated(); allow write: if isSuperAdmin(); } //[cite: 7]
+    match /business_vectors/{document=**} { allow read: if isAuthenticated(); allow write: if false; } //[cite: 7]
+    match /template_research_vectors/{document=**} { allow read: if isSuperAdmin(); allow write: if false; } //[cite: 7]
     
     // Aturan untuk Brankas Dashboard Pelanggan
     match /transactions/{transactionId} {
-      allow read: if isAuthenticated() && (request.auth.uid == resource.data.userId || isSuperAdmin());
-      allow write: if false; 
+      allow read: if isAuthenticated() && (request.auth.uid == resource.data.userId || isSuperAdmin()); //[cite: 7]
+      allow write: if false;  //[cite: 7]
     }
     
-    match /{document=**} { allow read, write: if false; }
+    match /{document=**} { allow read, write: if false; } //[cite: 7]
   }
 }
