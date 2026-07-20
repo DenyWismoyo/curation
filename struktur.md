@@ -6,15 +6,18 @@
 │       │   └── promptTemplate.ts
 │       ├── templates
 │       │   └── UniversalPDFDocument.tsx
+│       ├── actionPlanService.ts
 │       ├── documentGenerator.ts
 │       ├── emailService.ts
 │       ├── formBuilderService.ts
 │       ├── index.ts
+│       ├── omniAiService.ts
 │       ├── paymentService.ts
 │       ├── pdfGenerator.ts
 │       └── vectorService.ts
 ├── public
 │   ├── docs
+│   │   ├── apa_itu_omnifit.md
 │   │   ├── assessor.md
 │   │   ├── curator.md
 │   │   ├── dashboard.md
@@ -56,15 +59,19 @@
     │   │   ├── result
     │   │   │   └── [id]
     │   │   │       └── page.tsx
+    │   │   ├── token
+    │   │   │   └── page.tsx
+    │   │   ├── workspace
+    │   │   │   └── page.tsx
     │   │   └── page.tsx
     │   ├── admin
+    │   │   ├── assessment
+    │   │   │   └── [id]
+    │   │   │       └── page.tsx
     │   │   ├── assessors
     │   │   │   └── page.tsx
     │   │   ├── feedback
     │   │   │   └── page.tsx
-    │   │   ├── manage-assessment
-    │   │   │   └── [id]
-    │   │   │       └── page.tsx
     │   │   ├── partners
     │   │   │   └── page.tsx
     │   │   ├── pricing
@@ -75,9 +82,6 @@
     │   │   │   └── page.tsx
     │   │   ├── layout.tsx
     │   │   └── page.tsx
-    │   ├── api
-    │   │   └── openclaw
-    │   │       └── route.ts
     │   ├── assessor
     │   │   ├── layout.tsx
     │   │   └── page.tsx
@@ -98,12 +102,12 @@
     │   │   │   ├── AssessorTemplateBuilder.tsx
     │   │   │   └── AssessorTemplatePreview.tsx
     │   │   ├── curation
+    │   │   │   ├── ActionPlanBuilder.tsx
     │   │   │   ├── CurationDashboard.tsx
     │   │   │   ├── CurationLanding.tsx
     │   │   │   ├── DynamicField.tsx
     │   │   │   ├── DynamicTrackSelector.tsx
     │   │   │   ├── DynamicWizard.tsx
-    │   │   │   ├── FeedbackModal.tsx
     │   │   │   ├── PublicExportPDF.tsx
     │   │   │   ├── ReviewAndConfirm.tsx
     │   │   │   └── SystemCapabilitiesModal.tsx
@@ -114,8 +118,12 @@
     │   │   │   └── PricingPackages.tsx
     │   │   └── shared
     │   │       ├── AIPromptBlueprintPDF.tsx
-    │   │       ├── OpenClawWidget.tsx
+    │   │       ├── FeedbackModal.tsx
+    │   │       ├── GlobalFeedbackWidget.tsx
+    │   │       ├── GlobalFloatingWidget.tsx
+    │   │       ├── OmniAiWidget.tsx
     │   │       ├── PWAInstallPrompt.tsx
+    │   │       ├── SocialShareCard.tsx
     │   │       ├── TemplateQuestionsPDF.tsx
     │   │       ├── UniversalAssessmentView.tsx
     │   │       └── UniversalPDFDocument.tsx
