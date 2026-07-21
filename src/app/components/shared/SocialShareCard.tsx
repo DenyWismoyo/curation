@@ -1,132 +1,125 @@
 // src/app/components/shared/SocialShareCard.tsx
 'use client';
 
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Share2, Copy, Sparkles, CheckCircle2 } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Copy, Check, ShieldCheck, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
-// Import custom icons (sesuaikan path jika perlu)
-import { AiSparkIcon, EcosystemIcon } from '@/types';
+// IMPORT CUSTOM ICON BRAND
+import { AiSparkIcon } from '@/types';
 
-interface SocialShareCardProps {
+export interface SocialShareCardProps {
   namaUsaha: string;
   score: number;
   readinessLevel: string;
   trackType: string;
-  urlToShare?: string;
 }
 
-export function SocialShareCard({ namaUsaha, score, readinessLevel, trackType, urlToShare = 'https://omnifit.cloud' }: SocialShareCardProps) {
+export function SocialShareCard({ namaUsaha, score, readinessLevel, trackType }: SocialShareCardProps) {
+  const cardRef = useRef<HTMLDivElement>(null);
   const [isCopied, setIsCopied] = useState(false);
 
-  const shareText = `Saya baru saja menyelesaikan evaluasi komprehensif "${trackType}" di Omnifit AI Analytics!\n\n🏢 Entitas: ${namaUsaha}\n📊 AI Readiness Score: ${score}/100\n🚀 Level: ${readinessLevel}\n\nCek kesiapan bisnismu sekarang di: ${urlToShare}`;
+  const handleCopyCaption = () => {
+    const text = `Saya baru saja menyelesaikan evaluasi matrik "${trackType}" di Omnifit OS untuk entitas ${namaUsaha}.\n\nSkor Analitik: ${score}/100\nStatus Kesiapan: ${readinessLevel}\n\nPusat kendali eksekusi dan blueprint strategi siap dijalankan. #Omnifit #AI #StrategicAssessment`;
+    
+    navigator.clipboard.writeText(text);
+    setIsCopied(true);
+    toast.success("Caption berhasil disalin ke clipboard!");
+    setTimeout(() => setIsCopied(false), 2000);
+  };
 
-  const handleShare = async () => {
-    // Gunakan Native Web Share API jika tersedia (biasanya di HP: Safari/Chrome Mobile)
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `Hasil Asesmen Omnifit: ${namaUsaha}`,
-          text: shareText,
-        });
-        toast.success("Berhasil membuka menu bagikan!");
-      } catch (error) {
-        console.log("Share dibatalkan atau gagal", error);
+  const handleNativeShare = async () => {
+    const shareData = {
+      title: 'Skor Asesmen Omnifit',
+      text: `Skor analitik AI untuk ${namaUsaha} adalah ${score}/100 (${readinessLevel}).`,
+      url: 'https://omnifit.cloud'
+    };
+
+    try {
+      if (navigator.share && navigator.canShare(shareData)) {
+        await navigator.share(shareData);
+      } else {
+        handleCopyCaption(); // Fallback jika browser tidak mendukung Web Share API
       }
-    } else {
-      // Fallback untuk desktop: Salin ke clipboard
-      copyToClipboard();
+    } catch (err) {
+      console.log('Error sharing:', err);
     }
   };
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(shareText);
-    setIsCopied(true);
-    toast.success("Teks pencapaian disalin!", {
-      description: "Silakan paste di caption Instagram, LinkedIn, atau TikTok Anda."
-    });
-    setTimeout(() => setIsCopied(false), 3000);
-  };
-
-  // Menentukan warna badge berdasarkan skor
-  const isHighTier = score >= 75;
-  const cardGradient = isHighTier 
-    ? 'from-emerald-900 via-emerald-800 to-slate-900' 
-    : 'from-indigo-900 via-blue-900 to-slate-900';
-  
-  const accentColor = isHighTier ? 'text-emerald-400' : 'text-indigo-400';
-  const glowColor = isHighTier ? 'bg-emerald-500/20' : 'bg-indigo-500/20';
-
   return (
-    <div className="flex flex-col gap-4">
-      {/* KARTU PENCAPAIAN (Design khusus untuk di-Screenshot) */}
-      <motion.div 
-        whileHover={{ scale: 1.02 }}
-        className={`relative w-full aspect-[4/5] sm:aspect-auto sm:h-[400px] rounded-[2rem] bg-gradient-to-br ${cardGradient} p-6 sm:p-8 text-white shadow-2xl overflow-hidden flex flex-col justify-between ring-1 ring-white/10`}
+    <div className="bg-white p-6 sm:p-8 flex flex-col h-full relative group">
+      
+      {/* KARTU VISUAL (Target Screenshot yang Elegan) */}
+      <div 
+        ref={cardRef}
+        className="bg-slate-50/50 p-6 sm:p-8 rounded-[1.5rem] ring-1 ring-slate-200 mb-6 relative overflow-hidden flex-1 flex flex-col"
       >
-        {/* Background Ornaments */}
-        <div className={`absolute top-0 right-0 w-64 h-64 ${glowColor} rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none`}></div>
-        <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/60 to-transparent pointer-events-none"></div>
+        {/* Ornamen Latar yang Sangat Halus */}
+        <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50/50 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
+        <AiSparkIcon size={120} className="absolute -bottom-10 -right-10 text-slate-100 opacity-50 grayscale pointer-events-none transform -rotate-12" />
 
-        {/* Header Kartu */}
-        <div className="relative z-10 flex justify-between items-start">
-          <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full ring-1 ring-white/20">
-            <EcosystemIcon className="w-4 h-4 text-white" />
-            <span className="text-[10px] font-black uppercase tracking-widest text-white">Omnifit Verified</span>
+        <div className="flex justify-between items-start mb-10 relative z-10">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white ring-1 ring-slate-200 rounded-lg text-[9px] font-black uppercase tracking-widest text-slate-700 shadow-sm">
+            <ShieldCheck size={14} className="text-emerald-500" />
+            Omnifit Verified
           </div>
-          <AiSparkIcon className={`w-8 h-8 ${accentColor} opacity-80`} />
+          <span className="text-[10px] font-bold text-slate-400 mt-1">
+            {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+          </span>
         </div>
 
-        {/* Body Kartu (Skor) */}
-        <div className="relative z-10 text-center space-y-2 my-auto py-8">
-          <p className="text-xs font-bold uppercase tracking-widest text-white/60 mb-2">{trackType}</p>
-          <div className="inline-block relative">
-            <span className="text-7xl sm:text-8xl font-black tracking-tighter drop-shadow-lg leading-none">
-              {score}
-            </span>
-            <span className={`absolute top-2 -right-6 text-xl font-black ${accentColor}`}>/100</span>
-          </div>
-          <div className="mt-4">
-            <span className={`inline-block px-4 py-1.5 rounded-lg bg-white/10 backdrop-blur-sm text-sm font-bold ring-1 ring-white/20 ${accentColor}`}>
-              {readinessLevel.split('|')[0] || 'Tervalidasi'}
-            </span>
+        <div className="mb-10 relative z-10 flex-1">
+          <p className="text-[10px] font-black text-indigo-600 uppercase tracking-widest mb-2 line-clamp-1">
+            {trackType}
+          </p>
+          <div className="flex items-baseline gap-1.5 mb-2">
+            <span className="text-7xl font-black text-slate-900 tracking-tighter leading-none">{score}</span>
+            <span className="text-xl font-bold text-slate-400">/100</span>
           </div>
         </div>
 
-        {/* Footer Kartu */}
-        <div className="relative z-10 border-t border-white/10 pt-4 flex justify-between items-end">
-          <div>
-            <p className="text-[10px] uppercase font-bold tracking-widest text-white/50 mb-0.5">Entitas</p>
-            <p className="text-sm font-black truncate max-w-[180px]">{namaUsaha}</p>
+        <div className="flex items-end justify-between border-t border-slate-200/80 pt-5 relative z-10">
+          <div className="flex-1 pr-4">
+            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Entitas Tervalidasi</p>
+            <p className="text-sm font-bold text-slate-800 line-clamp-1">{namaUsaha}</p>
           </div>
-          <div className="text-right">
-            <p className="text-[10px] font-bold text-white/50">{new Date().toLocaleDateString('id-ID')}</p>
+          <div className="text-right shrink-0">
+            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Indeks Kesiapan</p>
+            <div className="inline-flex items-center px-2.5 py-1 bg-slate-900 text-white rounded-md text-[10px] font-bold tracking-wide">
+              {readinessLevel}
+            </div>
           </div>
         </div>
-      </motion.div>
-
-      {/* ACTION BUTTONS */}
-      <div className="grid grid-cols-2 gap-3">
-        <Button 
-          onClick={handleShare}
-          className="bg-slate-900 hover:bg-indigo-600 text-white h-12 rounded-xl font-bold shadow-lg flex items-center gap-2"
-        >
-          <Share2 size={16} /> Share Sosmed
-        </Button>
-        <Button 
-          variant="outline"
-          onClick={copyToClipboard}
-          className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50 h-12 rounded-xl font-bold shadow-sm flex items-center gap-2"
-        >
-          {isCopied ? <CheckCircle2 size={16} className="text-emerald-500" /> : <Copy size={16} />}
-          {isCopied ? 'Tersalin!' : 'Salin Caption'}
-        </Button>
       </div>
-      <p className="text-[10px] text-center text-slate-400 font-medium px-2">
-        *Screenshot kartu di atas atau salin caption untuk dipamerkan ke LinkedIn, Instagram, atau TikTok Anda.
-      </p>
+
+      {/* AREA AKSI */}
+      <div className="relative z-10">
+        <div className="flex gap-3 mb-4">
+          <Button 
+            onClick={handleNativeShare}
+            className="flex-1 bg-slate-900 hover:bg-indigo-600 text-white rounded-xl h-12 text-xs font-bold shadow-md transition-all group/share"
+          >
+            <Share2 size={14} className="mr-2 text-indigo-400 group-hover/share:text-white transition-colors" /> Bagikan
+          </Button>
+          <Button 
+            variant="outline"
+            onClick={handleCopyCaption}
+            className={`flex-1 rounded-xl h-12 text-xs font-bold transition-all ${
+              isCopied 
+                ? 'bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-50 hover:text-emerald-600' 
+                : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:text-indigo-600'
+            }`}
+          >
+            {isCopied ? <Check size={14} className="mr-2" /> : <Copy size={14} className="mr-2 text-slate-400" />}
+            {isCopied ? 'Tersalin!' : 'Salin Caption'}
+          </Button>
+        </div>
+        <p className="text-[10px] text-slate-400 font-medium text-center leading-relaxed px-4">
+          * Ambil tangkapan layar (screenshot) kartu di atas atau salin caption untuk dibagikan ke media profesional Anda.
+        </p>
+      </div>
+      
     </div>
   );
 }

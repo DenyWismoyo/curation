@@ -50,14 +50,14 @@ interface DraftItem {
 export function CurationLanding({ onStart, history, onLoadHistory, user, role, onLogin, onLogout }: Props) {
   const router = useRouter();
   const [isCapabilitiesModalOpen, setIsCapabilitiesModalOpen] = useState(false);
-  
+
   // State Data
   const [drafts, setDrafts] = useState<DraftItem[]>([]);
   const [isFetchingData, setIsFetchingData] = useState(true); // OPTIMASI: State untuk Skeleton Loading
-  
+
   // State Autentikasi Email
-  const { registerWithEmail, loginWithEmail } = useAuth();
-  const [authMode, setAuthMode] = useState<'options' | 'login' | 'register'>('options');
+  const { registerWithEmail, loginWithEmail, resetPassword } = useAuth();
+  const [authMode, setAuthMode] = useState<'options' | 'login' | 'register' | 'reset'>('options');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -73,6 +73,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
       try {
         const q = query(collection(db, 'form_templates'), where('isActive', '==', true));
         const snap = await getDocs(q);
+        
         const templates = snap.docs.map(document => ({
           id: document.id,
           trackName: document.data().trackName,
@@ -133,8 +134,8 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
          currentToken = savedToken;
        } else {
          currentToken = (!draft.isPaid || draft.price === 0) 
-             ? `FREE-${Math.random().toString(36).substring(2, 8).toUpperCase()}` 
-             : `TRIAL-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+              ? `FREE-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
+              : `TRIAL-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
        }
        sessionStorage.setItem('active_token', currentToken);
     }
@@ -161,6 +162,26 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
       if (error.code === 'auth/email-already-in-use') toast.error("Email sudah terdaftar.");
       else if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') toast.error("Email atau kata sandi salah.");
       else toast.error("Terjadi kesalahan. Silakan coba lagi.");
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return toast.error("Harap masukkan alamat email Anda.");
+    
+    setAuthLoading(true);
+    try {
+      await resetPassword(email);
+      toast.success("Tautan pengaturan kata sandi telah dikirim ke email Anda!");
+      setAuthMode('login'); 
+    } catch (error: any) {
+      if (error.code === 'auth/user-not-found') {
+        toast.error("Email belum terdaftar di sistem.");
+      } else {
+        toast.error("Gagal mengirim tautan. Silakan coba lagi.");
+      }
     } finally {
       setAuthLoading(false);
     }
@@ -248,6 +269,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                   <div className="group relative cursor-pointer overflow-hidden rounded-[1.25rem] bg-indigo-600 p-[2px] transition-all duration-300 hover:-translate-y-1 w-full shadow-lg shadow-indigo-600/10">
                     <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-pink-500 to-blue-500 opacity-60 group-hover:opacity-100 transition-opacity duration-500 animate-pulse"></div>
                     <div className="absolute -inset-x-20 inset-y-0 bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:animate-[shimmer_2s_infinite] pointer-events-none" />
+                    
                     <div className="relative flex items-center justify-between gap-5 rounded-xl bg-white px-5 py-4 transition-all group-hover:bg-white/95">
                       <div className="flex items-center gap-4 flex-1 min-w-0">
                         <div className="relative h-14 w-16 shrink-0 mr-2">
@@ -332,10 +354,38 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                     <Button size="lg" onClick={() => setAuthMode('register')} className="w-full shadow-md bg-indigo-600 text-white hover:bg-indigo-700 h-14 rounded-2xl text-base font-bold transition-all flex items-center justify-center gap-3">
                       Daftar dengan Email
                     </Button>
+
                     <p className="text-center text-sm text-slate-500 font-medium mt-2">
                       Sudah punya akun? <button onClick={() => setAuthMode('login')} className="text-indigo-600 font-bold hover:underline">Masuk di sini</button>
                     </p>
                   </>
+                ) : authMode === 'reset' ? (
+                  <form onSubmit={handleResetPassword} className="bg-white p-6 rounded-2xl ring-1 ring-slate-200 shadow-sm space-y-4 text-left">
+                    <h3 className="text-lg font-black text-slate-900 mb-2">Atur Ulang Kata Sandi</h3>
+                    <p className="text-xs font-medium text-slate-500 mb-4 leading-relaxed">
+                      Masukkan alamat email yang terhubung dengan akun Google Anda atau yang telah Anda daftarkan. Kami akan mengirimkan tautan untuk membuat kata sandi baru.
+                    </p>
+
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+                      <Input
+                        required
+                        type="email"
+                        placeholder="Alamat Email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="pl-10 h-12 rounded-xl bg-slate-50 border-slate-200"
+                      />
+                    </div>
+
+                    <Button type="submit" disabled={authLoading} className="w-full h-12 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold transition-all mt-2">
+                      {authLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Kirim Tautan'}
+                    </Button>
+
+                    <button type="button" onClick={() => setAuthMode('login')} className="w-full text-sm font-bold text-slate-500 hover:text-slate-800 mt-2">
+                      Kembali ke Login
+                    </button>
+                  </form>
                 ) : (
                   <form onSubmit={handleEmailAuth} className="bg-white p-6 rounded-2xl ring-1 ring-slate-200 shadow-sm space-y-4 text-left">
                     <h3 className="text-lg font-black text-slate-900 mb-2">
@@ -345,42 +395,50 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                     {authMode === 'register' && (
                       <div className="relative">
                         <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
-                        <Input 
-                          required 
-                          placeholder="Nama Lengkap Anda" 
-                          value={name} 
+                        <Input
+                          required
+                          placeholder="Nama Lengkap Anda"
+                          value={name}
                           onChange={(e) => setName(e.target.value)}
-                          className="pl-10 h-12 rounded-xl bg-slate-50 border-slate-200" 
+                          className="pl-10 h-12 rounded-xl bg-slate-50 border-slate-200"
                         />
                       </div>
                     )}
                     
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
-                      <Input 
-                        required 
-                        type="email" 
-                        placeholder="Alamat Email" 
-                        value={email} 
+                      <Input
+                        required
+                        type="email"
+                        placeholder="Alamat Email"
+                        value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="pl-10 h-12 rounded-xl bg-slate-50 border-slate-200" 
+                        className="pl-10 h-12 rounded-xl bg-slate-50 border-slate-200"
                       />
                     </div>
                     
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
-                      <Input 
-                        required 
-                        type="password" 
-                        placeholder="Kata Sandi (Min. 6 karakter)" 
-                        value={password} 
+                      <Input
+                        required
+                        type="password"
+                        placeholder="Kata Sandi (Min. 6 karakter)"
+                        value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="pl-10 h-12 rounded-xl bg-slate-50 border-slate-200" 
+                        className="pl-10 h-12 rounded-xl bg-slate-50 border-slate-200"
                         minLength={6}
                       />
                     </div>
 
-                    <Button type="submit" disabled={authLoading} className="w-full h-12 rounded-xl bg-slate-900 hover:bg-indigo-600 text-white font-bold transition-all">
+                    {authMode === 'login' && (
+                      <div className="flex justify-end mt-1">
+                        <button type="button" onClick={() => setAuthMode('reset')} className="text-xs font-bold text-indigo-600 hover:underline">
+                          Lupa / Belum Punya Kata Sandi?
+                        </button>
+                      </div>
+                    )}
+
+                    <Button type="submit" disabled={authLoading} className="w-full h-12 rounded-xl bg-slate-900 hover:bg-indigo-600 text-white font-bold transition-all mt-2">
                       {authLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : (authMode === 'register' ? 'Daftar & Lanjutkan' : 'Masuk')}
                     </Button>
                     
@@ -482,7 +540,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                           <DocExportIcon className="h-5 w-5 text-amber-500" /> Draf Belum Selesai
                         </h3>
                       </div>
-
                       <m.div variants={staggerContainer} initial="hidden" animate="visible" className="max-h-[300px] overflow-y-auto pr-2 custom-scrollbar flex flex-col gap-3 relative z-10">
                         {drafts.map((draft, idx) => (
                           <m.div 
@@ -528,7 +585,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                           <span className="text-[9px] font-black text-emerald-600 uppercase tracking-wider">Live Sync</span>
                         </div>
                       </div>
-
                       <m.div variants={staggerContainer} initial="hidden" animate="visible" className="max-h-[400px] overflow-y-auto pr-2 custom-scrollbar flex flex-col gap-3 relative z-10">
                         {history.map((item, idx) => (
                           <m.div 
@@ -579,6 +635,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
               isLoggedIn={!!user}
             />
           )}
+
         </div>
       </div>
     </LazyMotion>
