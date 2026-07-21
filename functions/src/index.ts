@@ -20,6 +20,7 @@ export { createPaymentInvoice, xenditWebhook } from "./paymentService";
 export { chatWithOmniAi } from "./omniAiService";
 export { generateActionPlanChecklist, generateSubTaskChecklist } from "./actionPlanService";
 export { generateTemplateSellingPoints } from "./outputService";
+export { weeklyActionPlanNudge } from "./nudgeService";
 
 // ============================================================================
 // INISIALISASI FIREBASE
