@@ -1,5 +1,4 @@
 // functions/src/promt/formBuilderPrompt.ts
-
 export interface FormBuilderPromptParams {
   trackName: string;
   config: any; 
@@ -8,7 +7,7 @@ export interface FormBuilderPromptParams {
 
 export const buildMegaAgentPrompt = (params: FormBuilderPromptParams): string => {
   const { trackName, config, archetypeInstruction } = params;
-  
+
   const metrics = config.expectedMetrics?.join(', ') || 'Metrik standar kelayakan bisnis';
   const analysisBlocks = config.expectedAnalysisBlocks?.join(' | ') || '';
   const risks = config.riskFramework || 'Deteksi potensi kegagalan operasional';
@@ -35,26 +34,25 @@ Fokus Deteksi Risiko (Red Flags): [${risks}]
 Standar Referensi Kredibel yang Wajib Diadopsi: [${sources}]
 
 ==================================================
-🧠 TAHAP 1: THE SCRATCHPAD (RISET & PEMETAAN WAJIB)
+TAHAP 1: THE SCRATCHPAD (RISET & PEMETAAN WAJIB)
 ==================================================
-Lakukan penelusuran (Search Grounding) terhadap standar referensi di atas.
-Anda WAJIB memastikan bahwa SETIAP "Target Metrik Radar" dan "Fokus Deteksi Risiko" yang disebutkan di atas memiliki MINIMAL 1 hingga 2 pertanyaan spesifik di dalam formulir. 
+Lakukan penelusuran (Search Grounding) terhadap standar referensi di atas. Anda WAJIB memastikan bahwa SETIAP "Target Metrik Radar" dan "Fokus Deteksi Risiko" yang disebutkan di atas memiliki MINIMAL 1 hingga 2 pertanyaan spesifik di dalam formulir.
 
 ==================================================
-🏗️ TAHAP 2: PEMBUATAN FORMULIR (STEPS)
+TAHAP 2: PEMBUATAN FORMULIR (STEPS)
 ==================================================
 Berdasarkan pemetaan di atas, buatlah struktur formulir secara presisi.
 
-🛡️ GUARDRAILS AUDIT (MUTLAK):
+GUARDRAILS AUDIT (MUTLAK):
 1. ANTI-LEAK: DILARANG menggunakan kata "Skor", "Bobot", "Nilai" pada label/deskripsi pertanyaan. Peserta tidak boleh tahu bobot di balik pilihan mereka.
 2. LOKALISASI BAHASA: Seluruh teks, label pertanyaan, deskripsi, hingga opsi jawaban WAJIB MENGGUNAKAN BAHASA INDONESIA YANG FORMAL DAN MUDAH DIPAHAMI. Nominal angka WAJIB menggunakan mata uang Rupiah (Rp).
 3. JSON STRING SAFETY: DILARANG KERAS menggunakan ENTER atau NEWLINE harfiah (\\n) di dalam teks value JSON. Gunakan spasi biasa untuk memisahkan kalimat.
 
-⚙️ ATURAN STRUKTUR & GAYA (ARCHETYPE):
+ATURAN STRUKTUR & GAYA (ARCHETYPE):
 ${archetypeInstruction}
 
-📋 INSTRUKSI TEKNIS STRUKTUR JSON & "POWERFUL MIXING":
-1. Langkah 1 WAJIB memiliki 4 field pertama dengan urutan ID: "namaUsaha", "namaPengisi", "emailAktif", "nomorTelepon".
+INSTRUKSI TEKNIS STRUKTUR JSON & "POWERFUL MIXING":
+1. Langkah 1 WAJIB memiliki 2 field pertama dengan urutan ID: "namaUsaha", "namaPengisi".
 2. SINERGI TIPE INPUT (WAJIB DITERAPKAN): Anda memiliki senjata input ("text", "textarea", "number", "date", "select", "radio", "checkbox", "file"). Anda WAJIB menggabungkan mereka secara cerdas!
    - Gunakan "checkbox" untuk menanyakan kelengkapan (contoh: "Pilih instrumen legalitas yang sudah Anda miliki").
    - Gunakan "number" khusus untuk data kuantitatif presisi (contoh: Omzet, Jumlah Pengguna, Kapasitas Produksi).
@@ -69,8 +67,7 @@ ${archetypeInstruction}
 ==================================================
 FORMAT KELUARAN (MUTLAK)
 ==================================================
-Keluarkan HANYA format JSON murni TANPA markdown block, TANPA teks pengantar apapun.
-Tiru persis struktur JSON berikut (termasuk cara penerapan showIf dan file):
+Keluarkan HANYA format JSON murni TANPA markdown block, TANPA teks pengantar apapun. Tiru persis struktur JSON berikut (termasuk cara penerapan showIf dan file):
 
 {
   "researchNotes": "Tuliskan ringkasan riset dalam satu paragraf lurus menggunakan Bahasa Indonesia tanpa enter.",
@@ -82,6 +79,9 @@ Tiru persis struktur JSON berikut (termasuk cara penerapan showIf dan file):
       "fields": [
         {
           "id": "namaUsaha", "label": "Nama Entitas", "type": "text", "required": true, "gridSpan": 2
+        },
+        {
+          "id": "namaPengisi", "label": "Nama Pengisi", "type": "text", "required": true, "gridSpan": 2
         },
         {
           "id": "statusSertifikasi",
@@ -102,14 +102,6 @@ Tiru persis struktur JSON berikut (termasuk cara penerapan showIf dan file):
           "gridSpan": 2,
           "fileAccept": ".pdf",
           "showIf": { "fieldId": "statusSertifikasi", "equals": "Sudah Memiliki (ISO/SNI)" }
-        },
-        {
-          "id": "alasanBelumSertifikasi",
-          "label": "Jelaskan kendala Anda belum memiliki sertifikasi",
-          "type": "textarea",
-          "required": true,
-          "gridSpan": 2,
-          "showIf": { "fieldId": "statusSertifikasi", "equals": "Belum Memiliki" }
         }
       ]
     }

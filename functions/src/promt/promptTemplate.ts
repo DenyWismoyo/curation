@@ -16,9 +16,10 @@ export interface PromptParams {
   tiersString: string;
   fewShotContext?: string; 
   customSystemPrompt?: string; 
-  negativePrompts?: string;      
-  formatInstructions?: string;   
-  customScoringRubric?: string; 
+  negativePrompts?: string;         
+  formatInstructions?: string;      
+  customScoringRubric?: string;
+  targetAudience?: string; // <-- INI YANG MENGHILANGKAN GARIS MERAH DI INDEX.TS
 }
 
 export const buildAssessmentPrompt = (params: PromptParams) => {

@@ -72,7 +72,7 @@ export const generateActionPlanChecklist = onCall(
       if (rawText.startsWith('```')) rawText = rawText.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
 
       const generatedChecklist = JSON.parse(rawText);
-      const db = getFirestore(admin.app());
+      const db = getFirestore(admin.app(), "curation");
       await db.collection("assessments").doc(assessmentId).update({
         "aiResult.customActionPlan": generatedChecklist,
         actionPlanGeneratedAt: admin.firestore.FieldValue.serverTimestamp()

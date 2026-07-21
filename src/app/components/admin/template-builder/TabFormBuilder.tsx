@@ -197,7 +197,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
               {isExpanded && (
                 <div className="p-4 sm:p-6 bg-slate-50/40 space-y-6 border-t border-slate-100">
                   {step.fields?.map((field, fIdx) => {
-                    const isPrimaryIdentity = ['namaUsaha', 'namaPengisi', 'emailAktif', 'nomorTelepon'].includes(field.id);
+                    const isPrimaryIdentity = ['namaUsaha', 'namaPengisi'].includes(field.id);
                     return (
                       <div key={`field-${sIdx}-${fIdx}`} className={`p-4 sm:p-5 rounded-2xl ring-1 shadow-sm flex flex-col md:flex-row gap-5 relative transition-all ${isPrimaryIdentity ? 'bg-indigo-50/20 ring-indigo-100/60' : 'bg-white ring-slate-200/70 hover:ring-indigo-200'}`}>
                         <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">

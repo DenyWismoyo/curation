@@ -25,7 +25,6 @@ export { generateActionPlanChecklist, generateSubTaskChecklist } from "./actionP
 // ============================================================================
 admin.initializeApp();
 const db = getFirestore(admin.app(), "curation");
-
 const geminiApiKeySecret = defineSecret("GEMINI_API_KEY");
 const smtpEmailSecret = defineSecret("SMTP_EMAIL");
 const smtpPasswordSecret = defineSecret("SMTP_PASSWORD");
@@ -116,9 +115,9 @@ export const processCurationAssessment = onCall({
               mimeType.startsWith('text/');
 
             if (!isSupported || fileName.toLowerCase().endsWith('.zip') || fileName.toLowerCase().endsWith('.rar') || fileName.toLowerCase().endsWith('.docx') || fileName.toLowerCase().endsWith('.xlsx')) {
-              parts.push({ 
-                 text: `[SYSTEM NOTE]: Pengguna melampirkan berkas bukti "${fileName}". Secara administratif BUKTI TELAH DILAMPIRKAN. Anggap klaim pengguna tervalidasi.` 
-               });
+              parts.push({
+                  text: `[SYSTEM NOTE]: Pengguna melampirkan berkas bukti "${fileName}". Secara administratif BUKTI TELAH DILAMPIRKAN. Anggap klaim pengguna tervalidasi.`
+                });
               continue; 
             }
 
@@ -163,7 +162,7 @@ export const processCurationAssessment = onCall({
          const vectorSnap = await vectorQuery.get();
          if (!vectorSnap.empty) {
             fewShotContext = `\n[KONTEKS RAG INDUSTRI]: Gunakan profil bisnis serupa yang pernah dievaluasi ini sebagai pembanding kalibrasi: ` + 
-               vectorSnap.docs.map(d => `(${d.data().namaUsaha} | Kesiapan: ${d.data().readinessLevel} | Skor: ${d.data().score})`).join(", ");
+                vectorSnap.docs.map(d => `(${d.data().namaUsaha} | Kesiapan: ${d.data().readinessLevel} | Skor: ${d.data().score})`).join(", ");
          }
       } catch (err) { }
 
@@ -207,7 +206,8 @@ export const processCurationAssessment = onCall({
         customSystemPrompt: finalSystemPrompt,
         negativePrompts: aiPromptConfig.negativePrompts,
         formatInstructions: aiPromptConfig.formatInstructions,
-        customScoringRubric: aiPromptConfig.customScoringRubric
+        customScoringRubric: aiPromptConfig.customScoringRubric,
+        targetAudience: aiPromptConfig.targetAudience || 'company' // <-- Modifikasi Target Audience
       });
       
       parts.unshift({ text: mainPromptText });
@@ -249,6 +249,7 @@ export const processCurationAssessment = onCall({
 
       const masterPromptOverride = `
         ${parts[0].text}
+
         PERHATIAN TUGAS MASTER (SANGAT PENTING):
         1. Tugas Anda HANYA memberikan justifikasi tingkat tinggi, Skor Akhir (0-100), dan Analisis SWOT/Risiko. 
         2. INSTRUKSI KHUSUS 'executiveSummary': DILARANG KERAS menggunakan paragraf panjang. WAJIB merangkum menjadi 5-8 poin utama (bullet points) yang sangat padat.
@@ -459,7 +460,7 @@ export const processCurationAssessment = onCall({
                   totalScore: Number(fullAiResultForBg.totalScore || 0),
                   readinessLevel: String(fullAiResultForBg.readinessLevel),
                   trackType: String(updatedDocDataForBg.trackType),
-                  assessmentUrl: `[https://omnifit.cloud/result/${assessmentId}](https://omnifit.cloud/result/${assessmentId})`
+                  assessmentUrl: `[https://omnifit.cloud/result/$](https://omnifit.cloud/result/$){assessmentId}`
                 });
             } catch (err) { }
           }
@@ -472,11 +473,11 @@ export const processCurationAssessment = onCall({
     } catch (error: any) {
       throw new HttpsError("internal", error.message || "Gagal memproses analisis AI.");
     } finally {
-      for (const tmpFile of tempLocalFiles) { 
-         try { if (fs.existsSync(tmpFile)) fs.unlinkSync(tmpFile); } catch (e) {} 
-       }
-      for (const geminiFile of uploadedGeminiFiles) { 
-         try { await withRetry(() => fileManager.deleteFile(geminiFile.name), 2, 2000); } catch (e) {} 
-       }
+      for (const tmpFile of tempLocalFiles) {
+          try { if (fs.existsSync(tmpFile)) fs.unlinkSync(tmpFile); } catch (e) {}
+        }
+      for (const geminiFile of uploadedGeminiFiles) {
+          try { await withRetry(() => fileManager.deleteFile(geminiFile.name), 2, 2000); } catch (e) {}
+        }
     }
-});
+  });

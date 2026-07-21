@@ -39,6 +39,7 @@ const DEFAULT_AI_CONFIG = {
   reportTone: "consultative" as const,
   gradingStrictness: "standard" as const,
   // PENAMBAHAN PROPERTI MULTIPURPOSE
+  targetAudience: "company" as const, // BARU
   formPurpose: "assessment" as any,
   customUiLabels: {
     scoreLabel: "AI Readiness Score",
@@ -413,6 +414,7 @@ function TemplateBuilderContent() {
         negativePrompts: "",
         formatInstructions: "",
         // MENGINISIALISASI FIELD BARU SAAT MEMBUAT BARU
+        targetAudience: "company", // BARU
         formPurpose: "assessment" as any,
         customUiLabels: {
           scoreLabel: "AI Readiness Score",
@@ -422,8 +424,15 @@ function TemplateBuilderContent() {
           executionLabel: "Action Plan Timeline"
         }
       },
-      steps: [{ stepNumber: 1, title: "Langkah 1", fields: [{ id: 'namaUsaha', label: 'Nama Entitas/Usaha', type: 'text', required: true, gridSpan: 2 }] }]
-    };
+steps: [{ 
+      stepNumber: 1, 
+      title: "Langkah 1", 
+      fields: [
+        { id: 'namaUsaha', label: 'Nama Entitas/Nama Anda', type: 'text', required: true, gridSpan: 2 },
+        { id: 'namaPengisi', label: 'Nama Pengisi/Panggilan', type: 'text', required: true, gridSpan: 2 }
+      ] 
+    }]
+  };
     setActiveTemplate(newTemplate);
     router.push(`?folder=${encodeURIComponent(activeFolder)}&edit=${newTemplate.id}&tab=general`);
   };

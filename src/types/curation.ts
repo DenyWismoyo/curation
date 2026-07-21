@@ -130,6 +130,7 @@ export interface AiPromptConfig {
   assessmentGoal?: string;
   mediaAnalysisFocus?: 'pitch-delivery' | 'ui-ux-design' | 'product-demo';
   riskFramework?: string;
+  targetAudience?: 'individual' | 'company'; // BARU: Menentukan target asesmen
   
   targetMetricCount?: number;
   targetBlockCount?: number;

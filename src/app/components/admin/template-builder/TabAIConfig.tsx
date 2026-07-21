@@ -13,7 +13,7 @@ import { getFirestore, doc, onSnapshot } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
 const QUESTION_TYPE_OPTIONS = [
-  { id: 'radio_weight', label: 'Skoring Ganda Berbobot', icon: '⚖️', rule: 'WAJIB maksimalkan penggunaan tipe "radio" atau "select" dengan array "options" berbobot (weight 0-100) untuk keperluan kalkulasi nilai otomatis.' },
+  { id: 'radio_weight', label: 'Skoring Ganda Berbobot', icon: '🎯', rule: 'WAJIB maksimalkan penggunaan tipe "radio" atau "select" dengan array "options" berbobot (weight 0-100) untuk keperluan kalkulasi nilai otomatis.' },
   { id: 'conditional_logic', label: 'Logika Bercabang (ShowIf)', icon: '🔀', rule: 'TERAPKAN INTEROGASI BERLAPIS: Gunakan properti "showIf". Jika peserta merespon klaim besar pada opsi radio/select, WAJIB pancing pertanyaan baru bertipe "file" atau "textarea" untuk menagih bukti.' },
   { id: 'file_upload', label: 'Upload Bukti', icon: '📎', rule: 'WAJIB sertakan tipe input "file" untuk menagih unggahan dokumen bukti (legalitas, laporan, portofolio, dll) guna menekan potensi manipulasi data.' },
   { id: 'number_metric', label: 'Angka & Nominal', icon: '🔢', rule: 'Gunakan tipe "number" secara spesifik untuk menangkap data kuantitatif presisi (seperti Omzet, Jumlah Karyawan, Biaya, Persentase) agar data tidak tercampur teks.' },
@@ -100,7 +100,6 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
       alert("AKSES DITOLAK: Fitur Auto-Research AI ini dikunci eksklusif hanya untuk Administrator Utama.");
       return;
     }
-
     if (!template.aiPromptConfig?.assessmentGoal) {
       alert("Mohon isi 'Tujuan / Fokus Analisis Utama' atau pilih Preset terlebih dahulu.");
       return;
@@ -110,7 +109,13 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
       if (!confirm("PERINGATAN: Proses ini akan mereset dan menimpa seluruh langkah form Anda yang ada di Tab Form Builder. Lanjutkan?")) return;
     }
 
-    let finalInstruction = template.formBuilderInstruction || "Rancang kuesioner penilaian secara sistematis.";
+    // MODIFIKASI: Inject Target Audiens ke dalam instruksi
+    let targetContext = template.aiPromptConfig?.targetAudience === 'individual'
+      ? "TARGET AUDIENS: INDIVIDU / PERSONAL. Gunakan kata 'Nama Lengkap Anda', 'Anda', dan sesuaikan pertanyaan murni untuk ranah personal. DILARANG KERAS menanyakan aspek perusahaan, organisasi, atau legalitas bisnis."
+      : "TARGET AUDIENS: PERUSAHAAN / ORGANISASI / STARTUP.";
+
+    let finalInstruction = targetContext + "\n\n" + (template.formBuilderInstruction || "Rancang kuesioner penilaian secara sistematis.");
+
     if (template.preferredQuestionTypes && template.preferredQuestionTypes.length > 0) {
       const selectedRules = template.preferredQuestionTypes.map(id => {
         const opt = QUESTION_TYPE_OPTIONS.find(o => o.id === id);
@@ -145,7 +150,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
   const updateConfig = (key: string, value: any) => {
     onChange({ ...template, aiPromptConfig: { ...(template.aiPromptConfig || {}), [key]: value } as any });
   };
-  
+
   const updateUiLabel = (key: string, value: string) => {
     const currentLabels = template.aiPromptConfig?.customUiLabels || {};
     updateConfig('customUiLabels', { ...currentLabels, [key]: value });
@@ -174,7 +179,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
   const parseAnalysisBlock = (blockStr: string) => {
     if (!blockStr) return { title: '', subs: '' };
     const colonIndex = blockStr.indexOf(':');
-    if (colonIndex === -1) return { title: blockStr, subs: '' }; 
+    if (colonIndex === -1) return { title: blockStr, subs: '' };
     return { title: blockStr.slice(0, colonIndex).trim(), subs: blockStr.slice(colonIndex + 1).trim() };
   };
 
@@ -193,7 +198,8 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
 
   return (
     <div className="bg-white p-6 md:p-8 rounded-3xl ring-1 ring-slate-200 shadow-sm space-y-8">
-       {dbStatus && (dbStatus.phase === 'RESEARCHING' || dbStatus.phase === 'BUILDING_FORM' || dbStatus.phase === 'FAILED') && (
+      
+      {dbStatus && (dbStatus.phase === 'RESEARCHING' || dbStatus.phase === 'BUILDING_FORM' || dbStatus.phase === 'FAILED') && (
         <div className={`p-4 rounded-2xl border flex items-center gap-4 transition-all duration-300 ${dbStatus.phase === 'FAILED' ? 'bg-rose-50 border-rose-200 text-rose-900' : 'bg-indigo-50 border-indigo-200 text-indigo-900'}`}>
           {dbStatus.phase === 'FAILED' ? <AlertTriangle className="w-5 h-5 animate-bounce text-rose-600 shrink-0"/> : <Loader2 className="w-5 h-5 animate-spin text-indigo-600 shrink-0" />}
           <div className="flex-1 text-sm">
@@ -213,6 +219,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
             </p>
           </div>
         </div>
+        
         <div className="shrink-0 w-full md:w-80 relative z-[60]" ref={dropdownRef}>
           <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Muat Template Otak AI:</label>
           <div 
@@ -222,6 +229,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
             <span className="truncate flex-1 text-left opacity-90">{isPresetDropdownOpen ? "Mencari Template..." : "-- Pilih dari 110+ Template --"}</span>
             <ChevronDown className="w-4 h-4 ml-2 shrink-0" />
           </div>
+
           {isPresetDropdownOpen && (
             <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl ring-1 ring-slate-200 flex flex-col z-[100] overflow-hidden">
               <div className="p-2 border-b border-slate-100 bg-slate-50 relative">
@@ -247,7 +255,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
           <div className="space-y-1.5">
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Fungsi & Domain Aplikasi Formulir:</label>
             <select 
-              value={template.aiPromptConfig?.formPurpose || 'assessment'} 
+              value={template.aiPromptConfig?.formPurpose || 'assessment'}
               onChange={(e) => {
                 const preset = DomainPresets.find(p => p.id === e.target.value);
                 if (preset) {
@@ -262,7 +270,20 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
               <option value="custom">Kustomisasi Penuh Mandiri (Manual)</option>
             </select>
           </div>
-          <div className="text-xs text-slate-500 bg-white p-3.5 rounded-xl border border-slate-100 font-medium">Saat fungsi diubah, label UI kartu (SWOT, Risiko, Timeline, dll) di bawah akan menyesuaikan otomatis.</div>
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Target Subjek Asesmen:</label>
+            <select
+              value={template.aiPromptConfig?.targetAudience || 'company'}
+              onChange={(e) => updateConfig('targetAudience', e.target.value)}
+              className="w-full h-11 rounded-xl border border-slate-200 bg-white text-slate-900 font-semibold px-3 focus:ring-2 focus:ring-indigo-500 text-sm shadow-sm"
+            >
+              <option value="company">Perusahaan / B2B / Organisasi</option>
+              <option value="individual">Individu / B2C / Personal</option>
+            </select>
+          </div>
+        </div>
+        <div className="text-xs text-slate-500 bg-white p-3.5 rounded-xl border border-slate-100 font-medium mt-2">
+          Saat fungsi dan target diubah, instruksi dasar dan label UI kartu akan menyesuaikan konteksnya.
         </div>
         
         <div className="pt-4 border-t border-slate-200/60 space-y-3">
@@ -288,7 +309,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
               Tekan tombol di bawah untuk meminta AI menyempurnakan metrik Anda, meracik volume kuesioner, dan membangun seluruh Seksi Form secara otonom.
             </p>
           </div>
-
+          
           <div className="bg-slate-800/50 p-5 rounded-2xl border border-slate-700 space-y-4 backdrop-blur-sm">
              <label className="text-[10px] font-black text-indigo-300 uppercase tracking-wider">Komposisi Input Formulir yang Diinginkan:</label>
              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
@@ -356,7 +377,6 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
           </div>
         </div>
 
-        {/* KOLOM BARU KHUSUS KONTROL JUMLAH / VOLUME KEPADATAN */}
         <div className="space-y-6">
           <h4 className="font-black text-slate-900 border-l-4 border-blue-500 pl-3">Skala Kepadatan Output</h4>
           <div className="space-y-3 p-4 bg-blue-50/50 rounded-2xl ring-1 ring-blue-100">
@@ -386,6 +406,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
           <h4 className="font-black text-slate-900 text-lg uppercase tracking-tight">Manajemen Blok Analisis Laporan</h4>
           <p className="text-xs text-slate-500 font-medium mt-1">Sistem AI akan mengekspansi list ini untuk memenuhi Target Jumlah Blok Analisis yang Anda tentukan di atas.</p>
         </div>
+        
         <div className="space-y-4">
           {(template.aiPromptConfig?.expectedAnalysisBlocks || []).map((item, idx) => {
             const { title, subs } = parseAnalysisBlock(item);
@@ -432,6 +453,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
               <Button type="button" variant="outline" onClick={() => addArrayItem(config.key, '')} className="w-full mt-3 border-dashed border-2 border-slate-300 text-slate-500 hover:bg-slate-100 rounded-xl h-10 font-bold text-xs"><Plus className="h-4 w-4" /> Tambah Manual</Button>
             </div>
           ))}
+
           <div className="space-y-3 p-5 bg-slate-50/80 rounded-2xl border border-slate-200 md:col-span-2">
             <label className="text-[11px] font-black text-slate-700 uppercase tracking-widest block mb-1">Fokus Kerangka Mitigasi Risiko / Kerentanan Sistematik</label>
             <Textarea value={template.aiPromptConfig?.riskFramework || ''} onChange={e => updateConfig('riskFramework', e.target.value)} placeholder="Petunjuk khusus penanganan red flags atau kelemahan kritis subjek..." className="rounded-xl bg-white border-slate-200 min-h-[100px] text-sm font-medium" />
