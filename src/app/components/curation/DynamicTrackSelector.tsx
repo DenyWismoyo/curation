@@ -57,16 +57,25 @@ const getCategoryTheme = (title: string, category: string) => {
       hoverRing: 'hover:ring-rose-300', hoverText: 'group-hover:text-rose-600', hoverBg: 'group-hover:bg-rose-50'
     };
   }
-  
+
   return { 
     bg: 'bg-indigo-50', text: 'text-indigo-600', ring: 'ring-indigo-200',
     hoverRing: 'hover:ring-indigo-300', hoverText: 'group-hover:text-indigo-600', hoverBg: 'group-hover:bg-indigo-50'
   };
 };
 
+// FUNGSI PARSER UNTUK MEMISAHKAN "JUDUL: DESKRIPSI"
+const parseExpectedOutput = (blockStr: string) => {
+  if (!blockStr) return { title: '', subs: '' };
+  const colonIndex = blockStr.indexOf(':');
+  if (colonIndex === -1) return { title: blockStr, subs: '' };
+  return { title: blockStr.slice(0, colonIndex).trim(), subs: blockStr.slice(colonIndex + 1).trim() };
+};
+
 export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelectorProps) {
   const router = useRouter();
   const [selectedTrack, setSelectedTrack] = useState<FormTemplate | null>(null);
+
   const activeTemplates = templates.filter(t => t.isActive);
 
   const handleSelectTrack = (template: FormTemplate) => {
@@ -97,6 +106,9 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
     ? (LucideIcons as any)[selectedTrack.trackIcon] 
     : AppModuleTealIcon;
 
+  // Ikon rotasi dinamis untuk list benefit
+  const OutputIcons = [AILensIcon, InfinityWorkflowIcon, BrainIcon, GlobalTargetIcon];
+
   return (
     <div className="min-h-screen bg-slate-50/50 py-8 px-6 lg:py-12 flex flex-col items-center">
       <div className="max-w-[1200px] w-full space-y-8">
@@ -123,8 +135,8 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
             {activeTemplates.map((template, index) => {
               const IconComponent = template.trackIcon && (LucideIcons as any)[template.trackIcon] 
-                                     ? (LucideIcons as any)[template.trackIcon] 
-                                     : AppModuleTealIcon; // Custom Fallback Icon
+                                      ? (LucideIcons as any)[template.trackIcon] 
+                                      : AppModuleTealIcon; // Custom Fallback Icon
               
               const theme = getCategoryTheme(template.trackName, template.category || '');
               
@@ -216,45 +228,72 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
 
                 <div className="space-y-6">
                   
-                  {/* KOTAK EKSPEKTASI HASIL (MENGGUNAKAN CUSTOM ICON) */}
+                  {/* KOTAK EKSPEKTASI HASIL (MENGGUNAKAN CUSTOM ICON & DATA DINAMIS) */}
                   <div className={`${drawerTheme.bg} p-6 rounded-3xl ring-1 ${drawerTheme.ring} bg-opacity-40`}>
                     <h5 className={`text-[11px] font-black ${drawerTheme.text} uppercase tracking-widest mb-5 flex items-center gap-2`}>
                       <AiSparkIcon size={14} /> Apa yang akan Anda dapatkan?
                     </h5>
                     <ul className="space-y-5">
-                      <li className="flex items-start gap-3.5">
-                        <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm text-slate-600 ring-1 ring-slate-200">
-                          <AILensIcon size={20} />
-                        </div>
-                        <div>
-                          <p className="text-sm font-bold text-slate-900 mb-1">Analisis Instan & Mendalam</p>
-                          <p className="text-xs text-slate-600 font-medium leading-relaxed">
-                            Laporan pemetaan komprehensif akan langsung disajikan dalam hitungan menit setelah Anda menyelesaikan pengisian.
-                          </p>
-                        </div>
-                      </li>
-                      <li className="flex items-start gap-3.5">
-                        <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm text-slate-600 ring-1 ring-slate-200">
-                          <DocExportIcon size={20} />
-                        </div>
-                        <div>
-                          <p className="text-sm font-bold text-slate-900 mb-1">Salinan Terkirim ke Email</p>
-                          <p className="text-xs text-slate-600 font-medium leading-relaxed">
-                            Akses hasil Anda kapan saja. Tautan dasbor dan salinan dokumen akan otomatis dikirimkan ke kotak masuk Anda.
-                          </p>
-                        </div>
-                      </li>
-                      <li className="flex items-start gap-3.5">
-                        <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm text-slate-600 ring-1 ring-slate-200">
-                          <BrainIcon size={20} />
-                        </div>
-                        <div>
-                          <p className="text-sm font-bold text-slate-900 mb-1">Fondasi Konsultasi Lanjutan</p>
-                          <p className="text-xs text-slate-600 font-medium leading-relaxed">
-                            Menjadi langkah awal dan <span className="italic">baseline</span> data objektif yang sangat berharga sebelum Anda melangkah ke sesi konsultasi bersama ahli.
-                          </p>
-                        </div>
-                      </li>
+                      {selectedTrack.expectedOutputs && selectedTrack.expectedOutputs.length > 0 ? (
+                        // Render Dinamis Berdasarkan Data Custom
+                        selectedTrack.expectedOutputs.map((item, idx) => {
+                          const { title, subs } = parseExpectedOutput(item);
+                          const DynamicIcon = OutputIcons[idx % OutputIcons.length];
+                          
+                          return (
+                            <li key={idx} className="flex items-start gap-3.5">
+                              <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm text-slate-600 ring-1 ring-slate-200">
+                                <DynamicIcon size={20} className={drawerTheme.text} />
+                              </div>
+                              <div>
+                                <p className="text-sm font-bold text-slate-900 mb-1">{title || item}</p>
+                                {subs && (
+                                  <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                                    {subs}
+                                  </p>
+                                )}
+                              </div>
+                            </li>
+                          );
+                        })
+                      ) : (
+                        // Fallback Jika Kosong (Modul Lama)
+                        <>
+                          <li className="flex items-start gap-3.5">
+                            <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm text-slate-600 ring-1 ring-slate-200">
+                              <AILensIcon size={20} />
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold text-slate-900 mb-1">Analisis Instan & Mendalam</p>
+                              <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                                Laporan pemetaan komprehensif akan langsung disajikan dalam hitungan menit setelah Anda menyelesaikan pengisian.
+                              </p>
+                            </div>
+                          </li>
+                          <li className="flex items-start gap-3.5">
+                            <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm text-slate-600 ring-1 ring-slate-200">
+                              <DocExportIcon size={20} />
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold text-slate-900 mb-1">Salinan Terkirim ke Email</p>
+                              <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                                Akses hasil Anda kapan saja. Tautan dasbor dan salinan dokumen akan otomatis dikirimkan ke kotak masuk Anda.
+                              </p>
+                            </div>
+                          </li>
+                          <li className="flex items-start gap-3.5">
+                            <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm text-slate-600 ring-1 ring-slate-200">
+                              <BrainIcon size={20} />
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold text-slate-900 mb-1">Fondasi Konsultasi Lanjutan</p>
+                              <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                                Menjadi langkah awal dan <span className="italic">baseline</span> data objektif yang sangat berharga sebelum Anda melangkah ke sesi konsultasi bersama ahli.
+                              </p>
+                            </div>
+                          </li>
+                        </>
+                      )}
                     </ul>
                   </div>
 

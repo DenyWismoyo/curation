@@ -7,13 +7,15 @@ import { db } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
+import { toast } from 'sonner';
 import { 
   KeyRound, Download, Plus, Building2, Users, Sparkles, Zap, 
-  Eye, X, Copy, Check, Search, ShieldCheck, UserCheck, Trash2, Edit3, FileText 
+  Eye, X, Copy, Check, Search, ShieldCheck, UserCheck, Trash2, Edit3, FileText,
+  Settings2
 } from 'lucide-react';
-import { AdminTokenExportPDF } from '@/app/components/admin/AdminTokenExportPDF';
 
-// IMPORT DOCUMENT PRESETS (Data Template Word)
+import { AdminTokenExportPDF } from '@/app/components/admin/AdminTokenExportPDF';
+import { TokenExportPDFButton } from '@/app/components/shared/TokenExportPDFButton'; 
 import { DocumentPresets } from '@/data/documentPromptTemplates';
 
 // === INTERFACES ===
@@ -70,10 +72,15 @@ export default function TokenManagerPage() {
   const [curatorProgram, setCuratorProgram] = useState('');
   const [curatorCode, setCuratorCode] = useState('');
 
-  // Modal Detail State (Untuk Peserta)
+  // Modal Detail & Edit Quota State
   const [selectedBatch, setSelectedBatch] = useState<CorporateBatch | null>(null);
   const [searchToken, setSearchToken] = useState('');
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
+  
+  // === STATE BARU: EDIT KUOTA TOKEN ===
+  const [editingQuotaBatch, setEditingQuotaBatch] = useState<CorporateBatch | null>(null);
+  const [newQuotaAmount, setNewQuotaAmount] = useState<number>(0);
+  const [isUpdatingQuota, setIsUpdatingQuota] = useState(false);
 
   // === FETCH DATA ===
   const fetchData = async () => {
@@ -97,6 +104,7 @@ export default function TokenManagerPage() {
       setCuratorTokens(dataCurator);
     } catch (e) {
       console.error(e);
+      toast.error("Gagal menarik data dari server.");
     } finally {
       setLoading(false);
     }
@@ -109,9 +117,9 @@ export default function TokenManagerPage() {
   // === HANDLER TOKEN PESERTA ===
   const generateCorporateBatch = async () => {
     const cleanCorpId = corpId.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
-    if (!cleanCorpId || cleanCorpId.length < 3) return alert("ID Korporat (Prefix) minimal 3 karakter huruf/angka.");
-    if (qty < 1 || qty > 5000) return alert("Jumlah token maksimal 5000 per batch.");
-    if (!corporateName) return alert("Nama korporat wajib diisi.");
+    if (!cleanCorpId || cleanCorpId.length < 3) return toast.warning("ID Korporat (Prefix) minimal 3 karakter huruf/angka.");
+    if (qty < 1 || qty > 5000) return toast.warning("Jumlah token maksimal 5000 per batch.");
+    if (!corporateName) return toast.warning("Nama korporat wajib diisi.");
 
     setIsGenerating(true);
     try {
@@ -134,7 +142,7 @@ export default function TokenManagerPage() {
 
       await setDoc(doc(db, 'corporate_tokens', cleanCorpId), batchData);
       setBatches([{ id: cleanCorpId, ...batchData } as CorporateBatch, ...batches]);
-      alert(`Berhasil! Batch untuk ${corporateName} dibuat.`);
+      toast.success(`Berhasil! Batch untuk ${corporateName} dibuat.`);
       
       setCorporateName('');
       setCorpId('');
@@ -142,9 +150,69 @@ export default function TokenManagerPage() {
       setSelectedDocTemplates([]); 
     } catch (error) {
       console.error("Gagal generate token:", error);
-      alert("Terjadi kesalahan sistem.");
+      toast.error("Terjadi kesalahan sistem saat membuat token.");
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  // === HANDLER EDIT KUOTA TOKEN ===
+  const handleSaveQuota = async () => {
+    if (!editingQuotaBatch) return;
+
+    if (newQuotaAmount < editingQuotaBatch.usedCount) {
+      return toast.error(`Kuota tidak bisa lebih kecil dari token yang sudah terpakai (${editingQuotaBatch.usedCount}).`);
+    }
+
+    setIsUpdatingQuota(true);
+    try {
+      const batchRef = doc(db, 'corporate_tokens', editingQuotaBatch.id);
+      const currentTokens = { ...editingQuotaBatch.tokens };
+      const diff = newQuotaAmount - editingQuotaBatch.totalTokens;
+
+      if (diff > 0) {
+        // MENAMBAH TOKEN BARU
+        for (let i = 0; i < diff; i++) {
+          let randomStr = Math.random().toString(36).substring(2, 8).toUpperCase();
+          while (currentTokens[randomStr]) {
+            randomStr = Math.random().toString(36).substring(2, 8).toUpperCase();
+          }
+          currentTokens[randomStr] = { isUsed: false, usedAt: null, usedByNamaUsaha: null };
+        }
+      } else if (diff < 0) {
+        // MENGHAPUS TOKEN YANG BELUM TERPAKAI
+        const numToRemove = Math.abs(diff);
+        const unusedKeys = Object.keys(currentTokens).filter(k => !currentTokens[k].isUsed);
+
+        if (unusedKeys.length < numToRemove) {
+          toast.error("Tidak cukup token yang belum terpakai untuk dihapus.");
+          setIsUpdatingQuota(false);
+          return;
+        }
+
+        for (let i = 0; i < numToRemove; i++) {
+          delete currentTokens[unusedKeys[i]];
+        }
+      }
+
+      await updateDoc(batchRef, {
+        totalTokens: newQuotaAmount,
+        tokens: currentTokens
+      });
+
+      setBatches(prev => prev.map(b => b.id === editingQuotaBatch.id ? { 
+        ...b, 
+        totalTokens: newQuotaAmount,
+        tokens: currentTokens
+      } : b));
+
+      toast.success("Kuota token berhasil diperbarui!");
+      setEditingQuotaBatch(null);
+    } catch (error) {
+      console.error("Gagal update kuota:", error);
+      toast.error("Terjadi kesalahan sistem saat memperbarui kuota.");
+    } finally {
+      setIsUpdatingQuota(false);
     }
   };
 
@@ -158,14 +226,14 @@ export default function TokenManagerPage() {
       });
       setBatches(prev => prev.map(b => b.id === batchId ? { 
         ...b, 
-        allowedTemplates: editingAllowedTemplates, 
+        allowedTemplates: editingAllowedTemplates,
         allowedDocumentTemplates: editingDocTemplates 
       } : b));
       setEditingBatchId(null);
-      alert('Hak akses berhasil diperbarui!');
+      toast.success('Hak akses form & dokumen berhasil diperbarui!');
     } catch (error) {
       console.error("Gagal update templates:", error);
-      alert("Terjadi kesalahan saat memperbarui akses.");
+      toast.error("Terjadi kesalahan saat memperbarui akses.");
     } finally {
       setIsUpdatingTemplates(false);
     }
@@ -175,11 +243,12 @@ export default function TokenManagerPage() {
   const generateCuratorToken = async () => {
     const code = curatorCode.trim().toUpperCase().replace(/\s/g, '-');
     const program = curatorProgram.trim();
-    if (!code || code.length < 5) return alert("Kode Kurator minimal 5 karakter.");
-    if (!program) return alert("Silakan pilih Nama Program/Entitas terlebih dahulu.");
+
+    if (!code || code.length < 5) return toast.warning("Kode Kurator minimal 5 karakter.");
+    if (!program) return toast.warning("Silakan pilih Nama Program/Entitas terlebih dahulu.");
     
     if (curatorTokens.find(t => t.id === code)) {
-      return alert("Kode Token ini sudah ada. Silakan gunakan kode lain.");
+      return toast.warning("Kode Token ini sudah ada. Silakan gunakan kode lain.");
     }
 
     setIsGenerating(true);
@@ -193,13 +262,13 @@ export default function TokenManagerPage() {
 
       await setDoc(doc(db, 'curator_tokens', code), tokenData);
       setCuratorTokens([tokenData, ...curatorTokens]);
-      alert(`Berhasil! Akses Kurator untuk program ${program} berhasil dibuat.`);
+      toast.success(`Akses Kurator untuk program ${program} berhasil dibuat.`);
       
       setCuratorCode('');
       setCuratorProgram('');
     } catch (error) {
       console.error("Gagal generate token kurator:", error);
-      alert("Terjadi kesalahan sistem.");
+      toast.error("Terjadi kesalahan sistem.");
     } finally {
       setIsGenerating(false);
     }
@@ -211,10 +280,10 @@ export default function TokenManagerPage() {
     try {
       await deleteDoc(doc(db, 'curator_tokens', tokenId));
       setCuratorTokens(curatorTokens.filter(t => t.id !== tokenId));
-      alert("Token kurator berhasil dicabut.");
+      toast.success("Token kurator berhasil dicabut.");
     } catch (error) {
       console.error("Gagal hapus token:", error);
-      alert("Gagal mencabut token.");
+      toast.error("Gagal mencabut token.");
     }
   };
 
@@ -336,6 +405,7 @@ export default function TokenManagerPage() {
                   <button onClick={() => setModelType('pro')} className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border-2 transition-all ${modelType === 'pro' ? 'border-amber-500 bg-amber-50 text-amber-700' : 'border-slate-200 bg-white text-slate-500 hover:border-amber-300'}`}><Sparkles className="w-4 h-4" /> AI Pro (Premium)</button>
                 </div>
               </div>
+              
               <Button onClick={generateCorporateBatch} disabled={isGenerating} className="w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 h-12 px-8 rounded-xl font-bold shadow-lg shadow-indigo-200">
                 <Plus className="w-4 h-4 mr-2" /> {isGenerating ? 'Memproses...' : 'Buat Batch Baru'}
               </Button>
@@ -390,6 +460,7 @@ export default function TokenManagerPage() {
                                   ))}
                                 </div>
                               </div>
+
                               {/* EDIT DOKUMEN WORD */}
                               <div>
                                 <p className="text-[10px] font-bold text-slate-500 uppercase mb-2 border-t border-slate-100 pt-3">2. Akses Dokumen Word:</p>
@@ -402,6 +473,7 @@ export default function TokenManagerPage() {
                                   ))}
                                 </div>
                               </div>
+
                               <div className="flex gap-2 pt-2 border-t border-slate-100">
                                 <Button size="sm" className="h-8 text-xs px-3 bg-indigo-600 flex-1" onClick={() => updateBatchTemplates(batch.id)} disabled={isUpdatingTemplates}>Simpan</Button>
                                 <Button size="sm" variant="outline" className="h-8 text-xs px-3 text-slate-500 flex-1" onClick={() => setEditingBatchId(null)}>Batal</Button>
@@ -421,6 +493,7 @@ export default function TokenManagerPage() {
                                   })}
                                 </div>
                               </div>
+
                               {/* VIEW DOKUMEN WORD */}
                               <div>
                                 <p className="text-[9px] font-black text-slate-400 uppercase mb-1">Dokumen Word:</p>
@@ -448,9 +521,28 @@ export default function TokenManagerPage() {
                         </td>
                         <td className="px-6 py-5 text-center">
                           <div className="flex justify-center gap-2">
-                            <Button onClick={() => setSelectedBatch(batch)} variant="outline" className="border-slate-200 bg-white shadow-sm w-10 h-10 p-0"><Eye className="w-4 h-4" /></Button>
-                            <Button onClick={() => exportTokensToCSV(batch.id, batch)} variant="outline" className="border-indigo-200 bg-white w-10 h-10 p-0"><Download className="w-4 h-4 text-indigo-600" /></Button>
-                            <AdminTokenExportPDF batch={batch} />
+                            <Button 
+                              onClick={() => {
+                                setEditingQuotaBatch(batch);
+                                setNewQuotaAmount(batch.totalTokens);
+                              }} 
+                              variant="outline" 
+                              className="border-amber-200 bg-amber-50 shadow-sm w-10 h-10 p-0 hover:bg-amber-100 transition-colors" 
+                              title="Atur Ulang Kuota Token"
+                            >
+                              <Settings2 className="w-4 h-4 text-amber-600" />
+                            </Button>
+
+                            <Button onClick={() => setSelectedBatch(batch)} variant="outline" className="border-slate-200 bg-white shadow-sm w-10 h-10 p-0" title="Lihat Detail">
+                              <Eye className="w-4 h-4" />
+                            </Button>
+                            
+                            <Button onClick={() => exportTokensToCSV(batch.id, batch)} variant="outline" className="border-indigo-200 bg-white shadow-sm w-10 h-10 p-0" title="Unduh CSV">
+                              <Download className="w-4 h-4 text-indigo-600" />
+                            </Button>
+
+                            {/* === TOMBOL PDF BARU BESERTA DATA TERUSAN === */}
+                            <TokenExportPDFButton batch={batch} availableTemplates={availableTemplates} />
                           </div>
                         </td>
                       </tr>
@@ -463,6 +555,7 @@ export default function TokenManagerPage() {
         </div>
       )}
 
+      {/* ... (TAB 2 DAN MODAL TETAP SAMA) */}
       {/* ========================================= */}
       {/* TAB 2: MANAJEMEN AKSES KURATOR            */}
       {/* ========================================= */}
@@ -485,6 +578,7 @@ export default function TokenManagerPage() {
               </select>
               <p className="text-[10px] text-slate-400 font-medium pt-1">Pilih dari entitas yang sudah didaftarkan pada tab Token Peserta.</p>
             </div>
+            
             <div className="space-y-2 w-full md:w-64">
               <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
                 <KeyRound className="w-3.5 h-3.5"/> Kode Login Kurator
@@ -496,6 +590,7 @@ export default function TokenManagerPage() {
                 className="h-12 rounded-xl bg-slate-50 uppercase font-mono font-bold"
               />
             </div>
+            
             <Button 
               onClick={generateCuratorToken} 
               disabled={isGenerating} 
@@ -567,10 +662,77 @@ export default function TokenManagerPage() {
         </div>
       )}
 
+      {/* MODAL EDIT KUOTA TOKEN */}
+      {editingQuotaBatch && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-[2rem] shadow-2xl w-full max-w-md flex flex-col ring-1 ring-slate-200 overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+              <div>
+                <h3 className="text-lg font-black text-slate-900">Atur Ulang Kuota Token</h3>
+                <p className="text-xs font-bold text-slate-500 mt-1 uppercase tracking-widest">{editingQuotaBatch.corporateName}</p>
+              </div>
+              <button onClick={() => setEditingQuotaBatch(null)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 text-slate-500 transition-colors">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="p-6 space-y-6">
+              <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl ring-1 ring-slate-100">
+                 <div className="text-center">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Awal</p>
+                    <p className="text-2xl font-black text-slate-800">{editingQuotaBatch.totalTokens}</p>
+                 </div>
+                 <div className="w-px h-10 bg-slate-200"></div>
+                 <div className="text-center">
+                    <p className="text-[10px] font-black text-amber-500 uppercase tracking-widest">Terpakai</p>
+                    <p className="text-2xl font-black text-amber-600">{editingQuotaBatch.usedCount}</p>
+                 </div>
+                 <div className="w-px h-10 bg-slate-200"></div>
+                 <div className="text-center">
+                    <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Sisa Aktif</p>
+                    <p className="text-2xl font-black text-emerald-600">{editingQuotaBatch.totalTokens - editingQuotaBatch.usedCount}</p>
+                 </div>
+              </div>
+
+              <div className="space-y-3">
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-widest">Tentukan Total Kuota Baru</label>
+                <Input
+                  type="number"
+                  min={editingQuotaBatch.usedCount}
+                  max={5000}
+                  value={newQuotaAmount}
+                  onChange={(e) => setNewQuotaAmount(Number(e.target.value))}
+                  className="h-14 text-xl font-black bg-white rounded-xl focus-visible:ring-indigo-500 text-center"
+                />
+                <p className="text-[11px] text-slate-500 font-medium text-center">
+                  {newQuotaAmount > editingQuotaBatch.totalTokens ? (
+                     <span className="text-emerald-600 font-bold">Sistem akan men-generate {newQuotaAmount - editingQuotaBatch.totalTokens} token baru secara acak.</span>
+                  ) : newQuotaAmount < editingQuotaBatch.totalTokens ? (
+                     <span className="text-rose-600 font-bold">Sistem akan menghapus {editingQuotaBatch.totalTokens - newQuotaAmount} token yang belum terpakai secara acak.</span>
+                  ) : (
+                     <span>Tidak ada perubahan pada jumlah token.</span>
+                  )}
+                </p>
+              </div>
+            </div>
+            <div className="p-6 border-t border-slate-100 bg-slate-50/50 flex gap-3">
+               <Button variant="outline" onClick={() => setEditingQuotaBatch(null)} className="w-full h-12 rounded-xl font-bold border-slate-200 text-slate-600 hover:bg-slate-100">Batal</Button>
+               <Button
+                  onClick={handleSaveQuota}
+                  disabled={isUpdatingQuota || newQuotaAmount === editingQuotaBatch.totalTokens || newQuotaAmount < editingQuotaBatch.usedCount}
+                  className="w-full h-12 rounded-xl font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-md"
+               >
+                 {isUpdatingQuota ? 'Menyimpan...' : 'Simpan Perubahan Kuota'}
+               </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* MODAL DAFTAR TOKEN (HANYA UNTUK TAB PESERTA) */}
       {selectedBatch && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white rounded-[2rem] shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col ring-1 ring-slate-200 overflow-hidden animate-in zoom-in-95 duration-200">
+            
             <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
               <div>
                 <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
@@ -584,12 +746,14 @@ export default function TokenManagerPage() {
                 <X className="w-5 h-5" />
               </button>
             </div>
+
             <div className="p-4 border-b border-slate-100 bg-white">
               <div className="relative">
                 <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                 <Input value={searchToken} onChange={(e) => setSearchToken(e.target.value)} placeholder="Cari Token atau Nama Usaha pengguna..." className="pl-10 h-12 bg-slate-50 border-slate-200 rounded-xl font-medium" />
               </div>
             </div>
+
             <div className="flex-1 overflow-y-auto bg-slate-50/30 p-4 space-y-3 custom-scrollbar">
               {getFilteredTokens().length === 0 ? (
                 <div className="text-center py-10 text-slate-400 font-medium text-sm">Tidak ada token yang cocok.</div>
@@ -613,6 +777,7 @@ export default function TokenManagerPage() {
                           </div>
                         )}
                       </div>
+                      
                       {!data.isUsed ? (
                         <Button variant="secondary" size="sm" onClick={() => handleCopyToken(fullToken)} className={`shrink-0 rounded-xl font-bold h-10 px-4 ${copiedToken === fullToken ? 'bg-emerald-500 text-white hover:bg-emerald-600' : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100'}`}>
                           {copiedToken === fullToken ? <><Check className="w-4 h-4 mr-1.5" /> Tersalin!</> : <><Copy className="w-4 h-4 mr-1.5" /> Copy Kode</>}
@@ -625,6 +790,7 @@ export default function TokenManagerPage() {
                 })
               )}
             </div>
+
           </div>
         </div>
       )}

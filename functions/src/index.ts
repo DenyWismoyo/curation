@@ -19,6 +19,7 @@ export { generateFormTemplateFromAI } from "./formBuilderService";
 export { createPaymentInvoice, xenditWebhook } from "./paymentService";
 export { chatWithOmniAi } from "./omniAiService";
 export { generateActionPlanChecklist, generateSubTaskChecklist } from "./actionPlanService";
+export { generateTemplateSellingPoints } from "./outputService";
 
 // ============================================================================
 // INISIALISASI FIREBASE

@@ -6,6 +6,7 @@ import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as LucideIcons from 'lucide-react'; 
+
 import { 
   X, Sparkles, CheckCircle2, ArrowRight, Loader2,
   MessageCircle, Users, Share2, Star, Copy, Check 
@@ -71,13 +72,22 @@ const getCategoryTheme = (title: string, category: string) => {
       gradient: 'from-rose-50/50 to-white'
     };
   }
+
   return { 
     bg: 'bg-indigo-50', text: 'text-indigo-600', ring: 'ring-indigo-200', 
     btn: 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-600/20 text-white', 
     pill: 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100',
     gradient: 'from-indigo-50/50 to-white'
   };
-}
+};
+
+// FUNGSI PARSER UNTUK MEMISAHKAN "JUDUL: DESKRIPSI"
+const parseExpectedOutput = (blockStr: string) => {
+  if (!blockStr) return { title: '', subs: '' };
+  const colonIndex = blockStr.indexOf(':');
+  if (colonIndex === -1) return { title: blockStr, subs: '' };
+  return { title: blockStr.slice(0, colonIndex).trim(), subs: blockStr.slice(colonIndex + 1).trim() };
+};
 
 export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpenPackageId }: PricingPackagesProps) {
   const [packages, setPackages] = useState<FormTemplate[]>([]);
@@ -169,30 +179,6 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
     }
   };
 
-  // FUNGSI SHARE NATIVE DEVICE
-  const handleSharePackage = async (e: React.MouseEvent, pkg: FormTemplate) => {
-    e.stopPropagation(); 
-    if (typeof window === 'undefined') return;
-
-    const shareUrl = `${window.location.origin}/katalog?buy=${pkg.id}`;
-    const shareData = {
-      title: `Omnifit: ${pkg.trackName}`,
-      text: `Mari deteksi dini potensi dan akar masalah Anda dengan modul asesmen "${pkg.trackName}" di platform Omnifit. Coba sekarang!`,
-      url: shareUrl,
-    };
-
-    if (navigator.share) {
-      try {
-        await navigator.share(shareData);
-      } catch (error: any) {
-        if (error.name !== 'AbortError') console.error('Error sharing:', error);
-      }
-    } else {
-      // Fallback ke fungsi Copy Link jika device tidak mendukung Share API Nativ
-      handleCopyLink(e, pkg.id);
-    }
-  };
-
   const categories = ['Semua', ...Array.from(new Set(packages.map(p => p.category?.trim()).filter(Boolean)))];
   const filteredPackages = packages.filter(pkg => activeCategory === 'Semua' || pkg.category === activeCategory);
 
@@ -201,6 +187,9 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
   const DrawerIcon = checkoutPackage?.trackIcon && (LucideIcons as any)[checkoutPackage.trackIcon] 
     ? (LucideIcons as any)[checkoutPackage.trackIcon] 
     : AppModuleTealIcon;
+
+  // Rotasi icon untuk membuat daftar output lebih dinamis visualnya
+  const OutputIcons = [AILensIcon, InfinityWorkflowIcon, BrainIcon, GlobalTargetIcon];
 
   return (
     <>
@@ -338,14 +327,15 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                                 <Button
                                   size="sm"
                                   className={`h-9 px-4 sm:px-5 rounded-xl text-xs font-bold shadow-sm transition-all group-hover:shadow-md ${
-                                    !pkg.isPaid || pkg.price === 0 
-                                      ? 'bg-slate-900 text-white hover:bg-slate-800' 
+                                    !pkg.isPaid || pkg.price === 0
+                                      ? 'bg-slate-900 text-white hover:bg-slate-800'
                                       : theme.btn
                                   }`}
                                 >
                                   Buka
                                 </Button>
                               </div>
+
                             </motion.div>
                           );
                         })}
@@ -365,7 +355,6 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                           Rancang formulir matriks asesmen eksklusif dan terintegrasi untuk kebutuhan Korporasi atau Institusi Anda.
                         </p>
                       </div>
-
                       <div className="relative z-10 shrink-0 w-full md:w-auto">
                         <a 
                           href="https://wa.me/6285777117587?text=Halo%20Admin%20Omnifit,%20saya%20tertarik%20untuk%20berdiskusi%20mengenai%20pembuatan%20modul%20asesmen%20custom." 
@@ -416,7 +405,8 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
 
               {/* Body Laci */}
               <div className="p-6 flex-1 overflow-y-auto custom-scrollbar">
-                 <div className="flex items-start gap-4 mb-6">
+                
+                <div className="flex items-start gap-4 mb-6">
                   <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 shadow-sm ring-1 ${drawerTheme.bg} ${drawerTheme.text} ${drawerTheme.ring}`}>
                     <DrawerIcon className="w-8 h-8" />
                   </div>
@@ -454,57 +444,75 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                   </div>
                   {/* ================================== */}
 
+                  {/* === AREA BENEFIT DINAMIS (EXPECTED OUTPUTS) === */}
                   <div className={`${drawerTheme.bg} p-5 rounded-3xl ring-1 ${drawerTheme.ring} bg-opacity-40`}>
                     <h5 className={`text-[11px] font-black ${drawerTheme.text} uppercase tracking-widest mb-4 flex items-center gap-2`}>
                       <AiSparkIcon size={16} /> Nilai Tambah Untuk Anda
                     </h5>
                     <ul className="space-y-4">
-                      <li className="flex items-start gap-3.5">
-                        <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm text-slate-600 ring-1 ring-slate-200">
-                          <AILensIcon size={20} />
-                        </div>
-                        <div>
-                          <p className="text-sm font-bold text-slate-800 mb-0.5">Sistem Deteksi Dini</p>
-                          <p className="text-xs text-slate-500 font-medium leading-relaxed">
-                            Mendiagnosa akar masalah, potensi tersembunyi, dan area <span className="italic">blind-spot</span> secara objektif.
-                          </p>
-                        </div>
-                      </li>
-                      <li className="flex items-start gap-3.5">
-                        <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm text-slate-600 ring-1 ring-slate-200">
-                          <InfinityWorkflowIcon size={20} />
-                        </div>
-                        <div>
-                          <p className="text-sm font-bold text-slate-800 mb-0.5">Menutup Kesenjangan (Gap)</p>
-                          <p className="text-xs text-slate-500 font-medium leading-relaxed">
-                            Menghilangkan kebingungan dengan memetakan jarak antara realita Anda saat ini dengan tujuan ideal.
-                          </p>
-                        </div>
-                      </li>
-                      <li className="flex items-start gap-3.5">
-                        <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm text-slate-600 ring-1 ring-slate-200">
-                          <BrainIcon size={20} />
-                        </div>
-                        <div>
-                          <p className="text-sm font-bold text-slate-800 mb-0.5">Evaluasi Adaptif & Personal</p>
-                          <p className="text-xs text-slate-500 font-medium leading-relaxed">
-                            Instrumen cerdas yang menyesuaikan pertanyaan dengan konteks unik Anda.
-                          </p>
-                        </div>
-                      </li>
-                      <li className="flex items-start gap-3.5">
-                        <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm text-slate-600 ring-1 ring-slate-200">
-                          <GlobalTargetIcon size={20} />
-                        </div>
-                        <div>
-                          <p className="text-sm font-bold text-slate-800 mb-0.5">Cetak Biru (Blueprint) Solusi</p>
-                          <p className="text-xs text-slate-500 font-medium leading-relaxed">
-                            Anda akan menerima panduan taktis dan rekomendasi langkah konkret yang siap dieksekusi.
-                          </p>
-                        </div>
-                      </li>
+                      {checkoutPackage.expectedOutputs && checkoutPackage.expectedOutputs.length > 0 ? (
+                        // Render Dinamis Berdasarkan Data dari TabGeneral
+                        checkoutPackage.expectedOutputs.map((item, idx) => {
+                          const { title, subs } = parseExpectedOutput(item);
+                          const DynamicIcon = OutputIcons[idx % OutputIcons.length]; // Merotasi ikon agar bervariasi
+                          
+                          return (
+                            <li key={idx} className="flex items-start gap-3.5">
+                              <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm text-slate-600 ring-1 ring-slate-200">
+                                <DynamicIcon size={20} className={drawerTheme.text} />
+                              </div>
+                              <div>
+                                <p className="text-sm font-bold text-slate-800 mb-0.5">{title || item}</p>
+                                {subs && (
+                                  <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                                    {subs}
+                                  </p>
+                                )}
+                              </div>
+                            </li>
+                          );
+                        })
+                      ) : (
+                        // Fallback Jika Modul Belum Punya Expected Outputs Custom
+                        <>
+                          <li className="flex items-start gap-3.5">
+                            <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm text-slate-600 ring-1 ring-slate-200">
+                              <AILensIcon size={20} />
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold text-slate-800 mb-0.5">Sistem Deteksi Dini</p>
+                              <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                                Mendiagnosa akar masalah, potensi tersembunyi, dan area <span className="italic">blind-spot</span> secara objektif.
+                              </p>
+                            </div>
+                          </li>
+                          <li className="flex items-start gap-3.5">
+                            <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm text-slate-600 ring-1 ring-slate-200">
+                              <InfinityWorkflowIcon size={20} />
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold text-slate-800 mb-0.5">Menutup Kesenjangan (Gap)</p>
+                              <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                                Menghilangkan kebingungan dengan memetakan jarak antara realita Anda saat ini dengan tujuan ideal.
+                              </p>
+                            </div>
+                          </li>
+                          <li className="flex items-start gap-3.5">
+                            <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm text-slate-600 ring-1 ring-slate-200">
+                              <GlobalTargetIcon size={20} />
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold text-slate-800 mb-0.5">Cetak Biru (Blueprint) Solusi</p>
+                              <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                                Anda akan menerima panduan taktis dan rekomendasi langkah konkret yang siap dieksekusi.
+                              </p>
+                            </div>
+                          </li>
+                        </>
+                      )}
                     </ul>
                   </div>
+                  {/* ============================================== */}
 
                   <div className="bg-emerald-50/50 p-4 rounded-2xl border border-emerald-100 flex items-start gap-3">
                     <div className="shrink-0 mt-0.5">
@@ -514,6 +522,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                       <strong className="text-emerald-800">Garansi Keamanan.</strong> Sesi Anda diamankan secara lokal. Input Anda tidak akan dikirim ke server kami sebelum Anda menekan tombol konfirmasi.
                     </p>
                   </div>
+
                 </div>
               </div>
 
@@ -529,7 +538,6 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                   Mulai Sesi Sekarang <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </div>
-
             </motion.div>
           </React.Fragment>
         )}

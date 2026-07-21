@@ -75,6 +75,12 @@ export interface AIResult {
   customUiLabels?: CustomUiLabels;
   // 2. TAMBAHAN BARU: Field untuk menyimpan hasil generate Action Plan
   customActionPlan?: ActionItem[]; 
+  sellingOutput?: {
+    hookTitle: string;
+    compellingSummary: string;
+    keyValuePropositions: string[];
+    closingCallToAction: string;
+  };
 }
 
 export interface CurationHistory {
@@ -154,6 +160,7 @@ export interface FormTemplate {
   id: string;             
   trackName: string;      
   trackDescription: string;
+  expectedOutputs?: string[]; // <--- TAMBAHKAN BARIS INI
   trackIcon: string;      
   isActive: boolean;      
   version: number;

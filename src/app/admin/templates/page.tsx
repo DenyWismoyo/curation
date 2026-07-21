@@ -9,12 +9,14 @@ import { FormTemplate } from '@/types/curation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { toast } from "sonner"; 
+import { getFunctions, httpsCallable } from 'firebase/functions';
+
 import { 
   Plus, Save, Trash2, Settings2, LayoutGrid, CheckCircle2,
   Copy, Download, Upload, BrainCircuit, FileEdit, ChevronLeft, Calendar, Eye,
   Folder, FolderOpen, List as ListIcon, GripVertical, 
   Search, CheckSquare, Edit3, MoveRight, X,
-  Terminal
+  Terminal, Sparkles, Loader2
 } from 'lucide-react';
 
 // IMPORT KOMPONEN MODULAR
@@ -24,7 +26,7 @@ import { TabFormBuilder } from '@/app/components/admin/template-builder/TabFormB
 import { AdminTemplatePreview } from '@/app/components/admin/AdminTemplatePreview';
 import { TabLogs } from '@/app/components/admin/template-builder/TabLogs';
 
-// DEFINISI DEFAULT CONFIG UNTUK FALLBACK TEMPLATE LAMA (DIPERBARUI)
+// DEFINISI DEFAULT CONFIG UNTUK FALLBACK TEMPLATE LAMA
 const DEFAULT_AI_CONFIG = {
   aiPersona: "",
   assessmentGoal: "",
@@ -38,8 +40,7 @@ const DEFAULT_AI_CONFIG = {
   formatInstructions: "",
   reportTone: "consultative" as const,
   gradingStrictness: "standard" as const,
-  // PENAMBAHAN PROPERTI MULTIPURPOSE
-  targetAudience: "company" as const, // BARU
+  targetAudience: "company" as const,
   formPurpose: "assessment" as any,
   customUiLabels: {
     scoreLabel: "AI Readiness Score",
@@ -58,7 +59,7 @@ function TemplateBuilderContent() {
   const activeFolder = searchParams.get('folder') || 'Semua';
   const editId = searchParams.get('edit');
   const tabParam = searchParams.get('tab') || 'general';
-  
+
   const [templates, setTemplates] = useState<FormTemplate[]>([]);
   const [activeTemplate, setActiveTemplate] = useState<FormTemplate | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -66,18 +67,21 @@ function TemplateBuilderContent() {
   
   const [activeView, setActiveView] = useState<'list' | 'edit'>('list');
   const [activeTab, setActiveTab] = useState<'general' | 'ai' | 'builder' | 'preview' | 'logs'>('general');
-
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
   const [isEditMode, setIsEditMode] = useState(false); 
+
   const [dbFolders, setDbFolders] = useState<string[]>([]);
   const [newFolderName, setNewFolderName] = useState('');
   const [isCreatingFolder, setIsCreatingFolder] = useState(false);
   const [draggedTemplateId, setDraggedTemplateId] = useState<string | null>(null);
-  
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
+  
   const [editingFolder, setEditingFolder] = useState<string | null>(null);
   const [editFolderName, setEditFolderName] = useState('');
+
+  // State untuk Mass Generate
+  const [isMassGenerating, setIsMassGenerating] = useState(false);
 
   // SINKRONISASI URL PARAMETER DENGAN RENDER VIEW & TAB DATA
   useEffect(() => {
@@ -147,12 +151,75 @@ function TemplateBuilderContent() {
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       result = result.filter(t => 
-         t.trackName.toLowerCase().includes(query) || 
-         (t.trackDescription && t.trackDescription.toLowerCase().includes(query))
+          t.trackName.toLowerCase().includes(query) ||
+          (t.trackDescription && t.trackDescription.toLowerCase().includes(query))
       );
     }
     return result;
   }, [templates, activeFolder, searchQuery]);
+
+  // === FUNGSI MASS GENERATE OUTPUTS ===
+  const handleMassGenerateExpectedOutputs = async () => {
+    if (!confirm("Sistem akan mencari form yang belum memiliki 'Benefit Output' dan men-generate-nya secara otomatis menggunakan AI. Proses ini mungkin memakan waktu beberapa menit. Lanjutkan?")) return;
+    
+    setIsMassGenerating(true);
+    const functions = getFunctions(undefined, 'asia-southeast2');
+    const generateFn = httpsCallable(functions, 'generateTemplateSellingPoints');
+    
+    let successCount = 0;
+    let skipCount = 0;
+    let failCount = 0;
+
+    for (const tpl of templates) {
+      if (!tpl.expectedOutputs || tpl.expectedOutputs.length === 0) {
+        if (!tpl.aiPromptConfig || !tpl.aiPromptConfig.expectedRecommendations) {
+          skipCount++;
+          continue;
+        }
+
+        try {
+          toast.info(`Memproses AI untuk: ${tpl.trackName}...`);
+          
+          const payload = {
+            trackName: tpl.trackName,
+            trackDescription: tpl.trackDescription || "Asesmen dan evaluasi",
+            aiPromptConfig: tpl.aiPromptConfig
+          };
+          
+          const result = await generateFn(payload);
+          const data = result.data as any;
+          
+          if (data.success && data.sellingPoints) {
+             const formattedOutputs = data.sellingPoints.map((sp: any) => `${sp.title}: ${sp.description}`);
+             
+             await updateDoc(doc(db, 'form_templates', tpl.id), {
+               expectedOutputs: formattedOutputs,
+               lastUpdated: new Date().toISOString()
+             });
+             
+             successCount++;
+             toast.success(`Berhasil meracik output: ${tpl.trackName}`);
+             
+             // Jeda 2.5 detik untuk menghindari rate limit API
+             await new Promise(r => setTimeout(r, 2500));
+          }
+        } catch (e: any) {
+          console.error(`Gagal pada ${tpl.trackName}:`, e);
+          failCount++;
+        }
+      } else {
+        skipCount++;
+      }
+    }
+    
+    toast.success(`Mass Generate Selesai!`, {
+      description: `Berhasil: ${successCount} | Gagal: ${failCount} | Di-skip: ${skipCount}`
+    });
+    
+    setIsMassGenerating(false);
+    fetchData(); // Muat ulang data
+  };
+  // ====================================
 
   const handleCreateFolder = async () => {
     if (!newFolderName.trim()) return;
@@ -185,7 +252,6 @@ function TemplateBuilderContent() {
     }
     const newName = editFolderName.trim();
     const templatesToUpdate = templates.filter(t => t.folder === oldName);
-
     setTemplates(prev => prev.map(t => t.folder === oldName ? { ...t, folder: newName } : t));
     setDbFolders(prev => prev.map(f => f === oldName ? newName : f));
     if (activeFolder === oldName) router.push(`?folder=${encodeURIComponent(newName)}`);
@@ -205,7 +271,6 @@ function TemplateBuilderContent() {
 
   const handleDeleteFolder = async (folderName: string) => {
     if(!confirm(`Hapus folder "${folderName}"? Template di dalamnya TIDAK akan dihapus, tetapi akan berpindah ke Uncategorized.`)) return;
-
     const templatesToUpdate = templates.filter(t => t.folder === folderName);
     setTemplates(prev => prev.map(t => t.folder === folderName ? { ...t, folder: undefined } : t));
     setDbFolders(prev => prev.filter(f => f !== folderName));
@@ -242,7 +307,7 @@ function TemplateBuilderContent() {
 
     const finalFolderValue = targetFolder === 'Uncategorized' ? null : targetFolder;
     setTemplates(prev => prev.map(t => t.id === templateId ? { ...t, folder: finalFolderValue || undefined } : t));
-
+    
     try {
       await updateDoc(doc(db, 'form_templates', templateId), { folder: finalFolderValue });
       toast.success("Template berhasil dipindahkan.");
@@ -269,16 +334,14 @@ function TemplateBuilderContent() {
   const handleBulkMove = async (targetFolder: string) => {
     if(selectedTemplates.length === 0 || !targetFolder) return;
     const finalFolderValue = targetFolder === 'Uncategorized' ? null : targetFolder;
-
     setTemplates(prev => prev.map(t => selectedTemplates.includes(t.id) ? { ...t, folder: finalFolderValue || undefined } : t));
-
     try {
       await Promise.all(selectedTemplates.map(id => updateDoc(doc(db, 'form_templates', id), { folder: finalFolderValue })));
       setSelectedTemplates([]); 
       toast.success(`${selectedTemplates.length} Template dipindahkan ke ${targetFolder}.`);
-    } catch(e) {
-       console.error("Bulk Move error", e);
-       toast.error("Gagal memindahkan beberapa template.");
+    } catch(e) { 
+      console.error("Bulk Move error", e); 
+      toast.error("Gagal memindahkan beberapa template.");
     }
   };
 
@@ -295,7 +358,6 @@ function TemplateBuilderContent() {
     }
   };
 
-  // FUNGSI IMPORT DI DASHBOARD LIST (Membuat Template Baru)
   const importTemplate = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -317,6 +379,9 @@ function TemplateBuilderContent() {
         if (!newTemplate.aiPromptConfig) {
           newTemplate.aiPromptConfig = { ...DEFAULT_AI_CONFIG };
         }
+        if (!newTemplate.expectedOutputs) {
+          newTemplate.expectedOutputs = [];
+        }
 
         setActiveTemplate(newTemplate);
         toast.success("Berhasil Import", { description: "Template baru berhasil dimuat dari file JSON." });
@@ -329,7 +394,6 @@ function TemplateBuilderContent() {
     event.target.value = '';
   };
 
-  // FUNGSI IMPORT SAAT BERADA DI DALAM TEMPLATE EDITOR (Menimpa Template Aktif)
   const importToCurrentTemplate = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -344,17 +408,16 @@ function TemplateBuilderContent() {
       try {
         const importedData = JSON.parse(e.target?.result as string);
         
-        // Validasi Struktur Data Form Builder
         if (!importedData || typeof importedData !== 'object') {
           toast.error("Format File Invalid", { description: "File yang diunggah bukan format JSON objek." });
           return;
         }
+
         if (!importedData.trackName || !Array.isArray(importedData.steps)) {
           toast.error("Struktur Tidak Dikenali", { description: "Properti 'trackName' atau array 'steps' tidak ditemukan di dalam JSON. Ini bukan file template Curation." });
           return;
         }
 
-        // Pertahankan ID & Folder template yang sedang diedit (Overwrite data isinya saja)
         const updatedTemplate: FormTemplate = {
           ...importedData,
           id: activeTemplate!.id,
@@ -364,6 +427,9 @@ function TemplateBuilderContent() {
 
         if (!updatedTemplate.aiPromptConfig) {
           updatedTemplate.aiPromptConfig = { ...DEFAULT_AI_CONFIG };
+        }
+        if (!updatedTemplate.expectedOutputs) {
+          updatedTemplate.expectedOutputs = [];
         }
 
         setActiveTemplate(updatedTemplate);
@@ -389,15 +455,15 @@ function TemplateBuilderContent() {
     toast.info("File JSON sedang diunduh.");
   };
 
-  // DIPERBARUI: Fungsi createNewTemplate agar mendefinisikan label UI secara otomatis
   const createNewTemplate = () => {
     const newTemplate: FormTemplate = {
-      id: `track_${Date.now()}`, 
-      trackName: "Kategori Baru", 
-      trackDescription: "Deskripsi singkat.", 
+      id: `track_${Date.now()}`,
+      trackName: "Kategori Baru",
+      trackDescription: "Deskripsi singkat.",
+      expectedOutputs: [], 
       trackIcon: "LayoutGrid",
-      isActive: false, 
-      version: 1, 
+      isActive: false,
+      version: 1,
       lastUpdated: new Date().toISOString(),
       folder: activeFolder !== 'Semua' && activeFolder !== 'Uncategorized' ? activeFolder : undefined,
       aiPromptConfig: {
@@ -413,8 +479,7 @@ function TemplateBuilderContent() {
         customSystemPrompt: "",
         negativePrompts: "",
         formatInstructions: "",
-        // MENGINISIALISASI FIELD BARU SAAT MEMBUAT BARU
-        targetAudience: "company", // BARU
+        targetAudience: "company",
         formPurpose: "assessment" as any,
         customUiLabels: {
           scoreLabel: "AI Readiness Score",
@@ -424,15 +489,16 @@ function TemplateBuilderContent() {
           executionLabel: "Action Plan Timeline"
         }
       },
-steps: [{ 
-      stepNumber: 1, 
-      title: "Langkah 1", 
-      fields: [
-        { id: 'namaUsaha', label: 'Nama Entitas/Nama Anda', type: 'text', required: true, gridSpan: 2 },
-        { id: 'namaPengisi', label: 'Nama Pengisi/Panggilan', type: 'text', required: true, gridSpan: 2 }
-      ] 
-    }]
-  };
+      steps: [{
+        stepNumber: 1,
+        title: "Langkah 1",
+        fields: [
+          { id: 'namaUsaha', label: 'Nama Entitas/Nama Anda', type: 'text', required: true, gridSpan: 2 },
+          { id: 'namaPengisi', label: 'Nama Pengisi/Panggilan', type: 'text', required: true, gridSpan: 2 }
+        ]
+      }]
+    };
+    
     setActiveTemplate(newTemplate);
     router.push(`?folder=${encodeURIComponent(activeFolder)}&edit=${newTemplate.id}&tab=general`);
   };
@@ -457,15 +523,15 @@ steps: [{
     if (!templateToSave) return;
     
     const hasNamaUsaha = templateToSave.steps?.some(step => step.fields?.some(f => f.id === 'namaUsaha'));
-    if (!hasNamaUsaha) { 
-      toast.error('GAGAL MENYIMPAN: Form kehilangan kolom "namaUsaha" (Identitas Utama).', { description: 'Kolom pertama pada langkah 1 harus memiliki id: "namaUsaha" agar database bisa melacak entitas.'}); 
-      return; 
+    if (!hasNamaUsaha) {
+       toast.error('GAGAL MENYIMPAN: Form kehilangan kolom "namaUsaha" (Identitas Utama).', { description: 'Kolom pertama pada langkah 1 harus memiliki id: "namaUsaha" agar database bisa melacak entitas.'});
+       return; 
     }
     
     setIsSaving(true);
     try {
       const templateFinal = { ...templateToSave, lastUpdated: new Date().toISOString() };
-      const firestoreSafePayload = JSON.parse(JSON.stringify(templateFinal)); 
+      const firestoreSafePayload = JSON.parse(JSON.stringify(templateFinal));
       
       await setDoc(doc(db, 'form_templates', firestoreSafePayload.id), firestoreSafePayload);
       
@@ -479,10 +545,10 @@ steps: [{
         toast.success('Template Form Berhasil Tersimpan!', { description: 'Perubahan Anda telah direkam ke database.'});
       }
     } catch (error) { 
-      console.error(error); 
-      toast.error('Gagal menyimpan ke database.', { description: 'Periksa koneksi internet atau konsol log Anda.'});
+       console.error(error); 
+       toast.error('Gagal menyimpan ke database.', { description: 'Periksa koneksi internet atau konsol log Anda.'});
     } finally { 
-      setIsSaving(false); 
+       setIsSaving(false); 
     }
   };
 
@@ -493,11 +559,11 @@ steps: [{
       setTemplates(prev => prev.filter(t => t.id !== id));
       toast.success("Template berhasil dihapus permanen.");
       if (editId === id) { 
-        router.push(`?folder=${encodeURIComponent(activeFolder)}`); 
-      }
+         router.push(`?folder=${encodeURIComponent(activeFolder)}`); 
+       }
     } catch (error) { 
-      console.error(error); 
-      toast.error("Gagal menghapus template.");
+       console.error(error); 
+       toast.error("Gagal menghapus template.");
     }
   };
 
@@ -523,6 +589,18 @@ steps: [{
           </div>
           
           <div className="flex flex-wrap items-center gap-3 shrink-0">
+            
+            {/* TOMBOL MASS GENERATE OUTPUTS */}
+            <Button 
+              onClick={handleMassGenerateExpectedOutputs} 
+              disabled={isMassGenerating}
+              variant="outline"
+              className="border-indigo-200 text-indigo-700 hover:bg-indigo-50 rounded-xl shadow-sm h-10 px-4 font-bold"
+            >
+              {isMassGenerating ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Sparkles className="h-4 w-4 mr-2" />}
+              {isMassGenerating ? 'Memproses...' : 'Mass Generate Output'}
+            </Button>
+
             <Button 
               variant={isEditMode ? "default" : "outline"}
               onClick={() => {
@@ -536,15 +614,17 @@ steps: [{
               {isEditMode ? <CheckCircle2 className="w-4 h-4" /> : <Settings2 className="w-4 h-4" />}
               {isEditMode ? "Selesai Mengatur" : "Atur Organisasi"}
             </Button>
-
+            
             <div className="flex bg-slate-200/60 p-1 rounded-xl ring-1 ring-slate-200 hidden sm:flex">
               <button onClick={() => setViewMode('list')} className={`p-2 rounded-lg transition-all ${viewMode === 'list' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-500 hover:text-slate-800'}`}><ListIcon size={18}/></button>
               <button onClick={() => setViewMode('grid')} className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-500 hover:text-slate-800'}`}><LayoutGrid size={18}/></button>
             </div>
+            
             <label className="hidden sm:flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl text-sm font-bold cursor-pointer shadow-sm transition-all">
               <Upload className="h-4 w-4" /> Import JSON
               <input type="file" accept=".json" onChange={importTemplate} className="hidden" />
             </label>
+            
             <Button onClick={createNewTemplate} className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md shadow-indigo-200 gap-2 h-10 px-5 font-bold">
               <Plus className="h-4 w-4" /> Buat Baru
             </Button>
@@ -566,7 +646,7 @@ steps: [{
               const isSystemFolder = name === 'Semua' || name === 'Uncategorized';
 
               return (
-                <div
+                <div 
                   key={name} onClick={() => router.push(`?folder=${encodeURIComponent(name)}`)} onDragOver={handleDragOver} onDrop={(e) => handleDrop(e, name)}
                   className={`group flex items-center gap-2 px-3 py-1.5 rounded-xl cursor-pointer transition-all border shrink-0 relative ${
                     isCurrentActive ? 'bg-indigo-50 border-indigo-200 text-indigo-700 shadow-sm' : 'bg-transparent border-transparent text-slate-600 hover:bg-slate-50 hover:border-slate-200'
@@ -694,7 +774,7 @@ steps: [{
                     {filteredTemplates.map(template => {
                       const isSelected = selectedTemplates.includes(template.id);
                       return (
-                        <tr
+                        <tr 
                           key={template.id} draggable={isEditMode} onDragStart={(e) => handleDragStart(e, template.id)}
                           className={`group transition-all duration-200 border-l-[3px] ${
                             draggedTemplateId === template.id 
@@ -742,11 +822,13 @@ steps: [{
                 </table>
               </div>
             </div>
+
           ) : (
             
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 animate-in fade-in duration-300 w-full">
               {filteredTemplates.map(template => {
                 const isSelected = selectedTemplates.includes(template.id);
+
                 return (
                   <Card 
                     key={template.id} draggable={isEditMode} onDragStart={(e) => handleDragStart(e, template.id)}
@@ -842,7 +924,8 @@ steps: [{
       </div>
 
       <div className="flex bg-slate-200/50 p-1.5 rounded-2xl w-full overflow-x-auto hide-scrollbar mb-8">
-        {[{ id: 'general', label: 'Pengaturan Dasar', icon: Settings2 }, 
+        {[
+          { id: 'general', label: 'Pengaturan Dasar', icon: Settings2 }, 
           { id: 'ai', label: 'Otak AI & Enterprise', icon: BrainCircuit },
           { id: 'builder', label: 'Editor Formulir', icon: LayoutGrid }, 
           { id: 'preview', label: 'Preview Mode', icon: Eye },

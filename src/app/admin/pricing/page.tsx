@@ -9,7 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from "sonner";
 import { 
-  Save, LayoutGrid, Loader2, Store, Eye, EyeOff, Tag, Users, Flame, ListChecks, Search, KeyRound, Copy, Check, Share2
+  Save, LayoutGrid, Loader2, Store, Eye, EyeOff, Tag, Users, Flame, 
+  ListChecks, Search, KeyRound, Copy, Check, Share2, Folder, Filter
 } from 'lucide-react';
 import { FormTemplate } from '@/types/curation';
 
@@ -33,6 +34,9 @@ export default function PricingManagerPage() {
   const [isGeneratingToken, setIsGeneratingToken] = useState<string | null>(null); 
   const [searchTerm, setSearchTerm] = useState('');
   
+  // State baru untuk filter kategori aktif
+  const [activeCategory, setActiveCategory] = useState<string>('Semua');
+
   const [generatedTokens, setGeneratedTokens] = useState<Record<string, string>>({});
   const [copiedTokens, setCopiedTokens] = useState<Record<string, boolean>>({});
   const [formStates, setFormStates] = useState<Record<string, PricingFormState>>({});
@@ -56,8 +60,8 @@ export default function PricingManagerPage() {
         let formattedDate = '';
         if (tpl.discountExpiry) {
           const d = new Date(tpl.discountExpiry);
-          if (!isNaN(d.getTime())) { 
-            formattedDate = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+          if (!isNaN(d.getTime())) {
+             formattedDate = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
           }
         }
 
@@ -255,7 +259,6 @@ export default function PricingManagerPage() {
       toast.success(`Token berhasil dibuat!`, {
         description: `Kode: ${fullToken} (Akses Modul: ${templateName})`
       });
-
     } catch (error) {
       console.error("Gagal generate token B2C:", error);
       toast.error("Gagal membuat token akses.");
@@ -287,10 +290,22 @@ export default function PricingManagerPage() {
     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(Number(angka));
   };
 
-  const filteredTemplates = useMemo(() => {
-    return templates.filter(template => {
+  // --- LOGIC PENGELOMPOKAN & FILTER KATEGORI --- //
+  
+  // 1. Ekstrak Kategori Unik dari data yang TERSIMPAN
+  const uniqueCategories = useMemo(() => {
+    const cats = new Set<string>();
+    templates.forEach(t => {
+      if (t.category) cats.add(t.category.trim());
+      else cats.add('Umum');
+    });
+    return ['Semua', ...Array.from(cats).sort()];
+  }, [templates]);
+
+  // 2. Filter data berdasarkan Search dan ActiveCategory
+  const displayedTemplates = useMemo(() => {
+    let filtered = templates.filter(template => {
       const query = searchTerm.toLowerCase();
-      
       if (query) {
         return (
           template.trackName.toLowerCase().includes(query) ||
@@ -299,7 +314,27 @@ export default function PricingManagerPage() {
       }
       return template.isDisplayedOnLanding === true;
     });
-  }, [templates, searchTerm]);
+
+    if (activeCategory !== 'Semua') {
+      filtered = filtered.filter(t => {
+        const cat = t.category?.trim() || 'Umum';
+        return cat === activeCategory;
+      });
+    }
+
+    return filtered;
+  }, [templates, searchTerm, activeCategory]);
+
+  // 3. Kelompokkan Data Berdasarkan Kategori untuk Render Visual
+  const groupedData = useMemo(() => {
+    const groups: Record<string, FormTemplate[]> = {};
+    displayedTemplates.forEach(t => {
+       const cat = t.category?.trim() || 'Umum';
+       if (!groups[cat]) groups[cat] = [];
+       groups[cat].push(t);
+    });
+    return groups;
+  }, [displayedTemplates]);
 
   const SwitchToggle = ({ checked, onChange, label }: { checked: boolean, onChange: () => void, label: string }) => (
     <label className="flex items-center gap-2 cursor-pointer group">
@@ -314,6 +349,13 @@ export default function PricingManagerPage() {
   return (
     <div className="space-y-6 animate-in fade-in duration-500 pb-20">
       
+      {/* Datalist untuk memberikan auto-suggest saat admin mengetik nama kategori baru */}
+      <datalist id="category-suggestions">
+        {uniqueCategories.filter(c => c !== 'Semua').map(cat => (
+          <option key={cat} value={cat} />
+        ))}
+      </datalist>
+
       {/* Header Panel */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
         <div>
@@ -334,229 +376,272 @@ export default function PricingManagerPage() {
         </Button>
       </div>
 
-      {/* Filter Search Bar */}
-      <div className="flex flex-col gap-2 w-full md:w-[450px]">
-        <div className="relative">
+      {/* Area Filter & Organisasi: Search + Category Tabs */}
+      <div className="flex flex-col gap-4 bg-white p-4 rounded-2xl ring-1 ring-slate-200 shadow-sm sticky top-0 md:relative z-20">
+        
+        {/* Search Bar */}
+        <div className="relative w-full">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
           <Input
             type="text"
-            placeholder="Ketik untuk mencari modul yang tersembunyi..."
+            placeholder="Cari nama modul untuk memunculkan modul yang tersembunyi..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9 h-11 bg-white rounded-xl border-slate-200 focus-visible:ring-indigo-500 shadow-sm w-full font-medium text-sm"
+            className="pl-9 h-11 bg-slate-50 rounded-xl border-slate-200 focus-visible:ring-indigo-500 w-full font-medium text-sm"
           />
         </div>
+
+        {/* Tab Kategori */}
+        <div className="flex items-center gap-2 overflow-x-auto custom-scrollbar pb-1">
+          <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5 shrink-0 pr-2">
+            <Filter size={14} /> Kategori:
+          </span>
+          {uniqueCategories.map(cat => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all border shrink-0 ${
+                activeCategory === cat 
+                  ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm' 
+                  : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50 hover:text-indigo-600'
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+        
         {!searchTerm && (
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">
-            Menampilkan {filteredTemplates.length} modul yang tayang di publik
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pt-1 border-t border-slate-100">
+            Menampilkan {displayedTemplates.length} modul yang ditayangkan
           </p>
         )}
       </div>
 
-      {/* Konten Utama - Menggunakan Flex/Grid Layout */}
-      <div className="w-full">
+      {/* Konten Utama - Render Berdasarkan Kategori */}
+      <div className="w-full mt-6">
         {loading ? (
           <div className="py-20 text-center text-slate-500 flex justify-center items-center gap-3 font-medium bg-white rounded-3xl shadow-sm ring-1 ring-slate-200">
             <Loader2 className="w-6 h-6 animate-spin text-indigo-600" /> Memuat Etalase...
           </div>
-        ) : filteredTemplates.length === 0 ? (
+        ) : displayedTemplates.length === 0 ? (
           <div className="py-20 text-center text-slate-500 font-medium bg-white rounded-3xl shadow-sm ring-1 ring-slate-200">
             {searchTerm 
               ? "Tidak ada modul asesmen yang cocok dengan pencarian." 
-              : "Belum ada modul yang tayang. Gunakan pencarian di atas untuk memunculkan modul tersembunyi."}
+              : "Belum ada modul yang tayang di kategori ini."}
           </div>
         ) : (
-          <div className="flex flex-col gap-5">
-            {filteredTemplates.map(template => {
-              const state = formStates[template.id];
-              if (!state) return null;
-              
-              const isChanged = checkIsChanged(template.id, template);
-              const originalPrice = parseInt(state.price || '0', 10);
-              const discountPerc = parseInt(state.discountPercentage || '0', 10);
-              const finalPrice = originalPrice - (originalPrice * (discountPerc / 100));
-
-              const highlightCardClass = state.isDisplayedOnLanding 
-                ? 'border-l-[4px] border-l-emerald-500 border-t border-r border-b border-slate-200 bg-emerald-50/20 hover:bg-emerald-50/40 shadow-sm' 
-                : 'border border-slate-200 bg-white/70 hover:bg-white opacity-80 hover:opacity-100 shadow-sm';
-
-              return (
-                <div key={template.id} className={`flex flex-col lg:flex-row gap-5 lg:gap-8 p-5 md:p-6 rounded-2xl transition-all duration-200 ${highlightCardClass}`}>
-                  
-                  {/* KOLOM 1: Info Modul & Social Proof */}
-                  <div className="flex-1 lg:max-w-[320px] space-y-4">
-                    <div className="flex items-start gap-4">
-                      <div className="mt-0.5 w-10 h-10 rounded-xl bg-white flex items-center justify-center text-slate-500 shrink-0 ring-1 ring-slate-200 shadow-sm">
-                        <LayoutGrid size={18}/>
-                      </div>
-                      <div>
-                        <p className="font-black text-slate-900 text-[15px] leading-snug">{template.trackName}</p>
-                        <p className="text-xs text-slate-400 font-medium line-clamp-2 mt-1" title={template.trackDescription}>
-                          {template.trackDescription || "Deskripsi singkat."}
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-3">
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">Kategori Modul</label>
-                        <Input 
-                          type="text" 
-                          placeholder="Misal: Enterprise, Startup" 
-                          value={state.category}
-                          onChange={(e) => handleInputChange(template.id, 'category', e.target.value)}
-                          className="h-9 text-xs font-bold bg-white border-slate-200 shadow-sm focus-visible:ring-indigo-500"
-                        />
-                      </div>
-
-                      <button 
-                        onClick={() => handleToggle(template.id, 'isDisplayedOnLanding')}
-                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] uppercase tracking-widest font-bold transition-all border ${
-                          state.isDisplayedOnLanding ? 'bg-emerald-50 text-emerald-600 border-emerald-200 shadow-sm' : 'bg-white text-slate-500 border-slate-300 hover:bg-slate-50'
-                        }`}
-                      >
-                        {state.isDisplayedOnLanding ? <Eye size={12} /> : <EyeOff size={12} />}
-                        {state.isDisplayedOnLanding ? 'Tampil di Katalog' : 'Status: Tersembunyi'}
-                      </button>
-                      
-                      <div className="bg-orange-50/50 p-3 rounded-xl border border-orange-100/50 space-y-3">
-                        <SwitchToggle checked={state.isBestSeller} onChange={() => handleToggle(template.id, 'isBestSeller')} label="Tandai Best Seller" />
-                        <div className="flex items-center gap-2">
-                          <Users className="w-3.5 h-3.5 text-orange-400" />
-                          <Input 
-                            type="text" placeholder="Jml Pengguna" value={state.userCount}
-                            onChange={(e) => handleInputChange(template.id, 'userCount', e.target.value)}
-                            className="h-8 w-24 text-xs font-bold bg-white"
-                          />
-                          <span className="text-[10px] font-bold text-slate-400 uppercase">Pengguna</span>
-                        </div>
-                      </div>
-                    </div>
+          <div className="flex flex-col gap-10">
+            {Object.entries(groupedData).sort(([a], [b]) => a.localeCompare(b)).map(([categoryName, items]) => (
+              <div key={categoryName} className="space-y-4 animate-in fade-in duration-300">
+                
+                {/* Header Kategori */}
+                <div className="flex items-center gap-3 border-b-2 border-slate-100 pb-3 pl-2">
+                  <div className="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0">
+                    <Folder className="w-4 h-4" />
                   </div>
-
-                  {/* Garis Pemisah Mobile */}
-                  <div className="w-full h-px bg-slate-200/60 lg:hidden"></div>
-
-                  {/* KOLOM 2: Harga & FOMO */}
-                  <div className="flex-1 lg:max-w-[280px] space-y-4">
-                    <SwitchToggle checked={state.isPaid} onChange={() => handleToggle(template.id, 'isPaid')} label="Berbayar" />
-                    
-                    <div className="relative w-full">
-                      <span className={`absolute left-3 top-1/2 -translate-y-1/2 font-bold ${!state.isPaid ? 'text-slate-300' : 'text-slate-400'}`}>Rp</span>
-                      <Input 
-                        type="text" value={state.price}
-                        onChange={(e) => handleInputChange(template.id, 'price', e.target.value)}
-                        disabled={!state.isPaid}
-                        className={`pl-9 h-10 font-bold text-sm rounded-xl transition-all ${!state.isPaid ? 'bg-slate-50 opacity-50 border-slate-200 text-slate-400' : 'bg-white border-slate-200 shadow-sm focus-visible:ring-indigo-500'}`}
-                      />
-                    </div>
-
-                    {state.isPaid && (
-                      <div className="bg-rose-50/50 p-3 rounded-xl border border-rose-100 space-y-3 shadow-sm">
-                        <div className="flex items-center justify-between gap-2">
-                          <div className="relative w-[110px] shrink-0">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400"><Tag className="w-3.5 h-3.5" /></span>
-                            <Input 
-                              type="text" value={state.discountPercentage}
-                              onChange={(e) => handleInputChange(template.id, 'discountPercentage', e.target.value)}
-                              className="pl-8 pr-7 h-9 font-bold text-sm bg-white border-rose-200 text-rose-700 focus-visible:ring-rose-500"
-                            />
-                            <span className="absolute right-3 top-1/2 -translate-y-1/2 font-bold text-rose-500">%</span>
-                          </div>
-                          {discountPerc > 0 && <div className="text-[10px] font-black text-rose-600 bg-rose-100 px-2 py-1 rounded-md text-right leading-tight">Final:<br/>{formatRupiah(finalPrice)}</div>}
-                        </div>
-                        
-                        {discountPerc > 0 && (
-                          <div className="space-y-1.5">
-                            <label className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1"><Flame className="w-3 h-3 text-orange-500"/> Batas Waktu Diskon (Opsional)</label>
-                            <Input 
-                              type="datetime-local" value={state.discountExpiry}
-                              onChange={(e) => handleInputChange(template.id, 'discountExpiry', e.target.value)}
-                              className="h-9 text-xs font-bold text-slate-600 bg-white"
-                            />
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Garis Pemisah Mobile */}
-                  <div className="w-full h-px bg-slate-200/60 lg:hidden"></div>
-
-                  {/* KOLOM 3: Custom USP */}
-                  <div className="flex-1 lg:max-w-[280px] space-y-2">
-                    <label className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1.5">
-                      <ListChecks className="w-3.5 h-3.5 text-emerald-500"/> Keunggulan Tambahan (Opsional)
-                    </label>
-                    <Textarea 
-                      placeholder="Sesi Konsultasi Eksklusif 30 Menit&#10;Prioritas Validasi Dokumen"
-                      value={state.customUSPs}
-                      onChange={(e) => handleInputChange(template.id, 'customUSPs', e.target.value)}
-                      className="text-xs bg-white resize-y min-h-[120px] shadow-sm border-slate-200 focus-visible:ring-indigo-500"
-                    />
-                    <p className="text-[9px] text-slate-400 font-medium">Tekan Enter untuk memisahkan setiap poin.</p>
-                  </div>
-
-                  {/* Garis Pemisah Mobile */}
-                  <div className="w-full h-px bg-slate-200/60 lg:hidden"></div>
-
-                  {/* KOLOM 4: Aksi Simpan & Generate Token */}
-                  <div className="flex flex-col justify-end gap-3 w-full lg:max-w-[180px]">
-                    <Button 
-                      onClick={() => handleSaveItem(template.id)} 
-                      disabled={!isChanged || isSaving === template.id}
-                      variant="outline"
-                      className={`w-full h-10 rounded-xl font-bold transition-all text-xs ${
-                        isChanged ? 'bg-indigo-600 border-indigo-600 text-white shadow-md hover:bg-indigo-700' : 'bg-slate-50 text-slate-400 border-slate-200 cursor-not-allowed'
-                      }`}
-                    >
-                      {isSaving === template.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Simpan Perubahan'}
-                    </Button>
-                    
-                    <Button
-                      onClick={() => handleCopyShareLink(template.id)}
-                      variant="outline"
-                      className="w-full h-10 rounded-xl font-bold border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 hover:text-blue-800 transition-all text-xs flex items-center justify-center gap-1.5 shadow-sm"
-                      title="Salin link direct untuk dikirim ke customer"
-                    >
-                      <Share2 className="w-3.5 h-3.5" />
-                      Copy Link Share
-                    </Button>
-
-                    <Button
-                      onClick={() => handleGenerateB2CToken(template.id, template.trackName)}
-                      disabled={isGeneratingToken === template.id}
-                      variant="outline"
-                      className="w-full h-10 rounded-xl font-bold border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800 transition-all text-xs flex items-center justify-center gap-1.5 shadow-sm"
-                      title="Buat token eceran sekali pakai untuk pelanggan"
-                    >
-                      {isGeneratingToken === template.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <KeyRound className="w-3.5 h-3.5" />}
-                      Generate Token B2C
-                    </Button>
-
-                    {generatedTokens[template.id] && (
-                      <div className="w-full flex items-center justify-between p-2.5 bg-emerald-100/50 rounded-xl border border-emerald-300 mt-1 animate-in zoom-in-95 duration-200 shadow-sm">
-                        <span className="font-mono text-[12px] font-black text-emerald-900 tracking-tight truncate">
-                          {generatedTokens[template.id]}
-                        </span>
-                        <button 
-                          onClick={() => handleCopyManual(template.id, generatedTokens[template.id])}
-                          className="shrink-0 ml-2 p-2 bg-white rounded-lg hover:bg-emerald-50 transition-colors shadow-sm ring-1 ring-emerald-200/50"
-                          title="Salin Ulang Token"
-                        >
-                          {copiedTokens[template.id] ? (
-                            <Check className="w-4 h-4 text-emerald-600" />
-                          ) : (
-                            <Copy className="w-4 h-4 text-emerald-600" />
-                          )}
-                        </button>
-                      </div>
-                    )}
-                  </div>
-
+                  <h2 className="text-xl font-black text-slate-800 tracking-tight">{categoryName}</h2>
+                  <span className="bg-slate-100 text-slate-500 text-xs font-bold px-2.5 py-1 rounded-md ml-2">
+                    {items.length} Modul
+                  </span>
                 </div>
-              );
-            })}
+
+                {/* List Modul di Dalam Kategori */}
+                <div className="flex flex-col gap-5">
+                  {items.map(template => {
+                    const state = formStates[template.id];
+                    if (!state) return null;
+                    
+                    const isChanged = checkIsChanged(template.id, template);
+                    const originalPrice = parseInt(state.price || '0', 10);
+                    const discountPerc = parseInt(state.discountPercentage || '0', 10);
+                    const finalPrice = originalPrice - (originalPrice * (discountPerc / 100));
+                    
+                    const highlightCardClass = state.isDisplayedOnLanding 
+                      ? 'border-l-[4px] border-l-emerald-500 border-t border-r border-b border-slate-200 bg-emerald-50/10 hover:bg-emerald-50/30 shadow-sm' 
+                      : 'border border-slate-200 bg-white/70 hover:bg-white opacity-80 hover:opacity-100 shadow-sm';
+
+                    return (
+                      <div key={template.id} className={`flex flex-col lg:flex-row gap-5 lg:gap-8 p-5 md:p-6 rounded-2xl transition-all duration-200 ${highlightCardClass}`}>
+                        
+                        {/* KOLOM 1: Info Modul & Social Proof */}
+                        <div className="flex-1 lg:max-w-[320px] space-y-4">
+                          <div className="flex items-start gap-4">
+                            <div className="mt-0.5 w-10 h-10 rounded-xl bg-white flex items-center justify-center text-slate-500 shrink-0 ring-1 ring-slate-200 shadow-sm">
+                              <LayoutGrid size={18}/>
+                            </div>
+                            <div>
+                              <p className="font-black text-slate-900 text-[15px] leading-snug">{template.trackName}</p>
+                              <p className="text-xs text-slate-400 font-medium line-clamp-2 mt-1" title={template.trackDescription}>
+                                {template.trackDescription || "Deskripsi singkat."}
+                              </p>
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-3 pt-2">
+                            <div className="space-y-1">
+                              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">Kategori Modul</label>
+                              <Input 
+                                type="text" 
+                                list="category-suggestions"
+                                placeholder="Misal: Enterprise, Startup" 
+                                value={state.category}
+                                onChange={(e) => handleInputChange(template.id, 'category', e.target.value)}
+                                className="h-9 text-xs font-bold bg-white border-slate-200 shadow-sm focus-visible:ring-indigo-500"
+                              />
+                            </div>
+                            
+                            <button 
+                              onClick={() => handleToggle(template.id, 'isDisplayedOnLanding')}
+                              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] uppercase tracking-widest font-bold transition-all border ${
+                                state.isDisplayedOnLanding ? 'bg-emerald-50 text-emerald-600 border-emerald-200 shadow-sm' : 'bg-white text-slate-500 border-slate-300 hover:bg-slate-50'
+                              }`}
+                            >
+                              {state.isDisplayedOnLanding ? <Eye size={12} /> : <EyeOff size={12} />}
+                              {state.isDisplayedOnLanding ? 'Tampil di Katalog' : 'Status: Tersembunyi'}
+                            </button>
+                            
+                            <div className="bg-orange-50/50 p-3 rounded-xl border border-orange-100/50 space-y-3">
+                              <SwitchToggle checked={state.isBestSeller} onChange={() => handleToggle(template.id, 'isBestSeller')} label="Tandai Best Seller" />
+                              <div className="flex items-center gap-2">
+                                <Users className="w-3.5 h-3.5 text-orange-400" />
+                                <Input 
+                                  type="text" placeholder="Jml Pengguna" value={state.userCount}
+                                  onChange={(e) => handleInputChange(template.id, 'userCount', e.target.value)}
+                                  className="h-8 w-24 text-xs font-bold bg-white"
+                                />
+                                <span className="text-[10px] font-bold text-slate-400 uppercase">Pengguna</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Garis Pemisah Mobile */}
+                        <div className="w-full h-px bg-slate-200/60 lg:hidden"></div>
+
+                        {/* KOLOM 2: Harga & FOMO */}
+                        <div className="flex-1 lg:max-w-[280px] space-y-4">
+                          <SwitchToggle checked={state.isPaid} onChange={() => handleToggle(template.id, 'isPaid')} label="Berbayar" />
+                          
+                          <div className="relative w-full">
+                            <span className={`absolute left-3 top-1/2 -translate-y-1/2 font-bold ${!state.isPaid ? 'text-slate-300' : 'text-slate-400'}`}>Rp</span>
+                            <Input 
+                              type="text" value={state.price}
+                              onChange={(e) => handleInputChange(template.id, 'price', e.target.value)}
+                              disabled={!state.isPaid}
+                              className={`pl-9 h-10 font-bold text-sm rounded-xl transition-all ${!state.isPaid ? 'bg-slate-50 opacity-50 border-slate-200 text-slate-400' : 'bg-white border-slate-200 shadow-sm focus-visible:ring-indigo-500'}`}
+                            />
+                          </div>
+
+                          {state.isPaid && (
+                            <div className="bg-rose-50/50 p-3 rounded-xl border border-rose-100 space-y-3 shadow-sm">
+                              <div className="flex items-center justify-between gap-2">
+                                <div className="relative w-[110px] shrink-0">
+                                  <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400"><Tag className="w-3.5 h-3.5" /></span>
+                                  <Input 
+                                    type="text" value={state.discountPercentage}
+                                    onChange={(e) => handleInputChange(template.id, 'discountPercentage', e.target.value)}
+                                    className="pl-8 pr-7 h-9 font-bold text-sm bg-white border-rose-200 text-rose-700 focus-visible:ring-rose-500"
+                                  />
+                                  <span className="absolute right-3 top-1/2 -translate-y-1/2 font-bold text-rose-500">%</span>
+                                </div>
+                                {discountPerc > 0 && <div className="text-[10px] font-black text-rose-600 bg-rose-100 px-2 py-1 rounded-md text-right leading-tight">Final:<br/>{formatRupiah(finalPrice)}</div>}
+                              </div>
+                              
+                              {discountPerc > 0 && (
+                                <div className="space-y-1.5">
+                                  <label className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1"><Flame className="w-3 h-3 text-orange-500"/> Batas Waktu Diskon (Opsional)</label>
+                                  <Input 
+                                    type="datetime-local" value={state.discountExpiry}
+                                    onChange={(e) => handleInputChange(template.id, 'discountExpiry', e.target.value)}
+                                    className="h-9 text-xs font-bold text-slate-600 bg-white"
+                                  />
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Garis Pemisah Mobile */}
+                        <div className="w-full h-px bg-slate-200/60 lg:hidden"></div>
+
+                        {/* KOLOM 3: Custom USP */}
+                        <div className="flex-1 lg:max-w-[280px] space-y-2">
+                          <label className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1.5">
+                            <ListChecks className="w-3.5 h-3.5 text-emerald-500"/> Keunggulan Tambahan (Opsional)
+                          </label>
+                          <Textarea 
+                            placeholder="Sesi Konsultasi Eksklusif 30 Menit&#10;Prioritas Validasi Dokumen"
+                            value={state.customUSPs}
+                            onChange={(e) => handleInputChange(template.id, 'customUSPs', e.target.value)}
+                            className="text-xs bg-white resize-y min-h-[120px] shadow-sm border-slate-200 focus-visible:ring-indigo-500"
+                          />
+                          <p className="text-[9px] text-slate-400 font-medium">Tekan Enter untuk memisahkan setiap poin.</p>
+                        </div>
+
+                        {/* Garis Pemisah Mobile */}
+                        <div className="w-full h-px bg-slate-200/60 lg:hidden"></div>
+
+                        {/* KOLOM 4: Aksi Simpan & Generate Token */}
+                        <div className="flex flex-col justify-end gap-3 w-full lg:max-w-[180px]">
+                          <Button 
+                            onClick={() => handleSaveItem(template.id)} 
+                            disabled={!isChanged || isSaving === template.id}
+                            variant="outline"
+                            className={`w-full h-10 rounded-xl font-bold transition-all text-xs ${
+                              isChanged ? 'bg-indigo-600 border-indigo-600 text-white shadow-md hover:bg-indigo-700' : 'bg-slate-50 text-slate-400 border-slate-200 cursor-not-allowed'
+                            }`}
+                          >
+                            {isSaving === template.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Simpan Perubahan'}
+                          </Button>
+                          
+                          <Button
+                            onClick={() => handleCopyShareLink(template.id)}
+                            variant="outline"
+                            className="w-full h-10 rounded-xl font-bold border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 hover:text-blue-800 transition-all text-xs flex items-center justify-center gap-1.5 shadow-sm"
+                            title="Salin link direct untuk dikirim ke customer"
+                          >
+                            <Share2 className="w-3.5 h-3.5" />
+                            Copy Link Share
+                          </Button>
+
+                          <Button
+                            onClick={() => handleGenerateB2CToken(template.id, template.trackName)}
+                            disabled={isGeneratingToken === template.id}
+                            variant="outline"
+                            className="w-full h-10 rounded-xl font-bold border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800 transition-all text-xs flex items-center justify-center gap-1.5 shadow-sm"
+                            title="Buat token eceran sekali pakai untuk pelanggan"
+                          >
+                            {isGeneratingToken === template.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <KeyRound className="w-3.5 h-3.5" />}
+                            Generate Token B2C
+                          </Button>
+
+                          {generatedTokens[template.id] && (
+                            <div className="w-full flex items-center justify-between p-2.5 bg-emerald-100/50 rounded-xl border border-emerald-300 mt-1 animate-in zoom-in-95 duration-200 shadow-sm">
+                              <span className="font-mono text-[12px] font-black text-emerald-900 tracking-tight truncate">
+                                {generatedTokens[template.id]}
+                              </span>
+                              <button 
+                                onClick={() => handleCopyManual(template.id, generatedTokens[template.id])}
+                                className="shrink-0 ml-2 p-2 bg-white rounded-lg hover:bg-emerald-50 transition-colors shadow-sm ring-1 ring-emerald-200/50"
+                                title="Salin Ulang Token"
+                              >
+                                {copiedTokens[template.id] ? (
+                                  <Check className="w-4 h-4 text-emerald-600" />
+                                ) : (
+                                  <Copy className="w-4 h-4 text-emerald-600" />
+                                )}
+                              </button>
+                            </div>
+                          )}
+                        </div>
+
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>
