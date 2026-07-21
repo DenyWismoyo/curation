@@ -1,3 +1,4 @@
+// src/app/assessor/page.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -9,37 +10,33 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { toast } from "sonner";
 import { 
-  Users, KeyRound, Search, CheckCircle2, Copy, Plus, 
-  Loader2, ShieldCheck, Edit3, Briefcase, FileSignature, Settings2, Eye
+  KeyRound, Search, CheckCircle2, Copy, Plus, 
+  Loader2, ShieldCheck, Edit3, Briefcase, Settings2, Eye, LayoutGrid 
 } from 'lucide-react';
-import { AssessorManualEditor } from '@/app/components/assessor/AssessorManualEditor';
+
+import { AssessorAssessmentDetail } from '@/app/components/assessor/AssessorAssessmentDetail';
 import { AssessorTemplateBuilder } from '@/app/components/assessor/AssessorTemplateBuilder';
 import { AssessorTemplatePreview } from '@/app/components/assessor/AssessorTemplatePreview';
 
 // IMPORT CUSTOM HOOK MOBILE BACK
 import { useMobileBack } from '@/hooks/useMobileBack';
 
-interface AssessorAllocation {
-  id: string; 
-  corporateName: string;
-  totalTokens: number;
-  usedCount: number;
-  allowedTemplates: string[];
-  tokens: Record<string, { isUsed: boolean; usedAt: string | null; usedByNamaUsaha: string | null }>;
-}
-
 export default function AssessorDashboardPage() {
   const { user } = useAuth();
-  const [allocation, setAllocation] = useState<AssessorAllocation | null>(null);
+  const [allocation, setAllocation] = useState<any>(null);
   const [assessments, setAssessments] = useState<any[]>([]);
+  
+  // STATE BARU: Menyimpan semua modul yang diizinkan & modul yang sedang aktif
+  const [allowedModules, setAllowedModules] = useState<any[]>([]);
   const [activeTemplate, setActiveTemplate] = useState<any>(null); 
+  
   const [loading, setLoading] = useState(true);
-
+  
   const [generateQty, setGenerateQty] = useState(1);
   const [isGenerating, setIsGenerating] = useState(false);
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
   
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedAssessment, setSelectedAssessment] = useState<any | null>(null);
   const [isCustomizingTemplate, setIsCustomizingTemplate] = useState(false); 
   const [isPreviewingTemplate, setIsPreviewingTemplate] = useState(false);
@@ -51,7 +48,6 @@ export default function AssessorDashboardPage() {
   useMobileBack(isCustomizingTemplate, () => setIsCustomizingTemplate(false));
   useMobileBack(isPreviewingTemplate, () => setIsPreviewingTemplate(false));
 
-
   useEffect(() => {
     if (user?.email) {
       fetchAssessorData();
@@ -61,23 +57,51 @@ export default function AssessorDashboardPage() {
   const fetchAssessorData = async () => {
     setLoading(true);
     try {
+      if (!user?.email) return;
+
+      // 1. Ambil Data Profil Asesor
+      const assessorRef = doc(db, 'assessors', user.email);
+      const assessorSnap = await getDoc(assessorRef);
+
+      if (!assessorSnap.exists()) {
+        setAllocation(null);
+        setLoading(false);
+        return;
+      }
+
+      const assessorProfile = assessorSnap.data();
+
+      // 2. Ambil Token berdasarkan Program Kemitraan Asesor
       const qTokens = query(
         collection(db, 'corporate_tokens'), 
-        where('assessorEmail', '==', user?.email),
-        where('isAssessorControlled', '==', true)
+        where('corporateName', '==', assessorProfile.programName)
       );
       const snapTokens = await getDocs(qTokens);
       
       if (!snapTokens.empty) {
         const docData = snapTokens.docs[0];
-        const allocationData = { id: docData.id, ...docData.data() } as AssessorAllocation;
+        const allocationData = { id: docData.id, ...docData.data(), assessorName: assessorProfile.assessorName } as any;
         setAllocation(allocationData);
 
+        // 3. Ambil SELURUH Modul yang diizinkan untuk Program ini
         if (allocationData.allowedTemplates && allocationData.allowedTemplates.length > 0) {
-          const templateRef = doc(db, 'form_templates', allocationData.allowedTemplates[0]);
-          const templateSnap = await getDoc(templateRef);
-          if (templateSnap.exists()) {
-            setActiveTemplate({ id: templateSnap.id, ...templateSnap.data() });
+          // Memecah array ID menjadi chunk isi 10 untuk query 'in' Firestore
+          const chunks = [];
+          for (let i = 0; i < allocationData.allowedTemplates.length; i += 10) {
+            chunks.push(allocationData.allowedTemplates.slice(i, i + 10));
+          }
+
+          let fetchedModules: any[] = [];
+          for (const chunk of chunks) {
+            const qTpls = query(collection(db, 'form_templates'), where('__name__', 'in', chunk));
+            const snapTpls = await getDocs(qTpls);
+            snapTpls.forEach(t => fetchedModules.push({ id: t.id, ...t.data() }));
+          }
+
+          setAllowedModules(fetchedModules);
+          // Set template pertama sebagai yang aktif secara default
+          if (fetchedModules.length > 0) {
+            setActiveTemplate(fetchedModules[0]);
           }
         }
 
@@ -123,7 +147,10 @@ export default function AssessorDashboardPage() {
       const newTokens = { ...(allocation.tokens || {}) };
       
       for (let i = 0; i < generateQty; i++) {
-        const randomStr = Math.random().toString(36).substring(2, 8).toUpperCase();
+        let randomStr = Math.random().toString(36).substring(2, 8).toUpperCase();
+        while(newTokens[randomStr]) {
+            randomStr = Math.random().toString(36).substring(2, 8).toUpperCase();
+        }
         newTokens[randomStr] = { isUsed: false, usedAt: null, usedByNamaUsaha: null };
       }
 
@@ -184,39 +211,59 @@ export default function AssessorDashboardPage() {
       {/* HEADER INFO */}
       <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-4 mb-8">
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Ruang Kerja Asesor</p>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
+            Asesor: {allocation.assessorName}
+          </p>
           <h1 className="text-3xl font-black text-slate-900 tracking-tight">{allocation.corporateName}</h1>
           <p className="text-slate-500 mt-2 font-medium max-w-2xl text-balance">
             Kelola tata usaha penilaian, distribusikan token ke peserta, dan koreksi hasil evaluasi secara manual.
           </p>
         </div>
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap items-end gap-4">
           
+          {/* DROPDOWN PEMILIH MODUL (Hanya muncul jika lebih dari 1 modul) */}
+          {allowedModules.length > 0 && (
+            <div className="flex flex-col gap-1.5 w-full sm:w-auto">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                <LayoutGrid size={12} /> Pilih Modul Aktif
+              </label>
+              <select 
+                value={activeTemplate?.id || ''}
+                onChange={(e) => setActiveTemplate(allowedModules.find(m => m.id === e.target.value))}
+                className="h-[50px] w-full sm:w-[220px] rounded-2xl border border-slate-200 bg-white px-4 text-sm font-bold text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+              >
+                {allowedModules.map((mod: any) => (
+                  <option key={mod.id} value={mod.id}>{mod.trackName}</option>
+                ))}
+              </select>
+            </div>
+          )}
+
           {/* TOMBOL KONTROL MODUL AI */}
           {activeTemplate && (
              <div className="flex gap-2">
                <Button 
                  onClick={() => setIsPreviewingTemplate(true)}
                  variant="outline"
-                 className="h-auto py-3 px-5 rounded-2xl border-slate-200 text-slate-600 hover:bg-slate-50 font-bold flex flex-col items-center gap-1 shadow-sm"
+                 className="h-[50px] px-5 rounded-2xl border-slate-200 text-slate-600 hover:bg-slate-50 font-bold flex items-center gap-2 shadow-sm"
                >
-                 <Eye className="w-5 h-5"/>
-                 <span className="text-[10px] uppercase tracking-widest">Preview Form</span>
+                 <Eye className="w-4 h-4"/>
+                 <span className="text-[10px] uppercase tracking-widest mt-0.5">Preview Form</span>
                </Button>
                <Button 
                  onClick={() => setIsCustomizingTemplate(true)}
                  variant="outline"
-                 className="h-auto py-3 px-5 rounded-2xl border-indigo-200 text-indigo-700 hover:bg-indigo-50 font-bold flex flex-col items-center gap-1 shadow-sm"
+                 className="h-[50px] px-5 rounded-2xl border-indigo-200 text-indigo-700 hover:bg-indigo-50 font-bold flex items-center gap-2 shadow-sm"
                >
-                 <Settings2 className="w-5 h-5"/>
-                 <span className="text-[10px] uppercase tracking-widest">Sesuaikan Modul</span>
+                 <Settings2 className="w-4 h-4"/>
+                 <span className="text-[10px] uppercase tracking-widest mt-0.5">Sesuaikan Modul</span>
                </Button>
              </div>
           )}
           
-          <div className="bg-white p-3 px-5 rounded-2xl ring-1 ring-slate-200 shadow-sm text-center">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Sisa Kuota</p>
-            <p className="text-xl font-black text-emerald-600">{allocation.totalTokens - currentGeneratedCount} <span className="text-sm text-slate-500">Lembar</span></p>
+          <div className="bg-white px-5 py-2 rounded-2xl ring-1 ring-slate-200 shadow-sm flex flex-col justify-center items-center h-[50px]">
+            <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Sisa Kuota</p>
+            <p className="text-base font-black text-emerald-600 leading-tight">{allocation.totalTokens - currentGeneratedCount} <span className="text-xs text-slate-500 font-bold">Lembar</span></p>
           </div>
         </div>
       </div>
@@ -252,12 +299,12 @@ export default function AssessorDashboardPage() {
             </div>
           </Card>
 
-          <Card className="bg-white rounded-3xl border-none ring-1 ring-slate-200 shadow-sm overflow-hidden flex flex-col h-[400px]"> 
-            <div className="p-4 border-b border-slate-100 bg-slate-50/50">
+          <Card className="bg-white rounded-3xl border-none ring-1 ring-slate-200 shadow-sm overflow-hidden flex flex-col h-[400px]">
+             <div className="p-4 border-b border-slate-100 bg-slate-50/50">
               <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest">Daftar Kode Akses</h3>
             </div>
             <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
-              {generatedTokensArray.map(([code, data]) => {
+              {generatedTokensArray.map(([code, data]: any) => {
                 const fullToken = `${allocation.id}-${code}`;
                 return (
                   <div key={code} className="bg-slate-50 p-3 rounded-xl border border-slate-200 flex flex-col gap-2">
@@ -278,8 +325,8 @@ export default function AssessorDashboardPage() {
 
         {/* KOLOM KANAN: DAFTAR PESERTA */}
         <div className="lg:col-span-2 space-y-4">
-          <Card className="bg-white rounded-3xl border-none ring-1 ring-slate-200 shadow-sm overflow-hidden flex flex-col h-[calc(100vh-180px)] min-h-[600px]"> 
-            <div className="p-5 sm:p-6 border-b border-slate-100 flex flex-col sm:flex-row gap-4 justify-between items-center bg-white sticky top-0 z-10">
+          <Card className="bg-white rounded-3xl border-none ring-1 ring-slate-200 shadow-sm overflow-hidden flex flex-col h-[calc(100vh-180px)] min-h-[600px]">
+             <div className="p-5 sm:p-6 border-b border-slate-100 flex flex-col sm:flex-row gap-4 justify-between items-center bg-white sticky top-0 z-10">
               <div>
                 <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
                   <Briefcase className="w-5 h-5 text-indigo-600" /> Hasil Pengisian Pendaftar
@@ -301,22 +348,34 @@ export default function AssessorDashboardPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
-                  {filteredAssessments.map(item => (
-                    <tr key={item.id} className="hover:bg-slate-50 transition-colors">
-                      <td className="px-6 py-4">
-                        <p className="font-black text-slate-900 text-base">{item.namaUsaha}</p>
-                        <p className="text-[10px] text-slate-500 font-medium">{item.email}</p>
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        <div className="inline-flex items-center justify-center w-9 h-9 rounded-full font-black text-sm ring-1 bg-slate-100">{item.curatorAssessment?.verifiedScore || item.score || 0}</div>
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        <Button onClick={() => setSelectedAssessment(item)} variant="outline" className="h-9 px-4 rounded-xl border-indigo-200 text-indigo-700 hover:bg-indigo-50 font-bold text-xs">
-                          Edit Manual &amp; Cetak
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
+                  {filteredAssessments.map(item => {
+                    const isFinalized = item.status === 'Curator_Validated';
+                    const isDraft = item.status === 'Curator_Draft' || (!isFinalized && item.curatorAssessment !== undefined);
+                    const skorAkhir = item.aiResult?.totalScore || item.score || 0;
+
+                    return (
+                      <tr key={item.id} className="hover:bg-slate-50 transition-colors">
+                        <td className="px-6 py-4">
+                          <p className="font-black text-slate-900 text-base mb-0.5">{item.namaUsaha}</p>
+                          <p className="text-[10px] text-slate-500 font-medium">{item.email}</p>
+                        </td>
+                        <td className="px-6 py-4 text-center">
+                          <div className={`inline-flex items-center justify-center w-9 h-9 rounded-full font-black text-sm ring-1 ${isFinalized ? 'bg-emerald-50 text-emerald-700 ring-emerald-200' : 'bg-slate-100 text-slate-700 ring-slate-200'}`}>
+                            {item.curatorAssessment?.verifiedScore || skorAkhir}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-center">
+                          <Button 
+                            onClick={() => setSelectedAssessment(item)} 
+                            variant={isFinalized ? "outline" : "default"} 
+                            className={`h-9 px-4 rounded-xl font-bold text-xs shadow-sm ${isFinalized ? 'border-slate-200 text-slate-700' : isDraft ? 'bg-amber-500 hover:bg-amber-600 text-white' : 'bg-indigo-600 hover:bg-indigo-700 text-white'}`}
+                          >
+                            {isFinalized ? <><Eye className="w-3.5 h-3.5 mr-1.5" /> Lihat Hasil</> : <><Edit3 className="w-3.5 h-3.5 mr-1.5" /> Edit & Cetak</>}
+                          </Button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -324,12 +383,15 @@ export default function AssessorDashboardPage() {
         </div>
       </div>
 
-      {/* MODAL EDITOR MANUAL PESERTA */}
+      {/* MODAL EDITOR MANUAL PESERTA (MENGGUNAKAN UNIVERSAL VIEW BARU) */}
       {selectedAssessment && (
-        <AssessorManualEditor 
+        <AssessorAssessmentDetail 
           data={selectedAssessment}
           onClose={() => setSelectedAssessment(null)}
-          onSaveSuccess={() => setSelectedAssessment(null)}
+          onSaveSuccess={() => {
+            setSelectedAssessment(null);
+            fetchAssessorData();
+          }}
         />
       )}
 
@@ -347,7 +409,7 @@ export default function AssessorDashboardPage() {
         />
       )}
 
-      {/* MODAL PREVIEW FORM ASESOR (BARU DITAMBAHKAN) */}
+      {/* MODAL PREVIEW FORM ASESOR */}
       {isPreviewingTemplate && activeTemplate && (
         <AssessorTemplatePreview
           template={activeTemplate}

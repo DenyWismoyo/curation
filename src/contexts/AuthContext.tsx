@@ -1,7 +1,16 @@
 // src/contexts/AuthContext.tsx
 'use client';
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { onAuthStateChanged, signInWithPopup, signOut, User } from 'firebase/auth';
+import { 
+  onAuthStateChanged, 
+  signInWithPopup, 
+  signOut, 
+  User,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile
+} from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { auth, googleProvider, db } from '@/lib/firebase';
 
@@ -10,6 +19,8 @@ interface AuthContextType {
   role: 'user' | 'admin_omnifit' | 'admin_csrs' | 'assessor' | null;
   loading: boolean;
   loginWithGoogle: () => Promise<void>;
+  registerWithEmail: (email: string, password: string, name: string) => Promise<void>;
+  loginWithEmail: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -49,7 +60,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             if (userSnap.exists()) {
               currentRole = userSnap.data().role || 'user';
             } else {
-              // Registrasi user baru
+              // Registrasi user baru di Firestore
               await setDoc(userRef, {
                 email: currentUser.email,
                 displayName: currentUser.displayName,
@@ -81,6 +92,41 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  // Fungsi Baru: Daftar dengan Email & Password
+  const registerWithEmail = async (email: string, password: string, name: string) => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      
+      // Update profil di Firebase Auth untuk menyimpan Nama
+      await updateProfile(userCredential.user, {
+        displayName: name
+      });
+
+      // Simpan langsung ke Firestore agar data nama sinkron sejak awal
+      const userRef = doc(db, 'users', userCredential.user.uid);
+      await setDoc(userRef, {
+        email: userCredential.user.email,
+        displayName: name,
+        role: 'user',
+        createdAt: new Date().toISOString()
+      }, { merge: true });
+
+    } catch (error) {
+      console.error("Gagal mendaftar dengan email:", error);
+      throw error; // Melempar error agar bisa ditangkap oleh UI (contoh: email sudah terdaftar)
+    }
+  };
+
+  // Fungsi Baru: Login dengan Email
+  const loginWithEmail = async (email: string, password: string) => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+      console.error("Gagal login dengan email:", error);
+      throw error;
+    }
+  };
+
   const logout = async () => {
     try {
       await signOut(auth);
@@ -90,7 +136,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, role, loading, loginWithGoogle, logout }}>
+    <AuthContext.Provider value={{ user, role, loading, loginWithGoogle, registerWithEmail, loginWithEmail, logout }}>
       {children}
     </AuthContext.Provider>
   );

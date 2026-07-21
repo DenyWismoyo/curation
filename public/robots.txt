@@ -1,0 +1,16 @@
+User-Agent: *
+Allow: /
+Allow: /katalog
+Allow: /mitra
+Allow: /assessment
+Allow: /token
+
+Disallow: /admin/
+Disallow: /assessor/
+Disallow: /curator/
+Disallow: /dashboard/
+Disallow: /workspace/
+Disallow: /result/
+Disallow: /api/
+
+Sitemap: [https://omnifit.cloud](https://omnifit.cloud)/sitemap.xml
