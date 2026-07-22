@@ -1,5 +1,6 @@
 // src/app/components/admin/template-builder/TabAIConfig.tsx
 'use client';
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -7,17 +8,17 @@ import { Button } from '@/components/ui/button';
 import { FormTemplate } from '@/types/curation';
 import { AIPromptPresets } from '@/data/aiPromptTemplates';
 import { DomainPresets } from '@/data/domainPresets';
-import { Sparkles, Plus, Trash2, ChevronDown, Bot, Loader2, Search, Settings, AlertTriangle } from 'lucide-react';
+import { Sparkles, Plus, Trash2, ChevronDown, Bot, Loader2, Search, Settings, AlertTriangle, Fingerprint, Zap } from 'lucide-react';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { getFirestore, doc, onSnapshot } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
 const QUESTION_TYPE_OPTIONS = [
-  { id: 'radio_weight', label: 'Skoring Ganda Berbobot', icon: '🎯', rule: 'WAJIB maksimalkan penggunaan tipe "radio" atau "select" dengan array "options" berbobot (weight 0-100) untuk keperluan kalkulasi nilai otomatis.' },
+  { id: 'radio_weight', label: 'Skoring Ganda Berbobot', icon: '⚖️', rule: 'WAJIB maksimalkan penggunaan tipe "radio" atau "select" dengan array "options" berbobot (weight 0-100) untuk keperluan kalkulasi nilai otomatis.' },
   { id: 'conditional_logic', label: 'Logika Bercabang (ShowIf)', icon: '🔀', rule: 'TERAPKAN INTEROGASI BERLAPIS: Gunakan properti "showIf". Jika peserta merespon klaim besar pada opsi radio/select, WAJIB pancing pertanyaan baru bertipe "file" atau "textarea" untuk menagih bukti.' },
-  { id: 'file_upload', label: 'Upload Bukti', icon: '📎', rule: 'WAJIB sertakan tipe input "file" untuk menagih unggahan dokumen bukti (legalitas, laporan, portofolio, dll) guna menekan potensi manipulasi data.' },
+  { id: 'file_upload', label: 'Upload Bukti', icon: '📄', rule: 'WAJIB sertakan tipe input "file" untuk menagih unggahan dokumen bukti (legalitas, laporan, portofolio, dll) guna menekan potensi manipulasi data.' },
   { id: 'number_metric', label: 'Angka & Nominal', icon: '🔢', rule: 'Gunakan tipe "number" secara spesifik untuk menangkap data kuantitatif presisi (seperti Omzet, Jumlah Karyawan, Biaya, Persentase) agar data tidak tercampur teks.' },
-  { id: 'text_justification', label: 'Teks Analisa / Alasan', icon: '📝', rule: 'Gunakan tipe "textarea" secara strategis untuk menuntut penjelasan, justifikasi, keluhan, atau uraian deskriptif yang mendalam dari peserta.' }
+  { id: 'text_justification', label: 'Teks Analisa / Alasan', icon: '✍️', rule: 'Gunakan tipe "textarea" secara strategis untuk menuntut penjelasan, justifikasi, keluhan, atau uraian deskriptif yang mendalam dari peserta.' }
 ];
 
 interface TabAIConfigProps {
@@ -31,6 +32,9 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
   const [isPresetDropdownOpen, setIsPresetDropdownOpen] = useState(false);
   const [presetSearchTerm, setPresetSearchTerm] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Status Adaptive Form Mode
+  const isAdaptive = (template.aiPromptConfig as any)?.isAdaptive || false;
 
   useEffect(() => {
     if (!template.id) return;
@@ -100,6 +104,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
       alert("AKSES DITOLAK: Fitur Auto-Research AI ini dikunci eksklusif hanya untuk Administrator Utama.");
       return;
     }
+
     if (!template.aiPromptConfig?.assessmentGoal) {
       alert("Mohon isi 'Tujuan / Fokus Analisis Utama' atau pilih Preset terlebih dahulu.");
       return;
@@ -114,7 +119,20 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
       ? "TARGET AUDIENS: INDIVIDU / PERSONAL. Gunakan kata 'Nama Lengkap Anda', 'Anda', dan sesuaikan pertanyaan murni untuk ranah personal. DILARANG KERAS menanyakan aspek perusahaan, organisasi, atau legalitas bisnis."
       : "TARGET AUDIENS: PERUSAHAAN / ORGANISASI / STARTUP.";
 
-    let finalInstruction = targetContext + "\n\n" + (template.formBuilderInstruction || "Rancang kuesioner penilaian secara sistematis.");
+    // MODIFIKASI: Inject Adaptive Form Logic jika diaktifkan
+    let adaptiveInstruction = "";
+    if (isAdaptive) {
+      adaptiveInstruction = `
+      ==================================================
+      PERHATIAN: MODE ADAPTIVE LIVING FORM DIAKTIFKAN!
+      ==================================================
+      1. Anda WAJIB membuat daftar pertanyaan (fields) SECARA LENGKAP **HANYA UNTUK STEP 1** (Langkah 1).
+      2. Untuk Step 2, Step 3, dan seterusnya, Anda WAJIB membuat kerangka seksinya (title dan description) yang mengarahkan pada metrik evaluasi.
+      3. TETAPI, untuk Step 2 dan seterusnya, array "fields" WAJIB DIBIARKAN KOSONG ([]). JANGAN ISI PERTANYAAN APA PUN di Step 2 ke atas! Pertanyaan untuk seksi tersebut akan dirancang oleh Agen AI lain secara real-time saat peserta mengisi form.
+      `;
+    }
+
+    let finalInstruction = targetContext + "\n\n" + (template.formBuilderInstruction || "Rancang kuesioner penilaian secara sistematis.") + "\n\n" + adaptiveInstruction;
 
     if (template.preferredQuestionTypes && template.preferredQuestionTypes.length > 0) {
       const selectedRules = template.preferredQuestionTypes.map(id => {
@@ -141,6 +159,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
         console.error("Error latar belakang Cloud Function:", asyncError);
         setIsGenerating(false);
       });
+
     } catch (error: any) {
       console.error(error);
       setIsGenerating(false);
@@ -299,6 +318,9 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
         </div>
       </div>
 
+      {/* ==================================================== */}
+      {/* PANEL KONTROL GENERASI MULTI-AGENT */}
+      {/* ==================================================== */}
       <div className="p-6 md:p-8 bg-gradient-to-br from-indigo-900 to-slate-900 rounded-[2rem] shadow-xl relative overflow-hidden text-white border border-indigo-800">
         <div className="absolute top-0 right-0 opacity-10 pointer-events-none transform translate-x-10 -translate-y-10"><Bot size={200} /></div>
         
@@ -324,6 +346,28 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
                  );
                })}
              </div>
+
+             {/* === TOGGLE ADAPTIVE LIVING FORM === */}
+             <div className="mt-4 pt-4 border-t border-slate-700">
+               <label className="flex items-start gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 bg-slate-900/40 hover:bg-slate-800 border-indigo-500/30">
+                 <div className="pt-0.5">
+                   <input 
+                      type="checkbox" 
+                      className="w-5 h-5 rounded border-slate-600 text-indigo-500 focus:ring-indigo-500 bg-slate-800"
+                      checked={isAdaptive}
+                      onChange={(e) => updateConfig('isAdaptive', e.target.checked)}
+                    />
+                 </div>
+                 <div className="flex-1">
+                   <h5 className="text-sm font-black text-white flex items-center gap-2">
+                     <Fingerprint className="w-4 h-4 text-emerald-400"/> Aktifkan Adaptive Living Form
+                   </h5>
+                   <p className="text-[11px] text-slate-400 font-medium leading-relaxed mt-1">
+                     Alih-alih meracik semua pertanyaan di awal, AI <strong className="text-emerald-400">hanya akan membuat pertanyaan untuk Step 1</strong>, beserta judul-judul untuk Step selanjutnya. Pertanyaan Step lanjutan akan digenerate secara real-time menyesuaikan jawaban peserta.
+                   </p>
+                 </div>
+               </label>
+             </div>
              
              <label className="text-[10px] font-black text-indigo-300 uppercase tracking-wider block mt-4">Instruksi Spesifik Pembentukan Kuesioner (Opsional):</label>
              <Textarea
@@ -344,6 +388,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
         </div>
       </div>
 
+      {/* Sisa Konfigurasi (AI Persona, Strictness, Tiers, Metrics, dll) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-4">
         <div className="space-y-6">
           <h4 className="font-black text-slate-900 border-l-4 border-indigo-600 pl-3">Instruksi Dasar & Karakter AI</h4>
@@ -468,8 +513,8 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
           <div className="space-y-2 p-6 bg-amber-50/40 rounded-3xl border border-amber-100 shadow-sm md:col-span-2">
             <label className="text-[12px] font-black text-amber-900 uppercase tracking-widest block mb-1">Custom Scoring Rubric (Panduan Kuantifikasi Angka)</label>
             <Textarea 
-              value={template.aiPromptConfig?.customScoringRubric || ''} 
-              onChange={e => updateConfig('customScoringRubric', e.target.value)} 
+              value={template.aiPromptConfig?.customScoringRubric || ''}
+              onChange={e => updateConfig('customScoringRubric', e.target.value)}
               placeholder="Definisikan kriteria pemberian nilai matematis dari 0 sampai 100..."
               className="rounded-2xl bg-white border-amber-200 min-h-[100px] text-sm font-medium focus-visible:ring-amber-500" 
             />
@@ -477,8 +522,8 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
           <div className="space-y-2 p-6 bg-indigo-50/40 rounded-3xl border border-indigo-100 shadow-sm md:col-span-2">
             <label className="text-[12px] font-black text-indigo-900 uppercase tracking-widest block mb-1">Custom System Rules & Aturan If-Then</label>
             <Textarea 
-              value={template.aiPromptConfig?.customSystemPrompt || ''} 
-              onChange={e => updateConfig('customSystemPrompt', e.target.value)} 
+              value={template.aiPromptConfig?.customSystemPrompt || ''}
+              onChange={e => updateConfig('customSystemPrompt', e.target.value)}
               placeholder="Gunakan aturan JIKA-MAKA untuk memandu penalaran langkah demi langkah AI..."
               className="rounded-2xl bg-white border-indigo-200 min-h-[120px] text-sm font-medium focus-visible:ring-indigo-500" 
             />
@@ -486,8 +531,8 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
           <div className="space-y-2 p-6 bg-rose-50/40 rounded-3xl border border-rose-100 shadow-sm">
             <label className="text-[12px] font-black text-rose-900 uppercase tracking-widest block mb-1">Negative Prompts (Pantangan Mutlak AI)</label>
             <Textarea 
-              value={template.aiPromptConfig?.negativePrompts || ''} 
-              onChange={e => updateConfig('negativePrompts', e.target.value)} 
+              value={template.aiPromptConfig?.negativePrompts || ''}
+              onChange={e => updateConfig('negativePrompts', e.target.value)}
               placeholder="Sebutkan hal-hal yang DILARANG KERAS dikeluarkan dalam narasi evaluasi AI..."
               className="rounded-2xl bg-white border-rose-200 min-h-[100px] text-sm font-medium focus-visible:ring-rose-500" 
             />
@@ -495,8 +540,8 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
           <div className="space-y-2 p-6 bg-emerald-50/40 rounded-3xl border border-emerald-100 shadow-sm">
             <label className="text-[12px] font-black text-emerald-900 uppercase tracking-widest block mb-1">Format Teks & Markdown Output Instructions</label>
             <Textarea 
-              value={template.aiPromptConfig?.formatInstructions || ''} 
-              onChange={e => updateConfig('formatInstructions', e.target.value)} 
+              value={template.aiPromptConfig?.formatInstructions || ''}
+              onChange={e => updateConfig('formatInstructions', e.target.value)}
               placeholder="Aturan cetak huruf tebal atau penataan paragraf khusus untuk mempercantik output visual..."
               className="rounded-2xl bg-white border-emerald-200 min-h-[100px] text-sm font-medium focus-visible:ring-emerald-500" 
             />

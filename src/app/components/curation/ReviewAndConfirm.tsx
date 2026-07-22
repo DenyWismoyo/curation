@@ -14,7 +14,6 @@ import { DocExportIcon, AdminShieldIcon, AiSparkIcon } from '@/types';
 export interface ReviewAndConfirmProps {
   answers: Record<string, any>;
   onBack: () => void;
-  // Mempertahankan BUG FIX: Parameter disesuaikan menjadi tokenUsed
   onSubmit: (assessmentData: { selfScore: number; isConfirmedEarnest: boolean; tokenUsed: string }) => void;
   isSubmitting?: boolean;
 }
@@ -265,7 +264,8 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
                 </div>
               </div>
               
-              <div className="p-5 flex flex-col sm:flex-row items-center gap-3 bg-slate-50 border-t border-slate-100">
+              {/* === PERBAIKAN LAYOUT DI SINI === */}
+              <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 border-t border-slate-100">
                 <Button 
                   variant="outline" 
                   onClick={() => setShowModal(false)}

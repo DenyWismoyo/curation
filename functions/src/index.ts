@@ -69,8 +69,6 @@ export const processCurationAssessment = onCall({
     const formData = data.formData || {};
     const trackType = data.trackType || formData.trackType || "Evaluasi Umum";
     
-    // BUG FIX 2: DEEP SEARCH TOKEN RESILIENCY
-    // Menelusuri seluruh kemungkinan nesting key payload dari frontend React
     const tokenUsed = data.tokenUsed || formData.tokenUsed || data.token || formData.token || null;
 
     let corporateEntityName = null;
@@ -217,7 +215,7 @@ export const processCurationAssessment = onCall({
         negativePrompts: aiPromptConfig.negativePrompts,
         formatInstructions: aiPromptConfig.formatInstructions,
         customScoringRubric: aiPromptConfig.customScoringRubric,
-        targetAudience: aiPromptConfig.targetAudience || 'company' // <-- Target Audience
+        targetAudience: aiPromptConfig.targetAudience || 'company' 
       });
       
       parts.unshift({ text: mainPromptText });
@@ -260,9 +258,12 @@ export const processCurationAssessment = onCall({
       const masterPromptOverride = `
         ${parts[0].text}
 
-        PERHATIAN TUGAS MASTER (SANGAT PENTING):
-        1. Tugas Anda HANYA memberikan justifikasi tingkat tinggi, Skor Akhir (0-100), dan Analisis SWOT/Risiko. 
-        2. INSTRUKSI KHUSUS 'executiveSummary': DILARANG KERAS menggunakan paragraf panjang. WAJIB merangkum menjadi 5-8 poin utama (bullet points) yang sangat padat.
+        ==================================================
+        PERHATIAN TUGAS MASTER AGENT (SANGAT PENTING & MUTLAK):
+        ==================================================
+        1. Tugas Anda SAAT INI HANYA mengisi kerangka JSON utama: "_internalReasoning", "totalScore", "readinessLevel", "dataConfidenceScore", "contradictionsFound", "incubationRoute", "swotAnalysis", "riskAssessment", dan "executiveSummary".
+        2. DILARANG KERAS mengerjakan, menjabarkan, atau menyusupkan teks untuk "Custom Analysis Blocks", "Metrics Array", "File Analysis", atau "Action Plan" ke dalam properti 'executiveSummary'! Bagian tersebut BUKAN TUGAS ANDA, melainkan tugas Worker Agents di fase berikutnya.
+        3. INSTRUKSI KHUSUS 'executiveSummary': Rangkum 5-8 poin utama yang padat. Jangan ada judul seksi apa pun di dalamnya.
       `;
       const masterParts = [{ text: masterPromptOverride }, ...parts.slice(1)];
       
