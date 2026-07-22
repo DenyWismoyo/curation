@@ -1,7 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Briefcase, CheckCircle2, Edit3, ShieldCheck } from 'lucide-react';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 import { AdminExportPDF } from './AdminExportPDF';
 
 // IMPORT KOMPONEN UNIVERSAL (Sesuaikan path jika perlu)
@@ -15,8 +17,44 @@ interface AdminAssessmentDetailProps {
 export function AdminAssessmentDetail({ data, onClose }: AdminAssessmentDetailProps) {
   const [activeTab, setActiveTab] = useState<'evaluasi' | 'input'>('evaluasi');
   
-  const { formData, aiResult, score, readinessLevel, trackType, namaUsaha, createdAt, corporateEntity, status, curatorAssessment, curatorNotes } = data;
+  // STATE UNTUK GABUNGAN DATA AI PUBLIK DAN INTERNAL
+  const [mergedAiResult, setMergedAiResult] = useState(data.aiResult || {});
   
+  // Deteksi ID dokumen dari props (bisa bernama 'id' atau 'assessmentId')
+  const documentId = data.id || data.assessmentId;
+  
+  // Destructuring sisa data
+  const { formData, score, readinessLevel, trackType, namaUsaha, createdAt, corporateEntity, status, curatorAssessment, curatorNotes } = data;
+
+  // EFEK UNTUK MENARIK DATA RAHASIA SAAT PANEL INI DIBUKA
+  useEffect(() => {
+    const fetchInternalDetails = async () => {
+      // Jika ID tidak ada, batalkan penarikan data dan tampilkan pesan error di console
+      if (!documentId) {
+        console.error("🚨 ALERT: ID Dokumen tidak ditemukan di props 'data'. Tabel Admin Anda tidak mengirimkan ID dokumen.");
+        return;
+      }
+      
+      try {
+        console.log(`Mengambil data internal untuk ID: ${documentId}...`);
+        const internalDocRef = doc(db, 'assessments', documentId, 'internal', 'details');
+        const internalSnap = await getDoc(internalDocRef);
+        
+        if (internalSnap.exists()) {
+          console.log("✅ Data internal berhasil ditemukan dan digabungkan!");
+          // Gabungkan data publik dari tabel dengan data rahasia dari sub-collection
+          setMergedAiResult((prev: any) => ({ ...prev, ...internalSnap.data() }));
+        } else {
+          console.warn("⚠️ Dokumen internal/details tidak ditemukan di database untuk ID ini.");
+        }
+      } catch (error) {
+        console.error("❌ Gagal menarik data internal:", error);
+      }
+    };
+
+    fetchInternalDetails();
+  }, [documentId]);
+
   const finalCuratorScore = curatorAssessment?.verifiedScore || 0;
   const isCuratorValidated = status === 'Curator_Validated' || curatorAssessment !== undefined;
 
@@ -32,7 +70,7 @@ export function AdminAssessmentDetail({ data, onClose }: AdminAssessmentDetailPr
         <div className="bg-white px-6 py-5 sm:px-8 border-b border-slate-200 flex justify-between items-start lg:items-center flex-col lg:flex-row gap-4 shrink-0">
           <div>
             <div className="flex items-center gap-3">
-              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">{namaUsaha}</h2>
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">{namaUsaha || 'Entitas Tanpa Nama'}</h2>
               {status === 'Curator_Validated' ? (
                 <span className="shrink-0 bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded flex items-center gap-1">
                   <CheckCircle2 size={12}/> Kurasi Selesai
@@ -44,14 +82,17 @@ export function AdminAssessmentDetail({ data, onClose }: AdminAssessmentDetailPr
               ) : null}
             </div>
             <div className="flex items-center flex-wrap gap-2 mt-2">
-              <span className="inline-flex px-3 py-1 rounded-md text-[11px] font-black uppercase tracking-widest bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200">{trackType}</span>
+              <span className="inline-flex px-3 py-1 rounded-md text-[11px] font-black uppercase tracking-widest bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200">{trackType || 'Asesmen'}</span>
               <span className="inline-flex px-3 py-1 rounded-md text-[11px] font-black uppercase tracking-widest bg-slate-100 text-slate-600 ring-1 ring-slate-200">{corporateEntity || 'Program Umum'}</span>
-              <span className="text-xs text-slate-400 font-medium">Masuk: {new Date(createdAt).toLocaleDateString('id-ID')}</span>
+              {createdAt && (
+                <span className="text-xs text-slate-400 font-medium">Masuk: {new Date(createdAt).toLocaleDateString('id-ID')}</span>
+              )}
             </div>
           </div>
           
           <div className="flex items-center gap-3">
-            <AdminExportPDF data={data} />
+            {/* Update props PDF agar mendapatkan data gabungan terbaru */}
+            <AdminExportPDF data={{ ...data, aiResult: mergedAiResult }} />
             <button onClick={onClose} className="p-2 bg-slate-100 hover:bg-rose-100 text-slate-500 hover:text-rose-600 rounded-full transition-colors active:scale-95" title="Tutup Panel">
               <X className="w-6 h-6" />
             </button>
@@ -77,7 +118,7 @@ export function AdminAssessmentDetail({ data, onClose }: AdminAssessmentDetailPr
               trackType={trackType}
               corporateEntity={corporateEntity}
               formData={formData}
-              aiResult={aiResult}
+              aiResult={mergedAiResult} // MENGGUNAKAN DATA GABUNGAN
               curatorData={{
                 isEditing: false, 
                 curatorScore: finalCuratorScore,

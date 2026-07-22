@@ -12,7 +12,7 @@ export const buildMegaAgentPrompt = (params: FormBuilderPromptParams): string =>
   const analysisBlocks = config.expectedAnalysisBlocks?.join(' | ') || '';
   const risks = config.riskFramework || 'Deteksi potensi kegagalan operasional';
   const sources = config.researchSourcesCited?.join(', ') || 'Standar industri global terbaik';
-
+  
   // AMBIL PURPOSE AGAR AI TAHU CONTEXT PEMBUATAN FORM
   const purpose = config.formPurpose || 'assessment';
   const purposeContext = 
@@ -21,11 +21,15 @@ export const buildMegaAgentPrompt = (params: FormBuilderPromptParams): string =>
     purpose === 'consultation' ? "FORMULIR KONSULTASI PAKAR (Fokus pada identifikasi akar masalah dan pengumpulan fakta spesifik)" : 
     "KUESIONER AUDIT BISNIS & STANDAR MUTU (Due Diligence)";
 
+  const targetAudience = config.targetAudience === 'individual' 
+    ? "TARGET: INDIVIDU / PEGAWAI / PERSONAL. Gunakan kata sapaan langsung (Anda, Bapak/Ibu). DILARANG KERAS menanyakan data perusahaan, omzet, legalitas PT, atau laporan keuangan."
+    : "TARGET: PERUSAHAAN / ORGANISASI / STARTUP. Gunakan bahasa B2B dan fokus pada metrik skala bisnis.";
+
   return `
-Anda adalah entitas super gabungan dari [Profesor Riset Standar Global] dan [Chief Information Architect].
-Tugas Anda merancang instrumen asesmen tingkat Enterprise untuk program: "${trackName}".
+Anda adalah entitas super gabungan dari [Profesor Riset Standar Global] dan [Chief Information Architect]. Tugas Anda merancang instrumen asesmen tingkat Enterprise untuk program: "${trackName}".
 
 DOMAIN & FOKUS SISTEM INI ADALAH: ${purposeContext}
+${targetAudience}
 
 Tujuan Asesmen Utama: "${config.assessmentGoal || 'Evaluasi mendalam pemetaan kualitas.'}"
 Target Metrik Radar yang Harus Diukur: [${metrics}]
@@ -69,29 +73,28 @@ FORMAT KELUARAN (MUTLAK)
 ==================================================
 Keluarkan HANYA format JSON murni TANPA markdown block, TANPA teks pengantar apapun. Tiru persis struktur JSON berikut (termasuk cara penerapan showIf dan file):
 
-{
   "researchNotes": "Tuliskan ringkasan riset dalam satu paragraf lurus menggunakan Bahasa Indonesia tanpa enter.",
   "steps": [
     {
       "stepNumber": 1,
-      "title": "Identitas & Legalitas Dasar",
-      "description": "Lengkapi data dasar penanggung jawab dan entitas",
+      "title": "Identitas Dasar",
+      "description": "Lengkapi data dasar penanggung jawab",
       "fields": [
         {
-          "id": "namaUsaha", "label": "Nama Entitas", "type": "text", "required": true, "gridSpan": 2
+          "id": "namaUsaha", "label": "${config.targetAudience === 'individual' ? 'Nama Lengkap Anda' : 'Nama Entitas/Perusahaan'}", "type": "text", "required": true, "gridSpan": 2
         },
         {
-          "id": "namaPengisi", "label": "Nama Pengisi", "type": "text", "required": true, "gridSpan": 2
+          "id": "namaPengisi", "label": "Nama Pengisi Form", "type": "text", "required": true, "gridSpan": 2
         },
         {
           "id": "statusSertifikasi",
-          "label": "Status Sertifikasi Mutu",
+          "label": "Status Sertifikasi",
           "type": "radio",
           "required": true,
           "gridSpan": 2,
           "options": [
             {"label": "Belum Memiliki", "weight": 0},
-            {"label": "Sudah Memiliki (ISO/SNI)", "weight": 100}
+            {"label": "Sudah Memiliki", "weight": 100}
           ]
         },
         {
@@ -101,11 +104,10 @@ Keluarkan HANYA format JSON murni TANPA markdown block, TANPA teks pengantar apa
           "required": true,
           "gridSpan": 2,
           "fileAccept": ".pdf",
-          "showIf": { "fieldId": "statusSertifikasi", "equals": "Sudah Memiliki (ISO/SNI)" }
+          "showIf": { "fieldId": "statusSertifikasi", "equals": "Sudah Memiliki" }
         }
       ]
     }
   ]
-}
 `.trim();
 };

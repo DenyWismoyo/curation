@@ -8,8 +8,7 @@ import { getFirestore } from "firebase-admin/firestore";
 const geminiApiKeySecret = defineSecret("GEMINI_API_KEY");
 
 // 1. FUNGSI EKSISTING (JANGAN DIHAPUS, BIARKAN SEPERTI INI)
-export const generateActionPlanChecklist = onCall(
-  {
+export const generateActionPlanChecklist = onCall({
     memory: "256MiB",
     region: "asia-southeast2",
     secrets: [geminiApiKeySecret],
@@ -17,7 +16,6 @@ export const generateActionPlanChecklist = onCall(
   },
   async (request) => {
     if (!request.auth) throw new HttpsError("unauthenticated", "Akses ditolak.");
-
     const { assessmentId, aiResult } = request.data;
     if (!assessmentId || !aiResult) throw new HttpsError("invalid-argument", "Data tidak lengkap.");
 
@@ -25,9 +23,15 @@ export const generateActionPlanChecklist = onCall(
       const API_KEY = geminiApiKeySecret.value();
       const genAI = new GoogleGenerativeAI(API_KEY);
       
+      // BACA TARGET AUDIENS DARI HASIL AI SEBELUMNYA
+      const targetAudience = aiResult.targetAudience || 'company';
+      const personaInstruction = targetAudience === 'individual'
+        ? "Anda adalah Senior Life Coach & Pakar Pengembangan Karir. Tugas Anda menyintesis laporan analitik menjadi TEPAT 10 langkah eksekusi (Action Plan) PERSONAL yang berurutan, logis, interaktif. Gunakan bahasa yang memberdayakan individu, BUKAN bahasa korporat."
+        : "Anda adalah Chief Operating Officer (COO) tingkat Enterprise. Tugas Anda menyintesis laporan analitik menjadi TEPAT 10 langkah eksekusi (Action Plan) BISNIS yang berurutan, logis, dan taktis untuk organisasi.";
+
       const model = genAI.getGenerativeModel({
         model: "gemini-3.1-flash-lite",
-        systemInstruction: "Anda adalah Chief Operating Officer (COO) tingkat Enterprise. Tugas Anda menyintesis berbagai dimensi laporan analitik menjadi TEPAT 10 langkah eksekusi (Action Plan) yang berurutan, logis, interaktif dan mencakup rutinitas harian, target mingguan, serta pencapaian bulanan.",
+        systemInstruction: personaInstruction,
         generationConfig: {
           temperature: 0.1, 
           maxOutputTokens: 3000, 
@@ -70,8 +74,8 @@ export const generateActionPlanChecklist = onCall(
       const result = await model.generateContent(prompt);
       let rawText = result.response.text().trim();
       if (rawText.startsWith('```')) rawText = rawText.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
-
       const generatedChecklist = JSON.parse(rawText);
+
       const db = getFirestore(admin.app(), "curation");
       await db.collection("assessments").doc(assessmentId).update({
         "aiResult.customActionPlan": generatedChecklist,
@@ -83,12 +87,10 @@ export const generateActionPlanChecklist = onCall(
       console.error("Gagal membedah Action Plan:", error);
       throw new HttpsError("internal", error.message || "Gagal memproses AI Action Plan.");
     }
-  }
-);
+  });
 
 // 2. FUNGSI BARU: MEMBEDAH 1 TUGAS MENJADI SUB-CHECKLIST
-export const generateSubTaskChecklist = onCall(
-  {
+export const generateSubTaskChecklist = onCall({
     memory: "256MiB",
     region: "asia-southeast2",
     secrets: [geminiApiKeySecret],
@@ -96,7 +98,6 @@ export const generateSubTaskChecklist = onCall(
   },
   async (request) => {
     if (!request.auth) throw new HttpsError("unauthenticated", "Akses ditolak.");
-
     const { taskName, taskDescription } = request.data;
     if (!taskName) throw new HttpsError("invalid-argument", "Nama tugas diperlukan.");
 
@@ -106,7 +107,7 @@ export const generateSubTaskChecklist = onCall(
       
       const model = genAI.getGenerativeModel({
         model: "gemini-3.1-flash-lite", // Pakai versi yang ringan dan cepat
-        systemInstruction: "Anda adalah Project Manager. Tugas Anda adalah memecah sebuah tugas makro menjadi 3 hingga 5 sub-tugas (micro-steps) yang sangat praktis, bisa langsung dikerjakan (actionable), dan logis.",
+        systemInstruction: "Anda adalah Life Coach/Project Manager yang asertif. Tugas Anda adalah memecah sebuah tugas makro menjadi 3 hingga 5 sub-tugas (micro-steps) yang sangat praktis, bisa langsung dikerjakan (actionable), dan logis.",
         generationConfig: {
           temperature: 0.2, 
           responseMimeType: "application/json",
@@ -135,12 +136,11 @@ export const generateSubTaskChecklist = onCall(
       const result = await model.generateContent(prompt);
       let rawText = result.response.text().trim();
       if (rawText.startsWith('```')) rawText = rawText.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
-
       const subTasks = JSON.parse(rawText);
+
       return { success: true, subTasks };
     } catch (error: any) {
       console.error("Gagal membuat Sub-Task:", error);
       throw new HttpsError("internal", error.message || "Gagal menyusun Sub-Checklist.");
     }
-  }
-);
+  });

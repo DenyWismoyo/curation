@@ -1,5 +1,4 @@
 // functions/src/index.ts
-
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { defineSecret } from "firebase-functions/params";
 import * as admin from "firebase-admin";
@@ -71,7 +70,6 @@ export const processCurationAssessment = onCall({
     const trackType = data.trackType || formData.trackType || "Evaluasi Umum";
     
     const tokenUsed = data.tokenUsed || formData.tokenUsed || data.token || formData.token || null;
-
     let corporateEntityName = null;
     let allowedDocTemplates: string[] = [];
     
@@ -85,7 +83,6 @@ export const processCurationAssessment = onCall({
       
       const corpRef = db.collection('corporate_tokens').doc(corpId);
       const corpDoc = await corpRef.get();
-
       if (!corpDoc.exists) throw new HttpsError("not-found", `Entitas korporat tidak ditemukan.`);
       
       const corpData = corpDoc.data();
@@ -149,10 +146,9 @@ export const processCurationAssessment = onCall({
             }
 
             if (fileState.state === "FAILED" || fileState.state === "PROCESSING") continue; 
-
             uploadedGeminiFiles.push(uploadResult.file);
             parts.push({ fileData: { mimeType: uploadResult.file.mimeType, fileUri: uploadResult.file.uri } });
-            
+          
           } catch (fileErr: any) {
             console.warn(`[FAIL-SAFE] Gagal mengunggah file ke Gemini API.`, fileErr);
           }
@@ -171,7 +167,7 @@ export const processCurationAssessment = onCall({
          const vectorSnap = await vectorQuery.get();
          if (!vectorSnap.empty) {
             fewShotContext = `\n[KONTEKS RAG INDUSTRI]: Gunakan profil bisnis serupa yang pernah dievaluasi ini sebagai pembanding kalibrasi: ` + 
-                 vectorSnap.docs.map(d => `(${d.data().namaUsaha} | Kesiapan: ${d.data().readinessLevel} | Skor: ${d.data().score})`).join(", ");
+                  vectorSnap.docs.map(d => `(${d.data().namaUsaha} | Kesiapan: ${d.data().readinessLevel} | Skor: ${d.data().score})`).join(", ");
          }
       } catch (err) { }
 
@@ -200,6 +196,9 @@ export const processCurationAssessment = onCall({
       let finalSystemPrompt = aiPromptConfig.customSystemPrompt || '';
       finalSystemPrompt = finalSystemPrompt.replace(/{{namaUsaha}}/g, formData.namaUsaha || 'Entitas Terkait');
       finalSystemPrompt = finalSystemPrompt.replace(/{{sektorIndustri}}/g, formData.sektorIndustri || 'Sektor Usaha');
+
+      // TENTUKAN TARGET AUDIENS SECARA EKSPLISIT
+      const targetAudience = aiPromptConfig.targetAudience || 'company';
       
       const mainPromptText = buildAssessmentPrompt({
         aiPersona: aiPromptConfig.aiPersona || "AHLI ANALISIS DAN DUE DILIGENCE KELAS DUNIA",
@@ -216,7 +215,7 @@ export const processCurationAssessment = onCall({
         negativePrompts: aiPromptConfig.negativePrompts,
         formatInstructions: aiPromptConfig.formatInstructions,
         customScoringRubric: aiPromptConfig.customScoringRubric,
-        targetAudience: aiPromptConfig.targetAudience || 'company' 
+        targetAudience: targetAudience
       });
       
       parts.unshift({ text: mainPromptText });
@@ -229,7 +228,7 @@ export const processCurationAssessment = onCall({
         model: "gemini-3.1-pro-preview",
         systemInstruction: systemPrompt,
         generationConfig: {
-          temperature: 0.2,
+          temperature: 0.2, // Suhu rendah agar sangat analitis dan presisi
           maxOutputTokens: 8192, 
           responseMimeType: "application/json",
           responseSchema: {
@@ -258,14 +257,14 @@ export const processCurationAssessment = onCall({
 
       const masterPromptOverride = `
         ${parts[0].text}
-
         ==================================================
         PERHATIAN TUGAS MASTER AGENT (SANGAT PENTING & MUTLAK):
         ==================================================
         1. Tugas Anda SAAT INI HANYA mengisi kerangka JSON utama: "_internalReasoning", "totalScore", "readinessLevel", "dataConfidenceScore", "contradictionsFound", "incubationRoute", "swotAnalysis", "riskAssessment", dan "executiveSummary".
         2. DILARANG KERAS mengerjakan, menjabarkan, atau menyusupkan teks untuk "Custom Analysis Blocks", "Metrics Array", "File Analysis", atau "Action Plan" ke dalam properti 'executiveSummary'! Bagian tersebut BUKAN TUGAS ANDA, melainkan tugas Worker Agents di fase berikutnya.
-        3. INSTRUKSI KHUSUS 'executiveSummary': Rangkum 5-8 poin utama yang padat. Jangan ada judul seksi apa pun di dalamnya.
+        3. INSTRUKSI KHUSUS 'executiveSummary': Rangkum analisis Anda dalam 5-8 poin utama yang padat. WAJIB gunakan karakter '\\n' (slash n) untuk memisahkan setiap poin. JANGAN DIGABUNG menjadi 1 paragraf panjang lurus!
       `;
+
       const masterParts = [{ text: masterPromptOverride }, ...parts.slice(1)];
       
       const masterJson = await withRetry(async () => {
@@ -276,22 +275,23 @@ export const processCurationAssessment = onCall({
       });
 
       // ======================================================================
-      // FASE 2: WORKER AGENTS
+      // FASE 2: WORKER AGENTS (WITH STRICTER AUDIENCE CONTEXT)
       // ======================================================================
       const getWorkerModel = (schema: any) => genAI.getGenerativeModel({
         model: "gemini-2.5-flash",
-        systemInstruction: "Anda adalah AI Content Elaborator untuk eksekutif. Tugas Anda mengekstrak wawasan dari data mentah menjadi narasi yang SANGAT PADAT. OUTPUT WAJIB BERUPA JSON VALID. DILARANG KERAS MENGGUNAKAN ENTER/NEWLINE HARFIAH.",
-        generationConfig: { temperature: 0.4, responseMimeType: "application/json", responseSchema: schema }
+        systemInstruction: "Anda adalah AI Content Elaborator berkecepatan tinggi. Tugas Anda mengekstrak wawasan dari data mentah menjadi narasi yang SANGAT PRESISI. OUTPUT WAJIB BERUPA JSON VALID. DILARANG KERAS MENGGUNAKAN NEWLINE/ENTER HARFIAH KECUALI MENGGUNAKAN '\\n'.",
+        generationConfig: { temperature: 0.1, responseMimeType: "application/json", responseSchema: schema }
       });
 
-      const audienceContext = aiPromptConfig.targetAudience === 'individual' 
-        ? "Ini adalah asesmen untuk INDIVIDU/PERSONAL. Dilarang menggunakan istilah bisnis atau korporat." 
-        : "Ini adalah asesmen untuk PERUSAHAAN/BISNIS.";
+      const isIndividual = targetAudience === 'individual';
+      const audienceContext = isIndividual 
+         ? "TARGET AUDIENS KETAT: INDIVIDU / PEGAWAI / PERSONAL. DILARANG KERAS menggunakan istilah B2B, strategi perusahaan, omzet, atau valuasi. Fokus pada pengembangan diri, karir, dan psikologi."
+         : "TARGET AUDIENS: PERUSAHAAN / BISNIS. Gunakan bahasa profesional korporat, fokus pada metrik bisnis, ekspansi, dan skalabilitas.";
 
       const workerABlocks = async () => {
         try {
           const schemaA = { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, required: ["title", "iconType", "metrics"], properties: { title: { type: SchemaType.STRING }, iconType: { type: SchemaType.STRING }, metrics: { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, required: ["label", "value"], properties: { label: { type: SchemaType.STRING }, value: { type: SchemaType.STRING } } } } } } };
-          const promptA = `JABARKAN narasi analitis HANYA untuk kerangka blok standar ini: ${JSON.stringify(aiPromptConfig.expectedAnalysisBlocks)}. \nData subjek: ${dataString}. \nSesuaikan narasi Anda dengan temuan kelemahan/kekuatan dari Master Assessor: ${JSON.stringify(masterJson.swotAnalysis)}.\nKONTEKS AUDIENS: ${audienceContext}`;
+          const promptA = `JABARKAN narasi analitis HANYA untuk kerangka blok standar ini: ${JSON.stringify(aiPromptConfig.expectedAnalysisBlocks)}. \nData subjek: ${dataString}. \nSesuaikan narasi Anda dengan temuan dari Master Assessor: ${JSON.stringify(masterJson.swotAnalysis)}.\nKONTEKS AUDIENS: ${audienceContext}`;
           
           return await withRetry(async () => {
             const res = await getWorkerModel(schemaA).generateContent(promptA);
@@ -305,7 +305,7 @@ export const processCurationAssessment = onCall({
       const workerBMetrics = async () => {
         try {
           const schemaB = { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, required: ["label", "score", "description"], properties: { label: { type: SchemaType.STRING }, score: { type: SchemaType.INTEGER }, description: { type: SchemaType.STRING } } } };
-          const promptB = `Berikan justifikasi evaluasi naratif dan skor (0-100) HANYA untuk daftar metrik pilar baku ini: ${JSON.stringify(aiPromptConfig.expectedMetrics)}. \nData Subjek: ${dataString}. \nSkor Akhir subjek ini adalah ${masterJson.totalScore}/100. Pastikan nilai (score) yang Anda berikan selaras.\nKONTEKS AUDIENS: ${audienceContext}`;
+          const promptB = `Berikan justifikasi evaluasi naratif dan skor (0-100) HANYA untuk daftar metrik pilar baku ini: ${JSON.stringify(aiPromptConfig.expectedMetrics)}. \nData Subjek: ${dataString}. \nSkor Akhir subjek ini adalah ${masterJson.totalScore}/100. Pastikan nilai (score) selaras.\nKONTEKS AUDIENS: ${audienceContext}`;
           
           return await withRetry(async () => {
             const res = await getWorkerModel(schemaB).generateContent(promptB);
@@ -319,7 +319,7 @@ export const processCurationAssessment = onCall({
       const workerCRecommendations = async () => {
         try {
           const schemaC = { type: SchemaType.OBJECT, required: ["recommendations", "nextActionSteps"], properties: { recommendations: { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, required: ["title", "content"], properties: { title: { type: SchemaType.STRING }, content: { type: SchemaType.STRING } } } }, nextActionSteps: { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, required: ["timeframe", "task"], properties: { timeframe: { type: SchemaType.STRING }, task: { type: SchemaType.STRING } } } } } };
-          const promptC = `Buat Rencana Tindakan (Action Plan) TAKTIS HANYA untuk area rekomendasi standar ini: ${JSON.stringify(aiPromptConfig.expectedRecommendations)}. \nFokuskan pada risiko utama ini: ${JSON.stringify(masterJson.riskAssessment.criticalRisks)}.\nKONTEKS AUDIENS: ${audienceContext}`;
+          const promptC = `Buat Rencana Tindakan TAKTIS HANYA untuk area rekomendasi ini: ${JSON.stringify(aiPromptConfig.expectedRecommendations)}. \nFokuskan pada risiko utama ini: ${JSON.stringify(masterJson.riskAssessment.criticalRisks)}.\nKONTEKS AUDIENS: ${audienceContext}`;
           
           return await withRetry(async () => {
             const res = await getWorkerModel(schemaC).generateContent(promptC);
@@ -346,15 +346,16 @@ export const processCurationAssessment = onCall({
         } catch (e) { return null; }
       };
 
-      const [finalBlocks, finalMetrics, finalRecommendations, finalFiles] = await Promise.all([
-        workerABlocks(), workerBMetrics(), workerCRecommendations(), workerDFiles()
-      ]);
+      // EKSEKUSI BERURUTAN AGAR AMAN DARI LIMIT API
+      const finalBlocks = await workerABlocks();
+      const finalMetrics = await workerBMetrics();
+      const finalRecommendations = await workerCRecommendations();
+      const finalFiles = await workerDFiles();
 
       // ======================================================================
-      // FASE 3: ASSEMBLER & TRANSACTION (IMPLEMENTASI DOCUMENT SPLITTING)
+      // FASE 3: ASSEMBLER & TRANSACTION
       // ======================================================================
       
-      // 1. Objek Publik (Aman untuk dilihat User Biasa)
       const publicAiResult = {
         executiveSummary: masterJson.executiveSummary || "",
         readinessLevel: masterJson.readinessLevel || "Belum Ditentukan",
@@ -364,10 +365,10 @@ export const processCurationAssessment = onCall({
         recommendations: finalRecommendations?.recommendations || [],
         nextActionSteps: finalRecommendations?.nextActionSteps || [],
         formPurpose: aiPromptConfig.formPurpose || 'assessment',
+        targetAudience: targetAudience, // DISIMPAN UNTUK ACTION PLAN SERVICE
         customUiLabels: aiPromptConfig.customUiLabels || {}
       };
 
-      // 2. Objek Internal (Dirahasiakan, hanya untuk Admin/Curator)
       const internalAiResult = {
         _internalReasoning: masterJson._internalReasoning || "",
         dataConfidenceScore: masterJson.dataConfidenceScore || 0,
@@ -378,9 +379,7 @@ export const processCurationAssessment = onCall({
         fileAnalysisInsights: finalFiles || null,
       };
 
-      // Gabungan (Hanya untuk keperluan Vector DB & PDF Background)
       const fullAiResultForBg = { ...publicAiResult, ...internalAiResult };
-
       let assessmentId = "";
       
       await db.runTransaction(async (transaction) => {
@@ -409,7 +408,6 @@ export const processCurationAssessment = onCall({
         const newAssessmentRef = db.collection("assessments").doc();
         assessmentId = newAssessmentRef.id;
         
-        // Simpan Data Publik ke Dokumen Induk
         const updatedDocData = {
           userId: userId, 
           userEmail: formData.email || userEmail,
@@ -420,7 +418,7 @@ export const processCurationAssessment = onCall({
           score: publicAiResult.totalScore || 0,
           readinessLevel: publicAiResult.readinessLevel || 'Belum Ditentukan',
           formData: formData,
-          aiResult: publicAiResult, // KUNCI: Hanya data publik yang tersimpan di sini
+          aiResult: publicAiResult, 
           tokenUsed: tokenUsed || null, 
           allowedDocumentTemplates: allowedDocTemplates,
           documentGenerationQuota: tokenUsed ? 1 : 0, 
@@ -432,13 +430,10 @@ export const processCurationAssessment = onCall({
         
         transaction.set(newAssessmentRef, updatedDocData);
 
-        // Simpan Data Rahasia ke Subcollection "internal/details"
         const internalDocRef = newAssessmentRef.collection("internal").doc("details");
         transaction.set(internalDocRef, internalAiResult);
-
       });
 
-      // Background Tasks menggunakan data gabungan penuh (fullAiResultForBg)
       const updatedDocDataForBg = {
          namaUsaha: formData.namaUsaha || 'Tanpa Nama',
          trackType: trackType,
@@ -468,7 +463,6 @@ export const processCurationAssessment = onCall({
         (async () => {
           const smtpEmail = smtpEmailSecret.value();
           const smtpPassword = smtpPasswordSecret.value();
-
           if (smtpEmail && smtpPassword && updatedDocDataForBg.userEmail) {
             try {
                 const { sendAssessmentEmail } = await import("./emailService");
@@ -485,7 +479,6 @@ export const processCurationAssessment = onCall({
         })()
       ]);
 
-      // Kita kembalikan full result ke Frontend saat pertama kali generate agar dashboard langsung memuat tanpa perlu query ulang
       return { assessmentId, aiResult: fullAiResultForBg };
       
     } catch (error: any) {

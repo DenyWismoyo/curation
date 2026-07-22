@@ -1,5 +1,4 @@
-// src/promt/aiConfigPrompt.ts
-
+// functions/src/promt/aiConfigPrompt.ts
 export interface AIConfigPromptParams {
   trackName: string;
   topicToResearch: string;
@@ -37,6 +36,7 @@ export const buildAIConfigPrompt = (params: AIConfigPromptParams): string => {
     STRUKTUR JSON WAJIB MEMILIKI SELURUH KEY BERIKUT DAN TIDAK BOLEH ADA YANG DIKOSONGKAN:
     {
       "formPurpose": "Pilih SALAH SATU secara presisi berdasarkan konteks program ini: 'assessment', 'counseling', 'monitoring', atau 'consultation'.",
+      "targetAudience": "Pilih SALAH SATU secara presisi: 'individual' (jika targetnya adalah personal, siswa, pegawai, pasien, jenjang karir) ATAU 'company' (jika targetnya adalah perusahaan, organisasi, institusi, atau entitas bisnis).",
       "customUiLabels": {
         "scoreLabel": "Buat label UI yang cocok (contoh: 'AI Readiness Score', 'Indeks Kesehatan', atau 'Persentase Capaian')",
         "swotLabel": "Buat label UI untuk blok SWOT (contoh: 'Capability Matrix' atau 'Pemetaan Karakter')",

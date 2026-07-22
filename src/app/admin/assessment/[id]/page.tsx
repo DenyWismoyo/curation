@@ -20,11 +20,37 @@ export default function AdminAssessmentDetailPage() {
   useEffect(() => {
     const fetchData = async () => {
       if (!params.id) return;
+      
       try {
+        // 1. TARIK DATA PUBLIK (DOKUMEN INDUK)
         const docRef = doc(db, 'assessments', params.id as string);
         const docSnap = await getDoc(docRef);
+        
         if (docSnap.exists()) {
-          setData({ id: docSnap.id, ...docSnap.data() });
+          // FIX: Tambahkan tipe ": any" agar TypeScript tidak mengeluh (garis merah hilang)
+          let combinedData: any = { id: docSnap.id, ...docSnap.data() };
+
+          // 2. TARIK DATA RAHASIA (DARI SUB-COLLECTION INTERNAL/DETAILS)
+          try {
+            const internalDocRef = doc(db, 'assessments', params.id as string, 'internal', 'details');
+            const internalSnap = await getDoc(internalDocRef);
+            
+            if (internalSnap.exists()) {
+              console.log("✅ Data rahasia (Matriks, SWOT, Custom Block) berhasil ditarik!");
+              // Gabungkan objek aiResult publik dengan data internal
+              combinedData.aiResult = { 
+                ...(combinedData.aiResult || {}), 
+                ...internalSnap.data() 
+              };
+            } else {
+              console.warn("⚠️ Data rahasia tidak ditemukan untuk dokumen ini.");
+            }
+          } catch (internalError) {
+            console.error("Gagal menarik data sub-collection internal:", internalError);
+          }
+
+          // Simpan data yang sudah digabungkan secara utuh ke dalam state
+          setData(combinedData);
         } else {
           alert('Data asesmen tidak ditemukan.');
           router.push('/admin');
@@ -35,6 +61,7 @@ export default function AdminAssessmentDetailPage() {
         setLoading(false);
       }
     };
+    
     fetchData();
   }, [params.id, router]);
 
@@ -51,9 +78,9 @@ export default function AdminAssessmentDetailPage() {
 
   const { formData, aiResult, score, readinessLevel, trackType, corporateEntity, status, curatorAssessment, curatorNotes } = data;
   const isCuratorValidated = status === 'Curator_Validated' || curatorAssessment !== undefined;
-
+  
   const formatKey = (key: string) => key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-
+  
   // Mencegah error jika format telepon mengandung karakter selain angka
   const waNumber = formData?.telepon ? String(formData.telepon).replace(/[^0-9]/g, '') : '';
 
@@ -74,7 +101,7 @@ export default function AdminAssessmentDetailPage() {
             <div className="flex flex-wrap items-center gap-3">
               {formData?.namaPengisi && (
                 <span className="text-[11px] font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-md ring-1 ring-slate-200/50 flex items-center gap-1.5">
-                  👤 {formData.namaPengisi}
+                    {formData.namaPengisi}
                 </span>
               )}
               {formData?.email && (
@@ -90,6 +117,7 @@ export default function AdminAssessmentDetailPage() {
             </div>
           </div>
         </div>
+        
         <div className="shrink-0">
           <AdminExportPDF data={data} />
         </div>
@@ -135,11 +163,11 @@ export default function AdminAssessmentDetailPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {Object.entries(formData || {}).map(([key, value]) => {
               if (!value) return null;
-              // Sembunyikan field identitas dari list jika ingin tampilan yang lebih bersih (karena sudah ada di header)
               if (['namaUsaha', 'namaPengisi', 'email', 'telepon'].includes(key)) return null;
-
+              
               const isUrl = typeof value === 'string' && value.startsWith('http');
               const isArray = Array.isArray(value);
+              
               return (
                 <div key={key} className="bg-slate-50 p-4 rounded-2xl ring-1 ring-slate-100">
                   <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">{formatKey(key)}</p>
@@ -150,6 +178,7 @@ export default function AdminAssessmentDetailPage() {
           </div>
         </div>
       )}
+
     </div>
   );
 }
