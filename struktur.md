@@ -11,13 +11,16 @@
 │       ├── emailService.ts
 │       ├── formBuilderService.ts
 │       ├── index.ts
+│       ├── nudgeService.ts
 │       ├── omniAiService.ts
+│       ├── outputService.ts
 │       ├── paymentService.ts
 │       ├── pdfGenerator.ts
 │       └── vectorService.ts
 ├── public
 │   ├── docs
 │   │   ├── apa_itu_omnifit.md
+│   │   ├── architecture-review.md
 │   │   ├── assessor.md
 │   │   ├── curator.md
 │   │   ├── dashboard.md
@@ -41,6 +44,8 @@
 │   ├── icon-512x512.png
 │   ├── logo.png
 │   ├── next.svg
+│   ├── robots.txt
+│   ├── sitemap.xml
 │   ├── vercel.svg
 │   └── window.svg
 └── src
@@ -98,6 +103,7 @@
     │   │   │   ├── AdminTokenExportPDF.tsx
     │   │   │   └── TemplateExportPDFButton.tsx
     │   │   ├── assessor
+    │   │   │   ├── AssessorAssessmentDetail.tsx
     │   │   │   ├── AssessorManualEditor.tsx
     │   │   │   ├── AssessorTemplateBuilder.tsx
     │   │   │   └── AssessorTemplatePreview.tsx
@@ -125,6 +131,8 @@
     │   │       ├── PWAInstallPrompt.tsx
     │   │       ├── SocialShareCard.tsx
     │   │       ├── TemplateQuestionsPDF.tsx
+    │   │       ├── TokenBatchPDFDocument.tsx
+    │   │       ├── TokenExportPDFButton.tsx
     │   │       ├── UniversalAssessmentView.tsx
     │   │       └── UniversalPDFDocument.tsx
     │   ├── curator
