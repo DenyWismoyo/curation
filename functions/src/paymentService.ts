@@ -217,13 +217,15 @@ export const xenditWebhook = onRequest(
             // =========================================================
             // AUTO-PROVISIONING: Generate Token B2C secara otomatis
             // =========================================================
-            if (txData?.packageId) {
+if (txData?.packageId) {
               const b2cRef = db.collection("corporate_tokens").doc("B2C");
               
               await b2cRef.set({
                 corporateName: "Penjualan B2C (Mandiri)",
                 modelType: "flash", 
                 totalTokens: FieldValue.increment(1),
+                // BUG FIX 3: Tambahkan timestamp agar data terindex di menu admin
+                createdAt: new Date().toISOString(), 
                 tokens: {
                   [tokenCode]: {
                     isUsed: false,

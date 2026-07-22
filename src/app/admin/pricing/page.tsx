@@ -226,7 +226,7 @@ export default function PricingManagerPage() {
     }
   };
 
-  const handleGenerateB2CToken = async (templateId: string, templateName: string) => {
+const handleGenerateB2CToken = async (templateId: string, templateName: string) => {
     setIsGeneratingToken(templateId);
     try {
       const b2cRef = doc(db, 'corporate_tokens', 'B2C');
@@ -236,6 +236,8 @@ export default function PricingManagerPage() {
         corporateName: "Penjualan B2C (Mandiri)",
         modelType: "flash", 
         totalTokens: increment(1),
+        // BUG FIX 3: Tambahkan createdAt agar dokumen masuk ke index sorting 'admin/tokens/page'
+        createdAt: new Date().toISOString(), 
         tokens: {
           [tokenCode]: {
             isUsed: false,
@@ -245,7 +247,6 @@ export default function PricingManagerPage() {
           }
         }
       }, { merge: true });
-
       const fullToken = `B2C-${tokenCode}`;
       
       setGeneratedTokens(prev => ({ ...prev, [templateId]: fullToken }));
@@ -266,6 +267,7 @@ export default function PricingManagerPage() {
       setIsGeneratingToken(null);
     }
   };
+
 
   const handleCopyManual = (id: string, token: string) => {
     navigator.clipboard.writeText(token);
