@@ -1,4 +1,5 @@
 // functions/src/formBuilderService.ts
+
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { defineSecret } from "firebase-functions/params";
 import * as admin from "firebase-admin";
@@ -33,8 +34,7 @@ const withRetry = async <T>(fn: () => Promise<T>, retries = 3, delayMs = 2000): 
   }
 };
 
-export const generateFormTemplateFromAI = onCall(
-  {
+export const generateFormTemplateFromAI = onCall({
     memory: "2GiB",
     timeoutSeconds: 900,
     region: "asia-southeast2",
@@ -53,7 +53,7 @@ export const generateFormTemplateFromAI = onCall(
     }
 
     const data = request.data as any;
-    const { templateId, trackName, aiPromptConfig, archetypeInstruction } = data;
+    const { templateId, trackName, aiPromptConfig, archetypeInstruction, formMode } = data;
     
     if (!templateId) throw new HttpsError("invalid-argument", "ID Template wajib disertakan.");
 
@@ -82,7 +82,6 @@ export const generateFormTemplateFromAI = onCall(
           updatedAt: new Date().toISOString()
         }
       });
-
       await logToTerminal("Memulai sesi pipeline Enterprise Multi-Agent AI...", "info");
 
       // ---------------------------------------------------------
@@ -151,7 +150,6 @@ export const generateFormTemplateFromAI = onCall(
         ? JSON.stringify(aiPromptConfig, null, 2) 
         : "Belum ada konfigurasi awal, rumuskan dari nol.";
 
-// AMBIL NILAI KUSTOM VOLUME DARI FRONTEND (Fallback ke angka default)
       const targetMetricCount = aiPromptConfig?.targetMetricCount || 8;
       const targetBlockCount = aiPromptConfig?.targetBlockCount || 6;
       const targetTierCount = aiPromptConfig?.targetTierCount || 4;
@@ -183,7 +181,6 @@ export const generateFormTemplateFromAI = onCall(
       `;
 
       await logToTerminal(`Merumuskan penyempurnaan Otak AI & Masterplan untuk domain: [${trackName || "Asesmen Umum"}]...`, "info");
-
       const masterResult = await withRetry(() => masterModel.generateContent(masterPrompt));
       const blueprint = JSON.parse(masterResult.response.text().trim());
 
@@ -198,6 +195,7 @@ export const generateFormTemplateFromAI = onCall(
       await storeTemplateResearchVector(templateId, trackName, blueprint.researchNotes, API_KEY)
         .catch(e => console.warn("Peringatan: Gagal merekam vector research (Non-Fatal)."));
       await logToTerminal("Vector Database berhasil diperbarui.", "success");
+
 
       // ---------------------------------------------------------
       // FASE 2: DYNAMIC PERSONA & ASYNCHRONOUS BATCHING
@@ -226,13 +224,13 @@ export const generateFormTemplateFromAI = onCall(
                 gridSpan: { type: SchemaType.INTEGER }, fileAccept: { type: SchemaType.STRING },
                 options: { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, properties: { label: { type: SchemaType.STRING }, weight: { type: SchemaType.INTEGER } } } },
                 showIf: { 
-  type: SchemaType.OBJECT, 
-  required: ["fieldId", "equals"], // <-- Tambahkan required di sini
-  properties: { 
-    fieldId: { type: SchemaType.STRING }, 
-    equals: { type: SchemaType.STRING } 
-  } 
-}
+                  type: SchemaType.OBJECT, 
+                  required: ["fieldId", "equals"],
+                  properties: { 
+                    fieldId: { type: SchemaType.STRING }, 
+                    equals: { type: SchemaType.STRING } 
+                  } 
+                }
               }
             }
           }
@@ -241,12 +239,14 @@ export const generateFormTemplateFromAI = onCall(
 
       const promptParams = { trackName: trackName || "Asesmen Umum", config: blueprint.aiPromptConfig, archetypeInstruction: archetypeInstruction || "" };
       const baseInstructions = buildMegaAgentPrompt(promptParams);
+
       let rawFinalSteps: any[] = [];
       const batchSize = 3; 
 
       for (let i = 0; i < blueprint.stepOutlines.length; i += batchSize) {
         const batch = blueprint.stepOutlines.slice(i, i + batchSize);
-        const batchMessage = `Meracik Kuesioner Batch ${Math.ceil(i/batchSize) + 1} (Seksi ${i + 1} s/d ${i + batch.length})...`;
+        
+        const batchMessage = `Meracik Kuesioner Batch ${Math.ceil(i/batchSize) + 1} (Seksi ${i + 1} s/d${i + batch.length})...`;
         await templateRef.update({ "aiGenerationStatus.message": batchMessage });
         await logToTerminal(batchMessage, "info");
 
@@ -256,6 +256,7 @@ export const generateFormTemplateFromAI = onCall(
           
           const sectionPrompt = `
             ${baseInstructions}
+
             HASIL RISET STANDAR TERBARU: ${blueprint.researchNotes}
             
             ROLEPLAY MUTLAK: Anda saat ini berperan sebagai "${step.expertPersona}". 
@@ -274,11 +275,10 @@ export const generateFormTemplateFromAI = onCall(
             const sectionResult = await withRetry(() => sectionModel.generateContent(sectionPrompt));
             let rawJsonText = sectionResult.response.text().trim();
             
-            // FITUR PEMBERSIH FORMAT: Mencegah JSON.parse gagal jika ada Markdown
             if (rawJsonText.startsWith('```')) {
               rawJsonText = rawJsonText.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
             }
-
+            
             const fieldsArray = JSON.parse(rawJsonText);
             
             if (!Array.isArray(fieldsArray)) {
@@ -300,6 +300,7 @@ export const generateFormTemplateFromAI = onCall(
 
       await logToTerminal("Seluruh seksi formulir berhasil diracik dan digabungkan.", "success");
 
+
       // ---------------------------------------------------------
       // PROGRAMMATIC DEDUPLICATION (HARDCODE FILTER)
       // ---------------------------------------------------------
@@ -316,6 +317,7 @@ export const generateFormTemplateFromAI = onCall(
         return { ...step, fields: uniqueFields };
       });
 
+
       // ---------------------------------------------------------
       // FASE 3: AI SELF-CORRECTION (SHOW-IF VALIDATOR)
       // ---------------------------------------------------------
@@ -327,17 +329,17 @@ export const generateFormTemplateFromAI = onCall(
         generationConfig: { temperature: 0.1, responseMimeType: "application/json" }
       });
 
-const validationPrompt = `
-  Anda adalah "Lead Quality Assurance". Berikut adalah JSON formulir yang sudah bersih dari ID duplikat.
-  Tugas utama Anda HANYA memverifikasi properti "showIf":
-  1. Pastikan "fieldId" di dalam "showIf" merujuk pada "id" yang BENAR-BENAR ADA di array fields sebelumnya.
-  2. WAJIB pastikan "showIf" memiliki properti "equals". Jika "equals" hilang atau kosong, Anda WAJIB memperbaikinya dengan mengambil salah satu "label" dari opsi jawaban (options) field pemicu tersebut.
-  3. Jika merujuk pada ID yang tidak ada atau referensi ke depan (referencing future fields), hapus properti "showIf" tersebut.
-  4. Kembalikan array JSON utuh tanpa merubah struktur lain.
-  
-  DATA FORMULIR MENTAH:
-  ${JSON.stringify(deduplicatedSteps)}
-`;
+      const validationPrompt = `
+        Anda adalah "Lead Quality Assurance". Berikut adalah JSON formulir yang sudah bersih dari ID duplikat.
+        Tugas utama Anda HANYA memverifikasi properti "showIf":
+        1. Pastikan "fieldId" di dalam "showIf" merujuk pada "id" yang BENAR-BENAR ADA di array fields sebelumnya.
+        2. WAJIB pastikan "showIf" memiliki properti "equals". Jika "equals" hilang atau kosong, Anda WAJIB memperbaikinya dengan mengambil salah satu "label" dari opsi jawaban (options) field pemicu tersebut.
+        3. Jika merujuk pada ID yang tidak ada atau referensi ke depan (referencing future fields), hapus properti "showIf" tersebut.
+        4. Kembalikan array JSON utuh tanpa merubah struktur lain.
+
+        DATA FORMULIR MENTAH:
+        ${JSON.stringify(deduplicatedSteps)}
+      `;
 
       const validationResult = await withRetry(() => validatorModel.generateContent(validationPrompt));
       let validJsonText = validationResult.response.text().trim();
@@ -352,7 +354,39 @@ const validationPrompt = `
       await logToTerminal("Verifikasi selesai. Struktur formulir 100% valid dan aman dari loop logic.", "success");
 
       // ---------------------------------------------------------
-      // FASE 4: SAVE TO FIRESTORE
+      // FASE 4: PRE-WARMING VECTOR DB (RAG SEEDER)
+      // ---------------------------------------------------------
+      if (formMode === 'adaptive' || formMode === 'hybrid' || aiPromptConfig?.isAdaptive) {
+        await logToTerminal("Menyuntikkan referensi kuesioner ke Bank Soal AI (Pre-Warming RAG)...", "info");
+        try {
+          const embedModel = genAI.getGenerativeModel({ model: "text-embedding-004" });
+          const bankPromises = cleanedSteps.flatMap((step: any) => 
+            step.fields.map(async (field: any) => {
+              const textToEmbed = `Track: ${trackName}, Step: ${step.title}, Label: ${field.label}`;
+              const embRes = await embedModel.embedContent(textToEmbed);
+              const vectorVal = embRes.embedding.values;
+
+              return db.collection('adaptive_question_banks').doc().set({
+                templateId: templateId || 'general',
+                stepIndex: step.stepNumber || 1,
+                stepTitle: step.title,
+                questionData: field,
+                embedding: admin.firestore.FieldValue.vector(vectorVal),
+                usageCount: 1,
+                createdAt: admin.firestore.FieldValue.serverTimestamp()
+              });
+            })
+          );
+          
+          await Promise.allSettled(bankPromises);
+          await logToTerminal("Pre-Warming RAG selesai! AI memiliki pengetahuan dasar yang kaya.", "success");
+        } catch (err: any) {
+          await logToTerminal(`Gagal melakukan Pre-Warming (Non-Fatal): ${err.message}`, "error");
+        }
+      }
+
+      // ---------------------------------------------------------
+      // FASE 5: SAVE TO FIRESTORE
       // ---------------------------------------------------------
       await templateRef.update({
         steps: cleanedSteps,
@@ -387,16 +421,16 @@ const validationPrompt = `
           updatedAt: new Date().toISOString()
         }
       });
+
       throw new HttpsError("internal", error.message || "Gagal memproses analisis AI.");
     }
-  }
-);
+});
+
 
 // ============================================================================
 // FUNGSI 2: AI CONFIGURATION ENHANCER (Legacy)
 // ============================================================================
-export const generateAIConfigResearch = onCall(
-  {
+export const generateAIConfigResearch = onCall({
     memory: "1GiB",
     timeoutSeconds: 300, 
     region: "asia-southeast2",
@@ -410,8 +444,10 @@ export const generateAIConfigResearch = onCall(
 
     const data = request.data as any;
     const { templateId, trackName, customTopic, currentConfig } = data;
+
     const topicToResearch = customTopic || trackName || "Asesmen Bisnis Umum";
     const safeTemplateId = templateId || `research_config_${Date.now()}`;
+
     const API_KEY = geminiApiKeySecret.value();
     const genAI = new GoogleGenerativeAI(API_KEY);
 
@@ -428,12 +464,14 @@ export const generateAIConfigResearch = onCall(
 
       const hasExistingConfig = currentConfig && Object.keys(currentConfig).length > 0;
       const systemPrompt = buildAIConfigPrompt({ trackName, topicToResearch, currentConfig, hasExistingConfig });
+
       const result = await withRetry(() => model.generateContent(systemPrompt));
       let rawText = result.response.text().trim();
       
       if (rawText.startsWith('```')) rawText = rawText.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
       
       const parsedConfig = JSON.parse(rawText);
+
       await storeTemplateResearchVector(safeTemplateId, `Config Research: ${topicToResearch}`, rawText, API_KEY).catch(e => console.error(e));
 
       return { success: true, aiPromptConfig: parsedConfig };
@@ -441,5 +479,4 @@ export const generateAIConfigResearch = onCall(
     } catch (error: any) {
       throw new HttpsError("internal", error.message || "Gagal melakukan auto-research.");
     }
-  }
-);
+});

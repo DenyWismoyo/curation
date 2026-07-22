@@ -17,7 +17,7 @@ export const generateAndStoreVectorEmbedding = async (assessmentId: string, docD
     const genAI = new GoogleGenerativeAI(apiKey);
     
     // Gunakan model khusus embedding (sangat murah dan cepat)
-    const model = genAI.getGenerativeModel({ model: "text-embedding-004" });
+    const model = genAI.getGenerativeModel({ model: "text-embedding-001" });
 
     // RAG STRATEGY: Rangkum intisari data untuk diubah menjadi Vector
     // Kita gabungkan Data Profil + Executive Summary + SWOT + Rekomendasi
@@ -79,7 +79,7 @@ export const matchBusinessWithIndustry = onCall(
 
     const API_KEY = geminiApiKeySecret.value();
     const genAI = new GoogleGenerativeAI(API_KEY);
-    const model = genAI.getGenerativeModel({ model: "text-embedding-004" });
+    const model = genAI.getGenerativeModel({ model: "text-embedding-001" });
 
     try {
       // 1. Ubah query pencarian investor menjadi Vector
@@ -124,7 +124,7 @@ export const storeTemplateResearchVector = async (templateId: string, trackName:
     const db = getFirestore(admin.app(), "curation");
     const genAI = new GoogleGenerativeAI(apiKey);
     
-    const model = genAI.getGenerativeModel({ model: "text-embedding-004" });
+    const model = genAI.getGenerativeModel({ model: "text-embedding-001" });
 
     // PERBAIKAN: Potong data riset jika terlampau panjang (Limit Embedding Model ~9600 token / ~30.000 karakter)
     // Teks dipotong hanya untuk kepentingan ekstraksi Vector, namun data teks asli (full) tetap disimpan ke DB

@@ -2,6 +2,7 @@
 
 export type ViewState = 'landing' | 'track-select' | 'wizard' | 'processing' | 'dashboard';
 
+
 export interface CurationFormData {
   [key: string]: any;
 }
@@ -109,6 +110,7 @@ export interface FormField {
     fieldId: string;
     equals: string | number | boolean;
   };
+  aiReasoning?: string; // Menyimpan penjelasan mengapa AI mengajukan pertanyaan ini
 }
 
 export interface FormStep {
@@ -180,6 +182,7 @@ export interface FormTemplate {
   folder?: string;
   formBuilderInstruction?: string;
   preferredQuestionTypes?: string[];
+  formMode?: 'standard' | 'adaptive' | 'hybrid';
 }
 
 export interface AssessmentPayload {

@@ -22,7 +22,8 @@ export { chatWithOmniAi } from "./omniAiService";
 export { generateActionPlanChecklist, generateSubTaskChecklist } from "./actionPlanService";
 export { generateTemplateSellingPoints } from "./outputService";
 export { weeklyActionPlanNudge } from "./nudgeService";
-export { generateAdaptiveQuestions } from "./adaptiveValidationService";
+export { generateAdaptiveQuestions, evaluateMacroBranching, manualTriggerRAGSeed } from "./adaptiveValidationService";
+export { enhanceFieldLogic } from "./fieldEnhancerService";
 
 // ============================================================================
 // INISIALISASI FIREBASE

@@ -48,10 +48,10 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
   
   // State khusus saat AI sedang men-generate pertanyaan untuk step berikutnya
   const [isGeneratingStep, setIsGeneratingStep] = useState(false);
-
+  
   // Ref untuk mengatur auto-scroll ke atas setiap ganti step
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-
+  
   const [formData, setFormData] = useState<any>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem(CACHE_KEY);
@@ -114,6 +114,7 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
     if (!currentStepData || !currentStepData.fields) return false;
     const visibleFields = currentStepData.fields.filter(isFieldVisible);
     const requiredFields = visibleFields.filter(f => f.required);
+    
     for (const field of requiredFields) {
       const val = formData[field.id];
       if (!val || (Array.isArray(val) && val.length === 0)) return false;
@@ -121,55 +122,99 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
     return true;
   };
 
-  // LOGIKA NAVIGASI & ADAPTIVE FORM INJECTION
+  // FUNGSI INJEKSI PERTANYAAN (MICRO-ADAPTIVE)
+  const executeAdaptiveFieldInjection = async (targetStepData: FormStep, targetStepIndex: number) => {
+    setIsGeneratingStep(true);
+    if (scrollContainerRef.current) scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    try {
+      const functions = getFunctions(app, 'asia-southeast2');
+      const generateQuestions = httpsCallable(functions, 'generateAdaptiveQuestions');
+      
+      const response = await generateQuestions({ 
+        formData, 
+        trackName: template.trackName, 
+        aiPromptConfig: template.aiPromptConfig,
+        stepTitle: targetStepData.title,
+        stepDescription: targetStepData.description,
+        templateId: template.id,
+        stepIndex: targetStepIndex
+      });
+      
+      const data = response.data as { fields: FormField[] };
+      
+      if (data.fields && data.fields.length > 0) {
+        const updatedSteps = [...localSteps];
+        updatedSteps[targetStepIndex].fields = data.fields;
+        setLocalSteps(updatedSteps);
+      }
+      setStep(targetStepIndex + 1);
+    } catch (error: any) {
+      console.error("AI Adaptive Generation Error:", error);
+      toast.error("Gagal menyinkronkan pertanyaan AI. Silakan coba lagi atau lewati.", { duration: 4000 });
+      setStep(targetStepIndex + 1);
+    } finally {
+      setIsGeneratingStep(false);
+    }
+  };
+
+  // LOGIKA NAVIGASI (DENGAN MACRO-ADAPTIVE BRANCHING)
   const handleNext = async () => {
-    if (step < totalSteps) {
+    // 1. Kondisi Lanjut ke Step Lokal Berikutnya
+    if (step < localSteps.length) {
       const nextStepIndex = step; // Index array base-0
       const nextStepData = localSteps[nextStepIndex];
+      
+      // Jika formMode di-set adaptive, kosongkan field agar AI meracik ulang berdasarkan jawaban terbaru
+      if (template.formMode === 'adaptive' && nextStepData.fields && nextStepData.fields.length > 0) {
+          nextStepData.fields = [];
+      }
 
-      // Jika step berikutnya kosong (Mode Adaptive), minta AI meracik pertanyaan
+      // Cek jika field kosong dan butuh micro-adaptive (injeksi pertanyaan)
       if (!nextStepData.fields || nextStepData.fields.length === 0) {
-        setIsGeneratingStep(true);
-        if (scrollContainerRef.current) scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-        
-        try {
-          const functions = getFunctions(app, 'asia-southeast2');
-          const generateQuestions = httpsCallable(functions, 'generateAdaptiveQuestions');
-          
-          const response = await generateQuestions({ 
-            formData, 
-            trackName: template.trackName, 
-            aiPromptConfig: template.aiPromptConfig,
-            stepTitle: nextStepData.title,
-            stepDescription: nextStepData.description
-          });
-          
-          const data = response.data as { fields: FormField[] };
-          
-          if (data.fields && data.fields.length > 0) {
-            // Suntikkan field baru ke step tersebut
-            const updatedSteps = [...localSteps];
-            updatedSteps[nextStepIndex].fields = data.fields;
-            setLocalSteps(updatedSteps);
-            setStep(step + 1);
-          } else {
-             // Fallback jika AI gagal membuat pertanyaan
-             setStep(step + 1);
-          }
-        } catch (error: any) {
-          console.error("AI Adaptive Generation Error:", error);
-          toast.error("Gagal menyinkronkan pertanyaan AI. Silakan coba lagi atau lewati.", { duration: 4000 });
-          setStep(step + 1);
-        } finally {
-          setIsGeneratingStep(false);
-        }
+        await executeAdaptiveFieldInjection(nextStepData, nextStepIndex);
       } else {
-        // Mode Standar (Step sudah ada isi fields-nya)
         setStep(step + 1);
         if (scrollContainerRef.current) scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
       }
-    } else {
-      // Form Selesai -> Lanjut ke Review
+    } 
+    // 2. MACRO-ADAPTIVE BRANCHING (Di Ujung Form)
+    else if (template.formMode === 'hybrid' || template.formMode === 'adaptive') {
+      setIsGeneratingStep(true);
+      if (scrollContainerRef.current) scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+
+      try {
+        const functions = getFunctions(app, 'asia-southeast2');
+        const evaluateBranching = httpsCallable(functions, 'evaluateMacroBranching');
+        
+        const response = await evaluateBranching({ 
+          formData, 
+          trackName: template.trackName,
+          currentTotalSteps: localSteps.length 
+        });
+        const data = response.data as { requiresNewSection: boolean; newStep?: FormStep };
+
+        if (data.requiresNewSection && data.newStep) {
+          // AI menyuntikkan Seksi Baru, langsung render!
+          setLocalSteps([...localSteps, data.newStep]);
+          
+          // Langsung racik pertanyaannya (karena fields dikirim kosong oleh evaluateMacroBranching)
+          await executeAdaptiveFieldInjection(data.newStep, localSteps.length);
+          toast.success("Seksi investigasi khusus berhasil disusun berdasarkan jawaban sebelumnya.");
+        } else {
+          setIsReviewMode(true);
+          if (scrollContainerRef.current) scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      } catch (error: any) {
+        console.error("Macro-Adaptive Error:", error);
+        setIsReviewMode(true); // Fallback ke Review jika API gagal
+        if (scrollContainerRef.current) scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+      } finally {
+        setIsGeneratingStep(false);
+      }
+    } 
+    // 3. Mode Standard (Berakhir)
+    else {
       setIsReviewMode(true);
       if (scrollContainerRef.current) scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -205,7 +250,6 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
 
   // ================= TAMPILAN WIZARD (FOCUS MODE) =================
   return (
-    // Container utama mengunci layar (100dvh) agar tidak ikut scroll, hanya bagian tengah yang scroll
     <div className="fixed inset-0 z-50 flex flex-col bg-[#FAFAFA] overflow-hidden">
       
       {/* ================= HEADER (FIXED TOP) ================= */}
@@ -289,9 +333,9 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
                   <BrainIcon size={40} className="text-indigo-600 animate-pulse" />
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-2xl font-black text-slate-900">Meracik Formulir Adaptif...</h3>
+                  <h3 className="text-2xl font-black text-slate-900">Menganalisis & Meracik Modul...</h3>
                   <p className="text-slate-500 font-medium max-w-md mx-auto leading-relaxed">
-                    Sistem kami sedang membaca jawaban Anda di langkah sebelumnya dan menyusun pertanyaan khusus (tailor-made) untuk langkah berikutnya.
+                    Sistem kami sedang membaca profil Anda dan menyusun pertanyaan khusus (tailor-made) untuk tahap selanjutnya.
                   </p>
                 </div>
               </motion.div>
@@ -320,6 +364,19 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
                         className="bg-white p-5 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] shadow-sm ring-1 ring-slate-200/60 transition-shadow hover:ring-indigo-200 hover:shadow-md"
                       >
                         <DynamicField field={field} value={formData[field.id]} onChange={(val) => handleChange(field.id, val)} />
+
+                        {/* BLOK TAMBAHAN: EXPLAINABLE AI BADGE (Transparansi Kecerdasan) */}
+                        {field.aiReasoning && (
+                          <motion.div 
+                            initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
+                            className="mt-4 inline-flex items-start gap-2 bg-indigo-50/60 p-3 rounded-xl border border-indigo-100/60"
+                          >
+                            <AiSparkIcon size={16} className="text-indigo-500 shrink-0 mt-0.5" />
+                            <p className="text-[11px] font-medium text-indigo-900/80 leading-relaxed">
+                              <strong className="text-indigo-700">Analisis AI:</strong> {field.aiReasoning}
+                            </p>
+                          </motion.div>
+                        )}
                       </motion.div>
                     ))
                   )}
@@ -355,7 +412,7 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
                 disabled={!isStepValid() && currentStepData?.fields?.length > 0}
                 className="w-full sm:w-auto h-12 sm:h-14 px-6 sm:px-10 rounded-xl sm:rounded-2xl bg-slate-900 text-white font-bold text-sm sm:text-base hover:bg-indigo-600 shadow-xl shadow-slate-900/10 transition-all flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {step < totalSteps ? (
+                {step < totalSteps || template.formMode === 'hybrid' || template.formMode === 'adaptive' ? (
                   <>Selanjutnya <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" /></>
                 ) : (
                   <>Tinjau Data <DocExportIcon size={18} className="group-hover:scale-110 transition-transform" /></>
@@ -365,7 +422,6 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
           </div>
         </footer>
       )}
-
     </div>
   );
 }

@@ -127,6 +127,28 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
             placeholder="Jelaskan secara singkat apa tujuan dari form ini..."
           />
         </div>
+
+        {/* --- BLOK TAMBAHAN: MODE EKSEKUSI FORMULIR --- */}
+        <div className="space-y-2 md:col-span-2 bg-indigo-50/50 p-5 rounded-2xl ring-1 ring-indigo-100">
+          <div className="flex items-center gap-2 mb-2">
+            <Sparkles size={18} className="text-indigo-600" />
+            <label className="text-[11px] font-black text-indigo-900 uppercase tracking-widest">
+              Mode Eksekusi Formulir (Sistem AI)
+            </label>
+          </div>
+          <p className="text-xs text-indigo-700/70 font-medium mb-3">
+            Tentukan bagaimana AI merender kuesioner ini kepada responden secara *real-time*.
+          </p>
+          <select
+            value={template.formMode || 'standard'}
+            onChange={e => onChange({ ...template, formMode: e.target.value as 'standard' | 'adaptive' | 'hybrid' })}
+            className="w-full h-12 rounded-xl border border-indigo-200 bg-white text-slate-900 font-bold px-4 focus:ring-2 focus:ring-indigo-500 text-sm shadow-sm cursor-pointer"
+          >
+            <option value="standard">Standard (Statis & Konsisten sesuai Template)</option>
+            <option value="adaptive">Adaptive (Full AI Generate-on-the-fly dari Step 1)</option>
+            <option value="hybrid">Hybrid (Statis di Awal, Expand Dinamis di Akhir)</option>
+          </select>
+        </div>
       </div>
 
       {/* --- BLOK DINAMIS: HARAPAN OUTPUT / BENEFIT PESERTA --- */}
@@ -211,6 +233,7 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
           <p className="text-xs text-indigo-700/70 font-medium mt-0.5">Jika dicentang, peserta dapat melihat dan memilih kategori ini.</p>
         </div>
       </div>
+
     </div>
   );
 }

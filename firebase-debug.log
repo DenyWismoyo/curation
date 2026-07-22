@@ -1,17 +1,104 @@
-[debug] [2026-07-22T04:31:20.457Z] ----------------------------------------------------------------------
-[debug] [2026-07-22T04:31:20.459Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\ASUS\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only functions
-[debug] [2026-07-22T04:31:20.462Z] CLI Version:   15.24.0
-[debug] [2026-07-22T04:31:20.462Z] Platform:      win32
-[debug] [2026-07-22T04:31:20.462Z] Node Version:  v24.13.1
-[debug] [2026-07-22T04:31:20.462Z] Detected Agent: unknown
-[debug] [2026-07-22T04:31:20.462Z] Time:          Wed Jul 22 2026 11:31:20 GMT+0700 (Western Indonesia Time)
-[debug] [2026-07-22T04:31:20.462Z] ----------------------------------------------------------------------
+[debug] [2026-07-22T06:44:17.472Z] ----------------------------------------------------------------------
+[debug] [2026-07-22T06:44:17.474Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\ASUS\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only functions
+[debug] [2026-07-22T06:44:17.477Z] CLI Version:   15.24.0
+[debug] [2026-07-22T06:44:17.477Z] Platform:      win32
+[debug] [2026-07-22T06:44:17.478Z] Node Version:  v24.13.1
+[debug] [2026-07-22T06:44:17.478Z] Detected Agent: unknown
+[debug] [2026-07-22T06:44:17.478Z] Time:          Wed Jul 22 2026 13:44:17 GMT+0700 (Western Indonesia Time)
+[debug] [2026-07-22T06:44:17.478Z] ----------------------------------------------------------------------
 [debug] 
-[debug] [2026-07-22T04:31:22.973Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2026-07-22T04:31:22.973Z] > authorizing via signed-in user (deny.wismoyo@gmail.com)
-[debug] [2026-07-22T04:31:22.973Z] [iam] checking project teknopark-surakarta for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
-[debug] [2026-07-22T04:31:22.983Z] Checked if tokens are valid: true, expires at: 1784695760796
-[debug] [2026-07-22T04:31:22.983Z] Checked if tokens are valid: true, expires at: 1784695760796
-[debug] [2026-07-22T04:31:22.984Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions [none]
-[debug] [2026-07-22T04:31:22.984Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions  x-goog-user-project=teknopark-surakarta
-[debug] [2026-07-22T04:31:22.984Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2026-07-22T06:44:20.073Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-07-22T06:44:20.073Z] > authorizing via signed-in user (deny.wismoyo@gmail.com)
+[debug] [2026-07-22T06:44:20.073Z] [iam] checking project teknopark-surakarta for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2026-07-22T06:44:20.099Z] Checked if tokens are valid: true, expires at: 1784703791019
+[debug] [2026-07-22T06:44:20.099Z] Checked if tokens are valid: true, expires at: 1784703791019
+[debug] [2026-07-22T06:44:20.100Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions [none]
+[debug] [2026-07-22T06:44:20.100Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions  x-goog-user-project=teknopark-surakarta
+[debug] [2026-07-22T06:44:20.100Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2026-07-22T06:44:20.580Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions 200
+[debug] [2026-07-22T06:44:20.581Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2026-07-22T06:44:20.581Z] Checked if tokens are valid: true, expires at: 1784703791019
+[debug] [2026-07-22T06:44:20.581Z] Checked if tokens are valid: true, expires at: 1784703791019
+[debug] [2026-07-22T06:44:20.581Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/teknopark-surakarta/serviceAccounts/teknopark-surakarta@appspot.gserviceaccount.com:testIamPermissions [none]
+[debug] [2026-07-22T06:44:20.581Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/teknopark-surakarta/serviceAccounts/teknopark-surakarta@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2026-07-22T06:44:22.070Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/teknopark-surakarta/serviceAccounts/teknopark-surakarta@appspot.gserviceaccount.com:testIamPermissions 200
+[debug] [2026-07-22T06:44:22.071Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/teknopark-surakarta/serviceAccounts/teknopark-surakarta@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[info] 
+[info] === Deploying to 'teknopark-surakarta'...
+[info] 
+[info] i  deploying functions 
+[info] Running command: npm --prefix "$RESOURCE_DIR" run build
+[info] +  functions: Finished running predeploy script. 
+[debug] [2026-07-22T06:44:29.687Z] Checked if tokens are valid: true, expires at: 1784703791019
+[debug] [2026-07-22T06:44:29.687Z] Checked if tokens are valid: true, expires at: 1784703791019
+[debug] [2026-07-22T06:44:29.688Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta [none]
+[debug] [2026-07-22T06:44:30.069Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta 200
+[debug] [2026-07-22T06:44:30.069Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta {"projectNumber":"831800993201","projectId":"teknopark-surakarta","lifecycleState":"ACTIVE","name":"teknopark-surakarta","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2026-02-19T13:04:08.565280Z"}
+[info] i  functions: preparing codebase curation-apps for deployment 
+[info] i  functions: ensuring required API cloudfunctions.googleapis.com is enabled... 
+[info] i  functions: ensuring required API cloudbuild.googleapis.com is enabled... 
+[info] i  artifactregistry: ensuring required API artifactregistry.googleapis.com is enabled... 
+[debug] [2026-07-22T06:44:30.072Z] Checked if tokens are valid: true, expires at: 1784703791019
+[debug] [2026-07-22T06:44:30.072Z] Checked if tokens are valid: true, expires at: 1784703791019
+[debug] [2026-07-22T06:44:30.073Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/teknopark-surakarta/adminSdkConfig [none]
+[debug] [2026-07-22T06:44:31.453Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/teknopark-surakarta/adminSdkConfig 200
+[debug] [2026-07-22T06:44:31.453Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/teknopark-surakarta/adminSdkConfig {"projectId":"teknopark-surakarta","storageBucket":"teknopark-surakarta.firebasestorage.app"}
+[debug] [2026-07-22T06:44:31.455Z] Validating nodejs source
+[warn] !  functions: package.json indicates an outdated version of firebase-functions. Please upgrade using npm install --save firebase-functions@latest in your functions directory. 
+[debug] [2026-07-22T06:44:32.862Z] > [functions] package.json contents: {
+  "name": "functions",
+  "scripts": {
+    "lint": "eslint .",
+    "build": "node --max-old-space-size=4096 ./node_modules/typescript/bin/tsc",
+    "build:watch": "tsc --watch",
+    "serve": "npm run build && firebase emulators:start --only functions",
+    "shell": "npm run build && firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "22"
+  },
+  "main": "lib/index.js",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@react-pdf/renderer": "^4.5.1",
+    "@sparticuz/chromium": "^149.0.0",
+    "firebase-admin": "^13.6.0",
+    "firebase-functions": "^7.0.0",
+    "nodemailer": "^8.0.10",
+    "puppeteer-core": "^25.1.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "xendit-node": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.2",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@typescript-eslint/eslint-plugin": "^5.12.0",
+    "@typescript-eslint/parser": "^5.12.0",
+    "eslint": "^8.9.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-import": "^2.25.4",
+    "firebase-functions-test": "^3.4.1",
+    "typescript": "^5.4.5"
+  },
+  "private": true
+}
+[debug] [2026-07-22T06:44:32.862Z] Building nodejs source
+[info] i  functions: Loading and analyzing source code for codebase curation-apps to determine what to deploy 
+[debug] [2026-07-22T06:44:32.864Z] Could not find functions.yaml. Must use http discovery
+[debug] [2026-07-22T06:44:32.879Z] Found firebase-functions binary at 'D:\Project\ai-curation-app\functions\node_modules\.bin\firebase-functions'
+[info] Serving at port 8957
+
+[debug] [2026-07-22T06:44:34.723Z] Got response from /__/functions.yaml {"endpoints":{"generatePDFReport":{"availableMemoryMb":1024,"timeoutSeconds":300,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","region":["asia-southeast2"],"labels":{},"callableTrigger":{},"entryPoint":"generatePDFReport"},"matchBusinessWithIndustry":{"availableMemoryMb":512,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","region":["asia-southeast2"],"secretEnvironmentVariables":[{"key":"GEMINI_API_KEY"}],"labels":{},"callableTrigger":{},"entryPoint":"matchBusinessWithIndustry"},"generateFormTemplateFromAI":{"availableMemoryMb":2048,"timeoutSeconds":900,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","region":["asia-southeast2"],"secretEnvironmentVariables":[{"key":"GEMINI_API_KEY"}],"labels":{},"callableTrigger":{},"entryPoint":"generateFormTemplateFromAI"},"createPaymentInvoice":{"availableMemoryMb":256,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","region":["asia-southeast2"],"secretEnvironmentVariables":[{"key":"XENDIT_SECRET_KEY"},{"key":"META_PIXEL_ID"},{"key":"META_ACCESS_TOKEN"}],"labels":{},"callableTrigger":{},"entryPoint":"createPaymentInvoice"},"xenditWebhook":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","region":["asia-southeast2"],"secretEnvironmentVariables":[{"key":"META_PIXEL_ID"},{"key":"META_ACCESS_TOKEN"}],"labels":{},"httpsTrigger":{},"entryPoint":"xenditWebhook"},"chatWithOmniAi":{"availableMemoryMb":256,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","region":["asia-southeast2"],"secretEnvironmentVariables":[{"key":"GEMINI_API_KEY"}],"labels":{},"callableTrigger":{},"entryPoint":"chatWithOmniAi"},"generateActionPlanChecklist":{"availableMemoryMb":256,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","region":["asia-southeast2"],"secretEnvironmentVariables":[{"key":"GEMINI_API_KEY"}],"labels":{},"callableTrigger":{},"entryPoint":"generateActionPlanChecklist"},"generateSubTaskChecklist":{"availableMemoryMb":256,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","region":["asia-southeast2"],"secretEnvironmentVariables":[{"key":"GEMINI_API_KEY"}],"labels":{},"callableTrigger":{},"entryPoint":"generateSubTaskChecklist"},"generateTemplateSellingPoints":{"availableMemoryMb":256,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","region":["asia-southeast2"],"secretEnvironmentVariables":[{"key":"GEMINI_API_KEY"}],"labels":{},"callableTrigger":{},"entryPoint":"generateTemplateSellingPoints"},"weeklyActionPlanNudge":{"availableMemoryMb":1024,"timeoutSeconds":540,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","region":["asia-southeast2"],"secretEnvironmentVariables":[{"key":"GEMINI_API_KEY"},{"key":"SMTP_EMAIL"},{"key":"SMTP_PASSWORD"}],"labels":{},"scheduleTrigger":{"schedule":"0 8 * * 1","retryConfig":{},"timeZone":"Asia/Jakarta"},"entryPoint":"weeklyActionPlanNudge"},"generateAdaptiveQuestions":{"availableMemoryMb":512,"timeoutSeconds":120,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","region":["asia-southeast2"],"secretEnvironmentVariables":[{"key":"GEMINI_API_KEY"}],"labels":{},"callableTrigger":{},"entryPoint":"generateAdaptiveQuestions"},"evaluateMacroBranching":{"availableMemoryMb":256,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","region":["asia-southeast2"],"secretEnvironmentVariables":[{"key":"GEMINI_API_KEY"}],"labels":{},"callableTrigger":{},"entryPoint":"evaluateMacroBranching"},"manualTriggerRAGSeed":{"availableMemoryMb":512,"timeoutSeconds":300,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","region":["asia-southeast2"],"secretEnvironmentVariables":[{"key":"GEMINI_API_KEY"}],"labels":{},"httpsTrigger":{},"entryPoint":"manualTriggerRAGSeed"},"enhanceFieldLogic":{"availableMemoryMb":256,"timeoutSeconds":60,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","region":["asia-southeast2"],"secretEnvironmentVariables":[{"key":"GEMINI_API_KEY"}],"labels":{},"callableTrigger":{},"entryPoint":"enhanceFieldLogic"},"processCurationAssessment":{"availableMemoryMb":2048,"timeoutSeconds":540,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","region":["asia-southeast2"],"secretEnvironmentVariables":[{"key":"GEMINI_API_KEY"},{"key":"SMTP_EMAIL"},{"key":"SMTP_PASSWORD"}],"labels":{},"callableTrigger":{},"entryPoint":"processCurationAssessment"}},"specVersion":"v1alpha1","requiredAPIs":[{"api":"cloudscheduler.googleapis.com","reason":"Needed for scheduled functions."}],"extensions":{},"params":[{"type":"secret","name":"XENDIT_SECRET_KEY"},{"type":"secret","name":"META_PIXEL_ID"},{"type":"secret","name":"META_ACCESS_TOKEN"},{"type":"secret","name":"GEMINI_API_KEY"},{"type":"secret","name":"SMTP_EMAIL"},{"type":"secret","name":"SMTP_PASSWORD"}]}
+[debug] [2026-07-22T06:44:37.797Z] Checked if tokens are valid: true, expires at: 1784703791019
+[debug] [2026-07-22T06:44:37.798Z] Checked if tokens are valid: true, expires at: 1784703791019
+[debug] [2026-07-22T06:44:37.798Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v1/projects/teknopark-surakarta/locations/-/functions [none]
+[debug] [2026-07-22T06:44:38.802Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v1/projects/teknopark-surakarta/locations/-/functions 200
+[debug] [2026-07-22T06:44:38.802Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v1/projects/teknopark-surakarta/locations/-/functions {}
+[debug] [2026-07-22T06:44:38.803Z] Checked if tokens are valid: true, expires at: 1784703791019
+[debug] [2026-07-22T06:44:38.803Z] Checked if tokens are valid: true, expires at: 1784703791019
+[debug] [2026-07-22T06:44:38.803Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v2/projects/teknopark-surakarta/locations/-/functions filter=environment%3D%22GEN_2%22

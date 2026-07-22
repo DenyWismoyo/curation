@@ -1,11 +1,14 @@
 // src/app/components/admin/template-builder/TabFormBuilder.tsx
 'use client';
+
 import React, { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { FormTemplate, FormStep, FormField, FieldType } from '@/types/curation';
 import { ChevronUp, ChevronDown, Trash2, Sparkles, ArrowUp, ArrowDown, Plus, GitBranch, Save, Loader2, Bot } from 'lucide-react';
 import { getFirestore, doc, onSnapshot, updateDoc } from 'firebase/firestore';
+import { getFunctions, httpsCallable } from 'firebase/functions';
+import { toast } from 'sonner';
 
 interface TabFormBuilderProps {
   template: FormTemplate;
@@ -17,6 +20,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
   const [expandedSteps, setExpandedSteps] = useState<number[]>([0]);
   const [stepToDelete, setStepToDelete] = useState<number | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [enhancingFieldId, setEnhancingFieldId] = useState<string | null>(null); // State loading untuk AI Field Co-Pilot
 
   // REALTIME SNAPSHOT LISTENER (Hanya untuk sinkronisasi state loading & data baru)
   useEffect(() => {
@@ -61,9 +65,9 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
           steps: template.steps,
           lastUpdated: new Date().toISOString()
         });
-        alert("Formulir berhasil disimpan secara permanen!");
+        toast.success("Formulir berhasil disimpan secara permanen!");
       } catch (e: any) {
-        alert("Gagal menyimpan perubahan: " + e.message);
+        toast.error("Gagal menyimpan perubahan: " + e.message);
       }
     }
   };
@@ -126,6 +130,39 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
     onChange({ ...template, steps: newSteps });
   };
 
+  // --- BLOK BARU: HANDLER AI FIELD CO-PILOT ---
+  const handleEnhanceField = async (stepIndex: number, fieldIndex: number, field: FormField) => {
+    if (!field.label || field.label.trim() === "Pertanyaan Baru") {
+      toast.warning("Silakan tulis pertanyaan mentahnya terlebih dahulu di kolom Label.");
+      return;
+    }
+
+    setEnhancingFieldId(field.id);
+    try {
+      const functions = getFunctions(undefined, 'asia-southeast2');
+      const enhanceFn = httpsCallable(functions, 'enhanceFieldLogic');
+      const response = await enhanceFn({
+        trackName: template.trackName,
+        templateId: template.id,
+        currentField: field
+      });
+
+      const data = response.data as { success: boolean, fields: FormField[] };
+      if (data.success && data.fields && data.fields.length > 0) {
+        const newSteps = [...template.steps];
+        // Timpa field lama dengan 1 atau 2 field baru hasil AI
+        newSteps[stepIndex].fields.splice(fieldIndex, 1, ...data.fields);
+        onChange({ ...template, steps: newSteps });
+        toast.success("Logika pertanyaan berhasil disempurnakan oleh AI!");
+      }
+    } catch (error: any) {
+      console.error(error);
+      toast.error("Gagal menyempurnakan pertanyaan: " + error.message);
+    } finally {
+      setEnhancingFieldId(null);
+    }
+  };
+
   if (isGenerating) {
     return (
       <div className="flex flex-col items-center justify-center p-20 bg-indigo-50/50 border border-dashed border-indigo-200 rounded-[2rem] text-center space-y-4">
@@ -160,8 +197,10 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
       ) : (
         template.steps.map((step, sIdx) => {
           const isExpanded = expandedSteps.includes(sIdx);
+          
           return (
             <div key={`step-${sIdx}`} className="bg-white rounded-[2rem] ring-1 ring-slate-200/80 shadow-sm overflow-hidden transition-all duration-300">
+              
               <div 
                 className={`p-5 flex items-center justify-between cursor-pointer select-none transition-colors ${isExpanded ? 'bg-slate-900 text-white' : 'hover:bg-slate-50/50'}`}
                 onClick={() => toggleStepExpansion(sIdx)}
@@ -194,17 +233,36 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                   {isExpanded ? <ChevronUp className="w-5 h-5 text-slate-400" /> : <ChevronDown className="w-5 h-5 text-slate-400" />}
                 </div>
               </div>
+
               {isExpanded && (
                 <div className="p-4 sm:p-6 bg-slate-50/40 space-y-6 border-t border-slate-100">
                   {step.fields?.map((field, fIdx) => {
                     const isPrimaryIdentity = ['namaUsaha', 'namaPengisi'].includes(field.id);
+                    const isBeingEnhanced = enhancingFieldId === field.id;
+
                     return (
-                      <div key={`field-${sIdx}-${fIdx}`} className={`p-4 sm:p-5 rounded-2xl ring-1 shadow-sm flex flex-col md:flex-row gap-5 relative transition-all ${isPrimaryIdentity ? 'bg-indigo-50/20 ring-indigo-100/60' : 'bg-white ring-slate-200/70 hover:ring-indigo-200'}`}>
+                      <div key={`field-${sIdx}-${fIdx}`} className={`p-4 sm:p-5 rounded-2xl ring-1 shadow-sm flex flex-col md:flex-row gap-5 relative transition-all ${isPrimaryIdentity ? 'bg-indigo-50/20 ring-indigo-100/60' : 'bg-white ring-slate-200/70 hover:ring-indigo-200'} ${isBeingEnhanced ? 'opacity-50 pointer-events-none' : ''}`}>
+                        
                         <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="space-y-1 md:col-span-2">
+                          
+                          <div className="space-y-1 md:col-span-2 relative">
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Label Pertanyaan</label>
-                            <Input value={field.label} onChange={e => updateField(sIdx, fIdx, 'label', e.target.value)} className="bg-white border-slate-200 h-10 rounded-xl font-bold text-slate-800 text-sm" />
+                            <Input value={field.label} onChange={e => updateField(sIdx, fIdx, 'label', e.target.value)} className="bg-white border-slate-200 h-10 rounded-xl font-bold text-slate-800 text-sm pr-32" />
+                            
+                            {/* TOMBOL MANTRA AI FIELD CO-PILOT */}
+                            {!isPrimaryIdentity && (
+                              <button 
+                                onClick={() => handleEnhanceField(sIdx, fIdx, field)}
+                                disabled={isBeingEnhanced}
+                                className="absolute right-1 top-6 bottom-1 flex items-center gap-1.5 px-3 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 hover:text-indigo-700 text-[10px] font-black uppercase tracking-wider rounded-lg transition-colors border border-indigo-100"
+                                title="Biarkan AI mengubah pertanyaan sederhana ini menjadi form bercabang berbobot otomatis."
+                              >
+                                {isBeingEnhanced ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+                                AI Enhance
+                              </button>
+                            )}
                           </div>
+
                           <div className="space-y-1">
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tipe Input</label>
                             <select value={field.type} disabled={isPrimaryIdentity} onChange={e => updateField(sIdx, fIdx, 'type', e.target.value as FieldType)} className="w-full border border-slate-200 h-10 rounded-xl text-xs px-3 bg-white text-slate-800 font-medium">
@@ -218,6 +276,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                               <option value="file">Upload Dokumen</option>
                             </select>
                           </div>
+
                           <div className="space-y-1">
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex justify-between items-center">
                               <span>Key Database (ID)</span>
@@ -290,6 +349,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                                   const isObj = typeof opt === 'object' && opt !== null;
                                   const optLabel = isObj ? opt.label : String(opt);
                                   const optWeight = isObj ? opt.weight : 0;
+
                                   return (
                                     <div key={optIdx} className="flex items-center gap-2 bg-white p-2 border border-slate-200 rounded-lg shadow-sm">
                                       <Input 
@@ -333,6 +393,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                               </Button>
                             </div>
                           )}
+
                         </div>
                         
                         <div className="flex md:flex-col gap-1 items-center justify-center pt-3 md:pt-0 md:pl-3 border-t md:border-t-0 md:border-l border-slate-100 shrink-0">
