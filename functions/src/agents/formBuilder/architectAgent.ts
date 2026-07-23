@@ -1,6 +1,7 @@
 import { onDocumentUpdated } from "firebase-functions/v2/firestore";
 import { defineSecret } from "firebase-functions/params";
 import * as admin from "firebase-admin";
+import { getFirestore } from "firebase-admin/firestore";
 import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 
 const geminiApiKeySecret = defineSecret("GEMINI_API_KEY");
@@ -16,7 +17,7 @@ const logToTerminal = async (docRef: admin.firestore.DocumentReference, message:
 };
 
 export const formBuilderArchitectAgent = onDocumentUpdated({
-  database: "curation", // PERBAIKAN: Menunjuk database curation
+  database: "curation", 
   document: "form_templates/{templateId}",
   region: "asia-southeast2",
   memory: "1GiB",
@@ -51,9 +52,9 @@ export const formBuilderArchitectAgent = onDocumentUpdated({
             researchNotes: { type: SchemaType.STRING },
             aiPromptConfig: {
               type: SchemaType.OBJECT,
-              required: ["formPurpose", "aiPersona", "assessmentGoal", "gradingStrictness", "reportTone", "expectedMetrics", "expectedAnalysisBlocks", "expectedRecommendations", "riskFramework", "customReadinessTiers", "customScoringRubric", "negativePrompts", "formatInstructions", "customSystemPrompt", "actionPlanBehavior"],
+              // KUNCI PERBAIKAN: Sengaja tidak memasukkan targetAudience & formPurpose agar AI tidak berhalusinasi merubahnya
+              required: ["aiPersona", "assessmentGoal", "gradingStrictness", "reportTone", "expectedMetrics", "expectedAnalysisBlocks", "expectedRecommendations", "riskFramework", "customReadinessTiers", "customScoringRubric", "negativePrompts", "formatInstructions", "customSystemPrompt", "actionPlanBehavior"],
               properties: {
-                formPurpose: { type: SchemaType.STRING },
                 aiPersona: { type: SchemaType.STRING },
                 assessmentGoal: { type: SchemaType.STRING },
                 gradingStrictness: { type: SchemaType.STRING },
@@ -69,12 +70,6 @@ export const formBuilderArchitectAgent = onDocumentUpdated({
                 formatInstructions: { type: SchemaType.STRING },
                 customScoringRubric: { type: SchemaType.STRING },
                 actionPlanBehavior: { type: SchemaType.STRING },
-                customUiLabels: {
-                  type: SchemaType.OBJECT,
-                  properties: {
-                    scoreLabel: { type: SchemaType.STRING }, swotLabel: { type: SchemaType.STRING }, riskLabel: { type: SchemaType.STRING }, roadmapLabel: { type: SchemaType.STRING }, executionLabel: { type: SchemaType.STRING }
-                  }
-                },
                 researchSourcesCited: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } }
               }
             },
@@ -136,8 +131,26 @@ export const formBuilderArchitectAgent = onDocumentUpdated({
 
     await logToTerminal(templateRef, "Otak AI dan Master Blueprint berhasil disempurnakan!", "success");
 
+    // =========================================================================
+    // KUNCI PERBAIKAN: MERGE DATA (MELINDUNGI SETTINGAN UI DARI OVERWRITE AI)
+    // =========================================================================
+    const existingConfig = afterData.aiPromptConfig || {};
+    
+    const finalAiPromptConfig = {
+      ...existingConfig,           // 1. Bawa semua data lama terlebih dahulu
+      ...blueprint.aiPromptConfig, // 2. Timpa dengan kecerdasan / riset baru dari AI
+      
+      // 3. KUNCI ABSOLUT: Timpa kembali secara paksa dengan settingan UI Admin 
+      // agar AI tidak bisa menghapus, menimpa, atau berhalusinasi!
+      formPurpose: existingConfig.formPurpose || 'assessment',
+      targetAudience: existingConfig.targetAudience || 'company',
+      customUiLabels: existingConfig.customUiLabels || {},
+      isAdaptive: existingConfig.isAdaptive || false
+    };
+
+    // Simpan konfigurasi yang telah digabungkan ke database
     await templateRef.update({
-      aiPromptConfig: blueprint.aiPromptConfig,
+      aiPromptConfig: finalAiPromptConfig,
       stepOutlinesCache: blueprint.stepOutlines,
       researchNotesCache: blueprint.researchNotes,
       aiGenerationStatus: {
