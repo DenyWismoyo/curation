@@ -8,7 +8,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { FormTemplate } from '@/types/curation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { toast } from "sonner"; 
+import { toast } from "sonner";
+
 import { getFunctions, httpsCallable } from 'firebase/functions';
 
 import { 
@@ -55,7 +56,6 @@ function TemplateBuilderContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // MENGAMBIL STATE NAVIGASI LANGSUNG DARI URL QUERY PARAMETERS
   const activeFolder = searchParams.get('folder') || 'Semua';
   const editId = searchParams.get('edit');
   const tabParam = searchParams.get('tab') || 'general';
@@ -64,23 +64,18 @@ function TemplateBuilderContent() {
   const [activeTemplate, setActiveTemplate] = useState<FormTemplate | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  
   const [activeView, setActiveView] = useState<'list' | 'edit'>('list');
   const [activeTab, setActiveTab] = useState<'general' | 'ai' | 'builder' | 'preview' | 'logs'>('general');
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
   const [isEditMode, setIsEditMode] = useState(false); 
-
   const [dbFolders, setDbFolders] = useState<string[]>([]);
   const [newFolderName, setNewFolderName] = useState('');
   const [isCreatingFolder, setIsCreatingFolder] = useState(false);
   const [draggedTemplateId, setDraggedTemplateId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
-  
   const [editingFolder, setEditingFolder] = useState<string | null>(null);
   const [editFolderName, setEditFolderName] = useState('');
-
-  // State untuk Mass Generate
   const [isMassGenerating, setIsMassGenerating] = useState(false);
 
   // SINKRONISASI URL PARAMETER DENGAN RENDER VIEW & TAB DATA
@@ -124,6 +119,7 @@ function TemplateBuilderContent() {
         loadedFolders.push(doc.id);
       });
       setDbFolders(loadedFolders);
+
     } catch (error) {
       console.error("Gagal memuat data:", error);
       toast.error("Gagal memuat data template.");
@@ -176,10 +172,8 @@ function TemplateBuilderContent() {
           skipCount++;
           continue;
         }
-
         try {
           toast.info(`Memproses AI untuk: ${tpl.trackName}...`);
-          
           const payload = {
             trackName: tpl.trackName,
             trackDescription: tpl.trackDescription || "Asesmen dan evaluasi",
@@ -199,8 +193,6 @@ function TemplateBuilderContent() {
              
              successCount++;
              toast.success(`Berhasil meracik output: ${tpl.trackName}`);
-             
-             // Jeda 2.5 detik untuk menghindari rate limit API
              await new Promise(r => setTimeout(r, 2500));
           }
         } catch (e: any) {
@@ -217,9 +209,8 @@ function TemplateBuilderContent() {
     });
     
     setIsMassGenerating(false);
-    fetchData(); // Muat ulang data
+    fetchData(); 
   };
-  // ====================================
 
   const handleCreateFolder = async () => {
     if (!newFolderName.trim()) return;
@@ -252,6 +243,7 @@ function TemplateBuilderContent() {
     }
     const newName = editFolderName.trim();
     const templatesToUpdate = templates.filter(t => t.folder === oldName);
+
     setTemplates(prev => prev.map(t => t.folder === oldName ? { ...t, folder: newName } : t));
     setDbFolders(prev => prev.map(f => f === oldName ? newName : f));
     if (activeFolder === oldName) router.push(`?folder=${encodeURIComponent(newName)}`);
@@ -271,6 +263,7 @@ function TemplateBuilderContent() {
 
   const handleDeleteFolder = async (folderName: string) => {
     if(!confirm(`Hapus folder "${folderName}"? Template di dalamnya TIDAK akan dihapus, tetapi akan berpindah ke Uncategorized.`)) return;
+    
     const templatesToUpdate = templates.filter(t => t.folder === folderName);
     setTemplates(prev => prev.map(t => t.folder === folderName ? { ...t, folder: undefined } : t));
     setDbFolders(prev => prev.filter(f => f !== folderName));
@@ -280,9 +273,9 @@ function TemplateBuilderContent() {
       await deleteDoc(doc(db, 'template_folders', folderName));
       await Promise.all(templatesToUpdate.map(t => updateDoc(doc(db, 'form_templates', t.id), { folder: null })));
       toast.success("Folder berhasil dihapus.");
-    } catch (e) { 
-      console.error(e); 
-      toast.error("Gagal menghapus folder.");
+    } catch (e) {
+       console.error(e);
+       toast.error("Gagal menghapus folder.");
       fetchData();
     }
   };
@@ -303,9 +296,10 @@ function TemplateBuilderContent() {
     e.preventDefault();
     const templateId = e.dataTransfer.getData('text/plain') || draggedTemplateId;
     setDraggedTemplateId(null);
-    if (!templateId || targetFolder === 'Semua') return;
 
+    if (!templateId || targetFolder === 'Semua') return;
     const finalFolderValue = targetFolder === 'Uncategorized' ? null : targetFolder;
+
     setTemplates(prev => prev.map(t => t.id === templateId ? { ...t, folder: finalFolderValue || undefined } : t));
     
     try {
@@ -334,20 +328,24 @@ function TemplateBuilderContent() {
   const handleBulkMove = async (targetFolder: string) => {
     if(selectedTemplates.length === 0 || !targetFolder) return;
     const finalFolderValue = targetFolder === 'Uncategorized' ? null : targetFolder;
+    
     setTemplates(prev => prev.map(t => selectedTemplates.includes(t.id) ? { ...t, folder: finalFolderValue || undefined } : t));
+    
     try {
       await Promise.all(selectedTemplates.map(id => updateDoc(doc(db, 'form_templates', id), { folder: finalFolderValue })));
-      setSelectedTemplates([]); 
+      setSelectedTemplates([]);
       toast.success(`${selectedTemplates.length} Template dipindahkan ke ${targetFolder}.`);
-    } catch(e) { 
-      console.error("Bulk Move error", e); 
-      toast.error("Gagal memindahkan beberapa template.");
+    } catch(e) {
+       console.error("Bulk Move error", e);
+       toast.error("Gagal memindahkan beberapa template.");
     }
   };
 
   const handleBulkDelete = async () => {
     if(!confirm(`PERINGATAN! Anda akan menghapus permanen ${selectedTemplates.length} template terpilih. Lanjutkan?`)) return;
+    
     setTemplates(prev => prev.filter(t => !selectedTemplates.includes(t.id)));
+    
     try {
       await Promise.all(selectedTemplates.map(id => deleteDoc(doc(db, 'form_templates', id))));
       toast.success(`${selectedTemplates.length} Template berhasil dihapus.`);
@@ -361,6 +359,7 @@ function TemplateBuilderContent() {
   const importTemplate = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
+
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
@@ -371,9 +370,22 @@ function TemplateBuilderContent() {
           return;
         }
 
+        // AMANKAN STATUS AI: Pastikan tidak membawa error dari form lama
+        if (importedData.aiGenerationStatus) {
+            importedData.aiGenerationStatus = {
+                phase: "COMPLETED",
+                message: "Hasil Import JSON.",
+                updatedAt: new Date().toISOString()
+            };
+        }
+
         const newTemplate: FormTemplate = {
-          ...importedData, id: `track_imported_${Date.now()}`, trackName: `${importedData.trackName || 'Imported'}`,
-          isActive: false, lastUpdated: new Date().toISOString(), folder: activeFolder !== 'Semua' ? activeFolder : undefined
+          ...importedData, 
+          id: `track_imported_${Date.now()}`, 
+          trackName: `${importedData.trackName || 'Imported'}`,
+          isActive: false, 
+          lastUpdated: new Date().toISOString(), 
+          folder: activeFolder !== 'Semua' ? activeFolder : undefined
         };
         
         if (!newTemplate.aiPromptConfig) {
@@ -386,8 +398,9 @@ function TemplateBuilderContent() {
         setActiveTemplate(newTemplate);
         toast.success("Berhasil Import", { description: "Template baru berhasil dimuat dari file JSON." });
         router.push(`?folder=${encodeURIComponent(activeFolder)}&edit=${newTemplate.id}&tab=general`);
-      } catch (error) { 
-        toast.error("Gagal Membaca File", { description: "Terjadi kesalahan saat memparsing file JSON." }); 
+
+      } catch (error) {
+        toast.error("Gagal Membaca File", { description: "Terjadi kesalahan saat memparsing file JSON." });
       }
     };
     reader.readAsText(file);
@@ -412,10 +425,18 @@ function TemplateBuilderContent() {
           toast.error("Format File Invalid", { description: "File yang diunggah bukan format JSON objek." });
           return;
         }
-
         if (!importedData.trackName || !Array.isArray(importedData.steps)) {
           toast.error("Struktur Tidak Dikenali", { description: "Properti 'trackName' atau array 'steps' tidak ditemukan di dalam JSON. Ini bukan file template Curation." });
           return;
+        }
+
+        // AMANKAN STATUS AI: Pastikan tidak membawa error dari form lama
+        if (importedData.aiGenerationStatus) {
+            importedData.aiGenerationStatus = {
+                phase: "COMPLETED",
+                message: "Hasil Overwrite JSON.",
+                updatedAt: new Date().toISOString()
+            };
         }
 
         const updatedTemplate: FormTemplate = {
@@ -436,6 +457,7 @@ function TemplateBuilderContent() {
         toast.success("Template Berhasil Ditimpa (Overwrite)!", {
           description: "Data dari JSON berhasil masuk. Klik 'Simpan' untuk menyimpannya permanen ke database."
         });
+
       } catch (error) {
         toast.error("Gagal Membaca File JSON", { description: "Pastikan file tidak korup atau memiliki format JSON yang benar." });
       }
@@ -448,6 +470,7 @@ function TemplateBuilderContent() {
     if (!activeTemplate) return;
     const dataStr = JSON.stringify(activeTemplate, null, 2);
     const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+
     const linkElement = document.createElement('a');
     linkElement.setAttribute('href', dataUri);
     linkElement.setAttribute('download', `${activeTemplate.trackName}_export.json`);
@@ -513,24 +536,46 @@ function TemplateBuilderContent() {
       isActive: false, 
       lastUpdated: new Date().toISOString() 
     };
+
+    // Bersihkan status AI pada duplikat agar tidak error
+    if ((duplicatedTemplate as any).aiGenerationStatus) {
+        (duplicatedTemplate as any).aiGenerationStatus = {
+            phase: "COMPLETED",
+            message: "Hasil Duplikasi.",
+            updatedAt: new Date().toISOString()
+        };
+    }
+
     setActiveTemplate(duplicatedTemplate);
     router.push(`?folder=${encodeURIComponent(activeFolder)}&edit=${duplicatedId}&tab=general`);
     toast.success('Kategori berhasil digandakan!', { description: 'Klik "Simpan" untuk merekam permanen ke database.' });
   };
 
+  // KUNCI PERBAIKAN: Fungsi Simpan Paksa Mengubah Status AI Menjadi COMPLETED
   const saveTemplate = async (overrideTemplate?: FormTemplate) => {
-    const templateToSave = overrideTemplate || activeTemplate; 
+    const templateToSave = overrideTemplate || activeTemplate;
+    
     if (!templateToSave) return;
     
     const hasNamaUsaha = templateToSave.steps?.some(step => step.fields?.some(f => f.id === 'namaUsaha'));
     if (!hasNamaUsaha) {
-       toast.error('GAGAL MENYIMPAN: Form kehilangan kolom "namaUsaha" (Identitas Utama).', { description: 'Kolom pertama pada langkah 1 harus memiliki id: "namaUsaha" agar database bisa melacak entitas.'});
-       return; 
+      toast.error('GAGAL MENYIMPAN: Form kehilangan kolom "namaUsaha" (Identitas Utama).', { description: 'Kolom pertama pada langkah 1 harus memiliki id: "namaUsaha" agar database bisa melacak entitas.'});
+      return; 
     }
     
     setIsSaving(true);
     try {
-      const templateFinal = { ...templateToSave, lastUpdated: new Date().toISOString() };
+      const templateFinal = { 
+          ...templateToSave, 
+          lastUpdated: new Date().toISOString(),
+          // PERBAIKAN FATAL: Memaksa backend tahu ini adalah save manual, bukan perintah mulai AI
+          aiGenerationStatus: {
+              phase: "COMPLETED",
+              message: "Disimpan secara manual oleh Admin.",
+              updatedAt: new Date().toISOString()
+          }
+      };
+      
       const firestoreSafePayload = JSON.parse(JSON.stringify(templateFinal));
       
       await setDoc(doc(db, 'form_templates', firestoreSafePayload.id), firestoreSafePayload);
@@ -544,11 +589,11 @@ function TemplateBuilderContent() {
       if (!overrideTemplate) {
         toast.success('Template Form Berhasil Tersimpan!', { description: 'Perubahan Anda telah direkam ke database.'});
       }
-    } catch (error) { 
-       console.error(error); 
-       toast.error('Gagal menyimpan ke database.', { description: 'Periksa koneksi internet atau konsol log Anda.'});
-    } finally { 
-       setIsSaving(false); 
+    } catch (error) {
+        console.error(error);
+        toast.error('Gagal menyimpan ke database.', { description: 'Periksa koneksi internet atau konsol log Anda.'});
+    } finally {
+        setIsSaving(false); 
     }
   };
 
@@ -558,12 +603,12 @@ function TemplateBuilderContent() {
       await deleteDoc(doc(db, 'form_templates', id));
       setTemplates(prev => prev.filter(t => t.id !== id));
       toast.success("Template berhasil dihapus permanen.");
-      if (editId === id) { 
-         router.push(`?folder=${encodeURIComponent(activeFolder)}`); 
-       }
-    } catch (error) { 
-       console.error(error); 
-       toast.error("Gagal menghapus template.");
+      if (editId === id) {
+          router.push(`?folder=${encodeURIComponent(activeFolder)}`);
+        }
+    } catch (error) {
+        console.error(error);
+        toast.error("Gagal menghapus template.");
     }
   };
 
@@ -748,7 +793,7 @@ function TemplateBuilderContent() {
               <p className="text-slate-500 text-sm mt-1">{searchQuery ? `Tidak ada form yang cocok dengan "${searchQuery}".` : 'Tarik form dari folder lain dan lepas di folder ini.'}</p>
             </div>
           ) : viewMode === 'list' ? (
-            
+             
             <div className="bg-white rounded-3xl shadow-sm overflow-hidden animate-in fade-in duration-300 w-full border border-slate-200">
               <div className="overflow-x-auto w-full custom-scrollbar">
                 <table className="w-full text-sm text-left">
@@ -779,7 +824,7 @@ function TemplateBuilderContent() {
                           className={`group transition-all duration-200 border-l-[3px] ${
                             draggedTemplateId === template.id 
                               ? 'opacity-40 bg-slate-100 border-l-slate-300' 
-                              : isSelected && isEditMode 
+                              : isSelected && isEditMode
                               ? 'bg-indigo-50/50 border-l-indigo-500' 
                               : template.isActive 
                               ? 'bg-white hover:bg-emerald-50/20 border-l-emerald-400' 
@@ -824,18 +869,18 @@ function TemplateBuilderContent() {
             </div>
 
           ) : (
-            
+             
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 animate-in fade-in duration-300 w-full">
               {filteredTemplates.map(template => {
                 const isSelected = selectedTemplates.includes(template.id);
-
+                
                 return (
                   <Card 
                     key={template.id} draggable={isEditMode} onDragStart={(e) => handleDragStart(e, template.id)}
                     className={`relative p-6 rounded-3xl border-none ring-2 shadow-sm transition-all flex flex-col justify-between h-full cursor-pointer group ${
                       draggedTemplateId === template.id 
                         ? 'opacity-40 scale-95 ring-slate-200' 
-                        : isSelected && isEditMode 
+                        : isSelected && isEditMode
                         ? 'bg-indigo-50/40 ring-indigo-500' 
                         : template.isActive 
                         ? 'bg-white ring-slate-100 hover:ring-emerald-300 hover:shadow-xl' 
@@ -850,7 +895,7 @@ function TemplateBuilderContent() {
                         <CheckSquare className="w-4 h-4" />
                       </button>
                     )}
-
+                    
                     <div onClick={() => router.push(`?folder=${encodeURIComponent(activeFolder)}&edit=${template.id}&tab=general`)} className="flex-1 cursor-pointer">
                       <div className="flex items-start justify-between mb-4">
                         <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors ${
@@ -909,6 +954,7 @@ function TemplateBuilderContent() {
             <p className="text-[10px] uppercase tracking-widest font-bold text-slate-400 truncate">Status: {activeTemplate.isActive ? 'Publik' : 'Draft'}</p>
           </div>
         </div>
+        
         <div className="flex flex-wrap items-center gap-2 shrink-0">
           
           <label className="hidden sm:flex items-center gap-2 px-3 h-10 bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl text-sm font-medium cursor-pointer transition-all">
@@ -919,6 +965,8 @@ function TemplateBuilderContent() {
           <Button variant="outline" onClick={exportTemplate} className="border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl h-10 px-3 hidden sm:flex"><Download className="w-4 h-4 sm:mr-2 shrink-0" /> <span>Export JSON</span></Button>
           <Button variant="outline" onClick={duplicateTemplate} className="border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl h-10 px-3 hidden sm:flex"><Copy className="w-4 h-4 sm:mr-2 shrink-0" /> <span>Duplikat</span></Button>
           <Button variant="outline" onClick={() => deleteTemplate(activeTemplate.id)} className="border-rose-100 text-rose-600 hover:bg-rose-50 rounded-xl h-10 w-10 p-0 shrink-0"><Trash2 className="w-4 h-4" /></Button>
+          
+          {/* TOMBOL SIMPAN GLOBAL */}
           <Button onClick={() => saveTemplate()} disabled={isSaving} className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl h-10 px-6 font-bold shadow-sm shadow-indigo-200 whitespace-nowrap"><Save className="w-4 h-4 sm:mr-2 shrink-0" /> {isSaving ? 'Menyimpan...' : 'Simpan'}</Button>
         </div>
       </div>

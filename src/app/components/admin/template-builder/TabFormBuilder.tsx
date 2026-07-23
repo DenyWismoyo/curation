@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { FormTemplate, FormStep, FormField, FieldType } from '@/types/curation';
 import { ChevronUp, ChevronDown, Trash2, Sparkles, ArrowUp, ArrowDown, Plus, GitBranch, Save, Loader2, Bot } from 'lucide-react';
-import { doc, onSnapshot, updateDoc } from 'firebase/firestore'; // PERBAIKAN: getFirestore dihapus
+import { doc, onSnapshot, updateDoc } from 'firebase/firestore'; 
 import { getFunctions, httpsCallable } from 'firebase/functions';
-import { db } from '@/lib/firebase'; // PERBAIKAN: Import db
+import { db } from '@/lib/firebase'; 
 import { toast } from 'sonner';
 
 interface TabFormBuilderProps {
@@ -22,22 +22,33 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
   const [isGenerating, setIsGenerating] = useState(false);
   const [enhancingStepIndex, setEnhancingStepIndex] = useState<number | null>(null);
 
+  const templateRef = useRef<FormTemplate>(template);
+  useEffect(() => {
+    templateRef.current = template;
+  }, [template]);
+
+  const isWaitingForAI = useRef(false);
+
   useEffect(() => {
     if (!template.id) return;
     
-    // PERBAIKAN: Menggunakan db dari @/lib/firebase
     const unsubscribe = onSnapshot(doc(db, "form_templates", template.id), (snapshot) => {
       if (snapshot.exists()) {
         const docData = snapshot.data();
         const status = docData.aiGenerationStatus;
 
         if (status) {
-          if (status.phase === 'RESEARCHING' || status.phase === 'BUILDING_FORM') {
+          const isProcessing = ['RESEARCHING', 'BUILDING_FORM'].includes(status.phase);
+          
+          if (isProcessing) {
             setIsGenerating(true);
+            isWaitingForAI.current = true;
           } else if (status.phase === 'COMPLETED' || status.phase === 'FAILED') {
             setIsGenerating(false);
-            if (status.phase === 'COMPLETED' && docData.steps) {
-              onChange({ ...template, steps: docData.steps });
+            
+            if (status.phase === 'COMPLETED' && isWaitingForAI.current && docData.steps) {
+              onChange({ ...templateRef.current, steps: docData.steps });
+              isWaitingForAI.current = false;
             }
           }
         }
@@ -57,15 +68,23 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
     return fields;
   };
 
-  const handleManualSave = async () => {
+  // PERBAIKAN: Mencegah Form Submit bawaan & Mengunci Status AI
+  const handleManualSave = async (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
     if (onAutoSave) {
       await onAutoSave(template);
     } else {
       try {
-        // PERBAIKAN: Menggunakan db dari @/lib/firebase
         await updateDoc(doc(db, "form_templates", template.id), {
           steps: template.steps,
-          lastUpdated: new Date().toISOString()
+          lastUpdated: new Date().toISOString(),
+          // Paksa AI untuk standby agar tidak ada trigger tak terduga
+          "aiGenerationStatus.phase": "COMPLETED",
+          "aiGenerationStatus.message": "Formulir disimpan secara manual oleh Admin."
         });
         toast.success("Formulir berhasil disimpan secara permanen!");
       } catch (e: any) {
@@ -191,7 +210,8 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Hasil Generasi Otak AI</p>
           </div>
         </div>
-        <Button onClick={handleManualSave} variant="outline" className="bg-slate-900 text-white hover:bg-slate-800 font-bold hidden sm:flex gap-2 rounded-xl h-10 shadow-sm">
+        {/* PERBAIKAN: Menambahkan type="button" untuk mencegah form parent ter-submit */}
+        <Button type="button" onClick={handleManualSave} variant="outline" className="bg-slate-900 text-white hover:bg-slate-800 font-bold hidden sm:flex gap-2 rounded-xl h-10 shadow-sm">
           <Save className="w-4 h-4" /> Simpan Form
         </Button>
       </div>
@@ -235,6 +255,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                 <div className="flex items-center gap-2 shrink-0">
                   {isExpanded && (
                     <Button 
+                      type="button"
                       variant="outline" 
                       onClick={(e) => { e.stopPropagation(); handleEnhanceStep(sIdx, step); }} 
                       disabled={isStepBeingEnhanced}
@@ -246,7 +267,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                   )}
                   
                   {isExpanded && (
-                    <Button variant="ghost" onClick={(e) => { e.stopPropagation(); setStepToDelete(sIdx); }} className="text-slate-400 hover:text-rose-400 hover:bg-slate-800 h-8 px-2.5 rounded-xl text-xs font-bold mr-1 hidden sm:flex">
+                    <Button type="button" variant="ghost" onClick={(e) => { e.stopPropagation(); setStepToDelete(sIdx); }} className="text-slate-400 hover:text-rose-400 hover:bg-slate-800 h-8 px-2.5 rounded-xl text-xs font-bold mr-1 hidden sm:flex">
                       Hapus Step
                     </Button>
                   )}
@@ -302,7 +323,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                             </label>
                           </div>
 
-                          {/* --- PERBAIKAN LOGIKA BERCABANG (SHOW-IF) --- */}
+                          {/* --- LOGIKA BERCABANG (SHOW-IF) --- */}
                           {!isPrimaryIdentity && (
                             <div className="md:col-span-2 space-y-2 p-3.5 bg-indigo-50/30 rounded-xl border border-indigo-100/50">
                               <label className="text-[10px] font-black text-indigo-900 uppercase tracking-wider flex items-center gap-1.5"><GitBranch className="w-3.5 h-3.5 text-indigo-600"/> Logika Aliran Cabang Pertanyaan</label>
@@ -406,7 +427,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                                           className="w-14 h-8 text-center text-xs font-bold text-indigo-600 bg-indigo-50/40 border-indigo-100" 
                                         />
                                       </div>
-                                      <Button variant="ghost" onClick={() => {
+                                      <Button type="button" variant="ghost" onClick={() => {
                                         const newOpts = [...(field.options || [])];
                                         newOpts.splice(optIdx, 1);
                                         updateField(sIdx, fIdx, 'options', newOpts);
@@ -417,7 +438,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                                   );
                                 })}
                               </div>
-                              <Button variant="outline" size="sm" onClick={() => {
+                              <Button type="button" variant="outline" size="sm" onClick={() => {
                                 const newOpts = [...(field.options || [])];
                                 newOpts.push({ label: `Pilihan ${newOpts.length + 1}`, weight: 0 });
                                 updateField(sIdx, fIdx, 'options', newOpts);
@@ -436,7 +457,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                       </div>
                     );
                   })}
-                  <Button variant="outline" onClick={() => addField(sIdx)} className="w-full border-dashed border-2 h-12 text-xs font-bold text-slate-500 rounded-xl hover:bg-slate-50"><Plus className="h-4 w-4 mr-1.5" /> Tambah Kuesioner Pertanyaan</Button>
+                  <Button type="button" variant="outline" onClick={() => addField(sIdx)} className="w-full border-dashed border-2 h-12 text-xs font-bold text-slate-500 rounded-xl hover:bg-slate-50"><Plus className="h-4 w-4 mr-1.5" /> Tambah Kuesioner Pertanyaan</Button>
                 </div>
               )}
             </div>
@@ -444,7 +465,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
         })
       )}
 
-      <Button onClick={addStep} className="w-full bg-slate-200 text-slate-700 hover:bg-slate-300 h-12 font-bold text-sm rounded-xl mt-4 border-dashed border-2 border-slate-300"><Plus className="h-4 w-4 mr-1.5" /> Tambah Seksi Langkah Baru (Manual)</Button>
+      <Button type="button" onClick={addStep} className="w-full bg-slate-200 text-slate-700 hover:bg-slate-300 h-12 font-bold text-sm rounded-xl mt-4 border-dashed border-2 border-slate-300"><Plus className="h-4 w-4 mr-1.5" /> Tambah Seksi Langkah Baru (Manual)</Button>
 
       {/* DIALOG MODAL CONFIRM DELETE STEP */}
       {stepToDelete !== null && (
@@ -453,8 +474,8 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
             <h3 className="text-base font-black text-slate-900 text-center">Hapus Langkah Formulir Ini?</h3>
             <p className="text-xs text-slate-500 text-center mt-1 leading-relaxed">Seluruh susunan variabel kuesioner di dalam seksi langkah ini akan terhapus secara permanen.</p>
             <div className="flex gap-2.5 mt-6">
-              <Button variant="outline" onClick={() => setStepToDelete(null)} className="w-full h-10 text-xs font-bold rounded-xl">Batal</Button>
-              <Button onClick={executeRemoveStep} className="w-full h-10 text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white rounded-xl">Ya, Hapus</Button>
+              <Button type="button" variant="outline" onClick={() => setStepToDelete(null)} className="w-full h-10 text-xs font-bold rounded-xl">Batal</Button>
+              <Button type="button" onClick={executeRemoveStep} className="w-full h-10 text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white rounded-xl">Ya, Hapus</Button>
             </div>
           </div>
         </div>

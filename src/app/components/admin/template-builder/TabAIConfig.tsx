@@ -26,7 +26,11 @@ const ADVANCED_SCENARIOS = [
   { id: 'b2b_audit', label: 'Strict Audit Bisnis (B2B)' },
   { id: 'b2c_counseling', label: 'Empathetic Counseling (B2C)' },
   { id: 'b2e_hybrid', label: 'Hybrid HR & Coaching (B2E)' },
-  { id: 'edu_coaching', label: 'Educational / Pelatihan' }
+  { id: 'edu_coaching', label: 'Educational / Pelatihan' },
+  { id: 'gov_policy', label: 'Audit Tata Kelola Publik (Pemerintah)' },
+  { id: 'startup_pitch', label: 'Evaluasi Traksi & Skalabilitas (Startup)' },
+  { id: 'creative_portfolio', label: 'Kurasi Portofolio Kreatif & Seni' },
+  { id: 'financial_risk', label: 'Analisis Kelayakan Finansial (Investasi)' }
 ];
 
 interface TabAIConfigProps {
@@ -37,13 +41,22 @@ interface TabAIConfigProps {
 export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isGeneratingAdvanced, setIsGeneratingAdvanced] = useState(false);
-  const [advancedScenario, setAdvancedScenario] = useState('b2b_audit');
+  const [advancedScenario, setAdvancedScenario] = useState('b2c_counseling');
   const [dbStatus, setDbStatus] = useState<{ phase: string; message: string } | null>(null);
   const [isPresetDropdownOpen, setIsPresetDropdownOpen] = useState(false);
   const [presetSearchTerm, setPresetSearchTerm] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const isAdaptive = (template.aiPromptConfig as any)?.isAdaptive || false;
+
+  // PERBAIKAN 1: Menyimpan state template terakhir agar bisa dipanggil tanpa memicu re-render
+  const templateRef = useRef<FormTemplate>(template);
+  useEffect(() => {
+    templateRef.current = template;
+  }, [template]);
+
+  // PERBAIKAN 2: Flag pintar untuk mengetahui apakah AI sedang jalan atau tidak
+  const isWaitingForAI = useRef(false);
 
   useEffect(() => {
     if (!template.id) return;
@@ -55,12 +68,24 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
 
         if (status) {
           setDbStatus({ phase: status.phase, message: status.message });
-          if (status.phase === 'INITIATING' || status.phase === 'RESEARCHING' || status.phase === 'FABRICATING' || status.phase === 'VALIDATING' || status.phase === 'PRE_WARMING' || status.phase === 'BUILDING_FORM') {
+          
+          const processingPhases = ['INITIATING', 'RESEARCHING', 'FABRICATING', 'VALIDATING', 'PRE_WARMING', 'BUILDING_FORM'];
+          
+          if (processingPhases.includes(status.phase)) {
             setIsGenerating(true);
-          } else if (status.phase === 'COMPLETED' || status.phase === 'FAILED') {
+            isWaitingForAI.current = true; // Tandai bahwa kita memang sedang menyuruh AI bekerja
+          } 
+          else if (status.phase === 'COMPLETED' || status.phase === 'FAILED') {
             setIsGenerating(false);
-            if (status.phase === 'COMPLETED' && docData.aiPromptConfig) {
-              onChange({ ...template, aiPromptConfig: docData.aiPromptConfig, steps: docData.steps });
+            
+            // PERBAIKAN 3: HANYA timpa state lokal dengan database JIKA AI benar-benar baru selesai bekerja
+            if (status.phase === 'COMPLETED' && isWaitingForAI.current && docData.aiPromptConfig) {
+              onChange({ 
+                ...templateRef.current, // Gunakan template terbaru
+                aiPromptConfig: docData.aiPromptConfig, 
+                steps: docData.steps 
+              });
+              isWaitingForAI.current = false; // Matikan flag agar perubahan manual berikutnya tidak ditimpa
             }
           }
         }
@@ -68,7 +93,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
     });
 
     return () => unsubscribe();
-  }, [template.id, onChange, template]);
+  }, [template.id]); // PERBAIKAN 4: Array dependency dibersihkan agar tidak loop
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -125,7 +150,6 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
       if (!confirm("PERINGATAN: Proses ini akan mereset dan menimpa seluruh langkah form Anda yang ada di Tab Form Builder. Lanjutkan?")) return;
     }
 
-    // PERBAIKAN: Logika dinamis untuk berbagai tipe audiens
     const audience = template.aiPromptConfig?.targetAudience || 'company';
     let targetContext = "";
     
@@ -361,7 +385,6 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
             </select>
           </div>
           
-          {/* PERBAIKAN: Penambahan opsi Target Audiens */}
           <div className="space-y-1.5">
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Target Subjek Asesmen:</label>
             <select
@@ -452,11 +475,12 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
              />
           </div>
 
-          <Button 
-            onClick={handleGenerateUnified} 
-            disabled={isGenerating}
-            className={`w-full font-black h-14 text-base rounded-2xl shadow-lg transition-all duration-300 ${isGenerating ? 'bg-indigo-500/50 cursor-wait text-white' : 'bg-indigo-500 hover:bg-indigo-400 text-white hover:-translate-y-1 hover:shadow-indigo-500/30'}`}
-          >
+              <Button 
+                type="button" // <--- TAMBAHKAN INI
+                onClick={handleGenerateUnified} 
+                disabled={isGenerating}
+                className="w-full font-black h-14 text-base rounded-2xl..."
+              >
             {isGenerating ? <><Loader2 className="w-5 h-5 animate-spin mr-2"/> Sistem Multi-Agent Sedang Bekerja...</> : <><Bot className="w-5 h-5 mr-2"/> Generate Otak AI & Kuesioner Form</>}
           </Button>
         </div>
@@ -593,11 +617,12 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
                  <option key={sc.id} value={sc.id}>{sc.label}</option>
                ))}
              </select>
-             <Button 
-               onClick={handleGenerateAdvancedPrompts}
-               disabled={isGeneratingAdvanced}
-               className="w-full sm:w-auto bg-rose-600 hover:bg-rose-700 text-white font-bold h-10 rounded-xl text-xs"
-             >
+<Button 
+  type="button" // <--- TAMBAHKAN INI
+  onClick={handleGenerateAdvancedPrompts}
+  disabled={isGeneratingAdvanced}
+  className="w-full sm:w-auto bg-rose-600 hover:bg-rose-700..."
+>
                {isGeneratingAdvanced ? <Loader2 className="w-4 h-4 mr-1.5 animate-spin" /> : <Sparkles className="w-4 h-4 mr-1.5" />}
                AI Enhance
              </Button>

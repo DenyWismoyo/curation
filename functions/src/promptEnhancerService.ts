@@ -35,32 +35,45 @@ export const generateAdvancedPrompts = onCall({
               customSystemPrompt: { type: SchemaType.STRING, description: "Aturan logika IF-THEN dan cara AI menganalisis data (Apakah mencari celah/kritis, atau suportif)." },
               negativePrompts: { type: SchemaType.STRING, description: "Larangan mutlak / Red Flags / Kata-kata yang tidak boleh digunakan oleh AI." },
               formatInstructions: { type: SchemaType.STRING, description: "Instruksi format penulisan. Wajib menginstruksikan AI untuk menggunakan markdown **tebal**, *miring*, dan ### sub-heading." },
-              actionPlanBehavior: { type: SchemaType.STRING, description: "Instruksi KHUSUS bagaimana AI harus menulis rencana aksi. Apakah berupa SOP bisnis, atau rutinitas psikologi individu." }
+              
+              // PERBAIKAN: Mempertegas instruksi untuk memastikan AI merespons dengan kalimat lengkap, bukan placeholder
+              actionPlanBehavior: { type: SchemaType.STRING, description: "Instruksi KHUSUS berupa 1-2 kalimat detail tentang bagaimana AI harus menulis rencana aksi. (CONTOH: 'Fokuskan action plan pada pembuatan SOP, metrik KPI, dan taktik efisiensi biaya. Gunakan bahasa korporat yang asertif.')" }
             }
           }
         }
       });
 
-      // Menerjemahkan skema pilihan admin menjadi instruksi
+      // PERBAIKAN: Menerjemahkan opsi skenario baru ke dalam instruksi prompt builder
       let scenarioInstruction = "";
       switch(scenario) {
         case 'b2e_hybrid':
-          scenarioInstruction = "SKEMA HYBRID B2E (Business-to-Employee): Atur 'customSystemPrompt' agar AI sangat KRITIS dan OBJEKTIF saat menilai metrik untuk laporan HR. TETAPI, atur 'actionPlanBehavior' agar AI SANGAT SUPORTIF, EMPATIK, dan bertindak layaknya Mentor/Coach untuk pengembangan diri pegawai tersebut.";
+          scenarioInstruction = "SKEMA HYBRID B2E: Atur 'customSystemPrompt' agar AI kritis terhadap metrik HR, tetapi atur 'actionPlanBehavior' agar suportif dan empatik (layaknya Mentor).";
           break;
         case 'b2b_audit':
-          scenarioInstruction = "SKEMA STRICT AUDIT B2B: Atur SELURUH prompt agar AI bertindak seperti Auditor Eksternal, Venture Capital, atau Investigator Hukum. Sangat ketat, mencari celah risiko, dan action plan wajib berupa SOP strategis/taktis bisnis. Larang penggunaan bahasa emosional.";
+          scenarioInstruction = "SKEMA STRICT AUDIT B2B: Atur AI layaknya Auditor Eksternal. 'actionPlanBehavior' WAJIB diinstruksikan untuk membuat SOP bisnis, perbaikan operasional, dan taktik ROI.";
           break;
         case 'b2c_counseling':
-          scenarioInstruction = "SKEMA EMPATHETIC COUNSELING B2C: Atur SELURUH prompt agar AI bertindak sebagai Psikolog/Konselor. Larang keras penggunaan istilah korporat/bisnis/B2B. Action plan harus berupa kebiasaan harian (habits), mindfulness, atau intervensi psikologis ringan.";
+          scenarioInstruction = "SKEMA EMPATHETIC COUNSELING B2C: AI bertindak sebagai Psikolog/Konselor. 'actionPlanBehavior' WAJIB diinstruksikan untuk merumuskan intervensi psikologis, kebiasaan harian (habits), dan mindfulness.";
           break;
         case 'edu_coaching':
-          scenarioInstruction = "SKEMA EDUCATIONAL COACHING: Atur prompt agar AI bertindak sebagai Dosen/Pelatih Ahli. Evaluasi harus bersifat akademis/evaluatif namun mendidik. Action plan berupa kurikulum belajar, latihan soal, atau perbaikan teknis.";
+          scenarioInstruction = "SKEMA EDUCATIONAL: AI bertindak sebagai Dosen/Pelatih. 'actionPlanBehavior' WAJIB difokuskan pada kurikulum belajar, tugas latihan, dan perbaikan teknis/akademik.";
+          break;
+        case 'gov_policy':
+          scenarioInstruction = "SKEMA PEMERINTAHAN: AI bertindak sebagai Analis Kebijakan Publik. 'actionPlanBehavior' WAJIB difokuskan pada rekomendasi tata kelola, transparansi, dan efisiensi birokrasi.";
+          break;
+        case 'startup_pitch':
+          scenarioInstruction = "SKEMA STARTUP: AI bertindak sebagai Venture Capitalist. 'actionPlanBehavior' WAJIB berfokus pada strategi growth hacking, pivot produk, mitigasi burn-rate, dan go-to-market strategy.";
+          break;
+        case 'creative_portfolio':
+          scenarioInstruction = "SKEMA KREATIF: AI bertindak sebagai Art Director/Kurator. 'actionPlanBehavior' WAJIB berfokus pada eksplorasi ide, perbaikan estetika karya, dan penetrasi audiens kreatif.";
+          break;
+        case 'financial_risk':
+          scenarioInstruction = "SKEMA FINANSIAL: AI bertindak sebagai Financial Advisor/Risk Analyst. 'actionPlanBehavior' WAJIB berfokus pada diversifikasi portofolio, efisiensi cashflow, dan strategi lindung nilai (hedging).";
           break;
         default:
-          scenarioInstruction = "SKEMA STANDAR UMUM: Buat instruksi yang seimbang, profesional, dan berorientasi pada hasil.";
+          scenarioInstruction = "SKEMA STANDAR UMUM: Buat instruksi yang seimbang dan berorientasi pada hasil.";
       }
 
-      // PERBAIKAN: Melemparkan data audiens utuh agar AI bisa meracik prompt dengan sempurna
       const prompt = `
         Konteks Program Asesmen: "${trackName || 'Umum'}"
         Target Audiens: "${targetAudience || 'Perusahaan / Organisasi'}"
@@ -74,7 +87,7 @@ export const generateAdvancedPrompts = onCall({
         Anda WAJIB menyisipkan instruksi format visual berikut secara eksplisit ke dalam teks 'formatInstructions':
         "Gunakan Markdown secara maksimal untuk kemudahan membaca: Gunakan penanda **teks tebal** untuk menyoroti nama metrik/istilah penting, *miring* untuk penekanan atau kutipan, dan gunakan awalan ### (Heading 3) untuk memisahkan sub-topik laporan agar sistem merendernya dengan rapi."
 
-        Tugas: Hasilkan 5 komponen Advanced Prompting yang tajam, detail, dan langsung bisa dieksekusi oleh mesin AI.
+        Tugas: Hasilkan 5 komponen Advanced Prompting yang tajam, detail, dan langsung bisa dieksekusi oleh mesin AI. Pastikan seluruh kolom terisi dengan kalimat penuh.
       `;
 
       const result = await model.generateContent(prompt);

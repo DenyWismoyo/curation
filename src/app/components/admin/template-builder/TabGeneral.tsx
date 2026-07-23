@@ -244,11 +244,12 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
             <p className="text-xs text-slate-500 font-medium mt-1">Poin-poin hasil akhir yang akan muncul di Katalog Landing Page.</p>
           </div>
           
-          <Button 
-            onClick={handleGenerateOutputs} 
-            disabled={isGenerating}
-            className="shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl h-10 shadow-md shadow-indigo-200"
-          >
+<Button 
+  type="button" // <--- TAMBAHKAN INI
+  onClick={handleGenerateOutputs} 
+  disabled={isGenerating}
+  className="shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white..."
+>
             {isGenerating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
             Auto-Generate dengan AI
           </Button>
