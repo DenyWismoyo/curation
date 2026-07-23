@@ -6,7 +6,7 @@ service cloud.firestore {
     function isAuthenticated() { return request.auth != null; }
     function isSuperAdmin() { return request.auth != null && request.auth.token.email == 'deny.wismoyo@gmail.com'; }
     
-    // FUNGSI PINTAR: Mengecek hak asesor baik dari dokumen UID maupun dokumen Email
+    // FUNGSI PINTAR: Mengecek hak asesor
     function isAssessor() {
       return isAuthenticated() && (
         (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'assessor') ||
@@ -14,21 +14,29 @@ service cloud.firestore {
       );
     }
 
-    // Mengizinkan user membaca data profilnya jika ID dokumennya adalah UID atau Email-nya
+    // FUNGSI BARU: Mengecek hak Admin CSRS agar tidak terblokir
+    function isAdminCSRS() {
+      return isAuthenticated() && (
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin_csrs') ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.token.email)) && get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role == 'admin_csrs')
+      );
+    }
+
     match /users/{userId} {
       allow read, write: if isAuthenticated() && (request.auth.uid == userId || request.auth.token.email == userId || isSuperAdmin());
     }
 
     match /assessments/{assessmentId} {
-      // BACA: Izinkan siapa saja yang sedang login (atau true jika ingin benar-benar publik) 
-      // untuk melihat dokumen ringkasan saat membagikan link
-      allow read: if isAuthenticated(); 
+      // PERBAIKAN: Ubah menjadi 'if true' agar link dashboard asesmen bisa dibagikan 
+      // kepada atasan / rekan kerja user meskipun mereka belum login.
+      allow read: if true; 
       
-      // UPDATE: Hanya pemilik, Assessor, atau SuperAdmin
+      // UPDATE: Hanya pemilik, Assessor, Admin CSRS, atau SuperAdmin
       allow update: if isAuthenticated() && (
         request.auth.uid == resource.data.userId || 
         isSuperAdmin() || 
-        isAssessor()
+        isAssessor() ||
+        isAdminCSRS()
       );
       
       allow create: if isAuthenticated();
@@ -37,53 +45,41 @@ service cloud.firestore {
       // ==========================================
       // SECURITY RULE UNTUK DOCUMENT SPLITTING
       // ==========================================
-      // Kunci rapat-rapat sub-koleksi ini HANYA untuk SuperAdmin dan Assessor
+      // Sub-koleksi rahasia tetap dikunci ketat HANYA untuk Admin & Assessor
       match /internal/details {
-         allow read: if isSuperAdmin() || isAssessor();
-         allow write: if false; // Hanya Cloud Functions (Backend) yang diizinkan menulis ke sini
+         allow read: if isSuperAdmin() || isAssessor() || isAdminCSRS();
+         allow write: if false; 
       }
     }
 
     match /form_templates/{document=**} {
-      allow read: if true; // Akses baca publik (dibutuhkan untuk CurationLanding)
+      allow read: if true; 
       allow write: if isSuperAdmin();
     }
 
     match /corporate_tokens/{document=**} {
       allow read: if isAuthenticated();
       allow create, delete: if isSuperAdmin();
-      allow update: if isSuperAdmin() || isAssessor();
+      allow update: if isSuperAdmin() || isAssessor() || isAdminCSRS();
     }
     
-    // Aturan untuk Ulasan & Feedback
     match /feedbacks/{document=**} {
-      // Mengizinkan siapapun (termasuk user yang belum login) untuk mengirim ulasan
       allow create: if true; 
-      // Hanya Super Admin yang diizinkan untuk membaca, memperbarui, dan menghapus ulasan
       allow read, update, delete: if isSuperAdmin(); 
     }
+    
     match /adaptive_question_banks/{document=**} { 
-  allow read: if isSuperAdmin(); 
-  allow write: if false; 
-}
+      allow read: if isSuperAdmin() || isAdminCSRS(); 
+      allow write: if false; 
+    }
 
-    // ==========================================
-    // ATURAN KOLEKSI MITRA & EKOSISTEM
-    // ==========================================
     match /landing_partners/{document=**} {
-      // Mengizinkan SIAPA SAJA (publik) untuk membaca data mitra agar bisa tampil di Landing Page
       allow read: if true; 
-      // HANYA Admin yang diizinkan untuk menambah, mengubah, atau menghapus data mitra
       allow write: if isSuperAdmin();
     }
 
-    // ==========================================
-    // ATURAN BARU: KOLEKSI DATA ASESOR
-    // ==========================================
     match /assessors/{document=**} {
-      // Asesor (untuk membaca profilnya sendiri) dan Admin bebas membaca data profil ini
       allow read: if isAuthenticated();
-      // HANYA Super Admin yang boleh menambah, menghapus, atau mengedit data pendaftaran asesor
       allow write: if isSuperAdmin();
     }
     
@@ -93,7 +89,6 @@ service cloud.firestore {
     match /business_vectors/{document=**} { allow read: if isAuthenticated(); allow write: if false; }
     match /template_research_vectors/{document=**} { allow read: if isSuperAdmin(); allow write: if false; }
     
-    // Aturan untuk Brankas Dashboard Pelanggan
     match /transactions/{transactionId} {
       allow read: if isAuthenticated() && (request.auth.uid == resource.data.userId || isSuperAdmin());
       allow write: if false; 

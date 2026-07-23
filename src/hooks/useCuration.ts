@@ -1,10 +1,9 @@
 // src/hooks/useCuration.ts
 import { useState, useEffect, useCallback } from 'react';
-import { collection, getDocs, doc, onSnapshot, query, orderBy, where } from 'firebase/firestore';
+import { collection, getDocs, doc, onSnapshot, query, where } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 import { db, functions } from '@/lib/firebase';
 
-// Sesuaikan dengan interface yang Anda miliki di types/curation.ts
 interface CurationState {
   viewState: 'landing' | 'form' | 'processing' | 'dashboard';
   templates: any[];
@@ -32,13 +31,22 @@ export const useCuration = () => {
   useEffect(() => {
     const fetchTemplates = async () => {
       try {
+        // PERBAIKAN FATAL: Menghapus orderBy('order', 'asc') agar Firestore 
+        // tidak menyembunyikan dokumen yang tidak memiliki field 'order'
         const q = query(
           collection(db, 'form_templates'),
-          where('isActive', '==', true),
-          orderBy('order', 'asc')
+          where('isActive', '==', true)
         );
+        
         const snap = await getDocs(q);
         const loadedTemplates = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        
+        // Urutkan menggunakan JavaScript (Memory) agar lebih aman
+        loadedTemplates.sort((a: any, b: any) => {
+           const dateA = a.lastUpdated ? new Date(a.lastUpdated).getTime() : 0;
+           const dateB = b.lastUpdated ? new Date(b.lastUpdated).getTime() : 0;
+           return dateB - dateA; // Urutkan dari yang paling baru di-update
+        });
         
         setState(prev => ({
           ...prev,
@@ -74,12 +82,11 @@ export const useCuration = () => {
 
   // 2. FUNGSI UTAMA: MENGIRIM ASESMEN DAN MEMANTAU AGEN AI SECARA DINAMIS
   const submitAssessment = async (data: any) => {
-    // Ubah layar ke mode 'processing' agar Skeleton Loading Dinamis muncul
     setState(prev => ({ 
       ...prev, 
       formData: data, 
       viewState: 'processing',
-      currentAssessmentId: null, // Reset ID sebelumnya (jika ada)
+      currentAssessmentId: null, 
       aiResult: null 
     }));
 
@@ -87,7 +94,6 @@ export const useCuration = () => {
       const tokenUsed = sessionStorage.getItem('active_token');
       const processAssessment = httpsCallable(functions, 'processCurationAssessment');
       
-      // A. Panggil Gateway Agent (Cloud Function) untuk inisiasi
       const response = await processAssessment({
         formData: data,
         trackType: state.selectedTemplate?.trackName || 'Evaluasi Umum',
@@ -96,33 +102,28 @@ export const useCuration = () => {
         storageFilePaths: data.storageFilePaths || []
       }) as any;
 
-      // B. Tangkap ID Dokumen Asesmen dari server
       const assessmentId = response.data.assessmentId;
       
       if (!assessmentId) {
         throw new Error("Sistem gagal menginisialisasi ruang kerja. ID Asesmen tidak ditemukan.");
       }
 
-      // Simpan ID ke state (Ini akan memicu efek onSnapshot di komponen Skeleton Loading)
       setState(prev => ({ ...prev, currentAssessmentId: assessmentId }));
 
-      // C. MULAI MENDENGARKAN STATUS AGEN SECARA REAL-TIME DARI FIRESTORE
       const unsub = onSnapshot(doc(db, 'assessments', assessmentId), (docSnap) => {
         if (docSnap.exists()) {
           const docData = docSnap.data();
           const currentStatus = docData.status;
 
-          // Jika semua Multi-Agent (Gateway, Triangulator, Domain Expert, Post-Processing) selesai
           if (currentStatus === 'COMPLETED') {
             const finalResult = docData.aiResult;
             
             setState(prev => ({ 
               ...prev, 
               aiResult: finalResult,
-              viewState: 'dashboard' // Pindah ke layar Dasbor Utama
+              viewState: 'dashboard' 
             }));
 
-            // Simpan jejak ke riwayat lokal
             saveToHistory({
               id: assessmentId,
               date: new Date().toISOString(),
@@ -133,14 +134,12 @@ export const useCuration = () => {
               result: finalResult
             });
 
-            // Putuskan koneksi listener agar memori perangkat ringan kembali
             unsub(); 
             
           } 
-          // Jika salah satu agen mengalami kegagalan/error
           else if (currentStatus === 'FAILED') {
             alert(`Sirkuit AI terputus: ${docData.errorMessage || 'Terjadi kesalahan sistem internal.'}`);
-            setState(prev => ({ ...prev, viewState: 'form' })); // Kembalikan ke form
+            setState(prev => ({ ...prev, viewState: 'form' })); 
             unsub();
           }
         }
