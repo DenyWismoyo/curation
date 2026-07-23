@@ -15,14 +15,25 @@ import { buildAssessmentPrompt, getSystemPrompt } from "./promt/promptTemplate";
 // ============================================================================
 export { generatePDFReport } from "./documentGenerator";
 export { matchBusinessWithIndustry } from "./vectorService";
-export { generateFormTemplateFromAI } from "./formBuilderService";
+// export { generateFormTemplateFromAI } from "./formBuilderService";
 export { createPaymentInvoice, xenditWebhook } from "./paymentService";
 export { chatWithOmniAi } from "./omniAiService";
 export { generateActionPlanChecklist, generateSubTaskChecklist } from "./actionPlanService";
-export { generateTemplateSellingPoints } from "./outputService";
+export { generateTemplateSellingPoints, generatePromptAnchors } from "./outputService";
 export { weeklyActionPlanNudge } from "./nudgeService";
 export { generateAdaptiveQuestions, evaluateMacroBranching, manualTriggerRAGSeed } from "./adaptiveValidationService";
-export { enhanceFieldLogic } from "./fieldEnhancerService";
+export { enhanceFieldLogic, enhanceStepLogic } from "./fieldEnhancerService";
+// TAMBAHKAN EXPORT FUNGSI BARU DI SINI:
+export { generateAdvancedPrompts } from "./promptEnhancerService";
+export { formBuilderArchitectAgent } from "./agents/formBuilder/architectAgent";
+export { formBuilderFabricatorAgent } from "./agents/formBuilder/fabricatorAgent";
+export { formBuilderValidatorAgent } from "./agents/formBuilder/validatorAgent";
+export { formBuilderRagSeederAgent } from "./agents/formBuilder/ragSeederAgent";
+export { processCurationAssessment } from "./agents/assessment/gatewayAgent";
+export { assessmentTriangulatorAgent } from "./agents/assessment/triangulatorAgent";
+export { assessmentDomainExpertsAgent } from "./agents/assessment/domainExpertsAgent";
+export { assessmentTacticalPlannerAgent } from "./agents/assessment/tacticalPlannerAgent";
+export { assessmentPostProcessingAgent } from "./agents/assessment/postProcessingAgent";
 
 // ============================================================================
 // INISIALISASI FIREBASE
@@ -50,7 +61,7 @@ const withRetry = async <T>(fn: () => Promise<T>, retries = 4, delayMs = 3000): 
 // ============================================================================
 // CLOUD FUNCTION: ASESMEN AI UTAMA (MULTI-AGENT ARCHITECTURE)
 // ============================================================================
-export const processCurationAssessment = onCall({
+/*export const processCurationAssessment = onCall({
     memory: "2GiB",
     timeoutSeconds: 540,
     region: "asia-southeast2",
@@ -83,6 +94,7 @@ export const processCurationAssessment = onCall({
       
       const corpRef = db.collection('corporate_tokens').doc(corpId);
       const corpDoc = await corpRef.get();
+
       if (!corpDoc.exists) throw new HttpsError("not-found", `Entitas korporat tidak ditemukan.`);
       
       const corpData = corpDoc.data();
@@ -146,9 +158,10 @@ export const processCurationAssessment = onCall({
             }
 
             if (fileState.state === "FAILED" || fileState.state === "PROCESSING") continue; 
+
             uploadedGeminiFiles.push(uploadResult.file);
             parts.push({ fileData: { mimeType: uploadResult.file.mimeType, fileUri: uploadResult.file.uri } });
-          
+            
           } catch (fileErr: any) {
             console.warn(`[FAIL-SAFE] Gagal mengunggah file ke Gemini API.`, fileErr);
           }
@@ -167,7 +180,7 @@ export const processCurationAssessment = onCall({
          const vectorSnap = await vectorQuery.get();
          if (!vectorSnap.empty) {
             fewShotContext = `\n[KONTEKS RAG INDUSTRI]: Gunakan profil bisnis serupa yang pernah dievaluasi ini sebagai pembanding kalibrasi: ` + 
-                  vectorSnap.docs.map(d => `(${d.data().namaUsaha} | Kesiapan: ${d.data().readinessLevel} | Skor: ${d.data().score})`).join(", ");
+                   vectorSnap.docs.map(d => `(${d.data().namaUsaha} | Kesiapan: ${d.data().readinessLevel} | Skor: ${d.data().score})`).join(", ");
          }
       } catch (err) { }
 
@@ -197,7 +210,6 @@ export const processCurationAssessment = onCall({
       finalSystemPrompt = finalSystemPrompt.replace(/{{namaUsaha}}/g, formData.namaUsaha || 'Entitas Terkait');
       finalSystemPrompt = finalSystemPrompt.replace(/{{sektorIndustri}}/g, formData.sektorIndustri || 'Sektor Usaha');
 
-      // TENTUKAN TARGET AUDIENS SECARA EKSPLISIT
       const targetAudience = aiPromptConfig.targetAudience || 'company';
       
       const mainPromptText = buildAssessmentPrompt({
@@ -221,14 +233,11 @@ export const processCurationAssessment = onCall({
       parts.unshift({ text: mainPromptText });
       const systemPrompt = getSystemPrompt(true);
 
-      // ======================================================================
-      // FASE 1: MASTER ASSESSOR
-      // ======================================================================
       const masterModel = genAI.getGenerativeModel({
         model: "gemini-3.1-pro-preview",
         systemInstruction: systemPrompt,
         generationConfig: {
-          temperature: 0.2, // Suhu rendah agar sangat analitis dan presisi
+          temperature: 0.2,
           maxOutputTokens: 8192, 
           responseMimeType: "application/json",
           responseSchema: {
@@ -274,9 +283,6 @@ export const processCurationAssessment = onCall({
         return JSON.parse(masterRawText);
       });
 
-      // ======================================================================
-      // FASE 2: WORKER AGENTS (WITH STRICTER AUDIENCE CONTEXT)
-      // ======================================================================
       const getWorkerModel = (schema: any) => genAI.getGenerativeModel({
         model: "gemini-2.5-flash",
         systemInstruction: "Anda adalah AI Content Elaborator berkecepatan tinggi. Tugas Anda mengekstrak wawasan dari data mentah menjadi narasi yang SANGAT PRESISI. OUTPUT WAJIB BERUPA JSON VALID. DILARANG KERAS MENGGUNAKAN NEWLINE/ENTER HARFIAH KECUALI MENGGUNAKAN '\\n'.",
@@ -285,13 +291,13 @@ export const processCurationAssessment = onCall({
 
       const isIndividual = targetAudience === 'individual';
       const audienceContext = isIndividual 
-         ? "TARGET AUDIENS KETAT: INDIVIDU / PEGAWAI / PERSONAL. DILARANG KERAS menggunakan istilah B2B, strategi perusahaan, omzet, atau valuasi. Fokus pada pengembangan diri, karir, dan psikologi."
+          ? "TARGET AUDIENS KETAT: INDIVIDU / PEGAWAI / PERSONAL. DILARANG KERAS menggunakan istilah B2B, strategi perusahaan, omzet, atau valuasi. Fokus pada pengembangan diri, karir, dan psikologi."
          : "TARGET AUDIENS: PERUSAHAAN / BISNIS. Gunakan bahasa profesional korporat, fokus pada metrik bisnis, ekspansi, dan skalabilitas.";
 
       const workerABlocks = async () => {
         try {
           const schemaA = { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, required: ["title", "iconType", "metrics"], properties: { title: { type: SchemaType.STRING }, iconType: { type: SchemaType.STRING }, metrics: { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, required: ["label", "value"], properties: { label: { type: SchemaType.STRING }, value: { type: SchemaType.STRING } } } } } } };
-          const promptA = `JABARKAN narasi analitis HANYA untuk kerangka blok standar ini: ${JSON.stringify(aiPromptConfig.expectedAnalysisBlocks)}. \nData subjek: ${dataString}. \nSesuaikan narasi Anda dengan temuan dari Master Assessor: ${JSON.stringify(masterJson.swotAnalysis)}.\nKONTEKS AUDIENS: ${audienceContext}`;
+          const promptA = `JABARKAN narasi analitis HANYA untuk kerangka blok standar ini: ${JSON.stringify(aiPromptConfig.expectedAnalysisBlocks)}. \nData subjek: ${dataString}. \nSesuaikan narasi Anda dengan temuan dari Master Assessor: ${JSON.stringify(masterJson.swotAnalysis)}.\nKONTEKS AUDIENS: ${audienceContext}\nATURAN KONDISIONAL KHUSUS: ${aiPromptConfig.customSystemPrompt || 'Gunakan logika analisis yang relevan.'}\nPANTANGAN (DILARANG KERAS): ${aiPromptConfig.negativePrompts || 'Tidak ada pantangan khusus, namun jaga gaya bahasa.'}`;
           
           return await withRetry(async () => {
             const res = await getWorkerModel(schemaA).generateContent(promptA);
@@ -305,7 +311,7 @@ export const processCurationAssessment = onCall({
       const workerBMetrics = async () => {
         try {
           const schemaB = { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, required: ["label", "score", "description"], properties: { label: { type: SchemaType.STRING }, score: { type: SchemaType.INTEGER }, description: { type: SchemaType.STRING } } } };
-          const promptB = `Berikan justifikasi evaluasi naratif dan skor (0-100) HANYA untuk daftar metrik pilar baku ini: ${JSON.stringify(aiPromptConfig.expectedMetrics)}. \nData Subjek: ${dataString}. \nSkor Akhir subjek ini adalah ${masterJson.totalScore}/100. Pastikan nilai (score) selaras.\nKONTEKS AUDIENS: ${audienceContext}`;
+          const promptB = `Berikan justifikasi evaluasi naratif dan skor (0-100) HANYA untuk daftar metrik pilar baku ini: ${JSON.stringify(aiPromptConfig.expectedMetrics)}. \nData Subjek: ${dataString}. \nSkor Akhir subjek ini adalah ${masterJson.totalScore}/100. Pastikan nilai (score) selaras.\nKONTEKS AUDIENS: ${audienceContext}\nATURAN KONDISIONAL KHUSUS: ${aiPromptConfig.customSystemPrompt || 'Gunakan logika analisis yang relevan.'}\nPANTANGAN (DILARANG KERAS): ${aiPromptConfig.negativePrompts || 'Tidak ada pantangan khusus, namun jaga gaya bahasa.'}`;
           
           return await withRetry(async () => {
             const res = await getWorkerModel(schemaB).generateContent(promptB);
@@ -319,7 +325,7 @@ export const processCurationAssessment = onCall({
       const workerCRecommendations = async () => {
         try {
           const schemaC = { type: SchemaType.OBJECT, required: ["recommendations", "nextActionSteps"], properties: { recommendations: { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, required: ["title", "content"], properties: { title: { type: SchemaType.STRING }, content: { type: SchemaType.STRING } } } }, nextActionSteps: { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, required: ["timeframe", "task"], properties: { timeframe: { type: SchemaType.STRING }, task: { type: SchemaType.STRING } } } } } };
-          const promptC = `Buat Rencana Tindakan TAKTIS HANYA untuk area rekomendasi ini: ${JSON.stringify(aiPromptConfig.expectedRecommendations)}. \nFokuskan pada risiko utama ini: ${JSON.stringify(masterJson.riskAssessment.criticalRisks)}.\nKONTEKS AUDIENS: ${audienceContext}`;
+          const promptC = `Buat Rencana Tindakan TAKTIS HANYA untuk area rekomendasi ini: ${JSON.stringify(aiPromptConfig.expectedRecommendations)}. \nFokuskan pada risiko utama ini: ${JSON.stringify(masterJson.riskAssessment.criticalRisks)}.\nKONTEKS AUDIENS: ${audienceContext}\nATURAN KONDISIONAL KHUSUS: ${aiPromptConfig.customSystemPrompt || 'Gunakan logika analisis yang relevan.'}\nPANTANGAN (DILARANG KERAS): ${aiPromptConfig.negativePrompts || 'Tidak ada pantangan khusus.'}\nATURAN GAYA ACTION PLAN (MUTLAK): ${aiPromptConfig.actionPlanBehavior || 'Sesuaikan rekomendasi dengan profil target audiens secara natural.'}`;
           
           return await withRetry(async () => {
             const res = await getWorkerModel(schemaC).generateContent(promptC);
@@ -346,15 +352,10 @@ export const processCurationAssessment = onCall({
         } catch (e) { return null; }
       };
 
-      // EKSEKUSI BERURUTAN AGAR AMAN DARI LIMIT API
       const finalBlocks = await workerABlocks();
       const finalMetrics = await workerBMetrics();
       const finalRecommendations = await workerCRecommendations();
       const finalFiles = await workerDFiles();
-
-      // ======================================================================
-      // FASE 3: ASSEMBLER & TRANSACTION
-      // ======================================================================
       
       const publicAiResult = {
         executiveSummary: masterJson.executiveSummary || "",
@@ -365,8 +366,9 @@ export const processCurationAssessment = onCall({
         recommendations: finalRecommendations?.recommendations || [],
         nextActionSteps: finalRecommendations?.nextActionSteps || [],
         formPurpose: aiPromptConfig.formPurpose || 'assessment',
-        targetAudience: targetAudience, // DISIMPAN UNTUK ACTION PLAN SERVICE
-        customUiLabels: aiPromptConfig.customUiLabels || {}
+        targetAudience: targetAudience,
+        customUiLabels: aiPromptConfig.customUiLabels || {},
+        actionPlanBehavior: aiPromptConfig.actionPlanBehavior || ""
       };
 
       const internalAiResult = {
@@ -434,13 +436,13 @@ export const processCurationAssessment = onCall({
         transaction.set(internalDocRef, internalAiResult);
       });
 
-      const updatedDocDataForBg = {
-         namaUsaha: formData.namaUsaha || 'Tanpa Nama',
-         trackType: trackType,
-         score: fullAiResultForBg.totalScore || 0,
-         readinessLevel: fullAiResultForBg.readinessLevel || 'Belum Ditentukan',
-         formData: formData,
-         aiResult: fullAiResultForBg, 
+      const updatedDocDataForBg = { 
+         namaUsaha: formData.namaUsaha || 'Tanpa Nama', 
+         trackType: trackType, 
+         score: fullAiResultForBg.totalScore || 0, 
+         readinessLevel: fullAiResultForBg.readinessLevel || 'Belum Ditentukan', 
+         formData: formData, 
+         aiResult: fullAiResultForBg,
          userEmail: formData.email || userEmail
       };
       
@@ -472,7 +474,7 @@ export const processCurationAssessment = onCall({
                   totalScore: Number(fullAiResultForBg.totalScore || 0),
                   readinessLevel: String(fullAiResultForBg.readinessLevel),
                   trackType: String(updatedDocDataForBg.trackType),
-                  assessmentUrl: `[https://omnifit.cloud/result/$](https://omnifit.cloud/result/$){assessmentId}`
+                  assessmentUrl: `https://omnifit.cloud/result/${assessmentId}`
                 });
             } catch (err) { }
           }
@@ -491,4 +493,5 @@ export const processCurationAssessment = onCall({
           try { await withRetry(() => fileManager.deleteFile(geminiFile.name), 2, 2000); } catch (e) {}
         }
     }
-  });
+  }
+); */

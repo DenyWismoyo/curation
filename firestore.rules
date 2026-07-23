@@ -62,6 +62,10 @@ service cloud.firestore {
       // Hanya Super Admin yang diizinkan untuk membaca, memperbarui, dan menghapus ulasan
       allow read, update, delete: if isSuperAdmin(); 
     }
+    match /adaptive_question_banks/{document=**} { 
+  allow read: if isSuperAdmin(); 
+  allow write: if false; 
+}
 
     // ==========================================
     // ATURAN KOLEKSI MITRA & EKOSISTEM

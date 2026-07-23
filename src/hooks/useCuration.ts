@@ -1,187 +1,195 @@
 // src/hooks/useCuration.ts
-import { useState, useEffect } from 'react';
-import { ViewState, CurationFormData, AIResult, CurationHistory, FormTemplate } from '@/types/curation';
-import { processAIAssessment } from '@/services/ai.service';
-import { collection, getDocs, setDoc, doc } from 'firebase/firestore'; 
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '@/lib/firebase';
-import { defaultTemplates } from '@/data/defaultTemplates';
+import { useState, useEffect, useCallback } from 'react';
+import { collection, getDocs, doc, onSnapshot, query, orderBy, where } from 'firebase/firestore';
+import { httpsCallable } from 'firebase/functions';
+import { db, functions } from '@/lib/firebase';
 
-export function useCuration() {
-  const [viewState, setViewState] = useState<ViewState>('landing');
-  const [templates, setTemplates] = useState<FormTemplate[]>([]);
-  const [selectedTemplate, setSelectedTemplate] = useState<FormTemplate | null>(null);
-  const [isLoadingTemplates, setIsLoadingTemplates] = useState(true);
-  const [formData, setFormData] = useState<CurationFormData>({});
-  const [aiResult, setAiResult] = useState<AIResult | null>(null);
-  const [history, setHistory] = useState<CurationHistory[]>([]);
+// Sesuaikan dengan interface yang Anda miliki di types/curation.ts
+interface CurationState {
+  viewState: 'landing' | 'form' | 'processing' | 'dashboard';
+  templates: any[];
+  isLoadingTemplates: boolean;
+  selectedTemplate: any | null;
+  formData: any;
+  aiResult: any | null;
+  currentAssessmentId: string | null;
+  history: any[];
+}
 
-  const fetchTemplates = async () => {
-    setIsLoadingTemplates(true);
-    try {
-      const querySnapshot = await getDocs(collection(db, 'form_templates'));
-      if (querySnapshot.empty) {
-        console.log("Seeding default templates to Firestore...");
-        for (const tpl of defaultTemplates) {
-          await setDoc(doc(db, 'form_templates', tpl.id), tpl);
-        }
-        setTemplates(defaultTemplates);
-      } else {
-        const loadedTemplates: FormTemplate[] = [];
-        querySnapshot.forEach((doc) => {
-          loadedTemplates.push(doc.data() as FormTemplate);
-        });
-        setTemplates(loadedTemplates);
-      }
-    } catch (error) {
-      console.error("Gagal mengambil Form Templates:", error);
-      setTemplates(defaultTemplates);
-    } finally {
-      setIsLoadingTemplates(false);
-    }
-  };
+export const useCuration = () => {
+  const [state, setState] = useState<CurationState>({
+    viewState: 'landing',
+    templates: [],
+    isLoadingTemplates: true,
+    selectedTemplate: null,
+    formData: {},
+    aiResult: null,
+    currentAssessmentId: null,
+    history: [],
+  });
 
-  const loadHistoryData = () => {
-    if (typeof window !== 'undefined') {
-      const savedHistory = localStorage.getItem('curationHistory');
-      if (savedHistory) {
-        try { setHistory(JSON.parse(savedHistory)); } catch (e) { console.error(e); }
-      }
-    }
-  };
-
+  // 1. Ambil Template Kuesioner dari Database saat Hook pertama kali dimuat
   useEffect(() => {
-    loadHistoryData();
-    fetchTemplates();
-  }, []);
-
-  const saveToHistory = (data: CurationFormData, result: AIResult, track: string, firestoreId: string) => {
-    const newEntry: CurationHistory = {
-      id: firestoreId,
-      date: new Date().toISOString(),
-      trackType: track,
-      namaUsaha: data.namaUsaha || 'Tanpa Nama',
-      score: result.totalScore,
-      data: data,
-      result: result
+    const fetchTemplates = async () => {
+      try {
+        const q = query(
+          collection(db, 'form_templates'),
+          where('isActive', '==', true),
+          orderBy('order', 'asc')
+        );
+        const snap = await getDocs(q);
+        const loadedTemplates = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        
+        setState(prev => ({
+          ...prev,
+          templates: loadedTemplates,
+          isLoadingTemplates: false
+        }));
+      } catch (error) {
+        console.error("Gagal mengambil template kuesioner:", error);
+        setState(prev => ({ ...prev, isLoadingTemplates: false }));
+      }
     };
 
-    const updatedHistory = [newEntry, ...history];
-    setHistory(updatedHistory);
+    fetchTemplates();
     
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('curationHistory', JSON.stringify(updatedHistory));
+    // Muat riwayat lokal (Local Storage) untuk user tamu/anonim
+    const savedHistory = localStorage.getItem('curationHistory');
+    if (savedHistory) {
+      try {
+        setState(prev => ({ ...prev, history: JSON.parse(savedHistory) }));
+      } catch (e) {
+        console.error("Gagal memparsing riwayat lokal:", e);
+      }
     }
+  }, []);
+
+  const saveToHistory = (item: any) => {
+    setState(prev => {
+      const newHistory = [item, ...prev.history].slice(0, 50); // Maksimal simpan 50 riwayat lokal
+      localStorage.setItem('curationHistory', JSON.stringify(newHistory));
+      return { ...prev, history: newHistory };
+    });
   };
 
-  const loadHistoryItem = (item: CurationHistory) => {
-    const templateMatch = templates.find(t => t.trackName === item.trackType);
-    setSelectedTemplate(templateMatch || null);
-    setFormData(item.data);
-    setAiResult(item.result);
-    setViewState('dashboard');
-  };
+  // 2. FUNGSI UTAMA: MENGIRIM ASESMEN DAN MEMANTAU AGEN AI SECARA DINAMIS
+  const submitAssessment = async (data: any) => {
+    // Ubah layar ke mode 'processing' agar Skeleton Loading Dinamis muncul
+    setState(prev => ({ 
+      ...prev, 
+      formData: data, 
+      viewState: 'processing',
+      currentAssessmentId: null, // Reset ID sebelumnya (jika ada)
+      aiResult: null 
+    }));
 
-  const restart = () => {
-    setViewState('landing');
-    setSelectedTemplate(null);
-    setFormData({});
-    setAiResult(null);
-  };
-
-  const submitAssessment = async (finalData: Record<string, any>) => {
-    if (!selectedTemplate) return;
-
-    const tokenUsed = finalData.token;
-    delete finalData.token;
-
-    setViewState('processing');
-    
     try {
-      const dbData: Record<string, any> = { ...finalData };
-      const storageFilePaths: string[] = []; 
-      const uploadPromises: Promise<void>[] = [];
+      const tokenUsed = sessionStorage.getItem('active_token');
+      const processAssessment = httpsCallable(functions, 'processCurationAssessment');
       
-      const rawNamaUsaha = finalData.namaUsaha || 'Tanpa_Nama';
-      const safeNamaUsaha = rawNamaUsaha.replace(/[^a-zA-Z0-9]/g, '_'); 
-      const folderPath = `curation_files/${safeNamaUsaha}_${Date.now()}`;
+      // A. Panggil Gateway Agent (Cloud Function) untuk inisiasi
+      const response = await processAssessment({
+        formData: data,
+        trackType: state.selectedTemplate?.trackName || 'Evaluasi Umum',
+        tokenUsed: tokenUsed,
+        aiPromptConfig: state.selectedTemplate?.aiPromptConfig || {},
+        storageFilePaths: data.storageFilePaths || []
+      }) as any;
 
-      for (const key in dbData) {
-        const value = dbData[key];
-        
-        // SKENARIO 1: File Baru (Belum pernah diunggah)
-        if (value instanceof File) {
-          const safeFileName = value.name.replace(/\s+/g, '_');
-          const filePath = `${folderPath}/${safeFileName}`; 
-          const storageRef = ref(storage, filePath);
-          
-          const uploadTask = uploadBytes(storageRef, value).then(async (snapshot) => {
-            const downloadUrl = await getDownloadURL(snapshot.ref);
-            dbData[key] = downloadUrl; // Ganti File mentah dengan URL String
-            storageFilePaths.push(filePath); 
-          });
-          uploadPromises.push(uploadTask);
-        } 
-        // SKENARIO 2: Bypass File (Sudah pernah terunggah tapi AI gagal/timeout sebelumnya)
-        else if (typeof value === 'string' && value.includes('firebasestorage.googleapis.com')) {
-          try {
-            // Ekstrak letak path storage asli dari dalam URL Firebase
-            const urlObj = new URL(value);
-            const pathPart = urlObj.pathname.split('/o/')[1];
-            if (pathPart) {
-              const decodedPath = decodeURIComponent(pathPart.split('?')[0]);
-              storageFilePaths.push(decodedPath);
-            }
-          } catch (e) {
-            console.error("Gagal mengekstrak path dari URL Storage:", e);
+      // B. Tangkap ID Dokumen Asesmen dari server
+      const assessmentId = response.data.assessmentId;
+      
+      if (!assessmentId) {
+        throw new Error("Sistem gagal menginisialisasi ruang kerja. ID Asesmen tidak ditemukan.");
+      }
+
+      // Simpan ID ke state (Ini akan memicu efek onSnapshot di komponen Skeleton Loading)
+      setState(prev => ({ ...prev, currentAssessmentId: assessmentId }));
+
+      // C. MULAI MENDENGARKAN STATUS AGEN SECARA REAL-TIME DARI FIRESTORE
+      const unsub = onSnapshot(doc(db, 'assessments', assessmentId), (docSnap) => {
+        if (docSnap.exists()) {
+          const docData = docSnap.data();
+          const currentStatus = docData.status;
+
+          // Jika semua Multi-Agent (Gateway, Triangulator, Domain Expert, Post-Processing) selesai
+          if (currentStatus === 'COMPLETED') {
+            const finalResult = docData.aiResult;
+            
+            setState(prev => ({ 
+              ...prev, 
+              aiResult: finalResult,
+              viewState: 'dashboard' // Pindah ke layar Dasbor Utama
+            }));
+
+            // Simpan jejak ke riwayat lokal
+            saveToHistory({
+              id: assessmentId,
+              date: new Date().toISOString(),
+              trackType: docData.trackType,
+              namaUsaha: data.namaUsaha || 'Tanpa Nama',
+              score: finalResult?.totalScore || 0,
+              data: data,
+              result: finalResult
+            });
+
+            // Putuskan koneksi listener agar memori perangkat ringan kembali
+            unsub(); 
+            
+          } 
+          // Jika salah satu agen mengalami kegagalan/error
+          else if (currentStatus === 'FAILED') {
+            alert(`Sirkuit AI terputus: ${docData.errorMessage || 'Terjadi kesalahan sistem internal.'}`);
+            setState(prev => ({ ...prev, viewState: 'form' })); // Kembalikan ke form
+            unsub();
           }
         }
-      }
-
-      // Tunggu hingga semua file (yang baru) terupload ke Storage
-      await Promise.all(uploadPromises);
-      
-      // KRUSIAL: Update Form Data dengan URL, agar bisa otomatis diselamatkan oleh LocalStorage
-      setFormData(dbData as CurationFormData);
-      
-      // Panggil Cloud Function
-      const { assessmentId, aiResult } = await processAIAssessment(
-        dbData as CurationFormData, 
-        selectedTemplate.trackName, 
-        storageFilePaths,
-        selectedTemplate.aiPromptConfig,
-        tokenUsed
-      );
-      
-      setAiResult(aiResult);
-      saveToHistory(dbData, aiResult, selectedTemplate.trackName, assessmentId);
-
-      // Bersihkan session cache karena sudah berhasil
-      if (typeof window !== 'undefined') {
-        sessionStorage.removeItem('active_token');
-        sessionStorage.removeItem('active_model');
-        localStorage.removeItem(`curation_draft_dynamic_${selectedTemplate.id}`);
-      }
-      
-      setViewState('dashboard');
-
-      if (typeof window !== 'undefined' && window.parent !== window) {
-        window.parent.postMessage({
-          type: 'CURATION_COMPLETED',
-          payload: { namaUsaha: dbData.namaUsaha, track: selectedTemplate?.trackName }
-        }, '*');
-      }
+      }, (error) => {
+        console.error("Gagal mendengarkan status AI:", error);
+        alert("Koneksi pemantauan terputus. Pastikan koneksi internet Anda stabil.");
+        setState(prev => ({ ...prev, viewState: 'form' }));
+        unsub();
+      });
 
     } catch (error: any) {
-      console.error("Terjadi kesalahan saat memproses data:", error);
-      alert(error.message || "Gagal memproses AI. Pastikan Token benar.");
-      // Kembalikan ke layar wizard. Berkat 'setFormData(dbData)' di atas, memori file sudah aman.
-      setViewState('wizard'); 
+      console.error("Gagal memproses asesmen:", error);
+      alert(error.message || "Gagal menghubungi server AI Omnifit.");
+      setState(prev => ({ ...prev, viewState: 'form' }));
     }
   };
 
+  const restart = useCallback(() => {
+    setState(prev => ({
+      ...prev,
+      viewState: 'landing',
+      formData: {},
+      aiResult: null,
+      selectedTemplate: null,
+      currentAssessmentId: null
+    }));
+  }, []);
+
+  const setSelectedTemplate = useCallback((template: any) => {
+    setState(prev => ({ ...prev, selectedTemplate: template, viewState: 'form' }));
+  }, []);
+
+  const loadHistoryItem = useCallback((item: any) => {
+    setState(prev => ({
+      ...prev,
+      formData: item.data,
+      aiResult: item.result,
+      viewState: 'dashboard',
+      currentAssessmentId: item.id || null
+    }));
+  }, []);
+
   return {
-    state: { viewState, templates, selectedTemplate, isLoadingTemplates, formData, aiResult, history },
-    actions: { setViewState, setSelectedTemplate, loadHistoryData, loadHistoryItem, submitAssessment, restart }
+    state,
+    actions: {
+      submitAssessment,
+      restart,
+      setSelectedTemplate,
+      loadHistoryItem
+    }
   };
-}
+};

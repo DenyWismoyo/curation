@@ -1,4 +1,3 @@
-// src/app/components/admin/template-builder/TabAIConfig.tsx
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -8,17 +7,26 @@ import { Button } from '@/components/ui/button';
 import { FormTemplate } from '@/types/curation';
 import { AIPromptPresets } from '@/data/aiPromptTemplates';
 import { DomainPresets } from '@/data/domainPresets';
-import { Sparkles, Plus, Trash2, ChevronDown, Bot, Loader2, Search, Settings, AlertTriangle, Fingerprint, Zap } from 'lucide-react';
+import { Sparkles, Plus, Trash2, ChevronDown, Bot, Loader2, Search, Settings, AlertTriangle, Fingerprint } from 'lucide-react';
 import { getFunctions, httpsCallable } from 'firebase/functions';
-import { getFirestore, doc, onSnapshot } from 'firebase/firestore';
+import { doc, onSnapshot, updateDoc } from 'firebase/firestore'; 
+import { db } from '@/lib/firebase'; 
 import { getAuth } from 'firebase/auth';
+import { toast } from 'sonner';
 
 const QUESTION_TYPE_OPTIONS = [
-  { id: 'radio_weight', label: 'Skoring Ganda Berbobot', icon: '⚖️', rule: 'WAJIB maksimalkan penggunaan tipe "radio" atau "select" dengan array "options" berbobot (weight 0-100) untuk keperluan kalkulasi nilai otomatis.' },
+  { id: 'radio_weight', label: 'Skoring Ganda Berbobot', icon: '🎯', rule: 'WAJIB maksimalkan penggunaan tipe "radio" atau "select" dengan array "options" berbobot (weight 0-100) untuk keperluan kalkulasi nilai otomatis.' },
   { id: 'conditional_logic', label: 'Logika Bercabang (ShowIf)', icon: '🔀', rule: 'TERAPKAN INTEROGASI BERLAPIS: Gunakan properti "showIf". Jika peserta merespon klaim besar pada opsi radio/select, WAJIB pancing pertanyaan baru bertipe "file" atau "textarea" untuk menagih bukti.' },
-  { id: 'file_upload', label: 'Upload Bukti', icon: '📄', rule: 'WAJIB sertakan tipe input "file" untuk menagih unggahan dokumen bukti (legalitas, laporan, portofolio, dll) guna menekan potensi manipulasi data.' },
+  { id: 'file_upload', label: 'Upload Bukti', icon: '📎', rule: 'WAJIB sertakan tipe input "file" untuk menagih unggahan dokumen bukti (legalitas, laporan, portofolio, dll) guna menekan potensi manipulasi data.' },
   { id: 'number_metric', label: 'Angka & Nominal', icon: '🔢', rule: 'Gunakan tipe "number" secara spesifik untuk menangkap data kuantitatif presisi (seperti Omzet, Jumlah Karyawan, Biaya, Persentase) agar data tidak tercampur teks.' },
   { id: 'text_justification', label: 'Teks Analisa / Alasan', icon: '✍️', rule: 'Gunakan tipe "textarea" secara strategis untuk menuntut penjelasan, justifikasi, keluhan, atau uraian deskriptif yang mendalam dari peserta.' }
+];
+
+const ADVANCED_SCENARIOS = [
+  { id: 'b2b_audit', label: 'Strict Audit Bisnis (B2B)' },
+  { id: 'b2c_counseling', label: 'Empathetic Counseling (B2C)' },
+  { id: 'b2e_hybrid', label: 'Hybrid HR & Coaching (B2E)' },
+  { id: 'edu_coaching', label: 'Educational / Pelatihan' }
 ];
 
 interface TabAIConfigProps {
@@ -28,24 +36,26 @@ interface TabAIConfigProps {
 
 export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isGeneratingAdvanced, setIsGeneratingAdvanced] = useState(false);
+  const [advancedScenario, setAdvancedScenario] = useState('b2b_audit');
   const [dbStatus, setDbStatus] = useState<{ phase: string; message: string } | null>(null);
   const [isPresetDropdownOpen, setIsPresetDropdownOpen] = useState(false);
   const [presetSearchTerm, setPresetSearchTerm] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Status Adaptive Form Mode
   const isAdaptive = (template.aiPromptConfig as any)?.isAdaptive || false;
 
   useEffect(() => {
     if (!template.id) return;
-    const db = getFirestore();
+    
     const unsubscribe = onSnapshot(doc(db, "form_templates", template.id), (snapshot) => {
       if (snapshot.exists()) {
         const docData = snapshot.data();
         const status = docData.aiGenerationStatus;
+
         if (status) {
           setDbStatus({ phase: status.phase, message: status.message });
-          if (status.phase === 'RESEARCHING' || status.phase === 'BUILDING_FORM') {
+          if (status.phase === 'INITIATING' || status.phase === 'RESEARCHING' || status.phase === 'FABRICATING' || status.phase === 'VALIDATING' || status.phase === 'PRE_WARMING' || status.phase === 'BUILDING_FORM') {
             setIsGenerating(true);
           } else if (status.phase === 'COMPLETED' || status.phase === 'FAILED') {
             setIsGenerating(false);
@@ -56,8 +66,9 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
         }
       }
     });
+
     return () => unsubscribe();
-  }, [template.id]);
+  }, [template.id, onChange, template]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -70,8 +81,8 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
   }, []);
 
   const filteredPresets = AIPromptPresets?.filter(preset => 
-    preset.name.toLowerCase().includes(presetSearchTerm.toLowerCase()) || 
-    preset.description.toLowerCase().includes(presetSearchTerm.toLowerCase())
+      preset.name.toLowerCase().includes(presetSearchTerm.toLowerCase()) || 
+      preset.description.toLowerCase().includes(presetSearchTerm.toLowerCase())
   ) || [];
 
   const toggleQuestionType = (typeId: string) => {
@@ -114,12 +125,22 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
       if (!confirm("PERINGATAN: Proses ini akan mereset dan menimpa seluruh langkah form Anda yang ada di Tab Form Builder. Lanjutkan?")) return;
     }
 
-    // MODIFIKASI: Inject Target Audiens ke dalam instruksi
-    let targetContext = template.aiPromptConfig?.targetAudience === 'individual'
-      ? "TARGET AUDIENS: INDIVIDU / PERSONAL. Gunakan kata 'Nama Lengkap Anda', 'Anda', dan sesuaikan pertanyaan murni untuk ranah personal. DILARANG KERAS menanyakan aspek perusahaan, organisasi, atau legalitas bisnis."
-      : "TARGET AUDIENS: PERUSAHAAN / ORGANISASI / STARTUP.";
+    // PERBAIKAN: Logika dinamis untuk berbagai tipe audiens
+    const audience = template.aiPromptConfig?.targetAudience || 'company';
+    let targetContext = "";
+    
+    if (audience === 'individual' || audience === 'student') {
+      targetContext = `TARGET AUDIENS: PERSONAL (${audience.toUpperCase()}). Gunakan kata sapaan langsung (Anda, Bapak/Ibu) dan sesuaikan pertanyaan murni untuk ranah personal. DILARANG KERAS menanyakan aspek perusahaan, organisasi, atau legalitas bisnis.`;
+    } else if (audience === 'government') {
+      targetContext = `TARGET AUDIENS: INSTANSI PEMERINTAH / PUBLIK. Gunakan bahasa formal birokrasi, tata kelola (governance), dan fokus pada kualitas pelayanan publik.`;
+    } else if (audience === 'community') {
+      targetContext = `TARGET AUDIENS: KOMUNITAS / YAYASAN. Fokus pada manajemen relawan, dampak sosial, dan program nirlaba.`;
+    } else if (audience === 'startup' || audience === 'umkm') {
+      targetContext = `TARGET AUDIENS: ${audience.toUpperCase()}. Fokus pada inovasi, pertumbuhan, efisiensi operasional, dan product-market fit.`;
+    } else {
+      targetContext = `TARGET AUDIENS: KORPORASI / B2B / ORGANISASI. Gunakan bahasa profesional dan metrik skala bisnis enterprise.`;
+    }
 
-    // MODIFIKASI: Inject Adaptive Form Logic jika diaktifkan
     let adaptiveInstruction = "";
     if (isAdaptive) {
       adaptiveInstruction = `
@@ -132,7 +153,12 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
       `;
     }
 
-    let finalInstruction = targetContext + "\n\n" + (template.formBuilderInstruction || "Rancang kuesioner penilaian secara sistematis.") + "\n\n" + adaptiveInstruction;
+    let contextAnchor = "";
+    if (template.specificTargetContext || template.methodologyContext) {
+       contextAnchor = `\n==================================================\nKONTEKS ANCHOR (ACUAN MUTLAK):\n- Profil Subjek Asesmen: ${template.specificTargetContext || 'Umum'}\n- Metodologi/Pendekatan: ${template.methodologyContext || 'Standar Industri Terbaik'}\n==================================================\n`;
+    }
+
+    let finalInstruction = contextAnchor + targetContext + "\n\n" + (template.formBuilderInstruction || "Rancang kuesioner penilaian secara sistematis.") + "\n\n" + adaptiveInstruction;
 
     if (template.preferredQuestionTypes && template.preferredQuestionTypes.length > 0) {
       const selectedRules = template.preferredQuestionTypes.map(id => {
@@ -143,26 +169,70 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
     }
 
     setIsGenerating(true);
-    setDbStatus({ phase: "STARTING", message: "Menginisialisasi pipeline Enterprise Multi-Agent AI..." });
+    setDbStatus({ phase: "INITIATING", message: "Membangunkan Pipeline Enterprise Multi-Agent AI..." });
     
     try {
-      const functions = getFunctions(undefined, 'asia-southeast2');
-      const generateUnifiedFn = httpsCallable(functions, 'generateFormTemplateFromAI', { timeout: 900000 });
-      
-      generateUnifiedFn({
-        templateId: template.id,
+      await updateDoc(doc(db, "form_templates", template.id), {
         trackName: template.trackName || "Evaluasi Umum",
-        customTopic: template.trackName,
-        archetypeInstruction: finalInstruction,
-        aiPromptConfig: template.aiPromptConfig 
-      }).catch((asyncError) => {
-        console.error("Error latar belakang Cloud Function:", asyncError);
-        setIsGenerating(false);
+        specificTargetContext: template.specificTargetContext || "",
+        methodologyContext: template.methodologyContext || "",
+        formBuilderInstruction: finalInstruction,
+        aiPromptConfig: template.aiPromptConfig,
+        generationLogs: [],
+        aiGenerationStatus: {
+          phase: "INITIATING",
+          message: "Menghubungi Architect Agent (Gemini 3.1 Pro)...",
+          updatedAt: new Date().toISOString()
+        }
+      });
+      
+      toast.success("Pipeline AI Diaktifkan!", { 
+        description: "Agen AI sedang bekerja di latar belakang. Silakan pantau log terminal." 
       });
 
     } catch (error: any) {
       console.error(error);
       setIsGenerating(false);
+      setDbStatus({ phase: "FAILED", message: error.message || "Gagal memicu agen." });
+      toast.error("Gagal", { description: "Gagal menginisiasi pipeline AI." });
+    }
+  };
+
+  const handleGenerateAdvancedPrompts = async () => {
+    setIsGeneratingAdvanced(true);
+    try {
+      const functions = getFunctions(undefined, 'asia-southeast2');
+      const generateAdvancedFn = httpsCallable(functions, 'generateAdvancedPrompts');
+      const payload = {
+        trackName: template.trackName,
+        specificTargetContext: template.specificTargetContext,
+        methodologyContext: template.methodologyContext,
+        targetAudience: template.aiPromptConfig?.targetAudience,
+        scenario: advancedScenario
+      };
+
+      const result = await generateAdvancedFn(payload);
+      const data = result.data as any;
+
+      if (data.success && data.advancedPrompts) {
+        onChange({
+          ...template,
+          aiPromptConfig: {
+            ...(template.aiPromptConfig || {}),
+            customScoringRubric: data.advancedPrompts.customScoringRubric,
+            customSystemPrompt: data.advancedPrompts.customSystemPrompt,
+            negativePrompts: data.advancedPrompts.negativePrompts,
+            formatInstructions: data.advancedPrompts.formatInstructions,
+            actionPlanBehavior: data.advancedPrompts.actionPlanBehavior
+          } as any
+        });
+        toast.success("Berhasil!", { description: "Kustomisasi Aturan AI (Advanced Prompts) telah berhasil disempurnakan." });
+      }
+    } catch(e: any) {
+      console.error(e);
+      toast.error("Gagal Generate", { description: e.message || "Terjadi kesalahan pada server AI." });
+    } finally {
+      setIsGeneratingAdvanced(false);
     }
   };
 
@@ -217,8 +287,8 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
 
   return (
     <div className="bg-white p-6 md:p-8 rounded-3xl ring-1 ring-slate-200 shadow-sm space-y-8">
-      
-      {dbStatus && (dbStatus.phase === 'RESEARCHING' || dbStatus.phase === 'BUILDING_FORM' || dbStatus.phase === 'FAILED') && (
+       
+      {dbStatus && (dbStatus.phase !== 'COMPLETED' && dbStatus.phase !== 'STANDBY') && (
         <div className={`p-4 rounded-2xl border flex items-center gap-4 transition-all duration-300 ${dbStatus.phase === 'FAILED' ? 'bg-rose-50 border-rose-200 text-rose-900' : 'bg-indigo-50 border-indigo-200 text-indigo-900'}`}>
           {dbStatus.phase === 'FAILED' ? <AlertTriangle className="w-5 h-5 animate-bounce text-rose-600 shrink-0"/> : <Loader2 className="w-5 h-5 animate-spin text-indigo-600 shrink-0" />}
           <div className="flex-1 text-sm">
@@ -270,6 +340,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
 
       <div className="p-6 bg-slate-50 border border-slate-200 rounded-3xl space-y-4">
         <h4 className="font-black text-slate-900 flex items-center gap-2 text-md"><Settings className="w-5 h-5 text-indigo-600" /> Pengaturan Modul Dashboard</h4>
+        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Fungsi & Domain Aplikasi Formulir:</label>
@@ -289,15 +360,22 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
               <option value="custom">Kustomisasi Penuh Mandiri (Manual)</option>
             </select>
           </div>
+          
+          {/* PERBAIKAN: Penambahan opsi Target Audiens */}
           <div className="space-y-1.5">
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Target Subjek Asesmen:</label>
             <select
               value={template.aiPromptConfig?.targetAudience || 'company'}
               onChange={(e) => updateConfig('targetAudience', e.target.value)}
-              className="w-full h-11 rounded-xl border border-slate-200 bg-white text-slate-900 font-semibold px-3 focus:ring-2 focus:ring-indigo-500 text-sm shadow-sm"
+              className="w-full h-11 rounded-xl border border-slate-200 bg-white text-slate-900 font-semibold px-3 focus:ring-2 focus:ring-indigo-500 text-sm shadow-sm cursor-pointer"
             >
-              <option value="company">Perusahaan / B2B / Organisasi</option>
-              <option value="individual">Individu / B2C / Personal</option>
+              <option value="company">Perusahaan Besar / Korporasi</option>
+              <option value="startup">Startup Teknologi / Inovasi</option>
+              <option value="umkm">UMKM / Bisnis Menengah</option>
+              <option value="government">Instansi Pemerintah / Pelayanan Publik</option>
+              <option value="community">Komunitas / NGO / Yayasan</option>
+              <option value="individual">Individu / Karir / Personal</option>
+              <option value="student">Siswa / Mahasiswa / Akademik</option>
             </select>
           </div>
         </div>
@@ -318,9 +396,6 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
         </div>
       </div>
 
-      {/* ==================================================== */}
-      {/* PANEL KONTROL GENERASI MULTI-AGENT */}
-      {/* ==================================================== */}
       <div className="p-6 md:p-8 bg-gradient-to-br from-indigo-900 to-slate-900 rounded-[2rem] shadow-xl relative overflow-hidden text-white border border-indigo-800">
         <div className="absolute top-0 right-0 opacity-10 pointer-events-none transform translate-x-10 -translate-y-10"><Bot size={200} /></div>
         
@@ -347,13 +422,12 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
                })}
              </div>
 
-             {/* === TOGGLE ADAPTIVE LIVING FORM === */}
              <div className="mt-4 pt-4 border-t border-slate-700">
                <label className="flex items-start gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 bg-slate-900/40 hover:bg-slate-800 border-indigo-500/30">
                  <div className="pt-0.5">
-                   <input 
-                      type="checkbox" 
-                      className="w-5 h-5 rounded border-slate-600 text-indigo-500 focus:ring-indigo-500 bg-slate-800"
+                   <input
+                       type="checkbox"
+                       className="w-5 h-5 rounded border-slate-600 text-indigo-500 focus:ring-indigo-500 bg-slate-800"
                       checked={isAdaptive}
                       onChange={(e) => updateConfig('isAdaptive', e.target.checked)}
                     />
@@ -388,7 +462,6 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
         </div>
       </div>
 
-      {/* Sisa Konfigurasi (AI Persona, Strictness, Tiers, Metrics, dll) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-4">
         <div className="space-y-6">
           <h4 className="font-black text-slate-900 border-l-4 border-indigo-600 pl-3">Instruksi Dasar & Karakter AI</h4>
@@ -506,9 +579,31 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
       </div>
 
       <div className="md:col-span-2 space-y-6 pt-8 border-t border-slate-100">
-        <div className="flex flex-col mb-4">
+          
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-2">
           <h4 className="font-black text-slate-900 border-l-4 border-rose-500 pl-3 text-lg">Advanced Prompting (Ultra-Kustomisasi Aturan)</h4>
+          
+          <div className="flex flex-col sm:flex-row items-center gap-2 w-full lg:w-auto bg-slate-50 p-1.5 rounded-2xl border border-slate-200 shadow-sm">
+             <select 
+               value={advancedScenario} 
+               onChange={e => setAdvancedScenario(e.target.value)}
+               className="w-full sm:w-64 bg-white border border-slate-200 text-slate-700 text-xs font-bold rounded-xl h-10 px-3 focus:ring-1 focus:ring-rose-400"
+             >
+               {ADVANCED_SCENARIOS.map(sc => (
+                 <option key={sc.id} value={sc.id}>{sc.label}</option>
+               ))}
+             </select>
+             <Button 
+               onClick={handleGenerateAdvancedPrompts}
+               disabled={isGeneratingAdvanced}
+               className="w-full sm:w-auto bg-rose-600 hover:bg-rose-700 text-white font-bold h-10 rounded-xl text-xs"
+             >
+               {isGeneratingAdvanced ? <Loader2 className="w-4 h-4 mr-1.5 animate-spin" /> : <Sparkles className="w-4 h-4 mr-1.5" />}
+               AI Enhance
+             </Button>
+          </div>
         </div>
+        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2 p-6 bg-amber-50/40 rounded-3xl border border-amber-100 shadow-sm md:col-span-2">
             <label className="text-[12px] font-black text-amber-900 uppercase tracking-widest block mb-1">Custom Scoring Rubric (Panduan Kuantifikasi Angka)</label>
@@ -519,6 +614,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
               className="rounded-2xl bg-white border-amber-200 min-h-[100px] text-sm font-medium focus-visible:ring-amber-500" 
             />
           </div>
+
           <div className="space-y-2 p-6 bg-indigo-50/40 rounded-3xl border border-indigo-100 shadow-sm md:col-span-2">
             <label className="text-[12px] font-black text-indigo-900 uppercase tracking-widest block mb-1">Custom System Rules & Aturan If-Then</label>
             <Textarea 
@@ -528,6 +624,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
               className="rounded-2xl bg-white border-indigo-200 min-h-[120px] text-sm font-medium focus-visible:ring-indigo-500" 
             />
           </div>
+
           <div className="space-y-2 p-6 bg-rose-50/40 rounded-3xl border border-rose-100 shadow-sm">
             <label className="text-[12px] font-black text-rose-900 uppercase tracking-widest block mb-1">Negative Prompts (Pantangan Mutlak AI)</label>
             <Textarea 
@@ -537,13 +634,24 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
               className="rounded-2xl bg-white border-rose-200 min-h-[100px] text-sm font-medium focus-visible:ring-rose-500" 
             />
           </div>
+
           <div className="space-y-2 p-6 bg-emerald-50/40 rounded-3xl border border-emerald-100 shadow-sm">
             <label className="text-[12px] font-black text-emerald-900 uppercase tracking-widest block mb-1">Format Teks & Markdown Output Instructions</label>
             <Textarea 
               value={template.aiPromptConfig?.formatInstructions || ''}
               onChange={e => updateConfig('formatInstructions', e.target.value)}
-              placeholder="Aturan cetak huruf tebal atau penataan paragraf khusus untuk mempercantik output visual..."
+              placeholder="Cth: Gunakan penanda **teks tebal** untuk menyoroti istilah penting, *miring* untuk penekanan, dan ### untuk memisahkan sub-topik agar tampilan visual UI lebih rapi..."
               className="rounded-2xl bg-white border-emerald-200 min-h-[100px] text-sm font-medium focus-visible:ring-emerald-500" 
+            />
+          </div>
+          
+          <div className="space-y-2 p-6 bg-cyan-50/40 rounded-3xl border border-cyan-100 shadow-sm md:col-span-2">
+            <label className="text-[12px] font-black text-cyan-900 uppercase tracking-widest block mb-1">Instruksi Khusus Action Plan & Rekomendasi</label>
+            <Textarea 
+              value={template.aiPromptConfig?.actionPlanBehavior || ''}
+              onChange={e => updateConfig('actionPlanBehavior', e.target.value)}
+              placeholder="Cth (Individu): 'Gunakan bahasa psikologi yang empatik, berikan tugas ringan harian seperti jurnaling atau meditasi. Dilarang memberi tugas bisnis.'&#10;Cth (B2B): 'Tugas harus taktis, fokus pada metrik ROI dan perbaikan SOP.'"
+              className="rounded-2xl bg-white border-cyan-200 min-h-[100px] text-sm font-medium focus-visible:ring-cyan-500" 
             />
           </div>
         </div>

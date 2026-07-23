@@ -3,7 +3,8 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { FormTemplate } from '@/types/curation';
-import { getFirestore, doc, onSnapshot } from 'firebase/firestore';
+import { doc, onSnapshot } from 'firebase/firestore'; // PERBAIKAN: getFirestore dihapus
+import { db } from '@/lib/firebase'; // PERBAIKAN: Import db
 import { Terminal, Activity, CheckCircle2, AlertTriangle, Clock } from 'lucide-react';
 
 interface LogEntry {
@@ -25,7 +26,7 @@ export function TabLogs({ template }: TabLogsProps) {
   useEffect(() => {
     if (!template?.id) return;
     
-    const db = getFirestore();
+    // PERBAIKAN: Menggunakan db dari @/lib/firebase
     const unsubscribe = onSnapshot(doc(db, "form_templates", template.id), (snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.data();
@@ -133,10 +134,11 @@ export function TabLogs({ template }: TabLogsProps) {
           <div className="flex items-center gap-3 p-1.5 text-slate-500 animate-pulse">
             <span className="shrink-0 select-none flex items-center gap-1 opacity-0"><Clock className="w-3 h-3" /> [00:00:00.000]</span>
             <span className="shrink-0 w-3.5 h-3.5"></span>
-            <span>█ _</span>
+            <span className="break-words flex-1 leading-relaxed">AI sedang bekerja... Mohon tunggu sebentar.</span>
           </div>
         )}
       </div>
+
     </div>
   );
 }

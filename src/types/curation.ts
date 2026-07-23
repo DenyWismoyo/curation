@@ -82,6 +82,7 @@ export interface AIResult {
     keyValuePropositions: string[];
     closingCallToAction: string;
   };
+  actionPlanBehavior?: string;
 }
 
 export interface CurationHistory {
@@ -138,7 +139,7 @@ export interface AiPromptConfig {
   assessmentGoal?: string;
   mediaAnalysisFocus?: 'pitch-delivery' | 'ui-ux-design' | 'product-demo';
   riskFramework?: string;
-  targetAudience?: 'individual' | 'company'; // BARU: Menentukan target asesmen
+  targetAudience?: 'individual' | 'company' | 'startup' | 'umkm' | 'government' | 'community' | 'student' | string;
   
   targetMetricCount?: number;
   targetBlockCount?: number;
@@ -156,6 +157,7 @@ export interface AiPromptConfig {
   researchSourcesCited?: string[];
   formPurpose?: FormDomainPurpose; 
   customUiLabels?: CustomUiLabels;
+  actionPlanBehavior?: string;
 }
 
 export interface FormTemplate {
@@ -163,6 +165,8 @@ export interface FormTemplate {
   trackName: string;      
   trackDescription: string;
   expectedOutputs?: string[]; // <--- TAMBAHKAN BARIS INI
+  specificTargetContext?: string; // Menyimpan profil detail responden
+  methodologyContext?: string;    // Menyimpan metode pendekatan (Psikologi, ISO, dll)
   trackIcon: string;      
   isActive: boolean;      
   version: number;

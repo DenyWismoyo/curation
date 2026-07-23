@@ -1,5 +1,4 @@
 // functions/src/formBuilderService.ts
-
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { defineSecret } from "firebase-functions/params";
 import * as admin from "firebase-admin";
@@ -34,6 +33,10 @@ const withRetry = async <T>(fn: () => Promise<T>, retries = 3, delayMs = 2000): 
   }
 };
 
+// ============================================================================
+// FUNGSI 1: GENERATE MULTI-AGENT FORMULIR UTAMA
+// ============================================================================
+/*
 export const generateFormTemplateFromAI = onCall({
     memory: "2GiB",
     timeoutSeconds: 900,
@@ -53,7 +56,7 @@ export const generateFormTemplateFromAI = onCall({
     }
 
     const data = request.data as any;
-    const { templateId, trackName, aiPromptConfig, archetypeInstruction, formMode } = data;
+    const { templateId, trackName, aiPromptConfig, archetypeInstruction, formMode, specificTargetContext, methodologyContext } = data;
     
     if (!templateId) throw new HttpsError("invalid-argument", "ID Template wajib disertakan.");
 
@@ -102,7 +105,7 @@ export const generateFormTemplateFromAI = onCall({
               researchNotes: { type: SchemaType.STRING },
               aiPromptConfig: {
                 type: SchemaType.OBJECT,
-                required: ["formPurpose", "aiPersona", "assessmentGoal", "gradingStrictness", "reportTone", "expectedMetrics", "expectedAnalysisBlocks", "expectedRecommendations", "riskFramework", "customReadinessTiers", "customScoringRubric", "negativePrompts", "formatInstructions", "customSystemPrompt"],
+                required: ["formPurpose", "aiPersona", "assessmentGoal", "gradingStrictness", "reportTone", "expectedMetrics", "expectedAnalysisBlocks", "expectedRecommendations", "riskFramework", "customReadinessTiers", "customScoringRubric", "negativePrompts", "formatInstructions", "customSystemPrompt", "actionPlanBehavior"],
                 properties: {
                   formPurpose: { type: SchemaType.STRING },
                   aiPersona: { type: SchemaType.STRING },
@@ -119,10 +122,11 @@ export const generateFormTemplateFromAI = onCall({
                   negativePrompts: { type: SchemaType.STRING },
                   formatInstructions: { type: SchemaType.STRING },
                   customScoringRubric: { type: SchemaType.STRING },
+                  actionPlanBehavior: { type: SchemaType.STRING },
                   customUiLabels: { 
                     type: SchemaType.OBJECT, 
-                    properties: { 
-                      scoreLabel: { type: SchemaType.STRING }, swotLabel: { type: SchemaType.STRING }, riskLabel: { type: SchemaType.STRING }, roadmapLabel: { type: SchemaType.STRING }, executionLabel: { type: SchemaType.STRING } 
+                    properties: {
+                      scoreLabel: { type: SchemaType.STRING }, swotLabel: { type: SchemaType.STRING }, riskLabel: { type: SchemaType.STRING }, roadmapLabel: { type: SchemaType.STRING }, executionLabel: { type: SchemaType.STRING }
                     } 
                   },
                   researchSourcesCited: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } }
@@ -158,13 +162,17 @@ export const generateFormTemplateFromAI = onCall({
       const masterPrompt = `
         Anda adalah Chief Research Officer tingkat Enterprise. Topik program/asesmen: "${trackName || "Asesmen Umum"}".
         
+        KONTEKS ANCHOR (ACUAN MUTLAK PENELITIAN ANDA):
+        - Profil Spesifik Subjek Asesmen: ${specificTargetContext || 'Tergantung konfigurasi targetAudience, dilarang meleset dari ini.'}
+        - Metodologi / Pendekatan: ${methodologyContext || 'Standar Global Terbaik yang paling relevan dengan profil.'}
+        
         ALUR KERJA MUTLAK (IKUTI URUTAN INI):
         
         LANGKAH 1: PENYEMPURNAAN "OTAK AI" (aiPromptConfig)
         Berikut adalah draf konfigurasi dari klien:
         ${currentConfigStr}
         
-        Tugas: Lakukan web search untuk standar industri terbaik, lalu SEMPURNAKAN draf tersebut ke dalam properti "aiPromptConfig".
+        Tugas: Lakukan web search untuk standar industri terbaik yang SELARAS dengan Konteks Anchor, lalu SEMPURNAKAN draf tersebut ke dalam properti "aiPromptConfig".
         
         ATURAN KETAT VOLUME OUTPUT & SKALABILITAS (WAJIB DIPATUHI SECARA PRESISI):
         - expectedMetrics: Pertahankan data yang ada, lalu wajib kembangkan/tambahkan hingga jumlahnya TEPAT ${targetMetricCount} metrik evaluasi komprehensif.
@@ -181,11 +189,11 @@ export const generateFormTemplateFromAI = onCall({
       `;
 
       await logToTerminal(`Merumuskan penyempurnaan Otak AI & Masterplan untuk domain: [${trackName || "Asesmen Umum"}]...`, "info");
+      
       const masterResult = await withRetry(() => masterModel.generateContent(masterPrompt));
       const blueprint = JSON.parse(masterResult.response.text().trim());
 
       await logToTerminal("Otak AI dan Master Blueprint berhasil disempurnakan! Menyimpan konfigurasi ke database...", "success");
-
       await templateRef.update({
         aiPromptConfig: blueprint.aiPromptConfig,
         "aiGenerationStatus.message": "Konfigurasi Otak AI berhasil diperbarui. Mempersiapkan pembuatan kuesioner form..."
@@ -196,7 +204,6 @@ export const generateFormTemplateFromAI = onCall({
         .catch(e => console.warn("Peringatan: Gagal merekam vector research (Non-Fatal)."));
       await logToTerminal("Vector Database berhasil diperbarui.", "success");
 
-
       // ---------------------------------------------------------
       // FASE 2: DYNAMIC PERSONA & ASYNCHRONOUS BATCHING
       // ---------------------------------------------------------
@@ -204,13 +211,12 @@ export const generateFormTemplateFromAI = onCall({
         "aiGenerationStatus.phase": "BUILDING_FORM",
         "aiGenerationStatus.message": `Tahap 2: Meracik ${blueprint.stepOutlines.length} Seksi secara Paralel...`
       });
-
       await logToTerminal(`FASE 2: Mengerahkan Agen Pekerja (Gemini 2.5 Flash) berbekal Otak AI yang baru. Memulai fabrikasi ${blueprint.stepOutlines.length} seksi formulir...`, "info");
 
       const sectionModel = genAI.getGenerativeModel({
         model: "gemini-2.5-flash",
         generationConfig: {
-          temperature: 0.2,
+          temperature: 0.2, // Rendah agar showIf properties aman[cite: 1]
           responseMimeType: "application/json",
           responseSchema: {
             type: SchemaType.ARRAY,
@@ -226,6 +232,7 @@ export const generateFormTemplateFromAI = onCall({
                 showIf: { 
                   type: SchemaType.OBJECT, 
                   required: ["fieldId", "equals"],
+                  description: "Penting: equals WAJIB SAMA PERSIS dengan salah satu label di dalam options field pemicu.",
                   properties: { 
                     fieldId: { type: SchemaType.STRING }, 
                     equals: { type: SchemaType.STRING } 
@@ -256,7 +263,6 @@ export const generateFormTemplateFromAI = onCall({
           
           const sectionPrompt = `
             ${baseInstructions}
-
             HASIL RISET STANDAR TERBARU: ${blueprint.researchNotes}
             
             ROLEPLAY MUTLAK: Anda saat ini berperan sebagai "${step.expertPersona}". 
@@ -300,7 +306,6 @@ export const generateFormTemplateFromAI = onCall({
 
       await logToTerminal("Seluruh seksi formulir berhasil diracik dan digabungkan.", "success");
 
-
       // ---------------------------------------------------------
       // PROGRAMMATIC DEDUPLICATION (HARDCODE FILTER)
       // ---------------------------------------------------------
@@ -317,7 +322,6 @@ export const generateFormTemplateFromAI = onCall({
         return { ...step, fields: uniqueFields };
       });
 
-
       // ---------------------------------------------------------
       // FASE 3: AI SELF-CORRECTION (SHOW-IF VALIDATOR)
       // ---------------------------------------------------------
@@ -326,15 +330,15 @@ export const generateFormTemplateFromAI = onCall({
 
       const validatorModel = genAI.getGenerativeModel({
         model: "gemini-2.5-flash", 
-        generationConfig: { temperature: 0.1, responseMimeType: "application/json" }
+        generationConfig: { temperature: 0.0, responseMimeType: "application/json" } // Temperatur 0 agar absolut deterministik
       });
 
       const validationPrompt = `
         Anda adalah "Lead Quality Assurance". Berikut adalah JSON formulir yang sudah bersih dari ID duplikat.
-        Tugas utama Anda HANYA memverifikasi properti "showIf":
+        Tugas utama Anda HANYA memverifikasi properti "showIf" secara SANGAT KETAT:
         1. Pastikan "fieldId" di dalam "showIf" merujuk pada "id" yang BENAR-BENAR ADA di array fields sebelumnya.
-        2. WAJIB pastikan "showIf" memiliki properti "equals". Jika "equals" hilang atau kosong, Anda WAJIB memperbaikinya dengan mengambil salah satu "label" dari opsi jawaban (options) field pemicu tersebut.
-        3. Jika merujuk pada ID yang tidak ada atau referensi ke depan (referencing future fields), hapus properti "showIf" tersebut.
+        2. WAJIB pastikan "showIf" memiliki properti "equals". Nilai "equals" WAJIB menyalin (copy-paste) SAMA PERSIS (termasuk huruf besar/kecil) dengan salah satu nilai "label" dari array "options" milik field pemicu. Jika salah ketik, Anda WAJIB memperbaikinya!
+        3. Jika merujuk pada ID yang tidak ada, referensi ke depan (referencing future fields), ATAU field pemicu tidak memiliki "options" (bukan tipe pilihan ganda), Anda WAJIB MENGHAPUS properti "showIf" tersebut secara keseluruhan.
         4. Kembalikan array JSON utuh tanpa merubah struktur lain.
 
         DATA FORMULIR MENTAH:
@@ -360,12 +364,13 @@ export const generateFormTemplateFromAI = onCall({
         await logToTerminal("Menyuntikkan referensi kuesioner ke Bank Soal AI (Pre-Warming RAG)...", "info");
         try {
           const embedModel = genAI.getGenerativeModel({ model: "text-embedding-004" });
+          
           const bankPromises = cleanedSteps.flatMap((step: any) => 
             step.fields.map(async (field: any) => {
               const textToEmbed = `Track: ${trackName}, Step: ${step.title}, Label: ${field.label}`;
               const embRes = await embedModel.embedContent(textToEmbed);
               const vectorVal = embRes.embedding.values;
-
+              
               return db.collection('adaptive_question_banks').doc().set({
                 templateId: templateId || 'general',
                 stepIndex: step.stepNumber || 1,
@@ -398,7 +403,6 @@ export const generateFormTemplateFromAI = onCall({
           updatedAt: new Date().toISOString()
         }
       });
-
       await logToTerminal("PIPELINE SELESAI: Kuesioner skala Enterprise telah berhasil diintegrasikan!", "success");
 
       return { success: true, steps: cleanedSteps };
@@ -424,9 +428,9 @@ export const generateFormTemplateFromAI = onCall({
 
       throw new HttpsError("internal", error.message || "Gagal memproses analisis AI.");
     }
-});
-
-
+  }
+);
+*/
 // ============================================================================
 // FUNGSI 2: AI CONFIGURATION ENHANCER (Legacy)
 // ============================================================================
@@ -439,6 +443,7 @@ export const generateAIConfigResearch = onCall({
   },
   async (request) => {
     if (!request.auth) throw new HttpsError("unauthenticated", "Akses ditolak.");
+    
     const userEmail = request.auth.token.email?.toLowerCase();
     if (userEmail !== 'deny.wismoyo@gmail.com') throw new HttpsError("permission-denied", "SECURITY BREACH");
 
@@ -464,14 +469,12 @@ export const generateAIConfigResearch = onCall({
 
       const hasExistingConfig = currentConfig && Object.keys(currentConfig).length > 0;
       const systemPrompt = buildAIConfigPrompt({ trackName, topicToResearch, currentConfig, hasExistingConfig });
-
       const result = await withRetry(() => model.generateContent(systemPrompt));
       let rawText = result.response.text().trim();
       
       if (rawText.startsWith('```')) rawText = rawText.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
       
       const parsedConfig = JSON.parse(rawText);
-
       await storeTemplateResearchVector(safeTemplateId, `Config Research: ${topicToResearch}`, rawText, API_KEY).catch(e => console.error(e));
 
       return { success: true, aiPromptConfig: parsedConfig };
@@ -479,4 +482,5 @@ export const generateAIConfigResearch = onCall({
     } catch (error: any) {
       throw new HttpsError("internal", error.message || "Gagal melakukan auto-research.");
     }
-});
+  }
+);

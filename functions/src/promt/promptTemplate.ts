@@ -1,4 +1,5 @@
 // functions/src/promt/promptTemplate.ts
+
 export interface PromptParams {
   aiPersona: string;
   trackContext: string;
@@ -22,20 +23,34 @@ export interface PromptParams {
 }
 
 export const buildAssessmentPrompt = (params: PromptParams) => {
-  const isIndividual = params.targetAudience === 'individual';
-  const audienceInstruction = isIndividual
-     ? "TARGET AUDIENS KETAT: INDIVIDU / PERSONAL / PEGAWAI. Anda WAJIB menggunakan sudut pandang psikologi, karakter, kompetensi personal, dan pengembangan karir. DILARANG KERAS menggunakan istilah korporat seperti B2B, perusahaan, omzet, laba, valuasi, ekspansi pasar, atau operasional bisnis. Rute inkubasi (incubationRoute) harus berupa pelatihan, konseling, atau pengembangan diri."
-    : "TARGET AUDIENS: PERUSAHAAN / ORGANISASI / BISNIS. Gunakan bahasa profesional korporat, fokus pada metrik bisnis, skalabilitas, efisiensi operasional, dan penetrasi pasar.";
+  // PERBAIKAN: Gaya instruksi dan aturan dilarang yang jauh lebih spesifik untuk tiap audiens
+  const audienceType = params.targetAudience || 'company';
+  let audienceInstruction = "";
+  let isIndividual = false;
+  
+  if (audienceType === 'individual' || audienceType === 'student') {
+     isIndividual = true;
+     audienceInstruction = "TARGET AUDIENS KETAT: INDIVIDU / PERSONAL / PEGAWAI. Anda WAJIB menggunakan sudut pandang psikologi, karakter, kompetensi personal, dan pengembangan karir. DILARANG KERAS menggunakan istilah korporat seperti B2B, perusahaan, omzet, laba, valuasi, ekspansi pasar, atau operasional bisnis. Rute inkubasi (incubationRoute) harus berupa saran pelatihan, konseling, mentoring, atau pengembangan diri.";
+  } else if (audienceType === 'government') {
+     audienceInstruction = "TARGET AUDIENS: INSTANSI PEMERINTAH / LAYANAN PUBLIK. Evaluasi efektivitas program, transparansi birokrasi, tata kelola (governance), dan impak pelayanan masyarakat. Kurangi istilah bisnis korporat.";
+  } else if (audienceType === 'community') {
+     audienceInstruction = "TARGET AUDIENS: KOMUNITAS / NGO / YAYASAN. Fokus pada impak sosial (social impact), keberlanjutan program nirlaba (sustainability), advokasi, dan keterlibatan relawan.";
+  } else if (audienceType === 'startup' || audienceType === 'umkm') {
+     audienceInstruction = `TARGET AUDIENS: ${audienceType.toUpperCase()} / BISNIS KECIL MENENGAH. Fokus pada inovasi, kecocokan pasar (product-market fit), penjualan langsung (sales), efisiensi operasional, dan potensi skalabilitas.`;
+  } else {
+     audienceInstruction = "TARGET AUDIENS: PERUSAHAAN BESAR / BISNIS KORPORAT. Gunakan bahasa profesional korporat (B2B), fokus pada metrik bisnis makro, skalabilitas, manajemen supply chain, dan ekspansi penetrasi pasar.";
+  }
 
   return `
   ANDA ADALAH: ${params.aiPersona}. Tugas Anda adalah melakukan penilaian terhadap profil/entitas/peserta berikut dalam kategori: "${params.trackContext}".
-  TUJUAN UTAMA: ${params.assessmentGoal}
   
+  TUJUAN UTAMA: ${params.assessmentGoal}
   ${audienceInstruction}
   
   ATURAN PENILAIAN UMUM: ${params.strictnessInstruction}
   ${params.fewShotContext || ''}
   ATURAN GAYA BAHASA: ${params.toneInstruction}
+  
   ${params.customScoringRubric ? `\nRUBRIK PENILAIAN SKOR (WAJIB DIPATUHI):\n${params.customScoringRubric}` : ''}
   ${params.customSystemPrompt ? `\nATURAN KONDISIONAL & LOGIKA KHUSUS:\n${params.customSystemPrompt}` : ''}
   ${params.negativePrompts ? `\nPANTANGAN & BATASAN (DILARANG KERAS):\n${params.negativePrompts}` : ''}
@@ -56,9 +71,9 @@ export const buildAssessmentPrompt = (params: PromptParams) => {
   ==================================================
   DATA TEKS FORMULIR:
   ${params.dataString}
-  
+
   ${params.storageFilePaths && params.storageFilePaths.length > 0 ? "DOKUMEN TERLAMPIR TELAH DISERTAKAN. ANDA WAJIB MEMBACA SECARA FORENSIK DAN MENYILANGKAN DATANYA DENGAN TEKS KLAIM FORMULIR." : "TIDAK ADA DOKUMEN YANG DILAMPIRKAN. PENILAIAN INI HANYA BERBASIS KLAIM TEKS. INI ADALAH RED FLAG JIKA KLAIM MEREKA TERLALU BESAR TANPA BUKTI."}
-  
+
   ==================================================
   INSTRUKSI FORMAT ANALISIS KELUARAN & PEMBAGIAN PROPERTI JSON
   ==================================================
@@ -72,10 +87,11 @@ export const buildAssessmentPrompt = (params: PromptParams) => {
   5. PROPERTI 'swotAnalysis' & 'riskAssessment': Petakan SWOT dan Risiko secara logis ke dalam properti JSON-nya masing-masing. ${params.riskInstruction}
   6. TUGAS ACTION PLAN & RECOMMENDATIONS: Buat rekomendasi strategis. (Akan diproses khusus ke skema JSON recommendations & nextActionSteps).
   ${params.targetRecommendations}
+  
   7. PROPERTI SCORING & TIERING:
      - Berikan "totalScore" (0-100) dan "dataConfidenceScore" (0-100).
      - Penentuan "readinessLevel": Evaluasi menggunakan panduan tier berikut: [${params.tiersString}]. Format WAJIB: "Nama Tier | 3-5 Kata Sifat Dinamis" (Contoh: "Kandidat Unggul | Mandiri, Inovatif").
-     - Tentukan "incubationRoute" (${isIndividual ? 'Wajib berupa program pengembangan/training/konseling personal' : 'Wajib berupa rute akselerasi bisnis/investasi'}).
+     - Tentukan "incubationRoute" (${isIndividual ? 'Wajib berupa program pengembangan/training/konseling personal' : 'Wajib berupa rute akselerasi bisnis/investasi/pendampingan'}).
 
   ATURAN MUTLAK OUTPUT FORMAT:
   - Output MURNI dalam format JSON.

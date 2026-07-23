@@ -1,22 +1,19 @@
 // src/app/result/[id]/page.tsx
 'use client';
+
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { CurationDashboard } from '@/app/components/curation/CurationDashboard';
 import { useAuth } from '@/contexts/AuthContext';
-
-// IMPORT CUSTOM ICONS
 import { BrainIcon, DocExportIcon, EcosystemIcon } from '@/types';
 
 export default function SharedResultPage() {
   const params = useParams();
   const router = useRouter();
-  
-  // AMBIL IDENTITAS PENGGUNA DARI KONTEKS AUTENTIKASI
   const { user, role } = useAuth(); 
-  
+
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -25,28 +22,32 @@ export default function SharedResultPage() {
     const fetchResult = async () => {
       if (!params.id) return;
       
+      // KUNCI PERBAIKAN 1: Bersihkan state error setiap kali fungsi dijalankan
+      setError(''); 
+
       try {
-        // 1. Tarik Data Publik (Dapat diakses oleh siapa saja yang memiliki link)
+        // 1. Tarik Data Publik 
         const docRef = doc(db, 'assessments', params.id as string);
         const docSnap = await getDoc(docRef);
         
         if (docSnap.exists()) {
           let combinedData = docSnap.data();
           
-          // 2. CEK KEWENANGAN: Sesuaikan dengan role baru (admin_csrs & assessor)
+          // 2. CEK KEWENANGAN
           const isInternalStaff = user && (role === 'admin_csrs' || role === 'assessor');
-          
-          // Pengecekan Super Admin (Opsional, jika Anda menggunakan email spesifik di frontend)
           const isSuperAdmin = user?.email === 'deny.wismoyo@gmail.com';
           
           if (isInternalStaff || isSuperAdmin) {
-             // 3. JIKA INTERNAL/ADMIN: Tarik data rahasia dari sub-collection 'internal/details'
-             const internalDocRef = doc(db, 'assessments', params.id as string, 'internal', 'details');
-             const internalSnap = await getDoc(internalDocRef);
-             
-             if (internalSnap.exists()) {
-                // Gabungkan data publik dan data rahasia agar Dashboard menampilkan seluruh matriks
-                combinedData.aiResult = { ...combinedData.aiResult, ...internalSnap.data() };
+             // KUNCI PERBAIKAN 2: Gunakan try-catch mandiri agar jika gagal, page tidak hancur
+             try { 
+               const internalDocRef = doc(db, 'assessments', params.id as string, 'internal', 'details');
+               const internalSnap = await getDoc(internalDocRef);
+               
+               if (internalSnap.exists()) {
+                  combinedData.aiResult = { ...combinedData.aiResult, ...internalSnap.data() };
+               }
+             } catch (internalErr) {
+               console.warn("Gagal menarik data internal (Abaikan jika Anda bukan admin penuh).", internalErr);
              }
           }
           
@@ -87,7 +88,7 @@ export default function SharedResultPage() {
         <h2 className="text-2xl font-black text-slate-900 mb-2">Laporan Tidak Tersedia</h2>
         <p className="text-slate-500 font-medium mb-8 max-w-md">{error}</p>
         <button 
-          onClick={() => router.push('/')} 
+          onClick={() => router.push('/')}
           className="flex items-center gap-2 px-6 py-3 bg-slate-900 hover:bg-indigo-600 text-white rounded-xl font-bold shadow-xl shadow-slate-900/20 hover:shadow-indigo-600/30 transition-all"
         >
           <EcosystemIcon className="w-5 h-5 text-white" /> Kembali ke Beranda
@@ -99,19 +100,14 @@ export default function SharedResultPage() {
   return (
     <div className="relative">
       <CurationDashboard
-        // Data Utama
         assessmentId={params.id as string}
         trackType={data.trackType || 'Model Bisnis'}
         formData={data.formData || {}}
         aiResult={data.aiResult || {}}
         programName={data.corporateEntity || ''}
-        
-        // Data Monetisasi & Pembatasan Template
         documentGenerationQuota={data.documentGenerationQuota || 0}
         hasPaidForDocument={data.hasPaidForDocument || false}
         allowedDocumentTemplates={data.allowedDocumentTemplates || []}
-        
-        // Fungsi Restart
         onRestart={() => router.push('/')}
       />
     </div>

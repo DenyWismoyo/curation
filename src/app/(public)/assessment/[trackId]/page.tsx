@@ -1,48 +1,67 @@
+// src/app/assessment/[trackId]/page.tsx
 'use client';
 
 import React, { use, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { doc, onSnapshot } from 'firebase/firestore'; // TAMBAHKAN IMPORT INI
+import { db } from '@/lib/firebase'; // TAMBAHKAN IMPORT INI
 import { DynamicWizard } from '@/app/components/curation/DynamicWizard';
 import { CurationDashboard } from '@/app/components/curation/CurationDashboard';
 import { useCuration } from '@/hooks/useCuration';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // IMPORT CUSTOM ICONS
-import { AiSparkIcon, BrainIcon, AdminShieldIcon } from '@/types';
-
+import { AiSparkIcon, BrainIcon } from '@/types';
 // IMPORT CUSTOM HOOK MOBILE BACK
 import { useMobileBack } from '@/hooks/useMobileBack';
 
-
 // ========================================================
-// KOMPONEN: SKELETON DASHBOARD LOADING INTERAKTIF
+// KOMPONEN: SKELETON DASHBOARD LOADING DINAMIS (REAL-TIME)
 // ========================================================
-function InteractiveDashboardLoading({ formData, trackName }: { formData: Record<string, any>, trackName: string }) {
-  const [loadingText, setLoadingText] = useState('Mengumpulkan parameter operasional...');
+function InteractiveDashboardLoading({ formData, trackName, assessmentId }: { formData: Record<string, any>, trackName: string, assessmentId?: string | null }) {
+  const [loadingText, setLoadingText] = useState('Menginisialisasi Sistem Multi-Agent...');
 
-  // Simulasi fase berpikir AI agar terlihat hidup
+  // EFEK BARU: Mendengarkan status agen langsung dari Database secara Real-Time
   useEffect(() => {
-    const phases = [
-      'Menyintesis Executive Summary...',
-      'Menganalisis Lanskap Pasar & Kompetitor...',
-      'Mengkalkulasi Kesehatan Finansial & Traksi...',
-      'Membangun Matriks Dimensi Kinerja (Radar)...',
-      'Merumuskan Mitigasi Risiko & SWOT...',
-      'Memfinalisasi Skor & Rute Inkubasi Akhir...'
-    ];
-    let index = 0;
-    const interval = setInterval(() => {
-      index = (index + 1) % phases.length;
-      setLoadingText(phases[index]);
-    }, 4000); 
+    if (!assessmentId) return;
 
-    return () => clearInterval(interval);
-  }, []);
+    const unsub = onSnapshot(doc(db, 'assessments', assessmentId), (docSnap) => {
+      if (docSnap.exists()) {
+        const status = docSnap.data().status;
+        
+        // Sesuaikan teks dengan tahapan Agent di backend
+        switch (status) {
+          case 'ANALYZING_MASTER':
+            setLoadingText('Gateway Agent: Menganalisis profil dan menyintesis Executive Summary...');
+            break;
+          case 'ANALYZING_METRICS':
+            setLoadingText('Triangulator Agent: Memvalidasi integritas data & memecah metrik kinerja...');
+            break;
+          case 'PLANNING_ACTION':
+            setLoadingText('Domain Expert Agent: Merumuskan Rencana Aksi (Action Plan) Taktis...');
+            break;
+          case 'GENERATING_ASSETS':
+            setLoadingText('Post-Processing Agent: Membangun visualisasi Radar & Finalisasi Aset...');
+            break;
+          case 'COMPLETED':
+            setLoadingText('Semua komputasi selesai. Membuka dasbor...');
+            break;
+          case 'FAILED':
+            setLoadingText('Terjadi kesalahan pada sirkuit AI. Membatalkan proses...');
+            break;
+          default:
+            setLoadingText('Mengamankan jalur data operasional...');
+        }
+      }
+    });
+
+    return () => unsub(); // Cleanup memori
+  }, [assessmentId]);
 
   return (
     <div className="min-h-screen bg-slate-50 py-8 px-4 sm:py-12 sm:px-6 lg:px-12 relative">
       
-      {/* FLOATING AI STATUS BAR (Menandakan AI sedang bekerja) */}
+      {/* FLOATING AI STATUS BAR */}
       <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-md">
         <motion.div 
           initial={{ y: 50, opacity: 0 }}
@@ -50,11 +69,10 @@ function InteractiveDashboardLoading({ formData, trackName }: { formData: Record
           className="bg-slate-900/90 backdrop-blur-xl p-4 rounded-2xl shadow-2xl ring-1 ring-white/20 flex items-center gap-4"
         >
           <div className="w-10 h-10 bg-indigo-500/20 rounded-full flex items-center justify-center shrink-0">
-            {/* Custom Icon: MENGGANTIKAN LOADER BIASA DENGAN BRAIN ICON */}
             <BrainIcon size={20} className="text-indigo-400 animate-pulse" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-[10px] font-black uppercase tracking-widest text-indigo-400 mb-0.5">AI SEDANG BEKERJA</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-indigo-400 mb-0.5">STATUS KOMPUTASI AI</p>
             <AnimatePresence mode="wait">
               <motion.p 
                 key={loadingText}
@@ -71,9 +89,8 @@ function InteractiveDashboardLoading({ formData, trackName }: { formData: Record
       </div>
 
       <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8 pointer-events-none">
-        
-        {/* TOP ACTION BAR (Skeleton) */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+         {/* TOP ACTION BAR (Skeleton) */}
+         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="h-10 w-32 bg-slate-200 animate-pulse rounded-xl" />
           <div className="flex gap-3">
             <div className="h-10 w-32 bg-slate-200 animate-pulse rounded-xl" />
@@ -104,11 +121,9 @@ function InteractiveDashboardLoading({ formData, trackName }: { formData: Record
                   System Assessment Report
                 </h1>
                 <div className="flex flex-wrap items-center gap-2 mb-8">
-                  {/* Nama Startup (Data Real) */}
                   <span className="text-indigo-600 font-bold text-base sm:text-lg bg-indigo-50 px-3 py-1.5 rounded-lg ring-1 ring-indigo-100">
                     {formData?.namaUsaha || 'Menganalisis Entitas...'}
                   </span>
-                  {/* Track Name (Data Real) */}
                   <span className="bg-slate-100 text-slate-500 font-bold text-xs sm:text-sm px-3 py-1.5 rounded-lg uppercase tracking-widest ring-1 ring-slate-200">
                     {trackName}
                   </span>
@@ -131,7 +146,6 @@ function InteractiveDashboardLoading({ formData, trackName }: { formData: Record
             {/* Skor Panel Skeleton */}
             <div className="w-full lg:w-[340px] shrink-0 p-8 rounded-3xl bg-slate-900 relative overflow-hidden flex flex-col justify-center items-center shadow-lg">
               <p className="text-slate-500 text-xs font-black uppercase tracking-widest mb-4 flex items-center gap-2">
-                {/* Custom Icon AiSparkIcon Menggantikan ShieldCheck */}
                 <AiSparkIcon size={16}/> AI Readiness Score
               </p>
               <div className="w-24 h-24 mb-6 border-4 border-slate-700 border-t-indigo-500 rounded-full animate-spin" />
@@ -170,7 +184,6 @@ function InteractiveDashboardLoading({ formData, trackName }: { formData: Record
             </div>
             
             <div className="flex flex-col lg:flex-row gap-10 xl:gap-16 items-center">
-              {/* Fake Radar Circle */}
               <div className="w-full lg:w-2/5 flex flex-col items-center shrink-0">
                 <div className="w-64 h-64 sm:w-80 sm:h-80 rounded-full border-[10px] border-slate-200/50 flex items-center justify-center animate-pulse">
                   <div className="w-48 h-48 sm:w-60 sm:h-60 rounded-full border-[10px] border-slate-200/50 flex items-center justify-center">
@@ -179,7 +192,6 @@ function InteractiveDashboardLoading({ formData, trackName }: { formData: Record
                 </div>
               </div>
               
-              {/* Fake Metrics Cards */}
               <div className="w-full lg:w-3/5 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
                   <div key={i} className="bg-white p-5 rounded-2xl ring-1 ring-slate-100 h-24 flex flex-col gap-3">
@@ -194,7 +206,6 @@ function InteractiveDashboardLoading({ formData, trackName }: { formData: Record
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
@@ -206,8 +217,6 @@ function InteractiveDashboardLoading({ formData, trackName }: { formData: Record
 // ========================================================
 export default function AssessmentPage({ params }: { params: Promise<{ trackId: string }> }) {
   const router = useRouter();
-  
-  // Unwrap Promise parameter
   const { trackId } = use(params);
   
   // Panggil state global
@@ -222,7 +231,6 @@ export default function AssessmentPage({ params }: { params: Promise<{ trackId: 
     router.push('/assessment');
   });
 
-
   // TENTUKAN TEMPLATE BERDASARKAN SLUG
   const template = state.templates.find((t) => {
     const slug = t.trackName
@@ -233,9 +241,7 @@ export default function AssessmentPage({ params }: { params: Promise<{ trackId: 
     return slug === trackId;
   });
 
-  // Efek proteksi: Kembalikan ke halaman PILIH KATEGORI jika template tidak ditemukan ATAU tidak diizinkan
   useEffect(() => {
-    // Pastikan token masih ada
     const activeToken = sessionStorage.getItem('active_token');
     if (!activeToken) {
       router.replace('/');
@@ -243,13 +249,10 @@ export default function AssessmentPage({ params }: { params: Promise<{ trackId: 
     }
 
     if (!state.isLoadingTemplates && state.templates.length > 0) {
-      // Jika template tidak valid dari awal
       if (!template) {
         router.push('/assessment');
         return;
       }
-
-      // --- TAMBAHAN FILTERING: PROTEKSI BYPASS URL ---
       const savedAllowed = sessionStorage.getItem('active_allowed_templates');
       if (savedAllowed) {
         try {
@@ -263,7 +266,6 @@ export default function AssessmentPage({ params }: { params: Promise<{ trackId: 
           console.error("Gagal membaca proteksi URL dari session", e);
         }
       }
-      // -----------------------------------------------
     }
   }, [state.isLoadingTemplates, state.templates, template, router]);
 
@@ -289,16 +291,18 @@ export default function AssessmentPage({ params }: { params: Promise<{ trackId: 
       <InteractiveDashboardLoading 
         formData={state.formData} 
         trackName={template.trackName} 
+        assessmentId={state.currentAssessmentId} // PASSING ID KE SKELETON
       />
     );
   }
 
-  // ========================================================
+// ========================================================
   // LAYAR 2: DASHBOARD HASIL AI (Selesai)
   // ========================================================
   if (isDashboardActive) {
     return (
       <CurationDashboard 
+        assessmentId={state.currentAssessmentId || undefined} // <--- TAMBAHKAN "|| undefined" DI SINI
         trackType={template.trackName}
         formData={state.formData}
         aiResult={state.aiResult}

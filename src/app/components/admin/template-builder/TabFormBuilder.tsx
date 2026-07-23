@@ -1,4 +1,3 @@
-// src/app/components/admin/template-builder/TabFormBuilder.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -6,8 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { FormTemplate, FormStep, FormField, FieldType } from '@/types/curation';
 import { ChevronUp, ChevronDown, Trash2, Sparkles, ArrowUp, ArrowDown, Plus, GitBranch, Save, Loader2, Bot } from 'lucide-react';
-import { getFirestore, doc, onSnapshot, updateDoc } from 'firebase/firestore';
+import { doc, onSnapshot, updateDoc } from 'firebase/firestore'; // PERBAIKAN: getFirestore dihapus
 import { getFunctions, httpsCallable } from 'firebase/functions';
+import { db } from '@/lib/firebase'; // PERBAIKAN: Import db
 import { toast } from 'sonner';
 
 interface TabFormBuilderProps {
@@ -20,16 +20,17 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
   const [expandedSteps, setExpandedSteps] = useState<number[]>([0]);
   const [stepToDelete, setStepToDelete] = useState<number | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [enhancingFieldId, setEnhancingFieldId] = useState<string | null>(null); // State loading untuk AI Field Co-Pilot
+  const [enhancingStepIndex, setEnhancingStepIndex] = useState<number | null>(null);
 
-  // REALTIME SNAPSHOT LISTENER (Hanya untuk sinkronisasi state loading & data baru)
   useEffect(() => {
     if (!template.id) return;
-    const db = getFirestore();
+    
+    // PERBAIKAN: Menggunakan db dari @/lib/firebase
     const unsubscribe = onSnapshot(doc(db, "form_templates", template.id), (snapshot) => {
       if (snapshot.exists()) {
         const docData = snapshot.data();
         const status = docData.aiGenerationStatus;
+
         if (status) {
           if (status.phase === 'RESEARCHING' || status.phase === 'BUILDING_FORM') {
             setIsGenerating(true);
@@ -42,6 +43,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
         }
       }
     });
+
     return () => unsubscribe();
   }, [template.id]);
 
@@ -60,7 +62,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
       await onAutoSave(template);
     } else {
       try {
-        const db = getFirestore();
+        // PERBAIKAN: Menggunakan db dari @/lib/firebase
         await updateDoc(doc(db, "form_templates", template.id), {
           steps: template.steps,
           lastUpdated: new Date().toISOString()
@@ -121,45 +123,51 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
   const moveField = (stepIndex: number, fieldIndex: number, direction: 'up' | 'down') => {
     const newSteps = [...template.steps];
     const fields = [...newSteps[stepIndex].fields];
+    
     if (direction === 'up' && fieldIndex > 0) {
       [fields[fieldIndex - 1], fields[fieldIndex]] = [fields[fieldIndex], fields[fieldIndex - 1]];
     } else if (direction === 'down' && fieldIndex < fields.length - 1) {
       [fields[fieldIndex], fields[fieldIndex + 1]] = [fields[fieldIndex + 1], fields[fieldIndex]];
     }
+    
     newSteps[stepIndex].fields = fields;
     onChange({ ...template, steps: newSteps });
   };
 
-  // --- BLOK BARU: HANDLER AI FIELD CO-PILOT ---
-  const handleEnhanceField = async (stepIndex: number, fieldIndex: number, field: FormField) => {
-    if (!field.label || field.label.trim() === "Pertanyaan Baru") {
-      toast.warning("Silakan tulis pertanyaan mentahnya terlebih dahulu di kolom Label.");
+  const handleEnhanceStep = async (stepIndex: number, stepData: FormStep) => {
+    if (!stepData.fields || stepData.fields.length === 0) {
+      toast.warning("Seksi ini masih kosong.", { description: "Harap buat minimal 1 pertanyaan mentah terlebih dahulu." });
       return;
     }
 
-    setEnhancingFieldId(field.id);
+    setEnhancingStepIndex(stepIndex);
+    
     try {
       const functions = getFunctions(undefined, 'asia-southeast2');
-      const enhanceFn = httpsCallable(functions, 'enhanceFieldLogic');
-      const response = await enhanceFn({
+      const enhanceStepFn = httpsCallable(functions, 'enhanceStepLogic');
+      
+      const response = await enhanceStepFn({
         trackName: template.trackName,
         templateId: template.id,
-        currentField: field
+        stepTitle: stepData.title,
+        stepFields: stepData.fields,
+        aiPromptConfig: template.aiPromptConfig
       });
 
       const data = response.data as { success: boolean, fields: FormField[] };
+      
       if (data.success && data.fields && data.fields.length > 0) {
         const newSteps = [...template.steps];
-        // Timpa field lama dengan 1 atau 2 field baru hasil AI
-        newSteps[stepIndex].fields.splice(fieldIndex, 1, ...data.fields);
+        newSteps[stepIndex].fields = data.fields;
         onChange({ ...template, steps: newSteps });
-        toast.success("Logika pertanyaan berhasil disempurnakan oleh AI!");
+        toast.success("Berhasil!", { description: `Seksi "${stepData.title}" berhasil disempurnakan secara massal oleh AI.` });
       }
+
     } catch (error: any) {
       console.error(error);
-      toast.error("Gagal menyempurnakan pertanyaan: " + error.message);
+      toast.error("Gagal menyempurnakan seksi: " + error.message);
     } finally {
-      setEnhancingFieldId(null);
+      setEnhancingStepIndex(null);
     }
   };
 
@@ -175,7 +183,6 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
 
   return (
     <div className="space-y-4">
-      {/* HEADER VISUAL EDITOR */}
       <div className="flex justify-between items-center bg-white p-4 rounded-3xl ring-1 ring-slate-200 shadow-sm mb-6">
         <div className="flex items-center gap-3">
           <div className="p-2.5 bg-slate-100 text-slate-600 rounded-xl"><Bot className="w-5 h-5"/></div>
@@ -189,7 +196,6 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
         </Button>
       </div>
 
-      {/* RENDER FORM STEPS & FIELD CONFIGURATOR */}
       {(!template.steps || template.steps.length === 0) ? (
         <div className="text-center p-12 bg-white rounded-3xl ring-1 ring-slate-200 border border-dashed border-slate-300">
           <p className="text-slate-400 font-bold text-sm">Belum ada langkah formulir yang dibuat. Silakan kembali ke tab <b className="text-slate-700">Otak AI</b> dan tekan tombol <b>Generate</b>.</p>
@@ -197,9 +203,10 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
       ) : (
         template.steps.map((step, sIdx) => {
           const isExpanded = expandedSteps.includes(sIdx);
+          const isStepBeingEnhanced = enhancingStepIndex === sIdx;
           
           return (
-            <div key={`step-${sIdx}`} className="bg-white rounded-[2rem] ring-1 ring-slate-200/80 shadow-sm overflow-hidden transition-all duration-300">
+            <div key={`step-${sIdx}`} className={`bg-white rounded-[2rem] ring-1 ring-slate-200/80 shadow-sm overflow-hidden transition-all duration-300 ${isStepBeingEnhanced ? 'opacity-70 pointer-events-none' : ''}`}>
               
               <div 
                 className={`p-5 flex items-center justify-between cursor-pointer select-none transition-colors ${isExpanded ? 'bg-slate-900 text-white' : 'hover:bg-slate-50/50'}`}
@@ -224,7 +231,20 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                     <h3 className="font-bold text-slate-800 text-sm sm:text-base">{step.title} <span className="text-slate-400 text-xs font-medium ml-2">({step.fields?.length || 0} Pertanyaan)</span></h3>
                   )}
                 </div>
+                
                 <div className="flex items-center gap-2 shrink-0">
+                  {isExpanded && (
+                    <Button 
+                      variant="outline" 
+                      onClick={(e) => { e.stopPropagation(); handleEnhanceStep(sIdx, step); }} 
+                      disabled={isStepBeingEnhanced}
+                      className="text-indigo-400 border-indigo-500/30 bg-indigo-500/10 hover:bg-indigo-500/20 hover:text-indigo-300 h-8 px-3 rounded-xl text-[10px] font-black mr-1 hidden sm:flex items-center gap-1.5 transition-all"
+                    >
+                      {isStepBeingEnhanced ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+                      {isStepBeingEnhanced ? 'Meracik...' : 'AI Enhance Seksi'}
+                    </Button>
+                  )}
+                  
                   {isExpanded && (
                     <Button variant="ghost" onClick={(e) => { e.stopPropagation(); setStepToDelete(sIdx); }} className="text-slate-400 hover:text-rose-400 hover:bg-slate-800 h-8 px-2.5 rounded-xl text-xs font-bold mr-1 hidden sm:flex">
                       Hapus Step
@@ -238,29 +258,15 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                 <div className="p-4 sm:p-6 bg-slate-50/40 space-y-6 border-t border-slate-100">
                   {step.fields?.map((field, fIdx) => {
                     const isPrimaryIdentity = ['namaUsaha', 'namaPengisi'].includes(field.id);
-                    const isBeingEnhanced = enhancingFieldId === field.id;
-
+                    
                     return (
-                      <div key={`field-${sIdx}-${fIdx}`} className={`p-4 sm:p-5 rounded-2xl ring-1 shadow-sm flex flex-col md:flex-row gap-5 relative transition-all ${isPrimaryIdentity ? 'bg-indigo-50/20 ring-indigo-100/60' : 'bg-white ring-slate-200/70 hover:ring-indigo-200'} ${isBeingEnhanced ? 'opacity-50 pointer-events-none' : ''}`}>
+                      <div key={`field-${sIdx}-${fIdx}`} className={`p-4 sm:p-5 rounded-2xl ring-1 shadow-sm flex flex-col md:flex-row gap-5 relative transition-all ${isPrimaryIdentity ? 'bg-indigo-50/20 ring-indigo-100/60' : 'bg-white ring-slate-200/70 hover:ring-indigo-200'}`}>
                         
                         <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
                           
                           <div className="space-y-1 md:col-span-2 relative">
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Label Pertanyaan</label>
-                            <Input value={field.label} onChange={e => updateField(sIdx, fIdx, 'label', e.target.value)} className="bg-white border-slate-200 h-10 rounded-xl font-bold text-slate-800 text-sm pr-32" />
-                            
-                            {/* TOMBOL MANTRA AI FIELD CO-PILOT */}
-                            {!isPrimaryIdentity && (
-                              <button 
-                                onClick={() => handleEnhanceField(sIdx, fIdx, field)}
-                                disabled={isBeingEnhanced}
-                                className="absolute right-1 top-6 bottom-1 flex items-center gap-1.5 px-3 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 hover:text-indigo-700 text-[10px] font-black uppercase tracking-wider rounded-lg transition-colors border border-indigo-100"
-                                title="Biarkan AI mengubah pertanyaan sederhana ini menjadi form bercabang berbobot otomatis."
-                              >
-                                {isBeingEnhanced ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
-                                AI Enhance
-                              </button>
-                            )}
+                            <Input value={field.label} onChange={e => updateField(sIdx, fIdx, 'label', e.target.value)} className="bg-white border-slate-200 h-10 rounded-xl font-bold text-slate-800 text-sm" />
                           </div>
 
                           <div className="space-y-1">
@@ -296,13 +302,13 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                             </label>
                           </div>
 
-                          {/* LOGIKA BERCABANG (CONDITIONAL VISIBILITY) */}
+                          {/* --- PERBAIKAN LOGIKA BERCABANG (SHOW-IF) --- */}
                           {!isPrimaryIdentity && (
                             <div className="md:col-span-2 space-y-2 p-3.5 bg-indigo-50/30 rounded-xl border border-indigo-100/50">
                               <label className="text-[10px] font-black text-indigo-900 uppercase tracking-wider flex items-center gap-1.5"><GitBranch className="w-3.5 h-3.5 text-indigo-600"/> Logika Aliran Cabang Pertanyaan</label>
                               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                                <select
-                                  value={field.showIf ? "conditional" : "always"}
+                                <select 
+                                  value={field.showIf ? "conditional" : "always"} 
                                   onChange={(e) => {
                                     if (e.target.value === "always") {
                                       updateField(sIdx, fIdx, 'showIf', undefined);
@@ -319,21 +325,47 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                                 
                                 {field.showIf && (
                                   <>
-                                    <select
-                                      value={field.showIf.fieldId}
+                                    <select 
+                                      value={field.showIf.fieldId} 
                                       onChange={(e) => updateField(sIdx, fIdx, 'showIf', { ...field.showIf, fieldId: e.target.value, equals: '' })}
                                       className="border border-slate-200 h-9 rounded-lg text-xs px-2 bg-white text-slate-700"
                                     >
+                                      <option value="" disabled>Pilih Pertanyaan Pemicu...</option>
                                       {getAllAvailableFields().map(f => (
                                         <option key={f.id} value={f.id}>{f.label} ({f.id})</option>
                                       ))}
                                     </select>
-                                    <Input
-                                      placeholder="Nilai Pemicu (Cth: Ya)"
-                                      value={String(field.showIf.equals || '')}
-                                      onChange={(e) => updateField(sIdx, fIdx, 'showIf', { ...field.showIf, equals: e.target.value })}
-                                      className="bg-white border-slate-200 h-9 text-xs rounded-lg"
-                                    />
+                                    
+                                    {/* BLOK PINTAR: Merubah input menjadi Dropdown jika pertanyaan pemicu memiliki opsi */}
+                                    {(() => {
+                                      const targetField = getAllAvailableFields().find(f => f.id === field.showIf?.fieldId);
+                                      
+                                      if (targetField && targetField.options && targetField.options.length > 0) {
+                                        return (
+                                          <select 
+                                            value={String(field.showIf?.equals || '')} 
+                                            onChange={(e) => updateField(sIdx, fIdx, 'showIf', { ...field.showIf, equals: e.target.value })}
+                                            className="border border-slate-200 h-9 rounded-lg text-xs px-2 bg-white text-slate-700 font-bold"
+                                          >
+                                            <option value="" disabled>Pilih Jawaban Pemicu...</option>
+                                            {targetField.options.map((opt: any, i: number) => {
+                                              const optLabel = typeof opt === 'object' ? opt.label : opt;
+                                              return <option key={i} value={optLabel}>{optLabel}</option>;
+                                            })}
+                                          </select>
+                                        );
+                                      }
+                                      
+                                      // Fallback jika pertanyaan pemicu bertipe Text biasa
+                                      return (
+                                        <Input 
+                                          placeholder="Ketik Nilai Pemicu (Cth: Ya)" 
+                                          value={String(field.showIf?.equals || '')} 
+                                          onChange={(e) => updateField(sIdx, fIdx, 'showIf', { ...field.showIf, equals: e.target.value })}
+                                          className="bg-white border-slate-200 h-9 text-xs rounded-lg"
+                                        />
+                                      );
+                                    })()}
                                   </>
                                 )}
                               </div>
@@ -344,6 +376,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                           {(field.type === 'radio' || field.type === 'checkbox' || field.type === 'select') && !isPrimaryIdentity && (
                             <div className="md:col-span-2 space-y-2.5 p-4 bg-slate-50 border border-slate-200 rounded-xl">
                               <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Opsi Jawaban & Matrix Bobot Kuantitatif (0-100)</label>
+                              
                               <div className="space-y-2">
                                 {(field.options || []).map((opt, optIdx) => {
                                   const isObj = typeof opt === 'object' && opt !== null;
@@ -393,9 +426,8 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                               </Button>
                             </div>
                           )}
-
                         </div>
-                        
+
                         <div className="flex md:flex-col gap-1 items-center justify-center pt-3 md:pt-0 md:pl-3 border-t md:border-t-0 md:border-l border-slate-100 shrink-0">
                           <button type="button" onClick={() => moveField(sIdx, fIdx, 'up')} disabled={fIdx === 0} className="p-1.5 text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg"><ArrowUp className="h-4 w-4" /></button>
                           <button type="button" onClick={() => moveField(sIdx, fIdx, 'down')} disabled={fIdx === step.fields.length - 1} className="p-1.5 text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg"><ArrowDown className="h-4 w-4" /></button>
@@ -411,7 +443,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
           );
         })
       )}
-      
+
       <Button onClick={addStep} className="w-full bg-slate-200 text-slate-700 hover:bg-slate-300 h-12 font-bold text-sm rounded-xl mt-4 border-dashed border-2 border-slate-300"><Plus className="h-4 w-4 mr-1.5" /> Tambah Seksi Langkah Baru (Manual)</Button>
 
       {/* DIALOG MODAL CONFIRM DELETE STEP */}

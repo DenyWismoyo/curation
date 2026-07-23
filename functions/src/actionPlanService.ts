@@ -16,6 +16,7 @@ export const generateActionPlanChecklist = onCall({
   },
   async (request) => {
     if (!request.auth) throw new HttpsError("unauthenticated", "Akses ditolak.");
+
     const { assessmentId, aiResult } = request.data;
     if (!assessmentId || !aiResult) throw new HttpsError("invalid-argument", "Data tidak lengkap.");
 
@@ -23,11 +24,20 @@ export const generateActionPlanChecklist = onCall({
       const API_KEY = geminiApiKeySecret.value();
       const genAI = new GoogleGenerativeAI(API_KEY);
       
-      // BACA TARGET AUDIENS DARI HASIL AI SEBELUMNYA
+      // LOGIKA ANCHOR ACTION PLAN:
       const targetAudience = aiResult.targetAudience || 'company';
-      const personaInstruction = targetAudience === 'individual'
-        ? "Anda adalah Senior Life Coach & Pakar Pengembangan Karir. Tugas Anda menyintesis laporan analitik menjadi TEPAT 10 langkah eksekusi (Action Plan) PERSONAL yang berurutan, logis, interaktif. Gunakan bahasa yang memberdayakan individu, BUKAN bahasa korporat."
-        : "Anda adalah Chief Operating Officer (COO) tingkat Enterprise. Tugas Anda menyintesis laporan analitik menjadi TEPAT 10 langkah eksekusi (Action Plan) BISNIS yang berurutan, logis, dan taktis untuk organisasi.";
+      const customBehavior = aiResult.actionPlanBehavior;
+      
+      let personaInstruction = "";
+      if (customBehavior) {
+          // Jika Admin mendefinisikan custom behavior, paksa AI mengikuti aturan tersebut
+          personaInstruction = `Anda adalah Pakar Eksekutor. Tugas Anda menyintesis laporan analitik menjadi TEPAT 10 langkah eksekusi. \nATURAN MUTLAK GAYA BAHASA & KONTEKS TUGAS: ${customBehavior}`;
+      } else {
+          // Fallback ke logika default
+          personaInstruction = targetAudience === 'individual'
+            ? "Anda adalah Senior Life Coach & Pakar Pengembangan Karir. Tugas Anda menyintesis laporan analitik menjadi TEPAT 10 langkah eksekusi PERSONAL. Gunakan bahasa yang memberdayakan individu, BUKAN bahasa korporat."
+            : "Anda adalah Chief Operating Officer (COO) tingkat Enterprise. Tugas Anda menyintesis laporan analitik menjadi TEPAT 10 langkah eksekusi BISNIS yang berurutan, logis, dan taktis untuk organisasi.";
+      }
 
       const model = genAI.getGenerativeModel({
         model: "gemini-3.1-flash-lite",
@@ -43,12 +53,12 @@ export const generateActionPlanChecklist = onCall({
               required: ["id", "task", "description", "timeframe", "isCompleted", "contextualTip", "searchKeyword"],
               properties: {
                 id: { type: SchemaType.STRING },
-                task: { type: SchemaType.STRING, description: "Maksimal 6-8 kata. Wajib berupa kata kerja perintah taktis." },
+                task: { type: SchemaType.STRING, description: "Maksimal 6-8 kata. Wajib berupa kata kerja perintah taktis (atau ajakan refleksi jika individu)." },
                 description: { type: SchemaType.STRING, description: "Penjelasan eksekusi maksimal 2 kalimat padat dan jelas." },
                 timeframe: { type: SchemaType.STRING, description: "WAJIB pilih salah satu: 'Harian', 'Mingguan', atau 'Bulanan'." },
                 isCompleted: { type: SchemaType.BOOLEAN, description: "Wajib diset false" },
                 contextualTip: { type: SchemaType.STRING, description: "Satu kalimat singkat tips praktis, panduan kecil, atau motivasi untuk mengeksekusi tugas ini." },
-                searchKeyword: { type: SchemaType.STRING, description: "Satu frasa kata kunci spesifik (contoh: 'Cara membuat SOP Keuangan') yang relevan untuk dicari pengguna di YouTube/Google." }
+                searchKeyword: { type: SchemaType.STRING, description: "Satu frasa kata kunci YouTube/Google. Jika audiens individu/konseling, arahkan ke teknik psikologi/habit. Jika bisnis, arahkan ke strategi/SOP." }
               }
             }
           }
@@ -74,6 +84,7 @@ export const generateActionPlanChecklist = onCall({
       const result = await model.generateContent(prompt);
       let rawText = result.response.text().trim();
       if (rawText.startsWith('```')) rawText = rawText.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
+
       const generatedChecklist = JSON.parse(rawText);
 
       const db = getFirestore(admin.app(), "curation");
@@ -83,11 +94,13 @@ export const generateActionPlanChecklist = onCall({
       });
 
       return { success: true, actionPlan: generatedChecklist };
+
     } catch (error: any) {
       console.error("Gagal membedah Action Plan:", error);
       throw new HttpsError("internal", error.message || "Gagal memproses AI Action Plan.");
     }
-  });
+  }
+);
 
 // 2. FUNGSI BARU: MEMBEDAH 1 TUGAS MENJADI SUB-CHECKLIST
 export const generateSubTaskChecklist = onCall({

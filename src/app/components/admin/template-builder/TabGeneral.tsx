@@ -1,4 +1,3 @@
-// src/app/components/admin/template-builder/TabGeneral.tsx
 'use client';
 
 import React, { useState } from 'react';
@@ -6,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { FormTemplate } from '@/types/curation';
-import { Trash2, Plus, Sparkles, Loader2 } from 'lucide-react';
+import { Trash2, Plus, Sparkles, Loader2, Target } from 'lucide-react';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { toast } from 'sonner';
 
@@ -17,6 +16,7 @@ interface TabGeneralProps {
 
 export function TabGeneral({ template, onChange }: TabGeneralProps) {
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isGeneratingAnchors, setIsGeneratingAnchors] = useState(false);
 
   // FUNGSI UNTUK MEMISAHKAN "JUDUL" DAN "SUB-POIN"
   const parseExpectedOutput = (blockStr: string) => {
@@ -53,9 +53,8 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
     onChange({ ...template, expectedOutputs: newArr });
   };
 
-  // FUNGSI UNTUK GENERATE OUTPUT BERBASIS AI
+  // FUNGSI UNTUK GENERATE OUTPUT BERBASIS AI (Eksisting)
   const handleGenerateOutputs = async () => {
-    // Validasi: Pastikan konfigurasi Otak AI tidak kosong
     if (!template.aiPromptConfig?.expectedRecommendations || template.aiPromptConfig.expectedRecommendations.length === 0) {
       toast.error("Konfigurasi Belum Lengkap", {
         description: "Harap isi 'Target Rekomendasi' di Tab Otak AI terlebih dahulu agar AI bisa merumuskan output."
@@ -78,7 +77,6 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
       const data = result.data as any;
       
       if (data.success && data.sellingPoints) {
-         // Format hasil dari AI (array of object {title, description}) menjadi format string "Judul: Deskripsi"
          const formattedOutputs = data.sellingPoints.map((sp: any) => `${sp.title}: ${sp.description}`);
          onChange({ ...template, expectedOutputs: formattedOutputs });
          toast.success("Berhasil!", { description: "Copywriting benefit berhasil digenerate oleh AI." });
@@ -88,6 +86,43 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
       toast.error("Gagal Generate", { description: e.message || "Terjadi kesalahan pada server AI." });
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  // FUNGSI BARU UNTUK GENERATE PROMPT ANCHORS BERBASIS AI
+  const handleGenerateAnchors = async () => {
+    if (!template.trackName) {
+      toast.error("Nama Program Kosong", { description: "Harap isi Nama Program/Kategori terlebih dahulu untuk acuan AI." });
+      return;
+    }
+    
+    setIsGeneratingAnchors(true);
+    try {
+      const functions = getFunctions(undefined, 'asia-southeast2');
+      const generateAnchorsFn = httpsCallable(functions, 'generatePromptAnchors');
+
+      const payload = {
+        trackName: template.trackName,
+        trackDescription: template.trackDescription,
+        targetAudience: template.aiPromptConfig?.targetAudience
+      };
+
+      const result = await generateAnchorsFn(payload);
+      const data = result.data as any;
+
+      if (data.success && data.anchors) {
+        onChange({
+          ...template,
+          specificTargetContext: data.anchors.specificTargetContext,
+          methodologyContext: data.anchors.methodologyContext
+        });
+        toast.success("Berhasil!", { description: "Konteks spesifik berhasil dirumuskan oleh AI." });
+      }
+    } catch(e: any) {
+      console.error(e);
+      toast.error("Gagal Generate Anchors", { description: e.message || "Terjadi kesalahan pada server AI." });
+    } finally {
+      setIsGeneratingAnchors(false);
     }
   };
 
@@ -128,8 +163,57 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
           />
         </div>
 
-        {/* --- BLOK TAMBAHAN: MODE EKSEKUSI FORMULIR --- */}
-        <div className="space-y-2 md:col-span-2 bg-indigo-50/50 p-5 rounded-2xl ring-1 ring-indigo-100">
+        {/* --- BLOK KONTEKS SPESIFIK & PROMPT ANCHORS (DENGAN TOMBOL AUTO-GENERATE) --- */}
+        <div className="space-y-4 md:col-span-2 p-5 bg-amber-50/50 rounded-2xl ring-1 ring-amber-100 mt-2">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-1">
+            <div className="flex items-center gap-2">
+              <Target size={18} className="text-amber-600" />
+              <label className="text-[11px] font-black text-amber-900 uppercase tracking-widest">
+                Konteks Spesifik & Ketajaman AI (Prompt Anchors)
+              </label>
+            </div>
+            
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleGenerateAnchors}
+              disabled={isGeneratingAnchors}
+              className="h-8 text-[10px] font-bold bg-amber-100 hover:bg-amber-200 text-amber-800 border-amber-300 rounded-lg shadow-sm shrink-0"
+            >
+              {isGeneratingAnchors ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5 mr-1.5" />}
+              Auto-Generate Anchor
+            </Button>
+          </div>
+          
+          <p className="text-[11px] text-amber-700/80 font-medium leading-relaxed mb-4">
+            Kunci pemahaman AI di sini agar tidak menerka-nerka. Semakin spesifik profil target dan metodologinya, semakin tajam dan relevan pertanyaan kuesioner yang akan digenerate.
+          </p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-[10px] font-bold text-amber-700 uppercase tracking-widest">Profil Spesifik Subjek</label>
+              <Textarea 
+                value={template.specificTargetContext || ''}
+                onChange={e => onChange({ ...template, specificTargetContext: e.target.value })}
+                placeholder="Cth: Karyawan level manajerial yang sedang mengalami burnout dan butuh intervensi psikologi..."
+                className="rounded-xl bg-white border-amber-200 min-h-[80px] text-xs font-medium focus-visible:ring-amber-500"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-bold text-amber-700 uppercase tracking-widest">Metodologi / Referensi</label>
+              <Textarea 
+                value={template.methodologyContext || ''}
+                onChange={e => onChange({ ...template, methodologyContext: e.target.value })}
+                placeholder="Cth: Menggunakan pendekatan Cognitive Behavioral Therapy (CBT) / Skala Likert Psikometri / Standar ISO 9001..."
+                className="rounded-xl bg-white border-amber-200 min-h-[80px] text-xs font-medium focus-visible:ring-amber-500"
+              />
+            </div>
+          </div>
+        </div>
+        {/* --- AKHIR BLOK KONTEKS SPESIFIK --- */}
+
+        <div className="space-y-2 md:col-span-2 bg-indigo-50/50 p-5 rounded-2xl ring-1 ring-indigo-100 mt-2">
           <div className="flex items-center gap-2 mb-2">
             <Sparkles size={18} className="text-indigo-600" />
             <label className="text-[11px] font-black text-indigo-900 uppercase tracking-widest">
@@ -151,7 +235,6 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
         </div>
       </div>
 
-      {/* --- BLOK DINAMIS: HARAPAN OUTPUT / BENEFIT PESERTA --- */}
       <div className="space-y-4 p-6 bg-slate-50/80 rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden">
         <div className="absolute top-0 left-0 w-1.5 h-full bg-indigo-500"></div>
         
@@ -161,7 +244,6 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
             <p className="text-xs text-slate-500 font-medium mt-1">Poin-poin hasil akhir yang akan muncul di Katalog Landing Page.</p>
           </div>
           
-          {/* TOMBOL GENERATE AI */}
           <Button 
             onClick={handleGenerateOutputs} 
             disabled={isGenerating}
@@ -233,7 +315,6 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
           <p className="text-xs text-indigo-700/70 font-medium mt-0.5">Jika dicentang, peserta dapat melihat dan memilih kategori ini.</p>
         </div>
       </div>
-
     </div>
   );
 }

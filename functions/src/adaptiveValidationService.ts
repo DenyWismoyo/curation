@@ -100,7 +100,7 @@ export const generateAdaptiveQuestions = onCall({
 
       // PROSES GENERATE AI (Ini tetap menggunakan SDK karena terbukti aman dan jalan)
       const model = genAI.getGenerativeModel({
-        model: "gemini-2.5-flash", 
+        model: "gemini-3.1-flash-lite", 
         systemInstruction: `Anda adalah ${persona}. Tugas Anda merancang atau memilih instrumen pertanyaan kuesioner dinamis secara real-time. Output WAJIB berupa array JSON berisi objek 'FormField'.`,
         generationConfig: {
           temperature: 0.4,
