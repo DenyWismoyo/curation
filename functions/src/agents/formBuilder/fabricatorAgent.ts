@@ -27,7 +27,7 @@ const withRetry = async <T>(fn: () => Promise<T>, retries = 3, delayMs = 2000): 
 };
 
 export const formBuilderFabricatorAgent = onDocumentUpdated({
-  database: "curation", // PERBAIKAN: Menunjuk database curation
+  database: "curation", 
   document: "form_templates/{templateId}",
   region: "asia-southeast2",
   memory: "1GiB",
@@ -84,6 +84,25 @@ export const formBuilderFabricatorAgent = onDocumentUpdated({
     });
 
     const baseInstructions = buildMegaAgentPrompt({ trackName, config: aiPromptConfig, archetypeInstruction });
+    
+    // ====================================================================
+    // PERBAIKAN: Deteksi Audiens untuk Pertanyaan Identitas yang Dinamis
+    // ====================================================================
+    const audienceType = aiPromptConfig?.targetAudience || 'company';
+    let identityContext = "";
+    
+    if (audienceType === 'individual' || audienceType === 'student') {
+        identityContext = "Buat 2-3 pertanyaan identitas tambahan yang relevan dengan personal/karir (misal: Usia, Pendidikan Terakhir, Profesi, atau Domisili).";
+    } else if (audienceType === 'government') {
+        identityContext = "Buat 2-3 pertanyaan identitas tambahan yang relevan dengan ASN/Pemerintahan (misal: NIP, Jabatan, Golongan, atau Nama Instansi/Seksi).";
+    } else if (audienceType === 'community') {
+        identityContext = "Buat 2-3 pertanyaan identitas tambahan yang relevan dengan komunitas (misal: Peran di Komunitas, Lama Bergabung, atau Fokus Isu Sosial).";
+    } else if (audienceType === 'startup' || audienceType === 'umkm') {
+        identityContext = "Buat 2-3 pertanyaan identitas tambahan yang relevan dengan bisnis (misal: Tahun Berdiri, Kategori Produk/Jasa, atau Skala Operasional/Karyawan).";
+    } else {
+        identityContext = "Buat 2-3 pertanyaan identitas tambahan yang relevan dengan B2B/Korporasi (misal: Jabatan Pengisi Form, Sektor Industri, atau Skala Perusahaan).";
+    }
+
     let rawFinalSteps: any[] = [];
     const batchSize = 3; 
 
@@ -96,6 +115,7 @@ export const formBuilderFabricatorAgent = onDocumentUpdated({
         const absoluteIndex = i + indexInBatch;
         const isFirstStep = absoluteIndex === 0;
 
+        // PERBAIKAN: Prompt injeksi aturan dilarang menanyakan email & telepon
         const sectionPrompt = `
           ${baseInstructions}
           HASIL RISET STANDAR TERBARU: ${researchNotes}
@@ -103,9 +123,12 @@ export const formBuilderFabricatorAgent = onDocumentUpdated({
           Rancang 8-12 pertanyaan spesifik HANYA UNTUK Seksi ${absoluteIndex + 1}: "${step.title}".
           
           ${isFirstStep ? `
-          ATURAN SEKSI PERTAMA: 4 Field pertama WAJIB ber-ID persis: "namaUsaha", "namaPengisi", "emailAktif", "nomorTelepon". 
+          ATURAN SEKSI PERTAMA (DATA PROFIL DASAR):
+          1. Dua (2) Field pertama WAJIB ber-ID persis: "namaUsaha" dan "namaPengisi".
+          2. KONTEKS DINAMIS: ${identityContext}
+          3. PANTANGAN MUTLAK: DILARANG KERAS menanyakan "Email", "Kata Sandi", "Nomor Telepon", atau "WhatsApp". Sistem kami sudah mendeteksi akun Google dan data kontak mereka secara otomatis di layar pendaftaran!
           ` : `
-          ATURAN ANTI-DUPLIKASI MUTLAK: DILARANG KERAS menanyakan kembali Identitas Dasar.
+          ATURAN ANTI-DUPLIKASI MUTLAK: DILARANG KERAS menanyakan kembali Identitas Dasar di seksi ini. Fokus ke pendalaman kasus sesuai topik seksi ini.
           `}
         `;
 

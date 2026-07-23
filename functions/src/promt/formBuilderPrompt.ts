@@ -14,9 +14,6 @@ export const buildMegaAgentPrompt = (params: FormBuilderPromptParams): string =>
   const risks = config.riskFramework || 'Deteksi potensi kegagalan operasional';
   const sources = config.researchSourcesCited?.join(', ') || 'Standar industri global terbaik';
 
-  // =====================================================================
-  // PERBAIKAN: Penanganan Dinamis untuk Fungsi Domain & Purpose
-  // =====================================================================
   const purpose = config.formPurpose || 'assessment';
   let purposeContext = "";
 
@@ -27,14 +24,11 @@ export const buildMegaAgentPrompt = (params: FormBuilderPromptParams): string =>
   } else if (purpose === 'consultation') {
      purposeContext = "FORMULIR KONSULTASI PAKAR (Fokus pada identifikasi akar masalah dan pengumpulan fakta spesifik)";
   } else if (purpose === 'custom') {
-     // Jika Admin memilih "Kustomisasi Manual", fokus form akan otomatis mengikuti Nama Program
      purposeContext = `FORMULIR KUSTOM DINAMIS: "${trackName}" (Fokus evaluasi disesuaikan dengan konteks program ini)`;
   } else {
-     // Default Fallback
      purposeContext = "KUESIONER AUDIT BISNIS & STANDAR MUTU (Due Diligence)";
   }
      
-  // Deteksi Audiens yang Lebih Kaya & Dinamis
   const audienceType = config.targetAudience || 'company';
   let targetAudience = "";
   let namaLabel = "Nama Entitas/Perusahaan";
@@ -91,10 +85,10 @@ export const buildMegaAgentPrompt = (params: FormBuilderPromptParams): string =>
  ${archetypeInstruction}
 
  INSTRUKSI TEKNIS STRUKTUR JSON & "POWERFUL MIXING":
- 1. Langkah 1 WAJIB memiliki 2 field pertama dengan urutan ID: "namaUsaha", "namaPengisi".
+ 1. Langkah 1 WAJIB memiliki 2 field pertama dengan ID: "namaUsaha", "namaPengisi". Sisa pertanyaan identitas disesuaikan dengan konteks tanpa menanyakan Email/Telepon.
  2. SINERGI TIPE INPUT (WAJIB DITERAPKAN): Anda memiliki senjata input ("text", "textarea", "number", "date", "select", "radio", "checkbox", "file"). Anda WAJIB menggabungkan mereka secara cerdas!
-    - Gunakan "checkbox" untuk menanyakan kelengkapan (contoh: "Pilih instrumen legalitas yang sudah Anda miliki").
-    - Gunakan "number" khusus untuk data kuantitatif presisi (contoh: Omzet, Jumlah Pengguna, Kapasitas Produksi).
+    - Gunakan "checkbox" untuk menanyakan kelengkapan.
+    - Gunakan "number" khusus untuk data kuantitatif presisi (contoh: Omzet, Jumlah Pengguna, Umur).
     - Gunakan "radio" atau "select" untuk pilihan tunggal tingkat kematangan (maturity level).
  3. SECRET SCORING MATRIX: Untuk tipe 'radio', 'checkbox', atau 'select', array "options" WAJIB berupa objek: {"label": "Teks", "weight": angka_bobot_0_hingga_100}. Berikan bobot skor yang ketat dan selaras dengan Rubrik Klien berikut: "${config.customScoringRubric}".
  4. AGGRESSIVE CONDITIONAL LOGIC (INVESTIGASI FORENSIK): Gunakan properti "showIf": {"fieldId": "id_pemicu", "equals": "opsi_pemicu"} untuk membuat form yang reaktif dan cerdas:
@@ -114,7 +108,7 @@ export const buildMegaAgentPrompt = (params: FormBuilderPromptParams): string =>
      {
        "stepNumber": 1,
        "title": "Identitas Dasar",
-       "description": "Lengkapi data dasar penanggung jawab",
+       "description": "Lengkapi profil Anda",
        "fields": [
          {
            "id": "namaUsaha", "label": "${namaLabel}", "type": "text", "required": true, "gridSpan": 2
