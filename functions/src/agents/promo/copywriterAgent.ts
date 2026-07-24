@@ -23,12 +23,11 @@ export const generateCopywriting = onCall({
     stepsContext = formSteps.map((step: any, index: number) => `Tahapan ${index + 1}: ${step.title}`).join("\n");
   }
 
-  // PENAJAMAN PANDUAN COPYWRITING PER PLATFORM TERMASUK HASHTAG
   const platformGuidelines: Record<string, string> = {
-    instagram: "Caption estetik bergaya storytelling/AIDA. Wajib pakai EMOJI, spasi paragraf yang rapi, dan WAJIB sertakan 5-10 HASHTAG relevan di bagian paling bawah.",
-    tiktok: "Caption singkat, dinamis, gaya Gen Z/Milenial. Wajib EMOJI dan WAJIB 5-8 HASHTAG populer/spesifik di akhir.",
-    threads: "Teks tajam, relatable, memancing diskusi audiens. Wajib EMOJI dan WAJIB 3-5 HASHTAG spesifik.",
-    facebook: "Gaya storytelling profesional, solutif, menonjolkan kredibilitas. Wajib EMOJI dan WAJIB 5-8 HASHTAG bisnis/profesional."
+    instagram: "Gaya copywriting persuasif (AIDA/PAS), emosional, dan relatable. Pancing interaksi, berikan solusi elegan, akhiri dengan Call to Action yang kuat. Wajib 5-10 HASHTAG.",
+    tiktok: "Skrip/caption dinamis, penuh energi, relate dengan audiens, langsung 'menggigit' di 3 detik pertama. Wajib 5-8 HASHTAG.",
+    threads: "Teks tajam, opini mindblowing, memancing diskusi audiens agar berhenti scrolling. Wajib 3-5 HASHTAG.",
+    facebook: "Gaya edukatif namun hangat, menonjolkan kredibilitas dan solusi nyata dari masalah audiens. Wajib 5-8 HASHTAG."
   };
 
   const currentGuideline = platformGuidelines[platform];
@@ -38,11 +37,10 @@ export const generateCopywriting = onCall({
     const genAI = new GoogleGenerativeAI(API_KEY);
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-3.1-flash-lite",
-      // PENAJAMAN PERAN AI SEBAGAI EXPERT COPYWRITER
-      systemInstruction: "Anda adalah Chief Marketing Officer, Expert Copywriter, dan Visual Storyteller untuk Omnifit. Tugas Anda membuat caption media sosial yang SANGAT MEMIKAT, emosional, persuasif, kaya emoji, dan WAJIB memiliki hashtag. Anda juga merancang TEPAT 4 Slide Carousel infografis dengan presisi.",
+      model: "gemini-2.5-flash", // Menggunakan model mutakhir untuk copywriting
+      systemInstruction: "Anda adalah Expert Social Media Copywriter dengan spesialisasi konversi tinggi. Anda SANGAT PINTAR memainkan emosi audiens, menggunakan bahasa yang hangat, relatable, dan TIDAK KAKU/AKADEMIS. Anda paham cara merangkai kalimat persuasif tanpa terlihat seperti robot.",
       generationConfig: {
-        temperature: 0.7,
+        temperature: 0.8, // Suhu dinaikkan agar hasil lebih kreatif, emosional, dan 'menjual'
         responseMimeType: "application/json",
         responseSchema: {
           type: SchemaType.OBJECT,
@@ -57,8 +55,14 @@ export const generateCopywriting = onCall({
                 required: ["slideNumber", "textOnImage", "imagePrompt"],
                 properties: {
                   slideNumber: { type: SchemaType.INTEGER },
-                  textOnImage: { type: SchemaType.STRING, description: "Judul utama/kesimpulan singkat dari slide tersebut (Bahasa Indonesia)." },
-                  imagePrompt: { type: SchemaType.STRING, description: "Instruksi visual EXTREMELY DETAILED berbahasa INGGRIS, dengan instruksi penulisan teks berbahasa INDONESIA di dalam tanda kutip ganda." }
+                  textOnImage: { 
+                    type: SchemaType.STRING, 
+                    description: "Judul utama/kesimpulan singkat dari slide tersebut (Bahasa Indonesia). Maksimal 3-4 kata." 
+                  },
+                  imagePrompt: { 
+                    type: SchemaType.STRING, 
+                    description: "Instruksi visual EXTREMELY DETAILED berbahasa INGGRIS, dengan instruksi penulisan teks berbahasa INDONESIA di dalam tanda kutip ganda." 
+                  }
                 }
               }
             }
@@ -68,44 +72,44 @@ export const generateCopywriting = onCall({
     });
 
     const prompt = `
-      IDENTITAS PLATFORM:
+      IDENTITAS KAMPANYE:
       Brand: "Omnifit"
       Program: "${trackName}"
       Deskripsi: "${trackDescription || '-'}"
-      Audiens: "${targetAudience || 'Profesional'}"
-      Output: ${JSON.stringify(expectedOutputs || [])}
+      Target Audiens: "${targetAudience || 'Profesional'}" (Sesuaikan gaya bahasa sapaan dengan audiens ini. Misal: jika orang tua, gunakan sapaan 'Ayah/Bunda' atau 'Moms').
+      Output Program: ${JSON.stringify(expectedOutputs || [])}
       Tahapan Form: ${stepsContext}
+      Platform: ${platform}
       
-      TUGAS 1: Buat "copywriting" (caption) Bahasa Indonesia. 
+      TUGAS 1: Buat "copywriting" (caption) Bahasa Indonesia yang SANGAT MENJUAL.
       Aturan Platform: ${currentGuideline}. 
-      ATURAN MUTLAK COPYWRITING (WAJIB DIPATUHI):
-      1. HOOK: Kalimat pertama WAJIB memancing rasa sakit (pain point) atau rasa penasaran audiens. Jangan langsung jualan.
-      2. ISI: Gunakan gaya bahasa persuasif, berikan empati, lalu tawarkan program ini sebagai solusi transformasi yang nyata.
-      3. EMOJI & FORMAT: WAJIB pakai EMOJI yang relevan (seperti 🚀, 💡, 🎯, 📊). Wajib beri spasi kosong ganda (\\n\\n) antar ide paragraf agar tidak menumpuk dan mudah dibaca (scannable).
-      4. HASHTAGS (SANGAT PENTING!): JANGAN PERNAH MENGHILANGKAN HASHTAG. Anda WAJIB membuat barisan 5-10 hashtag yang relevan dengan topik di akhir caption (contoh: #Omnifit #NamaTopik #AsesmenAI, dll).
+      
+      ATURAN KETAT FORMAT & COPYWRITING (WAJIB DIPATUHI 100%):
+      1. TONE & EMOSI: Jangan kaku atau menggunakan istilah akademis/robotik (seperti 'kesenjangan literasi' atau 'pemetaan presisi'). Ubah menjadi bahasa sehari-hari yang menyentuh 'pain point' audiens.
+      2. KETERBACAAN (SCANNABLE): JANGAN BUAT ESAI! Pecah teks menjadi paragraf-paragraf pendek (maksimal 2-3 kalimat per paragraf).
+      3. SPASI GANDA MUTLAK: WAJIB gunakan spasi (\\n\\n) antar paragraf agar caption memiliki ruang bernapas (white space) dan enak dibaca.
+      4. ANTI-MARKDOWN BULLET: DILARANG KERAS menggunakan tanda bintang (* atau **) untuk membuat list. Jika ingin menjabarkan poin, WAJIB gunakan EMOJI di awal baris (contoh: ✅ Poin 1, 💡 Poin 2, 🚀 Poin 3).
+      5. CALL TO ACTION (CTA): Berikan CTA yang memicu urgensi atau FOMO di akhir teks.
+      6. HASHTAGS: Di baris paling bawah, berikan jarak (\\n\\n), lalu susun hashtag relevan (JANGAN DIHILANGKAN).
       
       TUGAS 2: Buatkan 4 "carouselSlides".
       
-      ATURAN MENULIS "imagePrompt" UNTUK MESIN GAMBAR (SAMA SEPERTI SEBELUMNYA, WAJIB DIPATUHI 100%):
-      Mesin gambar bodoh dalam menebak teks. Anda WAJIB menggunakan bahasa INGGRIS untuk mendeskripsikan gambar, TETAPI teks yang dicetak di gambar WAJIB disisipkan dengan bahasa INDONESIA di dalam tanda kutip ("..."). Teks TIDAK BOLEH PANJANG (maks 3 kata per elemen) agar tidak error!
+      ATURAN MENULIS "imagePrompt" UNTUK MESIN GAMBAR (TIDAK BOLEH BERUBAH):
+      Mesin AI Gambar tidak bisa membaca paragraf panjang. Anda WAJIB menggunakan bahasa INGGRIS untuk mendeskripsikan gambar, TETAPI teks yang dicetak di gambar WAJIB disisipkan dengan bahasa INDONESIA di dalam tanda kutip ("..."). Teks TIDAK BOLEH PANJANG (maks 3 kata per elemen)!
       
-      CONTOH DAN TEMPLATE PENULISAN "imagePrompt" PER SLIDE:
+      CONTOH PENULISAN "imagePrompt" PER SLIDE:
       
-      - SLIDE 1 (HOOK): 
-        Buat hook menarik di 'textOnImage'.
-        Format imagePrompt: "Vertical Portrait Aspect Ratio 3:4. Flat vector illustration, corporate minimalist, Teal and Vibrant Orange on clean white background. A stylized visual of [Metafora Masalah/Solusi]. In the center, write the large, bold text "[ISI textOnImage ANDA DI SINI]". No 3D, no photorealism."
+      - SLIDE 1 (HOOK/ATTENTION): 
+        Format imagePrompt: "Vertical Portrait Aspect Ratio 3:4. Flat vector illustration, corporate minimalist, Teal and Vibrant Orange on clean white background. A stylized visual of [Metafora Emosi/Masalah]. In the center, write the large, bold text "[ISI textOnImage DI SINI]". No 3D, no photorealism."
       
-      - SLIDE 2 (BENEFIT): 
-        Pilih 3 Output/Benefit, ringkas jadi max 2-3 kata per poin.
-        Format imagePrompt: "Vertical Portrait Aspect Ratio 3:4. Flat vector illustration, clean modern UI aesthetic, Teal and Vibrant Orange on white background. Draw a dashboard UI with 3 floating cards. On the first card, write the text "[POIN BENEFIT 1]". On the second card, write the text "[POIN BENEFIT 2]". On the third card, write the text "[POIN BENEFIT 3]". No 3D, no photorealism."
+      - SLIDE 2 (BENEFIT/INTEREST): 
+        Format imagePrompt: "Vertical Portrait Aspect Ratio 3:4. Flat vector illustration, clean modern UI aesthetic, Teal and Vibrant Orange on white background. Draw a dashboard UI with 3 floating cards. On the first card, write the text "[BENEFIT 1]". On the second card, write the text "[BENEFIT 2]". On the third card, write the text "[BENEFIT 3]". No 3D, no photorealism."
       
-      - SLIDE 3 (TAHAPAN): 
-        Pilih 3-4 Tahapan Form, ringkas jadi max 2 kata per tahapan (contoh: 'Validasi', 'Pemetaan', 'Hasil').
-        Format imagePrompt: "Vertical Portrait Aspect Ratio 3:4. Flat vector illustration, infographic style, Teal and Vibrant Orange on white background. A step-by-step winding roadmap with 3 nodes. Next to node 1, write the text "[NAMA TAHAP 1]". Next to node 2, write the text "[NAMA TAHAP 2]". Next to node 3, write the text "[NAMA TAHAP 3]". No 3D, no photorealism."
+      - SLIDE 3 (TAHAPAN/DESIRE): 
+        Format imagePrompt: "Vertical Portrait Aspect Ratio 3:4. Flat vector illustration, infographic style, Teal and Vibrant Orange on white background. A step-by-step winding roadmap with 3 nodes. Next to node 1, write the text "[TAHAP 1]". Next to node 2, write the text "[TAHAP 2]". Next to node 3, write the text "[TAHAP 3]". No 3D, no photorealism."
         
-      - SLIDE 4 (KESIMPULAN / HASIL AKHIR): 
-        Ringkas hasil akhir dari form ini.
-        Format imagePrompt: "Vertical Portrait Aspect Ratio 3:4. Flat vector illustration, corporate minimalist, Teal and Vibrant Orange on white background. A visual of a successful professional holding a document. On the document, write the large text "[KESIMPULAN SINGKAT ANDA]". No 3D, no photorealism."
+      - SLIDE 4 (KESIMPULAN/ACTION): 
+        Format imagePrompt: "Vertical Portrait Aspect Ratio 3:4. Flat vector illustration, corporate minimalist, Teal and Vibrant Orange on white background. A visual of a successful person matching the target audience. On a clipboard, write the large text "[KESIMPULAN SINGKAT]". No 3D, no photorealism."
     `;
 
     const result = await model.generateContent(prompt);
@@ -133,9 +137,26 @@ export const reviseCopywriting = onCall({
   try {
     const API_KEY = geminiApiKeySecret.value();
     const genAI = new GoogleGenerativeAI(API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-2.5-flash",
+      generationConfig: { temperature: 0.8 } // Suhu tinggi agar luwes saat revisi
+    });
 
-    const prompt = `Anda Copywriter. Revisi caption ${platform} ini: "${originalText}"\nInstruksi: "${instruction}"\nAturan: Pertahankan spasi ganda, emoji, dan WAJIB sertakan/pertahankan HASHTAG di akhir caption. Berikan HANYA teks hasil.`;
+    const prompt = `Anda Expert Social Media Copywriter. Revisi caption ${platform} ini: 
+    
+    Teks Awal: "${originalText}"
+    
+    Instruksi Klien: "${instruction}"
+    
+    ATURAN MUTLAK REVISI:
+    1. Jadikan bahasanya lebih emosional, relatable, dan 'menjual' (tidak kaku/akademis).
+    2. JANGAN PANJANG seperti esai! Maksimal 3 kalimat per paragraf.
+    3. WAJIB pertahankan spasi ganda (\\n\\n) antar paragraf.
+    4. DILARANG pakai asterisk (*) untuk list. WAJIB pakai Emoji di awal kalimat jika ada list/poin.
+    5. WAJIB sertakan/pertahankan HASHTAG di akhir caption. 
+    
+    Berikan HANYA teks hasil revisi tanpa basa-basi.`;
+
     const result = await model.generateContent(prompt);
     return { success: true, revisedText: result.response.text().trim() };
   } catch (error: any) { throw new HttpsError("internal", error.message); }
@@ -156,9 +177,12 @@ export const reviseSlidePrompt = onCall({
   try {
     const API_KEY = geminiApiKeySecret.value();
     const genAI = new GoogleGenerativeAI(API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-2.5-flash", 
+      generationConfig: { temperature: 0.5 } // Suhu dijaga sedikit lebih rendah untuk prompt gambar agar konsisten
+    });
 
-    const prompt = `Anda AI Art Director. Revisi prompt gambar ini: "${originalPrompt}"\nInstruksi klien: "${instruction}"\nATURAN MUTLAK:\n1. Prompt bahasa Inggris, teks tipografi di dalam prompt WAJIB bahasa Indonesia dan diapit tanda kutip ("...").\n2. Pertahankan Aspect Ratio 3:4, warna Teal/Orange/Yellow, gaya Flat Vector. No 3D.\nBerikan HANYA teks prompt hasil revisinya.`;
+    const prompt = `Anda AI Art Director. Revisi prompt gambar ini: "${originalPrompt}"\nInstruksi klien: "${instruction}"\nATURAN MUTLAK:\n1. Prompt bahasa Inggris, teks tipografi di dalam prompt WAJIB bahasa Indonesia dan diapit tanda kutip ("..."). Teks maksimal 3 kata!\n2. Pertahankan Aspect Ratio 3:4, warna Teal/Orange/Yellow, gaya Flat Vector. No 3D.\nBerikan HANYA teks prompt hasil revisinya tanpa basa-basi.`;
     const result = await model.generateContent(prompt);
     return { success: true, revisedPrompt: result.response.text().trim() };
   } catch (error: any) { throw new HttpsError("internal", error.message); }
