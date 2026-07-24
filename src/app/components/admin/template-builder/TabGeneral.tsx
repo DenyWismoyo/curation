@@ -18,9 +18,10 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isGeneratingAnchors, setIsGeneratingAnchors] = useState(false);
   
-  // STATE BARU UNTUK 2 TOMBOL PROMO
+  // STATE UNTUK MARKETING KIT
   const [isGeneratingCopy, setIsGeneratingCopy] = useState(false);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+  const [activePlatform, setActivePlatform] = useState<'instagram' | 'tiktok' | 'threads' | 'facebook'>('instagram');
 
   const parseExpectedOutput = (blockStr: string) => {
     if (!blockStr) return { title: '', subs: '' };
@@ -59,17 +60,21 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
       });
       return;
     }
+
     setIsGenerating(true);
     try {
       const functions = getFunctions(undefined, 'asia-southeast2');
       const generateFn = httpsCallable(functions, 'generateTemplateSellingPoints');
+      
       const payload = {
         trackName: template.trackName,
         trackDescription: template.trackDescription,
         aiPromptConfig: template.aiPromptConfig
       };
+      
       const result = await generateFn(payload);
       const data = result.data as any;
+      
       if (data.success && data.sellingPoints) {
          const formattedOutputs = data.sellingPoints.map((sp: any) => `${sp.title}: ${sp.description}`);
          onChange({ ...template, expectedOutputs: formattedOutputs });
@@ -88,17 +93,21 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
       toast.error("Nama Program Kosong", { description: "Harap isi Nama Program/Kategori terlebih dahulu untuk acuan AI." });
       return;
     }
+
     setIsGeneratingAnchors(true);
     try {
       const functions = getFunctions(undefined, 'asia-southeast2');
       const generateAnchorsFn = httpsCallable(functions, 'generatePromptAnchors');
+      
       const payload = {
         trackName: template.trackName,
         trackDescription: template.trackDescription,
         targetAudience: template.aiPromptConfig?.targetAudience
       };
+      
       const result = await generateAnchorsFn(payload);
       const data = result.data as any;
+      
       if (data.success && data.anchors) {
         onChange({
           ...template,
@@ -115,7 +124,7 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
     }
   };
 
-  // --- FUNGSI 1: GENERATE COPYWRITING & IMAGE PROMPT (GEMINI) ---
+  // --- FUNGSI 1: GENERATE COPYWRITING & IMAGE PROMPT (GEMINI) MULTI-PLATFORM ---
   const handleGenerateCopywriting = async () => {
     if (!template.trackName || !template.trackDescription) {
       toast.error("Data Belum Lengkap", { description: "Harap isi Nama dan Deskripsi Program terlebih dahulu." });
@@ -125,32 +134,36 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
     setIsGeneratingCopy(true);
     try {
       const functions = getFunctions(undefined, 'asia-southeast2');
-      const generateCopyFn = httpsCallable(functions, 'generateCopywriting'); 
-      
+      const generateCopyFn = httpsCallable(functions, 'generateCopywriting');
+              
       const payload = {
         trackName: template.trackName,
         trackDescription: template.trackDescription,
         expectedOutputs: template.expectedOutputs,
-        targetAudience: template.aiPromptConfig?.targetAudience
+        targetAudience: template.aiPromptConfig?.targetAudience,
+        targetPlatform: activePlatform // Mengirim platform yang sedang dipilih
       };
       
       const result = await generateCopyFn(payload);
       const data = result.data as any;
       
       if (data.success) {
-        // Gabungkan aset baru dengan yang sudah ada (jika ada imageUrl sebelumnya, jangan dihapus)
-        const currentAssets = template.promoAssets || { copywriting: '', imagePrompt: '', imageUrl: '', generatedAt: '' };
+        const currentAssets = (template.promoAssets as any) || {};
+        const platformAssets = currentAssets[activePlatform] || { copywriting: '', imagePrompt: '', imageUrl: '', generatedAt: '' };
         
         onChange({ 
           ...template, 
           promoAssets: {
             ...currentAssets,
-            copywriting: data.copywriting,
-            imagePrompt: data.imagePrompt,
-            generatedAt: new Date().toISOString()
+            [activePlatform]: {
+              ...platformAssets,
+              copywriting: data.copywriting,
+              imagePrompt: data.imagePrompt,
+              generatedAt: new Date().toISOString()
+            }
           } 
         });
-        toast.success("Copywriting Selesai!", { description: "Teks Caption dan Prompt Gambar berhasil dibuat." });
+        toast.success("Copywriting Selesai!", { description: `Teks Caption & Prompt Gambar untuk ${activePlatform.toUpperCase()} berhasil dibuat.` });
       }
     } catch(e: any) {
       console.error(e);
@@ -160,9 +173,11 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
     }
   };
 
-  // --- FUNGSI 2: RENDER GAMBAR DENGAN IMAGEN 3 (VERTEX AI) ---
+  // --- FUNGSI 2: RENDER GAMBAR DENGAN IMAGEN (VERTEX AI) MULTI-PLATFORM ---
   const handleRenderImage = async () => {
-    if (!template.promoAssets?.imagePrompt) {
+    const currentPrompt = (template.promoAssets as any)?.[activePlatform]?.imagePrompt;
+    
+    if (!currentPrompt) {
       toast.error("Prompt Kosong", { description: "Harap isi atau generate Image Prompt terlebih dahulu." });
       return;
     }
@@ -170,25 +185,30 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
     setIsGeneratingImage(true);
     try {
       const functions = getFunctions(undefined, 'asia-southeast2');
-      const generateImageFn = httpsCallable(functions, 'generatePromoImage'); 
-      
+      const generateImageFn = httpsCallable(functions, 'generatePromoImage');
+              
       const payload = {
-        imagePrompt: template.promoAssets.imagePrompt
+        imagePrompt: currentPrompt
       };
       
       const result = await generateImageFn(payload);
       const data = result.data as any;
       
       if (data.success && data.imageUrl) {
+        const currentAssets = (template.promoAssets as any) || {};
+        
         onChange({ 
           ...template, 
           promoAssets: {
-            ...template.promoAssets!,
-            imageUrl: data.imageUrl,
-            generatedAt: new Date().toISOString()
+            ...currentAssets,
+            [activePlatform]: {
+              ...currentAssets[activePlatform],
+              imageUrl: data.imageUrl,
+              generatedAt: new Date().toISOString()
+            }
           } 
         });
-        toast.success("Render Selesai!", { description: "Gambar berhasil dibuat dan disimpan." });
+        toast.success("Render Selesai!", { description: `Gambar untuk ${activePlatform.toUpperCase()} berhasil dibuat.` });
       }
     } catch(e: any) {
       console.error(e);
@@ -200,7 +220,7 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
 
   return (
     <div className="bg-white p-6 md:p-8 rounded-3xl ring-1 ring-slate-200 shadow-sm space-y-8">
-      
+             
       <div className="mb-2">
         <h3 className="text-xl font-black text-slate-900">Identitas Program</h3>
         <p className="text-sm text-slate-500 font-medium">Tampilan yang akan dilihat peserta di halaman depan.</p>
@@ -377,28 +397,48 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
         </div>
       </div>
 
-      {/* --- BLOK ASET PROMOSI (2 TOMBOL) --- */}
+      {/* --- BLOK ASET PROMOSI (MULTI-PLATFORM) --- */}
       <div className="space-y-4 p-6 bg-fuchsia-50/50 rounded-3xl border border-fuchsia-200 shadow-sm relative overflow-hidden mt-6">
         <div className="absolute top-0 left-0 w-1.5 h-full bg-fuchsia-500"></div>
         
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 pb-4 border-b border-fuchsia-200/50">
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 mb-2 pb-4 border-b border-fuchsia-200/50">
           <div>
             <h4 className="font-black text-fuchsia-900 text-lg uppercase tracking-tight">Marketing & Social Media Kit</h4>
-            <p className="text-xs text-fuchsia-700/80 font-medium mt-1">Gunakan AI untuk meramu Caption promosi dan merender Visual 3D.</p>
+            <p className="text-xs text-fuchsia-700/80 font-medium mt-1">Gunakan AI untuk meramu Caption promosi dan merender Visual per platform.</p>
           </div>
           
-          <Button
+          {/* TAB PLATFORM SWITCHER */}
+          <div className="flex flex-wrap bg-white p-1 rounded-xl ring-1 ring-fuchsia-200 shadow-sm">
+            {['instagram', 'tiktok', 'threads', 'facebook'].map(platform => (
+              <button
+                key={platform}
+                type="button"
+                onClick={() => setActivePlatform(platform as any)}
+                className={`px-4 py-1.5 text-xs font-bold capitalize rounded-lg transition-all ${activePlatform === platform ? 'bg-fuchsia-600 text-white shadow-sm' : 'text-fuchsia-500 hover:bg-fuchsia-50'}`}
+              >
+                {platform}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* TAMPILAN KONTEN BERDASARKAN PLATFORM AKTIF */}
+        <div className="flex items-center justify-between mt-2">
+           <span className="text-xs font-bold text-fuchsia-700 uppercase tracking-wider flex items-center gap-1.5">
+             Modul Aktif: <span className="bg-fuchsia-100 text-fuchsia-800 px-2 py-0.5 rounded-md capitalize">{activePlatform}</span>
+           </span>
+           <Button
             type="button"
             onClick={handleGenerateCopywriting}
             disabled={isGeneratingCopy}
-            className="shrink-0 bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-bold rounded-2xl h-10 shadow-sm"
+            className="shrink-0 bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-bold rounded-xl h-9 text-xs shadow-sm"
           >
-            {isGeneratingCopy ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <PenTool className="w-4 h-4 mr-2" />}
-            {isGeneratingCopy ? "Menulis Caption..." : "1. Generate Copy & Prompt"}
+            {isGeneratingCopy ? <Loader2 className="w-3.5 h-3.5 mr-2 animate-spin" /> : <PenTool className="w-3.5 h-3.5 mr-2" />}
+            1. Generate Copy {activePlatform}
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
           {/* Kolom Kiri: Copywriting */}
           <div className="space-y-2 flex flex-col h-full">
             <div className="flex justify-between items-end">
@@ -406,7 +446,7 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
               <button 
                 type="button" 
                 onClick={() => {
-                  navigator.clipboard.writeText(template.promoAssets?.copywriting || '');
+                  navigator.clipboard.writeText((template.promoAssets as any)?.[activePlatform]?.copywriting || '');
                   toast.success("Tersalin ke Clipboard!");
                 }} 
                 className="text-[9px] font-bold text-fuchsia-500 hover:text-fuchsia-700 flex items-center gap-1"
@@ -415,48 +455,63 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
               </button>
             </div>
             <Textarea 
-              value={template.promoAssets?.copywriting || ''}
-              onChange={e => onChange({ ...template, promoAssets: { ...template.promoAssets!, copywriting: e.target.value } })}
-              placeholder="Teks promosi akan muncul di sini..."
+              value={(template.promoAssets as any)?.[activePlatform]?.copywriting || ''}
+              onChange={e => {
+                const currentAssets = (template.promoAssets as any) || {};
+                onChange({ 
+                  ...template, 
+                  promoAssets: { 
+                    ...currentAssets, 
+                    [activePlatform]: { ...currentAssets[activePlatform], copywriting: e.target.value } 
+                  } 
+                });
+              }}
+              placeholder={`Teks promosi khusus ${activePlatform} akan muncul di sini...`}
               className="flex-1 min-h-[300px] h-full rounded-2xl bg-white border-fuchsia-200 text-sm font-medium focus-visible:ring-fuchsia-500 p-4 leading-relaxed"
             />
           </div>
 
           {/* Kolom Kanan: Visual Builder */}
           <div className="flex flex-col gap-4">
-            
             <div className="space-y-2">
-              <div className="flex justify-between items-end">
-                <label className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest flex items-center gap-1"><Sparkles size={12}/> Image Prompt (English)</label>
-              </div>
+              <label className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest flex items-center gap-1"><Sparkles size={12}/> Image Prompt (English)</label>
               <Textarea 
-                value={template.promoAssets?.imagePrompt || ''}
-                onChange={e => onChange({ ...template, promoAssets: { ...template.promoAssets!, imagePrompt: e.target.value } })}
-                placeholder="Instruksi gambar berbahasa Inggris untuk mesin Imagen 3... Anda bisa mengedit ini sebelum menekan tombol render."
+                value={(template.promoAssets as any)?.[activePlatform]?.imagePrompt || ''}
+                onChange={e => {
+                  const currentAssets = (template.promoAssets as any) || {};
+                  onChange({ 
+                    ...template, 
+                    promoAssets: { 
+                      ...currentAssets, 
+                      [activePlatform]: { ...currentAssets[activePlatform], imagePrompt: e.target.value } 
+                    } 
+                  });
+                }}
+                placeholder="Instruksi gambar berbahasa Inggris akan digenerate otomatis..."
                 className="h-[100px] rounded-xl bg-indigo-50/50 border-indigo-200 text-xs font-mono focus-visible:ring-indigo-500 p-3 leading-relaxed"
               />
               
               <Button
                 type="button"
                 onClick={handleRenderImage}
-                disabled={isGeneratingImage || !template.promoAssets?.imagePrompt}
+                disabled={isGeneratingImage || !(template.promoAssets as any)?.[activePlatform]?.imagePrompt}
                 className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl h-10 shadow-sm mt-2"
               >
                 {isGeneratingImage ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <ImageIcon className="w-4 h-4 mr-2" />}
-                {isGeneratingImage ? "Vertex AI Sedang Merender..." : "2. Render Gambar (Imagen 3)"}
+                2. Render Gambar ({activePlatform})
               </Button>
             </div>
 
             <div className="space-y-2 mt-auto">
               <div className="flex justify-between items-end">
                 <label className="text-[10px] font-bold text-fuchsia-600 uppercase tracking-widest">Hasil Render Gambar</label>
-                {template.promoAssets?.imageUrl && (
-                  <a href={template.promoAssets.imageUrl} target="_blank" rel="noreferrer" className="text-[9px] font-bold text-fuchsia-500 hover:underline">Buka Resolusi Penuh ↗</a>
+                {(template.promoAssets as any)?.[activePlatform]?.imageUrl && (
+                  <a href={(template.promoAssets as any)[activePlatform].imageUrl} target="_blank" rel="noreferrer" className="text-[9px] font-bold text-fuchsia-500 hover:underline">Buka Resolusi Penuh</a>
                 )}
               </div>
               <div className="rounded-2xl overflow-hidden border-2 border-fuchsia-200 bg-slate-50 aspect-square relative shadow-inner flex items-center justify-center">
-                {template.promoAssets?.imageUrl ? (
-                  <img src={template.promoAssets.imageUrl} alt="Promo Render" className="w-full h-full object-cover" />
+                {(template.promoAssets as any)?.[activePlatform]?.imageUrl ? (
+                  <img src={(template.promoAssets as any)[activePlatform].imageUrl} alt={`Promo ${activePlatform}`} className="w-full h-full object-cover" />
                 ) : (
                   <div className="text-center p-6 opacity-40">
                     <ImageIcon className="w-12 h-12 mx-auto mb-2 text-slate-400" />
@@ -465,7 +520,6 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
                 )}
               </div>
             </div>
-
           </div>
         </div>
       </div>

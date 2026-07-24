@@ -188,10 +188,12 @@ export interface FormTemplate {
   preferredQuestionTypes?: string[];
   formMode?: 'standard' | 'adaptive' | 'hybrid';
   promoAssets?: {
-    copywriting: string;
-    imagePrompt: string;
-    imageUrl: string;
-    generatedAt: string;
+    [platform: string]: {
+      copywriting: string;
+      imagePrompt: string;
+      imageUrl: string;
+      generatedAt: string;
+    }
   };
 }
 
