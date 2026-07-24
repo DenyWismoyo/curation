@@ -34,8 +34,8 @@ export { assessmentTriangulatorAgent } from "./agents/assessment/triangulatorAge
 export { assessmentDomainExpertsAgent } from "./agents/assessment/domainExpertsAgent";
 export { assessmentTacticalPlannerAgent } from "./agents/assessment/tacticalPlannerAgent";
 export { assessmentPostProcessingAgent } from "./agents/assessment/postProcessingAgent";
-export { generateCopywriting } from "./agents/promo/copywriterAgent";
-export { generatePromoImage } from "./agents/promo/imageRendererAgent";
+export { generateCopywriting, reviseSlidePrompt, reviseCopywriting } from "./agents/promo/copywriterAgent";
+export { renderSingleSlide } from "./agents/promo/imageRendererAgent";
 
 // ============================================================================
 // INISIALISASI FIREBASE

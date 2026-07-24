@@ -190,8 +190,13 @@ export interface FormTemplate {
   promoAssets?: {
     [platform: string]: {
       copywriting: string;
-      imagePrompt: string;
-      imageUrl: string;
+      // BARU: Array untuk menampung data multiple slide carousel
+      carouselSlides?: {
+        slideNumber: number;
+        textOnImage: string;
+        imagePrompt: string;
+        imageUrl?: string;
+      }[];
       generatedAt: string;
     }
   };

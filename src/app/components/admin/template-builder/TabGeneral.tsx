@@ -1,11 +1,10 @@
 'use client';
-
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { FormTemplate } from '@/types/curation';
-import { Trash2, Plus, Sparkles, Loader2, Target, Image as ImageIcon, Copy, PenTool } from 'lucide-react';
+import { Trash2, Plus, Sparkles, Loader2, Target, Image as ImageIcon, Copy, PenTool, RefreshCw, Wand2, DownloadCloud } from 'lucide-react';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { toast } from 'sonner';
 
@@ -18,10 +17,17 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isGeneratingAnchors, setIsGeneratingAnchors] = useState(false);
   
-  // STATE UNTUK MARKETING KIT
+  // STATE MARKETING KIT
   const [isGeneratingCopy, setIsGeneratingCopy] = useState(false);
-  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
   const [activePlatform, setActivePlatform] = useState<'instagram' | 'tiktok' | 'threads' | 'facebook'>('instagram');
+
+  // STATE REVISI (CAPTION & SLIDES)
+  const [copyRevisionText, setCopyRevisionText] = useState("");
+  const [isRevisingCopy, setIsRevisingCopy] = useState(false);
+  const [slideRevisionTexts, setSlideRevisionTexts] = useState<Record<number, string>>({});
+  const [isRevisingSlidePrompt, setIsRevisingSlidePrompt] = useState<Record<number, boolean>>({});
+  const [isRenderingSingleSlide, setIsRenderingSingleSlide] = useState<Record<number, boolean>>({});
+  const [isDownloading, setIsDownloading] = useState<Record<number, boolean>>({});
 
   const parseExpectedOutput = (blockStr: string) => {
     if (!blockStr) return { title: '', subs: '' };
@@ -55,172 +61,174 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
 
   const handleGenerateOutputs = async () => {
     if (!template.aiPromptConfig?.expectedRecommendations || template.aiPromptConfig.expectedRecommendations.length === 0) {
-      toast.error("Konfigurasi Belum Lengkap", {
-        description: "Harap isi 'Target Rekomendasi' di Tab Otak AI terlebih dahulu agar AI bisa merumuskan output."
-      });
+      toast.error("Konfigurasi Belum Lengkap", { description: "Harap isi 'Target Rekomendasi' di Tab Otak AI terlebih dahulu." });
       return;
     }
-
     setIsGenerating(true);
     try {
       const functions = getFunctions(undefined, 'asia-southeast2');
       const generateFn = httpsCallable(functions, 'generateTemplateSellingPoints');
-      
-      const payload = {
-        trackName: template.trackName,
-        trackDescription: template.trackDescription,
-        aiPromptConfig: template.aiPromptConfig
-      };
-      
-      const result = await generateFn(payload);
+      const result = await generateFn({ trackName: template.trackName, trackDescription: template.trackDescription, aiPromptConfig: template.aiPromptConfig });
       const data = result.data as any;
-      
       if (data.success && data.sellingPoints) {
-         const formattedOutputs = data.sellingPoints.map((sp: any) => `${sp.title}: ${sp.description}`);
-         onChange({ ...template, expectedOutputs: formattedOutputs });
-         toast.success("Berhasil!", { description: "Copywriting benefit berhasil digenerate oleh AI." });
+         onChange({ ...template, expectedOutputs: data.sellingPoints.map((sp: any) => `${sp.title}: ${sp.description}`) });
+         toast.success("Berhasil Generate Output.");
       }
-    } catch(e: any) {
-      console.error(e);
-      toast.error("Gagal Generate", { description: e.message || "Terjadi kesalahan pada server AI." });
-    } finally {
-      setIsGenerating(false);
-    }
+    } catch(e: any) { toast.error("Gagal Generate", { description: e.message }); } finally { setIsGenerating(false); }
   };
 
   const handleGenerateAnchors = async () => {
-    if (!template.trackName) {
-      toast.error("Nama Program Kosong", { description: "Harap isi Nama Program/Kategori terlebih dahulu untuk acuan AI." });
-      return;
-    }
-
     setIsGeneratingAnchors(true);
     try {
       const functions = getFunctions(undefined, 'asia-southeast2');
       const generateAnchorsFn = httpsCallable(functions, 'generatePromptAnchors');
-      
-      const payload = {
-        trackName: template.trackName,
-        trackDescription: template.trackDescription,
-        targetAudience: template.aiPromptConfig?.targetAudience
-      };
-      
-      const result = await generateAnchorsFn(payload);
+      const result = await generateAnchorsFn({ trackName: template.trackName, trackDescription: template.trackDescription, targetAudience: template.aiPromptConfig?.targetAudience });
       const data = result.data as any;
-      
       if (data.success && data.anchors) {
-        onChange({
-          ...template,
-          specificTargetContext: data.anchors.specificTargetContext,
-          methodologyContext: data.anchors.methodologyContext
-        });
-        toast.success("Berhasil!", { description: "Konteks spesifik berhasil dirumuskan oleh AI." });
+        onChange({ ...template, specificTargetContext: data.anchors.specificTargetContext, methodologyContext: data.anchors.methodologyContext });
+        toast.success("Berhasil Generate Anchor.");
       }
-    } catch(e: any) {
-      console.error(e);
-      toast.error("Gagal Generate Anchors", { description: e.message || "Terjadi kesalahan pada server AI." });
-    } finally {
-      setIsGeneratingAnchors(false);
-    }
+    } catch(e: any) { toast.error("Gagal Generate Anchors", { description: e.message }); } finally { setIsGeneratingAnchors(false); }
   };
 
-  // --- FUNGSI 1: GENERATE COPYWRITING & IMAGE PROMPT (GEMINI) MULTI-PLATFORM ---
+  // --- GENERATE COPYWRITING & PERTAHANKAN GAMBAR ---
   const handleGenerateCopywriting = async () => {
-    if (!template.trackName || !template.trackDescription) {
-      toast.error("Data Belum Lengkap", { description: "Harap isi Nama dan Deskripsi Program terlebih dahulu." });
-      return;
-    }
-    
     setIsGeneratingCopy(true);
     try {
       const functions = getFunctions(undefined, 'asia-southeast2');
       const generateCopyFn = httpsCallable(functions, 'generateCopywriting');
-              
-      const payload = {
-        trackName: template.trackName,
-        trackDescription: template.trackDescription,
-        expectedOutputs: template.expectedOutputs,
-        targetAudience: template.aiPromptConfig?.targetAudience,
-        targetPlatform: activePlatform // Mengirim platform yang sedang dipilih
-      };
+      const result = await generateCopyFn({
+        trackName: template.trackName, trackDescription: template.trackDescription,
+        expectedOutputs: template.expectedOutputs, targetAudience: template.aiPromptConfig?.targetAudience,
+        targetPlatform: activePlatform, formSteps: template.steps
+      });
       
-      const result = await generateCopyFn(payload);
       const data = result.data as any;
       
       if (data.success) {
         const currentAssets = (template.promoAssets as any) || {};
-        const platformAssets = currentAssets[activePlatform] || { copywriting: '', imagePrompt: '', imageUrl: '', generatedAt: '' };
+        // Ambil slide lama (jika ada) untuk mempertahankan gambarnya
+        const existingSlides = currentAssets[activePlatform]?.carouselSlides || [];
         
+        // Memetakan slide baru dan meng-inject imageUrl dari slide lama
+        const preservedSlides = data.carouselSlides.map((newSlide: any, index: number) => {
+          const existingImage = existingSlides[index]?.imageUrl;
+          return existingImage ? { ...newSlide, imageUrl: existingImage } : newSlide;
+        });
+
         onChange({ 
           ...template, 
-          promoAssets: {
-            ...currentAssets,
-            [activePlatform]: {
-              ...platformAssets,
-              copywriting: data.copywriting,
-              imagePrompt: data.imagePrompt,
-              generatedAt: new Date().toISOString()
-            }
+          promoAssets: { 
+            ...currentAssets, 
+            [activePlatform]: { 
+              ...currentAssets[activePlatform], 
+              copywriting: data.copywriting, 
+              carouselSlides: preservedSlides, // Gunakan array yang sudah di-inject
+              generatedAt: new Date().toISOString() 
+            } 
           } 
         });
-        toast.success("Copywriting Selesai!", { description: `Teks Caption & Prompt Gambar untuk ${activePlatform.toUpperCase()} berhasil dibuat.` });
+        toast.success("Konsep Diperbarui (Gambar Anda tetap aman!)");
       }
-    } catch(e: any) {
-      console.error(e);
-      toast.error("Gagal Generate Teks", { description: e.message });
-    } finally {
-      setIsGeneratingCopy(false);
-    }
+    } catch(e: any) { toast.error("Gagal Generate", { description: e.message }); } finally { setIsGeneratingCopy(false); }
   };
 
-  // --- FUNGSI 2: RENDER GAMBAR DENGAN IMAGEN (VERTEX AI) MULTI-PLATFORM ---
-  const handleRenderImage = async () => {
-    const currentPrompt = (template.promoAssets as any)?.[activePlatform]?.imagePrompt;
-    
-    if (!currentPrompt) {
-      toast.error("Prompt Kosong", { description: "Harap isi atau generate Image Prompt terlebih dahulu." });
-      return;
-    }
-
-    setIsGeneratingImage(true);
+  // --- REVISI CAPTION ---
+  const handleReviseCopywriting = async () => {
+    if (!copyRevisionText.trim()) return;
+    setIsRevisingCopy(true);
     try {
       const functions = getFunctions(undefined, 'asia-southeast2');
-      const generateImageFn = httpsCallable(functions, 'generatePromoImage');
-              
-      const payload = {
-        imagePrompt: currentPrompt
-      };
+      const reviseCopyFn = httpsCallable(functions, 'reviseCopywriting');
+      const currentCaption = (template.promoAssets as any)?.[activePlatform]?.copywriting;
       
-      const result = await generateImageFn(payload);
+      const result = await reviseCopyFn({ originalText: currentCaption, instruction: copyRevisionText, platform: activePlatform });
       const data = result.data as any;
       
-      if (data.success && data.imageUrl) {
+      if (data.success && data.revisedText) {
         const currentAssets = (template.promoAssets as any) || {};
-        
-        onChange({ 
-          ...template, 
-          promoAssets: {
-            ...currentAssets,
-            [activePlatform]: {
-              ...currentAssets[activePlatform],
-              imageUrl: data.imageUrl,
-              generatedAt: new Date().toISOString()
-            }
-          } 
-        });
-        toast.success("Render Selesai!", { description: `Gambar untuk ${activePlatform.toUpperCase()} berhasil dibuat.` });
+        onChange({ ...template, promoAssets: { ...currentAssets, [activePlatform]: { ...currentAssets[activePlatform], copywriting: data.revisedText } } });
+        setCopyRevisionText(""); 
+        toast.success("Revisi Caption Selesai!");
       }
-    } catch(e: any) {
-      console.error(e);
-      toast.error("Gagal Render Gambar", { description: e.message });
+    } catch(e: any) { toast.error("Gagal Revisi Teks", { description: e.message }); } finally { setIsRevisingCopy(false); }
+  };
+
+  // --- REVISI PROMPT SLIDE ---
+  const handleReviseSlidePrompt = async (index: number) => {
+    const instruction = slideRevisionTexts[index];
+    if (!instruction?.trim()) return;
+    setIsRevisingSlidePrompt(prev => ({ ...prev, [index]: true }));
+    try {
+      const functions = getFunctions(undefined, 'asia-southeast2');
+      const revisePromptFn = httpsCallable(functions, 'reviseSlidePrompt');
+      const currentSlides = [...(template.promoAssets as any)?.[activePlatform]?.carouselSlides];
+      const targetSlide = currentSlides[index];
+      
+      const result = await revisePromptFn({ originalPrompt: targetSlide.imagePrompt, instruction });
+      const data = result.data as any;
+      
+      if (data.success && data.revisedPrompt) {
+        currentSlides[index] = { ...targetSlide, imagePrompt: data.revisedPrompt };
+        const currentAssets = (template.promoAssets as any) || {};
+        onChange({ ...template, promoAssets: { ...currentAssets, [activePlatform]: { ...currentAssets[activePlatform], carouselSlides: currentSlides } } });
+        setSlideRevisionTexts(prev => ({ ...prev, [index]: "" }));
+        toast.success(`Prompt Slide ${targetSlide.slideNumber} Direvisi!`);
+      }
+    } catch(e: any) { toast.error("Gagal Revisi Prompt", { description: e.message }); } finally { setIsRevisingSlidePrompt(prev => ({ ...prev, [index]: false })); }
+  };
+
+  // --- RENDER 1 SLIDE SECARA MANUAL ---
+  const handleRenderSingleSlide = async (index: number) => {
+    setIsRenderingSingleSlide(prev => ({ ...prev, [index]: true }));
+    try {
+      const functions = getFunctions(undefined, 'asia-southeast2');
+      const renderSingleFn = httpsCallable(functions, 'renderSingleSlide');
+      const currentSlides = [...(template.promoAssets as any)?.[activePlatform]?.carouselSlides];
+      const targetSlide = currentSlides[index];
+      
+      const result = await renderSingleFn({ slide: targetSlide, trackName: template.trackName });
+      const data = result.data as any;
+      
+      if (data.success && data.updatedSlide) {
+        currentSlides[index] = data.updatedSlide;
+        const currentAssets = (template.promoAssets as any) || {};
+        onChange({ ...template, promoAssets: { ...currentAssets, [activePlatform]: { ...currentAssets[activePlatform], carouselSlides: currentSlides } } });
+        toast.success(`Render Slide ${targetSlide.slideNumber} Selesai!`);
+      }
+    } catch(e: any) { toast.error("Gagal Merender Slide", { description: e.message }); } finally { setIsRenderingSingleSlide(prev => ({ ...prev, [index]: false })); }
+  };
+
+  // --- FUNGSI DOWNLOAD GAMBAR ---
+  const handleDownloadImage = async (url: string, slideNumber: number) => {
+    setIsDownloading(prev => ({ ...prev, [slideNumber]: true }));
+    try {
+      toast.info(`Menyiapkan unduhan Slide ${slideNumber}...`);
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = `${template.trackName.replace(/[^a-zA-Z0-9]/g, '_')}_${activePlatform}_Slide_${slideNumber}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error(error);
+      toast.error("Gagal mengunduh gambar.");
     } finally {
-      setIsGeneratingImage(false);
+      setIsDownloading(prev => ({ ...prev, [slideNumber]: false }));
     }
   };
+
+  const activeAssets = (template.promoAssets as any)?.[activePlatform];
+  const activeCarouselSlides = activeAssets?.carouselSlides || [];
 
   return (
     <div className="bg-white p-6 md:p-8 rounded-3xl ring-1 ring-slate-200 shadow-sm space-y-8">
-             
+      
       <div className="mb-2">
         <h3 className="text-xl font-black text-slate-900">Identitas Program</h3>
         <p className="text-sm text-slate-500 font-medium">Tampilan yang akan dilihat peserta di halaman depan.</p>
@@ -228,32 +236,18 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Nama Program/Kategori</label>
-          <Input
-            value={template.trackName}
-            onChange={e => onChange({ ...template, trackName: e.target.value })}
-            className="rounded-xl h-12 bg-slate-50 font-bold"
-          />
+          <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Nama Program</label>
+          <Input value={template.trackName} onChange={e => onChange({ ...template, trackName: e.target.value })} className="rounded-xl h-12 bg-slate-50 font-bold" />
         </div>
         
         <div className="space-y-2">
-          <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Nama Icon (Lucide)</label>
-          <Input
-            value={template.trackIcon}
-            onChange={e => onChange({ ...template, trackIcon: e.target.value })}
-            placeholder="Contoh: Rocket, Store, Briefcase"
-            className="rounded-xl h-12 bg-slate-50 font-mono text-sm"
-          />
+          <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Icon (Lucide)</label>
+          <Input value={template.trackIcon} onChange={e => onChange({ ...template, trackIcon: e.target.value })} placeholder="Contoh: Rocket, Store" className="rounded-xl h-12 bg-slate-50 font-mono text-sm" />
         </div>
 
         <div className="space-y-2 md:col-span-2">
           <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Deskripsi Singkat</label>
-          <Textarea
-            value={template.trackDescription}
-            onChange={e => onChange({ ...template, trackDescription: e.target.value })}
-            className="rounded-xl bg-slate-50 min-h-[100px]"
-            placeholder="Jelaskan secara singkat apa tujuan dari form ini..."
-          />
+          <Textarea value={template.trackDescription} onChange={e => onChange({ ...template, trackDescription: e.target.value })} className="rounded-xl bg-slate-50 min-h-[100px]" placeholder="Jelaskan secara singkat tujuan form ini..." />
         </div>
 
         {/* --- BLOK KONTEKS SPESIFIK & PROMPT ANCHORS --- */}
@@ -261,70 +255,24 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-1">
             <div className="flex items-center gap-2">
               <Target size={18} className="text-amber-600" />
-              <label className="text-[11px] font-black text-amber-900 uppercase tracking-widest">
-                Konteks Spesifik & Ketajaman AI (Prompt Anchors)
-              </label>
+              <label className="text-[11px] font-black text-amber-900 uppercase tracking-widest">Konteks Spesifik & Ketajaman AI</label>
             </div>
-            
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={handleGenerateAnchors}
-              disabled={isGeneratingAnchors}
-              className="h-8 text-[10px] font-bold bg-amber-100 hover:bg-amber-200 text-amber-800 border-amber-300 rounded-lg shadow-sm shrink-0"
-            >
+            <Button type="button" variant="outline" size="sm" onClick={handleGenerateAnchors} disabled={isGeneratingAnchors} className="h-8 text-[10px] font-bold bg-amber-100 hover:bg-amber-200 text-amber-800 border-amber-300 rounded-lg shadow-sm shrink-0">
               {isGeneratingAnchors ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5 mr-1.5" />}
               Auto-Generate Anchor
             </Button>
           </div>
           
-          <p className="text-[11px] text-amber-700/80 font-medium leading-relaxed mb-4">
-            Kunci pemahaman AI di sini agar tidak menerka-nerka. Semakin spesifik profil target dan metodologinya, semakin tajam dan relevan pertanyaan kuesioner yang akan digenerate.
-          </p>
-          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-amber-700 uppercase tracking-widest">Profil Spesifik Subjek</label>
-              <Textarea 
-                value={template.specificTargetContext || ''}
-                onChange={e => onChange({ ...template, specificTargetContext: e.target.value })}
-                placeholder="Cth: Karyawan level manajerial yang sedang mengalami burnout dan butuh intervensi psikologi..."
-                className="rounded-xl bg-white border-amber-200 min-h-[80px] text-xs font-medium focus-visible:ring-amber-500"
-              />
+              <label className="text-[10px] font-bold text-amber-700 uppercase tracking-widest">Profil Subjek</label>
+              <Textarea value={template.specificTargetContext || ''} onChange={e => onChange({ ...template, specificTargetContext: e.target.value })} className="rounded-xl bg-white border-amber-200 min-h-[80px] text-xs font-medium" />
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-amber-700 uppercase tracking-widest">Metodologi / Referensi</label>
-              <Textarea 
-                value={template.methodologyContext || ''}
-                onChange={e => onChange({ ...template, methodologyContext: e.target.value })}
-                placeholder="Cth: Menggunakan pendekatan Cognitive Behavioral Therapy (CBT) / Skala Likert Psikometri / Standar ISO 9001..."
-                className="rounded-xl bg-white border-amber-200 min-h-[80px] text-xs font-medium focus-visible:ring-amber-500"
-              />
+              <label className="text-[10px] font-bold text-amber-700 uppercase tracking-widest">Metodologi</label>
+              <Textarea value={template.methodologyContext || ''} onChange={e => onChange({ ...template, methodologyContext: e.target.value })} className="rounded-xl bg-white border-amber-200 min-h-[80px] text-xs font-medium" />
             </div>
           </div>
-        </div>
-
-        {/* --- BLOK MODE EKSEKUSI --- */}
-        <div className="space-y-2 md:col-span-2 bg-indigo-50/50 p-5 rounded-2xl ring-1 ring-indigo-100 mt-2">
-          <div className="flex items-center gap-2 mb-2">
-            <Sparkles size={18} className="text-indigo-600" />
-            <label className="text-[11px] font-black text-indigo-900 uppercase tracking-widest">
-              Mode Eksekusi Formulir (Sistem AI)
-            </label>
-          </div>
-          <p className="text-xs text-indigo-700/70 font-medium mb-3">
-            Tentukan bagaimana AI merender kuesioner ini kepada responden secara *real-time*.
-          </p>
-          <select
-            value={template.formMode || 'standard'}
-            onChange={e => onChange({ ...template, formMode: e.target.value as 'standard' | 'adaptive' | 'hybrid' })}
-            className="w-full h-12 rounded-xl border border-indigo-200 bg-white text-slate-900 font-bold px-4 focus:ring-2 focus:ring-indigo-500 text-sm shadow-sm cursor-pointer"
-          >
-            <option value="standard">Standard (Statis & Konsisten sesuai Template)</option>
-            <option value="adaptive">Adaptive (Full AI Generate-on-the-fly dari Step 1)</option>
-            <option value="hybrid">Hybrid (Statis di Awal, Expand Dinamis di Akhir)</option>
-          </select>
         </div>
       </div>
 
@@ -334,17 +282,9 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
           <div>
             <h4 className="font-black text-slate-900 text-lg uppercase tracking-tight">Harapan Output / Benefit Peserta</h4>
-            <p className="text-xs text-slate-500 font-medium mt-1">Poin-poin hasil akhir yang akan muncul di Katalog Landing Page.</p>
           </div>
-          
-          <Button
-            type="button" 
-            onClick={handleGenerateOutputs}
-            disabled={isGenerating}
-            className="shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl h-10 shadow-sm"
-          >
-            {isGenerating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
-            Auto-Generate dengan AI
+          <Button type="button" onClick={handleGenerateOutputs} disabled={isGenerating} className="shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl h-10 shadow-sm">
+            {isGenerating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />} Auto-Generate
           </Button>
         </div>
         
@@ -352,188 +292,202 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
           {(template.expectedOutputs || []).map((item, idx) => {
             const { title, subs } = parseExpectedOutput(item);
             return (
-              <div key={idx} className="flex gap-4 items-start relative bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition-all hover:shadow-md">
+              <div key={idx} className="flex gap-4 items-start relative bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
                 <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="md:col-span-1 space-y-2">
-                    <label className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest">Judul Output</label>
-                    <Input 
-                      value={title} 
-                      onChange={(e) => updateExpectedOutput(idx, e.target.value, subs)}
-                      className="font-black text-slate-800 border-slate-200 bg-slate-50"
-                      placeholder="Cth: Action Plan Harian"
-                    />
+                    <label className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest">Judul</label>
+                    <Input value={title} onChange={(e) => updateExpectedOutput(idx, e.target.value, subs)} className="font-black text-slate-800 border-slate-200 bg-slate-50" />
                   </div>
                   <div className="md:col-span-2 space-y-2">
-                    <label className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Deskripsi Detail</label>
-                    <Textarea 
-                      value={subs} 
-                      onChange={(e) => updateExpectedOutput(idx, title, e.target.value)}
-                      className="text-sm font-medium border-slate-200 min-h-[60px]"
-                      placeholder="Cth: Panduan langkah demi langkah berbasis AAP yang bisa langsung diterapkan..."
-                    />
+                    <label className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Detail</label>
+                    <Textarea value={subs} onChange={(e) => updateExpectedOutput(idx, title, e.target.value)} className="text-sm font-medium border-slate-200 min-h-[60px]" />
                   </div>
                 </div>
-                <Button 
-                  type="button" 
-                  variant="ghost" 
-                  onClick={() => removeExpectedOutput(idx)} 
-                  className="text-slate-400 hover:text-rose-600 hover:bg-rose-50 h-10 w-10 shrink-0 mt-6"
-                  title="Hapus Blok Ini"
-                >
-                  <Trash2 className="w-4 h-4"/>
-                </Button>
+                <Button type="button" variant="ghost" onClick={() => removeExpectedOutput(idx)} className="text-slate-400 hover:text-rose-600 h-10 w-10 mt-6"><Trash2 className="w-4 h-4"/></Button>
               </div>
             )
           })}
-          
-          <Button 
-            type="button"
-            variant="outline"
-            onClick={addExpectedOutput}
-            className="w-full border-dashed border-2 border-slate-300 text-slate-500 hover:bg-slate-50 font-bold rounded-2xl h-12 shadow-sm"
-          >
-            <Plus className="w-5 h-5 mr-2"/> Tambah Output / Benefit Baru
-          </Button>
+          <Button type="button" variant="outline" onClick={addExpectedOutput} className="w-full border-dashed border-2 border-slate-300 text-slate-500 font-bold rounded-2xl h-12 shadow-sm"><Plus className="w-5 h-5 mr-2"/> Tambah Baru</Button>
         </div>
       </div>
 
-      {/* --- BLOK ASET PROMOSI (MULTI-PLATFORM) --- */}
+      {/* --- MARKETING KIT --- */}
       <div className="space-y-4 p-6 bg-fuchsia-50/50 rounded-3xl border border-fuchsia-200 shadow-sm relative overflow-hidden mt-6">
         <div className="absolute top-0 left-0 w-1.5 h-full bg-fuchsia-500"></div>
         
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 mb-2 pb-4 border-b border-fuchsia-200/50">
           <div>
             <h4 className="font-black text-fuchsia-900 text-lg uppercase tracking-tight">Marketing & Social Media Kit</h4>
-            <p className="text-xs text-fuchsia-700/80 font-medium mt-1">Gunakan AI untuk meramu Caption promosi dan merender Visual per platform.</p>
+            <p className="text-xs text-fuchsia-700/80 font-medium mt-1">Gunakan AI untuk meramu Caption promosi dan merender Visual Carousel per slide.</p>
           </div>
           
-          {/* TAB PLATFORM SWITCHER */}
           <div className="flex flex-wrap bg-white p-1 rounded-xl ring-1 ring-fuchsia-200 shadow-sm">
             {['instagram', 'tiktok', 'threads', 'facebook'].map(platform => (
-              <button
-                key={platform}
-                type="button"
-                onClick={() => setActivePlatform(platform as any)}
-                className={`px-4 py-1.5 text-xs font-bold capitalize rounded-lg transition-all ${activePlatform === platform ? 'bg-fuchsia-600 text-white shadow-sm' : 'text-fuchsia-500 hover:bg-fuchsia-50'}`}
-              >
+              <button key={platform} type="button" onClick={() => setActivePlatform(platform as any)} className={`px-4 py-1.5 text-xs font-bold capitalize rounded-lg transition-all ${activePlatform === platform ? 'bg-fuchsia-600 text-white shadow-sm' : 'text-fuchsia-500 hover:bg-fuchsia-50'}`}>
                 {platform}
               </button>
             ))}
           </div>
         </div>
 
-        {/* TAMPILAN KONTEN BERDASARKAN PLATFORM AKTIF */}
         <div className="flex items-center justify-between mt-2">
            <span className="text-xs font-bold text-fuchsia-700 uppercase tracking-wider flex items-center gap-1.5">
              Modul Aktif: <span className="bg-fuchsia-100 text-fuchsia-800 px-2 py-0.5 rounded-md capitalize">{activePlatform}</span>
            </span>
-           <Button
-            type="button"
-            onClick={handleGenerateCopywriting}
-            disabled={isGeneratingCopy}
-            className="shrink-0 bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-bold rounded-xl h-9 text-xs shadow-sm"
-          >
-            {isGeneratingCopy ? <Loader2 className="w-3.5 h-3.5 mr-2 animate-spin" /> : <PenTool className="w-3.5 h-3.5 mr-2" />}
-            1. Generate Copy {activePlatform}
+           <Button type="button" onClick={handleGenerateCopywriting} disabled={isGeneratingCopy} className="shrink-0 bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-bold rounded-xl h-9 text-xs shadow-sm">
+            {isGeneratingCopy ? <Loader2 className="w-3.5 h-3.5 mr-2 animate-spin" /> : <PenTool className="w-3.5 h-3.5 mr-2" />} Generate Ulang Konsep
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
-          {/* Kolom Kiri: Copywriting */}
-          <div className="space-y-2 flex flex-col h-full">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-4">
+          
+          {/* KOLOM KIRI: CAPTION & REVISI CAPTION */}
+          <div className="space-y-3 flex flex-col h-full lg:col-span-1">
             <div className="flex justify-between items-end">
               <label className="text-[10px] font-bold text-fuchsia-600 uppercase tracking-widest">Copywriting / Caption</label>
-              <button 
-                type="button" 
-                onClick={() => {
-                  navigator.clipboard.writeText((template.promoAssets as any)?.[activePlatform]?.copywriting || '');
-                  toast.success("Tersalin ke Clipboard!");
-                }} 
-                className="text-[9px] font-bold text-fuchsia-500 hover:text-fuchsia-700 flex items-center gap-1"
-              >
-                <Copy size={12}/> Salin Teks
-              </button>
+              <button type="button" onClick={() => { navigator.clipboard.writeText(activeAssets?.copywriting || ''); toast.success("Tersalin!"); }} className="text-[9px] font-bold text-fuchsia-500 hover:text-fuchsia-700 flex items-center gap-1"><Copy size={12}/> Salin Teks</button>
             </div>
+            
             <Textarea 
-              value={(template.promoAssets as any)?.[activePlatform]?.copywriting || ''}
+              value={activeAssets?.copywriting || ''}
               onChange={e => {
                 const currentAssets = (template.promoAssets as any) || {};
-                onChange({ 
-                  ...template, 
-                  promoAssets: { 
-                    ...currentAssets, 
-                    [activePlatform]: { ...currentAssets[activePlatform], copywriting: e.target.value } 
-                  } 
-                });
+                onChange({ ...template, promoAssets: { ...currentAssets, [activePlatform]: { ...currentAssets[activePlatform], copywriting: e.target.value } } });
               }}
-              placeholder={`Teks promosi khusus ${activePlatform} akan muncul di sini...`}
-              className="flex-1 min-h-[300px] h-full rounded-2xl bg-white border-fuchsia-200 text-sm font-medium focus-visible:ring-fuchsia-500 p-4 leading-relaxed"
+              placeholder={`Teks promosi khusus ${activePlatform}...`}
+              className="flex-1 min-h-[250px] rounded-2xl bg-white border-fuchsia-200 text-sm font-medium focus-visible:ring-fuchsia-500 p-4 leading-relaxed"
             />
+            
+            {/* AREA REVISI CAPTION */}
+            {activeAssets?.copywriting && (
+              <div className="bg-white p-2 rounded-xl ring-1 ring-fuchsia-200 shadow-sm flex flex-col gap-2">
+                <Input 
+                  value={copyRevisionText}
+                  onChange={(e) => setCopyRevisionText(e.target.value)}
+                  placeholder="Ketik instruksi revisi (Contoh: 'Buat lebih santai')" 
+                  className="text-xs h-8 border-fuchsia-100 bg-fuchsia-50/30"
+                />
+                <Button type="button" onClick={handleReviseCopywriting} disabled={isRevisingCopy || !copyRevisionText.trim()} variant="outline" className="h-8 text-xs font-bold text-fuchsia-600 border-fuchsia-200 hover:bg-fuchsia-50 w-full">
+                  {isRevisingCopy ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <Wand2 className="w-3.5 h-3.5 mr-1.5" />} Revisi dengan AI
+                </Button>
+              </div>
+            )}
           </div>
 
-          {/* Kolom Kanan: Visual Builder */}
-          <div className="flex flex-col gap-4">
-            <div className="space-y-2">
-              <label className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest flex items-center gap-1"><Sparkles size={12}/> Image Prompt (English)</label>
-              <Textarea 
-                value={(template.promoAssets as any)?.[activePlatform]?.imagePrompt || ''}
-                onChange={e => {
-                  const currentAssets = (template.promoAssets as any) || {};
-                  onChange({ 
-                    ...template, 
-                    promoAssets: { 
-                      ...currentAssets, 
-                      [activePlatform]: { ...currentAssets[activePlatform], imagePrompt: e.target.value } 
-                    } 
-                  });
-                }}
-                placeholder="Instruksi gambar berbahasa Inggris akan digenerate otomatis..."
-                className="h-[100px] rounded-xl bg-indigo-50/50 border-indigo-200 text-xs font-mono focus-visible:ring-indigo-500 p-3 leading-relaxed"
-              />
-              
-              <Button
-                type="button"
-                onClick={handleRenderImage}
-                disabled={isGeneratingImage || !(template.promoAssets as any)?.[activePlatform]?.imagePrompt}
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl h-10 shadow-sm mt-2"
-              >
-                {isGeneratingImage ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <ImageIcon className="w-4 h-4 mr-2" />}
-                2. Render Gambar ({activePlatform})
-              </Button>
+          {/* KOLOM KANAN: GAMBAR & REVISI GAMBAR */}
+          <div className="flex flex-col gap-4 lg:col-span-2">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3">
+              <div>
+                <label className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest flex items-center gap-1"><Sparkles size={12}/> AI Image Prompts (Carousel)</label>
+                <p className="text-[11px] text-fuchsia-700/70 font-medium mt-1">Render gambar dilakukan satu per satu untuk memastikan kualitas optimal.</p>
+              </div>
             </div>
 
-            <div className="space-y-2 mt-auto">
-              <div className="flex justify-between items-end">
-                <label className="text-[10px] font-bold text-fuchsia-600 uppercase tracking-widest">Hasil Render Gambar</label>
-                {(template.promoAssets as any)?.[activePlatform]?.imageUrl && (
-                  <a href={(template.promoAssets as any)[activePlatform].imageUrl} target="_blank" rel="noreferrer" className="text-[9px] font-bold text-fuchsia-500 hover:underline">Buka Resolusi Penuh</a>
-                )}
-              </div>
-              <div className="rounded-2xl overflow-hidden border-2 border-fuchsia-200 bg-slate-50 aspect-square relative shadow-inner flex items-center justify-center">
-                {(template.promoAssets as any)?.[activePlatform]?.imageUrl ? (
-                  <img src={(template.promoAssets as any)[activePlatform].imageUrl} alt={`Promo ${activePlatform}`} className="w-full h-full object-cover" />
-                ) : (
-                  <div className="text-center p-6 opacity-40">
-                    <ImageIcon className="w-12 h-12 mx-auto mb-2 text-slate-400" />
-                    <p className="text-xs font-bold text-slate-500">Belum Ada Gambar</p>
+            {activeCarouselSlides.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {activeCarouselSlides.map((slide: any, index: number) => (
+                  <div key={index} className="p-4 bg-white/70 border border-fuchsia-200 rounded-2xl flex flex-col gap-3 shadow-sm">
+                    <div className="flex justify-between items-center">
+                      <span className="text-[10px] font-black uppercase tracking-widest bg-fuchsia-100 text-fuchsia-700 px-2 py-0.5 rounded-md">Slide {slide.slideNumber}</span>
+                      
+                      {/* TOMBOL RENDER MANUAL PER SLIDE */}
+                      <Button 
+                        type="button" 
+                        onClick={() => handleRenderSingleSlide(index)}
+                        disabled={isRenderingSingleSlide[index]}
+                        className={`h-7 px-3 text-[10px] font-bold rounded-md transition-all ${slide.imageUrl ? 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border border-indigo-200' : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm'}`}
+                      >
+                        {isRenderingSingleSlide[index] ? <Loader2 className="w-3 h-3 animate-spin mr-1.5"/> : (slide.imageUrl ? <RefreshCw className="w-3 h-3 mr-1.5"/> : <ImageIcon className="w-3 h-3 mr-1.5"/>)} 
+                        {slide.imageUrl ? 'Render Ulang' : 'Render Gambar'}
+                      </Button>
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[9px] font-bold text-slate-500 uppercase">Teks Tipografi di Gambar</label>
+                      <Input 
+                        value={slide.textOnImage || ''} 
+                        onChange={(e) => {
+                          const currentAssets = (template.promoAssets as any) || {};
+                          const updatedSlides = [...activeCarouselSlides];
+                          updatedSlides[index] = { ...updatedSlides[index], textOnImage: e.target.value };
+                          onChange({ ...template, promoAssets: { ...currentAssets, [activePlatform]: { ...currentAssets[activePlatform], carouselSlides: updatedSlides } } });
+                        }}
+                        className="h-8 text-[11px] bg-white border-fuchsia-100 font-bold" 
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[9px] font-bold text-slate-500 uppercase">Instruksi Visual (Prompt AI)</label>
+                      <Textarea 
+                        value={slide.imagePrompt || ''}
+                        onChange={(e) => {
+                          const currentAssets = (template.promoAssets as any) || {};
+                          const updatedSlides = [...activeCarouselSlides];
+                          updatedSlides[index] = { ...updatedSlides[index], imagePrompt: e.target.value };
+                          onChange({ ...template, promoAssets: { ...currentAssets, [activePlatform]: { ...currentAssets[activePlatform], carouselSlides: updatedSlides } } });
+                        }}
+                        className="h-[60px] text-[10px] font-mono bg-white border-fuchsia-200 resize-none p-2"
+                      />
+                    </div>
+                    
+                    {/* AREA REVISI PROMPT SLIDE */}
+                    <div className="flex items-center gap-1.5 mt-1">
+                      <Input 
+                        value={slideRevisionTexts[index] || ''}
+                        onChange={(e) => setSlideRevisionTexts(prev => ({ ...prev, [index]: e.target.value }))}
+                        placeholder="Revisi prompt AI (misal: 'Ganti elemen')"
+                        className="h-7 text-[10px] flex-1 bg-indigo-50/40 border-indigo-100"
+                      />
+                      <Button 
+                        type="button" 
+                        onClick={() => handleReviseSlidePrompt(index)}
+                        disabled={isRevisingSlidePrompt[index] || !slideRevisionTexts[index]?.trim()}
+                        className="h-7 px-2 text-[9px] font-bold bg-indigo-600 text-white hover:bg-indigo-700 rounded-md shrink-0"
+                      >
+                         {isRevisingSlidePrompt[index] ? <Loader2 className="w-3 h-3 animate-spin"/> : <Wand2 className="w-3 h-3"/>}
+                      </Button>
+                    </div>
+
+                    <div className="rounded-xl overflow-hidden border border-fuchsia-200 bg-slate-100 aspect-[3/4] relative shadow-inner flex items-center justify-center mt-1 group">
+                      {slide.imageUrl ? (
+                        <>
+                          <img src={slide.imageUrl} alt={`Slide ${slide.slideNumber}`} className="w-full h-full object-cover" />
+                          
+                          {/* TOMBOL OVERLAY: BUKA & DOWNLOAD */}
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                             <Button
+                               type="button"
+                               onClick={() => handleDownloadImage(slide.imageUrl, slide.slideNumber)}
+                               disabled={isDownloading[slide.slideNumber]}
+                               className="h-8 px-3 text-[10px] font-bold bg-white text-slate-900 hover:bg-slate-200 rounded-lg"
+                             >
+                               {isDownloading[slide.slideNumber] ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1"/> : <DownloadCloud className="w-3.5 h-3.5 mr-1"/>}
+                               Download
+                             </Button>
+                             
+                             <a href={slide.imageUrl} target="_blank" rel="noreferrer" className="h-8 px-3 text-[10px] font-bold bg-fuchsia-600 text-white hover:bg-fuchsia-700 rounded-lg flex items-center">
+                               <ImageIcon className="w-3.5 h-3.5 mr-1"/> Buka
+                             </a>
+                          </div>
+                        </>
+                      ) : (
+                        <div className="text-center p-4 opacity-40">
+                          <ImageIcon className="w-8 h-8 mx-auto mb-2 text-slate-400" />
+                          <p className="text-[10px] font-bold text-slate-500">Belum Dirender</p>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                )}
+                ))}
               </div>
-            </div>
+            ) : (
+              <div className="text-center p-10 bg-fuchsia-50/50 border border-dashed border-fuchsia-200 rounded-2xl opacity-60">
+                 <ImageIcon className="w-10 h-10 mx-auto mb-3 text-fuchsia-300" />
+                 <p className="text-xs font-bold text-fuchsia-900">Belum ada slide visual.</p>
+                 <p className="text-[10px] text-fuchsia-700 mt-1">Tekan "Generate Ulang Konsep" di atas.</p>
+              </div>
+            )}
           </div>
-        </div>
-      </div>
-
-      <div className="flex items-center gap-4 p-5 bg-indigo-50/50 rounded-2xl ring-1 ring-indigo-100">
-        <input
-          type="checkbox"
-          checked={template.isActive}
-          onChange={e => onChange({ ...template, isActive: e.target.checked })}
-          className="w-5 h-5 rounded text-indigo-600 focus:ring-indigo-500 border-indigo-200 cursor-pointer"
-        />
-        <div>
-          <p className="font-bold text-indigo-900 text-sm">Aktifkan & Publikasikan</p>
-          <p className="text-xs text-indigo-700/70 font-medium mt-0.5">Jika dicentang, peserta dapat melihat dan memilih kategori ini.</p>
         </div>
       </div>
     </div>
