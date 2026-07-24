@@ -3,7 +3,6 @@ import { onCall, HttpsError } from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
 import { defineSecret } from "firebase-functions/params";
 
-// Menggunakan kunci rahasia yang sama dengan yang dipakai copywriterAgent
 const geminiApiKeySecret = defineSecret("GEMINI_API_KEY");
 
 export const generatePromoImage = onCall({
@@ -15,36 +14,34 @@ export const generatePromoImage = onCall({
 }, async (request) => {
   if (!request.auth) throw new HttpsError("unauthenticated", "Akses ditolak.");
   
-  const { imagePrompt } = request.data;
+  // Menangkap trackName dari frontend untuk dijadikan sub-folder
+  const { imagePrompt, trackName } = request.data;
   
   if (!imagePrompt) throw new HttpsError("invalid-argument", "Image Prompt wajib disertakan.");
   
   try {
     const API_KEY = geminiApiKeySecret.value();
     
-    // PERBAIKAN 1: Model menggunakan versi -002 dan metode dikembalikan ke :predict
-    const aiStudioEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict`;
+    const aiStudioEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent?key=${API_KEY}`;
     
     const response = await fetch(aiStudioEndpoint, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        "x-goog-api-key": API_KEY // Meletakkan API key di header lebih direkomendasikan
+        "Content-Type": "application/json"
       },
-      // PERBAIKAN 2: Menggunakan format asli Anda yang terbukti benar
       body: JSON.stringify({
-        instances: [
-          { prompt: imagePrompt }
+        contents: [
+          {
+            role: "user",
+            parts: [{ text: imagePrompt }]
+          }
         ],
-        parameters: {
-          sampleCount: 1,
-          aspectRatio: "1:1" // Bisa diganti "16:9" atau "9:16" sesuai platform jika mau
+        generationConfig: {
+          responseModalities: ["IMAGE"] 
         }
       })
     });
 
-    // PERBAIKAN 3: Safety Check untuk mencegah error "Unexpected end of JSON input"
-    // Jika Google merespon dengan Error 400/500, kita tangkap teks aslinya sebelum crash
     if (!response.ok) {
        const errorText = await response.text();
        console.error("Google AI Studio Response:", errorText);
@@ -57,24 +54,28 @@ export const generatePromoImage = onCall({
        throw new Error(`Google AI Studio Error: ${data.error.message}`);
     }
 
-    // Ekstraksi data menggunakan skema balasan dari :predict
-    if (!data.predictions || !data.predictions[0]) {
-      throw new Error("Gambar gagal dirender. Respon data kosong.");
+    const candidates = data.candidates;
+    if (!candidates || !candidates[0] || !candidates[0].content.parts[0].inlineData) {
+      throw new Error("Gambar gagal dirender. Respon data kosong atau format salah.");
     }
 
-    const base64Image = data.predictions[0].bytesBase64Encoded;
+    const base64Image = candidates[0].content.parts[0].inlineData.data;
     const buffer = Buffer.from(base64Image, 'base64');
 
-    // Simpan ke Firebase Storage
     const bucket = admin.storage().bucket();
-    const fileName = `promo_assets/promo_${Date.now()}_${Math.floor(Math.random() * 1000)}.png`;
+    
+    // --- LOGIKA SUB-FOLDER DINAMIS ---
+    // Membersihkan trackName dari spasi dan karakter khusus, default ke "umum" jika kosong
+    const safeTrackName = trackName ? trackName.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase() : 'umum';
+    
+    // Struktur file: promo_assets/nama_template/promo_123456.png
+    const fileName = `promo_assets/${safeTrackName}/promo_${Date.now()}_${Math.floor(Math.random() * 1000)}.png`;
     const file = bucket.file(fileName);
     
     await file.save(buffer, {
       metadata: { contentType: "image/png" }
     });
     
-    // Buat URL Publik
     const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(fileName)}?alt=media`;
 
     return {
