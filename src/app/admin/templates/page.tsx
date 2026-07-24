@@ -9,9 +9,7 @@ import { FormTemplate } from '@/types/curation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { toast } from "sonner";
-
 import { getFunctions, httpsCallable } from 'firebase/functions';
-
 import { 
   Plus, Save, Trash2, Settings2, LayoutGrid, CheckCircle2,
   Copy, Download, Upload, BrainCircuit, FileEdit, ChevronLeft, Calendar, Eye,
@@ -55,27 +53,32 @@ const DEFAULT_AI_CONFIG = {
 function TemplateBuilderContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-
+  
   const activeFolder = searchParams.get('folder') || 'Semua';
   const editId = searchParams.get('edit');
   const tabParam = searchParams.get('tab') || 'general';
 
   const [templates, setTemplates] = useState<FormTemplate[]>([]);
   const [activeTemplate, setActiveTemplate] = useState<FormTemplate | null>(null);
+  
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  
   const [activeView, setActiveView] = useState<'list' | 'edit'>('list');
   const [activeTab, setActiveTab] = useState<'general' | 'ai' | 'builder' | 'preview' | 'logs'>('general');
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
   const [isEditMode, setIsEditMode] = useState(false); 
+
   const [dbFolders, setDbFolders] = useState<string[]>([]);
   const [newFolderName, setNewFolderName] = useState('');
   const [isCreatingFolder, setIsCreatingFolder] = useState(false);
   const [draggedTemplateId, setDraggedTemplateId] = useState<string | null>(null);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
   const [editingFolder, setEditingFolder] = useState<string | null>(null);
   const [editFolderName, setEditFolderName] = useState('');
+  
   const [isMassGenerating, setIsMassGenerating] = useState(false);
 
   // SINKRONISASI URL PARAMETER DENGAN RENDER VIEW & TAB DATA
@@ -119,7 +122,6 @@ function TemplateBuilderContent() {
         loadedFolders.push(doc.id);
       });
       setDbFolders(loadedFolders);
-
     } catch (error) {
       console.error("Gagal memuat data:", error);
       toast.error("Gagal memuat data template.");
@@ -296,10 +298,9 @@ function TemplateBuilderContent() {
     e.preventDefault();
     const templateId = e.dataTransfer.getData('text/plain') || draggedTemplateId;
     setDraggedTemplateId(null);
-
     if (!templateId || targetFolder === 'Semua') return;
-    const finalFolderValue = targetFolder === 'Uncategorized' ? null : targetFolder;
 
+    const finalFolderValue = targetFolder === 'Uncategorized' ? null : targetFolder;
     setTemplates(prev => prev.map(t => t.id === templateId ? { ...t, folder: finalFolderValue || undefined } : t));
     
     try {
@@ -370,7 +371,6 @@ function TemplateBuilderContent() {
           return;
         }
 
-        // AMANKAN STATUS AI: Pastikan tidak membawa error dari form lama
         if (importedData.aiGenerationStatus) {
             importedData.aiGenerationStatus = {
                 phase: "COMPLETED",
@@ -380,11 +380,11 @@ function TemplateBuilderContent() {
         }
 
         const newTemplate: FormTemplate = {
-          ...importedData, 
-          id: `track_imported_${Date.now()}`, 
+          ...importedData,
+          id: `track_imported_${Date.now()}`,
           trackName: `${importedData.trackName || 'Imported'}`,
           isActive: false, 
-          lastUpdated: new Date().toISOString(), 
+          lastUpdated: new Date().toISOString(),
           folder: activeFolder !== 'Semua' ? activeFolder : undefined
         };
         
@@ -398,7 +398,6 @@ function TemplateBuilderContent() {
         setActiveTemplate(newTemplate);
         toast.success("Berhasil Import", { description: "Template baru berhasil dimuat dari file JSON." });
         router.push(`?folder=${encodeURIComponent(activeFolder)}&edit=${newTemplate.id}&tab=general`);
-
       } catch (error) {
         toast.error("Gagal Membaca File", { description: "Terjadi kesalahan saat memparsing file JSON." });
       }
@@ -425,12 +424,12 @@ function TemplateBuilderContent() {
           toast.error("Format File Invalid", { description: "File yang diunggah bukan format JSON objek." });
           return;
         }
+
         if (!importedData.trackName || !Array.isArray(importedData.steps)) {
           toast.error("Struktur Tidak Dikenali", { description: "Properti 'trackName' atau array 'steps' tidak ditemukan di dalam JSON. Ini bukan file template Curation." });
           return;
         }
 
-        // AMANKAN STATUS AI: Pastikan tidak membawa error dari form lama
         if (importedData.aiGenerationStatus) {
             importedData.aiGenerationStatus = {
                 phase: "COMPLETED",
@@ -470,7 +469,6 @@ function TemplateBuilderContent() {
     if (!activeTemplate) return;
     const dataStr = JSON.stringify(activeTemplate, null, 2);
     const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
-
     const linkElement = document.createElement('a');
     linkElement.setAttribute('href', dataUri);
     linkElement.setAttribute('download', `${activeTemplate.trackName}_export.json`);
@@ -530,14 +528,13 @@ function TemplateBuilderContent() {
     if (!activeTemplate) return;
     const duplicatedId = `track_copy_${Date.now()}`;
     const duplicatedTemplate = { 
-      ...activeTemplate, 
-      id: duplicatedId, 
-      trackName: `${activeTemplate.trackName} (Salinan)`, 
-      isActive: false, 
-      lastUpdated: new Date().toISOString() 
-    };
-
-    // Bersihkan status AI pada duplikat agar tidak error
+       ...activeTemplate, 
+       id: duplicatedId, 
+       trackName: `${activeTemplate.trackName} (Salinan)`, 
+       isActive: false, 
+       lastUpdated: new Date().toISOString() 
+     };
+     
     if ((duplicatedTemplate as any).aiGenerationStatus) {
         (duplicatedTemplate as any).aiGenerationStatus = {
             phase: "COMPLETED",
@@ -551,7 +548,6 @@ function TemplateBuilderContent() {
     toast.success('Kategori berhasil digandakan!', { description: 'Klik "Simpan" untuk merekam permanen ke database.' });
   };
 
-  // KUNCI PERBAIKAN: Fungsi Simpan Paksa Mengubah Status AI Menjadi COMPLETED
   const saveTemplate = async (overrideTemplate?: FormTemplate) => {
     const templateToSave = overrideTemplate || activeTemplate;
     
@@ -568,7 +564,6 @@ function TemplateBuilderContent() {
       const templateFinal = { 
           ...templateToSave, 
           lastUpdated: new Date().toISOString(),
-          // PERBAIKAN FATAL: Memaksa backend tahu ini adalah save manual, bukan perintah mulai AI
           aiGenerationStatus: {
               phase: "COMPLETED",
               message: "Disimpan secara manual oleh Admin.",
@@ -634,11 +629,11 @@ function TemplateBuilderContent() {
           </div>
           
           <div className="flex flex-wrap items-center gap-3 shrink-0">
-            
+             
             {/* TOMBOL MASS GENERATE OUTPUTS */}
             <Button 
-              onClick={handleMassGenerateExpectedOutputs} 
-              disabled={isMassGenerating}
+               onClick={handleMassGenerateExpectedOutputs} 
+               disabled={isMassGenerating}
               variant="outline"
               className="border-indigo-200 text-indigo-700 hover:bg-indigo-50 rounded-xl shadow-sm h-10 px-4 font-bold"
             >
@@ -756,7 +751,7 @@ function TemplateBuilderContent() {
                 className="w-full bg-slate-50 border-none ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-500 rounded-xl h-10 pl-9 pr-4 text-sm font-medium outline-none transition-all"
               />
             </div>
-
+            
             {selectedTemplates.length > 0 && isEditMode && (
               <div className="flex items-center gap-2 animate-in slide-in-from-right-4 duration-300 w-full sm:w-auto bg-indigo-50 ring-1 ring-indigo-200 p-1.5 rounded-xl overflow-x-auto hide-scrollbar">
                 <span className="text-xs font-black text-indigo-700 px-3 truncate shrink-0">{selectedTemplates.length} Terpilih</span>
@@ -793,7 +788,7 @@ function TemplateBuilderContent() {
               <p className="text-slate-500 text-sm mt-1">{searchQuery ? `Tidak ada form yang cocok dengan "${searchQuery}".` : 'Tarik form dari folder lain dan lepas di folder ini.'}</p>
             </div>
           ) : viewMode === 'list' ? (
-             
+            
             <div className="bg-white rounded-3xl shadow-sm overflow-hidden animate-in fade-in duration-300 w-full border border-slate-200">
               <div className="overflow-x-auto w-full custom-scrollbar">
                 <table className="w-full text-sm text-left">
@@ -869,7 +864,7 @@ function TemplateBuilderContent() {
             </div>
 
           ) : (
-             
+            
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 animate-in fade-in duration-300 w-full">
               {filteredTemplates.map(template => {
                 const isSelected = selectedTemplates.includes(template.id);
@@ -908,6 +903,7 @@ function TemplateBuilderContent() {
                           {isEditMode ? <GripVertical size={22} /> : <LayoutGrid size={22} />}
                         </div>
                       </div>
+
                       <h3 className={`text-lg font-black leading-snug mb-1 line-clamp-2 transition-colors ${template.isActive ? 'text-slate-900 group-hover:text-emerald-600' : 'text-slate-600 group-hover:text-slate-900'}`}>
                         {template.trackName}
                       </h3>
@@ -945,6 +941,7 @@ function TemplateBuilderContent() {
 
   return (
     <div className="space-y-6 animate-in slide-in-from-right-4 duration-300 pb-20 relative w-full min-w-0">
+      
       <div className="bg-white/90 backdrop-blur-md p-4 sm:p-5 rounded-3xl ring-1 ring-slate-200 shadow-sm flex flex-wrap justify-between items-center gap-4 sticky top-0 md:top-4 z-40 w-full mb-6">
         <div className="flex items-center gap-4 flex-1 min-w-0">
           <Button variant="ghost" onClick={() => router.push(`?folder=${encodeURIComponent(activeFolder)}`)} className="h-10 w-10 p-0 rounded-full bg-slate-50 hover:bg-slate-200 text-slate-600 shrink-0 ring-1 ring-slate-200"><ChevronLeft size={20} /></Button>
@@ -961,7 +958,6 @@ function TemplateBuilderContent() {
             <Upload className="w-4 h-4 shrink-0" /> <span className="hidden sm:inline">Import JSON</span>
             <input type="file" accept=".json" onChange={importToCurrentTemplate} className="hidden" />
           </label>
-
           <Button variant="outline" onClick={exportTemplate} className="border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl h-10 px-3 hidden sm:flex"><Download className="w-4 h-4 sm:mr-2 shrink-0" /> <span>Export JSON</span></Button>
           <Button variant="outline" onClick={duplicateTemplate} className="border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl h-10 px-3 hidden sm:flex"><Copy className="w-4 h-4 sm:mr-2 shrink-0" /> <span>Duplikat</span></Button>
           <Button variant="outline" onClick={() => deleteTemplate(activeTemplate.id)} className="border-rose-100 text-rose-600 hover:bg-rose-50 rounded-xl h-10 w-10 p-0 shrink-0"><Trash2 className="w-4 h-4" /></Button>

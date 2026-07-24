@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { FormTemplate } from '@/types/curation';
-import { Trash2, Plus, Sparkles, Loader2, Target } from 'lucide-react';
+import { Trash2, Plus, Sparkles, Loader2, Target, Image as ImageIcon, Copy, PenTool } from 'lucide-react';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { toast } from 'sonner';
 
@@ -17,8 +17,11 @@ interface TabGeneralProps {
 export function TabGeneral({ template, onChange }: TabGeneralProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isGeneratingAnchors, setIsGeneratingAnchors] = useState(false);
+  
+  // STATE BARU UNTUK 2 TOMBOL PROMO
+  const [isGeneratingCopy, setIsGeneratingCopy] = useState(false);
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
-  // FUNGSI UNTUK MEMISAHKAN "JUDUL" DAN "SUB-POIN"
   const parseExpectedOutput = (blockStr: string) => {
     if (!blockStr) return { title: '', subs: '' };
     const colonIndex = blockStr.indexOf(':');
@@ -26,19 +29,16 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
     return { title: blockStr.slice(0, colonIndex).trim(), subs: blockStr.slice(colonIndex + 1).trim() };
   };
 
-  // FUNGSI UNTUK MENYIMPAN PERUBAHAN INPUT
   const updateExpectedOutput = (idx: number, newTitle: string, newSubs: string) => {
     const cleanTitle = newTitle.trim();
     const cleanSubs = newSubs.trim();
     const combinedValue = cleanTitle || cleanSubs ? `${cleanTitle}${cleanSubs ? `: ${cleanSubs}` : ''}` : '';
-    
     const currentArr = template.expectedOutputs || [];
     const newArr = [...currentArr];
     newArr[idx] = combinedValue;
     onChange({ ...template, expectedOutputs: newArr });
   };
 
-  // FUNGSI UNTUK MENGHAPUS BLOK
   const removeExpectedOutput = (idx: number) => {
     const currentArr = template.expectedOutputs || [];
     const newArr = [...currentArr];
@@ -46,14 +46,12 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
     onChange({ ...template, expectedOutputs: newArr });
   };
 
-  // FUNGSI UNTUK MENAMBAH BLOK BARU MANUAL
   const addExpectedOutput = () => {
     const currentArr = template.expectedOutputs || [];
     const newArr = [...currentArr, 'Output Baru: Deskripsi singkat output ini'];
     onChange({ ...template, expectedOutputs: newArr });
   };
 
-  // FUNGSI UNTUK GENERATE OUTPUT BERBASIS AI (Eksisting)
   const handleGenerateOutputs = async () => {
     if (!template.aiPromptConfig?.expectedRecommendations || template.aiPromptConfig.expectedRecommendations.length === 0) {
       toast.error("Konfigurasi Belum Lengkap", {
@@ -61,21 +59,17 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
       });
       return;
     }
-
     setIsGenerating(true);
     try {
       const functions = getFunctions(undefined, 'asia-southeast2');
       const generateFn = httpsCallable(functions, 'generateTemplateSellingPoints');
-      
       const payload = {
         trackName: template.trackName,
         trackDescription: template.trackDescription,
         aiPromptConfig: template.aiPromptConfig
       };
-      
       const result = await generateFn(payload);
       const data = result.data as any;
-      
       if (data.success && data.sellingPoints) {
          const formattedOutputs = data.sellingPoints.map((sp: any) => `${sp.title}: ${sp.description}`);
          onChange({ ...template, expectedOutputs: formattedOutputs });
@@ -89,27 +83,22 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
     }
   };
 
-  // FUNGSI BARU UNTUK GENERATE PROMPT ANCHORS BERBASIS AI
   const handleGenerateAnchors = async () => {
     if (!template.trackName) {
       toast.error("Nama Program Kosong", { description: "Harap isi Nama Program/Kategori terlebih dahulu untuk acuan AI." });
       return;
     }
-    
     setIsGeneratingAnchors(true);
     try {
       const functions = getFunctions(undefined, 'asia-southeast2');
       const generateAnchorsFn = httpsCallable(functions, 'generatePromptAnchors');
-
       const payload = {
         trackName: template.trackName,
         trackDescription: template.trackDescription,
         targetAudience: template.aiPromptConfig?.targetAudience
       };
-
       const result = await generateAnchorsFn(payload);
       const data = result.data as any;
-
       if (data.success && data.anchors) {
         onChange({
           ...template,
@@ -126,8 +115,92 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
     }
   };
 
+  // --- FUNGSI 1: GENERATE COPYWRITING & IMAGE PROMPT (GEMINI) ---
+  const handleGenerateCopywriting = async () => {
+    if (!template.trackName || !template.trackDescription) {
+      toast.error("Data Belum Lengkap", { description: "Harap isi Nama dan Deskripsi Program terlebih dahulu." });
+      return;
+    }
+    
+    setIsGeneratingCopy(true);
+    try {
+      const functions = getFunctions(undefined, 'asia-southeast2');
+      const generateCopyFn = httpsCallable(functions, 'generateCopywriting'); 
+      
+      const payload = {
+        trackName: template.trackName,
+        trackDescription: template.trackDescription,
+        expectedOutputs: template.expectedOutputs,
+        targetAudience: template.aiPromptConfig?.targetAudience
+      };
+      
+      const result = await generateCopyFn(payload);
+      const data = result.data as any;
+      
+      if (data.success) {
+        // Gabungkan aset baru dengan yang sudah ada (jika ada imageUrl sebelumnya, jangan dihapus)
+        const currentAssets = template.promoAssets || { copywriting: '', imagePrompt: '', imageUrl: '', generatedAt: '' };
+        
+        onChange({ 
+          ...template, 
+          promoAssets: {
+            ...currentAssets,
+            copywriting: data.copywriting,
+            imagePrompt: data.imagePrompt,
+            generatedAt: new Date().toISOString()
+          } 
+        });
+        toast.success("Copywriting Selesai!", { description: "Teks Caption dan Prompt Gambar berhasil dibuat." });
+      }
+    } catch(e: any) {
+      console.error(e);
+      toast.error("Gagal Generate Teks", { description: e.message });
+    } finally {
+      setIsGeneratingCopy(false);
+    }
+  };
+
+  // --- FUNGSI 2: RENDER GAMBAR DENGAN IMAGEN 3 (VERTEX AI) ---
+  const handleRenderImage = async () => {
+    if (!template.promoAssets?.imagePrompt) {
+      toast.error("Prompt Kosong", { description: "Harap isi atau generate Image Prompt terlebih dahulu." });
+      return;
+    }
+
+    setIsGeneratingImage(true);
+    try {
+      const functions = getFunctions(undefined, 'asia-southeast2');
+      const generateImageFn = httpsCallable(functions, 'generatePromoImage'); 
+      
+      const payload = {
+        imagePrompt: template.promoAssets.imagePrompt
+      };
+      
+      const result = await generateImageFn(payload);
+      const data = result.data as any;
+      
+      if (data.success && data.imageUrl) {
+        onChange({ 
+          ...template, 
+          promoAssets: {
+            ...template.promoAssets!,
+            imageUrl: data.imageUrl,
+            generatedAt: new Date().toISOString()
+          } 
+        });
+        toast.success("Render Selesai!", { description: "Gambar berhasil dibuat dan disimpan." });
+      }
+    } catch(e: any) {
+      console.error(e);
+      toast.error("Gagal Render Gambar", { description: e.message });
+    } finally {
+      setIsGeneratingImage(false);
+    }
+  };
+
   return (
     <div className="bg-white p-6 md:p-8 rounded-3xl ring-1 ring-slate-200 shadow-sm space-y-8">
+      
       <div className="mb-2">
         <h3 className="text-xl font-black text-slate-900">Identitas Program</h3>
         <p className="text-sm text-slate-500 font-medium">Tampilan yang akan dilihat peserta di halaman depan.</p>
@@ -163,7 +236,7 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
           />
         </div>
 
-        {/* --- BLOK KONTEKS SPESIFIK & PROMPT ANCHORS (DENGAN TOMBOL AUTO-GENERATE) --- */}
+        {/* --- BLOK KONTEKS SPESIFIK & PROMPT ANCHORS --- */}
         <div className="space-y-4 md:col-span-2 p-5 bg-amber-50/50 rounded-2xl ring-1 ring-amber-100 mt-2">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-1">
             <div className="flex items-center gap-2">
@@ -211,8 +284,8 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
             </div>
           </div>
         </div>
-        {/* --- AKHIR BLOK KONTEKS SPESIFIK --- */}
 
+        {/* --- BLOK MODE EKSEKUSI --- */}
         <div className="space-y-2 md:col-span-2 bg-indigo-50/50 p-5 rounded-2xl ring-1 ring-indigo-100 mt-2">
           <div className="flex items-center gap-2 mb-2">
             <Sparkles size={18} className="text-indigo-600" />
@@ -244,12 +317,12 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
             <p className="text-xs text-slate-500 font-medium mt-1">Poin-poin hasil akhir yang akan muncul di Katalog Landing Page.</p>
           </div>
           
-<Button 
-  type="button" // <--- TAMBAHKAN INI
-  onClick={handleGenerateOutputs} 
-  disabled={isGenerating}
-  className="shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white..."
->
+          <Button
+            type="button" 
+            onClick={handleGenerateOutputs}
+            disabled={isGenerating}
+            className="shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl h-10 shadow-sm"
+          >
             {isGenerating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
             Auto-Generate dengan AI
           </Button>
@@ -265,18 +338,18 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
                     <label className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest">Judul Output</label>
                     <Input 
                       value={title} 
-                      onChange={(e) => updateExpectedOutput(idx, e.target.value, subs)} 
-                      className="font-black text-slate-800 border-slate-200 bg-slate-50" 
-                      placeholder="Cth: Action Plan Harian" 
+                      onChange={(e) => updateExpectedOutput(idx, e.target.value, subs)}
+                      className="font-black text-slate-800 border-slate-200 bg-slate-50"
+                      placeholder="Cth: Action Plan Harian"
                     />
                   </div>
                   <div className="md:col-span-2 space-y-2">
                     <label className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Deskripsi Detail</label>
                     <Textarea 
                       value={subs} 
-                      onChange={(e) => updateExpectedOutput(idx, title, e.target.value)} 
-                      className="text-sm font-medium border-slate-200 min-h-[60px]" 
-                      placeholder="Cth: Panduan langkah demi langkah berbasis AAP yang bisa langsung diterapkan..." 
+                      onChange={(e) => updateExpectedOutput(idx, title, e.target.value)}
+                      className="text-sm font-medium border-slate-200 min-h-[60px]"
+                      placeholder="Cth: Panduan langkah demi langkah berbasis AAP yang bisa langsung diterapkan..."
                     />
                   </div>
                 </div>
@@ -294,13 +367,106 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
           })}
           
           <Button 
-            type="button" 
-            variant="outline" 
-            onClick={addExpectedOutput} 
+            type="button"
+            variant="outline"
+            onClick={addExpectedOutput}
             className="w-full border-dashed border-2 border-slate-300 text-slate-500 hover:bg-slate-50 font-bold rounded-2xl h-12 shadow-sm"
           >
             <Plus className="w-5 h-5 mr-2"/> Tambah Output / Benefit Baru
           </Button>
+        </div>
+      </div>
+
+      {/* --- BLOK ASET PROMOSI (2 TOMBOL) --- */}
+      <div className="space-y-4 p-6 bg-fuchsia-50/50 rounded-3xl border border-fuchsia-200 shadow-sm relative overflow-hidden mt-6">
+        <div className="absolute top-0 left-0 w-1.5 h-full bg-fuchsia-500"></div>
+        
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 pb-4 border-b border-fuchsia-200/50">
+          <div>
+            <h4 className="font-black text-fuchsia-900 text-lg uppercase tracking-tight">Marketing & Social Media Kit</h4>
+            <p className="text-xs text-fuchsia-700/80 font-medium mt-1">Gunakan AI untuk meramu Caption promosi dan merender Visual 3D.</p>
+          </div>
+          
+          <Button
+            type="button"
+            onClick={handleGenerateCopywriting}
+            disabled={isGeneratingCopy}
+            className="shrink-0 bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-bold rounded-2xl h-10 shadow-sm"
+          >
+            {isGeneratingCopy ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <PenTool className="w-4 h-4 mr-2" />}
+            {isGeneratingCopy ? "Menulis Caption..." : "1. Generate Copy & Prompt"}
+          </Button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+          {/* Kolom Kiri: Copywriting */}
+          <div className="space-y-2 flex flex-col h-full">
+            <div className="flex justify-between items-end">
+              <label className="text-[10px] font-bold text-fuchsia-600 uppercase tracking-widest">Copywriting / Caption</label>
+              <button 
+                type="button" 
+                onClick={() => {
+                  navigator.clipboard.writeText(template.promoAssets?.copywriting || '');
+                  toast.success("Tersalin ke Clipboard!");
+                }} 
+                className="text-[9px] font-bold text-fuchsia-500 hover:text-fuchsia-700 flex items-center gap-1"
+              >
+                <Copy size={12}/> Salin Teks
+              </button>
+            </div>
+            <Textarea 
+              value={template.promoAssets?.copywriting || ''}
+              onChange={e => onChange({ ...template, promoAssets: { ...template.promoAssets!, copywriting: e.target.value } })}
+              placeholder="Teks promosi akan muncul di sini..."
+              className="flex-1 min-h-[300px] h-full rounded-2xl bg-white border-fuchsia-200 text-sm font-medium focus-visible:ring-fuchsia-500 p-4 leading-relaxed"
+            />
+          </div>
+
+          {/* Kolom Kanan: Visual Builder */}
+          <div className="flex flex-col gap-4">
+            
+            <div className="space-y-2">
+              <div className="flex justify-between items-end">
+                <label className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest flex items-center gap-1"><Sparkles size={12}/> Image Prompt (English)</label>
+              </div>
+              <Textarea 
+                value={template.promoAssets?.imagePrompt || ''}
+                onChange={e => onChange({ ...template, promoAssets: { ...template.promoAssets!, imagePrompt: e.target.value } })}
+                placeholder="Instruksi gambar berbahasa Inggris untuk mesin Imagen 3... Anda bisa mengedit ini sebelum menekan tombol render."
+                className="h-[100px] rounded-xl bg-indigo-50/50 border-indigo-200 text-xs font-mono focus-visible:ring-indigo-500 p-3 leading-relaxed"
+              />
+              
+              <Button
+                type="button"
+                onClick={handleRenderImage}
+                disabled={isGeneratingImage || !template.promoAssets?.imagePrompt}
+                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl h-10 shadow-sm mt-2"
+              >
+                {isGeneratingImage ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <ImageIcon className="w-4 h-4 mr-2" />}
+                {isGeneratingImage ? "Vertex AI Sedang Merender..." : "2. Render Gambar (Imagen 3)"}
+              </Button>
+            </div>
+
+            <div className="space-y-2 mt-auto">
+              <div className="flex justify-between items-end">
+                <label className="text-[10px] font-bold text-fuchsia-600 uppercase tracking-widest">Hasil Render Gambar</label>
+                {template.promoAssets?.imageUrl && (
+                  <a href={template.promoAssets.imageUrl} target="_blank" rel="noreferrer" className="text-[9px] font-bold text-fuchsia-500 hover:underline">Buka Resolusi Penuh ↗</a>
+                )}
+              </div>
+              <div className="rounded-2xl overflow-hidden border-2 border-fuchsia-200 bg-slate-50 aspect-square relative shadow-inner flex items-center justify-center">
+                {template.promoAssets?.imageUrl ? (
+                  <img src={template.promoAssets.imageUrl} alt="Promo Render" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="text-center p-6 opacity-40">
+                    <ImageIcon className="w-12 h-12 mx-auto mb-2 text-slate-400" />
+                    <p className="text-xs font-bold text-slate-500">Belum Ada Gambar</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+          </div>
         </div>
       </div>
 

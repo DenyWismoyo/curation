@@ -3,7 +3,7 @@
     "module": "commonjs",
     "jsx": "react-jsx",
     "esModuleInterop": true,
-    "moduleResolution": "node", 
+    "moduleResolution": "bundler",
     "noImplicitReturns": false,
     "noUnusedLocals": false,
     "outDir": "lib",

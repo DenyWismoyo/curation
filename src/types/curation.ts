@@ -187,6 +187,12 @@ export interface FormTemplate {
   formBuilderInstruction?: string;
   preferredQuestionTypes?: string[];
   formMode?: 'standard' | 'adaptive' | 'hybrid';
+  promoAssets?: {
+    copywriting: string;
+    imagePrompt: string;
+    imageUrl: string;
+    generatedAt: string;
+  };
 }
 
 export interface AssessmentPayload {
