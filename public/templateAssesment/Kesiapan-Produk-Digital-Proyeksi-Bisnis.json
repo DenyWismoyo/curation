@@ -1,0 +1,2196 @@
+{
+  "generationLogs": [
+    {
+      "timestamp": "2026-07-23T06:30:07.190Z",
+      "message": "FASE 1: Architect Agent (Gemini 3.1 Pro) diaktifkan. Melakukan penetrasi jaringan & riset blueprint...",
+      "type": "info"
+    },
+    {
+      "message": "Otak AI dan Master Blueprint berhasil disempurnakan!",
+      "timestamp": "2026-07-23T06:31:11.560Z",
+      "type": "success"
+    },
+    {
+      "type": "info",
+      "message": "FASE 2: Fabricator Agent (Gemini 2.5 Flash) dikerahkan. Memproduksi 6 seksi formulir...",
+      "timestamp": "2026-07-23T06:31:11.760Z"
+    },
+    {
+      "message": "Meracik Kuesioner Batch 1...",
+      "timestamp": "2026-07-23T06:31:11.834Z",
+      "type": "info"
+    },
+    {
+      "type": "info",
+      "message": "Meracik Kuesioner Batch 2...",
+      "timestamp": "2026-07-23T06:31:58.254Z"
+    },
+    {
+      "type": "success",
+      "timestamp": "2026-07-23T06:32:36.047Z",
+      "message": "Seluruh seksi formulir berhasil diracik."
+    },
+    {
+      "type": "info",
+      "message": "FASE 3: Polisher Agent (Gemini 3.1 Flash-Lite) diaktifkan. Melakukan QA Logika sekaligus memoles UI/UX form...",
+      "timestamp": "2026-07-23T06:32:36.315Z"
+    },
+    {
+      "type": "info",
+      "message": "Memoles UI dan menyembuhkan logika pada Seksi 6: Proyeksi Arus Kas & Keberlanjutan Bisnis...",
+      "timestamp": "2026-07-23T06:32:36.392Z"
+    },
+    {
+      "type": "info",
+      "timestamp": "2026-07-23T06:32:36.392Z",
+      "message": "Memoles UI dan menyembuhkan logika pada Seksi 1: Evaluasi Kualitas Sistem & Perangkat Lunak..."
+    },
+    {
+      "type": "info",
+      "timestamp": "2026-07-23T06:32:36.392Z",
+      "message": "Memoles UI dan menyembuhkan logika pada Seksi 3: Analisis Profitabilitas & Unit Economics..."
+    },
+    {
+      "type": "info",
+      "timestamp": "2026-07-23T06:32:36.392Z",
+      "message": "Memoles UI dan menyembuhkan logika pada Seksi 2: Validasi Product-Market Fit (PMF)..."
+    },
+    {
+      "message": "Memoles UI dan menyembuhkan logika pada Seksi 4: Integrasi Teknis & Keandalan Fungsional...",
+      "timestamp": "2026-07-23T06:32:36.392Z",
+      "type": "info"
+    },
+    {
+      "message": "Memoles UI dan menyembuhkan logika pada Seksi 5: Efisiensi Struktur Biaya & Operasional...",
+      "timestamp": "2026-07-23T06:32:36.392Z",
+      "type": "info"
+    },
+    {
+      "message": "Proses Polishing & QA Logika selesai. Kuesioner kini tervalidasi dan estetik 100%.",
+      "timestamp": "2026-07-23T06:32:47.726Z",
+      "type": "success"
+    },
+    {
+      "message": "PIPELINE SELESAI: Kuesioner skala Enterprise telah berhasil diintegrasikan!",
+      "timestamp": "2026-07-23T06:32:47.830Z",
+      "type": "success"
+    }
+  ],
+  "trialQuota": 0,
+  "isDisplayedOnLanding": true,
+  "formBuilderInstruction": "\n==================================================\nKONTEKS ANCHOR (ACUAN MUTLAK):\n- Profil Subjek Asesmen: Target subjek adalah Manajer Produk (Product Manager) dan Pemilik Bisnis (Business Owner) yang mengelola produk digital tahap pertumbuhan (growth stage). Mereka bertanggung jawab atas integrasi teknis fungsional serta keberlanjutan profitabilitas pada segmen pasar B2C skala kecil hingga B2B skala organisasi.\n- Metodologi/Pendekatan: Menggunakan framework Product-Market Fit (PMF) yang dikombinasikan dengan metode Unit Economics Analysis dan ISO/IEC 25010 untuk evaluasi kualitas sistem. Pendekatan ini memastikan validasi keandalan teknis selaras dengan strategi monetisasi dan efisiensi struktur biaya operasional.\n==================================================\nTARGET AUDIENS: UMKM. Fokus pada inovasi, pertumbuhan, efisiensi operasional, dan product-market fit.\n\nBertindaklah sebagai Asesor Produk Digital dan Konsultan Bisnis Senior. Buatkan kerangka daftar pertanyaan evaluasi (audit checklist) untuk menilai kesiapan sebuah produk. Fokus evaluasi ada pada dua pilar utama:\nKeandalan fungsionalitas teknis (meliputi stabilitas sistem, kelancaran proses autentikasi, efisiensi pembacaan basis data, dan skalabilitas).\nStruktur biaya dan kelayakan komersial.\nPastikan bagian komersialisasi mengeksplorasi skema monetisasi yang adaptif dan jelas, mulai dari pengguna skala kecil hingga paket enterprise (level instansi/organisasi). \n\n\n\nATURAN KOMPOSISI PERTANYAAN MUTLAK (WAJIB DIPATUHI):\n- WAJIB maksimalkan penggunaan tipe \"radio\" atau \"select\" dengan array \"options\" berbobot (weight 0-100) untuk keperluan kalkulasi nilai otomatis.\n- TERAPKAN INTEROGASI BERLAPIS: Gunakan properti \"showIf\". Jika peserta merespon klaim besar pada opsi radio/select, WAJIB pancing pertanyaan baru bertipe \"file\" atau \"textarea\" untuk menagih bukti.\n- WAJIB sertakan tipe input \"file\" untuk menagih unggahan dokumen bukti (legalitas, laporan, portofolio, dll) guna menekan potensi manipulasi data.\n- Gunakan tipe \"number\" secara spesifik untuk menangkap data kuantitatif presisi (seperti Omzet, Jumlah Karyawan, Biaya, Persentase) agar data tidak tercampur teks.\n- Gunakan tipe \"textarea\" secara strategis untuk menuntut penjelasan, justifikasi, keluhan, atau uraian deskriptif yang mendalam dari peserta.",
+  "isActive": true,
+  "steps": [
+    {
+      "description": "Penilaian karakteristik kualitas produk digital berdasarkan standar ISO/IEC 25010.",
+      "title": "Evaluasi Kualitas Sistem & Perangkat Lunak",
+      "fields": [
+        {
+          "type": "text",
+          "id": "namaUsaha",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Nama **Entitas / Perusahaan / PT**"
+        },
+        {
+          "id": "namaPengisi",
+          "type": "text",
+          "required": true,
+          "label": "Nama **Pengisi Form**",
+          "gridSpan": 2
+        },
+        {
+          "required": true,
+          "label": "Alamat **Email Aktif**",
+          "gridSpan": 2,
+          "id": "emailAktif",
+          "description": "Gunakan alamat email korporat untuk verifikasi.",
+          "type": "text"
+        },
+        {
+          "type": "text",
+          "id": "nomorTelepon",
+          "description": "Nomor yang dapat dihubungi untuk koordinasi teknis.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Nomor **Telepon Kontak**"
+        },
+        {
+          "description": "Evaluasi kesesuaian fungsionalitas produk dengan spesifikasi dan ekspektasi pengguna.",
+          "id": "pemenuhanKebutuhanFungsional",
+          "type": "radio",
+          "options": [
+            {
+              "weight": 10,
+              "label": "Belum memadai, banyak fitur inti yang belum berfungsi optimal"
+            },
+            {
+              "weight": 40,
+              "label": "Cukup memadai, fitur inti berfungsi namun masih ada celah fungsionalitas"
+            },
+            {
+              "weight": 60,
+              "label": "Memadai, seluruh fitur inti berfungsi sesuai harapan pengguna"
+            },
+            {
+              "weight": 90,
+              "label": "Sangat memadai, fungsionalitas produk melebihi ekspektasi dan sangat stabil"
+            }
+          ],
+          "aiReasoning": "Menilai keselarasan antara output teknis dengan spesifikasi kebutuhan bisnis untuk mengukur efektivitas pengembangan.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Sejauh mana produk digital Anda memenuhi **kebutuhan fungsional inti** pengguna?"
+        },
+        {
+          "id": "justifikasiFungsionalitas",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "pemenuhanKebutuhanFungsional",
+            "equals": "Belum memadai, banyak fitur inti yang belum berfungsi optimal"
+          },
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi hambatan teknis atau operasional yang menghalangi pencapaian fungsionalitas optimal.",
+          "required": true,
+          "label": "Mohon jelaskan **kendala atau tantangan utama** dalam pemenuhan kebutuhan fungsional produk Anda."
+        },
+        {
+          "description": "Metodologi yang digunakan untuk memastikan keandalan dan kualitas fungsional produk.",
+          "type": "radio",
+          "id": "prosesPengujianFungsionalitas",
+          "required": true,
+          "label": "Bagaimana **metodologi pengujian** fungsionalitas produk digital Anda saat ini?",
+          "options": [
+            {
+              "weight": 5,
+              "label": "Tidak ada proses pengujian formal"
+            },
+            {
+              "weight": 30,
+              "label": "Pengujian dilakukan secara manual oleh tim internal"
+            },
+            {
+              "weight": 65,
+              "label": "Pengujian otomatis diterapkan pada sebagian modul atau fitur"
+            },
+            {
+              "weight": 95,
+              "label": "Pengujian otomatis menyeluruh (end-to-end) terintegrasi dalam siklus pengembangan"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai kematangan proses Quality Assurance untuk memprediksi stabilitas jangka panjang sistem."
+        },
+        {
+          "id": "buktiPengujianOtomatis",
+          "type": "file",
+          "showIf": {
+            "equals": "Pengujian otomatis menyeluruh (end-to-end) terintegrasi dalam siklus pengembangan",
+            "fieldId": "prosesPengujianFungsionalitas"
+          },
+          "label": "Unggah **laporan atau dokumentasi** hasil pengujian otomatis menyeluruh Anda.",
+          "required": true,
+          "aiReasoning": "Memvalidasi klaim implementasi pengujian otomatis melalui bukti empiris berupa laporan teknis.",
+          "gridSpan": 2,
+          "fileAccept": ".pdf,.zip"
+        },
+        {
+          "type": "radio",
+          "id": "waktuResponsAplikasi",
+          "description": "Indikator efisiensi kinerja sistem dalam menanggapi permintaan pengguna.",
+          "required": true,
+          "label": "Berapa **waktu respons rata-rata** aplikasi saat diakses pengguna?",
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur performa sistem sebagai indikator utama pengalaman pengguna dan efisiensi arsitektur backend.",
+          "options": [
+            {
+              "weight": 10,
+              "label": "Lebih dari 5 detik"
+            },
+            {
+              "weight": 40,
+              "label": "Antara 3-5 detik"
+            },
+            {
+              "weight": 70,
+              "label": "Antara 1-3 detik"
+            },
+            {
+              "weight": 90,
+              "label": "Kurang dari 1 detik"
+            }
+          ]
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Menganalisis bottleneck sistem yang menyebabkan latensi tinggi pada aplikasi.",
+          "label": "Mohon jelaskan **faktor teknis** yang mempengaruhi waktu respons aplikasi Anda.",
+          "required": true,
+          "id": "penjelasanWaktuRespons",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Lebih dari 5 detik",
+            "fieldId": "waktuResponsAplikasi"
+          }
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Menentukan batas skalabilitas infrastruktur dalam menangani beban trafik puncak.",
+          "label": "Berapa **jumlah pengguna aktif bersamaan** (concurrent users) yang dapat ditangani sistem?",
+          "required": true,
+          "description": "Estimasi kapasitas sistem dalam menangani beban pengguna secara simultan.",
+          "type": "number",
+          "id": "kapasitasPenggunaBersamaan"
+        },
+        {
+          "type": "radio",
+          "id": "frekuensiKegagalanSistem",
+          "description": "Evaluasi keandalan sistem dan stabilitas operasional produk.",
+          "required": true,
+          "label": "Seberapa sering **insiden kegagalan sistem kritis** terjadi dalam 12 bulan terakhir?",
+          "options": [
+            {
+              "weight": 10,
+              "label": "Mingguan atau lebih sering"
+            },
+            {
+              "weight": 40,
+              "label": "Bulanan"
+            },
+            {
+              "weight": 70,
+              "label": "Triwulanan"
+            },
+            {
+              "weight": 95,
+              "label": "Tahunan atau tidak pernah"
+            }
+          ],
+          "aiReasoning": "Mengukur tingkat reliabilitas dan stabilitas operasional sistem dalam lingkungan produksi.",
+          "gridSpan": 2
+        },
+        {
+          "showIf": {
+            "equals": "Mingguan atau lebih sering",
+            "fieldId": "frekuensiKegagalanSistem"
+          },
+          "id": "penjelasanKegagalanSistem",
+          "type": "textarea",
+          "required": true,
+          "label": "Mohon jelaskan **penyebab utama dan langkah mitigasi** untuk insiden kegagalan sistem.",
+          "gridSpan": 2,
+          "aiReasoning": "Mengevaluasi efektivitas tim dalam melakukan post-mortem dan perbaikan sistem pasca-insiden."
+        },
+        {
+          "aiReasoning": "Menilai kesiapan organisasi dalam menjaga keberlangsungan bisnis melalui prosedur pemulihan data yang terukur.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 5,
+              "label": "Tidak ada mekanisme pemulihan data formal"
+            },
+            {
+              "weight": 30,
+              "label": "Pemulihan data dilakukan secara manual dengan waktu henti yang signifikan"
+            },
+            {
+              "weight": 65,
+              "label": "Pemulihan data otomatis sebagian, memerlukan intervensi manual"
+            },
+            {
+              "weight": 95,
+              "label": "Pemulihan data otomatis penuh dengan RTO (Recovery Time Objective) dan RPO (Recovery Point Objective) yang terdefinisi jelas"
+            }
+          ],
+          "label": "Bagaimana **mekanisme pemulihan data** pasca-kegagalan sistem atau bencana?",
+          "required": true,
+          "description": "Prosedur dan teknologi untuk memastikan integritas dan ketersediaan data setelah insiden.",
+          "id": "mekanismePemulihanData",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "equals": "Pemulihan data otomatis penuh dengan RTO (Recovery Time Objective) dan RPO (Recovery Point Objective) yang terdefinisi jelas",
+            "fieldId": "mekanismePemulihanData"
+          },
+          "type": "file",
+          "id": "buktiPemulihanData",
+          "required": true,
+          "label": "Unggah dokumen **Disaster Recovery Plan** atau laporan simulasi pemulihan data.",
+          "aiReasoning": "Memverifikasi keberadaan protokol pemulihan bencana yang terdokumentasi secara formal.",
+          "gridSpan": 2,
+          "fileAccept": ".pdf,.zip"
+        },
+        {
+          "required": true,
+          "label": "Bagaimana tingkat **implementasi standar keamanan data** pada produk Anda?",
+          "options": [
+            {
+              "weight": 10,
+              "label": "Belum ada implementasi keamanan data yang memadai"
+            },
+            {
+              "weight": 40,
+              "label": "Implementasi keamanan dasar (misalnya, password hashing)"
+            },
+            {
+              "weight": 70,
+              "label": "Implementasi keamanan menengah (misalnya, enkripsi data transit, otentikasi 2FA)"
+            },
+            {
+              "weight": 95,
+              "label": "Implementasi keamanan lanjut sesuai standar industri (misalnya, enkripsi data at rest, audit keamanan berkala, kepatuhan regulasi)"
+            }
+          ],
+          "aiReasoning": "Menilai postur keamanan siber untuk melindungi data sensitif pengguna dari ancaman eksternal.",
+          "gridSpan": 2,
+          "description": "Evaluasi perlindungan data pengguna dan sistem dari akses tidak sah atau kebocoran.",
+          "id": "implementasiKeamananData",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "equals": "Implementasi keamanan lanjut sesuai standar industri (misalnya, enkripsi data at rest, audit keamanan berkala, kepatuhan regulasi)",
+            "fieldId": "implementasiKeamananData"
+          },
+          "type": "file",
+          "id": "buktiKeamananData",
+          "label": "Unggah **laporan audit keamanan**, sertifikasi, atau kebijakan keamanan data.",
+          "required": true,
+          "gridSpan": 2,
+          "fileAccept": ".pdf,.zip",
+          "aiReasoning": "Memvalidasi kepatuhan terhadap standar keamanan melalui bukti sertifikasi atau audit pihak ketiga."
+        },
+        {
+          "type": "radio",
+          "id": "dokumentasiTeknisSistem",
+          "description": "Indikator kemudahan pemeliharaan dan pengembangan sistem di masa mendatang.",
+          "options": [
+            {
+              "weight": 5,
+              "label": "Tidak ada dokumentasi teknis yang tersedia"
+            },
+            {
+              "weight": 30,
+              "label": "Dokumentasi minimal dan tidak terstruktur"
+            },
+            {
+              "weight": 65,
+              "label": "Dokumentasi cukup lengkap namun perlu perbaikan struktur"
+            },
+            {
+              "weight": 95,
+              "label": "Dokumentasi sangat lengkap, terstruktur, dan selalu diperbarui"
+            }
+          ],
+          "aiReasoning": "Mengukur kemudahan transfer pengetahuan dan pemeliharaan sistem untuk keberlangsungan jangka panjang.",
+          "gridSpan": 2,
+          "label": "Seberapa lengkap dan terstruktur **dokumentasi teknis** produk digital Anda?",
+          "required": true
+        },
+        {
+          "showIf": {
+            "fieldId": "dokumentasiTeknisSistem",
+            "equals": "Dokumentasi sangat lengkap, terstruktur, dan selalu diperbarui"
+          },
+          "type": "file",
+          "id": "buktiDokumentasiTeknis",
+          "label": "Unggah contoh **dokumentasi teknis** (diagram arsitektur, panduan API, README).",
+          "required": true,
+          "gridSpan": 2,
+          "fileAccept": ".pdf,.zip,.md",
+          "aiReasoning": "Memverifikasi kualitas dan kedalaman dokumentasi teknis yang diklaim oleh pengembang."
+        }
+      ],
+      "stepNumber": 1
+    },
+    {
+      "stepNumber": 2,
+      "title": "Validasi Product-Market Fit (PMF)",
+      "fields": [
+        {
+          "required": true,
+          "label": "Bagaimana entitas Anda mendefinisikan dan mengukur **Product-Market Fit (PMF)** saat ini?",
+          "options": [
+            {
+              "weight": 10,
+              "label": "Belum terdefinisi secara formal atau metrik spesifik"
+            },
+            {
+              "weight": 30,
+              "label": "Memiliki hipotesis PMF awal namun belum tervalidasi data"
+            },
+            {
+              "weight": 60,
+              "label": "PMF terdefinisi dengan metrik namun validasi masih parsial"
+            },
+            {
+              "weight": 90,
+              "label": "PMF tervalidasi secara komprehensif dengan data dan metrik yang jelas"
+            }
+          ],
+          "aiReasoning": "Menentukan tingkat kematangan metodologi validasi pasar untuk menilai kesiapan produk dalam skala bisnis.",
+          "gridSpan": 2,
+          "id": "PMF_Definisi",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "equals": "PMF tervalidasi secara komprehensif dengan data dan metrik yang jelas",
+            "fieldId": "PMF_Definisi"
+          },
+          "id": "PMF_BuktiValidasi",
+          "type": "file",
+          "fileAccept": ".pdf,.doc,.docx",
+          "gridSpan": 2,
+          "label": "Unggah laporan atau ringkasan **validasi PMF** Anda",
+          "required": true
+        },
+        {
+          "showIf": {
+            "equals": "Belum terdefinisi secara formal atau metrik spesifik",
+            "fieldId": "PMF_Definisi"
+          },
+          "type": "textarea",
+          "id": "PMF_AlasanBelumDefinisi",
+          "gridSpan": 2,
+          "label": "Jelaskan alasan mengapa **PMF** belum terdefinisi secara formal atau metrik spesifik.",
+          "required": true
+        },
+        {
+          "type": "number",
+          "id": "PMF_PenggunaAktif",
+          "label": "Berapa rata-rata jumlah **Monthly Active Users (MAU)** produk digital Anda dalam 3 bulan terakhir?",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur volume traksi pengguna sebagai indikator dasar keberlanjutan produk di pasar."
+        },
+        {
+          "required": true,
+          "label": "Bagaimana tingkat **retensi pengguna** produk digital Anda dalam 3 bulan terakhir?",
+          "gridSpan": 2,
+          "aiReasoning": "Retensi adalah metrik krusial untuk membuktikan bahwa produk memberikan nilai berkelanjutan bagi pengguna.",
+          "options": [
+            {
+              "weight": 15,
+              "label": "Kurang dari 10%"
+            },
+            {
+              "weight": 40,
+              "label": "Antara 10% - 30%"
+            },
+            {
+              "weight": 70,
+              "label": "Antara 31% - 60%"
+            },
+            {
+              "weight": 95,
+              "label": "Lebih dari 60%"
+            }
+          ],
+          "type": "radio",
+          "id": "PMF_Retensi"
+        },
+        {
+          "showIf": {
+            "equals": "Kurang dari 10%",
+            "fieldId": "PMF_Retensi"
+          },
+          "id": "PMF_StrategiRetensiRendah",
+          "type": "textarea",
+          "required": true,
+          "label": "Jelaskan strategi yang sedang Anda terapkan untuk meningkatkan **retensi pengguna**.",
+          "gridSpan": 2
+        },
+        {
+          "aiReasoning": "NPS memberikan wawasan kualitatif mengenai loyalitas pelanggan dan potensi advokasi merek.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 10,
+              "label": "Belum pernah diukur"
+            },
+            {
+              "weight": 30,
+              "label": "Sedang dalam perencanaan pengukuran"
+            },
+            {
+              "weight": 45,
+              "label": "Sudah diukur, dengan NPS di bawah 0"
+            },
+            {
+              "weight": 70,
+              "label": "Sudah diukur, dengan NPS antara 0 hingga 30"
+            },
+            {
+              "weight": 90,
+              "label": "Sudah diukur, dengan NPS di atas 30"
+            }
+          ],
+          "required": true,
+          "label": "Apakah entitas Anda secara rutin mengukur **Net Promoter Score (NPS)** untuk produk ini?",
+          "id": "PMF_NPS",
+          "type": "radio"
+        },
+        {
+          "type": "file",
+          "id": "PMF_BuktiNPS",
+          "showIf": {
+            "equals": "Sudah diukur, dengan NPS di atas 30",
+            "fieldId": "PMF_NPS"
+          },
+          "gridSpan": 2,
+          "fileAccept": ".pdf,.doc,.docx",
+          "required": true,
+          "label": "Unggah laporan hasil pengukuran **NPS** Anda."
+        },
+        {
+          "label": "Jelaskan alasan mengapa **NPS** belum pernah diukur.",
+          "required": true,
+          "gridSpan": 2,
+          "id": "PMF_AlasanBelumNPS",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "PMF_NPS",
+            "equals": "Belum pernah diukur"
+          }
+        },
+        {
+          "label": "Apakah Anda pernah melakukan survei **Sean Ellis Test** (Product-Market Fit Survey)?",
+          "required": true,
+          "options": [
+            {
+              "weight": 10,
+              "label": "Belum pernah dilakukan"
+            },
+            {
+              "weight": 30,
+              "label": "Sedang dalam perencanaan"
+            },
+            {
+              "weight": 50,
+              "label": "Sudah dilakukan, dengan hasil 'sangat kecewa' di bawah 40%"
+            },
+            {
+              "weight": 85,
+              "label": "Sudah dilakukan, dengan hasil 'sangat kecewa' di atas 40%"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Metode ini mengukur seberapa besar kekecewaan pengguna jika produk tidak lagi tersedia, indikator kuat PMF.",
+          "id": "PMF_SeanEllis",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "fieldId": "PMF_SeanEllis",
+            "equals": "Sudah dilakukan, dengan hasil 'sangat kecewa' di atas 40%"
+          },
+          "id": "PMF_BuktiSeanEllis",
+          "type": "file",
+          "required": true,
+          "label": "Unggah hasil survei **Sean Ellis Test** Anda.",
+          "fileAccept": ".pdf,.doc,.docx",
+          "gridSpan": 2
+        },
+        {
+          "label": "Jelaskan alasan mengapa survei **Sean Ellis Test** belum pernah dilakukan.",
+          "required": true,
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "PMF_SeanEllis",
+            "equals": "Belum pernah dilakukan"
+          },
+          "id": "PMF_AlasanBelumSeanEllis",
+          "type": "textarea"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Memahami target audiens untuk mengevaluasi kesesuaian strategi pemasaran dan fitur produk.",
+          "options": [
+            {
+              "weight": 50,
+              "label": "Hanya B2C (Konsumen Langsung)"
+            },
+            {
+              "weight": 60,
+              "label": "Hanya B2B (Organisasi/Perusahaan)"
+            },
+            {
+              "weight": 70,
+              "label": "Keduanya, dengan fokus utama B2C"
+            },
+            {
+              "weight": 80,
+              "label": "Keduanya, dengan fokus utama B2B"
+            },
+            {
+              "weight": 90,
+              "label": "Keduanya, dengan distribusi fokus yang seimbang"
+            }
+          ],
+          "label": "Segmen pasar utama mana yang menjadi fokus **produk digital** Anda saat ini?",
+          "required": true,
+          "type": "radio",
+          "id": "PMF_SegmenPasar"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Tingkat adopsi fitur inti menunjukkan apakah produk benar-benar menyelesaikan masalah utama pengguna.",
+          "options": [
+            {
+              "weight": 20,
+              "label": "Kurang dari 25%"
+            },
+            {
+              "weight": 50,
+              "label": "Antara 25% - 50%"
+            },
+            {
+              "weight": 75,
+              "label": "Antara 51% - 75%"
+            },
+            {
+              "weight": 90,
+              "label": "Lebih dari 75%"
+            }
+          ],
+          "label": "Berapa persentase pengguna aktif yang secara konsisten menggunakan **fitur inti** produk Anda setiap bulan?",
+          "required": true,
+          "type": "radio",
+          "id": "PMF_AdopsiFitur"
+        },
+        {
+          "required": true,
+          "label": "Jelaskan analisis Anda mengenai penyebab rendahnya **adopsi fitur inti** dan rencana perbaikannya.",
+          "gridSpan": 2,
+          "id": "PMF_AnalisisAdopsiRendah",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "PMF_AdopsiFitur",
+            "equals": "Kurang dari 25%"
+          }
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Kualitas mekanisme umpan balik menentukan seberapa cepat produk dapat beradaptasi dengan kebutuhan pasar.",
+          "options": [
+            {
+              "weight": 30,
+              "label": "Survei ad-hoc atau wawancara informal"
+            },
+            {
+              "weight": 60,
+              "label": "Sistem umpan balik terstruktur (misal: in-app feedback, forum komunitas)"
+            },
+            {
+              "weight": 75,
+              "label": "Analitik perilaku pengguna dan A/B testing"
+            },
+            {
+              "weight": 90,
+              "label": "Kombinasi sistematis dari survei, wawancara, dan analitik"
+            }
+          ],
+          "required": true,
+          "label": "Mekanisme utama apa yang Anda gunakan untuk mengumpulkan **umpan balik pengguna** secara berkelanjutan?",
+          "id": "PMF_UmpanBalik",
+          "type": "select"
+        },
+        {
+          "showIf": {
+            "fieldId": "PMF_UmpanBalik",
+            "equals": "Survei ad-hoc atau wawancara informal"
+          },
+          "type": "textarea",
+          "id": "PMF_RencanaUmpanBalik",
+          "gridSpan": 2,
+          "label": "Jelaskan rencana Anda untuk mengimplementasikan mekanisme **umpan balik** yang lebih terstruktur.",
+          "required": true
+        },
+        {
+          "id": "PMF_ChurnRate",
+          "type": "radio",
+          "options": [
+            {
+              "weight": 10,
+              "label": "Lebih dari 10%"
+            },
+            {
+              "weight": 30,
+              "label": "Antara 6% - 10%"
+            },
+            {
+              "weight": 60,
+              "label": "Antara 2% - 5%"
+            },
+            {
+              "weight": 90,
+              "label": "Kurang dari 2%"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Churn rate yang tinggi adalah indikator utama ketidaksesuaian produk dengan kebutuhan pasar (lack of PMF).",
+          "label": "Berapa rata-rata tingkat **churn bulanan** produk digital Anda dalam 6 bulan terakhir?",
+          "required": true
+        },
+        {
+          "label": "Jelaskan strategi **mitigasi churn** yang sedang Anda terapkan atau rencanakan.",
+          "required": true,
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "PMF_ChurnRate",
+            "equals": "Lebih dari 10%"
+          },
+          "type": "textarea",
+          "id": "PMF_StrategiMitigasiChurn"
+        },
+        {
+          "showIf": {
+            "fieldId": "PMF_Definisi",
+            "equals": "PMF tervalidasi secara komprehensif dengan data dan metrik yang jelas"
+          },
+          "type": "file",
+          "id": "PMF_BuktiTraksiUmum",
+          "gridSpan": 2,
+          "fileAccept": ".pdf,.doc,.docx,.zip",
+          "required": false,
+          "label": "Unggah dokumen pendukung umum yang menunjukkan **traksi pasar** dan validasi PMF."
+        }
+      ],
+      "description": "Pengukuran tingkat adopsi pasar, retensi pengguna, dan traksi pada segmen target."
+    },
+    {
+      "stepNumber": 3,
+      "title": "Analisis Profitabilitas & Unit Economics",
+      "fields": [
+        {
+          "type": "radio",
+          "id": "rasioLTVCAC",
+          "aiReasoning": "Rasio LTV:CAC adalah indikator fundamental untuk mengukur keberlanjutan model bisnis dan efisiensi akuisisi pelanggan.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 10,
+              "label": "Rasio di bawah 1:1 (LTV < CAC)"
+            },
+            {
+              "weight": 40,
+              "label": "Rasio antara 1:1 hingga 2:1"
+            },
+            {
+              "weight": 70,
+              "label": "Rasio antara 2:1 hingga 3:1"
+            },
+            {
+              "weight": 90,
+              "label": "Rasio di atas 3:1 (LTV > 3x CAC)"
+            }
+          ],
+          "required": true,
+          "label": "Bagaimana rasio **Customer Lifetime Value (LTV)** terhadap **Customer Acquisition Cost (CAC)** produk digital Anda saat ini?"
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiRasioLTVCAC",
+          "showIf": {
+            "fieldId": "rasioLTVCAC",
+            "equals": "Rasio di bawah 1:1 (LTV < CAC)"
+          },
+          "label": "Mohon jelaskan faktor-faktor yang menyebabkan rasio **LTV:CAC** Anda berada di bawah 2:1 dan strategi perbaikannya.",
+          "required": true,
+          "aiReasoning": "Memahami hambatan operasional atau pasar yang menyebabkan inefisiensi biaya akuisisi dibandingkan nilai pelanggan.",
+          "gridSpan": 2
+        },
+        {
+          "showIf": {
+            "equals": "Rasio di atas 3:1 (LTV > 3x CAC)",
+            "fieldId": "rasioLTVCAC"
+          },
+          "type": "file",
+          "id": "buktiRasioLTVCAC",
+          "fileAccept": ".pdf,.xlsx",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Unggah laporan keuangan atau metrik yang mendukung klaim rasio **LTV:CAC** Anda."
+        },
+        {
+          "id": "periodePaybackCAC",
+          "type": "radio",
+          "options": [
+            {
+              "weight": 10,
+              "label": "Lebih dari 12 bulan"
+            },
+            {
+              "weight": 40,
+              "label": "Antara 9-12 bulan"
+            },
+            {
+              "weight": 70,
+              "label": "Antara 6-9 bulan"
+            },
+            {
+              "weight": 90,
+              "label": "Kurang dari 6 bulan"
+            }
+          ],
+          "aiReasoning": "Periode pengembalian CAC menentukan seberapa cepat modal yang diinvestasikan untuk akuisisi kembali ke kas perusahaan.",
+          "gridSpan": 2,
+          "label": "Berapa rata-rata **periode pengembalian biaya akuisisi pelanggan** (CAC Payback Period) produk digital Anda?",
+          "required": true
+        },
+        {
+          "aiReasoning": "Mengidentifikasi risiko arus kas akibat durasi pengembalian investasi yang terlalu lama.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Jelaskan alasan di balik periode pengembalian **CAC** yang lebih dari 9 bulan dan rencana mitigasinya.",
+          "showIf": {
+            "fieldId": "periodePaybackCAC",
+            "equals": "Lebih dari 12 bulan"
+          },
+          "type": "textarea",
+          "id": "justifikasiPaybackCAC"
+        },
+        {
+          "showIf": {
+            "fieldId": "periodePaybackCAC",
+            "equals": "Kurang dari 6 bulan"
+          },
+          "id": "buktiPaybackCAC",
+          "type": "file",
+          "required": true,
+          "label": "Unggah data atau laporan yang menunjukkan perhitungan **periode pengembalian CAC** Anda.",
+          "gridSpan": 2,
+          "fileAccept": ".pdf,.xlsx"
+        },
+        {
+          "type": "radio",
+          "id": "modelMonetisasi",
+          "label": "Seberapa jelas dan adaptif **model monetisasi** (misalnya, langganan, freemium, enterprise) produk digital Anda untuk segmen B2C dan B2B?",
+          "required": true,
+          "options": [
+            {
+              "weight": 10,
+              "label": "Belum ada model monetisasi yang jelas atau terdefinisi"
+            },
+            {
+              "weight": 40,
+              "label": "Model dasar B2C/B2B, namun kurang adaptif"
+            },
+            {
+              "weight": 70,
+              "label": "Model adaptif dengan tiering harga yang cukup jelas"
+            },
+            {
+              "weight": 90,
+              "label": "Model teroptimasi dengan paket enterprise dan opsi kustomisasi"
+            }
+          ],
+          "aiReasoning": "Kejelasan model monetisasi menentukan potensi pendapatan jangka panjang dan skalabilitas pasar.",
+          "gridSpan": 2
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiModelMonetisasi",
+          "showIf": {
+            "equals": "Belum ada model monetisasi yang jelas atau terdefinisi",
+            "fieldId": "modelMonetisasi"
+          },
+          "aiReasoning": "Menganalisis hambatan strategis dalam menciptakan aliran pendapatan yang berkelanjutan.",
+          "gridSpan": 2,
+          "label": "Uraikan tantangan dalam mendefinisikan atau mengadaptasi **model monetisasi** Anda dan rencana ke depan.",
+          "required": true
+        },
+        {
+          "options": [
+            {
+              "weight": 10,
+              "label": "Biaya operasional sangat tinggi, belum efisien"
+            },
+            {
+              "weight": 40,
+              "label": "Efisiensi dasar, masih banyak ruang optimasi"
+            },
+            {
+              "weight": 70,
+              "label": "Cukup efisien, dengan beberapa area perbaikan"
+            },
+            {
+              "weight": 90,
+              "label": "Sangat efisien, mendukung skalabilitas optimal"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Efisiensi operasional adalah kunci untuk menjaga margin keuntungan saat perusahaan melakukan ekspansi.",
+          "label": "Bagaimana **efisiensi struktur biaya operasional** produk digital Anda dalam mendukung skalabilitas?",
+          "required": true,
+          "type": "radio",
+          "id": "efisiensiBiayaOperasional"
+        },
+        {
+          "required": true,
+          "label": "Jelaskan area **biaya operasional** yang paling membebani dan strategi Anda untuk meningkatkannya.",
+          "aiReasoning": "Mengidentifikasi titik kebocoran biaya yang menghambat profitabilitas.",
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "efisiensiBiayaOperasional",
+            "equals": "Biaya operasional sangat tinggi, belum efisien"
+          },
+          "type": "textarea",
+          "id": "justifikasiEfisiensiBiaya"
+        },
+        {
+          "label": "Unggah ringkasan laporan **biaya operasional** atau analisis efisiensi Anda.",
+          "required": true,
+          "fileAccept": ".pdf,.xlsx",
+          "gridSpan": 2,
+          "showIf": {
+            "equals": "Sangat efisien, mendukung skalabilitas optimal",
+            "fieldId": "efisiensiBiayaOperasional"
+          },
+          "type": "file",
+          "id": "buktiEfisiensiBiaya"
+        },
+        {
+          "options": [
+            {
+              "weight": 10,
+              "label": "Negatif (penurunan MRR)"
+            },
+            {
+              "weight": 40,
+              "label": "0% - 5% per bulan"
+            },
+            {
+              "weight": 70,
+              "label": "5% - 15% per bulan"
+            },
+            {
+              "weight": 90,
+              "label": "Lebih dari 15% per bulan"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "MRR adalah metrik vital untuk mengukur momentum pertumbuhan dan kesehatan pendapatan perusahaan SaaS/B2B.",
+          "label": "Berapa rata-rata tingkat **pertumbuhan Pendapatan Berulang Bulanan (MRR Growth Rate)** produk digital Anda dalam 6 bulan terakhir?",
+          "required": true,
+          "id": "pertumbuhanMRR",
+          "type": "radio"
+        },
+        {
+          "label": "Mohon jelaskan faktor-faktor penyebab **penurunan MRR** dan strategi pemulihan yang sedang diimplementasikan.",
+          "required": true,
+          "aiReasoning": "Mengevaluasi urgensi dan efektivitas langkah perbaikan saat terjadi penurunan pendapatan.",
+          "gridSpan": 2,
+          "showIf": {
+            "equals": "Negatif (penurunan MRR)",
+            "fieldId": "pertumbuhanMRR"
+          },
+          "type": "textarea",
+          "id": "justifikasiMRRNegatif"
+        },
+        {
+          "required": true,
+          "label": "Unggah laporan **pertumbuhan MRR** atau dashboard metrik keuangan Anda.",
+          "fileAccept": ".pdf,.xlsx",
+          "gridSpan": 2,
+          "type": "file",
+          "id": "buktiPertumbuhanMRR",
+          "showIf": {
+            "fieldId": "pertumbuhanMRR",
+            "equals": "Lebih dari 15% per bulan"
+          }
+        },
+        {
+          "options": [
+            {
+              "weight": 10,
+              "label": "Lebih dari 10%"
+            },
+            {
+              "weight": 40,
+              "label": "Antara 5% - 10%"
+            },
+            {
+              "weight": 70,
+              "label": "Antara 2% - 5%"
+            },
+            {
+              "weight": 90,
+              "label": "Kurang dari 2%"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Tingkat churn yang tinggi adalah indikator utama ketidakpuasan pelanggan atau kegagalan produk dalam memberikan nilai.",
+          "label": "Berapa rata-rata tingkat **churn pelanggan (Customer Churn Rate)** bulanan produk digital Anda?",
+          "required": true,
+          "type": "radio",
+          "id": "tingkatChurnPelanggan"
+        },
+        {
+          "required": true,
+          "label": "Uraikan penyebab utama **tingkat churn** yang tinggi dan inisiatif retensi pelanggan Anda.",
+          "aiReasoning": "Memahami alasan pelanggan meninggalkan layanan untuk menentukan strategi retensi yang tepat.",
+          "gridSpan": 2,
+          "showIf": {
+            "equals": "Lebih dari 10%",
+            "fieldId": "tingkatChurnPelanggan"
+          },
+          "type": "textarea",
+          "id": "justifikasiChurnTinggi"
+        },
+        {
+          "fileAccept": ".pdf,.xlsx",
+          "gridSpan": 2,
+          "label": "Unggah laporan **metrik churn** atau strategi retensi pelanggan Anda.",
+          "required": true,
+          "showIf": {
+            "equals": "Kurang dari 2%",
+            "fieldId": "tingkatChurnPelanggan"
+          },
+          "type": "file",
+          "id": "buktiChurnRendah"
+        },
+        {
+          "options": [
+            {
+              "weight": 10,
+              "label": "Belum ada proyeksi arus kas"
+            },
+            {
+              "weight": 40,
+              "label": "Ada, namun sangat dasar dan belum terperinci"
+            },
+            {
+              "weight": 70,
+              "label": "Ada, cukup detail dengan asumsi yang jelas"
+            },
+            {
+              "weight": 90,
+              "label": "Sangat detail, terintegrasi dengan model keuangan, dan sering diperbarui"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Proyeksi arus kas sangat penting untuk memastikan likuiditas dan kemampuan perusahaan mendanai operasional.",
+          "required": true,
+          "label": "Apakah Anda memiliki **proyeksi arus kas (Cash Flow Projection)** yang jelas dan terperinci untuk 12-24 bulan ke depan?",
+          "id": "proyeksiArusKas",
+          "type": "radio"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Menilai kesiapan manajemen keuangan dalam mengelola risiko likuiditas.",
+          "label": "Jelaskan mengapa **proyeksi arus kas** belum tersedia dan rencana Anda untuk mengembangkannya.",
+          "required": true,
+          "showIf": {
+            "equals": "Belum ada proyeksi arus kas",
+            "fieldId": "proyeksiArusKas"
+          },
+          "type": "textarea",
+          "id": "justifikasiProyeksiArusKas"
+        },
+        {
+          "fileAccept": ".pdf,.xlsx",
+          "gridSpan": 2,
+          "label": "Unggah dokumen **proyeksi arus kas** Anda.",
+          "required": true,
+          "showIf": {
+            "equals": "Sangat detail, terintegrasi dengan model keuangan, dan sering diperbarui",
+            "fieldId": "proyeksiArusKas"
+          },
+          "id": "unggahProyeksiArusKas",
+          "type": "file"
+        },
+        {
+          "options": [
+            {
+              "weight": 10,
+              "label": "Belum divalidasi secara formal"
+            },
+            {
+              "weight": 40,
+              "label": "Berdasarkan asumsi internal atau harga kompetitor"
+            },
+            {
+              "weight": 70,
+              "label": "Divalidasi melalui riset pasar awal dan survei pelanggan"
+            },
+            {
+              "weight": 90,
+              "label": "Divalidasi secara berkelanjutan melalui A/B testing, analisis nilai, dan feedback pelanggan"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Validasi harga memastikan bahwa nilai yang ditawarkan selaras dengan kesediaan membayar pelanggan.",
+          "required": true,
+          "label": "Bagaimana **strategi penetapan harga** produk digital Anda divalidasi dan dioptimalkan untuk segmen B2C dan B2B?",
+          "type": "radio",
+          "id": "validasiStrategiHarga"
+        },
+        {
+          "showIf": {
+            "equals": "Belum divalidasi secara formal",
+            "fieldId": "validasiStrategiHarga"
+          },
+          "id": "justifikasiValidasiHarga",
+          "type": "textarea",
+          "label": "Uraikan mengapa **strategi harga** belum divalidasi dan rencana Anda untuk melakukannya.",
+          "required": true,
+          "aiReasoning": "Mengidentifikasi risiko kehilangan pendapatan akibat penetapan harga yang tidak berbasis data.",
+          "gridSpan": 2
+        },
+        {
+          "type": "file",
+          "id": "buktiValidasiHarga",
+          "showIf": {
+            "equals": "Divalidasi secara berkelanjutan melalui A/B testing, analisis nilai, dan feedback pelanggan",
+            "fieldId": "validasiStrategiHarga"
+          },
+          "required": true,
+          "label": "Unggah ringkasan hasil **A/B testing** atau laporan riset validasi harga Anda.",
+          "fileAccept": ".pdf,.docx",
+          "gridSpan": 2
+        }
+      ],
+      "description": "Evaluasi rasio LTV terhadap CAC dan periode pengembalian modal (Payback Period)."
+    },
+    {
+      "fields": [
+        {
+          "id": "keandalanFungsionalitas",
+          "type": "radio",
+          "description": "Evaluasi **stabilitas** dan **konsistensi** fitur utama produk digital Anda dalam kondisi operasional normal.",
+          "showIf": {
+            "fieldId": "keandalanFungsionalitas",
+            "equals": "Sering mengalami gangguan signifikan yang mempengaruhi pengalaman pengguna."
+          },
+          "required": true,
+          "label": "Tingkat **Keandalan Fungsionalitas** Inti Produk",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 10,
+              "label": "Sering mengalami gangguan signifikan yang mempengaruhi pengalaman pengguna."
+            },
+            {
+              "weight": 40,
+              "label": "Ada beberapa bug minor atau insiden sporadis yang memerlukan perbaikan berkala."
+            },
+            {
+              "weight": 70,
+              "label": "Stabil dengan insiden minimal, perbaikan dilakukan secara proaktif dan terencana."
+            },
+            {
+              "weight": 95,
+              "label": "Sangat stabil, jarang ada isu kritis, dan beroperasi sesuai ekspektasi tanpa gangguan berarti."
+            }
+          ]
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiKeandalanFungsional",
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi akar masalah teknis untuk menilai tingkat risiko operasional produk.",
+          "label": "Mohon jelaskan **insiden atau tantangan** keandalan fungsional yang paling sering terjadi.",
+          "required": true
+        },
+        {
+          "required": false,
+          "label": "Unggah **laporan uptime** atau log insiden produk Anda.",
+          "gridSpan": 2,
+          "fileAccept": ".pdf,.csv,.txt",
+          "type": "file",
+          "id": "buktiUptimeKeandalan",
+          "showIf": {
+            "equals": "Sangat stabil, jarang ada isu kritis, dan beroperasi sesuai ekspektasi tanpa gangguan berarti.",
+            "fieldId": "keandalanFungsionalitas"
+          }
+        },
+        {
+          "showIf": {
+            "equals": "Lambat dan sering mengalami crash atau kegagalan saat beban tinggi.",
+            "fieldId": "kinerjaSistemBeban"
+          },
+          "type": "radio",
+          "description": "Bagaimana produk Anda merespons saat terjadi **peningkatan jumlah pengguna** atau transaksi secara simultan?",
+          "id": "kinerjaSistemBeban",
+          "options": [
+            {
+              "weight": 10,
+              "label": "Lambat dan sering mengalami crash atau kegagalan saat beban tinggi."
+            },
+            {
+              "weight": 40,
+              "label": "Cukup responsif namun melambat secara signifikan pada jam sibuk atau puncak penggunaan."
+            },
+            {
+              "weight": 70,
+              "label": "Responsif di berbagai kondisi beban, dengan degradasi kinerja yang dapat diterima."
+            },
+            {
+              "weight": 95,
+              "label": "Sangat cepat dan efisien, mampu mempertahankan kinerja optimal di bawah beban ekstrem."
+            }
+          ],
+          "gridSpan": 2,
+          "required": true,
+          "label": "**Kinerja Sistem** dalam Menangani Beban Pengguna"
+        },
+        {
+          "aiReasoning": "Menganalisis bottleneck arsitektur yang menghambat skalabilitas sistem saat trafik tinggi.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan **penyebab utama** perlambatan atau kegagalan sistem saat beban tinggi.",
+          "id": "justifikasiKinerjaBeban",
+          "type": "textarea"
+        },
+        {
+          "required": true,
+          "label": "Unggah **laporan hasil uji beban** (load testing) atau metrik kinerja sistem.",
+          "fileAccept": ".pdf,.csv,.json",
+          "gridSpan": 2,
+          "type": "file",
+          "id": "buktiKinerjaBeban",
+          "showIf": {
+            "equals": "Sangat cepat dan efisien, mampu mempertahankan kinerja optimal di bawah beban ekstrem.",
+            "fieldId": "kinerjaSistemBeban"
+          }
+        },
+        {
+          "type": "radio",
+          "description": "Sejauh mana produk Anda dapat berinteraksi atau terhubung dengan **API pihak ketiga** atau ekosistem digital lainnya?",
+          "id": "integrasiSistemEksternal",
+          "options": [
+            {
+              "weight": 5,
+              "label": "Tidak ada kemampuan integrasi dengan sistem eksternal."
+            },
+            {
+              "weight": 35,
+              "label": "Integrasi terbatas melalui beberapa API khusus atau konektor sederhana."
+            },
+            {
+              "weight": 65,
+              "label": "Integrasi luas dengan API standar industri (misalnya RESTful API, OAuth) dan dokumentasi yang memadai."
+            },
+            {
+              "weight": 90,
+              "label": "Mendukung berbagai integrasi kustom dan standar, dengan SDK atau webhook yang fleksibel."
+            }
+          ],
+          "gridSpan": 2,
+          "required": true,
+          "label": "**Kemampuan Integrasi** Produk dengan Sistem Eksternal"
+        },
+        {
+          "showIf": {
+            "fieldId": "integrasiSistemEksternal",
+            "equals": "Integrasi luas dengan API standar industri (misalnya RESTful API, OAuth) dan dokumentasi yang memadai."
+          },
+          "id": "detailIntegrasiEksternal",
+          "type": "textarea",
+          "aiReasoning": "Memvalidasi fleksibilitas produk dalam beradaptasi dengan ekosistem teknologi klien.",
+          "gridSpan": 2,
+          "label": "Sebutkan **contoh integrasi** yang sudah ada atau jelaskan kapabilitas integrasi kustom Anda.",
+          "required": true
+        },
+        {
+          "label": "Sebutkan **contoh integrasi** yang sudah ada atau jelaskan kapabilitas integrasi kustom Anda.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Memvalidasi fleksibilitas produk dalam beradaptasi dengan ekosistem teknologi klien.",
+          "showIf": {
+            "fieldId": "integrasiSistemEksternal",
+            "equals": "Mendukung berbagai integrasi kustom dan standar, dengan SDK atau webhook yang fleksibel."
+          },
+          "id": "detailIntegrasiEksternalLanjut",
+          "type": "textarea"
+        },
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 5,
+              "label": "Belum ada standar keamanan yang diterapkan secara formal."
+            },
+            {
+              "weight": 30,
+              "label": "Keamanan dasar (misalnya SSL/TLS, firewall) telah diimplementasikan."
+            },
+            {
+              "weight": 70,
+              "label": "Keamanan berlapis dengan audit berkala, enkripsi data, dan manajemen kerentanan."
+            },
+            {
+              "weight": 95,
+              "label": "Memiliki sertifikasi keamanan (misalnya ISO 27001) atau kepatuhan terhadap OWASP Top 10 secara ketat."
+            }
+          ],
+          "required": true,
+          "label": "**Tingkat Keamanan Data** dan Sistem",
+          "type": "radio",
+          "description": "Bagaimana Anda memastikan perlindungan **data pengguna** dan integritas sistem dari ancaman siber?",
+          "id": "keamananDataSistem"
+        },
+        {
+          "showIf": {
+            "fieldId": "keamananDataSistem",
+            "equals": "Belum ada standar keamanan yang diterapkan secara formal."
+          },
+          "id": "rencanaMitigasiKeamanan",
+          "type": "textarea",
+          "required": true,
+          "label": "Jelaskan **rencana mitigasi** Anda untuk meningkatkan keamanan sistem.",
+          "gridSpan": 2,
+          "aiReasoning": "Menilai kesadaran risiko dan komitmen perusahaan terhadap perlindungan data sensitif."
+        },
+        {
+          "id": "buktiSertifikasiKeamanan",
+          "type": "file",
+          "showIf": {
+            "fieldId": "keamananDataSistem",
+            "equals": "Memiliki sertifikasi keamanan (misalnya ISO 27001) atau kepatuhan terhadap OWASP Top 10 secara ketat."
+          },
+          "required": true,
+          "label": "Unggah **dokumen sertifikasi keamanan** atau laporan audit keamanan.",
+          "fileAccept": ".pdf",
+          "gridSpan": 2
+        },
+        {
+          "required": true,
+          "label": "**Proses Pemeliharaan** dan Pengujian Kode",
+          "options": [
+            {
+              "weight": 10,
+              "label": "Proses tidak terstruktur, pemeliharaan dilakukan secara ad-hoc."
+            },
+            {
+              "weight": 30,
+              "label": "Pemeliharaan reaktif terhadap insiden, pengujian manual terbatas."
+            },
+            {
+              "weight": 60,
+              "label": "Ada proses CI/CD dasar dan pengujian unit/integrasi yang terdefinisi."
+            },
+            {
+              "weight": 90,
+              "label": "Otomatisasi CI/CD penuh, pengujian komprehensif (unit, integrasi, end-to-end), dan tinjauan kode rutin."
+            }
+          ],
+          "gridSpan": 2,
+          "description": "Bagaimana tim Anda mengelola **siklus hidup pengembangan** (SDLC) untuk memastikan kualitas produk?",
+          "type": "radio",
+          "id": "pemeliharaanPengujianKode"
+        },
+        {
+          "showIf": {
+            "fieldId": "pemeliharaanPengujianKode",
+            "equals": "Otomatisasi CI/CD penuh, pengujian komprehensif (unit, integrasi, end-to-end), dan tinjauan kode rutin."
+          },
+          "id": "metodologiPemeliharaan",
+          "type": "textarea",
+          "label": "Jelaskan **alat dan metodologi CI/CD** serta pengujian yang Anda gunakan.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur kematangan operasional tim teknis dalam menjaga kualitas kode secara berkelanjutan."
+        },
+        {
+          "id": "arsitekturSkalabilitas",
+          "type": "radio",
+          "description": "Bagaimana arsitektur produk Anda dirancang untuk mendukung **pertumbuhan pengguna** di masa depan?",
+          "label": "**Arsitektur Sistem** untuk Skalabilitas",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 15,
+              "label": "Monolitik, sulit diskalakan, dan memerlukan upaya besar untuk ekspansi."
+            },
+            {
+              "weight": 45,
+              "label": "Dapat diskalakan secara vertikal (peningkatan sumber daya server) namun terbatas."
+            },
+            {
+              "weight": 75,
+              "label": "Mengadopsi arsitektur mikroservis atau cloud-native dengan beberapa komponen yang dapat diskalakan secara independen."
+            },
+            {
+              "weight": 95,
+              "label": "Sangat elastis dan horizontal scalable, memanfaatkan infrastruktur cloud terdistribusi sepenuhnya."
+            }
+          ]
+        },
+        {
+          "required": true,
+          "label": "Jelaskan **detail arsitektur** sistem Anda dan penyedia cloud yang digunakan.",
+          "gridSpan": 2,
+          "aiReasoning": "Menilai ketahanan infrastruktur terhadap lonjakan permintaan pasar.",
+          "showIf": {
+            "equals": "Sangat elastis dan horizontal scalable, memanfaatkan infrastruktur cloud terdistribusi sepenuhnya.",
+            "fieldId": "arsitekturSkalabilitas"
+          },
+          "type": "textarea",
+          "id": "detailArsitekturSkalabilitas"
+        },
+        {
+          "description": "Bagaimana produk Anda mengelola **proses masuk** dan otorisasi akses pengguna?",
+          "type": "radio",
+          "id": "mekanismeAutentikasi",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 20,
+              "label": "Hanya menggunakan username dan password standar tanpa fitur keamanan tambahan."
+            },
+            {
+              "weight": 50,
+              "label": "Mendukung autentikasi dua faktor (2FA) atau multi-faktor (MFA)."
+            },
+            {
+              "weight": 70,
+              "label": "Integrasi dengan Single Sign-On (SSO) atau protokol OAuth/OpenID Connect."
+            },
+            {
+              "weight": 90,
+              "label": "Menerapkan audit keamanan autentikasi berkala dan deteksi anomali."
+            }
+          ],
+          "label": "Efisiensi dan **Keamanan Autentikasi** Pengguna",
+          "required": true
+        },
+        {
+          "showIf": {
+            "fieldId": "mekanismeAutentikasi",
+            "equals": "Menerapkan audit keamanan autentikasi berkala dan deteksi anomali."
+          },
+          "type": "file",
+          "id": "buktiAuditAutentikasi",
+          "label": "Unggah **laporan audit keamanan** terkait mekanisme autentikasi pengguna.",
+          "required": true,
+          "gridSpan": 2,
+          "fileAccept": ".pdf"
+        },
+        {
+          "type": "radio",
+          "id": "optimasiBasisData",
+          "description": "Bagaimana Anda memastikan **basis data** produk beroperasi secara efisien dan responsif?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 10,
+              "label": "Belum ada upaya optimasi basis data yang signifikan."
+            },
+            {
+              "weight": 40,
+              "label": "Penerapan indeks dasar pada tabel-tabel kunci."
+            },
+            {
+              "weight": 70,
+              "label": "Query dioptimasi secara berkala, dengan pemantauan kinerja basis data."
+            },
+            {
+              "weight": 95,
+              "label": "Menggunakan teknik sharding, replikasi, atau caching tingkat lanjut untuk performa tinggi."
+            }
+          ],
+          "label": "**Optimalisasi Kinerja** Basis Data",
+          "required": true
+        },
+        {
+          "showIf": {
+            "equals": "Menggunakan teknik sharding, replikasi, atau caching tingkat lanjut untuk performa tinggi.",
+            "fieldId": "optimasiBasisData"
+          },
+          "type": "textarea",
+          "id": "strategiBasisData",
+          "gridSpan": 2,
+          "aiReasoning": "Mengevaluasi efisiensi manajemen data sebagai fondasi performa aplikasi.",
+          "required": true,
+          "label": "Jelaskan **teknologi basis data** dan strategi optimasi yang Anda terapkan."
+        },
+        {
+          "description": "Bagaimana Anda mengelola **peluncuran versi baru** dan penanganan jika terjadi masalah?",
+          "type": "radio",
+          "id": "strategiDeploymentRollback",
+          "required": true,
+          "label": "**Strategi Deployment** dan Rollback Produk",
+          "options": [
+            {
+              "weight": 10,
+              "label": "Deployment manual, sering menyebabkan downtime atau isu pasca-peluncuran."
+            },
+            {
+              "weight": 40,
+              "label": "Otomatisasi deployment sebagian, namun rollback masih manual dan berisiko."
+            },
+            {
+              "weight": 80,
+              "label": "Otomatisasi deployment penuh dengan strategi rollback yang terdefinisi, namun mungkin ada downtime singkat."
+            },
+            {
+              "weight": 95,
+              "label": "Otomatisasi deployment dan rollback tanpa downtime (zero-downtime deployment) dengan pemantauan real-time."
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "showIf": {
+            "fieldId": "strategiDeploymentRollback",
+            "equals": "Otomatisasi deployment dan rollback tanpa downtime (zero-downtime deployment) dengan pemantauan real-time."
+          },
+          "id": "detailDeploymentRollback",
+          "type": "textarea",
+          "required": true,
+          "label": "Jelaskan **alat dan proses** yang Anda gunakan untuk deployment tanpa downtime.",
+          "aiReasoning": "Menilai tingkat keandalan layanan (SLA) melalui kemampuan pemulihan sistem yang cepat.",
+          "gridSpan": 2
+        },
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 5,
+              "label": "Tidak ada sistem pemantauan atau peringatan dini yang terstruktur."
+            },
+            {
+              "weight": 30,
+              "label": "Pemantauan dasar (misalnya uptime server) dengan notifikasi manual."
+            },
+            {
+              "weight": 60,
+              "label": "Pemantauan metrik kinerja (CPU, memori, disk) dengan ambang batas peringatan."
+            },
+            {
+              "weight": 90,
+              "label": "Pemantauan end-to-end (aplikasi, infrastruktur, log) dengan peringatan otomatis dan dashboard real-time."
+            }
+          ],
+          "label": "**Sistem Pemantauan** dan Peringatan Dini",
+          "required": true,
+          "description": "Bagaimana Anda memantau **kesehatan produk** dan mendeteksi masalah secara proaktif?",
+          "id": "sistemPemantauanPeringatan",
+          "type": "radio"
+        },
+        {
+          "type": "textarea",
+          "id": "detailPemantauanPeringatan",
+          "showIf": {
+            "fieldId": "sistemPemantauanPeringatan",
+            "equals": "Pemantauan end-to-end (aplikasi, infrastruktur, log) dengan peringatan otomatis dan dashboard real-time."
+          },
+          "aiReasoning": "Mengukur kemampuan tim dalam melakukan observabilitas sistem untuk meminimalisir downtime.",
+          "gridSpan": 2,
+          "label": "Sebutkan **alat pemantauan** dan dashboard yang Anda gunakan.",
+          "required": true
+        }
+      ],
+      "title": "Integrasi Teknis & Keandalan Fungsional",
+      "description": "Peninjauan arsitektur teknis, keandalan sistem, dan kesiapan integrasi fungsional.",
+      "stepNumber": 4
+    },
+    {
+      "fields": [
+        {
+          "options": [
+            {
+              "weight": 90,
+              "label": "Teridentifikasi dengan sangat jelas, terklasifikasi (tetap/variabel), dan dipantau secara berkala."
+            },
+            {
+              "weight": 60,
+              "label": "Teridentifikasi cukup jelas, namun klasifikasi dan pemantauan belum optimal."
+            },
+            {
+              "weight": 30,
+              "label": "Sebagian besar biaya teridentifikasi, namun belum ada klasifikasi dan pemantauan sistematis."
+            },
+            {
+              "weight": 10,
+              "label": "Struktur biaya operasional belum teridentifikasi atau dikelola secara formal."
+            }
+          ],
+          "aiReasoning": "Memahami kematangan manajemen biaya operasional sangat krusial untuk menentukan skalabilitas dan kesehatan finansial jangka panjang perusahaan.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Bagaimana Anda mengidentifikasi dan mengelola **struktur biaya operasional** produk digital Anda (misalnya, biaya server, lisensi, SDM operasional)?",
+          "id": "biayaOperasional",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "fieldId": "biayaOperasional",
+            "equals": "Teridentifikasi dengan sangat jelas, terklasifikasi (tetap/variabel), dan dipantau secara berkala."
+          },
+          "type": "file",
+          "id": "buktiBiayaOperasional",
+          "required": true,
+          "label": "Unggah **Dokumen Rincian Struktur Biaya Operasional** Anda (misalnya, laporan keuangan, anggaran operasional).",
+          "gridSpan": 2,
+          "fileAccept": ".pdf"
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiBiayaOperasional",
+          "showIf": {
+            "equals": "Struktur biaya operasional belum teridentifikasi atau dikelola secara formal.",
+            "fieldId": "biayaOperasional"
+          },
+          "gridSpan": 2,
+          "required": true,
+          "label": "Jelaskan **tantangan utama** yang Anda hadapi dalam mengidentifikasi dan mengelola struktur biaya operasional."
+        },
+        {
+          "id": "pengukuranCAC",
+          "type": "radio",
+          "required": true,
+          "label": "Apakah Anda memiliki metrik yang jelas dan terukur untuk **Biaya Akuisisi Pelanggan (CAC)** pada setiap segmen pasar?",
+          "gridSpan": 2,
+          "aiReasoning": "Efisiensi akuisisi pelanggan adalah indikator utama apakah model bisnis dapat tumbuh secara berkelanjutan tanpa membakar modal berlebih.",
+          "options": [
+            {
+              "weight": 95,
+              "label": "Ya, CAC terukur dengan presisi untuk setiap segmen dan dianalisis secara rutin."
+            },
+            {
+              "weight": 70,
+              "label": "Ya, CAC terukur namun belum spesifik per segmen atau analisisnya belum rutin."
+            },
+            {
+              "weight": 40,
+              "label": "CAC diestimasi secara umum, namun belum ada pengukuran presisi."
+            },
+            {
+              "weight": 15,
+              "label": "Belum ada pengukuran atau estimasi CAC yang formal."
+            }
+          ]
+        },
+        {
+          "required": true,
+          "label": "Sebutkan **rata-rata CAC** per pelanggan Anda saat ini (dalam Rupiah).",
+          "gridSpan": 2,
+          "showIf": {
+            "equals": "Ya, CAC terukur dengan presisi untuk setiap segmen dan dianalisis secara rutin.",
+            "fieldId": "pengukuranCAC"
+          },
+          "id": "rataRataCAC",
+          "type": "number"
+        },
+        {
+          "fileAccept": ".pdf",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Unggah **Laporan Metrik CAC** Anda (misalnya, laporan kampanye pemasaran, analisis biaya akuisisi).",
+          "showIf": {
+            "fieldId": "pengukuranCAC",
+            "equals": "Ya, CAC terukur dengan presisi untuk setiap segmen dan dianalisis secara rutin."
+          },
+          "type": "file",
+          "id": "buktiCAC"
+        },
+        {
+          "showIf": {
+            "equals": "Belum ada pengukuran atau estimasi CAC yang formal.",
+            "fieldId": "pengukuranCAC"
+          },
+          "type": "textarea",
+          "id": "justifikasiCAC",
+          "required": true,
+          "label": "Jelaskan mengapa **pengukuran CAC** belum dilakukan atau belum formal.",
+          "gridSpan": 2
+        },
+        {
+          "type": "radio",
+          "id": "pengukuranLTV",
+          "options": [
+            {
+              "weight": 95,
+              "label": "LTV terukur dengan model prediktif yang akurat dan dianalisis secara berkala."
+            },
+            {
+              "weight": 70,
+              "label": "LTV dihitung berdasarkan data historis, namun model prediktif belum diterapkan."
+            },
+            {
+              "weight": 40,
+              "label": "LTV diestimasi secara kasar, namun belum ada perhitungan yang sistematis."
+            },
+            {
+              "weight": 15,
+              "label": "Belum ada pengukuran atau estimasi LTV yang formal."
+            }
+          ],
+          "aiReasoning": "LTV memberikan gambaran tentang potensi pendapatan jangka panjang yang dihasilkan oleh setiap pelanggan, yang harus dibandingkan dengan biaya akuisisi.",
+          "gridSpan": 2,
+          "label": "Bagaimana Anda mengukur **Nilai Seumur Hidup Pelanggan (LTV)** untuk produk digital Anda?",
+          "required": true
+        },
+        {
+          "label": "Sebutkan **rata-rata LTV** per pelanggan Anda saat ini (dalam Rupiah).",
+          "required": true,
+          "gridSpan": 2,
+          "type": "number",
+          "id": "rataRataLTV",
+          "showIf": {
+            "fieldId": "pengukuranLTV",
+            "equals": "LTV terukur dengan model prediktif yang akurat dan dianalisis secara berkala."
+          }
+        },
+        {
+          "label": "Unggah **Laporan Metrik LTV** Anda (misalnya, analisis retensi, proyeksi pendapatan pelanggan).",
+          "required": true,
+          "fileAccept": ".pdf",
+          "gridSpan": 2,
+          "showIf": {
+            "equals": "LTV terukur dengan model prediktif yang akurat dan dianalisis secara berkala.",
+            "fieldId": "pengukuranLTV"
+          },
+          "id": "buktiLTV",
+          "type": "file"
+        },
+        {
+          "gridSpan": 2,
+          "label": "Jelaskan mengapa **pengukuran LTV** belum dilakukan atau belum formal.",
+          "required": true,
+          "id": "justifikasiLTV",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "pengukuranLTV",
+            "equals": "Belum ada pengukuran atau estimasi LTV yang formal."
+          }
+        },
+        {
+          "id": "paybackCAC",
+          "type": "radio",
+          "options": [
+            {
+              "weight": 90,
+              "label": "Sangat efisien (<6 bulan), menunjukkan pengembalian investasi yang cepat."
+            },
+            {
+              "weight": 70,
+              "label": "Efisiensi baik (6-12 bulan), sesuai standar industri."
+            },
+            {
+              "weight": 45,
+              "label": "Cukup efisien (12-18 bulan), perlu upaya percepatan."
+            },
+            {
+              "weight": 15,
+              "label": "Tidak efisien (>18 bulan), berisiko terhadap arus kas."
+            }
+          ],
+          "aiReasoning": "Periode pengembalian CAC yang cepat menunjukkan likuiditas yang sehat dan kemampuan perusahaan untuk mendanai pertumbuhan dari arus kas internal.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Berapa rata-rata **periode pengembalian modal** dari biaya akuisisi pelanggan (CAC Payback Period) Anda?"
+        },
+        {
+          "gridSpan": 2,
+          "label": "Jelaskan strategi Anda untuk **mempercepat periode pengembalian modal** CAC.",
+          "required": true,
+          "showIf": {
+            "equals": "Tidak efisien (>18 bulan), berisiko terhadap arus kas.",
+            "fieldId": "paybackCAC"
+          },
+          "id": "strategiPercepatPaybackCAC",
+          "type": "textarea"
+        },
+        {
+          "label": "Bagaimana **efisiensi biaya infrastruktur** teknis Anda dalam mendukung skalabilitas produk?",
+          "required": true,
+          "options": [
+            {
+              "weight": 90,
+              "label": "Infrastruktur sangat skalabel dengan biaya yang efisien per unit pertumbuhan."
+            },
+            {
+              "weight": 65,
+              "label": "Infrastruktur cukup skalabel, namun ada potensi optimasi biaya lebih lanjut."
+            },
+            {
+              "weight": 35,
+              "label": "Skalabilitas infrastruktur terbatas dan/atau biaya meningkat secara signifikan dengan pertumbuhan."
+            },
+            {
+              "weight": 10,
+              "label": "Belum ada strategi jelas untuk skalabilitas biaya infrastruktur."
+            }
+          ],
+          "aiReasoning": "Infrastruktur yang tidak efisien saat skala meningkat akan menggerus margin keuntungan secara drastis.",
+          "gridSpan": 2,
+          "id": "skalabilitasInfrastruktur",
+          "type": "radio"
+        },
+        {
+          "gridSpan": 2,
+          "label": "Berikan contoh implementasi **efisiensi biaya** pada skalabilitas infrastruktur Anda.",
+          "required": true,
+          "showIf": {
+            "equals": "Infrastruktur sangat skalabel dengan biaya yang efisien per unit pertumbuhan.",
+            "fieldId": "skalabilitasInfrastruktur"
+          },
+          "id": "contohEfisiensiSkalabilitas",
+          "type": "textarea"
+        },
+        {
+          "label": "Jelaskan **tantangan utama** dalam merencanakan dan mengimplementasikan skalabilitas biaya infrastruktur.",
+          "required": true,
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "skalabilitasInfrastruktur",
+            "equals": "Belum ada strategi jelas untuk skalabilitas biaya infrastruktur."
+          },
+          "id": "tantanganSkalabilitas",
+          "type": "textarea"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Budaya optimasi biaya yang sistematis memastikan perusahaan tetap kompetitif dan tangguh dalam menghadapi fluktuasi pasar.",
+          "options": [
+            {
+              "weight": 90,
+              "label": "Memiliki proses sistematis untuk identifikasi dan implementasi optimasi biaya, terintegrasi dengan pemantauan kualitas."
+            },
+            {
+              "weight": 60,
+              "label": "Melakukan optimasi biaya secara ad-hoc atau berdasarkan kebutuhan, namun belum sistematis."
+            },
+            {
+              "weight": 30,
+              "label": "Optimasi biaya belum menjadi fokus utama atau belum ada proses yang jelas."
+            },
+            {
+              "weight": 10,
+              "label": "Belum ada inisiatif optimasi biaya yang signifikan."
+            }
+          ],
+          "required": true,
+          "label": "Bagaimana Anda melakukan **optimasi biaya operasional** secara berkelanjutan tanpa mengorbankan kualitas?",
+          "id": "optimasiBiaya",
+          "type": "radio"
+        },
+        {
+          "gridSpan": 2,
+          "label": "Berikan contoh **inisiatif optimasi biaya** yang telah berhasil Anda terapkan dan dampaknya.",
+          "required": true,
+          "id": "contohOptimasiBiaya",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Memiliki proses sistematis untuk identifikasi dan implementasi optimasi biaya, terintegrasi dengan pemantauan kualitas.",
+            "fieldId": "optimasiBiaya"
+          }
+        },
+        {
+          "id": "alasanOptimasiBiaya",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Belum ada inisiatif optimasi biaya yang signifikan.",
+            "fieldId": "optimasiBiaya"
+          },
+          "gridSpan": 2,
+          "label": "Jelaskan alasan mengapa **optimasi biaya** belum menjadi prioritas atau belum ada inisiatif signifikan.",
+          "required": true
+        }
+      ],
+      "title": "Efisiensi Struktur Biaya & Operasional",
+      "description": "Analisis efisiensi biaya operasional untuk mendukung skalabilitas produk digital.",
+      "stepNumber": 5
+    },
+    {
+      "title": "Proyeksi Arus Kas & Keberlanjutan Bisnis",
+      "fields": [
+        {
+          "id": "jenisModelPendapatan",
+          "type": "radio",
+          "options": [
+            {
+              "weight": 70,
+              "label": "Berlangganan (Subscription)"
+            },
+            {
+              "weight": 60,
+              "label": "Transaksi (Transaction-based)"
+            },
+            {
+              "weight": 40,
+              "label": "Iklan (Advertising)"
+            },
+            {
+              "weight": 50,
+              "label": "Freemium (Gabungan Gratis & Berbayar)"
+            },
+            {
+              "weight": 80,
+              "label": "Lisensi (Licensing)"
+            },
+            {
+              "weight": 30,
+              "label": "Lainnya"
+            }
+          ],
+          "aiReasoning": "Menentukan struktur monetisasi untuk memvalidasi potensi keberlanjutan finansial jangka panjang.",
+          "gridSpan": 2,
+          "label": "Apa **model pendapatan utama** yang diterapkan pada produk digital Anda?",
+          "required": true
+        },
+        {
+          "id": "penjelasanModelPendapatanLainnya",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "jenisModelPendapatan",
+            "equals": "Lainnya"
+          },
+          "label": "Jelaskan **model pendapatan alternatif** yang Anda terapkan",
+          "required": true,
+          "aiReasoning": "Memberikan ruang bagi model bisnis unik yang tidak terakomodasi dalam kategori standar.",
+          "gridSpan": 2
+        },
+        {
+          "aiReasoning": "Mengukur ekspektasi pertumbuhan pendapatan sebagai indikator kesehatan bisnis masa depan.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Berapa **proyeksi pendapatan kotor (Gross Revenue)** untuk 12 bulan ke depan (dalam Rp)?",
+          "description": "Masukkan angka proyeksi pendapatan dalam Rupiah, contoh: 1500000000",
+          "id": "proyeksiPendapatan12Bulan",
+          "type": "number"
+        },
+        {
+          "id": "strategiHargaB2BB2C",
+          "type": "radio",
+          "label": "Bagaimana **strategi penetapan harga** Anda membedakan segmen B2C dan B2B?",
+          "required": true,
+          "options": [
+            {
+              "weight": 20,
+              "label": "Harga Tunggal untuk Semua Segmen"
+            },
+            {
+              "weight": 80,
+              "label": "Tiered Pricing (Berjenjang) untuk B2C dan Paket Enterprise untuk B2B"
+            },
+            {
+              "weight": 90,
+              "label": "Custom Pricing (Harga Kustom) Berdasarkan Kebutuhan Klien B2B"
+            },
+            {
+              "weight": 60,
+              "label": "Model Freemium dengan Opsi Upgrade Berbayar"
+            },
+            {
+              "weight": 40,
+              "label": "Lainnya"
+            }
+          ],
+          "aiReasoning": "Memahami fleksibilitas harga untuk mengoptimalkan penetrasi pasar di segmen yang berbeda.",
+          "gridSpan": 2
+        },
+        {
+          "id": "penjelasanStrategiHargaLainnya",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Lainnya",
+            "fieldId": "strategiHargaB2BB2C"
+          },
+          "gridSpan": 2,
+          "aiReasoning": "Memungkinkan penjelasan mendalam mengenai taktik harga khusus yang digunakan perusahaan.",
+          "required": true,
+          "label": "Jelaskan **strategi penetapan harga lainnya** yang Anda terapkan"
+        },
+        {
+          "id": "strukturBiayaOperasional",
+          "type": "radio",
+          "options": [
+            {
+              "weight": 10,
+              "label": "Belum ada strategi pengelolaan biaya yang terstruktur"
+            },
+            {
+              "weight": 30,
+              "label": "Melakukan review biaya secara ad-hoc dan reaktif"
+            },
+            {
+              "weight": 60,
+              "label": "Memiliki anggaran biaya operasional tahunan dengan monitoring rutin"
+            },
+            {
+              "weight": 90,
+              "label": "Menerapkan optimasi biaya berkelanjutan dan analisis ROI untuk setiap pengeluaran"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai kedewasaan manajemen operasional dalam menjaga margin keuntungan.",
+          "label": "Bagaimana Anda mengelola **efisiensi struktur biaya operasional** produk digital Anda?",
+          "required": true
+        },
+        {
+          "label": "Bagaimana **kondisi arus kas operasional** produk digital Anda saat ini?",
+          "required": true,
+          "options": [
+            {
+              "weight": 10,
+              "label": "Negatif dan membutuhkan injeksi modal eksternal secara rutin"
+            },
+            {
+              "weight": 40,
+              "label": "Negatif namun menunjukkan tren perbaikan menuju positif"
+            },
+            {
+              "weight": 70,
+              "label": "Positif dan stabil, mampu menutupi biaya operasional"
+            },
+            {
+              "weight": 95,
+              "label": "Sangat positif, mampu mendanai ekspansi dan inovasi internal"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi tingkat ketergantungan bisnis terhadap pendanaan eksternal.",
+          "type": "radio",
+          "id": "statusArusKas"
+        },
+        {
+          "label": "Apakah Anda memiliki **dokumen proyeksi keuangan komprehensif** untuk 3-5 tahun ke depan?",
+          "required": true,
+          "aiReasoning": "Memastikan adanya perencanaan strategis berbasis data keuangan yang terukur.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Belum ada"
+            },
+            {
+              "weight": 40,
+              "label": "Ada, namun masih dalam tahap draf atau belum final"
+            },
+            {
+              "weight": 90,
+              "label": "Ada, sudah final dan digunakan sebagai panduan strategis"
+            }
+          ],
+          "type": "radio",
+          "id": "dokumenProyeksiKeuangan"
+        },
+        {
+          "fileAccept": ".pdf,.xlsx",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Unggah **dokumen proyeksi keuangan** Anda",
+          "id": "unggahProyeksiKeuangan",
+          "type": "file",
+          "showIf": {
+            "fieldId": "dokumenProyeksiKeuangan",
+            "equals": "Ada, sudah final dan digunakan sebagai panduan strategis"
+          }
+        },
+        {
+          "showIf": {
+            "equals": "Belum ada",
+            "fieldId": "dokumenProyeksiKeuangan"
+          },
+          "type": "textarea",
+          "id": "justifikasiProyeksiKeuangan",
+          "gridSpan": 2,
+          "aiReasoning": "Menggali alasan di balik ketiadaan perencanaan keuangan formal untuk mitigasi risiko.",
+          "required": true,
+          "label": "Jelaskan **kendala atau rencana** terkait dokumen proyeksi keuangan Anda"
+        }
+      ],
+      "description": "Pemetaan proyeksi arus kas masa depan dan keberlanjutan bisnis di pasar B2C dan B2B.",
+      "stepNumber": 6
+    }
+  ],
+  "discountPercentage": 97,
+  "discountExpiry": null,
+  "version": 3,
+  "aiPromptConfig": {
+    "customUiLabels": {
+      "riskLabel": "Critical Risks & Mitigation Map",
+      "executionLabel": "Action Plan Timeline",
+      "roadmapLabel": "Rekomendasi Strategis",
+      "swotLabel": "Capability Matrix (SWOT)",
+      "scoreLabel": "AI Readiness Score"
+    },
+    "expectedAnalysisBlocks": [
+      "Analisis Kualitas & Integrasi Teknis: Evaluasi karakteristik ISO/IEC 25010, Keandalan fungsional produk digital",
+      "Evaluasi Product-Market Fit & Traksi: Penetrasi segmen B2C dan B2B, Retensi pengguna dan adopsi pasar",
+      "Proyeksi Profitabilitas & Unit Economics: Analisis rasio LTV terhadap CAC, Efisiensi struktur biaya operasional"
+    ],
+    "assessmentGoal": "Melakukan penilaian komprehensif terhadap kesiapan produk digital tahap pertumbuhan dan proyeksi profitabilitas bisnis menggunakan kerangka Product-Market Fit (PMF), Unit Economics, dan standar kualitas sistem ISO/IEC 25010.",
+    "reportTone": "consultative",
+    "formatInstructions": "Gunakan Markdown secara maksimal untuk kemudahan membaca: Gunakan penanda **teks tebal** untuk menyoroti nama metrik/istilah penting, *miring* untuk penekanan atau kutipan, dan gunakan awalan ### (Heading 3) untuk memisahkan sub-topik laporan agar sistem merendernya dengan rapi.",
+    "formPurpose": "Product Readiness and Business Projection Assessment",
+    "customReadinessTiers": [
+      "Tier 1: Validasi Awal & Pengembangan Fungsional (Belum Mencapai PMF)",
+      "Tier 2: Traksi Awal & Kualitas Sistem Dasar (PMF Parsial, Unit Economics Negatif)",
+      "Tier 3: Kesiapan Skalabilitas (PMF Tervalidasi, ISO/IEC 25010 Terpenuhi, Unit Economics Positif)",
+      "Tier 4: Kematangan Pertumbuhan (Skalabilitas B2C/B2B Masif, Profitabilitas Berkelanjutan)"
+    ],
+    "gradingStrictness": "strict",
+    "expectedMetrics": [
+      "Kualitas Sistem & Perangkat Lunak (ISO/IEC 25010)",
+      "Validasi Product-Market Fit (PMF) & Traksi Pengguna",
+      "Profitabilitas & Unit Economics (LTV:CAC Ratio & Payback Period)",
+      "Integrasi Teknis & Keandalan Fungsional",
+      "Efisiensi Struktur Biaya & Skalabilitas Operasional",
+      "Proyeksi Arus Kas & Keberlanjutan Bisnis (B2C/B2B)"
+    ],
+    "mediaAnalysisFocus": "Analisis kelayakan dokumen teknis, metrik retensi pengguna (PMF), laporan Unit Economics, dan evaluasi kualitas sistem (ISO/IEC 25010).",
+    "aiPersona": "Chief Research Officer & Asesor Ahli Kesiapan Produk Digital Enterprise",
+    "customSystemPrompt": "Anda adalah Konselor Strategis Produk yang menggunakan pendekatan psikologi untuk menganalisis kesiapan bisnis. Jika data menunjukkan ketidakpastian pasar, maka Anda harus memberikan validasi empati; jika data menunjukkan kegagalan teknis, maka Anda harus memberikan kritik konstruktif yang suportif. Gunakan logika IF-THEN untuk memetakan kesehatan produk terhadap kondisi mental manajer, memastikan setiap analisis teknis berujung pada penguatan kepercayaan diri subjek.",
+    "expectedRecommendations": [
+      "Peningkatan Kualitas Sistem Berdasarkan Karakteristik ISO/IEC 25010",
+      "Strategi Penguatan Product-Market Fit (PMF) untuk Segmen B2C dan B2B",
+      "Optimalisasi Unit Economics (LTV:CAC) dan Percepatan Payback Period",
+      "Penyempurnaan Integrasi Teknis dan Keandalan Fungsional Produk",
+      "Efisiensi Struktur Biaya Operasional untuk Skalabilitas Pertumbuhan",
+      "Peta Jalan Proyeksi Arus Kas dan Keberlanjutan Profitabilitas",
+      "Mitigasi Risiko Skalabilitas Teknologi dan Penetrasi Pasar Lanjutan"
+    ],
+    "customScoringRubric": "Skor 0-40 diberikan jika produk gagal dalam validasi unit economics dan memiliki celah kritis pada ISO/IEC 25010; skor 41-70 diberikan jika produk memiliki potensi pertumbuhan namun belum mencapai efisiensi biaya yang optimal; skor 71-100 diberikan jika produk menunjukkan PMF yang kuat, struktur biaya yang sehat, dan kualitas sistem yang memenuhi standar ISO/IEC 25010.",
+    "researchSourcesCited": [
+      "[1.1.1] ISO 25010 - ISO 25000",
+      " Characteristics and Sub Characteristics of ISO 25010:2023",
+      " SaaS CAC & LTV Statistics 2026: Unit Economics Benchmarks",
+      " 92% of SaaS Startups Fail. Most Never Even Check This One Number.",
+      " How to measure product-market fit? A complete guide",
+      " What is product-market fit, and do investors care about it?"
+    ],
+    "riskFramework": "Risiko Skalabilitas Produk Digital & Volatilitas Unit Economics",
+    "actionPlanBehavior": "Fokuskan rencana aksi pada intervensi psikologis untuk mengurangi stres manajerial, pembentukan kebiasaan harian (habits) yang mendukung pengambilan keputusan berbasis data, serta integrasi praktik mindfulness untuk menjaga fokus dalam menghadapi tekanan pertumbuhan produk.",
+    "negativePrompts": "Dilarang menggunakan bahasa yang menghakimi, sarkastik, atau terlalu kaku/robotik. Jangan gunakan kata-kata seperti 'gagal total', 'tidak kompeten', atau 'bodoh'. Hindari penggunaan jargon teknis yang tidak dijelaskan secara psikologis. Jangan memberikan saran yang mengabaikan kesejahteraan mental subjek."
+  },
+  "isBestSeller": false,
+  "category": "Umum",
+  "userCount": 5,
+  "expectedOutputs": [
+    "Peta Mitigasi Risiko Strategis: Identifikasi celah operasional dan legal secara presisi menggunakan standar ISO 31000 untuk melindungi aset bisnis dari ancaman kegagalan sistemik.",
+    "Rekomendasi Skalabilitas Berbasis Data: Dapatkan panduan langkah demi langkah untuk meningkatkan Commercial Readiness Index (CRI) guna memastikan produk Anda siap menguasai pasar global.",
+    "Action Plan Optimalisasi Profitabilitas: Transformasikan struktur biaya menjadi model pendapatan yang berkelanjutan dengan proyeksi arus kas yang terukur dan efisien.",
+    "Insight Matrix Kematangan Bisnis: Visualisasikan posisi produk Anda melalui integrasi standar mutu ISO dan ESG untuk membangun kepercayaan investor serta kredibilitas jangka panjang."
+  ],
+  "lastUpdated": "2026-07-25T10:39:22.887Z",
+  "trackIcon": "LayoutGrid",
+  "price": 250000,
+  "specificTargetContext": "Target subjek adalah Manajer Produk (Product Manager) dan Pemilik Bisnis (Business Owner) yang mengelola produk digital tahap pertumbuhan (growth stage). Mereka bertanggung jawab atas integrasi teknis fungsional serta keberlanjutan profitabilitas pada segmen pasar B2C skala kecil hingga B2B skala organisasi.",
+  "customUSPs": [],
+  "id": "track_1784686227805",
+  "isPaid": true,
+  "trackDescription": "Untuk meninjau keandalan fungsionalitas produk sekaligus struktur biayanya. Penilaian ini dirancang untuk memastikan produk tidak hanya berjalan lancar secara teknis, tetapi juga memiliki skema monetisasi yang jelas untuk pengguna skala kecil maupun level organisasi",
+  "trackName": "Kesiapan Produk Digital & Proyeksi Bisnis",
+  "methodologyContext": "Menggunakan framework Product-Market Fit (PMF) yang dikombinasikan dengan metode Unit Economics Analysis dan ISO/IEC 25010 untuk evaluasi kualitas sistem. Pendekatan ini memastikan validasi keandalan teknis selaras dengan strategi monetisasi dan efisiensi struktur biaya operasional.",
+  "aiGenerationStatus": {
+    "message": "Disimpan secara manual oleh Admin.",
+    "updatedAt": "2026-07-23T06:35:01.397Z",
+    "phase": "COMPLETED"
+  },
+  "preferredQuestionTypes": [
+    "radio_weight",
+    "conditional_logic",
+    "file_upload",
+    "number_metric",
+    "text_justification"
+  ]
+}

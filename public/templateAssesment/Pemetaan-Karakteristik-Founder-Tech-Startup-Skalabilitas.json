@@ -1,0 +1,2305 @@
+{
+  "trackDescription": "Asesmen psikometrik dan operasional mendalam untuk mengidentifikasi dominasi archetype C-Level Anda (Hustler/CEO, Hacker/CTO, Hipster/CPO) sekaligus mengukur tingkat kematangan startup Anda menuju skalabilitas tingkat Enterprise.",
+  "trackName": "Pemetaan Karakteristik Founder: Tech Startup & Skalabilitas",
+  "id": "track_1782515751295",
+  "steps": [
+    {
+      "stepNumber": 1,
+      "description": "Mengidentifikasi dominasi insting komersial, teknis, atau desain founder serta mengevaluasi keseimbangan peran dalam tim C-Level berdasarkan framework Belbin.",
+      "fields": [
+        {
+          "type": "text",
+          "id": "namaUsaha",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Nama **Usaha atau Startup** Anda"
+        },
+        {
+          "gridSpan": 2,
+          "label": "Nama Lengkap **Founder/Pengisi Form**",
+          "required": true,
+          "type": "text",
+          "id": "namaPengisi"
+        },
+        {
+          "id": "usiaAnda",
+          "type": "number",
+          "description": "Mohon masukkan usia Anda dalam angka.",
+          "gridSpan": 1,
+          "label": "Usia Anda saat ini (dalam **tahun**)",
+          "required": true
+        },
+        {
+          "type": "select",
+          "id": "pendidikanTerakhir",
+          "options": [
+            {
+              "label": "SMA/SMK",
+              "weight": 20
+            },
+            {
+              "weight": 40,
+              "label": "Diploma"
+            },
+            {
+              "weight": 70,
+              "label": "Sarjana (S1)"
+            },
+            {
+              "label": "Magister (S2)",
+              "weight": 90
+            },
+            {
+              "label": "Doktor (S3)",
+              "weight": 100
+            }
+          ],
+          "aiReasoning": "Mengukur latar belakang akademis sebagai indikator dasar kapasitas kognitif dan disiplin.",
+          "gridSpan": 1,
+          "label": "Pendidikan **formal terakhir** yang Anda tempuh",
+          "required": true
+        },
+        {
+          "required": true,
+          "label": "Total **pengalaman profesional** di industri teknologi atau startup (dalam tahun)",
+          "aiReasoning": "Menilai kematangan pengalaman praktis dalam ekosistem startup yang dinamis.",
+          "gridSpan": 2,
+          "description": "Mohon masukkan total tahun pengalaman Anda.",
+          "id": "pengalamanProfesionalTahun",
+          "type": "number"
+        },
+        {
+          "type": "radio",
+          "id": "instingUtamaProduk",
+          "label": "Ketika ide produk baru muncul, **insting utama** Anda cenderung fokus pada aspek apa?",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi orientasi strategis founder apakah lebih ke arah bisnis, teknis, atau desain.",
+          "options": [
+            {
+              "weight": 80,
+              "label": "Validasi pasar, model bisnis, dan potensi monetisasi"
+            },
+            {
+              "weight": 80,
+              "label": "Arsitektur teknis, skalabilitas, dan implementasi sistem"
+            },
+            {
+              "label": "Pengalaman pengguna, estetika desain, dan daya tarik produk",
+              "weight": 80
+            },
+            {
+              "weight": 100,
+              "label": "Kombinasi seimbang dari ketiganya"
+            }
+          ]
+        },
+        {
+          "options": [
+            {
+              "weight": 80,
+              "label": "Mendorong tim untuk bertindak, menantang asumsi, dan mencari solusi cepat (Shaper)"
+            },
+            {
+              "label": "Mengajukan ide-ide inovatif, perspektif baru, dan solusi kreatif (Plant)",
+              "weight": 80
+            },
+            {
+              "weight": 80,
+              "label": "Menganalisis opsi secara objektif, menimbang pro dan kontra, dan memastikan keputusan rasional (Monitor Evaluator)"
+            },
+            {
+              "weight": 60,
+              "label": "Membangun konsensus, menjaga harmoni, dan mendukung anggota tim (Teamworker)"
+            },
+            {
+              "label": "Mengubah ide menjadi rencana praktis, mengorganisir sumber daya, dan memastikan eksekusi (Implementer)",
+              "weight": 70
+            },
+            {
+              "label": "Memastikan detail terselesaikan, standar kualitas terpenuhi, dan tenggat waktu tercapai (Completer Finisher)",
+              "weight": 70
+            },
+            {
+              "label": "Saya sering mengambil beberapa peran tergantung konteks",
+              "weight": 90
+            }
+          ],
+          "aiReasoning": "Memetakan kontribusi unik founder dalam dinamika tim untuk memastikan keseimbangan peran.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Dalam **pengambilan keputusan krusial**, peran apa yang paling sering Anda ambil dalam tim (berdasarkan **Arketipe Belbin**)?",
+          "id": "peranBelbinKeputusan",
+          "type": "radio"
+        },
+        {
+          "type": "radio",
+          "id": "manajemenPengetahuanKunci",
+          "options": [
+            {
+              "label": "Sudah ada dokumentasi lengkap dan program pelatihan silang untuk anggota tim lain",
+              "weight": 100
+            },
+            {
+              "label": "Sedang dalam proses dokumentasi dan transfer pengetahuan",
+              "weight": 70
+            },
+            {
+              "weight": 0,
+              "label": "Belum ada rencana spesifik, masih mengandalkan individu tersebut"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengevaluasi risiko ketergantungan pada individu (key-person risk) dalam operasional startup.",
+          "required": true,
+          "label": "Bagaimana Anda mengelola **pengetahuan atau proses operasional** yang dikuasai oleh individu kunci?"
+        },
+        {
+          "showIf": {
+            "equals": "Belum ada rencana spesifik, masih mengandalkan individu tersebut",
+            "fieldId": "manajemenPengetahuanKunci"
+          },
+          "type": "textarea",
+          "id": "justifikasiPengetahuanKunci",
+          "label": "Mohon jelaskan alasan belum adanya rencana spesifik untuk **manajemen pengetahuan**.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Menggali hambatan struktural atau prioritas yang menyebabkan kurangnya mitigasi risiko operasional."
+        },
+        {
+          "required": true,
+          "label": "Ketika mengembangkan fitur baru, apa **kekhawatiran utama** Anda?",
+          "options": [
+            {
+              "label": "Memastikan teknologi yang digunakan paling mutakhir dan skalabel, bahkan jika butuh waktu lebih lama",
+              "weight": 40
+            },
+            {
+              "label": "Memastikan produk segera diluncurkan untuk mendapatkan traksi pasar dan feedback, meskipun belum sempurna",
+              "weight": 50
+            },
+            {
+              "label": "Memastikan antarmuka pengguna sempurna, estetis, dan memberikan pengalaman terbaik",
+              "weight": 40
+            },
+            {
+              "weight": 100,
+              "label": "Menemukan keseimbangan antara ketiga aspek tersebut untuk peluncuran yang optimal"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai prioritas founder antara kesempurnaan teknis, kecepatan pasar, atau kualitas pengalaman pengguna.",
+          "type": "radio",
+          "id": "kekhawatiranPengembangan"
+        },
+        {
+          "id": "keseimbanganTimCLevel",
+          "type": "radio",
+          "label": "Bagaimana Anda menilai **keseimbangan peran dan keahlian** di antara tim inti C-Level saat ini?",
+          "required": true,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Sangat seimbang, setiap orang memiliki peran dan keahlian yang saling melengkapi"
+            },
+            {
+              "label": "Cukup seimbang, ada beberapa tumpang tindih atau celah kecil yang sedang diatasi",
+              "weight": 70
+            },
+            {
+              "label": "Kurang seimbang, ada dominasi peran tertentu atau celah kompetensi yang signifikan",
+              "weight": 30
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mendeteksi potensi ketimpangan kompetensi yang dapat menghambat pertumbuhan startup."
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan **celah kompetensi** atau dominasi peran yang Anda maksud.",
+          "aiReasoning": "Memperjelas area spesifik yang memerlukan intervensi atau penambahan talenta baru.",
+          "gridSpan": 2,
+          "showIf": {
+            "equals": "Kurang seimbang, ada dominasi peran tertentu atau celah kompetensi yang signifikan",
+            "fieldId": "keseimbanganTimCLevel"
+          },
+          "id": "justifikasiKeseimbanganTim",
+          "type": "textarea"
+        }
+      ],
+      "title": "Pemetaan DNA Founder & Arketipe Tim (Belbin)"
+    },
+    {
+      "description": "Menilai sejauh mana proses operasional dan pengembangan produk telah terstandarisasi, serta kesiapan infrastruktur teknologi untuk skalabilitas tinggi.",
+      "title": "Audit Kematangan Operasional (CMMI) & Infrastruktur",
+      "fields": [
+        {
+          "options": [
+            {
+              "weight": 10,
+              "label": "Tidak ada dokumentasi formal, proses bersifat ad-hoc"
+            },
+            {
+              "weight": 40,
+              "label": "Beberapa proses penting didokumentasikan secara informal"
+            },
+            {
+              "weight": 70,
+              "label": "Sebagian besar proses operasional telah didokumentasikan dan distandarisasi"
+            },
+            {
+              "label": "Semua proses operasional terdefinisi, terintegrasi, dan terus dioptimalkan",
+              "weight": 100
+            }
+          ],
+          "aiReasoning": "Menilai tingkat kematangan operasional melalui dokumentasi formal sebagai fondasi skalabilitas.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Bagaimana Anda mendokumentasikan dan **menstandarisasi proses operasional kunci** dalam startup Anda?",
+          "type": "radio",
+          "id": "prosesDokumentasi"
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiProsesDokumentasi",
+          "showIf": {
+            "fieldId": "prosesDokumentasi",
+            "equals": "Tidak ada dokumentasi formal, proses bersifat ad-hoc"
+          },
+          "gridSpan": 2,
+          "aiReasoning": "Menggali hambatan internal yang menghalangi standarisasi operasional.",
+          "required": true,
+          "label": "Mohon jelaskan alasan di balik kondisi **dokumentasi proses operasional** Anda saat ini."
+        },
+        {
+          "gridSpan": 2,
+          "fileAccept": ".pdf,.doc,.docx",
+          "required": true,
+          "label": "Unggah contoh **dokumen standar operasional (SOP)** atau panduan proses Anda.",
+          "showIf": {
+            "equals": "Semua proses operasional terdefinisi, terintegrasi, dan terus dioptimalkan",
+            "fieldId": "prosesDokumentasi"
+          },
+          "id": "buktiDokumentasiProses",
+          "type": "file"
+        },
+        {
+          "required": true,
+          "label": "Bagaimana Anda mengelola **perubahan pada produk, fitur, atau prosedur operasional** inti?",
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur ketangkasan organisasi dalam merespons perubahan tanpa mengorbankan stabilitas.",
+          "options": [
+            {
+              "weight": 15,
+              "label": "Perubahan dilakukan secara reaktif tanpa proses formal"
+            },
+            {
+              "label": "Ada perencanaan dasar, namun implementasi seringkali tidak konsisten",
+              "weight": 45
+            },
+            {
+              "weight": 75,
+              "label": "Memiliki proses manajemen perubahan yang terdefinisi dan diikuti"
+            },
+            {
+              "label": "Proses manajemen perubahan terukur, otomatis, dan terus ditingkatkan",
+              "weight": 95
+            }
+          ],
+          "type": "radio",
+          "id": "manajemenPerubahan"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi titik lemah dalam alur kerja manajemen perubahan.",
+          "required": true,
+          "label": "Mohon jelaskan **tantangan terbesar** Anda dalam mengelola perubahan operasional.",
+          "id": "justifikasiManajemenPerubahan",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "manajemenPerubahan",
+            "equals": "Perubahan dilakukan secara reaktif tanpa proses formal"
+          }
+        },
+        {
+          "aiReasoning": "Menilai keberlanjutan arsitektur teknis jangka panjang terhadap kecepatan pengembangan.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 10,
+              "label": "Utang teknis belum menjadi fokus utama, ditangani jika ada masalah"
+            },
+            {
+              "weight": 35,
+              "label": "Ada kesadaran, namun penanganannya masih reaktif dan sporadis"
+            },
+            {
+              "label": "Secara proaktif mengidentifikasi dan menjadwalkan perbaikan utang teknis",
+              "weight": 70
+            },
+            {
+              "weight": 90,
+              "label": "Pengelolaan utang teknis terintegrasi dalam roadmap produk dan proses pengembangan"
+            }
+          ],
+          "required": true,
+          "label": "Bagaimana pendekatan Anda dalam mengelola **'utang teknis' (technical debt)** dalam pengembangan produk?",
+          "id": "pengelolaanUtangTeknis",
+          "type": "radio"
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan mengapa **pengelolaan utang teknis** belum menjadi fokus utama Anda.",
+          "aiReasoning": "Memahami prioritas strategis yang mengesampingkan pemeliharaan teknis.",
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "pengelolaanUtangTeknis",
+            "equals": "Utang teknis belum menjadi fokus utama, ditangani jika ada masalah"
+          },
+          "type": "textarea",
+          "id": "justifikasiUtangTeknis"
+        },
+        {
+          "options": [
+            {
+              "label": "Belum ada rencana formal, fokus pada kebutuhan saat ini",
+              "weight": 10
+            },
+            {
+              "label": "Ada rencana jangka pendek untuk mengatasi lonjakan trafik",
+              "weight": 40
+            },
+            {
+              "weight": 70,
+              "label": "Memiliki rencana skalabilitas jangka menengah dengan estimasi kapasitas"
+            },
+            {
+              "weight": 95,
+              "label": "Rencana skalabilitas jangka panjang terdefinisi, diuji, dan dioptimalkan secara berkala"
+            }
+          ],
+          "aiReasoning": "Menilai kesiapan infrastruktur dalam menghadapi lonjakan beban kerja (load).",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Bagaimana Anda merencanakan **skalabilitas infrastruktur** untuk mendukung pertumbuhan pengguna?",
+          "type": "radio",
+          "id": "perencanaanSkalabilitasInfrastruktur"
+        },
+        {
+          "label": "Mohon jelaskan mengapa **perencanaan skalabilitas** Anda masih terbatas pada kebutuhan saat ini.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Menganalisis keterbatasan sumber daya atau visi dalam perencanaan infrastruktur.",
+          "type": "textarea",
+          "id": "justifikasiSkalabilitasInfrastruktur",
+          "showIf": {
+            "fieldId": "perencanaanSkalabilitasInfrastruktur",
+            "equals": "Belum ada rencana formal, fokus pada kebutuhan saat ini"
+          }
+        },
+        {
+          "label": "Bagaimana proses **jaminan kualitas (QA)** dan pengujian produk dilakukan untuk memastikan keandalan?",
+          "required": true,
+          "aiReasoning": "Mengukur tingkat otomatisasi dan ketelitian dalam menjaga kualitas produk.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Pengujian dilakukan secara ad-hoc oleh tim pengembangan",
+              "weight": 15
+            },
+            {
+              "weight": 45,
+              "label": "Ada pengujian manual terstruktur untuk fitur-fitur utama"
+            },
+            {
+              "weight": 75,
+              "label": "Sebagian besar pengujian diotomatisasi dan terintegrasi dalam siklus pengembangan"
+            },
+            {
+              "label": "Memiliki strategi QA komprehensif dengan otomatisasi penuh dan pengujian performa/keamanan",
+              "weight": 95
+            }
+          ],
+          "id": "jaminanKualitasPengujian",
+          "type": "radio"
+        },
+        {
+          "label": "Mohon jelaskan tantangan Anda dalam menerapkan **proses QA** yang lebih terstruktur.",
+          "required": true,
+          "aiReasoning": "Mengidentifikasi hambatan dalam adopsi praktik pengujian yang lebih disiplin.",
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "jaminanKualitasPengujian",
+            "equals": "Pengujian dilakukan secara ad-hoc oleh tim pengembangan"
+          },
+          "type": "textarea",
+          "id": "justifikasiJaminanKualitas"
+        },
+        {
+          "options": [
+            {
+              "label": "Belum ada kebijakan atau praktik keamanan data yang formal",
+              "weight": 10
+            },
+            {
+              "weight": 40,
+              "label": "Menerapkan praktik keamanan dasar dan kepatuhan minimal"
+            },
+            {
+              "weight": 70,
+              "label": "Memiliki kebijakan keamanan data yang terdefinisi dan audit internal berkala"
+            },
+            {
+              "label": "Bersertifikasi standar keamanan internasional (misal: ISO 27001) dan audit eksternal rutin",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai kepatuhan dan kesadaran risiko keamanan data sebagai aset krusial.",
+          "required": true,
+          "label": "Bagaimana Anda memastikan **keamanan data dan privasi pengguna** dalam operasional Anda?",
+          "id": "keamananDataPrivasi",
+          "type": "radio"
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiKeamananData",
+          "showIf": {
+            "fieldId": "keamananDataPrivasi",
+            "equals": "Belum ada kebijakan atau praktik keamanan data yang formal"
+          },
+          "required": true,
+          "label": "Mohon jelaskan mengapa **keamanan data** belum menjadi prioritas utama Anda.",
+          "aiReasoning": "Menggali alasan di balik rendahnya prioritas keamanan data.",
+          "gridSpan": 2
+        },
+        {
+          "required": true,
+          "label": "Unggah dokumen **sertifikasi keamanan data** Anda (misal: ISO 27001).",
+          "fileAccept": ".pdf",
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "keamananDataPrivasi",
+            "equals": "Bersertifikasi standar keamanan internasional (misal: ISO 27001) dan audit eksternal rutin"
+          },
+          "id": "buktiSertifikasiKeamanan",
+          "type": "file"
+        },
+        {
+          "type": "radio",
+          "id": "manajemenInsidenMonitoring",
+          "required": true,
+          "label": "Bagaimana sistem Anda dimonitor dan **insiden operasional** (downtime, bug) ditangani?",
+          "gridSpan": 2,
+          "aiReasoning": "Menilai kemampuan organisasi dalam mendeteksi dan merespons kegagalan sistem secara cepat.",
+          "options": [
+            {
+              "weight": 10,
+              "label": "Penanganan insiden bersifat reaktif, tanpa sistem monitoring khusus"
+            },
+            {
+              "label": "Ada monitoring dasar dan notifikasi manual untuk insiden",
+              "weight": 40
+            },
+            {
+              "label": "Memiliki sistem monitoring otomatis dan prosedur penanganan insiden yang terdefinisi",
+              "weight": 70
+            },
+            {
+              "weight": 95,
+              "label": "Sistem monitoring prediktif, penanganan insiden otomatis, dan analisis akar masalah berkelanjutan"
+            }
+          ]
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiManajemenInsiden",
+          "showIf": {
+            "equals": "Penanganan insiden bersifat reaktif, tanpa sistem monitoring khusus",
+            "fieldId": "manajemenInsidenMonitoring"
+          },
+          "aiReasoning": "Mengidentifikasi keterbatasan teknis atau proses dalam monitoring insiden.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan mengapa **penanganan insiden** Anda masih bersifat reaktif."
+        },
+        {
+          "options": [
+            {
+              "label": "Tidak ada pengelolaan formal, hanya berdasarkan kebutuhan mendesak",
+              "weight": 10
+            },
+            {
+              "weight": 35,
+              "label": "Ada kontrak dasar, namun tanpa evaluasi kinerja rutin"
+            },
+            {
+              "weight": 70,
+              "label": "Melakukan evaluasi kinerja vendor secara berkala dan memiliki SLA dasar"
+            },
+            {
+              "label": "Memiliki kerangka kerja manajemen vendor yang komprehensif, SLA ketat, dan kemitraan strategis",
+              "weight": 90
+            }
+          ],
+          "aiReasoning": "Menilai ketergantungan dan manajemen risiko terhadap pihak ketiga.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Bagaimana Anda mengelola **hubungan dengan vendor** atau pihak ketiga yang krusial?",
+          "type": "radio",
+          "id": "manajemenVendorPihakKetiga"
+        },
+        {
+          "aiReasoning": "Menganalisis alasan kurangnya formalitas dalam manajemen vendor.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan mengapa **pengelolaan vendor** Anda belum terstruktur.",
+          "id": "justifikasiManajemenVendor",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Tidak ada pengelolaan formal, hanya berdasarkan kebutuhan mendesak",
+            "fieldId": "manajemenVendorPihakKetiga"
+          }
+        },
+        {
+          "type": "radio",
+          "id": "rencanaPemulihanBencana",
+          "label": "Apakah Anda memiliki **rencana pemulihan bencana (DRP)** dan kelangsungan bisnis (BCP)?",
+          "required": true,
+          "aiReasoning": "Mengukur ketahanan organisasi terhadap skenario terburuk (disaster).",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 5,
+              "label": "Belum ada rencana formal"
+            },
+            {
+              "weight": 30,
+              "label": "Dalam tahap perencanaan atau konsep awal"
+            },
+            {
+              "label": "Sudah ada rencana, namun belum pernah diuji secara menyeluruh",
+              "weight": 65
+            },
+            {
+              "label": "Sudah ada rencana yang terdefinisi, diuji berkala, dan terus diperbarui",
+              "weight": 90
+            }
+          ]
+        },
+        {
+          "showIf": {
+            "fieldId": "rencanaPemulihanBencana",
+            "equals": "Belum ada rencana formal"
+          },
+          "id": "justifikasiRencanaBencana",
+          "type": "textarea",
+          "label": "Mohon jelaskan mengapa Anda belum memiliki **rencana pemulihan bencana** yang formal.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi hambatan dalam penyusunan strategi mitigasi bencana."
+        },
+        {
+          "type": "radio",
+          "id": "manajemenPengetahuanOperasional",
+          "required": true,
+          "label": "Bagaimana **pengetahuan operasional dan teknis** didokumentasikan dan disebarkan di tim?",
+          "options": [
+            {
+              "weight": 10,
+              "label": "Pengetahuan bersifat personal dan tidak terstruktur"
+            },
+            {
+              "weight": 35,
+              "label": "Ada beberapa dokumen, namun tersebar dan sulit diakses"
+            },
+            {
+              "label": "Memiliki repositori terpusat untuk dokumentasi teknis dan operasional",
+              "weight": 70
+            },
+            {
+              "weight": 90,
+              "label": "Sistem manajemen pengetahuan aktif, terintegrasi, dan mendorong berbagi informasi secara proaktif"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai efektivitas transfer pengetahuan untuk mencegah ketergantungan pada individu tertentu."
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiManajemenPengetahuan",
+          "showIf": {
+            "equals": "Pengetahuan bersifat personal dan tidak terstruktur",
+            "fieldId": "manajemenPengetahuanOperasional"
+          },
+          "label": "Mohon jelaskan tantangan Anda dalam **mengelola pengetahuan operasional** di tim.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Menggali hambatan dalam budaya berbagi pengetahuan."
+        }
+      ],
+      "stepNumber": 2
+    },
+    {
+      "title": "Asesmen Resiliensi & Profil Psikologis (Big Five)",
+      "fields": [
+        {
+          "label": "Bagaimana **reaksi Anda** saat menghadapi kemunduran tak terduga atau krisis besar dalam bisnis?",
+          "required": true,
+          "aiReasoning": "Mengukur stabilitas emosional dan ketahanan psikologis individu dalam situasi penuh tekanan.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Tetap tenang, menganalisis situasi secara objektif.",
+              "weight": 100
+            },
+            {
+              "weight": 75,
+              "label": "Merasa frustrasi, namun cepat bangkit dan mencari solusi."
+            },
+            {
+              "weight": 40,
+              "label": "Cenderung merasa kewalahan, butuh waktu untuk pulih."
+            },
+            {
+              "weight": 0,
+              "label": "Mudah panik atau kehilangan arah."
+            }
+          ],
+          "type": "radio",
+          "id": "reaksiSetback"
+        },
+        {
+          "label": "Mohon jelaskan lebih lanjut mengapa Anda cenderung **mudah panik atau kehilangan arah**.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Menggali akar penyebab dari respons emosional negatif untuk memahami pola koping individu.",
+          "id": "justifikasiReaksiSetback",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Mudah panik atau kehilangan arah.",
+            "fieldId": "reaksiSetback"
+          }
+        },
+        {
+          "required": true,
+          "label": "Bagaimana Anda mendekati **penetapan dan pencapaian tujuan** jangka panjang serta tugas harian?",
+          "gridSpan": 2,
+          "aiReasoning": "Menilai tingkat kesadaran (conscientiousness) dan kemampuan manajemen diri dalam eksekusi tugas.",
+          "options": [
+            {
+              "weight": 100,
+              "label": "Sangat terstruktur, disiplin, dan selalu membuat rencana detail."
+            },
+            {
+              "label": "Fleksibel namun tetap berorientasi pada tujuan utama.",
+              "weight": 75
+            },
+            {
+              "weight": 40,
+              "label": "Sering menunda, namun pada akhirnya menyelesaikan tugas."
+            },
+            {
+              "weight": 0,
+              "label": "Cenderung reaktif, jarang membuat rencana jangka panjang."
+            }
+          ],
+          "type": "radio",
+          "id": "pendekatanTujuan"
+        },
+        {
+          "showIf": {
+            "equals": "Cenderung reaktif, jarang membuat rencana jangka panjang.",
+            "fieldId": "pendekatanTujuan"
+          },
+          "id": "justifikasiPendekatanTujuan",
+          "type": "textarea",
+          "label": "Mohon jelaskan mengapa Anda cenderung **reaktif dan jarang membuat rencana jangka panjang**.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi hambatan dalam perencanaan strategis dan disiplin operasional."
+        },
+        {
+          "aiReasoning": "Mengevaluasi kemampuan kepemimpinan dan resiliensi dalam situasi krisis nyata.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Ceritakan pengalaman Anda saat startup menghadapi **tantangan kritis**. Bagaimana Anda secara pribadi mengatasi dan memimpin tim?",
+          "type": "textarea",
+          "id": "copingKrisis"
+        },
+        {
+          "options": [
+            {
+              "weight": 100,
+              "label": "Sangat terbuka, selalu mencari validasi dan siap pivot."
+            },
+            {
+              "label": "Terbuka dengan pertimbangan matang dan analisis mendalam.",
+              "weight": 75
+            },
+            {
+              "weight": 40,
+              "label": "Lebih suka berpegang pada rencana awal, perubahan hanya jika terpaksa."
+            },
+            {
+              "weight": 0,
+              "label": "Cenderung resisten terhadap perubahan besar."
+            }
+          ],
+          "aiReasoning": "Mengukur fleksibilitas kognitif dan keterbukaan terhadap pengalaman baru (openness to experience).",
+          "gridSpan": 2,
+          "label": "Seberapa terbuka Anda untuk melakukan **pivot atau perubahan arah strategi** bisnis berdasarkan data pasar baru?",
+          "required": true,
+          "type": "radio",
+          "id": "adaptasiStrategi"
+        },
+        {
+          "id": "justifikasiAdaptasiStrategi",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "adaptasiStrategi",
+            "equals": "Cenderung resisten terhadap perubahan besar."
+          },
+          "aiReasoning": "Memahami batasan psikologis individu dalam menerima perubahan fundamental.",
+          "gridSpan": 2,
+          "label": "Mohon jelaskan mengapa Anda cenderung **resisten terhadap perubahan besar**.",
+          "required": true
+        },
+        {
+          "type": "radio",
+          "id": "motivasiTim",
+          "required": true,
+          "label": "Bagaimana Anda biasanya **memotivasi dan memberi energi** kepada tim selama periode yang menantang?",
+          "options": [
+            {
+              "label": "Melalui komunikasi langsung, visi inspiratif, dan pengakuan.",
+              "weight": 100
+            },
+            {
+              "weight": 75,
+              "label": "Fokus pada data, fakta, dan kemajuan yang terukur."
+            },
+            {
+              "label": "Mendelegasikan kepada pemimpin tim untuk mengelola moral.",
+              "weight": 60
+            },
+            {
+              "label": "Cenderung bekerja sendiri dan berharap tim mengikuti.",
+              "weight": 0
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai gaya kepemimpinan dan kemampuan interpersonal dalam menjaga moral tim."
+        },
+        {
+          "aiReasoning": "Menganalisis kecenderungan isolasi diri dalam kepemimpinan.",
+          "gridSpan": 2,
+          "label": "Mohon jelaskan mengapa Anda cenderung **bekerja sendiri dan berharap tim mengikuti**.",
+          "required": true,
+          "id": "justifikasiMotivasiTim",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Cenderung bekerja sendiri dan berharap tim mengikuti.",
+            "fieldId": "motivasiTim"
+          }
+        },
+        {
+          "type": "radio",
+          "id": "penangananKonflik",
+          "required": true,
+          "label": "Bagaimana Anda menangani **ketidaksepakatan atau konflik** di antara tim manajemen senior?",
+          "options": [
+            {
+              "weight": 100,
+              "label": "Mencari konsensus melalui diskusi terbuka dan mediasi."
+            },
+            {
+              "label": "Menganalisis argumen, lalu mengambil keputusan yang paling rasional.",
+              "weight": 75
+            },
+            {
+              "label": "Menegaskan pandangan saya setelah mempertimbangkan masukan.",
+              "weight": 50
+            },
+            {
+              "weight": 0,
+              "label": "Cenderung menghindari konflik atau berharap masalah selesai sendiri."
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur kecerdasan emosional dan kemampuan negosiasi dalam lingkungan profesional."
+        },
+        {
+          "showIf": {
+            "equals": "Cenderung menghindari konflik atau berharap masalah selesai sendiri.",
+            "fieldId": "penangananKonflik"
+          },
+          "type": "textarea",
+          "id": "justifikasiPenangananKonflik",
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda cenderung **menghindari konflik atau berharap masalah selesai sendiri**.",
+          "aiReasoning": "Mengidentifikasi pola penghindaran konflik yang dapat menghambat dinamika tim.",
+          "gridSpan": 2
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Menilai tingkat kehati-hatian dan kemampuan antisipasi strategis.",
+          "options": [
+            {
+              "label": "Sangat detail, memiliki rencana kontingensi berlapis.",
+              "weight": 100
+            },
+            {
+              "label": "Cukup detail, dengan beberapa skenario yang dipertimbangkan.",
+              "weight": 75
+            },
+            {
+              "label": "Hanya garis besar, belum ada rencana aksi spesifik.",
+              "weight": 40
+            },
+            {
+              "weight": 0,
+              "label": "Belum ada rencana mitigasi yang konkret."
+            }
+          ],
+          "required": true,
+          "label": "Seberapa jauh Anda merencanakan **mitigasi risiko** untuk skenario terburuk dalam bisnis?",
+          "id": "mitigasiRisiko",
+          "type": "radio"
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda **belum memiliki rencana mitigasi yang konkret**.",
+          "aiReasoning": "Memahami alasan di balik kurangnya kesiapan menghadapi risiko.",
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "mitigasiRisiko",
+            "equals": "Belum ada rencana mitigasi yang konkret."
+          },
+          "id": "justifikasiMitigasiRisiko",
+          "type": "textarea"
+        },
+        {
+          "required": true,
+          "label": "Ketika menghadapi **kritik tajam atau kegagalan produk**, bagaimana Anda menjaga fokus dan motivasi?",
+          "aiReasoning": "Mengukur resiliensi terhadap umpan balik negatif dan kemampuan untuk belajar dari kegagalan.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Menganalisis kritik untuk pembelajaran, tetap termotivasi dan optimis."
+            },
+            {
+              "label": "Merasa kecewa sesaat, namun cepat bangkit dan mencari solusi.",
+              "weight": 75
+            },
+            {
+              "weight": 40,
+              "label": "Mudah terdemotivasi atau merasa pesimis untuk beberapa waktu."
+            },
+            {
+              "label": "Cenderung menyalahkan faktor eksternal atau kehilangan semangat.",
+              "weight": 0
+            }
+          ],
+          "type": "radio",
+          "id": "manajemenKritik"
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan lebih lanjut mengapa Anda cenderung **menyalahkan faktor eksternal atau kehilangan semangat**.",
+          "aiReasoning": "Menganalisis locus of control individu saat menghadapi kegagalan.",
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "manajemenKritik",
+            "equals": "Cenderung menyalahkan faktor eksternal atau kehilangan semangat."
+          },
+          "type": "textarea",
+          "id": "justifikasiManajemenKritik"
+        },
+        {
+          "type": "radio",
+          "id": "delegasiTugas",
+          "required": true,
+          "label": "Seberapa nyaman Anda **mendelegasikan tugas-tugas krusial** kepada tim?",
+          "aiReasoning": "Menilai tingkat kepercayaan (trust) dan kemampuan manajerial dalam memberdayakan orang lain.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Sangat nyaman, percaya pada kemampuan tim dan fokus pada strategi."
+            },
+            {
+              "weight": 75,
+              "label": "Cukup nyaman, dengan sistem pengawasan dan pelaporan yang jelas."
+            },
+            {
+              "weight": 40,
+              "label": "Cenderung melakukan sendiri tugas-tugas penting untuk memastikan kualitas."
+            },
+            {
+              "weight": 0,
+              "label": "Sulit mendelegasikan, merasa hanya saya yang bisa melakukannya dengan benar."
+            }
+          ]
+        },
+        {
+          "id": "justifikasiDelegasiTugas",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "delegasiTugas",
+            "equals": "Sulit mendelegasikan, merasa hanya saya yang bisa melakukannya dengan benar."
+          },
+          "label": "Mohon jelaskan mengapa Anda merasa **sulit mendelegasikan tugas-tugas krusial**.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi hambatan psikologis dalam melepaskan kontrol (micromanagement)."
+        }
+      ],
+      "description": "Mengukur tingkat ketahanan stres, stabilitas emosional (Neuroticism), dan kedisiplinan eksekusi (Conscientiousness) founder dalam menghadapi tekanan hiper-pertumbuhan.",
+      "stepNumber": 3
+    },
+    {
+      "stepNumber": 4,
+      "description": "Mengevaluasi metodologi founder dalam memvalidasi masalah pengguna, kecepatan merilis MVP, dan kemampuan beradaptasi berdasarkan umpan balik pasar.",
+      "title": "Validasi Pasar & Traksi Produk (MVP)",
+      "fields": [
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur kedalaman validasi pasar untuk memastikan produk menyelesaikan masalah nyata, bukan sekadar asumsi.",
+          "options": [
+            {
+              "label": "Hanya berdasarkan asumsi pribadi atau intuisi.",
+              "weight": 0
+            },
+            {
+              "label": "Diskusi informal dengan beberapa calon pengguna.",
+              "weight": 20
+            },
+            {
+              "label": "Wawancara terstruktur atau survei dengan segmen pasar yang jelas.",
+              "weight": 60
+            },
+            {
+              "weight": 100,
+              "label": "Melalui pilot project atau eksperimen pasar dengan data terukur."
+            }
+          ],
+          "label": "Bagaimana Anda mengonfirmasi bahwa **masalah** yang ingin Anda selesaikan benar-benar signifikan bagi **target pengguna** Anda?",
+          "required": true,
+          "id": "validasiMasalah",
+          "type": "radio"
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiAsumsiMasalah",
+          "showIf": {
+            "fieldId": "validasiMasalah",
+            "equals": "Hanya berdasarkan asumsi pribadi atau intuisi."
+          },
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda hanya mengandalkan **asumsi pribadi atau intuisi** dalam validasi masalah.",
+          "gridSpan": 2,
+          "aiReasoning": "Menggali rasionalitas di balik pendekatan validasi yang bersifat subjektif."
+        },
+        {
+          "label": "Unggah ringkasan hasil **pilot project** atau **data eksperimen pasar** Anda.",
+          "required": true,
+          "aiReasoning": "Memverifikasi bukti empiris dari klaim validasi pasar yang terukur.",
+          "fileAccept": ".pdf,.jpg,.png",
+          "gridSpan": 2,
+          "showIf": {
+            "equals": "Melalui pilot project atau eksperimen pasar dengan data terukur.",
+            "fieldId": "validasiMasalah"
+          },
+          "id": "buktiValidasiMasalah",
+          "type": "file"
+        },
+        {
+          "type": "radio",
+          "id": "definisiMVP",
+          "options": [
+            {
+              "label": "MVP saya memiliki banyak fitur, namun belum stabil.",
+              "weight": 10
+            },
+            {
+              "weight": 70,
+              "label": "Fokus pada satu atau dua fitur inti yang memecahkan masalah utama."
+            },
+            {
+              "label": "Berupa prototipe interaktif atau landing page untuk mengukur minat.",
+              "weight": 50
+            },
+            {
+              "label": "MVP dirancang untuk memvalidasi hipotesis bisnis paling kritis.",
+              "weight": 100
+            }
+          ],
+          "aiReasoning": "Menilai kedisiplinan dalam membatasi fitur untuk mencapai efisiensi pengembangan.",
+          "gridSpan": 2,
+          "label": "Bagaimana Anda mendefinisikan dan membatasi lingkup **Minimum Viable Product (MVP)** Anda?",
+          "required": true
+        },
+        {
+          "id": "alasanFiturBanyakMVP",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "definisiMVP",
+            "equals": "MVP saya memiliki banyak fitur, namun belum stabil."
+          },
+          "label": "Mohon jelaskan mengapa MVP Anda memiliki **banyak fitur** pada tahap awal.",
+          "required": true,
+          "aiReasoning": "Memahami strategi di balik keputusan untuk meluncurkan produk dengan fitur yang kompleks.",
+          "gridSpan": 2
+        },
+        {
+          "id": "contohHipotesisMVP",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "definisiMVP",
+            "equals": "MVP dirancang untuk memvalidasi hipotesis bisnis paling kritis."
+          },
+          "label": "Berikan contoh **hipotesis bisnis** paling kritis yang ingin Anda validasi dengan MVP Anda.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Menguji kejelasan fokus bisnis dalam proses pengembangan produk."
+        },
+        {
+          "required": true,
+          "label": "Metode apa yang Anda gunakan untuk menguji **MVP** Anda dengan **pengguna awal**?",
+          "options": [
+            {
+              "label": "Tidak ada pengujian formal, langsung diluncurkan.",
+              "weight": 0
+            },
+            {
+              "label": "Uji internal terbatas dengan tim atau lingkaran terdekat.",
+              "weight": 30
+            },
+            {
+              "weight": 70,
+              "label": "Uji A/B atau pengujian kelompok kecil dengan metrik yang ditentukan."
+            },
+            {
+              "label": "Peluncuran publik terbatas (soft launch) dengan sistem pengumpulan umpan balik yang terstruktur.",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai metodologi pengujian untuk memastikan feedback yang didapat relevan dan berkualitas.",
+          "id": "metodeUjiMVP",
+          "type": "radio"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi risiko operasional akibat ketiadaan proses pengujian.",
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda memilih untuk **tidak melakukan pengujian formal** pada MVP Anda.",
+          "type": "textarea",
+          "id": "alasanTanpaUjiMVP",
+          "showIf": {
+            "fieldId": "metodeUjiMVP",
+            "equals": "Tidak ada pengujian formal, langsung diluncurkan."
+          }
+        },
+        {
+          "showIf": {
+            "equals": "Peluncuran publik terbatas (soft launch) dengan sistem pengumpulan umpan balik yang terstruktur.",
+            "fieldId": "metodeUjiMVP"
+          },
+          "id": "metrikUjiMVP",
+          "type": "textarea",
+          "label": "Sebutkan **metrik kunci** yang Anda pantau selama peluncuran publik terbatas MVP Anda.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Memastikan adanya sistem pengukuran yang jelas dalam fase peluncuran."
+        },
+        {
+          "required": true,
+          "label": "Bagaimana Anda mengukur **traksi awal** atau **product-market fit** pada fase awal?",
+          "options": [
+            {
+              "label": "Hanya berdasarkan jumlah unduhan atau registrasi.",
+              "weight": 20
+            },
+            {
+              "weight": 70,
+              "label": "Melacak retensi pengguna dan tingkat penggunaan fitur kunci."
+            },
+            {
+              "weight": 80,
+              "label": "Menggunakan Net Promoter Score (NPS) atau survei kepuasan pengguna."
+            },
+            {
+              "label": "Kombinasi metrik kuantitatif (retensi, frekuensi) dan kualitatif (NPS, testimoni).",
+              "weight": 100
+            }
+          ],
+          "aiReasoning": "Menilai kematangan startup dalam menggunakan data untuk mengukur keberhasilan produk.",
+          "gridSpan": 2,
+          "type": "radio",
+          "id": "pengukuranTraksiAwal"
+        },
+        {
+          "aiReasoning": "Mendorong pemikiran lebih dalam mengenai metrik retensi dan keterlibatan pengguna.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Selain jumlah unduhan atau registrasi, **metrik apa lagi** yang Anda pertimbangkan untuk mengukur keberhasilan produk?",
+          "showIf": {
+            "fieldId": "pengukuranTraksiAwal",
+            "equals": "Hanya berdasarkan jumlah unduhan atau registrasi."
+          },
+          "type": "textarea",
+          "id": "pertimbanganMetrikLain"
+        },
+        {
+          "id": "contohMetrikTraksi",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "pengukuranTraksiAwal",
+            "equals": "Kombinasi metrik kuantitatif (retensi, frekuensi) dan kualitatif (NPS, testimoni)."
+          },
+          "aiReasoning": "Memvalidasi pemahaman praktis mengenai metrik pertumbuhan yang komprehensif.",
+          "gridSpan": 2,
+          "label": "Berikan contoh **metrik kuantitatif dan kualitatif** yang Anda gunakan untuk mengukur traksi awal.",
+          "required": true
+        },
+        {
+          "id": "integrasiUmpanBalik",
+          "type": "radio",
+          "required": true,
+          "label": "Bagaimana proses Anda dalam **mengintegrasikan umpan balik pengguna** ke dalam pengembangan produk selanjutnya?",
+          "options": [
+            {
+              "label": "Tidak ada proses formal, hanya diskusi ad-hoc.",
+              "weight": 10
+            },
+            {
+              "label": "Mengumpulkan umpan balik, namun prioritas implementasi belum terstruktur.",
+              "weight": 40
+            },
+            {
+              "label": "Memiliki siklus sprint terstruktur dengan backlog yang diisi dari umpan balik.",
+              "weight": 80
+            },
+            {
+              "weight": 100,
+              "label": "Menerapkan framework validasi berkelanjutan (misal: Lean Startup, Build-Measure-Learn)."
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai apakah startup memiliki siklus iterasi yang responsif terhadap kebutuhan pasar."
+        },
+        {
+          "aiReasoning": "Mengidentifikasi hambatan operasional dalam manajemen feedback.",
+          "gridSpan": 2,
+          "label": "Jelaskan **tantangan** yang Anda hadapi dalam mengintegrasikan umpan balik pengguna secara efektif.",
+          "required": true,
+          "type": "textarea",
+          "id": "tantanganUmpanBalik",
+          "showIf": {
+            "fieldId": "integrasiUmpanBalik",
+            "equals": "Tidak ada proses formal, hanya diskusi ad-hoc."
+          }
+        },
+        {
+          "label": "Deskripsikan **framework validasi berkelanjutan** yang Anda terapkan dan bagaimana cara kerjanya.",
+          "required": true,
+          "aiReasoning": "Memastikan penerapan metodologi pengembangan yang terstruktur dan terukur.",
+          "gridSpan": 2,
+          "id": "deskripsiFramework",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "integrasiUmpanBalik",
+            "equals": "Menerapkan framework validasi berkelanjutan (misal: Lean Startup, Build-Measure-Learn)."
+          }
+        },
+        {
+          "type": "radio",
+          "id": "kecepatanValidasi",
+          "required": true,
+          "label": "Berapa lama waktu yang Anda butuhkan untuk mencapai **validasi awal** yang jelas untuk proposisi nilai inti produk Anda?",
+          "options": [
+            {
+              "label": "Lebih dari 12 bulan.",
+              "weight": 10
+            },
+            {
+              "label": "Antara 6 hingga 12 bulan.",
+              "weight": 40
+            },
+            {
+              "label": "Antara 3 hingga 6 bulan.",
+              "weight": 70
+            },
+            {
+              "weight": 100,
+              "label": "Kurang dari 3 bulan."
+            }
+          ],
+          "aiReasoning": "Mengukur efisiensi startup dalam mencapai product-market fit.",
+          "gridSpan": 2
+        },
+        {
+          "id": "alasanValidasiLama",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Lebih dari 12 bulan.",
+            "fieldId": "kecepatanValidasi"
+          },
+          "gridSpan": 2,
+          "aiReasoning": "Menganalisis hambatan yang memperlambat siklus validasi produk.",
+          "label": "Mohon jelaskan faktor-faktor yang menyebabkan proses validasi Anda memakan waktu **lebih dari 12 bulan**.",
+          "required": true
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Menilai prioritas strategis startup dalam mengalokasikan modal dan waktu.",
+          "options": [
+            {
+              "weight": 20,
+              "label": "Pengembangan fitur baru secara ekstensif."
+            },
+            {
+              "weight": 30,
+              "label": "Pemasaran agresif untuk akuisisi pengguna."
+            },
+            {
+              "weight": 70,
+              "label": "Optimasi pengalaman pengguna dan perbaikan bug."
+            },
+            {
+              "label": "Validasi hipotesis bisnis dan pembelajaran pasar.",
+              "weight": 100
+            }
+          ],
+          "label": "Pada tahap MVP, di mana **fokus utama alokasi sumber daya** Anda?",
+          "required": true,
+          "id": "fokusSumberDayaMVP",
+          "type": "radio"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Memahami rasionalitas di balik strategi pengembangan fitur yang masif.",
+          "required": true,
+          "label": "Jelaskan alasan di balik fokus Anda pada **pengembangan fitur ekstensif** pada tahap MVP.",
+          "showIf": {
+            "fieldId": "fokusSumberDayaMVP",
+            "equals": "Pengembangan fitur baru secara ekstensif."
+          },
+          "type": "textarea",
+          "id": "justifikasiFiturEkstensif"
+        },
+        {
+          "aiReasoning": "Mengevaluasi efektivitas strategi akuisisi pengguna di tahap awal.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Deskripsikan **strategi pemasaran agresif** yang Anda terapkan pada tahap MVP dan hasil yang dicapai.",
+          "showIf": {
+            "fieldId": "fokusSumberDayaMVP",
+            "equals": "Pemasaran agresif untuk akuisisi pengguna."
+          },
+          "id": "strategiPemasaranMVP",
+          "type": "textarea"
+        },
+        {
+          "required": true,
+          "label": "Apakah Anda memiliki pemahaman awal tentang **unit economics** (CAC dan LTV) pada tahap validasi?",
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur kesadaran finansial startup terhadap keberlanjutan model bisnis.",
+          "options": [
+            {
+              "weight": 0,
+              "label": "Belum ada estimasi atau data."
+            },
+            {
+              "weight": 40,
+              "label": "Memiliki estimasi kasar berdasarkan asumsi."
+            },
+            {
+              "label": "Memiliki data awal dari pilot project atau uji coba terbatas.",
+              "weight": 70
+            },
+            {
+              "weight": 100,
+              "label": "Secara aktif melacak dan mengoptimalkan metrik ini sejak awal."
+            }
+          ],
+          "id": "pemahamanUnitEconomics",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "equals": "Belum ada estimasi atau data.",
+            "fieldId": "pemahamanUnitEconomics"
+          },
+          "id": "rencanaUnitEconomics",
+          "type": "textarea",
+          "aiReasoning": "Memastikan adanya komitmen untuk membangun disiplin finansial.",
+          "gridSpan": 2,
+          "label": "Jelaskan rencana Anda untuk mulai **melacak dan menganalisis** metrik unit economics.",
+          "required": true
+        },
+        {
+          "label": "Berikan contoh bagaimana Anda telah **mengoptimalkan metrik unit economics** pada tahap awal.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Memvalidasi kemampuan startup dalam meningkatkan efisiensi biaya akuisisi.",
+          "type": "textarea",
+          "id": "contohOptimasiUnitEconomics",
+          "showIf": {
+            "equals": "Secara aktif melacak dan mengoptimalkan metrik ini sejak awal.",
+            "fieldId": "pemahamanUnitEconomics"
+          }
+        },
+        {
+          "label": "Bagaimana Anda merespons jika validasi pasar menunjukkan bahwa **ide awal Anda tidak sesuai** dengan kebutuhan pengguna?",
+          "required": true,
+          "options": [
+            {
+              "weight": 10,
+              "label": "Melanjutkan dengan sedikit modifikasi, berharap akan berhasil."
+            },
+            {
+              "label": "Mencari segmen pasar baru untuk produk yang sama.",
+              "weight": 40
+            },
+            {
+              "weight": 80,
+              "label": "Melakukan pivot signifikan pada produk atau model bisnis."
+            },
+            {
+              "weight": 100,
+              "label": "Menghentikan proyek dan belajar dari kegagalan."
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai fleksibilitas dan ketahanan mental pendiri dalam menghadapi kegagalan validasi.",
+          "id": "strategiPivot",
+          "type": "radio"
+        },
+        {
+          "required": true,
+          "label": "Jelaskan alasan Anda memilih untuk **melanjutkan dengan sedikit modifikasi** meskipun ada indikasi ketidaksesuaian pasar.",
+          "gridSpan": 2,
+          "aiReasoning": "Menggali keyakinan pendiri terhadap visi produk di tengah tantangan pasar.",
+          "type": "textarea",
+          "id": "justifikasiLanjutModifikasi",
+          "showIf": {
+            "fieldId": "strategiPivot",
+            "equals": "Melanjutkan dengan sedikit modifikasi, berharap akan berhasil."
+          }
+        },
+        {
+          "id": "contohPivot",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "strategiPivot",
+            "equals": "Melakukan pivot signifikan pada produk atau model bisnis."
+          },
+          "gridSpan": 2,
+          "aiReasoning": "Memvalidasi pengalaman pendiri dalam melakukan adaptasi strategis.",
+          "required": true,
+          "label": "Berikan contoh **pivot signifikan** yang pernah Anda lakukan atau pertimbangkan, serta alasannya."
+        },
+        {
+          "aiReasoning": "Mengukur transparansi dan kesiapan data startup untuk proses asesmen lebih lanjut.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Tidak bersedia.",
+              "weight": 0
+            },
+            {
+              "weight": 50,
+              "label": "Bersedia membagikan ringkasan atau poin-poin penting."
+            },
+            {
+              "label": "Bersedia membagikan dokumen lengkap.",
+              "weight": 100
+            }
+          ],
+          "required": true,
+          "label": "Jika Anda memiliki **dokumen pendukung** (laporan metrik, testimoni, hasil survei) yang menunjukkan traksi awal, apakah Anda bersedia membagikannya?",
+          "type": "radio",
+          "id": "buktiTraksi"
+        },
+        {
+          "fileAccept": ".pdf,.jpg,.png",
+          "aiReasoning": "Memverifikasi klaim traksi melalui dokumen pendukung.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Unggah **ringkasan atau poin-poin penting** terkait traksi awal produk Anda.",
+          "showIf": {
+            "fieldId": "buktiTraksi",
+            "equals": "Bersedia membagikan ringkasan atau poin-poin penting."
+          },
+          "id": "unggahRingkasanTraksi",
+          "type": "file"
+        },
+        {
+          "aiReasoning": "Memverifikasi klaim traksi melalui dokumen pendukung yang komprehensif.",
+          "fileAccept": ".pdf,.jpg,.png",
+          "gridSpan": 2,
+          "label": "Unggah **dokumen lengkap** yang menunjukkan traksi awal produk Anda.",
+          "required": true,
+          "showIf": {
+            "fieldId": "buktiTraksi",
+            "equals": "Bersedia membagikan dokumen lengkap."
+          },
+          "type": "file",
+          "id": "unggahDokumenTraksi"
+        }
+      ]
+    },
+    {
+      "stepNumber": 5,
+      "description": "Menganalisis logika alokasi modal, efisiensi biaya akuisisi pelanggan berbanding nilai siklus hidup (LTV:CAC), serta strategi memperpanjang runway.",
+      "title": "Ketahanan Finansial & Unit Economics",
+      "fields": [
+        {
+          "label": "Seberapa dalam pemahaman Anda mengenai metrik **Customer Lifetime Value (LTV)** dan **Customer Acquisition Cost (CAC)** dalam konteks bisnis yang Anda jalankan?",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur literasi finansial pendiri terkait efisiensi akuisisi pelanggan dan keberlanjutan model bisnis jangka panjang.",
+          "options": [
+            {
+              "label": "Tidak familiar sama sekali",
+              "weight": 0
+            },
+            {
+              "label": "Pernah mendengar, namun belum mengukur",
+              "weight": 20
+            },
+            {
+              "weight": 50,
+              "label": "Mengukur, namun belum mengoptimalkan"
+            },
+            {
+              "label": "Mengukur dan secara aktif mengoptimalkan rasio LTV:CAC",
+              "weight": 100
+            }
+          ],
+          "id": "pemahamanLTVCAC",
+          "type": "radio"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Memvalidasi kemampuan praktis pendiri dalam menerapkan metrik finansial ke dalam strategi operasional nyata.",
+          "label": "Mohon jelaskan satu contoh konkret strategi yang Anda terapkan untuk mengoptimalkan rasio **LTV:CAC**.",
+          "required": true,
+          "showIf": {
+            "fieldId": "pemahamanLTVCAC",
+            "equals": "Mengukur dan secara aktif mengoptimalkan rasio LTV:CAC"
+          },
+          "type": "textarea",
+          "id": "contohOptimasiLTVCAC"
+        },
+        {
+          "id": "manajemenBurnRate",
+          "type": "radio",
+          "options": [
+            {
+              "label": "Tidak memantau secara rutin",
+              "weight": 0
+            },
+            {
+              "weight": 30,
+              "label": "Memantau secara bulanan, namun tanpa proyeksi"
+            },
+            {
+              "weight": 60,
+              "label": "Memiliki proyeksi burn rate, namun belum ada mitigasi"
+            },
+            {
+              "weight": 100,
+              "label": "Memiliki sistem proyeksi burn rate yang akurat dan strategi mitigasi risiko"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai kedisiplinan pendiri dalam menjaga kesehatan arus kas dan manajemen risiko likuiditas.",
+          "label": "Bagaimana Anda secara pribadi memantau dan mengelola tingkat pengeluaran kas (**burn rate**) startup Anda untuk memastikan keberlanjutan operasional?",
+          "required": true
+        },
+        {
+          "id": "strategiMitigasiBurnRate",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "manajemenBurnRate",
+            "equals": "Memiliki sistem proyeksi burn rate yang akurat dan strategi mitigasi risiko"
+          },
+          "label": "Berikan satu contoh strategi **mitigasi risiko** yang pernah Anda terapkan saat burn rate mendekati batas kritis.",
+          "required": true,
+          "aiReasoning": "Menguji ketangkasan pendiri dalam mengambil keputusan sulit saat menghadapi krisis keuangan.",
+          "gridSpan": 2
+        },
+        {
+          "label": "Berapa perkiraan **'runway'** (jangka waktu kas tersedia) startup Anda saat ini, dengan asumsi tingkat pengeluaran konstan?",
+          "required": true,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Kurang dari 3 bulan"
+            },
+            {
+              "weight": 30,
+              "label": "3 - 6 bulan"
+            },
+            {
+              "weight": 70,
+              "label": "7 - 12 bulan"
+            },
+            {
+              "label": "Lebih dari 12 bulan",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai urgensi dan stabilitas finansial startup dalam jangka pendek hingga menengah.",
+          "type": "select",
+          "id": "proyeksiRunway"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Mengevaluasi kesiapan rencana darurat pendiri dalam menghadapi ancaman kehabisan modal.",
+          "required": true,
+          "label": "Dengan **runway** yang singkat, langkah-langkah konkret apa yang sedang Anda persiapkan untuk memperpanjang keberlangsungan operasional?",
+          "showIf": {
+            "equals": "Kurang dari 3 bulan",
+            "fieldId": "proyeksiRunway"
+          },
+          "type": "textarea",
+          "id": "rencanaRunwayPendek"
+        },
+        {
+          "required": true,
+          "label": "Dalam alokasi dana yang Anda pimpin, prioritas utama Anda saat ini cenderung pada aspek:",
+          "options": [
+            {
+              "label": "Akuisisi pengguna agresif tanpa melihat profitabilitas jangka pendek",
+              "weight": 20
+            },
+            {
+              "weight": 70,
+              "label": "Pengembangan produk inti dan fitur baru"
+            },
+            {
+              "weight": 80,
+              "label": "Efisiensi operasional dan pengurangan biaya"
+            },
+            {
+              "weight": 100,
+              "label": "Membangun cadangan kas yang kuat untuk stabilitas jangka panjang"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi filosofi pertumbuhan pendiri dan bagaimana mereka memprioritaskan modal.",
+          "type": "radio",
+          "id": "prioritasAlokasiDana"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Memahami rasionalitas di balik strategi pertumbuhan agresif dan mitigasi risiko yang menyertainya.",
+          "required": true,
+          "label": "Mohon jelaskan alasan di balik prioritas **akuisisi pengguna yang agresif**, dan bagaimana Anda mengelola risikonya.",
+          "showIf": {
+            "equals": "Akuisisi pengguna agresif tanpa melihat profitabilitas jangka pendek",
+            "fieldId": "prioritasAlokasiDana"
+          },
+          "id": "justifikasiAkuisisiAgresif",
+          "type": "textarea"
+        },
+        {
+          "label": "Bagaimana Anda secara pribadi menyeimbangkan obsesi terhadap **pertumbuhan cepat** dengan kebutuhan untuk mencapai **profitabilitas** yang berkelanjutan?",
+          "required": true,
+          "options": [
+            {
+              "label": "Pertumbuhan adalah segalanya, profitabilitas akan mengikuti",
+              "weight": 10
+            },
+            {
+              "weight": 50,
+              "label": "Fokus pada pertumbuhan, namun mulai mempertimbangkan profitabilitas"
+            },
+            {
+              "label": "Berusaha menyeimbangkan keduanya secara strategis",
+              "weight": 80
+            },
+            {
+              "label": "Profitabilitas adalah fondasi utama, pertumbuhan harus sehat",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai kematangan strategis pendiri dalam menavigasi dilema antara skala dan profit.",
+          "type": "radio",
+          "id": "keseimbanganProfitabilitasPertumbuhan"
+        },
+        {
+          "aiReasoning": "Menggali visi jangka panjang pendiri terkait model bisnis dan keberlanjutan ekonomi perusahaan.",
+          "gridSpan": 2,
+          "label": "Jelaskan keyakinan Anda mengapa **pertumbuhan** harus menjadi prioritas utama, dan bagaimana Anda melihat **profitabilitas** di masa depan.",
+          "required": true,
+          "type": "textarea",
+          "id": "keyakinanPertumbuhan",
+          "showIf": {
+            "equals": "Pertumbuhan adalah segalanya, profitabilitas akan mengikuti",
+            "fieldId": "keseimbanganProfitabilitasPertumbuhan"
+          }
+        },
+        {
+          "aiReasoning": "Menilai integritas tata kelola keuangan dan profesionalisme pendiri dalam mengelola aset perusahaan.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Sering tercampur, terutama saat ada kebutuhan mendesak",
+              "weight": 0
+            },
+            {
+              "weight": 40,
+              "label": "Berusaha memisahkan, namun kadang masih ada tumpang tindih"
+            },
+            {
+              "weight": 80,
+              "label": "Memiliki rekening terpisah dan pencatatan yang rapi"
+            },
+            {
+              "label": "Pemisahan yang sangat ketat dengan sistem akuntansi yang profesional",
+              "weight": 100
+            }
+          ],
+          "required": true,
+          "label": "Bagaimana Anda memastikan pemisahan yang ketat antara **keuangan pribadi** dan **keuangan startup**, terutama saat startup menghadapi tekanan kas?",
+          "id": "pengelolaanKeuanganPribadiBisnis",
+          "type": "radio"
+        },
+        {
+          "id": "tantanganPemisahanKeuangan",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Sering tercampur, terutama saat ada kebutuhan mendesak",
+            "fieldId": "pengelolaanKeuanganPribadiBisnis"
+          },
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi hambatan operasional dalam tata kelola keuangan dan komitmen pendiri untuk perbaikan.",
+          "label": "Apa tantangan terbesar yang Anda hadapi dalam menjaga **pemisahan keuangan** pribadi dan startup, dan bagaimana Anda berencana mengatasinya?",
+          "required": true
+        }
+      ]
+    },
+    {
+      "fields": [
+        {
+          "aiReasoning": "Pertanyaan ini mengukur tingkat ketergantungan organisasi terhadap individu kunci dan kematangan sistem delegasi.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Ada sistem delegasi dan dokumentasi yang jelas",
+              "weight": 90
+            },
+            {
+              "label": "Ada beberapa individu kunci yang bisa mengambil alih",
+              "weight": 50
+            },
+            {
+              "weight": 10,
+              "label": "Saya pribadi yang menangani sebagian besar tugas penting"
+            }
+          ],
+          "required": true,
+          "label": "Bagaimana Anda memastikan **keberlanjutan operasional** jika salah satu pemimpin kunci tidak dapat bertugas?",
+          "id": "mekanismeDelegasi",
+          "type": "radio"
+        },
+        {
+          "id": "justifikasiDelegasi",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Saya pribadi yang menangani sebagian besar tugas penting",
+            "fieldId": "mekanismeDelegasi"
+          },
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda pribadi yang menangani sebagian besar tugas penting dan bagaimana Anda mengelola risiko **Bus Factor**.",
+          "gridSpan": 2,
+          "aiReasoning": "Analisis mendalam diperlukan untuk memahami hambatan struktural yang membuat pemimpin menjadi titik kegagalan tunggal."
+        },
+        {
+          "type": "radio",
+          "id": "definisiAplayers",
+          "label": "Bagaimana Anda mendefinisikan dan menarik **talenta terbaik (A-Players)** ke dalam tim Anda?",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Menilai apakah organisasi memiliki standar rekrutmen yang terukur untuk membangun kepadatan bakat.",
+          "options": [
+            {
+              "label": "Memiliki proses rekrutmen terstruktur dan kriteria A-Player yang jelas",
+              "weight": 95
+            },
+            {
+              "label": "Mengandalkan jaringan pribadi dan reputasi perusahaan",
+              "weight": 60
+            },
+            {
+              "weight": 15,
+              "label": "Belum ada definisi atau proses rekrutmen A-Player yang spesifik"
+            }
+          ]
+        },
+        {
+          "required": true,
+          "label": "Unggah dokumen **proses rekrutmen** atau kriteria A-Player Anda (misal: SOP, matriks kompetensi).",
+          "fileAccept": ".pdf,.doc,.docx",
+          "gridSpan": 2,
+          "type": "file",
+          "id": "buktiAplayers",
+          "showIf": {
+            "equals": "Memiliki proses rekrutmen terstruktur dan kriteria A-Player yang jelas",
+            "fieldId": "definisiAplayers"
+          }
+        },
+        {
+          "label": "Mohon jelaskan mengapa belum ada definisi atau proses rekrutmen A-Player yang spesifik di tim Anda.",
+          "required": true,
+          "aiReasoning": "Mengidentifikasi kendala dalam standarisasi kualitas rekrutmen.",
+          "gridSpan": 2,
+          "showIf": {
+            "equals": "Belum ada definisi atau proses rekrutmen A-Player yang spesifik",
+            "fieldId": "definisiAplayers"
+          },
+          "type": "textarea",
+          "id": "justifikasiAplayers"
+        },
+        {
+          "type": "radio",
+          "id": "programPengembanganLeader",
+          "label": "Program **pengembangan kepemimpinan** apa yang Anda terapkan untuk tim manajerial Anda?",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Mengevaluasi investasi organisasi dalam menciptakan pemimpin masa depan.",
+          "options": [
+            {
+              "label": "Program internal terstruktur dengan modul pelatihan berkelanjutan",
+              "weight": 90
+            },
+            {
+              "label": "Mentoring ad-hoc dan kesempatan belajar dari proyek",
+              "weight": 50
+            },
+            {
+              "weight": 10,
+              "label": "Belum ada program pengembangan kepemimpinan yang spesifik"
+            }
+          ]
+        },
+        {
+          "required": true,
+          "label": "Unggah modul atau silabus **program pengembangan kepemimpinan** Anda.",
+          "fileAccept": ".pdf,.doc,.docx",
+          "gridSpan": 2,
+          "type": "file",
+          "id": "buktiPengembanganLeader",
+          "showIf": {
+            "equals": "Program internal terstruktur dengan modul pelatihan berkelanjutan",
+            "fieldId": "programPengembanganLeader"
+          }
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan mengapa belum ada program pengembangan kepemimpinan yang spesifik di tim Anda.",
+          "gridSpan": 2,
+          "aiReasoning": "Memahami prioritas pengembangan SDM dalam struktur organisasi.",
+          "id": "justifikasiPengembanganLeader",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "programPengembanganLeader",
+            "equals": "Belum ada program pengembangan kepemimpinan yang spesifik"
+          }
+        },
+        {
+          "type": "radio",
+          "id": "sistemManajemenKinerja",
+          "required": true,
+          "label": "Bagaimana Anda mengelola **kinerja** dan memberikan umpan balik konstruktif kepada tim Anda secara berkala?",
+          "options": [
+            {
+              "weight": 90,
+              "label": "Sistem evaluasi kinerja formal dengan siklus umpan balik 360 derajat"
+            },
+            {
+              "weight": 50,
+              "label": "Diskusi informal berkala dan tinjauan kinerja tahunan"
+            },
+            {
+              "label": "Umpan balik hanya diberikan saat ada masalah atau proyek selesai",
+              "weight": 10
+            }
+          ],
+          "aiReasoning": "Menilai efektivitas mekanisme umpan balik dalam menjaga standar performa tinggi.",
+          "gridSpan": 2
+        },
+        {
+          "showIf": {
+            "fieldId": "sistemManajemenKinerja",
+            "equals": "Sistem evaluasi kinerja formal dengan siklus umpan balik 360 derajat"
+          },
+          "type": "file",
+          "id": "buktiManajemenKinerja",
+          "label": "Unggah contoh template **evaluasi kinerja** atau laporan umpan balik Anda.",
+          "required": true,
+          "fileAccept": ".pdf,.doc,.docx",
+          "gridSpan": 2
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan mengapa umpan balik hanya diberikan saat ada masalah atau proyek selesai di tim Anda.",
+          "gridSpan": 2,
+          "aiReasoning": "Menganalisis risiko dari budaya umpan balik yang reaktif.",
+          "type": "textarea",
+          "id": "justifikasiManajemenKinerja",
+          "showIf": {
+            "fieldId": "sistemManajemenKinerja",
+            "equals": "Umpan balik hanya diberikan saat ada masalah atau proyek selesai"
+          }
+        },
+        {
+          "label": "Apakah Anda memiliki **rencana suksesi** yang terdokumentasi untuk posisi-posisi kunci dalam organisasi Anda?",
+          "required": true,
+          "options": [
+            {
+              "weight": 95,
+              "label": "Ya, terencana dengan baik dan ditinjau secara berkala"
+            },
+            {
+              "weight": 50,
+              "label": "Sedang dalam proses penyusunan untuk beberapa posisi"
+            },
+            {
+              "label": "Belum ada rencana suksesi yang spesifik",
+              "weight": 5
+            }
+          ],
+          "aiReasoning": "Mengukur kesiapan organisasi dalam menghadapi transisi kepemimpinan yang tidak terduga.",
+          "gridSpan": 2,
+          "id": "rencanaSuksesi",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "fieldId": "rencanaSuksesi",
+            "equals": "Ya, terencana dengan baik dan ditinjau secara berkala"
+          },
+          "id": "buktiSuksesi",
+          "type": "file",
+          "label": "Unggah dokumen **rencana suksesi** Anda.",
+          "required": true,
+          "fileAccept": ".pdf,.doc,.docx",
+          "gridSpan": 2
+        },
+        {
+          "showIf": {
+            "equals": "Belum ada rencana suksesi yang spesifik",
+            "fieldId": "rencanaSuksesi"
+          },
+          "id": "justifikasiSuksesi",
+          "type": "textarea",
+          "gridSpan": 2,
+          "aiReasoning": "Memahami hambatan dalam perencanaan jangka panjang organisasi.",
+          "required": true,
+          "label": "Mohon jelaskan mengapa belum ada rencana suksesi yang spesifik di organisasi Anda."
+        },
+        {
+          "options": [
+            {
+              "weight": 90,
+              "label": "Metrik kinerja jelas, transparan, dan ada konsekuensi yang terukur"
+            },
+            {
+              "weight": 50,
+              "label": "Penekanan pada tanggung jawab individu melalui komunikasi verbal"
+            },
+            {
+              "label": "Masih dalam tahap pengembangan, belum ada sistem formal",
+              "weight": 10
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai sejauh mana tanggung jawab individu terintegrasi dalam sistem operasional.",
+          "label": "Bagaimana Anda menumbuhkan **budaya akuntabilitas** dan kepemilikan di antara anggota tim Anda?",
+          "required": true,
+          "type": "radio",
+          "id": "budayaAkuntabilitas"
+        },
+        {
+          "showIf": {
+            "equals": "Metrik kinerja jelas, transparan, dan ada konsekuensi yang terukur",
+            "fieldId": "budayaAkuntabilitas"
+          },
+          "type": "file",
+          "id": "buktiAkuntabilitas",
+          "required": true,
+          "label": "Unggah contoh **dashboard metrik kinerja** atau dokumen kebijakan akuntabilitas Anda.",
+          "fileAccept": ".pdf,.xls,.xlsx",
+          "gridSpan": 2
+        },
+        {
+          "showIf": {
+            "equals": "Masih dalam tahap pengembangan, belum ada sistem formal",
+            "fieldId": "budayaAkuntabilitas"
+          },
+          "type": "textarea",
+          "id": "justifikasiAkuntabilitas",
+          "label": "Mohon jelaskan mengapa budaya akuntabilitas masih dalam tahap pengembangan dan belum ada sistem formal di tim Anda.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi tantangan dalam membangun transparansi kinerja."
+        },
+        {
+          "options": [
+            {
+              "weight": 85,
+              "label": "Prosedur mediasi formal atau intervensi HR yang terstruktur"
+            },
+            {
+              "weight": 45,
+              "label": "Pendekatan langsung oleh pemimpin tim atau manajer terkait"
+            },
+            {
+              "weight": 15,
+              "label": "Tergantung kasusnya, seringkali diselesaikan secara informal"
+            }
+          ],
+          "aiReasoning": "Mengukur kedewasaan organisasi dalam mengelola gesekan internal demi menjaga produktivitas.",
+          "gridSpan": 2,
+          "label": "Mekanisme apa yang Anda gunakan untuk menyelesaikan **konflik internal** tim atau antar departemen secara efektif?",
+          "required": true,
+          "type": "radio",
+          "id": "mekanismeKonflik"
+        },
+        {
+          "showIf": {
+            "fieldId": "mekanismeKonflik",
+            "equals": "Prosedur mediasi formal atau intervensi HR yang terstruktur"
+          },
+          "type": "file",
+          "id": "buktiKonflik",
+          "label": "Unggah dokumen **prosedur resolusi konflik** atau kebijakan HR terkait.",
+          "required": true,
+          "gridSpan": 2,
+          "fileAccept": ".pdf,.doc,.docx"
+        },
+        {
+          "showIf": {
+            "equals": "Tergantung kasusnya, seringkali diselesaikan secara informal",
+            "fieldId": "mekanismeKonflik"
+          },
+          "id": "justifikasiKonflik",
+          "type": "textarea",
+          "label": "Mohon jelaskan bagaimana Anda menangani konflik yang seringkali diselesaikan secara informal dan potensi risikonya.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Menganalisis risiko bias atau ketidakadilan dalam penyelesaian konflik informal."
+        },
+        {
+          "required": true,
+          "label": "Strategi apa yang Anda terapkan untuk mempertahankan **talenta kunci** dan menjaga tingkat keterlibatan karyawan?",
+          "options": [
+            {
+              "weight": 95,
+              "label": "Program retensi komprehensif (kompensasi, pengembangan, budaya)"
+            },
+            {
+              "weight": 60,
+              "label": "Fokus pada kompensasi dan benefit yang kompetitif"
+            },
+            {
+              "weight": 10,
+              "label": "Belum ada strategi retensi khusus, mengandalkan lingkungan kerja yang baik"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai daya tahan organisasi dalam mempertahankan aset manusia yang paling berharga.",
+          "type": "radio",
+          "id": "strategiRetensi"
+        },
+        {
+          "showIf": {
+            "equals": "Program retensi komprehensif (kompensasi, pengembangan, budaya)",
+            "fieldId": "strategiRetensi"
+          },
+          "type": "file",
+          "id": "buktiRetensi",
+          "fileAccept": ".pdf,.doc,.docx",
+          "gridSpan": 2,
+          "label": "Unggah ringkasan **program retensi** atau inisiatif keterlibatan karyawan Anda.",
+          "required": true
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Memahami ketergantungan organisasi pada faktor budaya kerja dibandingkan sistem retensi formal.",
+          "label": "Mohon jelaskan mengapa belum ada strategi retensi khusus dan bagaimana Anda memastikan talenta kunci tetap bertahan.",
+          "required": true,
+          "showIf": {
+            "equals": "Belum ada strategi retensi khusus, mengandalkan lingkungan kerja yang baik",
+            "fieldId": "strategiRetensi"
+          },
+          "type": "textarea",
+          "id": "justifikasiRetensi"
+        },
+        {
+          "required": true,
+          "label": "Bagaimana Anda mendeskripsikan **gaya kepemimpinan** utama Anda dalam mengelola tim berkinerja tinggi?",
+          "options": [
+            {
+              "weight": 90,
+              "label": "Transformasional (menginspirasi, memberdayakan)"
+            },
+            {
+              "label": "Demokratis (partisipatif, konsensus)",
+              "weight": 70
+            },
+            {
+              "weight": 50,
+              "label": "Otoritatif (pengarah, visioner)"
+            },
+            {
+              "label": "Laissez-faire (delegatif penuh, minim intervensi)",
+              "weight": 20
+            }
+          ],
+          "aiReasoning": "Mengidentifikasi keselarasan gaya kepemimpinan dengan kebutuhan organisasi untuk mencapai performa puncak.",
+          "gridSpan": 2,
+          "type": "radio",
+          "id": "gayaKepemimpinan"
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan bagaimana Anda memastikan efektivitas dan akuntabilitas tim dengan gaya kepemimpinan **Laissez-faire**.",
+          "gridSpan": 2,
+          "aiReasoning": "Menganalisis bagaimana pemimpin memastikan target tetap tercapai tanpa intervensi langsung.",
+          "type": "textarea",
+          "id": "justifikasiGayaKepemimpinan",
+          "showIf": {
+            "fieldId": "gayaKepemimpinan",
+            "equals": "Laissez-faire (delegatif penuh, minim intervensi)"
+          }
+        },
+        {
+          "aiReasoning": "Menilai efisiensi dan jangkauan strategi akuisisi talenta organisasi.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 70,
+              "label": "Jaringan pribadi dan rekomendasi internal"
+            },
+            {
+              "label": "Platform rekrutmen online (LinkedIn, Jobstreet, dll.)",
+              "weight": 60
+            },
+            {
+              "label": "Headhunter atau agensi rekrutmen spesialis",
+              "weight": 80
+            },
+            {
+              "label": "Program magang atau kemitraan dengan universitas",
+              "weight": 50
+            },
+            {
+              "label": "Acara rekrutmen atau career fair",
+              "weight": 40
+            },
+            {
+              "label": "Belum ada saluran yang terbukti efektif",
+              "weight": 10
+            }
+          ],
+          "required": true,
+          "label": "Saluran utama apa yang paling efektif Anda gunakan untuk merekrut **talenta baru**, terutama untuk posisi strategis?",
+          "id": "saluranAkuisisiTalentaPrimer",
+          "type": "select"
+        },
+        {
+          "id": "justifikasiSaluranAkuisisi",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Belum ada saluran yang terbukti efektif",
+            "fieldId": "saluranAkuisisiTalentaPrimer"
+          },
+          "aiReasoning": "Mengidentifikasi hambatan dalam membangun pipeline talenta yang berkelanjutan.",
+          "gridSpan": 2,
+          "label": "Mohon jelaskan tantangan yang Anda hadapi sehingga belum ada saluran rekrutmen yang terbukti efektif untuk posisi strategis.",
+          "required": true
+        }
+      ],
+      "title": "Evolusi Kepemimpinan & Kepadatan Bakat",
+      "description": "Menilai kemampuan founder bertransisi dari kontributor individu menjadi manajer visioner, termasuk strategi perekrutan A-Players dan mekanisme delegasi.",
+      "stepNumber": 6
+    }
+  ],
+  "aiGenerationStatus": {
+    "message": "Disimpan secara manual oleh Admin.",
+    "updatedAt": "2026-07-24T03:13:17.047Z",
+    "phase": "COMPLETED"
+  },
+  "preferredQuestionTypes": [
+    "radio_weight",
+    "conditional_logic",
+    "text_justification"
+  ],
+  "methodologyContext": "Menggunakan kombinasi framework Belbin Team Role untuk pemetaan archetype C-Level dan CMMI (Capability Maturity Model Integration) untuk mengukur tingkat kematangan proses operasional startup. Pendekatan ini diintegrasikan dengan asesmen psikometrik berbasis Big Five Personality Traits untuk memprediksi ketahanan kepemimpinan dalam fase skalabilitas tinggi.",
+  "version": 4,
+  "generationLogs": [
+    {
+      "timestamp": "2026-07-23T12:15:34.075Z",
+      "message": "FASE 1: Architect Agent (Gemini 3.1 Pro) diaktifkan. Melakukan penetrasi jaringan & riset blueprint...",
+      "type": "info"
+    },
+    {
+      "type": "success",
+      "message": "Otak AI dan Master Blueprint berhasil disempurnakan!",
+      "timestamp": "2026-07-23T12:16:40.306Z"
+    },
+    {
+      "type": "info",
+      "timestamp": "2026-07-23T12:16:40.497Z",
+      "message": "FASE 2: Fabricator Agent (Gemini 2.5 Flash) dikerahkan. Memproduksi 6 seksi formulir..."
+    },
+    {
+      "message": "Meracik Kuesioner Batch 1...",
+      "timestamp": "2026-07-23T12:16:40.556Z",
+      "type": "info"
+    },
+    {
+      "type": "info",
+      "message": "Meracik Kuesioner Batch 2...",
+      "timestamp": "2026-07-23T12:17:12.292Z"
+    },
+    {
+      "message": "Seluruh seksi formulir berhasil diracik.",
+      "timestamp": "2026-07-23T12:17:52.359Z",
+      "type": "success"
+    },
+    {
+      "type": "info",
+      "message": "FASE 3: Polisher Agent (Gemini 3.1 Flash-Lite) diaktifkan. Melakukan QA Logika sekaligus memoles UI/UX form...",
+      "timestamp": "2026-07-23T12:17:52.595Z"
+    },
+    {
+      "type": "info",
+      "timestamp": "2026-07-23T12:17:52.680Z",
+      "message": "Memoles UI dan menyembuhkan logika pada Seksi 6: Evolusi Kepemimpinan & Kepadatan Bakat..."
+    },
+    {
+      "message": "Memoles UI dan menyembuhkan logika pada Seksi 3: Asesmen Resiliensi & Profil Psikologis (Big Five)...",
+      "timestamp": "2026-07-23T12:17:52.680Z",
+      "type": "info"
+    },
+    {
+      "message": "Memoles UI dan menyembuhkan logika pada Seksi 1: Pemetaan DNA Founder & Arketipe Tim (Belbin)...",
+      "timestamp": "2026-07-23T12:17:52.680Z",
+      "type": "info"
+    },
+    {
+      "timestamp": "2026-07-23T12:17:52.680Z",
+      "message": "Memoles UI dan menyembuhkan logika pada Seksi 2: Audit Kematangan Operasional (CMMI) & Infrastruktur...",
+      "type": "info"
+    },
+    {
+      "type": "info",
+      "timestamp": "2026-07-23T12:17:52.680Z",
+      "message": "Memoles UI dan menyembuhkan logika pada Seksi 4: Validasi Pasar & Traksi Produk (MVP)..."
+    },
+    {
+      "type": "info",
+      "message": "Memoles UI dan menyembuhkan logika pada Seksi 5: Ketahanan Finansial & Unit Economics...",
+      "timestamp": "2026-07-23T12:17:52.680Z"
+    },
+    {
+      "message": "Proses Polishing & QA Logika selesai. Kuesioner kini tervalidasi dan estetik 100%.",
+      "timestamp": "2026-07-23T12:18:04.994Z",
+      "type": "success"
+    },
+    {
+      "type": "success",
+      "timestamp": "2026-07-23T12:18:05.088Z",
+      "message": "PIPELINE SELESAI: Kuesioner skala Enterprise telah berhasil diintegrasikan!"
+    }
+  ],
+  "aiPromptConfig": {
+    "researchSourcesCited": [
+      "Belbin Team Roles (Team balance & C-Level Archetypes)",
+      "CMMI - Capability Maturity Model Integration (Operational scalability)",
+      "Big Five Personality Traits (Founder resilience & emotional stability)"
+    ],
+    "actionPlanBehavior": "Hasilkan action plan yang terikat waktu (time-bound), memiliki metrik keberhasilan yang jelas (KPI), dan menetapkan penanggung jawab utama (PIC) untuk setiap inisiatif.",
+    "customScoringRubric": "Gunakan pembobotan seimbang antara 3 pilar: 1) Keseimbangan Archetype (Belbin & Startup Triangle) 30%, 2) Kematangan Operasional (CMMI) 40%, 3) Resiliensi & Kepemimpinan (Big Five) 30%.",
+    "riskFramework": "Fokus deteksi Risiko Kegagalan Sistemik (Red Flags) akibat ketidakseimbangan 'Startup Triangle' dan psikologi: 1. HACKER TRAP (Over-engineering tanpa traksi). 2. HUSTLER TRAP (Bakar uang agresif mengabaikan Tech Debt). 3. HIPSTER TRAP (Obsesi visual menunda MVP). 4. BUS FACTOR (Single Point of Failure akibat ketiadaan delegasi). 5. BURNOUT RISK (Neurotisisme tinggi dan rendahnya resiliensi founder saat krisis).",
+    "negativePrompts": "Jangan gunakan jargon akademis yang terlalu kaku tanpa aplikasi taktis. Hindari menyalahkan founder secara personal; gunakan pendekatan suportif dan objektif. Jangan memberikan saran teknis spesifik bahasa pemrograman, fokus pada arsitektur dan skalabilitas. Jangan abaikan pentingnya kesehatan mental dan manajemen stres founder.",
+    "mediaAnalysisFocus": "Fokus pada kejelasan visi, metrik traksi, dan kelengkapan tim jika terdapat data pitch deck atau dokumen presentasi.",
+    "aiPersona": "Venture Capitalist Tier-1, Eksekutif C-Level Mentor, & Lead Assessor Skalabilitas Ekosistem Digital",
+    "expectedMetrics": [
+      "Indeks Keseimbangan DNA Founder (Hustler, Hacker, Hipster) & Pemetaan Peran Belbin",
+      "Tingkat Kematangan Operasional & Skalabilitas Sistem (Berdasarkan Framework CMMI)",
+      "Resiliensi Eksekutif & Stabilitas Emosional (Berdasarkan Big Five Personality Traits)",
+      "Ketajaman Problem-Solution Fit & Efisiensi Peluncuran MVP",
+      "Kesehatan Unit Economics (Rasio LTV:CAC) & Manajemen Runway",
+      "Kapasitas Kepemimpinan, Delegasi, & Kepadatan Bakat (Talent Density)"
+    ],
+    "customSystemPrompt": "Anda adalah sistem AI penasihat eksekutif yang ahli dalam membedah psikologi founder dan kesiapan operasional startup. Gunakan framework Belbin, CMMI, dan Big Five secara terintegrasi untuk memberikan wawasan yang tajam, empatik, namun tegas berorientasi pada skalabilitas bisnis.",
+    "expectedRecommendations": [
+      "Roadmap Taktis Jangka Pendek (0-3 Bulan) - Validasi & Traksi: Langkah eksak meloloskan diri dari jebakan archetype tunggal (Hustler/Hacker/Hipster) dan stabilisasi Cashflow awal.",
+      "Intervensi Psikologis & Resiliensi Founder (Ongoing): Strategi personal berbasis Big Five untuk mengelola stres, menurunkan neurotisisme, dan meningkatkan ketahanan mental eksekutif.",
+      "Roadmap Taktis Jangka Menengah (3-6 Bulan) - Formasi C-Level & Sistemasi: Panduan perekrutan Co-Founder pelengkap berbasis Belbin Team Roles dan implementasi SOP operasional.",
+      "Peningkatan Kematangan Operasional (Menuju CMMI Level 3+): Langkah sistematis mengadopsi praktik DevOps, orkestrasi Growth Loop otomatis, dan budaya kualitas di tim engineering.",
+      "Roadmap Strategis Jangka Panjang (6-12 Bulan) - Skalabilitas Enterprise: Cetak biru persiapan pendanaan lanjutan (Series A+), delegasi kepemimpinan teknis penuh, dan proteksi kekayaan intelektual."
+    ],
+    "gradingStrictness": "supportive",
+    "isAdaptive": false,
+    "targetAudience": "individual",
+    "reportTone": "investigative, data-driven, visionary, highly actionable, and elegantly structured",
+    "formatInstructions": "Gunakan markdown dengan heading yang jelas. Sajikan data dalam bentuk bullet points atau tabel jika memungkinkan. Berikan ringkasan eksekutif di awal laporan. Pastikan setiap blok analisis memiliki kesimpulan mini.",
+    "formPurpose": "custom",
+    "customReadinessTiers": [
+      "Fase Validasi/Pre-Seed (Skor 0-25): Eksekutor Reaktif (CMMI Level 1). Founder terjebak dalam archetype tunggal dengan resiliensi labil. Fokus Utama: Temukan Co-Founder pelengkap, luncurkan MVP secepat mungkin, dan capai Problem-Solution Fit.",
+      "Fase Traksi/Seed (Skor 26-50): Pemimpin Taktis (CMMI Level 2). Product-Market Fit terlihat, namun operasional rentan dan Bus Factor tinggi. Fokus Utama: Sistemasi alur kerja awal, perbaikan Unit Economics, dan pendelegasian tugas repetitif.",
+      "Fase Transisi Skala/Pre-Series A (Skor 51-75): Manajer Terstruktur (CMMI Level 3). Proses mulai terdefinisi, tim C-Level seimbang secara Belbin, dan stabilitas emosional membaik. Fokus Utama: Optimasi retensi pengguna, manajemen Tech Debt, dan perekrutan A-Players.",
+      "Fase Skalabilitas/Series A+ (Skor 76-100): Eksekutif Visioner (CMMI Level 4-5). Kesadaran diri tinggi (Big Five optimal), operasional berbasis data, dan tim berfungsi otonom. Fokus Utama: Memimpin hiper-pertumbuhan dan mengelola dana ventura masif dengan ROI terukur."
+    ],
+    "assessmentGoal": "Menganalisis pola keputusan strategis founder dalam skenario high-growth untuk menentukan dominasi DNA (Hustler/Hacker/Hipster) dipadukan dengan Belbin Team Roles, sekaligus mengaudit kematangan ekosistem startup berdasarkan prinsip CMMI (Capability Maturity Model Integration). Hasilkan cetak biru (roadmap) eskalasi yang mengawinkan profil psikologis Big Five (resiliensi) founder dengan tata kelola operasional yang terstandarisasi.",
+    "targetMetricCount": 6,
+    "customUiLabels": {
+      "riskLabel": "Pemicu Konflik & Strategi Pendampingan",
+      "executionLabel": "Timeline Sesi Konseling & Intervensi",
+      "swotLabel": "Pemetaan Karakter & Perilaku (SWOT)",
+      "roadmapLabel": "Rekomendasi Rencana Pengembangan",
+      "scoreLabel": "Indeks Profil & Stabilitas"
+    },
+    "expectedAnalysisBlocks": [
+      "Executive DNA & Belbin Archetype Profiling: Diagnosis dominasi insting founder (Komersial/Teknis/Desain), Identifikasi celah kompetensi (Blind-spots) tim C-Level.",
+      "Operational Maturity & CMMI Alignment: Evaluasi transisi dari fase reaktif ke terstandarisasi, Pengelolaan Tech Debt dan infrastruktur jangka panjang.",
+      "Psychological Resilience & Big Five Traits: Analisis tingkat Neuroticism dan Conscientiousness founder, Kapasitas manajemen stres saat runway menipis.",
+      "Market Validation & MVP Traction: Evaluasi ketepatan metode validasi ide, Kecepatan mendapatkan traksi awal tanpa membuang uang kas.",
+      "Financial Acumen & Burn Rate Control: Audit logika alokasi pendanaan, Penguasaan metrik profitabilitas di tengah obsesi pertumbuhan hiper.",
+      "Leadership Evolution & Talent Density: Penilaian standar perekrutan A-Players, Mekanisme delegasi taktis untuk menghindari Bus Factor."
+    ]
+  },
+  "expectedOutputs": [
+    "Peta Mitigasi Risiko Sistemik: Identifikasi dini jebakan fatal seperti Hacker Trap atau Burnout Risk untuk mengamankan keberlangsungan startup Anda sebelum terjadi kegagalan operasional.",
+    "Rekomendasi Strategis Berbasis Data: Dapatkan panduan presisi untuk menyeimbangkan DNA founder dan kematangan operasional agar bisnis Anda siap bertransformasi menjadi entitas skala Enterprise.",
+    "Action Plan Terukur (0-12 Bulan): Eksekusi langkah konkret mulai dari validasi MVP hingga persiapan pendanaan Series A dengan peta jalan yang dirancang khusus untuk mengakselerasi traksi bisnis Anda.",
+    "Insight Matrix Performa Eksekutif: Optimalkan resiliensi mental dan ketajaman kepemimpinan Anda melalui analisis psikometrik mendalam untuk membangun tim yang tangguh dan efisien."
+  ],
+  "lastUpdated": "2026-07-24T03:13:17.046Z",
+  "trackIcon": "Terminal",
+  "formBuilderInstruction": "\n==================================================\nKONTEKS ANCHOR (ACUAN MUTLAK):\n- Profil Subjek Asesmen: Founder atau co-founder startup tahap seed hingga series B yang sedang menghadapi transisi operasional menuju skala enterprise. Subjek memiliki kebutuhan validasi peran kepemimpinan teknis dan manajerial untuk memastikan keselarasan antara visi produk dan kesiapan infrastruktur organisasi.\n- Metodologi/Pendekatan: Menggunakan kombinasi framework Belbin Team Role untuk pemetaan archetype C-Level dan CMMI (Capability Maturity Model Integration) untuk mengukur tingkat kematangan proses operasional startup. Pendekatan ini diintegrasikan dengan asesmen psikometrik berbasis Big Five Personality Traits untuk memprediksi ketahanan kepemimpinan dalam fase skalabilitas tinggi.\n==================================================\nTARGET AUDIENS: PERSONAL (INDIVIDUAL). Gunakan kata sapaan langsung (Anda, Bapak/Ibu) dan sesuaikan pertanyaan murni untuk ranah personal. DILARANG KERAS menanyakan aspek perusahaan, organisasi, atau legalitas bisnis.\n\nRancang kuesioner penilaian secara sistematis.\n\n\n\nATURAN KOMPOSISI PERTANYAAN MUTLAK (WAJIB DIPATUHI):\n- WAJIB maksimalkan penggunaan tipe \"radio\" atau \"select\" dengan array \"options\" berbobot (weight 0-100) untuk keperluan kalkulasi nilai otomatis.\n- TERAPKAN INTEROGASI BERLAPIS: Gunakan properti \"showIf\". Jika peserta merespon klaim besar pada opsi radio/select, WAJIB pancing pertanyaan baru bertipe \"file\" atau \"textarea\" untuk menagih bukti.\n- Gunakan tipe \"textarea\" secara strategis untuk menuntut penjelasan, justifikasi, keluhan, atau uraian deskriptif yang mendalam dari peserta.",
+  "isActive": true,
+  "specificTargetContext": "Founder atau co-founder startup tahap seed hingga series B yang sedang menghadapi transisi operasional menuju skala enterprise. Subjek memiliki kebutuhan validasi peran kepemimpinan teknis dan manajerial untuk memastikan keselarasan antara visi produk dan kesiapan infrastruktur organisasi.",
+  "promoAssets": {
+    "instagram": {
+      "imageUrl": "",
+      "generatedAt": "2026-07-24T03:12:09.171Z",
+      "imagePrompt": "A high-end, modern tech-startup themed social media graphic. In the center, prominent large 3D typography displaying the text \"Apakah Anda Founder Sejati?\". Below it, the brand logo text \"Omnifit\" in a sleek, glowing futuristic font. The background features a sophisticated abstract dark UI/UX dashboard interface with glowing blue, purple, and neon green elements, 3D floating icons representing Hustler, Hacker, and Hipster archetypes (like a laptop, a lightbulb, and a rocket). Clean composition, studio lighting, hyper-realistic glassmorphism effects, 8k resolution, highly detailed.",
+      "copywriting": "🚀 APAKAH ANDA FOUNDER SEJATI?\n\nBanyak tech founder gagal bukan karena ide bisnis yang buruk, tapi karena ketidakcocokan archetype C-Level dengan skala bisnis. Apakah Anda seorang Hustler, Hacker, atau Hipster yang siap membawa startup ke tingkat Enterprise?\n\nJangan biarkan blindspot kepemimpinan menghambat pertumbuhan bisnis Anda. Saatnya mengukur kesiapan skalabilitas startup Anda secara presisi dengan AI Smart Assessment dari Omnifit.\n\nBerikut yang akan Anda dapatkan dari asesmen mendalam ini:\n\n🛡️ Peta Mitigasi Risiko Sistemik: Identifikasi dini jebakan fatal seperti Hacker Trap atau Burnout Risk sebelum operasional terganggu.\n\n📈 Rekomendasi Strategis Berbasis Data: Panduan presisi menyeimbangkan DNA founder dengan kematangan operasional menuju skala Enterprise.\n\n🎯 Action Plan Terukur (0-12 Bulan): Langkah konkret dari validasi MVP hingga persiapan pendanaan Series A.\n\n🧠 Insight Matrix Performa Eksekutif: Optimalkan resiliensi mental dan kepemimpinan untuk membangun tim super tangguh.\n\n🔗 Ambil kendali masa depan startup Anda hari ini. Klik link di bio untuk memulai asesmen karakter founder Anda sekarang!\n\n#Omnifit #TechFounder #StartupIndonesia #HustlerHackerHipster #StartupScalability #LeadershipAssessment #AIPowered"
+    }
+  }
+}

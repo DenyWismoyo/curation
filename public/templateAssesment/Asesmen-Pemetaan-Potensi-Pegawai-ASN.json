@@ -1,0 +1,2425 @@
+{
+  "specificTargetContext": "Target audiens adalah aparatur sipil negara (ASN) pada level manajerial dan fungsional yang memerlukan pemetaan kompetensi serta kinerja berbasis meritokrasi. Fokus utama mencakup profil dengan masa kerja menengah hingga senior yang memiliki data historis SKP dan rekam jejak perilaku kerja.",
+  "lastUpdated": "2026-07-23T01:38:14.949Z",
+  "trackIcon": "LayoutGrid",
+  "expectedOutputs": [
+    "Peta Mitigasi Kesenjangan Kompetensi: Identifikasi dini celah kompetensi pegawai untuk meminimalisir risiko kegagalan kinerja dan memastikan kesesuaian standar jabatan sesuai Permenpan RB No. 38 Tahun 2017.",
+    "Rekomendasi Pengembangan Presisi: Dapatkan kurasi program pelatihan dan pendampingan yang spesifik untuk setiap individu, mulai dari Diklatpim hingga sertifikasi teknis guna mempercepat akselerasi karier.",
+    "Rencana Aksi Strategis (Individual Development Plan): Transformasikan hasil asesmen menjadi langkah konkret melalui rencana aksi terukur yang memandu setiap pegawai mencapai potensi puncak dan produktivitas optimal.",
+    "Insight Matrix Talenta Objektif: Visualisasikan posisi pegawai dalam 9-Box Matrix berbasis data untuk pengambilan keputusan rotasi dan promosi yang transparan, adil, serta berbasis sistem merit."
+  ],
+  "isActive": true,
+  "formBuilderInstruction": "Buatkan untuk Instrumen komprehensif Sistem Informasi Manajemen Talenta. Terintegrasi dengan algoritma 9-Box Matrix untuk mengevaluasi indikator potensi, perilaku kerja BerAKHLAK, dan Indeks Profesionalitas ASN secara objektif.",
+  "generationLogs": [
+    {
+      "timestamp": "2026-07-22T10:47:48.620Z",
+      "message": "Memulai sesi pipeline Enterprise Multi-Agent AI...",
+      "type": "info"
+    },
+    {
+      "message": "FASE 1: Agen Master (Gemini 3.1 Pro) diaktifkan. Melakukan penetrasi jaringan internet dan restrukturisasi Otak AI...",
+      "timestamp": "2026-07-22T10:47:48.645Z",
+      "type": "info"
+    },
+    {
+      "message": "Merumuskan penyempurnaan Otak AI & Masterplan untuk domain: [Asesmen Pemetaan Potensi Pegawai (ASN)]...",
+      "timestamp": "2026-07-22T10:47:48.672Z",
+      "type": "info"
+    },
+    {
+      "type": "success",
+      "message": "Otak AI dan Master Blueprint berhasil disempurnakan! Menyimpan konfigurasi ke database...",
+      "timestamp": "2026-07-22T10:48:40.865Z"
+    },
+    {
+      "type": "info",
+      "message": "Mengekstrak temuan internet dan menyimpannya ke Vector Database (RAG)...",
+      "timestamp": "2026-07-22T10:48:40.954Z"
+    },
+    {
+      "type": "success",
+      "message": "Vector Database berhasil diperbarui.",
+      "timestamp": "2026-07-22T10:48:41.366Z"
+    },
+    {
+      "timestamp": "2026-07-22T10:48:41.437Z",
+      "message": "FASE 2: Mengerahkan Agen Pekerja (Gemini 2.5 Flash) berbekal Otak AI yang baru. Memulai fabrikasi 6 seksi formulir...",
+      "type": "info"
+    },
+    {
+      "message": "Meracik Kuesioner Batch 1 (Seksi 1 s/d3)...",
+      "timestamp": "2026-07-22T10:48:41.486Z",
+      "type": "info"
+    },
+    {
+      "timestamp": "2026-07-22T10:49:28.758Z",
+      "message": "Meracik Kuesioner Batch 2 (Seksi 4 s/d6)...",
+      "type": "info"
+    },
+    {
+      "type": "success",
+      "timestamp": "2026-07-22T10:49:59.957Z",
+      "message": "Seluruh seksi formulir berhasil diracik dan digabungkan."
+    },
+    {
+      "message": "Membersihkan ID duplikat pada struktur formulir...",
+      "timestamp": "2026-07-22T10:49:59.984Z",
+      "type": "info"
+    },
+    {
+      "type": "info",
+      "message": "FASE 3: Agen Validator (QA) meninjau integritas logika 'ShowIf' (Dependency Tree)...",
+      "timestamp": "2026-07-22T10:50:00.050Z"
+    },
+    {
+      "message": "Verifikasi selesai. Struktur formulir 100% valid dan aman dari loop logic.",
+      "timestamp": "2026-07-22T10:52:04.445Z",
+      "type": "success"
+    },
+    {
+      "timestamp": "2026-07-22T10:52:04.581Z",
+      "message": "PIPELINE SELESAI: Kuesioner skala Enterprise telah berhasil diintegrasikan!",
+      "type": "success"
+    }
+  ],
+  "aiPromptConfig": {
+    "aiPersona": "Asesor Ahli Utama Assessment Center BKN",
+    "expectedMetrics": [
+      "Kompetensi Manajerial (Integritas, Kerjasama, Komunikasi, Orientasi pada Hasil)",
+      "Kompetensi Sosial Kultural (Perekat Bangsa, Empati, Toleransi Keberagaman)",
+      "Potensi Kognitif dan Literasi Digital (Problem Solving, Adaptasi Teknologi)",
+      "Kecerdasan Emosional dan Agilitas (Ketahanan Stres, Fleksibilitas Berpikir)",
+      "Kepemimpinan dan Pengambilan Keputusan (Leadership, Decision Making)",
+      "Kompetensi Teknis dan Spesialisasi (Penguasaan Bidang Tugas, Kualitas Analisis Kebijakan)",
+      "Inovasi dan Mengelola Perubahan (Adaptif, Inisiatif Perubahan, Berpikir Kreatif)",
+      "Orientasi Pelayanan Publik (Responsivitas, Kualitas Pelayanan, Akuntabilitas)"
+    ],
+    "mediaAnalysisFocus": "Analisis respons teks kuesioner dan studi kasus situasional (Situational Judgment Test) untuk memetakan indikator perilaku ASN.",
+    "customSystemPrompt": "Anda adalah Asesor Ahli Utama di Assessment Center BKN. Tugas Anda adalah mengevaluasi respons kuesioner dari seorang ASN, memetakan potensi dan kompetensinya berdasarkan standar manajerial, teknis, dan sosial kultural pemerintah (Permenpan RB No. 38 Tahun 2017 & UU No. 20 Tahun 2023), lalu menyusun laporan pemetaan talenta yang komprehensif, objektif, dan berbasis bukti perilaku (behavioral evidence) untuk mendukung Sistem Merit.",
+    "expectedRecommendations": [
+      "Pengembangan Kepemimpinan dan Manajerial (Program Pelatihan Kepemimpinan Berjenjang, Mentoring dan Coaching Kinerja Berkelanjutan)",
+      "Pengayaan Pengalaman dan Karier (Rotasi Jabatan, Penugasan Proyek Lintas Sektoral)",
+      "Peningkatan Kapasitas Teknis dan Digital (Sertifikasi Kompetensi Teknis Spesifik, Pengembangan Literasi Digital dan SPBE)",
+      "Penguatan Karakter dan Ketahanan Mental (Konseling Ketahanan Mental, Partisipasi Aktif Forum Sosial Kultural)",
+      "Perencanaan dan Evaluasi Kinerja (Penyusunan Rencana Pengembangan Individu / IDP, Evaluasi Kesenjangan Kompetensi)"
+    ],
+    "researchSourcesCited": [
+      "UU No. 20 Tahun 2023 tentang Aparatur Sipil Negara (ASN)",
+      "Permenpan RB No. 38 Tahun 2017 tentang Standar Kompetensi Jabatan ASN",
+      "Surat Edaran Menpan RB No. 20 Tahun 2021 tentang Core Values ASN BerAKHLAK",
+      "Peraturan BKN No. 26 Tahun 2019 tentang Pembinaan Penyelenggara Penilaian Kompetensi PNS"
+    ],
+    "customScoringRubric": "Gunakan skala 1-5 berdasarkan indikator perilaku (Level 1: Pelaksana hingga Level 5: JPT). Nilai kesenjangan (gap) antara profil individu saat ini dengan Standar Kompetensi Jabatan yang dituju.",
+    "riskFramework": "Standar Kompetensi Jabatan ASN (Permenpan RB No. 38 Tahun 2017), UU No. 20 Tahun 2023 tentang ASN & Sistem Merit Manajemen Talenta",
+    "negativePrompts": "Jangan gunakan jargon korporat B2B komersial (seperti ROI, profit margin) yang tidak relevan dengan birokrasi pemerintahan. Jangan memberikan rekomendasi pemecatan; fokus pada pembinaan, rotasi, dan pengembangan kapasitas.",
+    "gradingStrictness": "supportive",
+    "reportTone": "investigative",
+    "formatInstructions": "Sajikan laporan dalam format terstruktur yang profesional, objektif, dan mudah dibaca oleh Pejabat Pembina Kepegawaian (PPK) serta Tim Penilai Kinerja Instansi.",
+    "customReadinessTiers": [
+      "Siap Utama (Ready Now) - Memenuhi seluruh standar kompetensi, direkomendasikan untuk promosi atau suksesi JPT",
+      "Siap dengan Pengembangan (Ready with Development) - Memenuhi sebagian besar standar, membutuhkan intervensi spesifik",
+      "Perlu Pembinaan Intensif (Needs Improvement) - Terdapat kesenjangan kompetensi moderat, fokus pada rotasi atau diklat teknis",
+      "Kritis (Critical Gap) - Kesenjangan kompetensi signifikan, memerlukan evaluasi kinerja menyeluruh dan konseling"
+    ],
+    "formPurpose": "Asesmen Pemetaan Potensi dan Kompetensi Pegawai (ASN)",
+    "customUiLabels": {
+      "scoreLabel": "Skor Kesiapan Talenta (Talent Pool)",
+      "swotLabel": "Matriks Kapasitas (SWOT ASN)",
+      "roadmapLabel": "Rekomendasi Strategis Karier",
+      "executionLabel": "Rencana Aksi Pengembangan (IDP)",
+      "riskLabel": "Peta Risiko Kesenjangan Kompetensi"
+    },
+    "expectedAnalysisBlocks": [
+      "Profil Kapasitas Kognitif: Kemampuan Analitis, Kecepatan Belajar",
+      "Peta Kompetensi Manajerial: Orientasi Hasil, Kemampuan Komunikasi",
+      "Dinamika Sosial Kultural: Toleransi Keberagaman, Peran Perekat Bangsa",
+      "Agilitas dan Ketahanan Mental: Manajemen Stres, Adaptabilitas Perubahan",
+      "Kematangan Kepemimpinan: Pengambilan Keputusan, Pengembangan Orang Lain",
+      "Kesiapan Era Digital: Literasi Teknologi, Inovasi Kerja"
+    ],
+    "assessmentGoal": "Melakukan penilaian menyeluruh terhadap potensi dan kompetensi (Manajerial, Sosial Kultural, Teknis, dan Literasi Digital) ASN untuk keperluan pemetaan talent pool (Sistem Merit) dan pengembangan karier berkelanjutan sesuai UU No. 20 Tahun 2023."
+  },
+  "version": 4,
+  "methodologyContext": "Menggunakan framework Talent Management berbasis 9-Box Matrix yang diintegrasikan dengan standar kompetensi teknis dan manajerial BKN. Metodologi asesmen memanfaatkan pendekatan psikometri terstandar serta analisis data perilaku kerja BerAKHLAK untuk menentukan kuadran pengembangan talenta.",
+  "formMode": "hybrid",
+  "preferredQuestionTypes": [
+    "radio_weight",
+    "conditional_logic",
+    "text_justification"
+  ],
+  "aiGenerationStatus": {
+    "message": "Sukses! Formulir skala Enterprise (6 seksi) telah tervalidasi dan siap digunakan.",
+    "updatedAt": "2026-07-22T10:52:04.485Z",
+    "phase": "COMPLETED"
+  },
+  "steps": [
+    {
+      "stepNumber": 1,
+      "title": "Evaluasi Integritas dan Orientasi Pelayanan Publik",
+      "fields": [
+        {
+          "id": "namaUsaha",
+          "type": "text",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Nama Lengkap Anda"
+        },
+        {
+          "required": true,
+          "label": "NIP",
+          "gridSpan": 2,
+          "id": "namaPengisi",
+          "type": "text"
+        },
+        {
+          "options": [
+            {
+              "label": "Pelaksana",
+              "weight": 20
+            },
+            {
+              "label": "Fungsional",
+              "weight": 60
+            },
+            {
+              "label": "Struktural",
+              "weight": 80
+            },
+            {
+              "label": "Lainnya",
+              "weight": 10
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Tipe input 'text' pada pertanyaan mentah 'Jabatan' disempurnakan menjadi 'select' untuk mengkategorikan jenis jabatan (Pelaksana, Fungsional, Struktural) yang lebih relevan dalam konteks asesmen potensi pegawai ASN. Penajaman bahasa label menjadi kalimat tanya profesional. Opsi 'Lainnya' ditambahkan untuk mengakomodasi jenis jabatan di luar kategori utama dan memicu pertanyaan berantai untuk penjelasan lebih lanjut.",
+          "required": true,
+          "label": "Apa jenis jabatan Anda saat ini?",
+          "description": "Pilih kategori jabatan yang paling sesuai dengan posisi Anda saat ini di lingkungan Aparatur Sipil Negara.",
+          "id": "jenisJabatan",
+          "type": "select"
+        },
+        {
+          "showIf": {
+            "equals": "Lainnya",
+            "fieldId": "jenisJabatan"
+          },
+          "description": "Sebutkan nama jabatan spesifik Anda dan berikan deskripsi singkat mengenai tugas serta tanggung jawab utama Anda.",
+          "type": "textarea",
+          "id": "penjelasanJabatanLainnya",
+          "label": "Mohon jelaskan jenis jabatan Anda yang 'Lainnya'.",
+          "required": true,
+          "aiReasoning": "Field tambahan ini dibuat sebagai pertanyaan berantai untuk meminta penjelasan detail jika responden memilih opsi 'Lainnya' pada pertanyaan 'Apa jenis jabatan Anda saat ini?', sesuai aturan untuk menciptakan field tambahan jika membutuhkan alasan khusus.",
+          "gridSpan": 2
+        },
+        {
+          "label": "Apa nama instansi tempat Anda bekerja saat ini?",
+          "required": true,
+          "aiReasoning": "Properti 'label' dipertajam menjadi kalimat tanya yang profesional. 'id' diubah agar lebih relevan dengan konteks 'Instansi'. Tipe input 'text' dipertahankan karena paling sesuai untuk input nama instansi dan tidak ada opsi pilihan ganda yang relevan. Tidak ada pertanyaan berantai yang dibuat karena pertanyaan ini tidak memerlukan bukti fisik atau alasan khusus.",
+          "gridSpan": 2,
+          "type": "text",
+          "id": "namaInstansi",
+          "description": "Mohon masukkan nama lengkap instansi tempat Anda bertugas saat ini."
+        },
+        {
+          "type": "radio",
+          "id": "integritasKonflik",
+          "label": "Bagaimana Anda mengelola potensi konflik kepentingan dalam menjalankan tugas dan wewenang Anda?",
+          "required": true,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Secara proaktif mengidentifikasi dan melaporkan setiap potensi konflik kepentingan, serta mengambil langkah tegas untuk menghindarinya."
+            },
+            {
+              "weight": 75,
+              "label": "Menghindari konflik kepentingan yang jelas dan melaporkan jika ada situasi yang meragukan."
+            },
+            {
+              "weight": 50,
+              "label": "Berhati-hati dalam situasi konflik kepentingan, namun terkadang memerlukan arahan lebih lanjut."
+            },
+            {
+              "weight": 25,
+              "label": "Kurang memperhatikan potensi konflik kepentingan, fokus pada penyelesaian tugas."
+            },
+            {
+              "weight": 0,
+              "label": "Tidak terlalu mempertimbangkan aspek konflik kepentingan dalam pengambilan keputusan."
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "id": "justifikasiKonflik",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "integritasKonflik",
+            "equals": "Kurang memperhatikan potensi konflik kepentingan, fokus pada penyelesaian tugas."
+          },
+          "label": "Mohon jelaskan alasan atau situasi yang mendasari pilihan Anda terkait pengelolaan konflik kepentingan.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "showIf": {
+            "equals": "Tidak terlalu mempertimbangkan aspek konflik kepentingan dalam pengambilan keputusan.",
+            "fieldId": "integritasKonflik"
+          },
+          "id": "justifikasiKonflik2",
+          "type": "textarea",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan alasan atau situasi yang mendasari pilihan Anda terkait pengelolaan konflik kepentingan."
+        },
+        {
+          "id": "responsivitasPelayanan",
+          "type": "radio",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Selalu merespons dengan sangat cepat dan memberikan solusi yang efektif."
+            },
+            {
+              "weight": 75,
+              "label": "Umumnya merespons dengan cepat dan berupaya memberikan solusi."
+            },
+            {
+              "weight": 50,
+              "label": "Merespons dalam waktu yang wajar sesuai prosedur, namun terkadang ada keterlambatan."
+            },
+            {
+              "weight": 25,
+              "label": "Seringkali membutuhkan waktu lebih lama untuk merespons karena prioritas lain."
+            },
+            {
+              "weight": 0,
+              "label": "Cenderung lambat dalam merespons, menunggu instruksi atau eskalasi."
+            }
+          ],
+          "label": "Seberapa cepat Anda merespons permintaan atau keluhan dari masyarakat/pemangku kepentingan terkait layanan yang Anda berikan?",
+          "required": true
+        },
+        {
+          "showIf": {
+            "equals": "Seringkali membutuhkan waktu lebih lama untuk merespons karena prioritas lain.",
+            "fieldId": "responsivitasPelayanan"
+          },
+          "type": "textarea",
+          "id": "justifikasiResponsivitas",
+          "label": "Mohon uraikan kendala atau faktor yang mempengaruhi kecepatan respons Anda.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "gridSpan": 2,
+          "label": "Mohon uraikan kendala atau faktor yang mempengaruhi kecepatan respons Anda.",
+          "required": true,
+          "showIf": {
+            "fieldId": "responsivitasPelayanan",
+            "equals": "Cenderung lambat dalam merespons, menunggu instruksi atau eskalasi."
+          },
+          "id": "justifikasiResponsivitas2",
+          "type": "textarea"
+        },
+        {
+          "id": "akuntabilitasSumberDaya",
+          "type": "radio",
+          "options": [
+            {
+              "weight": 100,
+              "label": "Secara konsisten mengelola sumber daya dengan sangat efisien, transparan, dan sesuai regulasi."
+            },
+            {
+              "weight": 75,
+              "label": "Mengelola sumber daya dengan efisien dan berupaya transparan."
+            },
+            {
+              "weight": 50,
+              "label": "Cukup efisien dalam penggunaan sumber daya, namun terkadang ada ruang untuk perbaikan."
+            },
+            {
+              "weight": 25,
+              "label": "Kurang optimal dalam pengelolaan sumber daya, seringkali ada pemborosan atau ketidakefisienan."
+            },
+            {
+              "weight": 0,
+              "label": "Tidak terlalu fokus pada efisiensi dan transparansi penggunaan sumber daya."
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Bagaimana Anda memastikan penggunaan sumber daya (waktu, anggaran, fasilitas) yang efektif dan efisien dalam tugas Anda?",
+          "required": true
+        },
+        {
+          "id": "justifikasiSumberDaya",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "akuntabilitasSumberDaya",
+            "equals": "Kurang optimal dalam pengelolaan sumber daya, seringkali ada pemborosan atau ketidakefisienan."
+          },
+          "label": "Mohon jelaskan tantangan atau praktik yang Anda hadapi dalam pengelolaan sumber daya.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "id": "justifikasiSumberDaya2",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "akuntabilitasSumberDaya",
+            "equals": "Tidak terlalu fokus pada efisiensi dan transparansi penggunaan sumber daya."
+          },
+          "label": "Mohon jelaskan tantangan atau praktik yang Anda hadapi dalam pengelolaan sumber daya.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "label": "Bagaimana Anda menunjukkan komitmen untuk memahami dan memenuhi kebutuhan serta harapan masyarakat/pengguna layanan?",
+          "required": true,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Secara aktif mencari masukan, berinovasi, dan proaktif dalam memenuhi kebutuhan layanan."
+            },
+            {
+              "weight": 75,
+              "label": "Merespons masukan dengan baik dan berupaya meningkatkan kualitas layanan."
+            },
+            {
+              "weight": 50,
+              "label": "Memenuhi standar layanan yang ditetapkan, namun jarang mencari masukan tambahan."
+            },
+            {
+              "weight": 25,
+              "label": "Cenderung pasif, hanya bertindak jika ada instruksi atau keluhan langsung."
+            },
+            {
+              "weight": 0,
+              "label": "Tidak terlalu peduli dengan masukan atau harapan pengguna layanan."
+            }
+          ],
+          "gridSpan": 2,
+          "id": "berorientasiPelayanan",
+          "type": "radio"
+        },
+        {
+          "gridSpan": 2,
+          "label": "Mohon berikan penjelasan mengenai pendekatan Anda dalam berorientasi pelayanan.",
+          "required": true,
+          "showIf": {
+            "equals": "Cenderung pasif, hanya bertindak jika ada instruksi atau keluhan langsung.",
+            "fieldId": "berorientasiPelayanan"
+          },
+          "type": "textarea",
+          "id": "justifikasiBerorientasi"
+        },
+        {
+          "showIf": {
+            "equals": "Tidak terlalu peduli dengan masukan atau harapan pengguna layanan.",
+            "fieldId": "berorientasiPelayanan"
+          },
+          "type": "textarea",
+          "id": "justifikasiBerorientasi2",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon berikan penjelasan mengenai pendekatan Anda dalam berorientasi pelayanan."
+        },
+        {
+          "required": true,
+          "label": "Seberapa konsisten Anda dalam mematuhi kode etik dan peraturan perilaku ASN dalam setiap tindakan dan keputusan?",
+          "options": [
+            {
+              "weight": 100,
+              "label": "Selalu mematuhi kode etik dan peraturan tanpa pengecualian, menjadi teladan."
+            },
+            {
+              "weight": 75,
+              "label": "Sangat konsisten dalam mematuhi kode etik dan peraturan."
+            },
+            {
+              "weight": 50,
+              "label": "Umumnya mematuhi, namun terkadang ada situasi yang menantang."
+            },
+            {
+              "weight": 25,
+              "label": "Kadang-kadang menghadapi kesulitan dalam mematuhi kode etik atau peraturan."
+            },
+            {
+              "weight": 0,
+              "label": "Kurang memprioritaskan kepatuhan terhadap kode etik dan peraturan."
+            }
+          ],
+          "gridSpan": 2,
+          "type": "radio",
+          "id": "kepatuhanEtik"
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiKepatuhan",
+          "showIf": {
+            "equals": "Kadang-kadang menghadapi kesulitan dalam mematuhi kode etik atau peraturan.",
+            "fieldId": "kepatuhanEtik"
+          },
+          "label": "Mohon jelaskan situasi atau faktor yang mempengaruhi kepatuhan Anda terhadap kode etik dan peraturan.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "label": "Mohon jelaskan situasi atau faktor yang mempengaruhi kepatuhan Anda terhadap kode etik dan peraturan.",
+          "required": true,
+          "gridSpan": 2,
+          "showIf": {
+            "equals": "Kurang memprioritaskan kepatuhan terhadap kode etik dan peraturan.",
+            "fieldId": "kepatuhanEtik"
+          },
+          "id": "justifikasiKepatuhan2",
+          "type": "textarea"
+        },
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Secara proaktif menyelaraskan tugas individu dengan target organisasi dan mencari cara untuk melampaui ekspektasi."
+            },
+            {
+              "weight": 75,
+              "label": "Menyelaraskan tugas dengan target organisasi dan berupaya mencapai hasil optimal."
+            },
+            {
+              "weight": 50,
+              "label": "Fokus pada penyelesaian tugas individu, dengan kesadaran akan kontribusinya pada target."
+            },
+            {
+              "weight": 25,
+              "label": "Lebih fokus pada penyelesaian tugas harian tanpa terlalu memperhatikan kontribusi pada target besar."
+            },
+            {
+              "weight": 0,
+              "label": "Kurang memahami atau tidak terlalu peduli dengan keterkaitan tugas individu dengan target organisasi."
+            }
+          ],
+          "required": true,
+          "label": "Bagaimana Anda memastikan bahwa tugas-tugas yang Anda laksanakan berkontribusi pada pencapaian target kinerja unit kerja atau organisasi?",
+          "id": "orientasiHasil",
+          "type": "radio"
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiOrientasiHasil",
+          "showIf": {
+            "fieldId": "orientasiHasil",
+            "equals": "Lebih fokus pada penyelesaian tugas harian tanpa terlalu memperhatikan kontribusi pada target besar."
+          },
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon uraikan pandangan Anda mengenai keterkaitan tugas individu dengan target organisasi."
+        },
+        {
+          "gridSpan": 2,
+          "label": "Mohon uraikan pandangan Anda mengenai keterkaitan tugas individu dengan target organisasi.",
+          "required": true,
+          "id": "justifikasiOrientasiHasil2",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Kurang memahami atau tidak terlalu peduli dengan keterkaitan tugas individu dengan target organisasi.",
+            "fieldId": "orientasiHasil"
+          }
+        },
+        {
+          "label": "Langkah-langkah apa yang Anda ambil untuk terus meningkatkan kualitas layanan publik yang Anda berikan?",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Secara rutin mengidentifikasi peluang inovasi dan mengimplementasikan perbaikan signifikan."
+            },
+            {
+              "weight": 75,
+              "label": "Aktif mencari cara untuk meningkatkan layanan dan menerapkan perbaikan yang relevan."
+            },
+            {
+              "weight": 50,
+              "label": "Meningkatkan layanan jika ada arahan atau masalah yang muncul."
+            },
+            {
+              "weight": 25,
+              "label": "Jarang mengambil inisiatif untuk meningkatkan kualitas layanan."
+            },
+            {
+              "weight": 0,
+              "label": "Tidak ada upaya khusus untuk peningkatan kualitas layanan."
+            }
+          ],
+          "id": "inovasiPelayanan",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "fieldId": "inovasiPelayanan",
+            "equals": "Jarang mengambil inisiatif untuk meningkatkan kualitas layanan."
+          },
+          "id": "justifikasiInovasi",
+          "type": "textarea",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan alasan atau kendala yang Anda hadapi dalam upaya peningkatan kualitas layanan."
+        },
+        {
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan alasan atau kendala yang Anda hadapi dalam upaya peningkatan kualitas layanan.",
+          "id": "justifikasiInovasi2",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Tidak ada upaya khusus untuk peningkatan kualitas layanan.",
+            "fieldId": "inovasiPelayanan"
+          }
+        },
+        {
+          "id": "pelaporanTransparansi",
+          "type": "radio",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Secara proaktif menyusun laporan yang komprehensif, akurat, dan mudah diakses oleh pihak yang berkepentingan."
+            },
+            {
+              "weight": 75,
+              "label": "Menyusun laporan sesuai standar dan berupaya transparan."
+            },
+            {
+              "weight": 50,
+              "label": "Melaporkan kinerja sesuai permintaan, namun terkadang kurang detail."
+            },
+            {
+              "weight": 25,
+              "label": "Pelaporan kinerja seringkali terlambat atau kurang lengkap."
+            },
+            {
+              "weight": 0,
+              "label": "Tidak terlalu fokus pada pelaporan yang transparan dan akuntabel."
+            }
+          ],
+          "label": "Bagaimana Anda memastikan transparansi dan akuntabilitas dalam pelaporan kinerja dan pertanggungjawaban tugas Anda?",
+          "required": true
+        },
+        {
+          "gridSpan": 2,
+          "label": "Mohon uraikan tantangan atau praktik Anda terkait pelaporan kinerja dan transparansi.",
+          "required": true,
+          "showIf": {
+            "fieldId": "pelaporanTransparansi",
+            "equals": "Pelaporan kinerja seringkali terlambat atau kurang lengkap."
+          },
+          "id": "justifikasiPelaporan",
+          "type": "textarea"
+        },
+        {
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon uraikan tantangan atau praktik Anda terkait pelaporan kinerja dan transparansi.",
+          "showIf": {
+            "equals": "Tidak terlalu fokus pada pelaporan yang transparan dan akuntabel.",
+            "fieldId": "pelaporanTransparansi"
+          },
+          "id": "justifikasiPelaporan2",
+          "type": "textarea"
+        }
+      ],
+      "description": "Mengukur tingkat akuntabilitas, responsivitas, dan komitmen ASN dalam memberikan pelayanan prima kepada masyarakat sesuai nilai dasar BerAKHLAK."
+    },
+    {
+      "stepNumber": 2,
+      "description": "Menilai kemampuan pemecahan masalah secara analitis serta tingkat adaptasi terhadap teknologi informasi dan Sistem Pemerintahan Berbasis Elektronik (SPBE).",
+      "fields": [
+        {
+          "required": true,
+          "label": "Bagaimana pendekatan Anda dalam menganalisis dan menyelesaikan masalah kompleks yang belum pernah dihadapi sebelumnya?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 20,
+              "label": "Menunggu arahan atau solusi dari atasan/rekan."
+            },
+            {
+              "weight": 40,
+              "label": "Mencoba beberapa solusi yang sudah dikenal, namun seringkali memerlukan bantuan."
+            },
+            {
+              "weight": 60,
+              "label": "Menganalisis masalah secara sistematis, mencari informasi, dan mengusulkan beberapa alternatif solusi."
+            },
+            {
+              "weight": 80,
+              "label": "Secara proaktif mengidentifikasi akar masalah, mengembangkan solusi inovatif, dan mengevaluasi dampaknya."
+            },
+            {
+              "weight": 100,
+              "label": "Mampu merumuskan kerangka kerja penyelesaian masalah yang kompleks, membimbing tim, dan mengantisipasi tantangan masa depan."
+            }
+          ],
+          "id": "pendekatanMasalahKompleks",
+          "type": "radio"
+        },
+        {
+          "gridSpan": 2,
+          "label": "Mohon jelaskan alasan Anda menunggu arahan atau solusi dalam menghadapi masalah kompleks.",
+          "required": true,
+          "id": "justifikasiMasalahKompleks",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "pendekatanMasalahKompleks",
+            "equals": "Menunggu arahan atau solusi dari atasan/rekan."
+          }
+        },
+        {
+          "id": "adaptasiTeknologiBaru",
+          "type": "radio",
+          "required": true,
+          "label": "Seberapa cepat Anda menguasai dan mengadaptasi penggunaan aplikasi atau sistem digital baru dalam pekerjaan Anda?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 20,
+              "label": "Membutuhkan waktu dan bimbingan intensif untuk memahami dasar-dasarnya."
+            },
+            {
+              "weight": 40,
+              "label": "Cukup lambat, seringkali merasa kesulitan dan memerlukan bantuan berulang."
+            },
+            {
+              "weight": 60,
+              "label": "Mampu belajar secara mandiri dengan panduan, namun butuh waktu untuk mahir."
+            },
+            {
+              "weight": 80,
+              "label": "Cepat beradaptasi, mampu mengeksplorasi fitur baru, dan sering membantu rekan lain."
+            },
+            {
+              "weight": 100,
+              "label": "Sangat cepat menguasai, bahkan mampu mengidentifikasi potensi peningkatan dan mengadvokasi penggunaannya secara luas."
+            }
+          ]
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiAdaptasiLambat",
+          "showIf": {
+            "equals": "Cukup lambat, seringkali merasa kesulitan dan memerlukan bantuan berulang.",
+            "fieldId": "adaptasiTeknologiBaru"
+          },
+          "required": true,
+          "label": "Mohon jelaskan tantangan yang Anda hadapi dalam mengadaptasi teknologi baru.",
+          "gridSpan": 2
+        },
+        {
+          "label": "Bagaimana Anda menilai tingkat kemahiran Anda dalam menggunakan perangkat lunak perkantoran (misalnya pengolah kata, lembar kerja, presentasi) dan platform komunikasi digital?",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 20,
+              "label": "Dasar, hanya bisa menggunakan fitur-fitur esensial."
+            },
+            {
+              "weight": 40,
+              "label": "Cukup, mampu menyelesaikan tugas standar namun kesulitan dengan fitur lanjutan."
+            },
+            {
+              "weight": 60,
+              "label": "Mahir, dapat menggunakan sebagian besar fitur dan mengoptimalkan pekerjaan."
+            },
+            {
+              "weight": 80,
+              "label": "Sangat mahir, mampu membuat template, otomatisasi sederhana, dan mengelola proyek digital."
+            },
+            {
+              "weight": 100,
+              "label": "Pakar, mampu melatih orang lain, mengembangkan solusi digital, dan mengintegrasikan berbagai alat."
+            }
+          ],
+          "id": "literasiDigitalDasar",
+          "type": "radio"
+        },
+        {
+          "id": "buktiKemahiranDigital",
+          "type": "file",
+          "showIf": {
+            "fieldId": "literasiDigitalDasar",
+            "equals": "Sangat mahir, mampu membuat template, otomatisasi sederhana, dan mengelola proyek digital."
+          },
+          "required": true,
+          "label": "Unggah bukti sertifikasi atau portofolio yang menunjukkan kemahiran digital Anda.",
+          "gridSpan": 2,
+          "fileAccept": ".pdf,.jpg,.png"
+        },
+        {
+          "id": "inisiatifInovasiDigital",
+          "type": "radio",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 20,
+              "label": "Belum pernah, saya mengikuti prosedur yang ada."
+            },
+            {
+              "weight": 40,
+              "label": "Pernah mengusulkan ide, namun belum terealisasi."
+            },
+            {
+              "weight": 60,
+              "label": "Pernah berkontribusi pada implementasi solusi digital yang diinisiasi orang lain."
+            },
+            {
+              "weight": 80,
+              "label": "Pernah menginisiasi dan berhasil menerapkan solusi digital sederhana yang meningkatkan efisiensi."
+            },
+            {
+              "weight": 100,
+              "label": "Secara konsisten menginisiasi, memimpin, dan berhasil mengimplementasikan inovasi digital yang berdampak signifikan pada organisasi."
+            }
+          ],
+          "label": "Pernahkah Anda menginisiasi atau berkontribusi pada pengembangan solusi atau perbaikan proses kerja berbasis digital di unit Anda?",
+          "required": true
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiInovasiBelum",
+          "showIf": {
+            "equals": "Belum pernah, saya mengikuti prosedur yang ada.",
+            "fieldId": "inisiatifInovasiDigital"
+          },
+          "label": "Mohon jelaskan mengapa Anda belum pernah menginisiasi perbaikan proses kerja berbasis digital.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "showIf": {
+            "equals": "Pernah menginisiasi dan berhasil menerapkan solusi digital sederhana yang meningkatkan efisiensi.",
+            "fieldId": "inisiatifInovasiDigital"
+          },
+          "type": "textarea",
+          "id": "contohInovasiDigital",
+          "gridSpan": 2,
+          "label": "Mohon berikan contoh spesifik inisiatif digital yang pernah Anda terapkan dan dampaknya.",
+          "required": true
+        },
+        {
+          "label": "Seberapa sering Anda menggunakan data atau analisis digital untuk mendukung pengambilan keputusan dalam tugas Anda?",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 20,
+              "label": "Jarang, lebih mengandalkan intuisi atau pengalaman."
+            },
+            {
+              "weight": 40,
+              "label": "Kadang-kadang, jika data tersedia dan mudah diakses."
+            },
+            {
+              "weight": 60,
+              "label": "Cukup sering, saya berusaha mencari data relevan untuk dipertimbangkan."
+            },
+            {
+              "weight": 80,
+              "label": "Sering, saya aktif mencari, menganalisis, dan menginterpretasikan data untuk setiap keputusan penting."
+            },
+            {
+              "weight": 100,
+              "label": "Secara konsisten menggunakan analisis data tingkat lanjut, bahkan mampu mengembangkan model prediktif untuk mendukung strategi."
+            }
+          ],
+          "id": "pengambilanKeputusanData",
+          "type": "radio"
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda jarang menggunakan data atau analisis digital dalam pengambilan keputusan.",
+          "gridSpan": 2,
+          "id": "justifikasiDataJarang",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "pengambilanKeputusanData",
+            "equals": "Jarang, lebih mengandalkan intuisi atau pengalaman."
+          }
+        },
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 20,
+              "label": "Kurang peduli, saya tidak terlalu memikirkan risiko siber."
+            },
+            {
+              "weight": 40,
+              "label": "Cukup tahu, namun seringkali lupa menerapkan praktik keamanan dasar."
+            },
+            {
+              "weight": 60,
+              "label": "Sadar dan menerapkan praktik keamanan dasar (password kuat, tidak klik tautan mencurigakan)."
+            },
+            {
+              "weight": 80,
+              "label": "Sangat sadar, proaktif dalam menjaga keamanan data, dan melaporkan potensi ancaman."
+            },
+            {
+              "weight": 100,
+              "label": "Menjadi advokat keamanan siber, mampu mengidentifikasi kerentanan, dan memberikan edukasi kepada rekan kerja."
+            }
+          ],
+          "required": true,
+          "label": "Bagaimana tingkat kesadaran dan praktik Anda terkait keamanan siber dan perlindungan data pribadi/organisasi?",
+          "id": "kesadaranKeamananSiber",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "fieldId": "kesadaranKeamananSiber",
+            "equals": "Kurang peduli, saya tidak terlalu memikirkan risiko siber."
+          },
+          "id": "justifikasiKeamananKurang",
+          "type": "textarea",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda kurang peduli terhadap risiko siber."
+        },
+        {
+          "required": true,
+          "label": "Seberapa aktif Anda dalam mengikuti pelatihan, kursus, atau sumber belajar mandiri untuk meningkatkan kompetensi digital Anda?",
+          "options": [
+            {
+              "weight": 20,
+              "label": "Pasif, hanya mengikuti jika diwajibkan."
+            },
+            {
+              "weight": 40,
+              "label": "Kadang-kadang, jika ada waktu luang."
+            },
+            {
+              "weight": 60,
+              "label": "Cukup aktif, mencari beberapa sumber belajar relevan."
+            },
+            {
+              "weight": 80,
+              "label": "Aktif dan proaktif, secara rutin mengikuti kursus online, webinar, atau membaca literatur digital terbaru."
+            },
+            {
+              "weight": 100,
+              "label": "Sangat aktif, menjadi pembelajar seumur hidup di bidang digital, bahkan menjadi mentor bagi orang lain."
+            }
+          ],
+          "gridSpan": 2,
+          "id": "pembelajaranMandiriDigital",
+          "type": "radio"
+        },
+        {
+          "required": true,
+          "label": "Unggah bukti sertifikat atau partisipasi Anda dalam pelatihan/kursus digital.",
+          "fileAccept": ".pdf,.jpg,.png",
+          "gridSpan": 2,
+          "type": "file",
+          "id": "buktiPembelajaranDigital",
+          "showIf": {
+            "equals": "Aktif dan proaktif, secara rutin mengikuti kursus online, webinar, atau membaca literatur digital terbaru.",
+            "fieldId": "pembelajaranMandiriDigital"
+          }
+        },
+        {
+          "options": [
+            {
+              "weight": 20,
+              "label": "Menerima informasi apa adanya tanpa verifikasi."
+            },
+            {
+              "weight": 40,
+              "label": "Cukup selektif, namun seringkali kesulitan membedakan informasi kredibel."
+            },
+            {
+              "weight": 60,
+              "label": "Berusaha memverifikasi dari beberapa sumber, namun terkadang masih ragu."
+            },
+            {
+              "weight": 80,
+              "label": "Secara sistematis memverifikasi sumber, membandingkan informasi, dan mengidentifikasi bias."
+            },
+            {
+              "weight": 100,
+              "label": "Mampu mengembangkan kerangka kerja evaluasi informasi, mengidentifikasi disinformasi, dan membimbing orang lain dalam literasi media digital."
+            }
+          ],
+          "gridSpan": 2,
+          "required": true,
+          "label": "Dalam menghadapi informasi digital yang melimpah, bagaimana Anda menyaring dan mengevaluasi kebenaran serta relevansi informasi tersebut?",
+          "type": "radio",
+          "id": "kemampuanBerpikirKritis"
+        },
+        {
+          "id": "justifikasiBerpikirKritis",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "kemampuanBerpikirKritis",
+            "equals": "Menerima informasi apa adanya tanpa verifikasi."
+          },
+          "label": "Mohon jelaskan mengapa Anda cenderung menerima informasi tanpa verifikasi.",
+          "required": true,
+          "gridSpan": 2
+        }
+      ],
+      "title": "Asesmen Kapasitas Kognitif dan Literasi Digital"
+    },
+    {
+      "stepNumber": 3,
+      "title": "Pemetaan Kompetensi Manajerial dan Kepemimpinan",
+      "fields": [
+        {
+          "type": "radio",
+          "id": "integritasDilema",
+          "options": [
+            {
+              "weight": 100,
+              "label": "Selalu berpegang teguh pada prinsip etika dan peraturan, bahkan jika itu berarti hasil jangka pendek tidak optimal."
+            },
+            {
+              "weight": 75,
+              "label": "Mengutamakan integritas namun mencari solusi yang juga mempertimbangkan dampak praktis."
+            },
+            {
+              "weight": 50,
+              "label": "Mencari panduan dari atasan atau kebijakan yang ada untuk memastikan keputusan yang tepat."
+            },
+            {
+              "weight": 25,
+              "label": "Terkadang mempertimbangkan fleksibilitas etika demi mencapai target yang mendesak."
+            },
+            {
+              "weight": 0,
+              "label": "Cenderung mengutamakan pencapaian target tanpa terlalu memikirkan aspek etika."
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Bagaimana Anda mengambil keputusan saat dihadapkan pada situasi dilema etika yang berpotensi memengaruhi reputasi atau hasil kerja tim Anda?",
+          "required": true
+        },
+        {
+          "required": true,
+          "label": "Coba jelaskan lebih lanjut situasi tersebut dan bagaimana Anda menanganinya.",
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "justifikasiIntegritas",
+          "showIf": {
+            "fieldId": "integritasDilema",
+            "equals": "Terkadang mempertimbangkan fleksibilitas etika demi mencapai target yang mendesak."
+          }
+        },
+        {
+          "required": true,
+          "label": "Coba jelaskan lebih lanjut situasi tersebut dan bagaimana Anda menanganinya.",
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "justifikasiIntegritas2",
+          "showIf": {
+            "equals": "Cenderung mengutamakan pencapaian target tanpa terlalu memikirkan aspek etika.",
+            "fieldId": "integritasDilema"
+          }
+        },
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Secara proaktif menginisiasi dan memimpin kolaborasi lintas fungsi yang signifikan, menghasilkan dampak positif yang terukur."
+            },
+            {
+              "weight": 75,
+              "label": "Sering berpartisipasi aktif dan berkontribusi besar dalam upaya kolaborasi."
+            },
+            {
+              "weight": 50,
+              "label": "Berpartisipasi jika diminta dan menjalankan peran yang diberikan dengan baik."
+            },
+            {
+              "weight": 25,
+              "label": "Cenderung bekerja secara independen, namun terbuka untuk kolaborasi jika diperlukan."
+            },
+            {
+              "weight": 0,
+              "label": "Lebih suka bekerja sendiri dan jarang terlibat dalam kolaborasi lintas fungsi."
+            }
+          ],
+          "label": "Seberapa aktif Anda dalam memprakarsai dan memfasilitasi kolaborasi dengan unit kerja atau pihak eksternal untuk mencapai tujuan bersama?",
+          "required": true,
+          "type": "radio",
+          "id": "kerjasamaLintasFungsi"
+        },
+        {
+          "type": "textarea",
+          "id": "contohKolaborasi",
+          "showIf": {
+            "equals": "Secara proaktif menginisiasi dan memimpin kolaborasi lintas fungsi yang signifikan, menghasilkan dampak positif yang terukur.",
+            "fieldId": "kerjasamaLintasFungsi"
+          },
+          "gridSpan": 2,
+          "required": true,
+          "label": "Berikan contoh konkret proyek kolaborasi yang Anda pimpin atau kontribusikan secara signifikan."
+        },
+        {
+          "showIf": {
+            "fieldId": "kerjasamaLintasFungsi",
+            "equals": "Sering berpartisipasi aktif dan berkontribusi besar dalam upaya kolaborasi."
+          },
+          "id": "contohKolaborasi2",
+          "type": "textarea",
+          "label": "Berikan contoh konkret proyek kolaborasi yang Anda pimpin atau kontribusikan secara signifikan.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Secara konsisten menggunakan berbagai metode komunikasi adaptif (visual, narasi, analogi) untuk memastikan pemahaman universal."
+            },
+            {
+              "weight": 75,
+              "label": "Mampu menyederhanakan informasi kompleks dan menyajikannya secara efektif kepada sebagian besar audiens."
+            },
+            {
+              "weight": 50,
+              "label": "Berusaha menyampaikan informasi dengan jelas, namun terkadang masih memerlukan klarifikasi lebih lanjut."
+            },
+            {
+              "weight": 25,
+              "label": "Cenderung menyampaikan informasi secara teknis, mengasumsikan audiens memiliki pemahaman yang sama."
+            },
+            {
+              "weight": 0,
+              "label": "Sering kesulitan dalam menyampaikan informasi kompleks sehingga sulit dipahami oleh audiens yang beragam."
+            }
+          ],
+          "required": true,
+          "label": "Bagaimana Anda memastikan pesan atau informasi kompleks dapat dipahami dengan jelas oleh berbagai audiens, termasuk mereka yang memiliki latar belakang berbeda?",
+          "id": "komunikasiKompleks",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "fieldId": "komunikasiKompleks",
+            "equals": "Secara konsisten menggunakan berbagai metode komunikasi adaptif (visual, narasi, analogi) untuk memastikan pemahaman universal."
+          },
+          "type": "textarea",
+          "id": "uraianKomunikasi",
+          "gridSpan": 2,
+          "label": "Uraikan salah satu pengalaman Anda dalam mengkomunikasikan ide kompleks dan hasilnya.",
+          "required": true
+        },
+        {
+          "type": "textarea",
+          "id": "uraianKomunikasi2",
+          "showIf": {
+            "equals": "Mampu menyederhanakan informasi kompleks dan menyajikannya secara efektif kepada sebagian besar audiens.",
+            "fieldId": "komunikasiKompleks"
+          },
+          "gridSpan": 2,
+          "required": true,
+          "label": "Uraikan salah satu pengalaman Anda dalam mengkomunikasikan ide kompleks dan hasilnya."
+        },
+        {
+          "options": [
+            {
+              "weight": 100,
+              "label": "Secara strategis merumuskan rencana inovatif, memobilisasi sumber daya, dan secara konsisten melampaui target yang ditetapkan."
+            },
+            {
+              "weight": 75,
+              "label": "Mampu menyusun strategi efektif dan secara konsisten mencapai atau sedikit melampaui target."
+            },
+            {
+              "weight": 50,
+              "label": "Berusaha keras untuk mencapai target dan seringkali berhasil memenuhinya."
+            },
+            {
+              "weight": 25,
+              "label": "Cenderung mencapai target minimal, namun jarang melampauinya."
+            },
+            {
+              "weight": 0,
+              "label": "Seringkali kesulitan mencapai target yang ditetapkan, terutama yang ambisius."
+            }
+          ],
+          "gridSpan": 2,
+          "required": true,
+          "label": "Dalam menghadapi target kerja yang ambisius atau di luar ekspektasi, bagaimana pendekatan Anda untuk memastikan pencapaian hasil yang optimal?",
+          "type": "radio",
+          "id": "orientasiHasilTarget"
+        },
+        {
+          "gridSpan": 2,
+          "label": "Sebutkan satu target ambisius yang berhasil Anda capai dan metrik keberhasilannya.",
+          "required": true,
+          "showIf": {
+            "fieldId": "orientasiHasilTarget",
+            "equals": "Secara strategis merumuskan rencana inovatif, memobilisasi sumber daya, dan secara konsisten melampaui target yang ditetapkan."
+          },
+          "type": "textarea",
+          "id": "buktiTarget"
+        },
+        {
+          "gridSpan": 2,
+          "label": "Sebutkan satu target ambisius yang berhasil Anda capai dan metrik keberhasilannya.",
+          "required": true,
+          "showIf": {
+            "fieldId": "orientasiHasilTarget",
+            "equals": "Mampu menyusun strategi efektif dan secara konsisten mencapai atau sedikit melampaui target."
+          },
+          "id": "buktiTarget2",
+          "type": "textarea"
+        },
+        {
+          "label": "Bagaimana Anda mengambil keputusan strategis yang krusial di bawah tekanan waktu atau informasi yang terbatas?",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Secara sistematis menganalisis data yang ada, mempertimbangkan berbagai skenario risiko, dan mengambil keputusan yang terbukti efektif."
+            },
+            {
+              "weight": 75,
+              "label": "Mampu membuat keputusan yang solid dengan cepat, meskipun dalam kondisi tidak ideal."
+            },
+            {
+              "weight": 50,
+              "label": "Membuat keputusan berdasarkan informasi yang tersedia, namun terkadang memerlukan penyesuaian."
+            },
+            {
+              "weight": 25,
+              "label": "Cenderung menunda keputusan atau mencari persetujuan dari pihak lain dalam situasi tekanan."
+            },
+            {
+              "weight": 0,
+              "label": "Seringkali kesulitan membuat keputusan yang tepat di bawah tekanan, menyebabkan penundaan atau kesalahan."
+            }
+          ],
+          "id": "keputusanStrategisTekanan",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "fieldId": "keputusanStrategisTekanan",
+            "equals": "Secara sistematis menganalisis data yang ada, mempertimbangkan berbagai skenario risiko, dan mengambil keputusan yang terbukti efektif."
+          },
+          "type": "textarea",
+          "id": "uraianKeputusan",
+          "label": "Uraikan salah satu keputusan krusial yang Anda ambil dan dampaknya.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "label": "Uraikan salah satu keputusan krusial yang Anda ambil dan dampaknya.",
+          "required": true,
+          "gridSpan": 2,
+          "showIf": {
+            "equals": "Mampu membuat keputusan yang solid dengan cepat, meskipun dalam kondisi tidak ideal.",
+            "fieldId": "keputusanStrategisTekanan"
+          },
+          "id": "uraianKeputusan2",
+          "type": "textarea"
+        },
+        {
+          "label": "Sejauh mana Anda berinisiatif untuk membimbing, melatih, atau mengembangkan potensi rekan kerja/bawahan Anda?",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Secara aktif merancang program mentoring/coaching, memberikan umpan balik konstruktif, dan secara signifikan meningkatkan kapabilitas tim."
+            },
+            {
+              "weight": 75,
+              "label": "Sering memberikan bimbingan dan dukungan yang efektif untuk pengembangan rekan kerja/bawahan."
+            },
+            {
+              "weight": 50,
+              "label": "Memberikan bimbingan jika diminta atau jika ada kesempatan yang jelas."
+            },
+            {
+              "weight": 25,
+              "label": "Fokus pada tugas pribadi, namun bersedia membantu jika ada pertanyaan."
+            },
+            {
+              "weight": 0,
+              "label": "Jarang terlibat dalam pengembangan rekan kerja/bawahan."
+            }
+          ],
+          "type": "radio",
+          "id": "pengembanganBawahan"
+        },
+        {
+          "id": "dampakPengembangan",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "pengembanganBawahan",
+            "equals": "Secara aktif merancang program mentoring/coaching, memberikan umpan balik konstruktif, dan secara signifikan meningkatkan kapabilitas tim."
+          },
+          "gridSpan": 2,
+          "label": "Berikan contoh bagaimana inisiatif Anda berkontribusi pada peningkatan kinerja atau karier seseorang.",
+          "required": true
+        },
+        {
+          "label": "Berikan contoh bagaimana inisiatif Anda berkontribusi pada peningkatan kinerja atau karier seseorang.",
+          "required": true,
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "pengembanganBawahan",
+            "equals": "Sering memberikan bimbingan dan dukungan yang efektif untuk pengembangan rekan kerja/bawahan."
+          },
+          "type": "textarea",
+          "id": "dampakPengembangan2"
+        },
+        {
+          "type": "radio",
+          "id": "inisiatifPerubahan",
+          "label": "Bagaimana peran Anda dalam mengidentifikasi kebutuhan perubahan, menginisiasi, dan mengelola implementasi perubahan signifikan di lingkungan kerja Anda?",
+          "required": true,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Secara proaktif mengidentifikasi peluang perubahan strategis, memimpin inisiatif, dan berhasil mengelola transisi dengan dampak positif yang terukur."
+            },
+            {
+              "weight": 75,
+              "label": "Sering mengusulkan ide perubahan dan berperan aktif dalam implementasinya."
+            },
+            {
+              "weight": 50,
+              "label": "Mendukung inisiatif perubahan yang dipimpin orang lain dan beradaptasi dengan baik."
+            },
+            {
+              "weight": 25,
+              "label": "Cenderung pasif terhadap perubahan, namun bersedia mengikuti arahan."
+            },
+            {
+              "weight": 0,
+              "label": "Menunjukkan resistensi terhadap perubahan atau kesulitan beradaptasi dengan lingkungan baru."
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "label": "Unggah dokumen pendukung (misal: laporan proyek perubahan, notulen rapat inisiatif) yang menunjukkan peran Anda.",
+          "required": true,
+          "gridSpan": 2,
+          "fileAccept": ".pdf",
+          "type": "file",
+          "id": "buktiPerubahan",
+          "showIf": {
+            "equals": "Secara proaktif mengidentifikasi peluang perubahan strategis, memimpin inisiatif, dan berhasil mengelola transisi dengan dampak positif yang terukur.",
+            "fieldId": "inisiatifPerubahan"
+          }
+        },
+        {
+          "id": "buktiPerubahan2",
+          "type": "file",
+          "showIf": {
+            "fieldId": "inisiatifPerubahan",
+            "equals": "Sering mengusulkan ide perubahan dan berperan aktif dalam implementasinya."
+          },
+          "fileAccept": ".pdf",
+          "gridSpan": 2,
+          "label": "Unggah dokumen pendukung (misal: laporan proyek perubahan, notulen rapat inisiatif) yang menunjukkan peran Anda.",
+          "required": true
+        },
+        {
+          "label": "Bagaimana Anda berkontribusi dalam menghasilkan ide atau solusi inovatif untuk tantangan yang kompleks atau masalah yang berulang di unit kerja Anda?",
+          "required": true,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Secara konsisten menghasilkan ide-ide inovatif yang terbukti efektif dalam memecahkan masalah kompleks dan menciptakan nilai baru."
+            },
+            {
+              "weight": 75,
+              "label": "Sering menyumbangkan ide-ide kreatif yang berkontribusi pada perbaikan proses atau solusi."
+            },
+            {
+              "weight": 50,
+              "label": "Berpartisipasi dalam sesi brainstorming dan memberikan masukan yang relevan."
+            },
+            {
+              "weight": 25,
+              "label": "Cenderung mengikuti prosedur standar, namun terbuka terhadap ide baru."
+            },
+            {
+              "weight": 0,
+              "label": "Jarang memberikan ide inovatif dan lebih suka mengikuti cara kerja yang sudah ada."
+            }
+          ],
+          "gridSpan": 2,
+          "id": "solusiInovatif",
+          "type": "radio"
+        },
+        {
+          "required": true,
+          "label": "Deskripsikan salah satu solusi inovatif yang Anda usulkan atau kembangkan dan dampaknya.",
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "deskripsiInovasi",
+          "showIf": {
+            "equals": "Secara konsisten menghasilkan ide-ide inovatif yang terbukti efektif dalam memecahkan masalah kompleks dan menciptakan nilai baru.",
+            "fieldId": "solusiInovatif"
+          }
+        },
+        {
+          "label": "Deskripsikan salah satu solusi inovatif yang Anda usulkan atau kembangkan dan dampaknya.",
+          "required": true,
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "solusiInovatif",
+            "equals": "Sering menyumbangkan ide-ide kreatif yang berkontribusi pada perbaikan proses atau solusi."
+          },
+          "id": "deskripsiInovasi2",
+          "type": "textarea"
+        },
+        {
+          "required": true,
+          "label": "Bagaimana Anda menjaga kinerja dan efektivitas Anda saat menghadapi beban kerja tinggi, tenggat waktu ketat, atau perubahan prioritas yang mendadak?",
+          "options": [
+            {
+              "weight": 100,
+              "label": "Secara proaktif mengelola stres, beradaptasi dengan cepat terhadap perubahan, dan mempertahankan kinerja optimal secara konsisten."
+            },
+            {
+              "weight": 75,
+              "label": "Mampu mengelola tekanan dengan baik dan beradaptasi dengan sebagian besar perubahan tanpa penurunan kinerja signifikan."
+            },
+            {
+              "weight": 50,
+              "label": "Berusaha keras untuk beradaptasi dan menjaga kinerja, meskipun terkadang merasa tertekan."
+            },
+            {
+              "weight": 25,
+              "label": "Terkadang kesulitan mengelola stres atau beradaptasi dengan perubahan mendadak, yang memengaruhi kinerja."
+            },
+            {
+              "weight": 0,
+              "label": "Seringkali kewalahan oleh tekanan atau kesulitan beradaptasi, menyebabkan penurunan kinerja yang jelas."
+            }
+          ],
+          "gridSpan": 2,
+          "id": "manajemenStresAdaptasi",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "equals": "Terkadang kesulitan mengelola stres atau beradaptasi dengan perubahan mendadak, yang memengaruhi kinerja.",
+            "fieldId": "manajemenStresAdaptasi"
+          },
+          "type": "textarea",
+          "id": "situasiKesulitanStres",
+          "label": "Jelaskan situasi spesifik di mana Anda merasa kesulitan dan bagaimana Anda mengatasinya.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "showIf": {
+            "fieldId": "manajemenStresAdaptasi",
+            "equals": "Seringkali kewalahan oleh tekanan atau kesulitan beradaptasi, menyebabkan penurunan kinerja yang jelas."
+          },
+          "type": "textarea",
+          "id": "situasiKesulitanStres2",
+          "label": "Jelaskan situasi spesifik di mana Anda merasa kesulitan dan bagaimana Anda mengatasinya.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Secara konsisten merumuskan visi yang inspiratif, strategi yang koheren, dan berhasil mengimplementasikannya dengan hasil yang transformatif."
+            },
+            {
+              "weight": 75,
+              "label": "Mampu merumuskan visi dan strategi yang jelas, serta mengkomunikasikannya secara efektif untuk mencapai tujuan."
+            },
+            {
+              "weight": 50,
+              "label": "Berpartisipasi dalam perumusan visi dan strategi, serta membantu implementasinya."
+            },
+            {
+              "weight": 25,
+              "label": "Fokus pada tugas operasional harian, namun memahami visi dan strategi yang ada."
+            },
+            {
+              "weight": 0,
+              "label": "Jarang terlibat dalam perumusan visi atau strategi dan kesulitan mengkomunikasikannya."
+            }
+          ],
+          "label": "Sejauh mana Anda mampu merumuskan, mengkomunikasikan, dan mengimplementasikan visi serta strategi jangka panjang untuk unit kerja atau proyek yang Anda pimpin?",
+          "required": true,
+          "id": "rumusanVisiStrategi",
+          "type": "radio"
+        },
+        {
+          "required": true,
+          "label": "Berikan contoh visi atau strategi yang Anda rumuskan dan bagaimana Anda mengimplementasikannya.",
+          "gridSpan": 2,
+          "id": "contohVisiStrategi",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "rumusanVisiStrategi",
+            "equals": "Secara konsisten merumuskan visi yang inspiratif, strategi yang koheren, dan berhasil mengimplementasikannya dengan hasil yang transformatif."
+          }
+        },
+        {
+          "gridSpan": 2,
+          "required": true,
+          "label": "Berikan contoh visi atau strategi yang Anda rumuskan dan bagaimana Anda mengimplementasikannya.",
+          "showIf": {
+            "equals": "Mampu merumuskan visi dan strategi yang jelas, serta mengkomunikasikannya secara efektif untuk mencapai tujuan.",
+            "fieldId": "rumusanVisiStrategi"
+          },
+          "id": "contohVisiStrategi2",
+          "type": "textarea"
+        }
+      ],
+      "description": "Mengevaluasi kemampuan ASN dalam merencanakan, mengorganisasi, mengambil keputusan strategis, serta memimpin dan mengembangkan bawahan."
+    },
+    {
+      "stepNumber": 4,
+      "description": "Mengukur kematangan emosional, ketahanan terhadap stres, empati, dan kemampuan menjadi perekat bangsa di tengah keberagaman.",
+      "title": "Dinamika Sosial Kultural dan Kecerdasan Emosional",
+      "fields": [
+        {
+          "required": true,
+          "label": "Bagaimana Anda menyikapi perbedaan pandangan, latar belakang, atau keyakinan dalam lingkungan kerja?",
+          "options": [
+            {
+              "weight": 20,
+              "label": "Menghindari interaksi dengan pihak yang berbeda."
+            },
+            {
+              "weight": 40,
+              "label": "Menerima perbedaan namun tidak aktif berinteraksi."
+            },
+            {
+              "weight": 60,
+              "label": "Terbuka untuk berdiskusi dan memahami perspektif lain."
+            },
+            {
+              "weight": 80,
+              "label": "Secara aktif mempromosikan inklusivitas dan menghargai keberagaman."
+            },
+            {
+              "weight": 100,
+              "label": "Menjadi teladan dalam membangun harmoni dan sinergi lintas perbedaan."
+            }
+          ],
+          "gridSpan": 2,
+          "type": "radio",
+          "id": "sikapKeberagaman"
+        },
+        {
+          "label": "Mohon jelaskan alasan Anda memilih opsi tersebut terkait sikap terhadap keberagaman.",
+          "required": true,
+          "gridSpan": 2,
+          "id": "justifikasiKeberagamanRendah",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Menghindari interaksi dengan pihak yang berbeda.",
+            "fieldId": "sikapKeberagaman"
+          }
+        },
+        {
+          "id": "peranPerekatBangsa",
+          "type": "radio",
+          "options": [
+            {
+              "weight": 20,
+              "label": "Tidak merasa perlu terlibat dalam isu persatuan."
+            },
+            {
+              "weight": 40,
+              "label": "Hanya berpartisipasi jika diminta."
+            },
+            {
+              "weight": 60,
+              "label": "Berupaya menjaga netralitas dan menghindari konflik."
+            },
+            {
+              "weight": 80,
+              "label": "Aktif menginisiasi kegiatan yang mempererat hubungan antar pegawai."
+            },
+            {
+              "weight": 100,
+              "label": "Menjadi agen perubahan yang secara konsisten membangun kohesi sosial di unit kerja."
+            }
+          ],
+          "gridSpan": 2,
+          "required": true,
+          "label": "Sejauh mana Anda berkontribusi dalam menciptakan suasana kerja yang kondusif dan mempersatukan berbagai elemen pegawai?"
+        },
+        {
+          "showIf": {
+            "fieldId": "peranPerekatBangsa",
+            "equals": "Menjadi agen perubahan yang secara konsisten membangun kohesi sosial di unit kerja."
+          },
+          "type": "textarea",
+          "id": "contohPerekatBangsaTinggi",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon berikan contoh konkret kontribusi Anda dalam membangun kohesi sosial di unit kerja."
+        },
+        {
+          "id": "responsKesulitanRekan",
+          "type": "radio",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 20,
+              "label": "Menganggap itu bukan urusan saya."
+            },
+            {
+              "weight": 40,
+              "label": "Bersimpati namun tidak melakukan tindakan konkret."
+            },
+            {
+              "weight": 60,
+              "label": "Menawarkan bantuan jika diminta atau terlihat jelas."
+            },
+            {
+              "weight": 80,
+              "label": "Secara proaktif menawarkan dukungan dan mencari solusi bersama."
+            },
+            {
+              "weight": 100,
+              "label": "Menjadi mentor atau pendukung utama bagi rekan yang membutuhkan."
+            }
+          ],
+          "label": "Bagaimana Anda merespons rekan kerja yang sedang menghadapi kesulitan pribadi atau tantangan profesional?",
+          "required": true
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan bagaimana Anda secara proaktif menawarkan dukungan atau menjadi mentor bagi rekan yang membutuhkan.",
+          "gridSpan": 2,
+          "showIf": {
+            "equals": "Menjadi mentor atau pendukung utama bagi rekan yang membutuhkan.",
+            "fieldId": "responsKesulitanRekan"
+          },
+          "type": "textarea",
+          "id": "deskripsiResponsKesulitanTinggi"
+        },
+        {
+          "required": true,
+          "label": "Dalam situasi kerja yang penuh tekanan atau tenggat waktu ketat, bagaimana Anda mengelola emosi dan menjaga fokus pada tugas?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 20,
+              "label": "Cenderung panik dan sulit berkonsentrasi."
+            },
+            {
+              "weight": 40,
+              "label": "Merasa tertekan namun tetap berusaha menyelesaikan tugas."
+            },
+            {
+              "weight": 60,
+              "label": "Mengidentifikasi sumber stres dan mencari cara mengatasinya."
+            },
+            {
+              "weight": 80,
+              "label": "Mampu menjaga ketenangan, memprioritaskan, dan mendelegasikan jika perlu."
+            },
+            {
+              "weight": 100,
+              "label": "Menjadi sumber ketenangan dan inspirasi bagi tim di bawah tekanan tinggi."
+            }
+          ],
+          "id": "manajemenStresKerja",
+          "type": "radio"
+        },
+        {
+          "required": true,
+          "label": "Mohon uraikan strategi spesifik yang Anda gunakan untuk menjaga ketenangan dan produktivitas di bawah tekanan tinggi.",
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "strategiStresKerjaTinggi",
+          "showIf": {
+            "equals": "Menjadi sumber ketenangan dan inspirasi bagi tim di bawah tekanan tinggi.",
+            "fieldId": "manajemenStresKerja"
+          }
+        },
+        {
+          "type": "radio",
+          "id": "adaptasiPerubahan",
+          "required": true,
+          "label": "Seberapa cepat Anda beradaptasi dengan perubahan kebijakan, prosedur, atau teknologi baru di lingkungan kerja?",
+          "options": [
+            {
+              "weight": 20,
+              "label": "Menolak atau merasa sangat tidak nyaman dengan perubahan."
+            },
+            {
+              "weight": 40,
+              "label": "Membutuhkan waktu lama untuk menyesuaikan diri."
+            },
+            {
+              "weight": 60,
+              "label": "Mampu beradaptasi setelah mendapatkan penjelasan yang memadai."
+            },
+            {
+              "weight": 80,
+              "label": "Secara proaktif mencari informasi dan beradaptasi dengan cepat."
+            },
+            {
+              "weight": 100,
+              "label": "Menjadi agen perubahan yang membantu rekan lain beradaptasi."
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "gridSpan": 2,
+          "label": "Mohon berikan contoh bagaimana Anda menjadi agen perubahan dalam membantu rekan lain beradaptasi dengan perubahan.",
+          "required": true,
+          "showIf": {
+            "equals": "Menjadi agen perubahan yang membantu rekan lain beradaptasi.",
+            "fieldId": "adaptasiPerubahan"
+          },
+          "id": "contohAdaptasiTinggi",
+          "type": "textarea"
+        },
+        {
+          "id": "peranKonflik",
+          "type": "radio",
+          "label": "Ketika terjadi perbedaan pendapat atau potensi konflik antar rekan kerja, peran apa yang biasanya Anda ambil?",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 20,
+              "label": "Menghindari terlibat sama sekali."
+            },
+            {
+              "weight": 40,
+              "label": "Hanya mengamati dari jauh."
+            },
+            {
+              "weight": 60,
+              "label": "Mencoba menengahi jika diminta."
+            },
+            {
+              "weight": 80,
+              "label": "Secara aktif memfasilitasi dialog untuk mencari titik temu."
+            },
+            {
+              "weight": 100,
+              "label": "Menjadi mediator yang efektif dan mencari solusi win-win."
+            }
+          ]
+        },
+        {
+          "type": "textarea",
+          "id": "pendekatanKonflikTinggi",
+          "showIf": {
+            "equals": "Menjadi mediator yang efektif dan mencari solusi win-win.",
+            "fieldId": "peranKonflik"
+          },
+          "required": true,
+          "label": "Mohon jelaskan pendekatan yang Anda gunakan saat menjadi mediator yang efektif dalam konflik.",
+          "gridSpan": 2
+        },
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 20,
+              "label": "Seringkali bertindak impulsif berdasarkan emosi."
+            },
+            {
+              "weight": 40,
+              "label": "Berusaha mengendalikan emosi namun kadang gagal."
+            },
+            {
+              "weight": 60,
+              "label": "Melakukan jeda sejenak sebelum mengambil keputusan."
+            },
+            {
+              "weight": 80,
+              "label": "Secara konsisten menerapkan teknik pengendalian emosi dan berpikir rasional."
+            },
+            {
+              "weight": 100,
+              "label": "Menjadi contoh dalam pengambilan keputusan yang tenang dan objektif di bawah tekanan."
+            }
+          ],
+          "required": true,
+          "label": "Bagaimana Anda memastikan keputusan atau tindakan Anda tidak dipengaruhi oleh emosi sesaat, terutama dalam situasi kritis?",
+          "id": "pengendalianDiriEmosi",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "equals": "Menjadi contoh dalam pengambilan keputusan yang tenang dan objektif di bawah tekanan.",
+            "fieldId": "pengendalianDiriEmosi"
+          },
+          "type": "textarea",
+          "id": "metodePengendalianDiriTinggi",
+          "required": true,
+          "label": "Mohon uraikan metode atau teknik yang Anda terapkan untuk menjaga objektivitas dalam pengambilan keputusan di bawah tekanan.",
+          "gridSpan": 2
+        },
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 20,
+              "label": "Jarang sekali atau tidak pernah."
+            },
+            {
+              "weight": 40,
+              "label": "Hanya jika ada instruksi jelas."
+            },
+            {
+              "weight": 60,
+              "label": "Bersedia berkolaborasi jika ada kesempatan."
+            },
+            {
+              "weight": 80,
+              "label": "Secara proaktif mencari peluang kolaborasi dan membangun jaringan."
+            },
+            {
+              "weight": 100,
+              "label": "Menjadi motor penggerak kolaborasi strategis yang berdampak luas."
+            }
+          ],
+          "label": "Seberapa sering Anda mengambil inisiatif untuk berkolaborasi lintas unit atau tim demi mencapai tujuan organisasi yang lebih besar?",
+          "required": true,
+          "id": "inisiatifKolaborasi",
+          "type": "radio"
+        },
+        {
+          "gridSpan": 2,
+          "label": "Mohon berikan contoh inisiatif kolaborasi strategis yang pernah Anda pimpin atau motori.",
+          "required": true,
+          "type": "textarea",
+          "id": "contohKolaborasiTinggi",
+          "showIf": {
+            "fieldId": "inisiatifKolaborasi",
+            "equals": "Menjadi motor penggerak kolaborasi strategis yang berdampak luas."
+          }
+        },
+        {
+          "type": "radio",
+          "id": "penerimaanUmpanBalik",
+          "options": [
+            {
+              "weight": 20,
+              "label": "Cenderung defensif atau merasa diserang."
+            },
+            {
+              "weight": 40,
+              "label": "Menerima namun tidak selalu menindaklanjuti."
+            },
+            {
+              "weight": 60,
+              "label": "Menganalisis umpan balik dan mempertimbangkan relevansinya."
+            },
+            {
+              "weight": 80,
+              "label": "Secara aktif mencari umpan balik dan menggunakannya untuk perbaikan diri."
+            },
+            {
+              "weight": 100,
+              "label": "Menginspirasi orang lain untuk menerima dan memberikan umpan balik secara terbuka."
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Bagaimana Anda menyikapi umpan balik konstruktif, terutama yang menyoroti area pengembangan diri Anda?",
+          "required": true
+        },
+        {
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan bagaimana Anda menginspirasi orang lain untuk menerima dan memberikan umpan balik secara terbuka.",
+          "showIf": {
+            "equals": "Menginspirasi orang lain untuk menerima dan memberikan umpan balik secara terbuka.",
+            "fieldId": "penerimaanUmpanBalik"
+          },
+          "id": "tindakLanjutUmpanBalikTinggi",
+          "type": "textarea"
+        },
+        {
+          "options": [
+            {
+              "weight": 20,
+              "label": "Lebih suka mempertahankan cara lama yang sudah terbukti."
+            },
+            {
+              "weight": 40,
+              "label": "Ragu-ragu mencoba hal baru."
+            },
+            {
+              "weight": 60,
+              "label": "Bersedia mempertimbangkan ide baru jika ada argumen kuat."
+            },
+            {
+              "weight": 80,
+              "label": "Secara aktif mencari dan mengeksplorasi ide-ide inovatif."
+            },
+            {
+              "weight": 100,
+              "label": "Menjadi pelopor dalam mengadopsi dan mengimplementasikan inovasi di unit kerja."
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Seberapa terbuka Anda terhadap ide-ide baru, pendekatan inovatif, atau cara kerja yang berbeda dari kebiasaan yang ada?",
+          "required": true,
+          "id": "keterbukaanIdeBaru",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "equals": "Menjadi pelopor dalam mengadopsi dan mengimplementasikan inovasi di unit kerja.",
+            "fieldId": "keterbukaanIdeBaru"
+          },
+          "type": "textarea",
+          "id": "contohImplementasiIdeBaruTinggi",
+          "label": "Mohon berikan contoh bagaimana Anda menjadi pelopor dalam mengadopsi atau mengimplementasikan inovasi di unit kerja.",
+          "required": true,
+          "gridSpan": 2
+        }
+      ]
+    },
+    {
+      "title": "Evaluasi Kompetensi Teknis dan Spesialisasi",
+      "fields": [
+        {
+          "label": "Bagaimana tingkat penguasaan Anda terhadap tugas-tugas inti dan fungsi utama dalam jabatan Anda saat ini?",
+          "required": true,
+          "options": [
+            {
+              "weight": 10,
+              "label": "Memahami dasar-dasar, namun memerlukan bimbingan rutin."
+            },
+            {
+              "weight": 30,
+              "label": "Mampu melaksanakan tugas dengan pengawasan minimal."
+            },
+            {
+              "weight": 50,
+              "label": "Menguasai sebagian besar tugas dan mampu menyelesaikan masalah standar."
+            },
+            {
+              "weight": 70,
+              "label": "Sangat menguasai tugas, mampu membimbing rekan, dan menangani kasus kompleks."
+            },
+            {
+              "weight": 90,
+              "label": "Ahli dalam bidang tugas, menjadi rujukan utama, dan mampu mengembangkan inovasi."
+            }
+          ],
+          "gridSpan": 2,
+          "type": "radio",
+          "id": "penguasaanTugasInti"
+        },
+        {
+          "type": "textarea",
+          "id": "alasanPenguasaanRendah",
+          "showIf": {
+            "equals": "Memahami dasar-dasar, namun memerlukan bimbingan rutin.",
+            "fieldId": "penguasaanTugasInti"
+          },
+          "placeholder": "Uraikan secara spesifik.",
+          "label": "Mohon jelaskan tantangan atau area yang memerlukan bimbingan lebih lanjut terkait penguasaan tugas inti Anda.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "placeholder": "Jelaskan situasi, tindakan, dan hasil yang dicapai.",
+          "showIf": {
+            "equals": "Ahli dalam bidang tugas, menjadi rujukan utama, dan mampu mengembangkan inovasi.",
+            "fieldId": "penguasaanTugasInti"
+          },
+          "type": "textarea",
+          "id": "contohPenguasaanTinggi",
+          "gridSpan": 2,
+          "label": "Mohon berikan contoh konkret bagaimana Anda menjadi ahli atau rujukan dalam bidang tugas Anda, termasuk inovasi yang dikembangkan.",
+          "required": true
+        },
+        {
+          "id": "kualitasAnalisisTeknis",
+          "type": "radio",
+          "required": true,
+          "label": "Seberapa efektif Anda dalam melakukan analisis teknis dan merumuskan rekomendasi kebijakan atau solusi di bidang tugas Anda?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 10,
+              "label": "Membutuhkan arahan detail untuk setiap analisis."
+            },
+            {
+              "weight": 30,
+              "label": "Mampu menganalisis dengan panduan, hasil standar."
+            },
+            {
+              "weight": 50,
+              "label": "Mampu menganalisis secara mandiri, hasil cukup komprehensif."
+            },
+            {
+              "weight": 70,
+              "label": "Sangat mahir menganalisis, rekomendasi inovatif dan berdampak."
+            },
+            {
+              "weight": 90,
+              "label": "Menjadi pakar rujukan, analisis strategis, dan mampu membentuk kebijakan."
+            }
+          ]
+        },
+        {
+          "placeholder": "Uraikan secara spesifik.",
+          "showIf": {
+            "equals": "Membutuhkan arahan detail untuk setiap analisis.",
+            "fieldId": "kualitasAnalisisTeknis"
+          },
+          "type": "textarea",
+          "id": "tantanganAnalisis",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan tantangan utama yang Anda hadapi dalam melakukan analisis teknis atau merumuskan rekomendasi."
+        },
+        {
+          "fileAccept": ".pdf,.docx",
+          "gridSpan": 2,
+          "label": "Unggah contoh dokumen analisis atau rekomendasi kebijakan yang pernah Anda susun atau kontribusikan.",
+          "required": true,
+          "showIf": {
+            "equals": "Menjadi pakar rujukan, analisis strategis, dan mampu membentuk kebijakan.",
+            "fieldId": "kualitasAnalisisTeknis"
+          },
+          "id": "buktiAnalisisKebijakan",
+          "type": "file"
+        },
+        {
+          "label": "Bagaimana Anda memanfaatkan teknologi digital dan aplikasi spesifik untuk meningkatkan efisiensi dan kualitas pekerjaan Anda?",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 10,
+              "label": "Jarang menggunakan, lebih memilih metode manual."
+            },
+            {
+              "weight": 30,
+              "label": "Menggunakan fitur dasar, perlu bantuan untuk fungsi lanjutan."
+            },
+            {
+              "weight": 50,
+              "label": "Cukup mahir menggunakan berbagai fitur, mampu beradaptasi dengan aplikasi baru."
+            },
+            {
+              "weight": 70,
+              "label": "Aktif mencari dan menerapkan teknologi baru, menjadi contoh bagi rekan."
+            },
+            {
+              "weight": 90,
+              "label": "Mengembangkan atau mengadvokasi solusi teknologi inovatif untuk unit kerja."
+            }
+          ],
+          "id": "pemanfaatanTeknologi",
+          "type": "radio"
+        },
+        {
+          "placeholder": "Uraikan secara spesifik.",
+          "showIf": {
+            "fieldId": "pemanfaatanTeknologi",
+            "equals": "Jarang menggunakan, lebih memilih metode manual."
+          },
+          "id": "kendalaTeknologi",
+          "type": "textarea",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan kendala atau alasan mengapa Anda jarang menggunakan teknologi digital dalam pekerjaan Anda."
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan solusi teknologi inovatif yang pernah Anda kembangkan atau advokasikan, serta dampaknya.",
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "contohInovasiTeknologi",
+          "showIf": {
+            "equals": "Mengembangkan atau mengadvokasi solusi teknologi inovatif untuk unit kerja.",
+            "fieldId": "pemanfaatanTeknologi"
+          },
+          "placeholder": "Jelaskan secara rinci."
+        },
+        {
+          "required": true,
+          "label": "Apakah Anda pernah menginisiasi atau berkontribusi pada pengembangan solusi teknis atau metode kerja baru yang terbukti meningkatkan kinerja unit?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Belum pernah."
+            },
+            {
+              "weight": 40,
+              "label": "Pernah, namun dampaknya terbatas."
+            },
+            {
+              "weight": 70,
+              "label": "Pernah, dengan dampak positif yang terukur."
+            },
+            {
+              "weight": 90,
+              "label": "Sering, dan menjadi pendorong utama inovasi di unit."
+            }
+          ],
+          "type": "radio",
+          "id": "inisiatifInovasiTeknis"
+        },
+        {
+          "showIf": {
+            "equals": "Belum pernah.",
+            "fieldId": "inisiatifInovasiTeknis"
+          },
+          "type": "textarea",
+          "id": "alasanBelumInovasi",
+          "placeholder": "Uraikan secara spesifik.",
+          "label": "Mohon jelaskan alasan atau kendala mengapa Anda belum pernah menginisiasi inovasi teknis.",
+          "required": true,
+          "gridSpan": 2
+        }
+      ],
+      "description": "Menilai kedalaman penguasaan bidang tugas spesifik, kualitas analisis kebijakan, dan penerapan standar teknis operasional.",
+      "stepNumber": 5
+    },
+    {
+      "stepNumber": 6,
+      "description": "Mengidentifikasi inisiatif perubahan, kreativitas, dan kemampuan adaptasi ASN dalam menghadapi dinamika birokrasi yang cepat berubah.",
+      "title": "Pengukuran Inovasi dan Agilitas Mengelola Perubahan",
+      "fields": [
+        {
+          "id": "inisiatifInovasi",
+          "type": "radio",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 20,
+              "label": "Sangat jarang, saya cenderung mengikuti prosedur yang sudah ada."
+            },
+            {
+              "weight": 40,
+              "label": "Kadang-kadang, jika ada masalah yang mendesak."
+            },
+            {
+              "weight": 60,
+              "label": "Cukup sering, saya aktif mencari peluang perbaikan."
+            },
+            {
+              "weight": 80,
+              "label": "Sering, saya rutin mengidentifikasi dan mengusulkan inovasi."
+            },
+            {
+              "weight": 100,
+              "label": "Sangat sering, saya menjadi motor penggerak inovasi di tim."
+            }
+          ],
+          "label": "Seberapa sering Anda mengusulkan ide atau solusi baru untuk meningkatkan efisiensi atau kualitas kerja di unit Anda?",
+          "required": true
+        },
+        {
+          "showIf": {
+            "fieldId": "inisiatifInovasi",
+            "equals": "Sangat sering, saya menjadi motor penggerak inovasi di tim."
+          },
+          "type": "textarea",
+          "id": "deskripsiInisiatifInovasi",
+          "placeholder": "Uraikan secara singkat inisiatif Anda...",
+          "required": true,
+          "label": "Mohon jelaskan satu contoh inisiatif inovasi yang pernah Anda usulkan dan dampaknya.",
+          "gridSpan": 2
+        },
+        {
+          "id": "responsPerubahan",
+          "type": "radio",
+          "options": [
+            {
+              "weight": 20,
+              "label": "Saya merasa kesulitan dan membutuhkan waktu lama untuk beradaptasi."
+            },
+            {
+              "weight": 40,
+              "label": "Saya menerima, namun sering merasa tidak nyaman dengan perubahan."
+            },
+            {
+              "weight": 60,
+              "label": "Saya berusaha memahami dan beradaptasi secara bertahap."
+            },
+            {
+              "weight": 80,
+              "label": "Saya cepat beradaptasi dan melihat perubahan sebagai peluang."
+            },
+            {
+              "weight": 100,
+              "label": "Saya proaktif membantu rekan kerja beradaptasi dan mempromosikan perubahan."
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Bagaimana Anda merespons ketika ada perubahan kebijakan, prosedur, atau teknologi baru di lingkungan kerja Anda?",
+          "required": true
+        },
+        {
+          "id": "tantanganAdaptasi",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Saya merasa kesulitan dan membutuhkan waktu lama untuk beradaptasi.",
+            "fieldId": "responsPerubahan"
+          },
+          "placeholder": "Uraikan tantangan dan strategi Anda...",
+          "label": "Jelaskan tantangan terbesar yang Anda hadapi saat beradaptasi dengan perubahan dan bagaimana Anda mengatasinya.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "id": "eksperimentasiKegagalan",
+          "type": "radio",
+          "options": [
+            {
+              "weight": 20,
+              "label": "Saya sangat menghindari risiko dan hanya melakukan yang sudah terbukti aman."
+            },
+            {
+              "weight": 40,
+              "label": "Saya mencoba jika ada jaminan keberhasilan yang tinggi."
+            },
+            {
+              "weight": 60,
+              "label": "Saya bersedia mencoba hal baru jika didukung dan diawasi."
+            },
+            {
+              "weight": 80,
+              "label": "Saya aktif mencari peluang untuk bereksperimen dan belajar dari hasilnya."
+            },
+            {
+              "weight": 100,
+              "label": "Saya secara konsisten mendorong eksperimentasi dan menganggap kegagalan sebagai bagian dari pembelajaran."
+            }
+          ],
+          "gridSpan": 2,
+          "required": true,
+          "label": "Sejauh mana Anda berani mencoba pendekatan baru atau bereksperimen, meskipun ada potensi kegagalan?"
+        },
+        {
+          "placeholder": "Jelaskan eksperimen dan pembelajarannya...",
+          "showIf": {
+            "equals": "Saya secara konsisten mendorong eksperimentasi dan menganggap kegagalan sebagai bagian dari pembelajaran.",
+            "fieldId": "eksperimentasiKegagalan"
+          },
+          "type": "textarea",
+          "id": "contohEksperimen",
+          "gridSpan": 2,
+          "label": "Berikan contoh eksperimen atau pendekatan baru yang pernah Anda coba dan pelajaran yang Anda petik.",
+          "required": true
+        },
+        {
+          "placeholder": "Uraikan pemanfaatan teknologi Anda...",
+          "id": "contohPemanfaatanTeknologi",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "pemanfaatanTeknologi",
+            "equals": "Saya menjadi rujukan bagi rekan kerja dalam pemanfaatan teknologi untuk inovasi dan transformasi digital."
+          },
+          "gridSpan": 2,
+          "required": true,
+          "label": "Sebutkan contoh spesifik pemanfaatan teknologi yang Anda lakukan dan bagaimana hal itu membantu inovasi."
+        },
+        {
+          "required": true,
+          "label": "Apakah Anda pernah terlibat dalam proyek atau tim yang bertujuan untuk mengembangkan inovasi atau melakukan perubahan signifikan di unit kerja Anda?",
+          "options": [
+            {
+              "weight": 20,
+              "label": "Belum pernah terlibat."
+            },
+            {
+              "weight": 40,
+              "label": "Pernah terlibat sebagai anggota pasif."
+            },
+            {
+              "weight": 60,
+              "label": "Pernah terlibat sebagai anggota aktif dengan kontribusi terbatas."
+            },
+            {
+              "weight": 80,
+              "label": "Sering terlibat dan memberikan kontribusi signifikan."
+            },
+            {
+              "weight": 100,
+              "label": "Secara aktif memimpin atau menginisiasi proyek inovasi."
+            }
+          ],
+          "gridSpan": 2,
+          "type": "radio",
+          "id": "keterlibatanProyekInovasi"
+        },
+        {
+          "placeholder": "Uraikan peran dan hasil proyek Anda...",
+          "showIf": {
+            "fieldId": "keterlibatanProyekInovasi",
+            "equals": "Secara aktif memimpin atau menginisiasi proyek inovasi."
+          },
+          "type": "textarea",
+          "id": "detailProyekInovasi",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Jelaskan peran Anda dalam proyek inovasi tersebut dan hasil yang dicapai."
+        },
+        {
+          "showIf": {
+            "equals": "Belum pernah terlibat.",
+            "fieldId": "keterlibatanProyekInovasi"
+          },
+          "id": "alasanTidakTerlibatInovasi",
+          "type": "textarea",
+          "placeholder": "Berikan alasan Anda...",
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda belum pernah terlibat dalam proyek inovasi.",
+          "gridSpan": 2
+        },
+        {
+          "id": "mendorongBudayaInovasi",
+          "type": "radio",
+          "options": [
+            {
+              "weight": 20,
+              "label": "Saya tidak terlalu memikirkan hal tersebut."
+            },
+            {
+              "weight": 40,
+              "label": "Saya mendukung ide rekan kerja jika diminta."
+            },
+            {
+              "weight": 60,
+              "label": "Saya sesekali memberikan masukan untuk mendorong inovasi."
+            },
+            {
+              "weight": 80,
+              "label": "Saya aktif memfasilitasi diskusi dan mendorong rekan kerja untuk berinovasi."
+            },
+            {
+              "weight": 100,
+              "label": "Saya secara konsisten menjadi advokat dan mentor dalam pengembangan budaya inovasi."
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Sejauh mana Anda berkontribusi dalam menciptakan lingkungan kerja yang mendorong ide-ide baru dan inovasi?",
+          "required": true
+        },
+        {
+          "showIf": {
+            "equals": "Saya secara konsisten menjadi advokat dan mentor dalam pengembangan budaya inovasi.",
+            "fieldId": "mendorongBudayaInovasi"
+          },
+          "id": "aksiMendorongInovasi",
+          "type": "textarea",
+          "placeholder": "Jelaskan tindakan Anda...",
+          "required": true,
+          "label": "Sebutkan tindakan spesifik yang Anda lakukan untuk mendorong budaya inovasi di unit kerja Anda.",
+          "gridSpan": 2
+        },
+        {
+          "required": true,
+          "label": "Ketika menghadapi perubahan yang tidak terduga atau tekanan tinggi, bagaimana Anda menjaga fokus dan produktivitas?",
+          "options": [
+            {
+              "weight": 20,
+              "label": "Saya sering merasa kewalahan dan sulit mempertahankan fokus."
+            },
+            {
+              "weight": 40,
+              "label": "Saya membutuhkan waktu lama untuk menyesuaikan diri dan kembali produktif."
+            },
+            {
+              "weight": 60,
+              "label": "Saya berusaha mencari cara untuk beradaptasi dan mengelola tekanan."
+            },
+            {
+              "weight": 80,
+              "label": "Saya cukup cepat beradaptasi dan menemukan solusi kreatif di bawah tekanan."
+            },
+            {
+              "weight": 100,
+              "label": "Saya mampu tetap tenang, fokus, dan bahkan melihat peluang di tengah perubahan atau krisis."
+            }
+          ],
+          "gridSpan": 2,
+          "type": "radio",
+          "id": "manajemenPerubahanPribadi"
+        },
+        {
+          "id": "tantanganManajemenStres",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Saya sering merasa kewalahan dan sulit mempertahankan fokus.",
+            "fieldId": "manajemenPerubahanPribadi"
+          },
+          "placeholder": "Uraikan tantangan dan strategi Anda...",
+          "label": "Jelaskan tantangan yang Anda hadapi dalam mengelola tekanan dan bagaimana Anda mengatasinya.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "type": "radio",
+          "id": "pengembanganKeterampilanBaru",
+          "options": [
+            {
+              "weight": 20,
+              "label": "Saya hanya belajar jika diwajibkan atau diminta."
+            },
+            {
+              "weight": 40,
+              "label": "Saya belajar jika ada waktu luang atau kesempatan yang mudah."
+            },
+            {
+              "weight": 60,
+              "label": "Saya aktif mencari sumber belajar dan mengikuti pelatihan yang relevan."
+            },
+            {
+              "weight": 80,
+              "label": "Saya secara mandiri mengidentifikasi kebutuhan pengembangan dan menguasai keterampilan baru."
+            },
+            {
+              "weight": 100,
+              "label": "Saya secara berkelanjutan menginvestasikan waktu dan sumber daya untuk menguasai kompetensi masa depan."
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Seberapa proaktif Anda dalam mempelajari keterampilan atau pengetahuan baru yang relevan dengan perubahan tuntutan kerja atau teknologi?",
+          "required": true
+        },
+        {
+          "type": "textarea",
+          "id": "contohPengembanganKeterampilan",
+          "showIf": {
+            "fieldId": "pengembanganKeterampilanBaru",
+            "equals": "Saya secara berkelanjutan menginvestasikan waktu dan sumber daya untuk menguasai kompetensi masa depan."
+          },
+          "placeholder": "Jelaskan keterampilan dan penerapannya...",
+          "required": true,
+          "label": "Sebutkan contoh keterampilan atau pengetahuan baru yang telah Anda pelajari dan bagaimana Anda menerapkannya.",
+          "gridSpan": 2
+        }
+      ]
+    }
+  ],
+  "id": "track_1784695418009",
+  "trackName": "Asesmen Pemetaan Potensi Pegawai (ASN)",
+  "trackDescription": "Instrumen komprehensif Sistem Informasi Manajemen Talenta. Terintegrasi dengan algoritma 9-Box Matrix untuk mengevaluasi indikator Cascading SKP, perilaku kerja BerAKHLAK, dan Indeks Profesionalitas ASN secara objektif."
+}

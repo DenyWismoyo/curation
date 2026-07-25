@@ -1,0 +1,1878 @@
+{
+  "trackName": "Navigasi Kewarasan: Meme, & Resiliensi Emosional",
+  "trackDescription": "Mengukur kecerdasan emosional melalui penggunaan humor satir, tingkat kebutuhan akan afirmasi instan, hingga pola konsumsi hiburan cepat (mikro-drama dan AI roleplay) untuk menjaga ekuilibrium mental.",
+  "steps": [
+    {
+      "title": "Seksi 1: Baseline Stres & Beban Kognitif",
+      "fields": [
+        {
+          "id": "namaUsaha",
+          "type": "text",
+          "required": true,
+          "label": "Nama Lengkap Anda",
+          "gridSpan": 2
+        },
+        {
+          "type": "text",
+          "id": "namaPengisi",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Nama Panggilan/Alias"
+        },
+        {
+          "required": true,
+          "label": "Alamat Email Aktif",
+          "gridSpan": 2,
+          "type": "text",
+          "id": "emailAktif"
+        },
+        {
+          "id": "nomorTelepon",
+          "type": "text",
+          "label": "Nomor Telepon Aktif",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "required": true,
+          "label": "Dalam sebulan terakhir, seberapa sering Anda merasa terbebani oleh stres atau tekanan?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Sangat Jarang",
+              "weight": 100
+            },
+            {
+              "weight": 75,
+              "label": "Kadang-kadang"
+            },
+            {
+              "label": "Cukup Sering",
+              "weight": 50
+            },
+            {
+              "weight": 25,
+              "label": "Sering Sekali"
+            },
+            {
+              "label": "Hampir Setiap Hari",
+              "weight": 0
+            }
+          ],
+          "id": "tingkatStresUmum",
+          "type": "radio"
+        },
+        {
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan lebih lanjut situasi yang menyebabkan Anda merasa terbebani hampir setiap hari.",
+          "type": "textarea",
+          "id": "penjelasanStresHarian",
+          "showIf": {
+            "equals": "Hampir Setiap Hari",
+            "fieldId": "tingkatStresUmum"
+          }
+        },
+        {
+          "options": [
+            {
+              "weight": 100,
+              "label": "Menerima dan mencari solusi"
+            },
+            {
+              "weight": 75,
+              "label": "Merasa sedikit cemas namun tetap tenang"
+            },
+            {
+              "label": "Cenderung khawatir dan sulit fokus",
+              "weight": 50
+            },
+            {
+              "weight": 25,
+              "label": "Merasa sangat cemas dan panik"
+            },
+            {
+              "weight": 0,
+              "label": "Menghindarinya sepenuhnya"
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Ketika dihadapkan pada situasi yang tidak pasti atau di luar kendali Anda, bagaimana reaksi emosional Anda?",
+          "required": true,
+          "type": "radio",
+          "id": "responKetidakpastian"
+        },
+        {
+          "label": "Jelaskan mengapa Anda memilih untuk menghindarinya sepenuhnya dan apa dampaknya bagi Anda.",
+          "required": true,
+          "gridSpan": 2,
+          "id": "alasanMenghindarKetidakpastian",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Menghindarinya sepenuhnya",
+            "fieldId": "responKetidakpastian"
+          }
+        },
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Sangat sering, membantu saya merasa lebih baik"
+            },
+            {
+              "label": "Cukup sering, kadang berhasil",
+              "weight": 75
+            },
+            {
+              "weight": 50,
+              "label": "Kadang-kadang, efeknya bervariasi"
+            },
+            {
+              "label": "Jarang, tidak terlalu membantu",
+              "weight": 25
+            },
+            {
+              "label": "Tidak pernah, tidak relevan bagi saya",
+              "weight": 0
+            }
+          ],
+          "required": true,
+          "label": "Seberapa sering Anda menggunakan meme atau konten humor digital untuk mengatasi perasaan negatif atau stres?",
+          "id": "penggunaanMemeKoping",
+          "type": "radio"
+        },
+        {
+          "type": "textarea",
+          "id": "contohMemeKoping",
+          "showIf": {
+            "equals": "Sangat sering, membantu saya merasa lebih baik",
+            "fieldId": "penggunaanMemeKoping"
+          },
+          "gridSpan": 2,
+          "required": true,
+          "label": "Berikan contoh bagaimana meme atau humor digital membantu Anda merasa lebih baik."
+        },
+        {
+          "options": [
+            {
+              "weight": 100,
+              "label": "Sangat sering, ini cara utama saya"
+            },
+            {
+              "label": "Cukup sering, sebagai pelengkap",
+              "weight": 75
+            },
+            {
+              "label": "Kadang-kadang, jika ada waktu",
+              "weight": 50
+            },
+            {
+              "label": "Jarang, lebih suka berpikir logis",
+              "weight": 25
+            },
+            {
+              "label": "Tidak pernah, tidak percaya pada hal tersebut",
+              "weight": 0
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Dalam mencari pemahaman diri atau solusi masalah, apakah Anda cenderung menggunakan metode refleksi simbolik (misalnya, jurnal, tarot, meditasi terpandu)?",
+          "required": true,
+          "type": "radio",
+          "id": "refleksiSimbolik"
+        },
+        {
+          "gridSpan": 2,
+          "required": true,
+          "label": "Jelaskan bagaimana metode refleksi simbolik menjadi cara utama Anda dalam mencari pemahaman diri.",
+          "showIf": {
+            "fieldId": "refleksiSimbolik",
+            "equals": "Sangat sering, ini cara utama saya"
+          },
+          "id": "penjelasanRefleksiSimbolik",
+          "type": "textarea"
+        },
+        {
+          "label": "Seberapa puas Anda dengan dukungan emosional yang Anda terima dari teman, keluarga, atau komunitas online?",
+          "required": true,
+          "options": [
+            {
+              "label": "Sangat puas, selalu ada yang mendukung",
+              "weight": 100
+            },
+            {
+              "weight": 75,
+              "label": "Cukup puas, ada beberapa yang bisa diandalkan"
+            },
+            {
+              "label": "Netral, kadang ada kadang tidak",
+              "weight": 50
+            },
+            {
+              "weight": 25,
+              "label": "Kurang puas, merasa sendirian"
+            },
+            {
+              "label": "Tidak puas sama sekali, tidak ada dukungan",
+              "weight": 0
+            }
+          ],
+          "gridSpan": 2,
+          "type": "radio",
+          "id": "kualitasDukunganSosial"
+        },
+        {
+          "type": "textarea",
+          "id": "alasanKurangDukungan",
+          "showIf": {
+            "fieldId": "kualitasDukunganSosial",
+            "equals": "Tidak puas sama sekali, tidak ada dukungan"
+          },
+          "gridSpan": 2,
+          "label": "Jelaskan mengapa Anda merasa tidak puas sama sekali dengan dukungan yang ada.",
+          "required": true
+        },
+        {
+          "options": [
+            {
+              "weight": 100,
+              "label": "Sangat mudah, saya sangat peka"
+            },
+            {
+              "weight": 75,
+              "label": "Cukup mudah, butuh sedikit waktu"
+            },
+            {
+              "label": "Kadang sulit, sering bingung",
+              "weight": 50
+            },
+            {
+              "label": "Sulit sekali, sering tidak tahu apa yang dirasakan",
+              "weight": 25
+            },
+            {
+              "weight": 0,
+              "label": "Tidak pernah memikirkannya"
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Seberapa mudah Anda mengenali dan memberi nama pada emosi yang sedang Anda rasakan (misalnya, marah, sedih, cemas, gembira)?",
+          "required": true,
+          "type": "radio",
+          "id": "kesadaranDiriEmosional"
+        },
+        {
+          "label": "Jelaskan mengapa Anda merasa sulit sekali mengenali emosi Anda dan bagaimana hal itu memengaruhi Anda.",
+          "required": true,
+          "gridSpan": 2,
+          "showIf": {
+            "equals": "Sulit sekali, sering tidak tahu apa yang dirasakan",
+            "fieldId": "kesadaranDiriEmosional"
+          },
+          "type": "textarea",
+          "id": "penjelasanSulitMengenaliEmosi"
+        },
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Sangat cepat, dalam hitungan jam",
+              "weight": 100
+            },
+            {
+              "weight": 75,
+              "label": "Cukup cepat, dalam satu atau dua hari"
+            },
+            {
+              "weight": 50,
+              "label": "Butuh beberapa hari hingga seminggu"
+            },
+            {
+              "label": "Butuh waktu lama, lebih dari seminggu",
+              "weight": 25
+            },
+            {
+              "weight": 0,
+              "label": "Sangat sulit untuk pulih"
+            }
+          ],
+          "required": true,
+          "label": "Setelah mengalami kejadian yang membuat Anda stres atau kecewa, seberapa cepat Anda biasanya dapat kembali merasa stabil dan melanjutkan aktivitas?",
+          "type": "radio",
+          "id": "pemulihanStres"
+        },
+        {
+          "showIf": {
+            "fieldId": "pemulihanStres",
+            "equals": "Sangat sulit untuk pulih"
+          },
+          "id": "penjelasanSulitPulih",
+          "type": "textarea",
+          "gridSpan": 2,
+          "label": "Jelaskan apa yang membuat Anda sangat sulit untuk pulih dari kejadian stres atau kekecewaan.",
+          "required": true
+        },
+        {
+          "required": true,
+          "label": "Seberapa sering Anda merasa perlu 'melarikan diri' dari masalah atau kenyataan dengan menghabiskan waktu berlebihan di platform digital (misalnya, media sosial, game, serial)?",
+          "options": [
+            {
+              "weight": 100,
+              "label": "Sangat jarang, saya lebih suka menghadapi masalah"
+            },
+            {
+              "label": "Kadang-kadang, untuk relaksasi singkat",
+              "weight": 75
+            },
+            {
+              "weight": 50,
+              "label": "Cukup sering, sebagai cara untuk menenangkan diri"
+            },
+            {
+              "label": "Sering, ini cara utama saya menghindari masalah",
+              "weight": 25
+            },
+            {
+              "label": "Hampir setiap hari, saya merasa terjebak",
+              "weight": 0
+            }
+          ],
+          "gridSpan": 2,
+          "id": "kecenderunganEskapisme",
+          "type": "radio"
+        },
+        {
+          "type": "textarea",
+          "id": "penjelasanEskapismeHarian",
+          "showIf": {
+            "fieldId": "kecenderunganEskapisme",
+            "equals": "Hampir setiap hari, saya merasa terjebak"
+          },
+          "gridSpan": 2,
+          "required": true,
+          "label": "Jelaskan mengapa Anda merasa terjebak dalam pelarian digital hampir setiap hari dan apa dampaknya."
+        }
+      ],
+      "description": "Mengukur tingkat stres dasar individu dan bagaimana mereka memandang tekanan dalam kehidupan sehari-hari.",
+      "stepNumber": 1
+    },
+    {
+      "stepNumber": 2,
+      "fields": [
+        {
+          "type": "radio",
+          "id": "frekuensiMeme",
+          "options": [
+            {
+              "label": "Hampir tidak pernah",
+              "weight": 75
+            },
+            {
+              "label": "Beberapa kali sehari",
+              "weight": 100
+            },
+            {
+              "weight": 50,
+              "label": "Setiap beberapa jam"
+            },
+            {
+              "weight": 25,
+              "label": "Hampir setiap saat saya membuka ponsel"
+            }
+          ],
+          "gridSpan": 2,
+          "required": true,
+          "label": "Seberapa sering Anda mengonsumsi meme atau konten humor digital dalam sehari?"
+        },
+        {
+          "id": "tujuanMeme",
+          "type": "radio",
+          "label": "Apa tujuan utama Anda mencari atau melihat meme saat merasa tertekan atau stres?",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 50,
+              "label": "Mencari hiburan ringan tanpa berpikir"
+            },
+            {
+              "label": "Mengekspresikan perasaan yang sulit diungkapkan",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Merasa terhubung dengan orang lain yang merasakan hal serupa"
+            },
+            {
+              "label": "Mengalihkan perhatian dari masalah yang ada",
+              "weight": 25
+            }
+          ]
+        },
+        {
+          "showIf": {
+            "equals": "Mengalihkan perhatian dari masalah yang ada",
+            "fieldId": "tujuanMeme"
+          },
+          "type": "textarea",
+          "id": "alasanPengalihanMeme",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Jelaskan mengapa Anda memilih mengalihkan perhatian dengan meme saat ada masalah."
+        },
+        {
+          "options": [
+            {
+              "weight": 100,
+              "label": "Humor positif dan inspiratif"
+            },
+            {
+              "weight": 75,
+              "label": "Humor satir atau sarkasme yang cerdas"
+            },
+            {
+              "label": "Humor gelap atau kontroversial",
+              "weight": 50
+            },
+            {
+              "weight": 25,
+              "label": "Humor absurd atau tidak masuk akal"
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Jenis humor seperti apa yang paling sering Anda cari dalam meme ketika suasana hati sedang tidak baik?",
+          "required": true,
+          "type": "radio",
+          "id": "jenisHumorMeme"
+        },
+        {
+          "label": "Mengapa Anda cenderung mencari humor gelap atau kontroversial saat suasana hati tidak baik?",
+          "required": true,
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "alasanHumorGelap",
+          "showIf": {
+            "equals": "Humor gelap atau kontroversial",
+            "fieldId": "jenisHumorMeme"
+          }
+        },
+        {
+          "options": [
+            {
+              "label": "Membuat saya merasa lebih buruk atau kosong",
+              "weight": 0
+            },
+            {
+              "label": "Tidak ada perubahan signifikan, hanya distraksi sesaat",
+              "weight": 25
+            },
+            {
+              "weight": 75,
+              "label": "Membantu saya merasa sedikit lebih ringan atau lega"
+            },
+            {
+              "label": "Memberikan perspektif baru atau validasi emosi saya",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2,
+          "required": true,
+          "label": "Bagaimana konsumsi meme secara umum memengaruhi kondisi emosional Anda setelahnya?",
+          "id": "dampakMemeEmosi",
+          "type": "radio"
+        },
+        {
+          "required": true,
+          "label": "Apakah Anda menggunakan meme sebagai salah satu cara utama untuk mengatasi stres atau kecemasan?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Tidak, saya punya cara lain",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Jarang, hanya sesekali"
+            },
+            {
+              "label": "Cukup sering, ini salah satu andalan saya",
+              "weight": 50
+            },
+            {
+              "weight": 25,
+              "label": "Sangat sering, saya merasa sulit tanpa meme"
+            }
+          ],
+          "type": "radio",
+          "id": "memeSebagaiKoping"
+        },
+        {
+          "required": true,
+          "label": "Uraikan mengapa Anda merasa sangat sulit tanpa meme sebagai mekanisme koping.",
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "memeSebagaiKoping",
+            "equals": "Sangat sering, saya merasa sulit tanpa meme"
+          },
+          "type": "textarea",
+          "id": "ketergantunganMeme"
+        },
+        {
+          "label": "Seberapa sering Anda berbagi meme dengan teman atau keluarga sebagai bentuk interaksi sosial atau untuk menunjukkan dukungan?",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Hampir tidak pernah",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Kadang-kadang"
+            },
+            {
+              "label": "Sering",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Sangat sering, ini cara saya berkomunikasi"
+            }
+          ],
+          "type": "radio",
+          "id": "berbagiMemeSosial"
+        },
+        {
+          "label": "Apakah Anda pernah merasa terjebak dalam 'doomscrolling' meme, yaitu terus-menerus melihat meme tanpa tujuan jelas hingga mengganggu aktivitas lain?",
+          "required": true,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Tidak pernah"
+            },
+            {
+              "label": "Jarang",
+              "weight": 75
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 50
+            },
+            {
+              "weight": 25,
+              "label": "Sering"
+            },
+            {
+              "label": "Sangat sering",
+              "weight": 0
+            }
+          ],
+          "gridSpan": 2,
+          "id": "memePemicuDoomscrolling",
+          "type": "radio"
+        },
+        {
+          "id": "deskripsiDoomscrolling",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "memePemicuDoomscrolling",
+            "equals": "Sangat sering"
+          },
+          "required": true,
+          "label": "Deskripsikan perasaan atau dampak yang Anda alami saat terjebak dalam 'doomscrolling' meme.",
+          "gridSpan": 2
+        },
+        {
+          "id": "memeValidasiEmosi",
+          "type": "radio",
+          "label": "Apakah Anda secara aktif mencari meme yang memvalidasi perasaan atau pengalaman Anda, terutama saat merasa tidak dipahami?",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Tidak pernah",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Jarang"
+            },
+            {
+              "weight": 50,
+              "label": "Cukup sering"
+            },
+            {
+              "weight": 25,
+              "label": "Sangat sering, saya merasa ini penting untuk saya"
+            }
+          ]
+        },
+        {
+          "id": "memeDanTindakanProaktif",
+          "type": "radio",
+          "label": "Setelah mengonsumsi meme, apakah Anda merasa lebih termotivasi untuk mengambil tindakan proaktif terhadap masalah Anda, atau cenderung tetap dalam kondisi pasif?",
+          "required": true,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Cenderung lebih pasif atau menunda"
+            },
+            {
+              "label": "Tidak ada perubahan signifikan",
+              "weight": 25
+            },
+            {
+              "label": "Sedikit lebih termotivasi untuk bertindak",
+              "weight": 75
+            },
+            {
+              "label": "Jauh lebih termotivasi dan merasa siap menghadapi masalah",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "id": "refleksiMeme",
+          "type": "radio",
+          "label": "Apakah Anda pernah merenungkan makna di balik meme yang Anda konsumsi, terutama yang berkaitan dengan isu sosial atau psikologis?",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 25,
+              "label": "Tidak pernah, hanya untuk hiburan"
+            },
+            {
+              "weight": 50,
+              "label": "Jarang, hanya jika meme tersebut sangat relevan"
+            },
+            {
+              "label": "Cukup sering, saya suka menganalisisnya",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Sangat sering, ini membantu saya memahami dunia dan diri saya"
+            }
+          ]
+        }
+      ],
+      "title": "Seksi 2: Konsumsi Meme & Humor Digital",
+      "description": "Mengeksplorasi frekuensi, jenis, dan tujuan konsumsi meme sebagai bentuk katarsis atau penghindaran."
+    },
+    {
+      "stepNumber": 3,
+      "description": "Menilai penggunaan tarot atau praktik simbolik lainnya dalam menghadapi ketidakpastian dan mencari validasi.",
+      "fields": [
+        {
+          "type": "radio",
+          "id": "frekuensiTarot",
+          "options": [
+            {
+              "weight": 0,
+              "label": "Tidak pernah"
+            },
+            {
+              "weight": 20,
+              "label": "Jarang (kurang dari sebulan sekali)"
+            },
+            {
+              "weight": 50,
+              "label": "Kadang-kadang (beberapa kali sebulan)"
+            },
+            {
+              "label": "Sering (mingguan)",
+              "weight": 75
+            },
+            {
+              "label": "Sangat sering (hampir setiap hari)",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2,
+          "required": true,
+          "label": "Seberapa sering Anda menggunakan Tarot atau alat refleksi simbolik lainnya untuk memahami situasi atau perasaan Anda?"
+        },
+        {
+          "id": "tujuanTarot",
+          "type": "radio",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Mencari hiburan atau rasa penasaran",
+              "weight": 20
+            },
+            {
+              "label": "Mendapatkan jawaban pasti untuk masalah",
+              "weight": 30
+            },
+            {
+              "label": "Validasi emosi atau perasaan yang sedang dialami",
+              "weight": 60
+            },
+            {
+              "label": "Meningkatkan introspeksi dan kesadaran diri",
+              "weight": 80
+            },
+            {
+              "label": "Mencari perspektif baru untuk pengambilan keputusan proaktif",
+              "weight": 100
+            }
+          ],
+          "required": true,
+          "label": "Apa tujuan utama Anda saat melakukan pembacaan Tarot atau refleksi simbolik?"
+        },
+        {
+          "id": "dampakEmosionalTarot",
+          "type": "radio",
+          "required": true,
+          "label": "Bagaimana perasaan Anda setelah sesi Tarot atau refleksi simbolik?",
+          "options": [
+            {
+              "label": "Lebih cemas atau bingung",
+              "weight": 0
+            },
+            {
+              "weight": 20,
+              "label": "Tidak ada perubahan signifikan, hanya distraksi sesaat"
+            },
+            {
+              "label": "Sedikit lega atau terhibur",
+              "weight": 50
+            },
+            {
+              "label": "Merasa lebih tenang dan memiliki kejelasan",
+              "weight": 75
+            },
+            {
+              "label": "Merasa diberdayakan untuk bertindak atau beradaptasi",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "id": "ketergantunganTarot",
+          "type": "radio",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Tidak sama sekali, saya mengandalkan diri sendiri"
+            },
+            {
+              "weight": 75,
+              "label": "Sedikit, hanya untuk inspirasi"
+            },
+            {
+              "label": "Cukup sering, untuk mendapatkan panduan",
+              "weight": 50
+            },
+            {
+              "label": "Sering, saya merasa kurang yakin tanpa panduan",
+              "weight": 25
+            },
+            {
+              "label": "Sangat bergantung, saya sulit membuat keputusan tanpa Tarot",
+              "weight": 0
+            }
+          ],
+          "label": "Seberapa besar Anda merasa perlu berkonsultasi dengan Tarot saat menghadapi ketidakpastian atau keputusan penting?",
+          "required": true
+        },
+        {
+          "required": true,
+          "label": "Jelaskan mengapa Anda merasa sangat bergantung pada Tarot dalam pengambilan keputusan.",
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "ketergantunganTarot",
+            "equals": "Sangat bergantung, saya sulit membuat keputusan tanpa Tarot"
+          },
+          "type": "textarea",
+          "id": "justifikasiKetergantungan"
+        },
+        {
+          "options": [
+            {
+              "label": "Mengabaikannya atau melupakannya",
+              "weight": 0
+            },
+            {
+              "weight": 30,
+              "label": "Merenungkannya saja tanpa tindakan lebih lanjut"
+            },
+            {
+              "label": "Mencari validasi atau interpretasi dari orang lain",
+              "weight": 50
+            },
+            {
+              "label": "Menggunakannya sebagai panduan untuk introspeksi mendalam",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Mengambil tindakan nyata atau perubahan perilaku berdasarkan refleksi tersebut"
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Setelah mendapatkan 'pesan' atau refleksi dari Tarot, apa yang biasanya Anda lakukan?",
+          "required": true,
+          "type": "radio",
+          "id": "aksiSetelahTarot"
+        },
+        {
+          "showIf": {
+            "equals": "Mengambil tindakan nyata atau perubahan perilaku berdasarkan refleksi tersebut",
+            "fieldId": "aksiSetelahTarot"
+          },
+          "type": "textarea",
+          "id": "contohAksiTarot",
+          "required": true,
+          "label": "Berikan contoh singkat bagaimana 'pesan' dari Tarot memengaruhi tindakan atau keputusan nyata Anda.",
+          "gridSpan": 2
+        },
+        {
+          "id": "tarotToleransiKetidakpastian",
+          "type": "radio",
+          "options": [
+            {
+              "label": "Tidak, justru membuat saya lebih khawatir",
+              "weight": 0
+            },
+            {
+              "label": "Kadang membuat saya lebih bingung",
+              "weight": 20
+            },
+            {
+              "weight": 50,
+              "label": "Sedikit membantu, memberikan sedikit perspektif"
+            },
+            {
+              "weight": 75,
+              "label": "Cukup membantu, saya merasa lebih siap menghadapi ketidakpastian"
+            },
+            {
+              "weight": 100,
+              "label": "Sangat membantu, saya merasa lebih tenang dan adaptif"
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Apakah penggunaan Tarot membantu Anda merasa lebih nyaman dan menerima ketidakpastian dalam hidup?",
+          "required": true
+        },
+        {
+          "type": "radio",
+          "id": "tarotKesadaranDiri",
+          "label": "Sejauh mana Tarot berkontribusi pada peningkatan kesadaran diri Anda (pemahaman tentang kekuatan, kelemahan, dan pola emosi)?",
+          "required": true,
+          "options": [
+            {
+              "label": "Tidak ada kontribusi",
+              "weight": 0
+            },
+            {
+              "weight": 30,
+              "label": "Sedikit kontribusi"
+            },
+            {
+              "label": "Cukup berkontribusi",
+              "weight": 60
+            },
+            {
+              "label": "Sangat berkontribusi",
+              "weight": 80
+            },
+            {
+              "label": "Merupakan alat utama dalam pengembangan kesadaran diri saya",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "label": "Selain Tarot, metode refleksi atau pencarian makna apa lagi yang Anda gunakan untuk menjaga keseimbangan mental?",
+          "required": false,
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "alternatifRefleksi",
+          "placeholder": "Contoh: Meditasi, jurnal, diskusi dengan mentor, membaca buku filosofi."
+        },
+        {
+          "id": "persepsiTarotKesejahteraan",
+          "type": "radio",
+          "options": [
+            {
+              "label": "Hanya sebagai hiburan atau ramalan",
+              "weight": 10
+            },
+            {
+              "weight": 30,
+              "label": "Sumber validasi eksternal yang menyenangkan"
+            },
+            {
+              "weight": 60,
+              "label": "Alat bantu untuk memahami emosi dan situasi"
+            },
+            {
+              "label": "Pendukung penting dalam proses introspeksi dan pertumbuhan diri",
+              "weight": 80
+            },
+            {
+              "weight": 100,
+              "label": "Bagian integral dari strategi resiliensi adaptif saya"
+            }
+          ],
+          "gridSpan": 2,
+          "required": true,
+          "label": "Bagaimana Anda melihat peran Tarot dalam konteks kesejahteraan mental dan resiliensi pribadi Anda secara keseluruhan?"
+        }
+      ],
+      "title": "Seksi 3: Praktik Tarot & Pencarian Makna"
+    },
+    {
+      "title": "Seksi 4: Respons Terhadap Krisis & Fleksibilitas",
+      "fields": [
+        {
+          "type": "radio",
+          "id": "adaptasiPerubahan",
+          "label": "Ketika menghadapi perubahan tak terduga dalam rutinitas harian, seberapa cepat Anda dapat menyesuaikan diri?",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Sangat sulit, saya merasa sangat terganggu.",
+              "weight": 0
+            },
+            {
+              "weight": 25,
+              "label": "Cukup sulit, butuh waktu lama untuk menerima."
+            },
+            {
+              "label": "Bisa menyesuaikan, meskipun ada sedikit ketidaknyamanan.",
+              "weight": 50
+            },
+            {
+              "label": "Cukup mudah, saya melihatnya sebagai tantangan baru.",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Sangat mudah, saya fleksibel terhadap perubahan."
+            }
+          ]
+        },
+        {
+          "label": "Seberapa sering Anda menggunakan meme atau konten humor untuk memproses emosi sulit atau situasi stres?",
+          "required": true,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Tidak pernah, saya tidak mengandalkan humor."
+            },
+            {
+              "label": "Jarang, hanya sesekali.",
+              "weight": 25
+            },
+            {
+              "label": "Kadang-kadang, jika situasinya memungkinkan.",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Sering, ini membantu saya merasa lebih baik."
+            },
+            {
+              "weight": 100,
+              "label": "Sangat sering, ini adalah mekanisme koping utama saya."
+            }
+          ],
+          "gridSpan": 2,
+          "type": "radio",
+          "id": "humorRegulasiEmosi"
+        },
+        {
+          "id": "introspeksiSimbolik",
+          "type": "radio",
+          "required": true,
+          "label": "Apakah Anda pernah menggunakan alat refleksi simbolik (misalnya, kartu tarot, jurnal terpandu, atau meditasi visual) untuk memahami perasaan atau situasi hidup?",
+          "options": [
+            {
+              "label": "Tidak pernah tertarik atau mencoba.",
+              "weight": 0
+            },
+            {
+              "label": "Pernah mencoba, tapi tidak rutin.",
+              "weight": 25
+            },
+            {
+              "label": "Kadang-kadang, untuk introspeksi ringan.",
+              "weight": 50
+            },
+            {
+              "label": "Sering, sebagai bagian dari praktik kesadaran diri.",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Sangat sering dan terintegrasi dalam hidup saya."
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "required": true,
+          "label": "Ketika dihadapkan pada situasi yang hasilnya tidak pasti, bagaimana reaksi Anda?",
+          "options": [
+            {
+              "label": "Sangat cemas dan panik.",
+              "weight": 0
+            },
+            {
+              "weight": 25,
+              "label": "Merasa tidak nyaman dan mencoba mencari kepastian."
+            },
+            {
+              "label": "Mampu menerima, meskipun ada sedikit kekhawatiran.",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Cukup tenang dan fokus pada apa yang bisa saya kendalikan."
+            },
+            {
+              "weight": 100,
+              "label": "Melihatnya sebagai peluang dan tetap optimis."
+            }
+          ],
+          "gridSpan": 2,
+          "id": "toleransiKetidakpastian",
+          "type": "radio"
+        },
+        {
+          "id": "eskapismeDigital",
+          "type": "radio",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Hampir setiap hari, ini adalah pelarian utama saya.",
+              "weight": 0
+            },
+            {
+              "weight": 25,
+              "label": "Beberapa kali seminggu, saya sering merasa terjebak."
+            },
+            {
+              "label": "Kadang-kadang, saat merasa sangat stres.",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Jarang, saya lebih suka menghadapi masalah."
+            },
+            {
+              "label": "Tidak pernah, saya membatasi waktu layar saya.",
+              "weight": 100
+            }
+          ],
+          "label": "Seberapa sering Anda merasa perlu menghabiskan waktu berlebihan di media sosial atau hiburan digital (misalnya, doomscrolling, menonton mikro-drama) untuk menghindari masalah di dunia nyata?",
+          "required": true
+        },
+        {
+          "showIf": {
+            "equals": "Hampir setiap hari, ini adalah pelarian utama saya",
+            "fieldId": "eskapismeDigital"
+          },
+          "type": "textarea",
+          "id": "alasanEskapisme",
+          "label": "Mohon jelaskan mengapa Anda merasa perlu melakukan eskapisme digital tersebut.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "type": "radio",
+          "id": "dukunganSosial",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Tidak pernah, saya lebih suka menyimpannya sendiri."
+            },
+            {
+              "label": "Jarang, saya merasa sulit untuk terbuka.",
+              "weight": 25
+            },
+            {
+              "label": "Kadang-kadang, jika saya merasa sangat tertekan.",
+              "weight": 50
+            },
+            {
+              "label": "Sering, saya memiliki beberapa orang yang bisa saya percaya.",
+              "weight": 75
+            },
+            {
+              "label": "Sangat sering, saya memiliki jaringan dukungan yang kuat.",
+              "weight": 100
+            }
+          ],
+          "required": true,
+          "label": "Seberapa sering Anda berbagi tantangan pribadi atau perasaan sulit dengan teman atau keluarga yang Anda percaya?"
+        },
+        {
+          "label": "Seberapa baik Anda mengenali dan memberi nama emosi Anda saat muncul?",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Sangat sulit, saya sering tidak tahu apa yang saya rasakan."
+            },
+            {
+              "weight": 25,
+              "label": "Cukup sulit, saya sering bingung dengan emosi saya."
+            },
+            {
+              "label": "Cukup baik, saya bisa mengenali emosi dasar.",
+              "weight": 50
+            },
+            {
+              "label": "Baik, saya bisa mengidentifikasi nuansa emosi yang berbeda.",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Sangat baik, saya memiliki pemahaman mendalam tentang emosi saya."
+            }
+          ],
+          "type": "radio",
+          "id": "kesadaranDiriEmosi"
+        },
+        {
+          "type": "radio",
+          "id": "strategiKoping",
+          "required": true,
+          "label": "Ketika menghadapi masalah besar, strategi mana yang paling sering Anda gunakan?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Menghindarinya dan berharap masalah akan hilang sendiri."
+            },
+            {
+              "label": "Mencoba melupakan masalah dengan mengalihkan perhatian.",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Mencari solusi praktis, meskipun kadang menunda."
+            },
+            {
+              "label": "Menghadapi masalah secara langsung dan mencari dukungan.",
+              "weight": 75
+            },
+            {
+              "label": "Menganalisis masalah, membuat rencana, dan bertindak proaktif.",
+              "weight": 100
+            }
+          ]
+        },
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Sangat besar, saya sulit memutuskan sendiri."
+            },
+            {
+              "label": "Cukup besar, saya butuh banyak masukan.",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Seimbang, saya mempertimbangkan masukan tapi keputusan akhir ada pada saya."
+            },
+            {
+              "weight": 75,
+              "label": "Cukup kecil, saya percaya pada intuisi dan analisis saya."
+            },
+            {
+              "weight": 100,
+              "label": "Sangat kecil, saya mandiri dalam pengambilan keputusan."
+            }
+          ],
+          "required": true,
+          "label": "Dalam membuat keputusan penting, seberapa besar Anda mengandalkan panduan atau opini dari sumber eksternal (misalnya, influencer, teman, atau ramalan)?",
+          "type": "radio",
+          "id": "ketergantunganEksternal"
+        },
+        {
+          "required": true,
+          "label": "Bagaimana Anda mengintegrasikan mekanisme koping alternatif (seperti humor digital atau refleksi simbolik) dengan tindakan nyata dalam menghadapi tantangan hidup?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Saya hanya mengandalkan koping alternatif dan menghindari tindakan nyata."
+            },
+            {
+              "weight": 25,
+              "label": "Koping alternatif seringkali membuat saya menunda tindakan nyata."
+            },
+            {
+              "label": "Saya mencoba menyeimbangkan, tapi kadang sulit.",
+              "weight": 50
+            },
+            {
+              "label": "Koping alternatif membantu saya mempersiapkan diri untuk tindakan nyata.",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Saya menggunakan koping alternatif sebagai pelengkap untuk tindakan proaktif."
+            }
+          ],
+          "type": "radio",
+          "id": "integrasiKoping"
+        }
+      ],
+      "description": "Mengevaluasi bagaimana individu beradaptasi ketika mekanisme koping utama mereka tidak berfungsi atau saat menghadapi krisis nyata.",
+      "stepNumber": 4
+    },
+    {
+      "stepNumber": 5,
+      "description": "Menganalisis apakah penggunaan meme dan komunitas tarot mendekatkan individu pada dukungan sosial atau justru mengisolasi mereka.",
+      "fields": [
+        {
+          "id": "memeKoneksi",
+          "type": "radio",
+          "label": "Seberapa sering Anda berbagi meme dengan lingkaran terdekat (teman/keluarga) untuk mengekspresikan perasaan atau mempererat ikatan?",
+          "required": true,
+          "options": [
+            {
+              "weight": 90,
+              "label": "Sangat sering, ini cara utama saya terhubung."
+            },
+            {
+              "label": "Sering, ini membantu saya berkomunikasi.",
+              "weight": 70
+            },
+            {
+              "label": "Kadang-kadang, tergantung suasana hati.",
+              "weight": 50
+            },
+            {
+              "label": "Jarang, saya lebih suka cara lain.",
+              "weight": 30
+            },
+            {
+              "weight": 10,
+              "label": "Tidak pernah, saya tidak menggunakan meme untuk itu."
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "showIf": {
+            "equals": "Sangat sering, ini cara utama saya terhubung.",
+            "fieldId": "memeKoneksi"
+          },
+          "type": "textarea",
+          "id": "contohMemeKoneksiPositif",
+          "gridSpan": 2,
+          "label": "Berikan contoh singkat bagaimana berbagi meme telah memperkuat koneksi Anda.",
+          "required": true
+        },
+        {
+          "type": "textarea",
+          "id": "alasanTidakMemeKoneksi",
+          "showIf": {
+            "equals": "Tidak pernah, saya tidak menggunakan meme untuk itu.",
+            "fieldId": "memeKoneksi"
+          },
+          "gridSpan": 2,
+          "required": true,
+          "label": "Jelaskan mengapa Anda tidak menggunakan meme untuk tujuan koneksi emosional."
+        },
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Sangat merasa didukung dan dipahami.",
+              "weight": 95
+            },
+            {
+              "label": "Cukup merasa didukung, tapi ada batasan.",
+              "weight": 70
+            },
+            {
+              "weight": 45,
+              "label": "Kadang-kadang, tergantung siapa yang berinteraksi."
+            },
+            {
+              "label": "Jarang, saya merasa sendirian secara digital.",
+              "weight": 20
+            },
+            {
+              "weight": 5,
+              "label": "Tidak pernah, saya tidak mencari dukungan di sana."
+            }
+          ],
+          "label": "Apakah Anda merasa mendapatkan dukungan emosional yang berarti dari koneksi digital Anda saat menghadapi tantangan pribadi?",
+          "required": true,
+          "id": "dukunganDigital",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "fieldId": "dukunganDigital",
+            "equals": "Sangat merasa didukung dan dipahami."
+          },
+          "id": "contohDukunganDigital",
+          "type": "textarea",
+          "label": "Ceritakan pengalaman singkat di mana Anda merasa sangat didukung secara digital.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "type": "textarea",
+          "id": "alasanTidakDukunganDigital",
+          "showIf": {
+            "equals": "Tidak pernah, saya tidak mencari dukungan di sana.",
+            "fieldId": "dukunganDigital"
+          },
+          "required": true,
+          "label": "Jelaskan mengapa Anda tidak mencari atau merasa tidak mendapatkan dukungan emosional dari koneksi digital.",
+          "gridSpan": 2
+        },
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 85,
+              "label": "Saya memiliki keseimbangan yang sehat antara keduanya."
+            },
+            {
+              "weight": 75,
+              "label": "Lebih banyak interaksi tatap muka, digital sebagai pelengkap."
+            },
+            {
+              "weight": 40,
+              "label": "Cenderung lebih banyak interaksi digital daripada tatap muka."
+            },
+            {
+              "weight": 15,
+              "label": "Hampir seluruh interaksi saya bersifat digital."
+            }
+          ],
+          "required": true,
+          "label": "Bagaimana Anda menyeimbangkan waktu antara interaksi sosial digital dan interaksi tatap muka dalam kehidupan sehari-hari?",
+          "id": "keseimbanganInteraksi",
+          "type": "radio"
+        },
+        {
+          "gridSpan": 2,
+          "label": "Uraikan alasan utama mengapa interaksi digital mendominasi kehidupan sosial Anda.",
+          "required": true,
+          "showIf": {
+            "fieldId": "keseimbanganInteraksi",
+            "equals": "Hampir seluruh interaksi saya bersifat digital."
+          },
+          "type": "textarea",
+          "id": "alasanInteraksiDigitalDominan"
+        },
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Seringkali meningkatkan suasana hati dan energi positif.",
+              "weight": 90
+            },
+            {
+              "weight": 65,
+              "label": "Cenderung positif, tapi kadang ada momen negatif."
+            },
+            {
+              "weight": 50,
+              "label": "Netral, tidak terlalu memengaruhi."
+            },
+            {
+              "weight": 25,
+              "label": "Seringkali memicu perasaan cemas atau perbandingan."
+            },
+            {
+              "label": "Hampir selalu membuat saya merasa lebih buruk.",
+              "weight": 5
+            }
+          ],
+          "required": true,
+          "label": "Secara umum, bagaimana interaksi sosial digital memengaruhi kondisi emosional Anda?",
+          "type": "radio",
+          "id": "dampakInteraksiDigital"
+        },
+        {
+          "label": "Jelaskan lebih lanjut bagaimana interaksi digital memicu perasaan negatif atau perbandingan.",
+          "required": true,
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "detailDampakNegatifDigital",
+          "showIf": {
+            "equals": "Seringkali memicu perasaan cemas atau perbandingan.",
+            "fieldId": "dampakInteraksiDigital"
+          }
+        },
+        {
+          "gridSpan": 2,
+          "required": true,
+          "label": "Uraikan mengapa interaksi digital hampir selalu membuat Anda merasa lebih buruk.",
+          "showIf": {
+            "fieldId": "dampakInteraksiDigital",
+            "equals": "Hampir selalu membuat saya merasa lebih buruk."
+          },
+          "type": "textarea",
+          "id": "detailDampakSangatNegatifDigital"
+        },
+        {
+          "type": "radio",
+          "id": "partisipasiGrupDukungan",
+          "required": true,
+          "label": "Apakah Anda aktif berpartisipasi dalam grup atau komunitas daring yang berfokus pada dukungan emosional atau minat bersama?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 90,
+              "label": "Ya, saya sangat aktif dan mendapatkan banyak manfaat."
+            },
+            {
+              "weight": 60,
+              "label": "Ya, saya sesekali berpartisipasi."
+            },
+            {
+              "weight": 40,
+              "label": "Tidak, tapi saya mengikuti beberapa grup."
+            },
+            {
+              "label": "Tidak, saya tidak tertarik atau tidak menemukan yang cocok.",
+              "weight": 20
+            }
+          ]
+        },
+        {
+          "required": true,
+          "label": "Sebutkan jenis dukungan atau manfaat utama yang Anda peroleh dari partisipasi aktif di grup daring tersebut.",
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "partisipasiGrupDukungan",
+            "equals": "Ya, saya sangat aktif dan mendapatkan banyak manfaat."
+          },
+          "type": "textarea",
+          "id": "jenisDukunganGrupOnline"
+        },
+        {
+          "label": "Jelaskan mengapa Anda tidak tertarik atau belum menemukan grup daring yang cocok untuk dukungan emosional/minat.",
+          "required": true,
+          "gridSpan": 2,
+          "id": "alasanTidakPartisipasiGrup",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Tidak, saya tidak tertarik atau tidak menemukan yang cocok.",
+            "fieldId": "partisipasiGrupDukungan"
+          }
+        },
+        {
+          "id": "detoksDigital",
+          "type": "radio",
+          "label": "Seberapa sering Anda sengaja memutuskan koneksi dari media sosial atau platform digital untuk menjaga kesejahteraan mental?",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 95,
+              "label": "Secara teratur, ini bagian dari rutinitas saya."
+            },
+            {
+              "weight": 70,
+              "label": "Sesekali, ketika saya merasa perlu."
+            },
+            {
+              "weight": 30,
+              "label": "Jarang, saya merasa sulit untuk melakukannya."
+            },
+            {
+              "label": "Tidak pernah, saya selalu terhubung.",
+              "weight": 10
+            }
+          ]
+        },
+        {
+          "required": true,
+          "label": "Uraikan alasan mengapa Anda merasa sulit atau tidak pernah melakukan detoks digital.",
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "detoksDigital",
+            "equals": "Tidak pernah, saya selalu terhubung."
+          },
+          "type": "textarea",
+          "id": "alasanTidakDetoksDigital"
+        },
+        {
+          "options": [
+            {
+              "weight": 90,
+              "label": "Ya, saya selalu otentik."
+            },
+            {
+              "label": "Sebagian besar ya, tapi kadang ada penyesuaian.",
+              "weight": 65
+            },
+            {
+              "weight": 35,
+              "label": "Tidak sepenuhnya, saya sering merasa perlu menampilkan citra tertentu."
+            },
+            {
+              "weight": 15,
+              "label": "Tidak, saya merasa harus berpura-pura."
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Apakah Anda merasa dapat menjadi diri sendiri sepenuhnya dalam interaksi sosial daring Anda?",
+          "required": true,
+          "id": "otentisitasOnline",
+          "type": "radio"
+        },
+        {
+          "id": "penjelasanTidakOtentikOnline",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Tidak sepenuhnya, saya sering merasa perlu menampilkan citra tertentu.",
+            "fieldId": "otentisitasOnline"
+          },
+          "gridSpan": 2,
+          "label": "Jelaskan mengapa Anda merasa perlu menampilkan citra tertentu atau berpura-pura dalam interaksi daring.",
+          "required": true
+        },
+        {
+          "showIf": {
+            "equals": "Tidak, saya merasa harus berpura-pura.",
+            "fieldId": "otentisitasOnline"
+          },
+          "type": "textarea",
+          "id": "penjelasanPuraPuraOnline",
+          "gridSpan": 2,
+          "label": "Uraikan mengapa Anda merasa harus berpura-pura dalam interaksi sosial daring Anda.",
+          "required": true
+        },
+        {
+          "type": "radio",
+          "id": "memeBahasaEmosi",
+          "required": true,
+          "label": "Apakah Anda menggunakan meme atau humor internet tertentu untuk mengkomunikasikan emosi sulit yang Anda rasa sulit diungkapkan secara verbal?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Sangat sering, ini alat komunikasi penting bagi saya.",
+              "weight": 85
+            },
+            {
+              "weight": 60,
+              "label": "Kadang-kadang, ini membantu saya memulai percakapan."
+            },
+            {
+              "label": "Jarang, saya lebih suka berbicara langsung.",
+              "weight": 40
+            },
+            {
+              "weight": 20,
+              "label": "Tidak pernah, saya tidak melihat meme sebagai alat ekspresi emosi."
+            }
+          ]
+        },
+        {
+          "label": "Berikan contoh bagaimana meme membantu Anda mengkomunikasikan emosi sulit.",
+          "required": true,
+          "gridSpan": 2,
+          "id": "contohMemeBahasaEmosi",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Sangat sering, ini alat komunikasi penting bagi saya.",
+            "fieldId": "memeBahasaEmosi"
+          }
+        }
+      ],
+      "title": "Seksi 5: Dinamika Sosial & Koneksi Digital"
+    },
+    {
+      "fields": [
+        {
+          "type": "radio",
+          "id": "responsPerubahan",
+          "label": "Bagaimana Anda biasanya merespons ketika rencana atau situasi hidup Anda mengalami perubahan mendadak?",
+          "required": true,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Saya merasa sangat sulit dan seringkali panik atau menolak."
+            },
+            {
+              "label": "Saya merasa tidak nyaman, namun berusaha mencari cara untuk beradaptasi.",
+              "weight": 40
+            },
+            {
+              "label": "Saya cukup fleksibel dan dapat menyesuaikan diri dengan relatif cepat.",
+              "weight": 70
+            },
+            {
+              "weight": 95,
+              "label": "Saya melihat perubahan sebagai peluang dan segera mencari solusi kreatif."
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "id": "memeKoping",
+          "type": "radio",
+          "options": [
+            {
+              "weight": 10,
+              "label": "Hampir tidak pernah, saya tidak merasa terbantu."
+            },
+            {
+              "label": "Kadang-kadang, untuk sedikit mengalihkan perhatian.",
+              "weight": 45
+            },
+            {
+              "label": "Cukup sering, saya merasa ini cara yang efektif untuk meringankan suasana hati.",
+              "weight": 75
+            },
+            {
+              "label": "Sangat sering, ini adalah salah satu strategi koping utama saya.",
+              "weight": 90
+            }
+          ],
+          "gridSpan": 2,
+          "required": true,
+          "label": "Seberapa sering Anda menggunakan meme atau humor digital untuk mengelola perasaan stres, cemas, atau sedih?"
+        },
+        {
+          "type": "textarea",
+          "id": "detailEskapisme",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan jenis aktivitas digital yang paling sering Anda gunakan untuk 'melarikan diri' dan mengapa Anda merasa perlu melakukannya."
+        },
+        {
+          "id": "kesadaranEmosi",
+          "type": "radio",
+          "required": true,
+          "label": "Seberapa baik Anda mengenali dan memahami emosi Anda sendiri (misalnya, marah, sedih, cemas, senang) saat emosi itu muncul?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Sangat sulit, saya sering merasa kewalahan dan tidak tahu apa yang saya rasakan.",
+              "weight": 0
+            },
+            {
+              "weight": 30,
+              "label": "Cukup sulit, saya butuh waktu untuk mengidentifikasi emosi saya."
+            },
+            {
+              "label": "Cukup baik, saya bisa mengenali sebagian besar emosi saya.",
+              "weight": 60
+            },
+            {
+              "weight": 95,
+              "label": "Sangat baik, saya memiliki pemahaman mendalam tentang lanskap emosi saya."
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "strategiMenenangkanDiri",
+          "required": true,
+          "label": "Ketika Anda merasa sangat tertekan atau kewalahan, strategi apa yang paling sering Anda gunakan untuk menenangkan diri?",
+          "options": [
+            {
+              "label": "Saya tidak tahu bagaimana menenangkan diri dan seringkali membiarkan emosi menguasai.",
+              "weight": 0
+            },
+            {
+              "weight": 20,
+              "label": "Mencari pengalihan instan (misalnya, makan, belanja impulsif)."
+            },
+            {
+              "label": "Berbicara dengan teman atau keluarga, atau melakukan hobi.",
+              "weight": 50
+            },
+            {
+              "label": "Melakukan aktivitas relaksasi (misalnya, meditasi, olahraga, membaca buku).",
+              "weight": 75
+            },
+            {
+              "weight": 90,
+              "label": "Mengidentifikasi akar masalah dan mencari solusi proaktif."
+            }
+          ],
+          "gridSpan": 2
+        }
+      ],
+      "title": "Seksi 6: Evaluasi Diri & Kapasitas Adaptasi",
+      "description": "Menyatukan pemahaman individu tentang mekanisme koping mereka sendiri dan kesiapan untuk menerapkan strategi pemecahan masalah yang lebih aktif.",
+      "stepNumber": 6
+    }
+  ],
+  "id": "track_1784006291207",
+  "aiGenerationStatus": {
+    "updatedAt": "2026-07-24T03:21:48.149Z",
+    "phase": "COMPLETED",
+    "message": "Disimpan secara manual oleh Admin."
+  },
+  "methodologyContext": "Menggunakan kerangka kerja Cognitive Appraisal Theory untuk menganalisis respons emosional dan skala Emotional Intelligence (EQ-i 2.0) yang dimodifikasi untuk konteks interaksi digital. Pendekatan ini diintegrasikan dengan analisis pola perilaku (behavioral pattern recognition) untuk mengukur korelasi antara konsumsi konten hiburan cepat dengan resiliensi mental.",
+  "aiPromptConfig": {
+    "reportTone": "consultative_and_empathetic",
+    "formatInstructions": "Gunakan bahasa yang empatik, relevan dengan budaya pop, dan terstruktur. Sajikan data dalam bentuk poin-poin yang mudah dicerna dengan nada yang mendukung (supportive).",
+    "customReadinessTiers": [
+      "Tier 1: Rentan (Ketergantungan tinggi pada eskapisme, resiliensi rendah)",
+      "Tier 2: Reaktif (Menggunakan meme/tarot sebagai pereda stres sementara, belum proaktif)",
+      "Tier 3: Adaptif (Mampu meregulasi emosi dengan baik, koping alternatif seimbang)",
+      "Tier 4: Resilien (Kapasitas penuh dalam menghadapi krisis, integrasi makna dan realitas yang sangat sehat)"
+    ],
+    "formPurpose": "Menilai efektivitas penggunaan meme dan tarot sebagai mekanisme koping modern terhadap resiliensi emosional individu.",
+    "customUiLabels": {
+      "swotLabel": "Matriks Kapasitas Mental (SWOT)",
+      "roadmapLabel": "Rekomendasi Kesejahteraan Strategis",
+      "scoreLabel": "Indeks Resiliensi Emosional",
+      "riskLabel": "Peta Risiko Eskapisme & Mitigasi",
+      "executionLabel": "Timeline Integrasi Koping Sehat"
+    },
+    "expectedAnalysisBlocks": [
+      "Profil Koping Digital: Penggunaan meme untuk katarsis, Tingkat keterikatan pada humor gelap (dark humor).",
+      "Navigasi Ketidakpastian: Penggunaan tarot untuk validasi emosi, Tingkat ketergantungan pada panduan eksternal.",
+      "Kapasitas Regulasi Emosi: Kemampuan menenangkan diri (self-soothing), Kecepatan pemulihan dari stres (bounce-back rate).",
+      "Pemetaan Risiko Psikologis: Indikasi penghindaran masalah (avoidance), Potensi doomscrolling atau fiksasi digital.",
+      "Dinamika Sosial & Koneksi: Berbagi meme sebagai bahasa cinta/koneksi, Keterisolasian vs interaksi bermakna.",
+      "Sintesis Resiliensi Holistik: Integrasi koping alternatif dengan realitas, Keseimbangan antara eskapisme dan tindakan proaktif."
+    ],
+    "assessmentGoal": "Mengevaluasi bagaimana humor digital (meme) dan refleksi simbolik (tarot) berkontribusi pada regulasi emosi dan kapasitas adaptasi psikologis.",
+    "expectedMetrics": [
+      "Indeks Fleksibilitas Psikologis (Psychological Flexibility)",
+      "Skor Regulasi Emosi Berbasis Humor (Meme Coping Efficacy)",
+      "Tingkat Introspeksi & Pencarian Makna (Tarot/Symbolic Reflection)",
+      "Kapasitas Toleransi Ketidakpastian (Uncertainty Tolerance)",
+      "Frekuensi Eskapisme Digital (Digital Escapism Rate)",
+      "Kualitas Jaringan Dukungan Sosial (Social Support Quality)",
+      "Tingkat Kesadaran Diri (Self-Awareness Quotient)",
+      "Skala Resiliensi Adaptif (Adaptive Resilience Scale)"
+    ],
+    "mediaAnalysisFocus": "Analisis pola konsumsi media digital (meme) dan praktik reflektif (tarot) dalam konteks regulasi emosi.",
+    "aiPersona": "Psikolog Klinis & Analis Budaya Populer",
+    "customSystemPrompt": "Anda adalah seorang Psikolog Klinis dan Analis Budaya Populer. Tugas Anda adalah menganalisis bagaimana individu menggunakan meme dan tarot sebagai mekanisme koping untuk bertahan dari stres modern. Berikan wawasan yang bebas dari penghakiman, berfokus pada resiliensi emosional, dan berikan rekomendasi yang dapat ditindaklanjuti untuk mencapai keseimbangan mental.",
+    "expectedRecommendations": [
+      "Strategi Pembatasan Eskapisme Digital (Digital Boundary Setting)",
+      "Pengembangan Koping Aktif (Active Problem-Solving Techniques)",
+      "Integrasi Refleksi Simbolik (Tarot) dengan Jurnal Terstruktur",
+      "Peningkatan Literasi Emosional Melalui Komunitas",
+      "Transisi dari Humor Defensif ke Penerimaan Diri (Self-Acceptance)"
+    ],
+    "riskFramework": "APA Resilience Guidelines & Brief COPE Inventory",
+    "customScoringRubric": "Skor 0-25: Rentan (Butuh intervensi koping aktif). Skor 26-50: Reaktif (Mulai mengenali emosi tapi masih menghindar). Skor 51-75: Adaptif (Keseimbangan koping yang baik). Skor 76-100: Resilien (Kematangan emosional tinggi).",
+    "researchSourcesCited": [
+      "APA Guidelines for Psychological Resilience",
+      "Brief COPE Inventory (Carver, 1997)",
+      "Modern Studies on Digital Culture and Coping Mechanisms"
+    ],
+    "negativePrompts": "Jangan menghakimi kepercayaan spiritual (tarot) atau selera humor (meme). Jangan memberikan diagnosis medis atau psikiatris klinis. Dilarang menggunakan jargon psikologi yang terlalu berat tanpa penjelasan yang memadai.",
+    "gradingStrictness": "empathetic_but_objective"
+  },
+  "generationLogs": [
+    {
+      "message": "Memulai sesi pipeline Enterprise Multi-Agent AI...",
+      "timestamp": "2026-07-14T05:56:25.573Z",
+      "type": "info"
+    },
+    {
+      "type": "info",
+      "timestamp": "2026-07-14T05:56:25.602Z",
+      "message": "FASE 1: Agen Master (Gemini 3.1 Pro) diaktifkan. Melakukan penetrasi jaringan internet dan restrukturisasi Otak AI..."
+    },
+    {
+      "type": "info",
+      "timestamp": "2026-07-14T05:56:25.634Z",
+      "message": "Merumuskan penyempurnaan Otak AI & Masterplan untuk domain: [Navigasi Kewarasan: Meme, Tarot, & Resiliensi Emosional]..."
+    },
+    {
+      "message": "Otak AI dan Master Blueprint berhasil disempurnakan! Menyimpan konfigurasi ke database...",
+      "timestamp": "2026-07-14T05:57:07.029Z",
+      "type": "success"
+    },
+    {
+      "type": "info",
+      "message": "Mengekstrak temuan internet dan menyimpannya ke Vector Database (RAG)...",
+      "timestamp": "2026-07-14T05:57:07.082Z"
+    },
+    {
+      "type": "success",
+      "message": "Vector Database berhasil diperbarui.",
+      "timestamp": "2026-07-14T05:57:07.470Z"
+    },
+    {
+      "message": "FASE 2: Mengerahkan Agen Pekerja (Gemini 2.5 Flash) berbekal Otak AI yang baru. Memulai fabrikasi 6 seksi formulir...",
+      "timestamp": "2026-07-14T05:57:07.515Z",
+      "type": "info"
+    },
+    {
+      "type": "info",
+      "message": "Meracik Kuesioner Batch 1 (Seksi 1 s/d 3)...",
+      "timestamp": "2026-07-14T05:57:07.561Z"
+    },
+    {
+      "message": "Meracik Kuesioner Batch 2 (Seksi 4 s/d 6)...",
+      "timestamp": "2026-07-14T05:57:41.054Z",
+      "type": "info"
+    },
+    {
+      "type": "success",
+      "message": "Seluruh seksi formulir berhasil diracik dan digabungkan.",
+      "timestamp": "2026-07-14T05:58:22.104Z"
+    },
+    {
+      "type": "info",
+      "message": "Membersihkan ID duplikat pada struktur formulir...",
+      "timestamp": "2026-07-14T05:58:22.132Z"
+    },
+    {
+      "timestamp": "2026-07-14T05:58:22.196Z",
+      "message": "FASE 3: Agen Validator (QA) meninjau integritas logika 'ShowIf' (Dependency Tree)...",
+      "type": "info"
+    },
+    {
+      "type": "success",
+      "timestamp": "2026-07-14T06:00:24.043Z",
+      "message": "Verifikasi selesai. Struktur formulir 100% valid dan aman dari loop logic."
+    },
+    {
+      "message": "PIPELINE SELESAI: Kuesioner skala Enterprise telah berhasil diintegrasikan!",
+      "timestamp": "2026-07-14T06:00:24.126Z",
+      "type": "success"
+    }
+  ],
+  "version": 2,
+  "specificTargetContext": "Generasi digital native (Gen Z dan Alpha) yang mengalami ketergantungan pada validasi media sosial dan mekanisme koping berbasis konsumsi konten mikro. Subjek memiliki kecenderungan menggunakan humor satir sebagai perisai psikologis dalam menghadapi tekanan eksistensial di ruang siber.",
+  "lastUpdated": "2026-07-24T03:21:48.149Z",
+  "trackIcon": "LayoutGrid",
+  "expectedOutputs": [
+    "Peta Mitigasi Risiko Mental: Identifikasi titik rawan eskapisme digital Anda untuk mencegah kelelahan emosional sebelum berubah menjadi pola perilaku destruktif.",
+    "Rekomendasi Koping Berbasis Sains: Transformasikan cara Anda memproses stres melalui teknik koping aktif yang tervalidasi secara klinis untuk stabilitas jangka panjang.",
+    "Action Plan Transformasi Diri: Dapatkan langkah taktis terukur untuk beralih dari humor defensif menuju penerimaan diri yang autentik dan tangguh.",
+    "Insight Matrix Resiliensi: Analisis mendalam yang memetakan kecerdasan emosional Anda agar mampu menavigasi ketidakpastian hidup dengan ketenangan yang presisi."
+  ],
+  "isActive": true,
+  "promoAssets": {
+    "instagram": {
+      "imageUrl": "",
+      "generatedAt": "2026-07-24T03:21:19.552Z",
+      "copywriting": "🧠 Sering ketawa karena meme gelap atau asyik sama AI roleplay pas lagi stres? Hati-hati, bisa jadi itu bukan cuma hiburan biasa, tapi sinyal eskapisme digital!\n\nSebagai profesional, tekanan kerja seringkali membuat kita mencari pelarian cepat. Tanpa sadar, humor satir dan konsumsi mikro-drama menjadi benteng pertahanan rapuh yang menutupi kelelahan emosional yang sesungguhnya.\n\nSaatnya ukur kecerdasan emosional dan tingkat resiliensimu secara ilmiah bersama Omnifit melalui program khusus: \"Navigasi Kewarasan: Meme, & Resiliensi Emosional\".\n\nApa yang akan Anda dapatkan dari asesmen berbasis AI ini?\n\n🔍 Peta Mitigasi Risiko Mental: Deteksi titik rawan eskapisme digital sebelum berubah menjadi burn-out atau perilaku destruktif.\n\n🧪 Rekomendasi Koping Berbasis Sains: Ubah cara merespons stres dengan teknik klinis yang tervalidasi untuk stabilitas jangka panjang.\n\n📈 Action Plan Transformasi Diri: Langkah taktis terukur untuk beralih dari humor defensif ke penerimaan diri yang autentik.\n\n📊 Insight Matrix Resiliensi: Analisis mendalam untuk menavigasi ketidakpastian kerja dengan ketenangan yang presisi.\n\nJangan biarkan stres terselubung menurunkan performa kerja dan kualitas hidup Anda. Ambil kendali penuh atas ekuilibrium mental Anda hari ini.\n\n👉 Klik link di bio untuk memulai asesmen pintar berbasis AI dari Omnifit sekarang!\n\n#Omnifit #KesehatanMental #ResiliensiEmosional #ProfesionalMuda #Productivity #MentalHealthAwareness #AIAssessment #KewarasanKerja",
+      "imagePrompt": "A premium tech-startup style social media graphic with a clean, modern aesthetic. The design features bold, large 3D typography displaying the brand name \"Omnifit\" at the top, and the main headline \"Ukur Kewarasan Emosional Anda\" in a striking, futuristic sans-serif font centered in the composition. The background is a sophisticated dark-mode UI dashboard with glowing neon accents in teal and soft purple, showcasing abstract data visualization of emotional intelligence. Floating 3D elements like transparent glass emojis and a stylized glowing human brain model are placed subtly on the sides. High-end, clean layout, professional and highly polished 3D render, perfect for an Instagram post."
+    }
+  },
+  "folder": "GEN Z"
+}

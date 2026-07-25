@@ -1,0 +1,1569 @@
+{
+  "promoAssets": {
+    "instagram": {
+      "imageUrl": "",
+      "copywriting": "Apakah pemetaan talenta ASN di instansi Anda sudah benar-benar objektif? 🏛️✨\n\nMenilai kompetensi sosio-kultural dan interpersonal ribuan ASN secara presisi kini bukan lagi tantangan berat. Saatnya beralih dari metode konvensional ke sistem merit cerdas berbasis AI!\n\nModul **Interpersonal & Sosio-kultural ASN** dari **Omnifit** hadir sebagai solusi komprehensif untuk merevolusi manajemen talenta di sektor publik.\n\nBerikut keunggulan utama yang akan Anda dapatkan:\n\n🛡️ **Peta Mitigasi Risiko Talenta**: Identifikasi dini hambatan perilaku untuk menjaga stabilitas budaya kerja.\n\n📈 **Rekomendasi Pengembangan Terukur**: Jalur intervensi presisi (mentoring hingga rotasi) untuk akselerasi kompetensi.\n\n⚙️ **Action Plan Berbasis Data**: Langkah konkret sistematis demi efektivitas pelayanan publik.\n\n📊 **Insight Matrix Kompetensi**: Visualisasi mendalam profil ASN untuk penempatan kerja yang tepat sasaran.\n\nSiap wujudkan sistem merit yang transparan dan adaptif? 🚀\n\nHubungi kami sekarang melalui link di bio untuk uji coba gratis platform Omnifit!\n\n#Omnifit #SistemMerit #ManajemenASN #AIAssessment #TransformasiBirokrasi #HumanCapital",
+      "imagePrompt": "A clean and modern UI/UX tech-startup style presentation. Prominently features large, bold 3D typography displaying the brand name \"Omnifit\" and the main title \"Sistem Merit ASN Berbasis AI\" in a sleek, professional sans-serif font. The background includes futuristic 3D elements like glowing data charts, holographic network nodes, and abstract glassmorphism shapes symbolizing talent mapping. Premium corporate design vibe with a professional color scheme of royal blue, vibrant teal, and clean white. High-end rendering, sharp focus, cinematic studio lighting.",
+      "generatedAt": "2026-07-24T03:14:55.533Z"
+    }
+  },
+  "specificTargetContext": "Aparatur Sipil Negara (ASN) dari berbagai jenjang jabatan yang berinteraksi dalam lingkungan birokrasi multikultural dan memerlukan adaptabilitas sosial tinggi. Fokus utama adalah pada individu yang memegang peran pelayanan publik serta manajerial yang membutuhkan kecerdasan emosional dan integritas budaya.",
+  "expectedOutputs": [
+    "Peta Mitigasi Risiko Talenta: Identifikasi dini hambatan perilaku dan resistensi perubahan untuk mencegah penurunan produktivitas serta menjaga stabilitas budaya kerja organisasi.",
+    "Rekomendasi Pengembangan Terukur: Dapatkan jalur intervensi yang presisi mulai dari mentoring hingga rotasi peran untuk mempercepat akselerasi kompetensi sosio-kultural ASN.",
+    "Action Plan Berbasis Data: Transformasikan hasil asesmen menjadi langkah konkret yang sistematis untuk meningkatkan efektivitas pelayanan publik dan sinergi lintas unit.",
+    "Insight Matrix Kompetensi: Visualisasi mendalam profil interpersonal setiap ASN yang memudahkan pengambil kebijakan dalam menempatkan talenta secara tepat sesuai sistem merit."
+  ],
+  "trackIcon": "Users",
+  "lastUpdated": "2026-07-24T03:15:16.564Z",
+  "formBuilderInstruction": "Melakukan evaluasi mendalam terhadap kematangan emosional (EQ), orientasi pelayanan publik, dan kemampuan kolaborasi ASN, sempurnakan dengan standard2 yang ada dan lengkapi otak ai serta pertanyaan2 untuk membedah iterpersonal individu ASN",
+  "isActive": true,
+  "aiPromptConfig": {
+    "reportTone": "consultative",
+    "customReadinessTiers": [
+      "Tingkat 1: Perlu Intervensi Dasar",
+      "Tingkat 2: Berkembang",
+      "Tingkat 3: Kompeten (Memenuhi Standar)",
+      "Tingkat 4: Role Model (Siap Mentoring)"
+    ],
+    "formPurpose": "assessment",
+    "formatInstructions": "Gunakan poin-poin tebal untuk menyoroti area kritis. Buat paragraf yang ringkas, objektif, dan berorientasi pada pengembangan SDM (Capacity Building).",
+    "customUiLabels": {
+      "executionLabel": "Timeline Intervensi Pelatihan",
+      "riskLabel": "Risiko Hambatan Kolaborasi",
+      "scoreLabel": "Indeks Kematangan Interpersonal",
+      "roadmapLabel": "Rekomendasi Pengembangan Karir",
+      "swotLabel": "Peta Kompetensi Sosio-Kultural"
+    },
+    "expectedAnalysisBlocks": [
+      "PROFIL SOSIO-KULTURAL: Analisis tingkat empati terhadap keberagaman, Kemampuan adaptasi di lingkungan kerja majemuk.",
+      "KAPASITAS KOLABORASI: Evaluasi kapabilitas sinergi lintas unit, Penyelesaian hambatan komunikasi birokrasi.",
+      "AREA PENGEMBANGAN: Identifikasi gap kompetensi interpersonal, Rekomendasi intervensi pelatihan spesifik.",
+      "ORIENTASI PELAYANAN: Responsivitas terhadap kebutuhan publik, Kualitas interaksi pelayanan prima.",
+      "MANAJEMEN KONFLIK: Strategi resolusi perselisihan internal, Kemampuan mediasi dan negosiasi.",
+      "KEPEMIMPINAN DAN PENGARUH: Kapasitas mentoring rekan sejawat, Peran sebagai perekat persatuan bangsa."
+    ],
+    "assessmentGoal": "Melakukan evaluasi mendalam terhadap kematangan emosional (EQ), orientasi pelayanan publik, dan kemampuan kolaborasi ASN berdasarkan Core Values BerAKHLAK dan standar Sosio-Kultural. Hasil analisis digunakan untuk merekomendasikan intervensi pelatihan interpersonal guna mendukung sistem meritokrasi yang transparan dan akuntabel.",
+    "customSystemPrompt": "Jika ASN menunjukkan skor tinggi pada resolusi konflik namun rendah di orientasi pelayanan, tekankan pentingnya menyeimbangkan diplomasi internal dengan responsivitas eksternal kepada masyarakat. Selalu kaitkan analisis dengan core values ASN BerAKHLAK dan peran krusial sebagai Perekat Bangsa.",
+    "aiPersona": "Asesor Kompetensi SDM Aparatur dan Psikolog Organisasi",
+    "expectedMetrics": [
+      "Orientasi Pelayanan Publik (BerAKHLAK)",
+      "Komunikasi Efektif & Asertif",
+      "Kerjasama & Sinergi Tim (Kolaboratif)",
+      "Manajemen Konflik & Keberagaman",
+      "Kecerdasan Emosional & Adaptabilitas",
+      "Akuntabilitas Sosial & Integritas (Akuntabel)",
+      "Kesadaran Sosio-Kultural & Perekat Bangsa (Harmonis)",
+      "Kepemimpinan Transformasional & Mentoring (Kompeten)"
+    ],
+    "mediaAnalysisFocus": "Analisis respons teks kualitatif untuk mendeteksi pola komunikasi, empati, dan kecenderungan kolaborasi lintas unit.",
+    "expectedRecommendations": [
+      "Mentoring / Coaching Kepemimpinan",
+      "Rotasi Peran Terbimbing lintas Unit Kerja",
+      "Pelatihan Manajemen Konflik Lanjutan",
+      "Workshop Sosio-Kultural dan Keberagaman",
+      "Program Sertifikasi Pelayanan Prima (Service Excellence)",
+      "Sesi Asesmen Psikologi Organisasi & Konseling Karir"
+    ],
+    "researchSourcesCited": [
+      "Standar Kompetensi Jabatan ASN (Permenpan RB No. 38 Tahun 2017)",
+      "Core Values ASN BerAKHLAK",
+      "Framework Psikologi Organisasi untuk Interpersonal Skills"
+    ],
+    "riskFramework": "Deteksi indikasi resistensi terhadap perubahan, perilaku silo/individualis, atau kurangnya orientasi pelayanan yang dapat menghambat sinergi birokrasi pemerintahan sesuai standar kompetensi Sosio-Kultural ASN.",
+    "customScoringRubric": "Skor 85-100: Sangat Kompeten (Role Model). Skor 70-84: Kompeten (Memenuhi Standar). Skor 50-69: Perlu Bimbingan. Skor <50: Kesenjangan Kompetensi Signifikan.",
+    "negativePrompts": "Jangan menggunakan jargon psikologis klinis yang membingungkan. Hindari kesimpulan yang bersifat menghakimi tanpa dasar data empiris dari isian form. Jangan menyarankan intervensi yang bertentangan dengan regulasi kepegawaian ASN.",
+    "gradingStrictness": "standard"
+  },
+  "generationLogs": [
+    {
+      "type": "info",
+      "timestamp": "2026-07-09T11:06:51.479Z",
+      "message": "Memulai sesi pipeline Enterprise Multi-Agent AI..."
+    },
+    {
+      "message": "FASE 1: Agen Master (Gemini 3.1 Pro) diaktifkan. Melakukan penetrasi jaringan internet dan restrukturisasi Otak AI...",
+      "timestamp": "2026-07-09T11:06:51.530Z",
+      "type": "info"
+    },
+    {
+      "message": "Merumuskan penyempurnaan Otak AI & Masterplan untuk domain: [Pelatihan Interpersonal & Sosial]...",
+      "timestamp": "2026-07-09T11:06:51.566Z",
+      "type": "info"
+    },
+    {
+      "type": "success",
+      "message": "Otak AI dan Master Blueprint berhasil disempurnakan! Menyimpan konfigurasi ke database...",
+      "timestamp": "2026-07-09T11:07:40.180Z"
+    },
+    {
+      "type": "info",
+      "message": "Mengekstrak temuan internet dan menyimpannya ke Vector Database (RAG)...",
+      "timestamp": "2026-07-09T11:07:40.241Z"
+    },
+    {
+      "message": "Vector Database berhasil diperbarui.",
+      "timestamp": "2026-07-09T11:07:40.443Z",
+      "type": "success"
+    },
+    {
+      "type": "info",
+      "timestamp": "2026-07-09T11:07:40.520Z",
+      "message": "FASE 2: Mengerahkan Agen Pekerja (Gemini 2.5 Flash) berbekal Otak AI yang baru. Memulai fabrikasi 6 seksi formulir..."
+    },
+    {
+      "type": "info",
+      "message": "Meracik Kuesioner Batch 1 (Seksi 1 s/d 3)...",
+      "timestamp": "2026-07-09T11:07:40.573Z"
+    },
+    {
+      "type": "info",
+      "timestamp": "2026-07-09T11:08:23.658Z",
+      "message": "Meracik Kuesioner Batch 2 (Seksi 4 s/d 6)..."
+    },
+    {
+      "timestamp": "2026-07-09T11:08:54.459Z",
+      "message": "Seluruh seksi formulir berhasil diracik dan digabungkan.",
+      "type": "success"
+    },
+    {
+      "type": "info",
+      "timestamp": "2026-07-09T11:08:54.480Z",
+      "message": "Membersihkan ID duplikat pada struktur formulir..."
+    },
+    {
+      "type": "info",
+      "timestamp": "2026-07-09T11:08:54.543Z",
+      "message": "FASE 3: Agen Validator (QA) meninjau integritas logika 'ShowIf' (Dependency Tree)..."
+    },
+    {
+      "message": "Verifikasi selesai. Struktur formulir 100% valid dan aman dari loop logic.",
+      "timestamp": "2026-07-09T11:09:59.508Z",
+      "type": "success"
+    },
+    {
+      "type": "success",
+      "message": "PIPELINE SELESAI: Kuesioner skala Enterprise telah berhasil diintegrasikan!",
+      "timestamp": "2026-07-09T11:09:59.602Z"
+    }
+  ],
+  "version": 3,
+  "methodologyContext": "Menggunakan framework Behavioral Event Interview (BEI) yang dipadukan dengan standar kompetensi sosio-kultural ASN berdasarkan Permenpan RB Nomor 38 Tahun 2017. Pendekatan asesmen dilakukan melalui metode Situational Judgment Test (SJT) dan 360-degree feedback untuk mengukur efektivitas interpersonal secara objektif.",
+  "preferredQuestionTypes": [
+    "radio_weight",
+    "conditional_logic",
+    "text_justification"
+  ],
+  "aiGenerationStatus": {
+    "phase": "COMPLETED",
+    "updatedAt": "2026-07-24T03:15:16.564Z",
+    "message": "Disimpan secara manual oleh Admin."
+  },
+  "steps": [
+    {
+      "description": "Mengukur dedikasi dan responsivitas ASN dalam memberikan pelayanan prima kepada masyarakat secara profesional dan ramah.",
+      "title": "Evaluasi Orientasi Pelayanan Publik",
+      "fields": [
+        {
+          "required": true,
+          "label": "Nama Lengkap Anda",
+          "gridSpan": 2,
+          "type": "text",
+          "id": "namaUsaha"
+        },
+        {
+          "required": true,
+          "label": "NIP",
+          "gridSpan": 2,
+          "type": "text",
+          "id": "namaPengisi"
+        },
+        {
+          "type": "radio",
+          "id": "responsivitasPelayanan",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Sangat cepat dan proaktif dalam memberikan solusi.",
+              "weight": 95
+            },
+            {
+              "weight": 80,
+              "label": "Cepat dan efisien dalam menanggapi."
+            },
+            {
+              "label": "Cukup cepat, namun kadang memerlukan tindak lanjut.",
+              "weight": 65
+            },
+            {
+              "weight": 40,
+              "label": "Lambat, seringkali melewati batas waktu standar."
+            },
+            {
+              "label": "Sangat lambat, sering tidak menanggapi atau mengabaikan.",
+              "weight": 10
+            }
+          ],
+          "required": true,
+          "label": "Bagaimana Anda menilai kecepatan respons Anda terhadap permintaan atau keluhan dari masyarakat?"
+        },
+        {
+          "gridSpan": 2,
+          "label": "Jelaskan kendala atau alasan di balik respons yang lambat.",
+          "required": true,
+          "id": "alasanResponsLambat",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "responsivitasPelayanan"
+          }
+        },
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Selalu ramah, empatik, dan memberikan solusi terbaik.",
+              "weight": 95
+            },
+            {
+              "weight": 80,
+              "label": "Umumnya ramah dan membantu, fokus pada penyelesaian masalah."
+            },
+            {
+              "weight": 65,
+              "label": "Cukup ramah, namun kadang kurang menunjukkan empati."
+            },
+            {
+              "weight": 40,
+              "label": "Seringkali kurang ramah atau terkesan terburu-buru."
+            },
+            {
+              "label": "Tidak ramah, sering menimbulkan ketidaknyamanan bagi masyarakat.",
+              "weight": 10
+            }
+          ],
+          "required": true,
+          "label": "Bagaimana Anda memastikan kualitas interaksi pelayanan yang prima dengan masyarakat?",
+          "id": "kualitasInteraksi",
+          "type": "radio"
+        },
+        {
+          "label": "Uraikan situasi atau alasan mengapa kualitas interaksi Anda kurang optimal.",
+          "required": true,
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "kualitasInteraksi"
+          },
+          "type": "textarea",
+          "id": "penjelasanKualitasInteraksi"
+        },
+        {
+          "type": "radio",
+          "id": "penangananKeluhan",
+          "label": "Bagaimana pendekatan Anda dalam menangani keluhan atau kritik dari masyarakat?",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 95,
+              "label": "Menerima dengan terbuka, mencari akar masalah, dan memberikan solusi konstruktif."
+            },
+            {
+              "label": "Menerima dan berusaha menyelesaikan sesuai prosedur yang berlaku.",
+              "weight": 80
+            },
+            {
+              "label": "Cukup menerima, namun kadang merasa defensif atau menyalahkan pihak lain.",
+              "weight": 65
+            },
+            {
+              "weight": 40,
+              "label": "Cenderung menghindari atau menunda penanganan keluhan."
+            },
+            {
+              "label": "Menolak keluhan, bahkan memperburuk situasi dengan respons negatif.",
+              "weight": 10
+            }
+          ]
+        },
+        {
+          "type": "textarea",
+          "id": "alasanPenangananKeluhan",
+          "showIf": {
+            "fieldId": "penangananKeluhan"
+          },
+          "required": true,
+          "label": "Jelaskan alasan atau kendala dalam penanganan keluhan yang kurang efektif.",
+          "gridSpan": 2
+        },
+        {
+          "label": "Seberapa jelas dan mudah dipahami informasi yang Anda sampaikan kepada masyarakat terkait layanan publik?",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Selalu menggunakan bahasa yang sederhana, lugas, dan mudah dicerna oleh semua kalangan.",
+              "weight": 95
+            },
+            {
+              "label": "Umumnya jelas, namun kadang masih menggunakan istilah teknis.",
+              "weight": 80
+            },
+            {
+              "label": "Cukup jelas, namun seringkali memerlukan penjelasan tambahan.",
+              "weight": 65
+            },
+            {
+              "label": "Seringkali tidak jelas, menggunakan jargon yang sulit dipahami.",
+              "weight": 40
+            },
+            {
+              "label": "Informasi yang disampaikan membingungkan dan menyesatkan.",
+              "weight": 10
+            }
+          ],
+          "type": "radio",
+          "id": "komunikasiInformasiPublik"
+        },
+        {
+          "showIf": {
+            "fieldId": "komunikasiInformasiPublik"
+          },
+          "type": "textarea",
+          "id": "contohKomunikasiTidakJelas",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Berikan contoh atau jelaskan mengapa informasi yang disampaikan seringkali tidak jelas."
+        },
+        {
+          "id": "pemanfaatanUmpanBalik",
+          "type": "radio",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Secara aktif mencari, menganalisis, dan mengimplementasikan umpan balik untuk inovasi layanan.",
+              "weight": 95
+            },
+            {
+              "label": "Menerima dan mempertimbangkan umpan balik untuk perbaikan rutin.",
+              "weight": 80
+            },
+            {
+              "label": "Menerima, namun jarang ada tindak lanjut konkret.",
+              "weight": 65
+            },
+            {
+              "weight": 40,
+              "label": "Jarang menerima atau mengabaikan umpan balik dari masyarakat."
+            },
+            {
+              "label": "Tidak pernah mempertimbangkan umpan balik, merasa layanan sudah sempurna.",
+              "weight": 10
+            }
+          ],
+          "label": "Bagaimana Anda memanfaatkan umpan balik atau saran dari masyarakat untuk perbaikan layanan?",
+          "required": true
+        },
+        {
+          "showIf": {
+            "fieldId": "pemanfaatanUmpanBalik"
+          },
+          "id": "buktiPemanfaatanUmpanBalik",
+          "type": "file",
+          "gridSpan": 2,
+          "fileAccept": ".pdf,.doc,.docx",
+          "required": true,
+          "label": "Unggah dokumen bukti implementasi umpan balik (misal: laporan perbaikan, notulen rapat)."
+        },
+        {
+          "gridSpan": 2,
+          "label": "Jelaskan alasan mengapa umpan balik jarang atau tidak pernah dimanfaatkan.",
+          "required": true,
+          "showIf": {
+            "fieldId": "pemanfaatanUmpanBalik"
+          },
+          "id": "penjelasanUmpanBalik",
+          "type": "textarea"
+        },
+        {
+          "type": "radio",
+          "id": "kesetaraanPelayanan",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Selalu memberikan pelayanan yang adil, setara, dan inklusif kepada semua lapisan masyarakat.",
+              "weight": 95
+            },
+            {
+              "label": "Umumnya adil, namun kadang ada perbedaan perlakuan yang tidak disengaja.",
+              "weight": 80
+            },
+            {
+              "weight": 65,
+              "label": "Cukup adil, namun kadang masih terpengaruh oleh faktor-faktor eksternal."
+            },
+            {
+              "label": "Seringkali menunjukkan bias atau preferensi dalam pelayanan.",
+              "weight": 40
+            },
+            {
+              "weight": 10,
+              "label": "Tidak adil, secara sengaja membeda-bedakan pelayanan."
+            }
+          ],
+          "label": "Bagaimana Anda memastikan kesetaraan pelayanan tanpa diskriminasi berdasarkan latar belakang sosial, ekonomi, atau budaya?",
+          "required": true
+        },
+        {
+          "type": "textarea",
+          "id": "contohKesetaraanPelayanan",
+          "showIf": {
+            "fieldId": "kesetaraanPelayanan"
+          },
+          "label": "Berikan contoh atau jelaskan situasi di mana kesetaraan pelayanan belum sepenuhnya tercapai.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "type": "radio",
+          "id": "inisiatifPerbaikanLayanan",
+          "required": true,
+          "label": "Seberapa sering Anda mengambil inisiatif untuk mengusulkan atau menerapkan perbaikan dalam prosedur atau kualitas layanan publik?",
+          "options": [
+            {
+              "label": "Sangat sering, aktif mengidentifikasi masalah dan mengusulkan solusi inovatif.",
+              "weight": 95
+            },
+            {
+              "weight": 80,
+              "label": "Sering, secara berkala mengusulkan perbaikan yang relevan."
+            },
+            {
+              "label": "Kadang-kadang, hanya jika ada instruksi atau masalah mendesak.",
+              "weight": 65
+            },
+            {
+              "weight": 40,
+              "label": "Jarang, cenderung menunggu instruksi atau perubahan dari atasan."
+            },
+            {
+              "weight": 10,
+              "label": "Tidak pernah, merasa tidak memiliki wewenang atau tanggung jawab untuk itu."
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "gridSpan": 2,
+          "fileAccept": ".pdf,.doc,.docx",
+          "required": true,
+          "label": "Unggah dokumen bukti inisiatif perbaikan layanan (misal: proposal, laporan implementasi).",
+          "showIf": {
+            "fieldId": "inisiatifPerbaikanLayanan"
+          },
+          "id": "buktiInisiatifPerbaikan",
+          "type": "file"
+        },
+        {
+          "showIf": {
+            "fieldId": "inisiatifPerbaikanLayanan"
+          },
+          "id": "alasanInisiatifPerbaikan",
+          "type": "textarea",
+          "required": true,
+          "label": "Jelaskan alasan mengapa inisiatif perbaikan layanan jarang atau tidak pernah diambil.",
+          "gridSpan": 2
+        },
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 95,
+              "label": "Sangat memahami dan selalu konsisten menerapkan standar tertinggi."
+            },
+            {
+              "label": "Memahami dengan baik dan umumnya menerapkan standar yang ditetapkan.",
+              "weight": 80
+            },
+            {
+              "label": "Cukup memahami, namun kadang ada inkonsistensi dalam penerapan.",
+              "weight": 65
+            },
+            {
+              "label": "Kurang memahami, seringkali tidak mengikuti standar yang ada.",
+              "weight": 40
+            },
+            {
+              "weight": 10,
+              "label": "Tidak memahami sama sekali, atau mengabaikan standar pelayanan."
+            }
+          ],
+          "required": true,
+          "label": "Seberapa baik Anda memahami dan menerapkan standar pelayanan publik yang berlaku di instansi Anda?",
+          "id": "pemahamanStandarPelayanan",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "fieldId": "pemahamanStandarPelayanan"
+          },
+          "type": "textarea",
+          "id": "penjelasanStandarPelayanan",
+          "gridSpan": 2,
+          "label": "Jelaskan kendala atau alasan mengapa pemahaman dan penerapan standar pelayanan belum optimal.",
+          "required": true
+        }
+      ],
+      "stepNumber": 1
+    },
+    {
+      "stepNumber": 2,
+      "title": "Asesmen Komunikasi & Integritas",
+      "fields": [
+        {
+          "id": "penangananKeluhanPublik",
+          "type": "radio",
+          "label": "Bagaimana Anda memastikan responsivitas terhadap kebutuhan dan keluhan masyarakat dalam pelayanan publik?",
+          "required": true,
+          "options": [
+            {
+              "label": "Sangat responsif, proaktif mencari solusi",
+              "weight": 100
+            },
+            {
+              "label": "Cukup responsif, menindaklanjuti sesuai prosedur",
+              "weight": 80
+            },
+            {
+              "weight": 60,
+              "label": "Kurang responsif, sering terlambat menanggapi"
+            },
+            {
+              "label": "Tidak responsif, cenderung mengabaikan keluhan",
+              "weight": 20
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "label": "Jelaskan kendala atau alasan di balik tingkat responsivitas Anda yang kurang optimal.",
+          "required": true,
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "alasanKurangResponsif"
+        }
+      ],
+      "description": "Menilai efektivitas komunikasi asertif, transparansi informasi, dan tingkat akuntabilitas dalam menjalankan tugas birokrasi."
+    },
+    {
+      "title": "Pengukuran Kapasitas Kolaborasi",
+      "fields": [
+        {
+          "required": true,
+          "label": "Seberapa sering Anda berkolaborasi dengan unit kerja lain untuk mencapai tujuan organisasi?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Selalu aktif mencari dan terlibat dalam kolaborasi lintas unit.",
+              "weight": 95
+            },
+            {
+              "label": "Sering berkolaborasi ketika ada kesempatan atau kebutuhan yang jelas.",
+              "weight": 80
+            },
+            {
+              "weight": 60,
+              "label": "Kadang-kadang berkolaborasi, terutama jika diminta atau diinstruksikan."
+            },
+            {
+              "weight": 30,
+              "label": "Jarang berkolaborasi, lebih fokus pada tugas unit sendiri."
+            },
+            {
+              "weight": 10,
+              "label": "Tidak pernah berkolaborasi dengan unit lain."
+            }
+          ],
+          "type": "radio",
+          "id": "sinergiLintasUnit"
+        },
+        {
+          "type": "textarea",
+          "id": "alasanKurangSinergi",
+          "showIf": {
+            "fieldId": "sinergiLintasUnit"
+          },
+          "label": "Jelaskan kendala atau alasan utama Anda jarang/tidak pernah berkolaborasi dengan unit lain.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "id": "contohInisiatifKolaborasi",
+          "description": "Uraikan secara singkat peran Anda, tujuan kolaborasi, dan hasil yang dicapai.",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "sinergiLintasUnit"
+          },
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon berikan contoh konkret inisiatif kolaborasi lintas unit yang pernah Anda gagas atau pimpin, serta dampaknya."
+        },
+        {
+          "id": "atasiHambatanKomunikasi",
+          "type": "radio",
+          "required": true,
+          "label": "Bagaimana Anda mengatasi hambatan komunikasi atau perbedaan pandangan dalam tim kerja atau antar unit?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Proaktif menginisiasi dialog terbuka dan mencari solusi bersama.",
+              "weight": 90
+            },
+            {
+              "weight": 75,
+              "label": "Berusaha memahami perspektif lain dan mencari titik temu."
+            },
+            {
+              "weight": 55,
+              "label": "Menunggu pihak lain untuk mengambil inisiatif penyelesaian."
+            },
+            {
+              "weight": 35,
+              "label": "Cenderung menghindari konfrontasi atau perbedaan pendapat."
+            },
+            {
+              "label": "Mengabaikan perbedaan dan fokus pada tugas individu.",
+              "weight": 15
+            }
+          ]
+        },
+        {
+          "required": true,
+          "label": "Jelaskan potensi dampak dari pendekatan Anda dalam mengatasi hambatan komunikasi.",
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "atasiHambatanKomunikasi"
+          },
+          "type": "textarea",
+          "id": "dampakHindariKomunikasi"
+        },
+        {
+          "id": "strategiManajemenKonflik",
+          "type": "radio",
+          "options": [
+            {
+              "weight": 95,
+              "label": "Aktif memediasi, mencari akar masalah, dan memfasilitasi solusi win-win."
+            },
+            {
+              "label": "Berusaha menjadi penengah dan mendorong diskusi konstruktif.",
+              "weight": 80
+            },
+            {
+              "label": "Menyampaikan pandangan saya dan berharap pihak lain menyesuaikan.",
+              "weight": 60
+            },
+            {
+              "label": "Menghindari keterlibatan langsung dan membiarkan konflik mereda sendiri.",
+              "weight": 30
+            },
+            {
+              "weight": 10,
+              "label": "Memilih pihak dan mendukung argumen yang saya anggap benar."
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Ketika terjadi perselisihan atau konflik internal dalam tim, pendekatan apa yang Anda ambil?",
+          "required": true
+        },
+        {
+          "type": "textarea",
+          "id": "alasanHindariKonflik",
+          "showIf": {
+            "fieldId": "strategiManajemenKonflik"
+          },
+          "gridSpan": 2,
+          "required": true,
+          "label": "Jelaskan alasan Anda memilih pendekatan tersebut dalam manajemen konflik."
+        },
+        {
+          "type": "radio",
+          "id": "peranPerekatBangsa",
+          "options": [
+            {
+              "label": "Secara aktif mempromosikan inklusivitas dan menghargai setiap perbedaan.",
+              "weight": 95
+            },
+            {
+              "weight": 80,
+              "label": "Mendukung inisiatif yang merayakan keberagaman dan toleransi."
+            },
+            {
+              "label": "Bersikap netral dan menghormati perbedaan tanpa intervensi aktif.",
+              "weight": 60
+            },
+            {
+              "label": "Cenderung berinteraksi dengan kelompok yang memiliki kesamaan dengan saya.",
+              "weight": 30
+            },
+            {
+              "weight": 10,
+              "label": "Tidak melihat relevansi keberagaman dalam konteks pekerjaan."
+            }
+          ],
+          "gridSpan": 2,
+          "required": true,
+          "label": "Dalam lingkungan kerja yang majemuk, bagaimana Anda berperan sebagai perekat persatuan dan menghargai keberagaman?"
+        },
+        {
+          "type": "textarea",
+          "id": "pandanganKeberagaman",
+          "showIf": {
+            "fieldId": "peranPerekatBangsa"
+          },
+          "label": "Uraikan pandangan Anda mengenai relevansi keberagaman dalam konteks kerja ASN.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "id": "adaptasiGayaKerja",
+          "type": "radio",
+          "required": true,
+          "label": "Seberapa mudah Anda beradaptasi dengan gaya kerja, preferensi, atau kepribadian rekan kerja yang berbeda dalam sebuah proyek kolaboratif?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 90,
+              "label": "Sangat mudah beradaptasi dan mampu menyesuaikan diri dengan berbagai gaya."
+            },
+            {
+              "weight": 75,
+              "label": "Cukup adaptif, dengan sedikit penyesuaian awal."
+            },
+            {
+              "label": "Membutuhkan waktu dan upaya ekstra untuk beradaptasi.",
+              "weight": 55
+            },
+            {
+              "label": "Cenderung mempertahankan gaya kerja saya sendiri.",
+              "weight": 35
+            },
+            {
+              "label": "Sulit beradaptasi dan sering merasa tidak nyaman dengan perbedaan.",
+              "weight": 15
+            }
+          ]
+        },
+        {
+          "gridSpan": 2,
+          "required": true,
+          "label": "Jelaskan tantangan yang Anda hadapi dalam beradaptasi dengan gaya kerja yang berbeda.",
+          "showIf": {
+            "fieldId": "adaptasiGayaKerja"
+          },
+          "id": "tantanganAdaptasi",
+          "type": "textarea"
+        },
+        {
+          "options": [
+            {
+              "weight": 95,
+              "label": "Selalu proaktif menetapkan peran, target, dan mekanisme pelaporan yang jelas."
+            },
+            {
+              "label": "Seringkali berdiskusi untuk menyepakati pembagian tugas dan tanggung jawab.",
+              "weight": 80
+            },
+            {
+              "label": "Mengikuti pembagian tugas yang sudah ada atau yang diusulkan orang lain.",
+              "weight": 60
+            },
+            {
+              "label": "Cenderung fokus pada bagian saya dan berasumsi orang lain akan melakukan bagiannya.",
+              "weight": 30
+            },
+            {
+              "weight": 10,
+              "label": "Tidak terlalu memikirkan akuntabilitas tim, lebih ke individu."
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Bagaimana Anda memastikan akuntabilitas bersama dan pembagian tanggung jawab yang jelas dalam proyek tim?",
+          "required": true,
+          "type": "radio",
+          "id": "akuntabilitasTim"
+        },
+        {
+          "required": true,
+          "label": "Jelaskan potensi dampak dari pendekatan Anda terhadap akuntabilitas tim.",
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "akuntabilitasTim"
+          },
+          "type": "textarea",
+          "id": "dampakKurangAkuntabilitas"
+        },
+        {
+          "id": "inisiatifMentoring",
+          "type": "radio",
+          "label": "Apakah Anda pernah atau bersedia untuk menjadi mentor bagi rekan sejawat yang membutuhkan bimbingan dalam pengembangan kompetensi interpersonal?",
+          "required": true,
+          "options": [
+            {
+              "weight": 95,
+              "label": "Aktif mencari kesempatan dan secara rutin melakukan mentoring."
+            },
+            {
+              "weight": 80,
+              "label": "Bersedia dan senang hati jika diminta untuk menjadi mentor."
+            },
+            {
+              "weight": 60,
+              "label": "Belum pernah, tetapi terbuka untuk mencoba jika ada kesempatan."
+            },
+            {
+              "label": "Tidak memiliki waktu atau merasa belum cukup kompeten untuk mentoring.",
+              "weight": 30
+            },
+            {
+              "label": "Tidak tertarik untuk melakukan mentoring.",
+              "weight": 10
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "type": "textarea",
+          "id": "alasanTidakMentoring",
+          "showIf": {
+            "fieldId": "inisiatifMentoring"
+          },
+          "label": "Jelaskan alasan Anda tidak tertarik atau belum dapat melakukan mentoring.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "showIf": {
+            "fieldId": "inisiatifMentoring"
+          },
+          "type": "file",
+          "id": "dokumenBuktiMentoring",
+          "fileAccept": ".pdf,.doc,.docx",
+          "gridSpan": 2,
+          "label": "Unggah dokumen pendukung atau laporan singkat terkait aktivitas mentoring yang pernah Anda lakukan.",
+          "required": true
+        },
+        {
+          "type": "radio",
+          "id": "responsInisiatifBaru",
+          "options": [
+            {
+              "label": "Sangat antusias dan proaktif mendukung implementasi.",
+              "weight": 90
+            },
+            {
+              "label": "Menerima dengan positif dan berpartisipasi aktif.",
+              "weight": 75
+            },
+            {
+              "weight": 55,
+              "label": "Menerima dengan beberapa pertimbangan atau kekhawatiran awal."
+            },
+            {
+              "weight": 35,
+              "label": "Cenderung resisten dan melihat potensi hambatan lebih dulu."
+            },
+            {
+              "label": "Menolak atau pasif dalam partisipasi.",
+              "weight": 15
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Bagaimana respons Anda terhadap pengenalan inisiatif kolaborasi baru atau perubahan prosedur kerja yang melibatkan banyak unit?",
+          "required": true
+        },
+        {
+          "type": "textarea",
+          "id": "alasanResistenInisiatif",
+          "showIf": {
+            "fieldId": "responsInisiatifBaru"
+          },
+          "required": true,
+          "label": "Jelaskan alasan utama Anda cenderung resisten atau menolak inisiatif kolaborasi baru.",
+          "gridSpan": 2
+        },
+        {
+          "required": true,
+          "label": "Dalam menyelesaikan tugas, apakah Anda lebih memilih bekerja secara mandiri atau dalam tim?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Sangat menyukai dan mengutamakan kerja tim untuk hasil terbaik.",
+              "weight": 95
+            },
+            {
+              "weight": 80,
+              "label": "Seimbang, bisa bekerja mandiri maupun tim tergantung konteks."
+            },
+            {
+              "label": "Lebih suka bekerja mandiri, tetapi bersedia dalam tim jika diperlukan.",
+              "weight": 60
+            },
+            {
+              "weight": 30,
+              "label": "Cenderung menghindari kerja tim jika ada pilihan lain."
+            },
+            {
+              "label": "Hanya nyaman bekerja secara mandiri.",
+              "weight": 10
+            }
+          ],
+          "id": "preferensiKerjaTim",
+          "type": "radio"
+        },
+        {
+          "required": true,
+          "label": "Jelaskan alasan Anda lebih memilih atau hanya nyaman bekerja secara mandiri.",
+          "gridSpan": 2,
+          "id": "alasanPreferensiMandiri",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "preferensiKerjaTim"
+          }
+        }
+      ],
+      "description": "Mengevaluasi kemampuan membangun sinergi, menghilangkan ego sektoral, dan bekerja sama lintas unit kerja instansi.",
+      "stepNumber": 3
+    },
+    {
+      "stepNumber": 4,
+      "title": "Pemetaan Sosio-Kultural & Keberagaman",
+      "fields": [
+        {
+          "id": "persepsiKeberagaman",
+          "type": "radio",
+          "required": true,
+          "label": "Bagaimana Anda memandang keberagaman latar belakang (suku, agama, budaya, gender) di lingkungan kerja Anda?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Sebagai kekuatan yang memperkaya dan mendorong inovasi."
+            },
+            {
+              "label": "Sebagai hal yang positif dan dapat dikelola dengan baik.",
+              "weight": 80
+            },
+            {
+              "label": "Sebagai tantangan yang memerlukan penyesuaian ekstra.",
+              "weight": 60
+            },
+            {
+              "label": "Sebagai potensi sumber konflik atau hambatan kerja.",
+              "weight": 20
+            }
+          ]
+        },
+        {
+          "id": "penjelasanPersepsiKeberagaman",
+          "type": "textarea",
+          "gridSpan": 2,
+          "label": "Mohon jelaskan lebih lanjut mengapa Anda memandang keberagaman sebagai tantangan atau potensi sumber konflik.",
+          "required": true
+        }
+      ],
+      "description": "Menilai tingkat empati, toleransi, dan kemampuan ASN untuk bertindak sebagai 'Perekat Bangsa' di lingkungan yang majemuk."
+    },
+    {
+      "stepNumber": 5,
+      "title": "Analisis Kecerdasan Emosional & Adaptabilitas",
+      "fields": [
+        {
+          "label": "Bagaimana Anda menilai kemampuan Anda dalam mengenali dan memahami emosi diri sendiri saat berinteraksi di lingkungan kerja?",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Sangat baik, saya selalu sadar akan emosi saya dan dampaknya terhadap orang lain."
+            },
+            {
+              "weight": 80,
+              "label": "Baik, saya cukup sering menyadari emosi saya dan dampaknya."
+            },
+            {
+              "weight": 50,
+              "label": "Cukup, kadang saya kesulitan mengenali emosi saya hingga bereaksi."
+            },
+            {
+              "weight": 20,
+              "label": "Kurang baik, saya sering tidak menyadari emosi saya hingga bereaksi tanpa kontrol."
+            }
+          ],
+          "type": "radio",
+          "id": "pemahamanEmosiDiri"
+        },
+        {
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda merasa kesulitan dalam mengenali emosi diri Anda.",
+          "type": "textarea",
+          "id": "penjelasanEmosiDiri",
+          "showIf": {
+            "fieldId": "pemahamanEmosiDiri"
+          }
+        },
+        {
+          "id": "pengelolaanEmosi",
+          "type": "radio",
+          "label": "Ketika menghadapi situasi kerja yang menekan atau memicu emosi negatif, strategi apa yang paling sering Anda gunakan untuk mengelola reaksi Anda?",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Saya selalu mampu menjaga ketenangan dan merespons secara rasional dan konstruktif."
+            },
+            {
+              "label": "Saya umumnya bisa mengendalikan diri setelah beberapa saat refleksi dan menenangkan diri.",
+              "weight": 80
+            },
+            {
+              "label": "Kadang saya kesulitan mengendalikan emosi, namun berusaha memperbaikinya setelah kejadian.",
+              "weight": 50
+            },
+            {
+              "label": "Saya seringkali bereaksi spontan dan sulit mengendalikan emosi dalam situasi sulit.",
+              "weight": 20
+            }
+          ]
+        },
+        {
+          "type": "textarea",
+          "id": "penjelasanPengelolaanEmosi",
+          "showIf": {
+            "fieldId": "pengelolaanEmosi"
+          },
+          "label": "Mohon uraikan contoh situasi di mana Anda kesulitan mengelola emosi dan bagaimana Anda menanganinya.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "options": [
+            {
+              "weight": 100,
+              "label": "Saya secara aktif mencari pemahaman, menghargai perbedaan, dan mempromosikan inklusivitas."
+            },
+            {
+              "weight": 80,
+              "label": "Saya berusaha memahami dan bersikap toleran terhadap perbedaan pandangan dan latar belakang."
+            },
+            {
+              "weight": 50,
+              "label": "Saya menerima perbedaan, namun kadang kesulitan memahami perspektif yang sangat berbeda dari saya."
+            },
+            {
+              "weight": 20,
+              "label": "Saya cenderung berinteraksi lebih nyaman dengan rekan yang serupa dengan saya dan kurang terbuka pada perbedaan."
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Bagaimana Anda menunjukkan empati dan penghargaan terhadap rekan kerja yang memiliki latar belakang sosio-kultural, pandangan, atau gaya kerja yang berbeda?",
+          "required": true,
+          "id": "empatiKeberagaman",
+          "type": "radio"
+        },
+        {
+          "id": "penjelasanEmpatiKeberagaman",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "empatiKeberagaman"
+          },
+          "required": true,
+          "label": "Jelaskan mengapa Anda merasa lebih nyaman berinteraksi dengan rekan yang serupa dan bagaimana hal itu memengaruhi kolaborasi Anda.",
+          "gridSpan": 2
+        },
+        {
+          "label": "Dalam menghadapi perubahan kebijakan, prosedur kerja, atau struktur tim yang baru, bagaimana respons adaptasi Anda?",
+          "required": true,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Saya proaktif mempelajari dan beradaptasi dengan cepat, bahkan membantu rekan lain dalam proses adaptasi."
+            },
+            {
+              "label": "Saya mampu beradaptasi dengan baik setelah memahami esensi dan implikasi perubahan.",
+              "weight": 80
+            },
+            {
+              "weight": 50,
+              "label": "Saya memerlukan waktu dan bimbingan untuk beradaptasi dengan perubahan yang signifikan."
+            },
+            {
+              "label": "Saya sering merasa tidak nyaman dan resisten terhadap perubahan, lebih suka pada rutinitas yang sudah ada.",
+              "weight": 20
+            }
+          ],
+          "gridSpan": 2,
+          "id": "adaptasiPerubahan",
+          "type": "radio"
+        },
+        {
+          "label": "Mohon berikan contoh spesifik resistensi Anda terhadap perubahan dan dampaknya pada pekerjaan Anda.",
+          "required": true,
+          "gridSpan": 2,
+          "id": "penjelasanAdaptasiPerubahan",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "adaptasiPerubahan"
+          }
+        },
+        {
+          "type": "radio",
+          "id": "resiliensiKerja",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Saya melihat kegagalan sebagai pelajaran, segera mencari solusi, dan bangkit dengan semangat baru.",
+              "weight": 100
+            },
+            {
+              "weight": 80,
+              "label": "Saya membutuhkan waktu untuk memproses, lalu mencari cara untuk memperbaiki dan melanjutkan."
+            },
+            {
+              "label": "Saya cenderung merasa putus asa untuk sementara waktu sebelum akhirnya melanjutkan upaya.",
+              "weight": 50
+            },
+            {
+              "label": "Saya seringkali sulit bangkit dan kehilangan motivasi setelah mengalami kegagalan atau hambatan.",
+              "weight": 20
+            }
+          ],
+          "label": "Ketika menghadapi kegagalan atau hambatan signifikan dalam pekerjaan, bagaimana Anda bangkit dan melanjutkan upaya?",
+          "required": true
+        },
+        {
+          "gridSpan": 2,
+          "required": true,
+          "label": "Jelaskan mengapa Anda kesulitan bangkit dari kegagalan dan bagaimana hal itu memengaruhi produktivitas Anda.",
+          "showIf": {
+            "fieldId": "resiliensiKerja"
+          },
+          "type": "textarea",
+          "id": "penjelasanResiliensiKerja"
+        },
+        {
+          "options": [
+            {
+              "label": "Saya menerima dengan terbuka, menganalisis, dan menggunakannya sebagai peluang untuk perbaikan diri.",
+              "weight": 100
+            },
+            {
+              "weight": 80,
+              "label": "Saya mendengarkan dan mempertimbangkan umpan balik, meskipun kadang merasa sedikit tidak nyaman."
+            },
+            {
+              "weight": 50,
+              "label": "Saya cenderung defensif pada awalnya, namun kemudian berusaha menerima dan merenungkan umpan balik."
+            },
+            {
+              "weight": 20,
+              "label": "Saya sering merasa tersinggung atau menolak umpan balik negatif, menganggapnya sebagai serangan pribadi."
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Bagaimana reaksi Anda ketika menerima umpan balik konstruktif atau kritik terhadap kinerja atau perilaku Anda?",
+          "required": true,
+          "type": "radio",
+          "id": "penerimaanUmpanBalik"
+        },
+        {
+          "showIf": {
+            "fieldId": "penerimaanUmpanBalik"
+          },
+          "id": "penjelasanPenerimaanUmpanBalik",
+          "type": "textarea",
+          "gridSpan": 2,
+          "label": "Mohon berikan contoh bagaimana Anda menolak umpan balik dan apa alasannya.",
+          "required": true
+        },
+        {
+          "id": "mengelolaKetidakpastian",
+          "type": "radio",
+          "options": [
+            {
+              "weight": 100,
+              "label": "Saya tetap tenang, proaktif mencari informasi, dan mampu mengambil keputusan adaptif dengan risiko terukur."
+            },
+            {
+              "weight": 80,
+              "label": "Saya berusaha mencari kejelasan dan dapat berfungsi dengan baik meskipun ada tingkat ketidakpastian."
+            },
+            {
+              "label": "Saya merasa cemas dan kesulitan membuat keputusan tanpa informasi yang lengkap dan jelas.",
+              "weight": 50
+            },
+            {
+              "label": "Saya cenderung pasif atau menunda tindakan hingga semua informasi dan tujuan menjadi sangat jelas.",
+              "weight": 20
+            }
+          ],
+          "gridSpan": 2,
+          "required": true,
+          "label": "Dalam situasi kerja yang penuh ketidakpastian, informasi terbatas, atau tujuan yang belum sepenuhnya jelas, bagaimana Anda merespons dan bertindak?"
+        },
+        {
+          "gridSpan": 2,
+          "label": "Jelaskan mengapa Anda cenderung pasif dalam situasi ketidakpastian dan bagaimana hal itu memengaruhi kinerja tim.",
+          "required": true,
+          "showIf": {
+            "fieldId": "mengelolaKetidakpastian"
+          },
+          "id": "penjelasanMengelolaKetidakpastian",
+          "type": "textarea"
+        },
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Saya secara rutin mengikuti pelatihan, membaca literatur, dan mencari mentor untuk pengembangan diri di area ini.",
+              "weight": 100
+            },
+            {
+              "label": "Saya sesekali mencari peluang pengembangan jika ada kesempatan atau rekomendasi.",
+              "weight": 80
+            },
+            {
+              "label": "Saya hanya mengembangkan diri jika diwajibkan atau diminta secara eksplisit oleh atasan.",
+              "weight": 50
+            },
+            {
+              "weight": 20,
+              "label": "Saya merasa tidak perlu atau tidak memiliki waktu khusus untuk pengembangan area ini secara mandiri."
+            }
+          ],
+          "required": true,
+          "label": "Langkah-langkah proaktif apa yang Anda ambil untuk terus mengembangkan kompetensi interpersonal dan kecerdasan emosional Anda?",
+          "id": "pengembanganDiriInterpersonal",
+          "type": "radio"
+        },
+        {
+          "label": "Mohon jelaskan mengapa Anda merasa tidak perlu atau tidak memiliki waktu untuk pengembangan diri di area ini.",
+          "required": true,
+          "gridSpan": 2,
+          "id": "penjelasanPengembanganDiri",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "pengembanganDiriInterpersonal"
+          }
+        }
+      ],
+      "description": "Mengukur kematangan emosional (EQ) dan kelincahan ASN dalam beradaptasi dengan perubahan kebijakan atau teknologi baru."
+    },
+    {
+      "stepNumber": 6,
+      "title": "Penilaian Kepemimpinan & Manajemen Konflik",
+      "fields": [
+        {
+          "options": [
+            {
+              "weight": 10,
+              "label": "Saya cenderung menghindari konflik dan berharap masalah akan selesai dengan sendirinya."
+            },
+            {
+              "weight": 40,
+              "label": "Saya langsung menghadapi pihak yang berkonflik secara tegas, kadang tanpa mediasi."
+            },
+            {
+              "label": "Saya mencoba mencari solusi kompromi yang dapat diterima semua pihak.",
+              "weight": 75
+            },
+            {
+              "weight": 95,
+              "label": "Saya memfasilitasi dialog terbuka untuk mencari akar masalah dan solusi kolaboratif jangka panjang."
+            }
+          ],
+          "gridSpan": 2,
+          "required": true,
+          "label": "Bagaimana pendekatan Anda dalam menangani konflik internal di dalam tim kerja Anda?",
+          "id": "pendekatanKonflikTim",
+          "description": "Evaluasi strategi resolusi perselisihan internal.",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "fieldId": "pendekatanKonflikTim"
+          },
+          "type": "textarea",
+          "id": "justifikasiKonflikTimRendah",
+          "label": "Jelaskan alasan atau kendala Anda dalam menerapkan pendekatan yang lebih kolaboratif dalam menangani konflik tim.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "description": "Menilai kemampuan mediasi dan negosiasi.",
+          "type": "radio",
+          "id": "prinsipMediasi",
+          "required": true,
+          "label": "Prinsip-prinsip apa yang menjadi panduan utama Anda saat memediasi perselisihan antar rekan kerja?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Saya tidak memiliki prinsip khusus, biasanya menyesuaikan situasi.",
+              "weight": 20
+            },
+            {
+              "weight": 55,
+              "label": "Fokus pada penyelesaian cepat agar pekerjaan tidak terganggu."
+            },
+            {
+              "weight": 80,
+              "label": "Memastikan semua pihak didengar dan mencari titik temu yang adil."
+            },
+            {
+              "weight": 90,
+              "label": "Mendorong pemahaman empati, membangun kembali hubungan, dan mencari solusi yang berkelanjutan."
+            }
+          ]
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiPrinsipMediasiRendah",
+          "showIf": {
+            "fieldId": "prinsipMediasi"
+          },
+          "label": "Mohon uraikan tantangan yang Anda hadapi dalam menerapkan prinsip mediasi yang konsisten.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Jarang sekali atau tidak pernah secara formal.",
+              "weight": 15
+            },
+            {
+              "weight": 50,
+              "label": "Kadang-kadang, jika ada waktu luang atau diminta."
+            },
+            {
+              "label": "Secara rutin, sebagai bagian dari pengembangan tim.",
+              "weight": 85
+            },
+            {
+              "label": "Secara proaktif dan terstruktur, dengan dampak yang terukur pada peningkatan kompetensi.",
+              "weight": 98
+            }
+          ],
+          "label": "Seberapa sering Anda terlibat dalam aktivitas mentoring atau pembinaan untuk pengembangan rekan kerja atau bawahan Anda?",
+          "required": true,
+          "description": "Mengukur kapasitas mentoring rekan sejawat.",
+          "type": "radio",
+          "id": "frekuensiMentoring"
+        },
+        {
+          "showIf": {
+            "fieldId": "frekuensiMentoring"
+          },
+          "type": "textarea",
+          "id": "justifikasiMentoringRendah",
+          "label": "Jelaskan mengapa Anda jarang atau tidak pernah terlibat dalam aktivitas mentoring.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Saya tidak memiliki inisiatif khusus, lingkungan sudah cukup beragam.",
+              "weight": 25
+            },
+            {
+              "label": "Saya memastikan tidak ada diskriminasi, namun belum ada program aktif.",
+              "weight": 60
+            },
+            {
+              "label": "Saya mempromosikan dialog dan kegiatan yang merayakan keberagaman.",
+              "weight": 80
+            },
+            {
+              "label": "Saya memimpin inisiatif strategis untuk menciptakan budaya kerja yang menghargai setiap individu sebagai perekat bangsa.",
+              "weight": 92
+            }
+          ],
+          "label": "Bagaimana Anda secara aktif mendorong lingkungan kerja yang inklusif dan menghargai keberagaman di antara ASN?",
+          "required": true,
+          "description": "Menilai peran sebagai perekat persatuan bangsa dan kesadaran sosio-kultural.",
+          "id": "fosterInklusif",
+          "type": "radio"
+        },
+        {
+          "gridSpan": 2,
+          "label": "Uraikan tantangan atau alasan mengapa inisiatif inklusif belum menjadi fokus utama Anda.",
+          "required": true,
+          "showIf": {
+            "fieldId": "fosterInklusif"
+          },
+          "type": "textarea",
+          "id": "justifikasiInklusifRendah"
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiAdaptasiRendah",
+          "gridSpan": 2,
+          "label": "Jelaskan tantangan yang Anda hadapi dalam memimpin tim melalui masa transisi perubahan.",
+          "required": true
+        },
+        {
+          "description": "Mengukur kemampuan manajemen konflik dan keberagaman.",
+          "type": "radio",
+          "id": "perspektifBeragam",
+          "label": "Bagaimana Anda memastikan bahwa perspektif yang beragam didengar dan dipertimbangkan dalam proses pengambilan keputusan, terutama saat terjadi perbedaan pendapat?",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Saya cenderung mengikuti pandangan mayoritas atau yang paling berpengaruh.",
+              "weight": 35
+            },
+            {
+              "weight": 58,
+              "label": "Saya meminta masukan, namun sulit mengintegrasikan semua pandangan."
+            },
+            {
+              "weight": 82,
+              "label": "Saya secara aktif mencari pandangan berbeda dan memfasilitasi diskusi konstruktif."
+            },
+            {
+              "label": "Saya menciptakan mekanisme formal untuk mengumpulkan dan menganalisis perspektif beragam, memastikan keputusan inklusif.",
+              "weight": 94
+            }
+          ]
+        },
+        {
+          "gridSpan": 2,
+          "required": true,
+          "label": "Uraikan kendala yang Anda alami dalam mengintegrasikan perspektif beragam dalam pengambilan keputusan.",
+          "id": "justifikasiPerspektifRendah",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "perspektifBeragam"
+          }
+        },
+        {
+          "options": [
+            {
+              "label": "Saya fokus pada target dan instruksi, inspirasi bukan prioritas utama.",
+              "weight": 20
+            },
+            {
+              "label": "Saya memberikan apresiasi atas pencapaian, namun belum secara konsisten.",
+              "weight": 65
+            },
+            {
+              "weight": 88,
+              "label": "Saya menjadi teladan, memberikan umpan balik konstruktif, dan mendorong inisiatif."
+            },
+            {
+              "weight": 96,
+              "label": "Saya secara aktif membangun visi bersama, memberdayakan tim, dan memfasilitasi pengembangan potensi maksimal setiap individu."
+            }
+          ],
+          "gridSpan": 2,
+          "required": true,
+          "label": "Dalam hal apa Anda menginspirasi dan memotivasi anggota tim Anda untuk mencapai kinerja yang lebih tinggi dan pertumbuhan pribadi?",
+          "description": "Menilai kepemimpinan transformasional dan mentoring.",
+          "type": "radio",
+          "id": "inspirasiMotivasi"
+        },
+        {
+          "required": true,
+          "label": "Jelaskan mengapa fokus pada inspirasi dan motivasi belum menjadi prioritas utama Anda.",
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "justifikasiInspirasiRendah",
+          "showIf": {
+            "fieldId": "inspirasiMotivasi"
+          }
+        },
+        {
+          "description": "Mendeteksi perilaku silo/individualis dan mengukur kerjasama tim.",
+          "type": "radio",
+          "id": "cegahSilo",
+          "required": true,
+          "label": "Bagaimana Anda mempromosikan kolaborasi lintas fungsi dan mencegah mentalitas 'silo' di unit Anda atau dengan unit lain?",
+          "options": [
+            {
+              "weight": 10,
+              "label": "Saya tidak memiliki strategi khusus, masing-masing unit bekerja sesuai tugasnya."
+            },
+            {
+              "weight": 45,
+              "label": "Saya mendorong komunikasi informal antar unit, namun mentalitas silo masih ada."
+            },
+            {
+              "label": "Saya menginisiasi proyek bersama dan pertemuan rutin lintas fungsi.",
+              "weight": 70
+            },
+            {
+              "weight": 95,
+              "label": "Saya membangun struktur dan budaya yang secara sistematis mendorong sinergi, berbagi pengetahuan, dan tujuan bersama lintas unit."
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "label": "Uraikan tantangan yang Anda hadapi dalam mencegah mentalitas 'silo' dan mempromosikan kolaborasi lintas fungsi.",
+          "required": true,
+          "gridSpan": 2,
+          "id": "justifikasiCegahSiloRendah",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "cegahSilo"
+          }
+        },
+        {
+          "type": "radio",
+          "id": "akuntabilitasKonflik",
+          "description": "Menilai akuntabilitas sosial dan integritas sesuai Core Values BerAKHLAK.",
+          "label": "Bagaimana Anda memastikan bahwa keputusan yang diambil dalam tim Anda mencerminkan prinsip akuntabilitas dan integritas, terutama dalam situasi konflik kepentingan?",
+          "required": true,
+          "options": [
+            {
+              "label": "Saya mengandalkan kejujuran individu, tanpa mekanisme formal.",
+              "weight": 30
+            },
+            {
+              "label": "Saya mengingatkan tentang etika, namun sulit mengawasi semua potensi konflik.",
+              "weight": 55
+            },
+            {
+              "weight": 80,
+              "label": "Saya menerapkan prosedur standar untuk deklarasi konflik kepentingan dan transparansi."
+            },
+            {
+              "label": "Saya membangun sistem pengawasan internal, mendorong pelaporan, dan memastikan konsekuensi yang jelas untuk pelanggaran, sesuai Core Values BerAKHLAK.",
+              "weight": 92
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "label": "Jelaskan kendala atau tantangan yang Anda hadapi dalam memastikan akuntabilitas dan integritas dalam situasi konflik kepentingan.",
+          "required": true,
+          "gridSpan": 2,
+          "id": "justifikasiAkuntabilitasRendah",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "akuntabilitasKonflik"
+          }
+        }
+      ],
+      "description": "Mengidentifikasi kapasitas ASN dalam memediasi perselisihan internal, negosiasi, dan memberikan mentoring kepada rekan sejawat."
+    }
+  ],
+  "id": "track_1783585776244",
+  "trackName": "Interpersonal & Sosio-kultural ASN",
+  "trackDescription": "Modul asesmen komprehensif untuk mengevaluasi kompetensi sosio-kultural dan keterampilan interpersonal ASN. Dirancang untuk mendukung pemetaan talenta dan pengembangan karir berbasis sistem merit."
+}

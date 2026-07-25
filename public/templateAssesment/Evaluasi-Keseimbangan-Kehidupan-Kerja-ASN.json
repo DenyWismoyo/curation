@@ -1,0 +1,2150 @@
+{
+  "id": "track_1784599603734",
+  "steps": [
+    {
+      "stepNumber": 1,
+      "title": "Fase Transisi Kehidupan dan Beban Domestik",
+      "fields": [
+        {
+          "type": "text",
+          "id": "namaUsaha",
+          "label": "Nama **Lengkap** Anda",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "id": "namaPengisi",
+          "type": "text",
+          "gridSpan": 2,
+          "required": true,
+          "label": "**Jabatan** atau **Unit Kerja** Anda"
+        },
+        {
+          "gridSpan": 2,
+          "label": "Alamat **Email** Aktif Anda",
+          "required": true,
+          "type": "text",
+          "id": "emailAktif"
+        },
+        {
+          "id": "nomorTelepon",
+          "type": "text",
+          "gridSpan": 2,
+          "label": "Nomor **Telepon Seluler** Anda",
+          "required": true
+        },
+        {
+          "required": true,
+          "label": "Fase **kehidupan krusial** apa yang sedang Anda alami saat ini?",
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi **stresor transisi** untuk memetakan *beban psikologis* individu.",
+          "options": [
+            {
+              "label": "Pra-nikah",
+              "weight": 20
+            },
+            {
+              "label": "Masa Pengasuhan Anak (Balita)",
+              "weight": 60
+            },
+            {
+              "label": "Masa Pengasuhan Anak (Remaja)",
+              "weight": 50
+            },
+            {
+              "label": "Proses Perceraian",
+              "weight": 80
+            },
+            {
+              "weight": 70,
+              "label": "Merawat Anggota Keluarga Lansia/Sakit"
+            },
+            {
+              "label": "Lainnya (Mohon jelaskan)",
+              "weight": 40
+            }
+          ],
+          "type": "radio",
+          "id": "faseKehidupanSaatIni"
+        },
+        {
+          "label": "Mohon jelaskan **fase kehidupan** lainnya yang Anda alami:",
+          "required": true,
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "penjelasanFaseLain",
+          "showIf": {
+            "equals": "Lainnya (Mohon jelaskan)",
+            "fieldId": "faseKehidupanSaatIni"
+          }
+        },
+        {
+          "options": [
+            {
+              "label": "Jarang sekali",
+              "weight": 10
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 40
+            },
+            {
+              "label": "Sering",
+              "weight": 70
+            },
+            {
+              "weight": 90,
+              "label": "Hampir setiap hari"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur **intensitas beban domestik** sebagai prediktor *burnout* non-profesional.",
+          "required": true,
+          "label": "Seberapa sering Anda merasa **kewalahan** dengan tanggung jawab *domestik* atau keluarga?",
+          "type": "radio",
+          "id": "bebanDomestik"
+        },
+        {
+          "required": true,
+          "label": "Uraikan detail **beban domestik** yang Anda rasakan secara rutin:",
+          "gridSpan": 2,
+          "showIf": {
+            "equals": "Sering",
+            "fieldId": "bebanDomestik"
+          },
+          "type": "textarea",
+          "id": "detailBebanDomestik"
+        },
+        {
+          "options": [
+            {
+              "label": "Tidak pernah",
+              "weight": 10
+            },
+            {
+              "label": "Jarang",
+              "weight": 30
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 60
+            },
+            {
+              "weight": 80,
+              "label": "Sering"
+            },
+            {
+              "weight": 95,
+              "label": "Sangat sering"
+            }
+          ],
+          "aiReasoning": "Menganalisis **Work-to-Family Conflict** yang berdampak pada *kesejahteraan mental*.",
+          "gridSpan": 2,
+          "label": "Seberapa sering **tuntutan pekerjaan** mengganggu *kehidupan pribadi* atau keluarga Anda?",
+          "required": true,
+          "id": "interferensiKerjaKeluarga",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "fieldId": "interferensiKerjaKeluarga",
+            "equals": "Sangat sering"
+          },
+          "type": "textarea",
+          "id": "contohInterferensiKerja",
+          "required": true,
+          "label": "Berikan **contoh spesifik** interferensi pekerjaan terhadap kehidupan pribadi:",
+          "gridSpan": 2
+        },
+        {
+          "required": true,
+          "label": "Seberapa sering **tanggung jawab pribadi** mengganggu *konsentrasi* atau kinerja di tempat kerja?",
+          "options": [
+            {
+              "label": "Tidak pernah",
+              "weight": 10
+            },
+            {
+              "weight": 30,
+              "label": "Jarang"
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 60
+            },
+            {
+              "label": "Sering",
+              "weight": 80
+            },
+            {
+              "weight": 95,
+              "label": "Sangat sering"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengevaluasi **Family-to-Work Conflict** sebagai indikator *penurunan produktivitas*.",
+          "type": "radio",
+          "id": "interferensiKeluargaKerja"
+        },
+        {
+          "gridSpan": 2,
+          "required": true,
+          "label": "Berikan **contoh spesifik** gangguan keluarga terhadap kinerja kerja:",
+          "showIf": {
+            "fieldId": "interferensiKeluargaKerja",
+            "equals": "Sangat sering"
+          },
+          "id": "contohInterferensiKeluarga",
+          "type": "textarea"
+        },
+        {
+          "type": "radio",
+          "id": "keseimbanganWaktu",
+          "required": true,
+          "label": "Bagaimana Anda menilai **proporsi waktu** antara pekerjaan kedinasan dan *kehidupan pribadi*?",
+          "options": [
+            {
+              "label": "Sangat seimbang",
+              "weight": 10
+            },
+            {
+              "label": "Cukup seimbang",
+              "weight": 30
+            },
+            {
+              "weight": 65,
+              "label": "Agak tidak seimbang"
+            },
+            {
+              "weight": 90,
+              "label": "Sangat tidak seimbang"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai **persepsi keseimbangan** sebagai dasar *evaluasi kepuasan kerja*."
+        },
+        {
+          "type": "textarea",
+          "id": "alasanTidakSeimbang",
+          "showIf": {
+            "fieldId": "keseimbanganWaktu",
+            "equals": "Sangat tidak seimbang"
+          },
+          "gridSpan": 2,
+          "label": "Jelaskan mengapa Anda merasa **proporsi waktu** Anda tidak seimbang:",
+          "required": true
+        },
+        {
+          "id": "detasemenPsikologis",
+          "type": "radio",
+          "options": [
+            {
+              "label": "Sangat mudah",
+              "weight": 10
+            },
+            {
+              "weight": 30,
+              "label": "Cukup mudah"
+            },
+            {
+              "label": "Agak sulit",
+              "weight": 60
+            },
+            {
+              "weight": 85,
+              "label": "Sangat sulit"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur **kemampuan pemulihan** (*recovery*) mental setelah jam kerja berakhir.",
+          "required": true,
+          "label": "Seberapa mudah Anda melakukan **detasemen psikologis** (melepaskan diri secara mental) dari pekerjaan?"
+        },
+        {
+          "showIf": {
+            "equals": "Sangat sulit",
+            "fieldId": "detasemenPsikologis"
+          },
+          "id": "dampakSulitDetasemen",
+          "type": "textarea",
+          "gridSpan": 2,
+          "label": "Jelaskan **dampak** dari kesulitan Anda melakukan *detasemen psikologis*:",
+          "required": true
+        },
+        {
+          "required": true,
+          "label": "Seberapa sering Anda merasa **lelah secara emosional** di akhir hari kerja?",
+          "aiReasoning": "Mendeteksi **gejala awal burnout** melalui *kelelahan emosional* yang kronis.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 10,
+              "label": "Jarang sekali"
+            },
+            {
+              "weight": 40,
+              "label": "Kadang-kadang"
+            },
+            {
+              "label": "Sering",
+              "weight": 75
+            },
+            {
+              "weight": 95,
+              "label": "Hampir setiap hari"
+            }
+          ],
+          "id": "kelelahanEmosional",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "fieldId": "kelelahanEmosional",
+            "equals": "Hampir setiap hari"
+          },
+          "type": "textarea",
+          "id": "gejalaKelelahanEmosional",
+          "label": "Uraikan **gejala kelelahan emosional** yang Anda rasakan:",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "aiReasoning": "Menilai **kualitas ekosistem kerja** dalam mendukung *kesejahteraan karyawan*.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 10,
+              "label": "Sangat mendukung"
+            },
+            {
+              "label": "Cukup mendukung",
+              "weight": 30
+            },
+            {
+              "weight": 70,
+              "label": "Kurang mendukung"
+            },
+            {
+              "label": "Tidak mendukung sama sekali",
+              "weight": 90
+            }
+          ],
+          "label": "Apakah Anda mendapatkan **dukungan memadai** dari lingkungan kerja untuk mengelola *keseimbangan kehidupan-kerja*?",
+          "required": true,
+          "id": "dukunganEkosistem",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "equals": "Tidak mendukung sama sekali",
+            "fieldId": "dukunganEkosistem"
+          },
+          "id": "penjelasanDukungan",
+          "type": "textarea",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Jelaskan mengapa Anda merasa lingkungan kerja **tidak mendukung**:"
+        }
+      ],
+      "description": "Mengidentifikasi fase kehidupan krusial saat ini (pra-nikah, pengasuhan anak, perceraian) dan tingkat beban domestik yang dihadapi ASN."
+    },
+    {
+      "fields": [
+        {
+          "id": "distribusiWaktuKerja",
+          "type": "radio",
+          "label": "Bagaimana Anda menilai **distribusi waktu** antara pekerjaan kedinasan dan kehidupan pribadi dalam seminggu terakhir?",
+          "required": true,
+          "aiReasoning": "Mengukur **keseimbangan kuantitatif** untuk mengidentifikasi potensi *burnout* akibat beban kerja berlebih.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Sangat seimbang, saya memiliki cukup waktu untuk keduanya.",
+              "weight": 10
+            },
+            {
+              "label": "Cukup seimbang, namun kadang ada sedikit pergeseran.",
+              "weight": 40
+            },
+            {
+              "weight": 70,
+              "label": "Agak tidak seimbang, pekerjaan sering mengambil alih waktu pribadi."
+            },
+            {
+              "weight": 95,
+              "label": "Sangat tidak seimbang, saya kesulitan membagi waktu secara adil."
+            }
+          ]
+        },
+        {
+          "id": "kualitasWaktuLuang",
+          "type": "radio",
+          "required": true,
+          "label": "Seberapa puas Anda dengan **kualitas waktu luang** yang dimiliki untuk diri sendiri atau keluarga?",
+          "options": [
+            {
+              "label": "Sangat memuaskan, saya merasa segar kembali setelahnya.",
+              "weight": 10
+            },
+            {
+              "label": "Cukup memuaskan, namun bisa lebih baik.",
+              "weight": 40
+            },
+            {
+              "weight": 70,
+              "label": "Kurang memuaskan, sering merasa terburu-buru atau terganggu."
+            },
+            {
+              "label": "Sangat tidak memuaskan, waktu luang saya sering terganggu atau tidak berkualitas.",
+              "weight": 95
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengevaluasi **kualitas pemulihan mental** (*recovery*) sebagai indikator utama kesehatan psikologis."
+        },
+        {
+          "required": true,
+          "label": "Seberapa sering pikiran Anda masih terfokus pada **pekerjaan kedinasan** saat berada di luar jam kerja?",
+          "aiReasoning": "Mendeteksi tingkat **keterikatan psikologis** (*psychological detachment*) yang buruk terhadap pekerjaan.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 10,
+              "label": "Jarang sekali, saya mudah melepaskan diri dari pekerjaan."
+            },
+            {
+              "weight": 40,
+              "label": "Kadang-kadang, terutama jika ada tugas mendesak."
+            },
+            {
+              "label": "Sering, saya sulit berhenti memikirkan pekerjaan.",
+              "weight": 70
+            },
+            {
+              "weight": 95,
+              "label": "Selalu, pikiran saya didominasi oleh pekerjaan bahkan di luar jam dinas."
+            }
+          ],
+          "type": "radio",
+          "id": "fokusPsikologisLuarDinas"
+        },
+        {
+          "gridSpan": 2,
+          "label": "Mohon jelaskan **situasi spesifik** yang membuat Anda selalu memikirkan pekerjaan di luar jam dinas.",
+          "required": true,
+          "type": "textarea",
+          "id": "jelaskanFokusLuarDinas",
+          "showIf": {
+            "equals": "Selalu, pikiran saya didominasi oleh pekerjaan bahkan di luar jam dinas.",
+            "fieldId": "fokusPsikologisLuarDinas"
+          }
+        },
+        {
+          "type": "radio",
+          "id": "interferensiKerjaPribadi",
+          "options": [
+            {
+              "weight": 5,
+              "label": "Hampir tidak pernah mengganggu."
+            },
+            {
+              "weight": 25,
+              "label": "Jarang mengganggu."
+            },
+            {
+              "label": "Kadang-kadang mengganggu.",
+              "weight": 55
+            },
+            {
+              "weight": 80,
+              "label": "Sering mengganggu."
+            },
+            {
+              "weight": 98,
+              "label": "Sangat sering mengganggu."
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur **konflik peran** yang terjadi ketika tanggung jawab profesional menginvasi ranah domestik.",
+          "label": "Seberapa sering **tuntutan pekerjaan** mengganggu komitmen pribadi atau keluarga (*Work Interference with Family* - WIF)?",
+          "required": true
+        },
+        {
+          "label": "Berikan contoh spesifik bagaimana pekerjaan Anda **sangat sering mengganggu** kehidupan pribadi Anda.",
+          "required": true,
+          "gridSpan": 2,
+          "id": "contohInterferensiKerjaPribadi",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Sangat sering mengganggu.",
+            "fieldId": "interferensiKerjaPribadi"
+          }
+        },
+        {
+          "required": true,
+          "label": "Seberapa sering **masalah pribadi** mengganggu fokus atau performa Anda di tempat kerja (*Family Interference with Work* - FIW)?",
+          "options": [
+            {
+              "weight": 5,
+              "label": "Hampir tidak pernah mengganggu."
+            },
+            {
+              "label": "Jarang mengganggu.",
+              "weight": 25
+            },
+            {
+              "label": "Kadang-kadang mengganggu.",
+              "weight": 55
+            },
+            {
+              "weight": 80,
+              "label": "Sering mengganggu."
+            },
+            {
+              "weight": 98,
+              "label": "Sangat sering mengganggu."
+            }
+          ],
+          "aiReasoning": "Menganalisis **dampak spillover** dari masalah domestik terhadap produktivitas profesional.",
+          "gridSpan": 2,
+          "id": "interferensiPribadiKerja",
+          "type": "radio"
+        },
+        {
+          "label": "Berikan contoh spesifik bagaimana masalah pribadi Anda **sangat sering mengganggu** fokus kerja.",
+          "required": true,
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "interferensiPribadiKerja",
+            "equals": "Sangat sering mengganggu."
+          },
+          "type": "textarea",
+          "id": "contohInterferensiPribadiKerja"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi **indikator klinis** kelelahan emosional yang dapat menurunkan *well-being* secara drastis.",
+          "label": "Mohon uraikan gejala **kelelahan emosional** (*emotional exhaustion*) yang dirasakan dan dampaknya terhadap aktivitas harian.",
+          "required": true,
+          "type": "textarea",
+          "id": "uraikanKelelahanEmosional"
+        },
+        {
+          "type": "radio",
+          "id": "kemampuanDetasemen",
+          "label": "Seberapa mudah Anda melakukan **detasemen mental** dari pekerjaan saat tidak bertugas?",
+          "required": true,
+          "options": [
+            {
+              "weight": 10,
+              "label": "Sangat mudah, saya bisa sepenuhnya fokus pada hal lain."
+            },
+            {
+              "label": "Cukup mudah, butuh sedikit waktu untuk beralih.",
+              "weight": 40
+            },
+            {
+              "weight": 70,
+              "label": "Agak sulit, pikiran saya sering kembali ke pekerjaan."
+            },
+            {
+              "weight": 95,
+              "label": "Sangat sulit, saya terus memikirkan pekerjaan bahkan saat di rumah."
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai kapasitas kognitif untuk melakukan *switching* antara peran profesional dan personal."
+        },
+        {
+          "gridSpan": 2,
+          "required": true,
+          "label": "Jelaskan tantangan utama dalam **melepaskan diri secara mental** dari pekerjaan saat berada di rumah.",
+          "id": "tantanganDetasemen",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Sangat sulit, saya terus memikirkan pekerjaan bahkan saat di rumah.",
+            "fieldId": "kemampuanDetasemen"
+          }
+        },
+        {
+          "id": "pemanfaatanFWA",
+          "type": "radio",
+          "options": [
+            {
+              "weight": 10,
+              "label": "Selalu memanfaatkan dan merasa terbantu."
+            },
+            {
+              "weight": 40,
+              "label": "Sering memanfaatkan, namun ada kendala."
+            },
+            {
+              "weight": 70,
+              "label": "Jarang memanfaatkan, karena tidak relevan atau sulit diterapkan."
+            },
+            {
+              "weight": 95,
+              "label": "Tidak pernah memanfaatkan."
+            }
+          ],
+          "aiReasoning": "Mengevaluasi efektivitas **kebijakan fleksibilitas** dalam mendukung keseimbangan kerja-hidup ASN.",
+          "gridSpan": 2,
+          "label": "Apakah Anda memanfaatkan kebijakan **Flexible Working Arrangement (FWA)** di instansi Anda?",
+          "required": true
+        },
+        {
+          "type": "textarea",
+          "id": "alasanTidakFWA",
+          "showIf": {
+            "fieldId": "pemanfaatanFWA",
+            "equals": "Tidak pernah memanfaatkan."
+          },
+          "label": "Mohon jelaskan alasan utama mengapa Anda **tidak pernah memanfaatkan** kebijakan FWA.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "id": "dampakTransisiKehidupan",
+          "type": "radio",
+          "gridSpan": 2,
+          "aiReasoning": "Memetakan **faktor eksternal** yang memengaruhi stabilitas keseimbangan kehidupan-kerja individu.",
+          "options": [
+            {
+              "weight": 5,
+              "label": "Tidak ada dampak signifikan, saya dapat mengelola dengan baik."
+            },
+            {
+              "label": "Dampak minor, memerlukan sedikit penyesuaian.",
+              "weight": 30
+            },
+            {
+              "label": "Dampak moderat, cukup memengaruhi keseimbangan saya.",
+              "weight": 65
+            },
+            {
+              "weight": 90,
+              "label": "Dampak signifikan, sangat mengganggu keseimbangan kehidupan-kerja saya."
+            }
+          ],
+          "required": true,
+          "label": "Bagaimana dampak **transisi kehidupan krusial** (misal: pengasuhan anak, pernikahan) terhadap keseimbangan Anda?"
+        },
+        {
+          "showIf": {
+            "fieldId": "dampakTransisiKehidupan",
+            "equals": "Dampak signifikan, sangat mengganggu keseimbangan kehidupan-kerja saya."
+          },
+          "id": "uraikanDampakTransisi",
+          "type": "textarea",
+          "label": "Jelaskan lebih lanjut mengenai **dampak signifikan** transisi kehidupan terhadap keseimbangan kerja dan pribadi Anda.",
+          "required": true,
+          "gridSpan": 2
+        }
+      ],
+      "title": "Evaluasi Keseimbangan Waktu dan Keterlibatan",
+      "description": "Mengukur proporsi waktu dan tingkat fokus psikologis yang dialokasikan antara pekerjaan kedinasan dan kehidupan pribadi.",
+      "stepNumber": 2
+    },
+    {
+      "description": "Menganalisis sejauh mana tuntutan pekerjaan mengganggu kehidupan personal (WIF) dan sebaliknya (FIW).",
+      "title": "Pengukuran Work-Family Conflict (WFCS)",
+      "fields": [
+        {
+          "aiReasoning": "Mengukur **Work-to-Family Interference** untuk mengidentifikasi tingkat *intrusi profesional* ke dalam ranah domestik.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Tidak pernah"
+            },
+            {
+              "weight": 20,
+              "label": "Jarang"
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 50
+            },
+            {
+              "label": "Sering",
+              "weight": 80
+            },
+            {
+              "weight": 100,
+              "label": "Sangat sering"
+            }
+          ],
+          "required": true,
+          "label": "Seberapa sering **tuntutan pekerjaan** mengganggu *waktu atau aktivitas pribadi* Anda?",
+          "type": "radio",
+          "id": "wif_interferensi_pekerjaan"
+        },
+        {
+          "label": "Mohon jelaskan secara spesifik bagaimana **tuntutan pekerjaan** mengganggu *kehidupan pribadi* Anda.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Melakukan **kualifikasi data** untuk memahami *konteks spesifik* dari gangguan pekerjaan yang terjadi secara rutin.",
+          "type": "textarea",
+          "id": "wif_justifikasi_gangguan_sering",
+          "showIf": {
+            "equals": "Sering",
+            "fieldId": "wif_interferensi_pekerjaan"
+          }
+        },
+        {
+          "aiReasoning": "Melakukan **investigasi mendalam** terhadap *krisis keseimbangan* yang terjadi secara intensif.",
+          "gridSpan": 2,
+          "label": "Mohon jelaskan secara spesifik bagaimana **tuntutan pekerjaan** mengganggu *kehidupan pribadi* Anda.",
+          "required": true,
+          "showIf": {
+            "fieldId": "wif_interferensi_pekerjaan",
+            "equals": "Sangat sering"
+          },
+          "type": "textarea",
+          "id": "wif_justifikasi_gangguan_sangat_sering"
+        },
+        {
+          "type": "radio",
+          "id": "fiw_interferensi_pribadi",
+          "gridSpan": 2,
+          "aiReasoning": "Mengevaluasi **Family-to-Work Interference** untuk memetakan *dampak domestik* terhadap produktivitas organisasi.",
+          "options": [
+            {
+              "weight": 0,
+              "label": "Tidak pernah"
+            },
+            {
+              "weight": 20,
+              "label": "Jarang"
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 50
+            },
+            {
+              "label": "Sering",
+              "weight": 80
+            },
+            {
+              "label": "Sangat sering",
+              "weight": 100
+            }
+          ],
+          "label": "Seberapa sering **masalah atau tanggung jawab pribadi** mengganggu *konsentrasi atau performa* di tempat kerja?",
+          "required": true
+        },
+        {
+          "showIf": {
+            "fieldId": "fiw_interferensi_pribadi",
+            "equals": "Sering"
+          },
+          "type": "textarea",
+          "id": "fiw_justifikasi_gangguan_sering",
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi **faktor pemicu** dari *distraksi personal* yang mempengaruhi efektivitas kerja.",
+          "label": "Mohon jelaskan secara spesifik bagaimana **masalah pribadi** mengganggu *fokus atau performa kerja* Anda.",
+          "required": true
+        },
+        {
+          "showIf": {
+            "equals": "Sangat sering",
+            "fieldId": "fiw_interferensi_pribadi"
+          },
+          "id": "fiw_justifikasi_gangguan_sangat_sering",
+          "type": "textarea",
+          "aiReasoning": "Menganalisis **urgensi masalah pribadi** yang berdampak *signifikan* terhadap stabilitas performa profesional.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan secara spesifik bagaimana **masalah pribadi** mengganggu *fokus atau performa kerja* Anda."
+        },
+        {
+          "label": "Seberapa sering Anda mengalami **kelelahan mental atau emosional** setelah jam kerja yang menghambat *aktivitas luar pekerjaan*?",
+          "required": true,
+          "aiReasoning": "Mengukur **beban kognitif** sebagai indikator utama *burnout* yang mempengaruhi kualitas hidup pasca-kerja.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Tidak pernah",
+              "weight": 0
+            },
+            {
+              "weight": 30,
+              "label": "Jarang"
+            },
+            {
+              "weight": 60,
+              "label": "Kadang-kadang"
+            },
+            {
+              "label": "Sering",
+              "weight": 85
+            },
+            {
+              "label": "Hampir setiap hari",
+              "weight": 100
+            }
+          ],
+          "type": "radio",
+          "id": "beban_kognitif_kelelahan"
+        },
+        {
+          "id": "beban_kognitif_contoh_sering",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Sering",
+            "fieldId": "beban_kognitif_kelelahan"
+          },
+          "aiReasoning": "Menggali **narasi kualitatif** untuk memahami *pemicu kelelahan* yang bersifat situasional.",
+          "gridSpan": 2,
+          "label": "Mohon berikan **contoh spesifik** situasi di mana Anda merasakan *kelelahan mental atau emosional* tersebut.",
+          "required": true
+        },
+        {
+          "aiReasoning": "Mendeteksi **pola kelelahan kronis** melalui *pengalaman empiris* responden.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon berikan **contoh spesifik** situasi di mana Anda merasakan *kelelahan mental atau emosional* tersebut.",
+          "showIf": {
+            "fieldId": "beban_kognitif_kelelahan",
+            "equals": "Hampir setiap hari"
+          },
+          "type": "textarea",
+          "id": "beban_kognitif_contoh_hampir_setiap_hari"
+        },
+        {
+          "id": "detasemen_psikologis",
+          "type": "radio",
+          "required": true,
+          "label": "Seberapa baik Anda mampu melakukan **detasemen psikologis** (melepaskan pikiran pekerjaan) saat berada di luar jam dinas?",
+          "aiReasoning": "Menilai **kapasitas pemulihan mental** sebagai *mekanisme pertahanan* terhadap stres kerja.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Sangat mudah",
+              "weight": 0
+            },
+            {
+              "label": "Cukup mudah",
+              "weight": 20
+            },
+            {
+              "weight": 50,
+              "label": "Terkadang sulit"
+            },
+            {
+              "weight": 80,
+              "label": "Seringkali sulit"
+            },
+            {
+              "label": "Sangat sulit",
+              "weight": 100
+            }
+          ]
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi **hambatan psikologis** yang mencegah *pemulihan energi* di luar jam kerja.",
+          "required": true,
+          "label": "Mohon jelaskan alasan mengapa Anda merasa **seringkali sulit** melakukan *detasemen psikologis* dari pekerjaan.",
+          "id": "detasemen_psikologis_alasan_sering",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "detasemen_psikologis",
+            "equals": "Seringkali sulit"
+          }
+        },
+        {
+          "showIf": {
+            "equals": "Sangat sulit",
+            "fieldId": "detasemen_psikologis"
+          },
+          "id": "detasemen_psikologis_alasan_sangat_sulit",
+          "type": "textarea",
+          "aiReasoning": "Menganalisis **keterikatan berlebih** yang berpotensi menyebabkan *kelelahan emosional jangka panjang*.",
+          "gridSpan": 2,
+          "label": "Mohon jelaskan alasan mengapa Anda merasa **sangat sulit** melakukan *detasemen psikologis* dari pekerjaan.",
+          "required": true
+        },
+        {
+          "label": "Bagaimana Anda menilai **proporsi waktu** yang dialokasikan antara *pekerjaan kedinasan* dan *kehidupan pribadi*?",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur **distribusi waktu** sebagai metrik dasar *keseimbangan kehidupan-kerja*.",
+          "options": [
+            {
+              "weight": 0,
+              "label": "Sangat seimbang"
+            },
+            {
+              "label": "Cukup seimbang",
+              "weight": 20
+            },
+            {
+              "label": "Agak tidak seimbang",
+              "weight": 50
+            },
+            {
+              "weight": 80,
+              "label": "Tidak seimbang"
+            },
+            {
+              "label": "Sangat tidak seimbang",
+              "weight": 100
+            }
+          ],
+          "id": "keseimbangan_waktu",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "equals": "Tidak seimbang",
+            "fieldId": "keseimbangan_waktu"
+          },
+          "type": "textarea",
+          "id": "keseimbangan_waktu_detail_tidak_seimbang",
+          "required": true,
+          "label": "Mohon berikan **detail lebih lanjut** mengenai *ketidakseimbangan waktu* yang Anda rasakan.",
+          "aiReasoning": "Menggali **data kualitatif** terkait *alokasi waktu* yang tidak proporsional.",
+          "gridSpan": 2
+        },
+        {
+          "type": "textarea",
+          "id": "keseimbangan_waktu_detail_sangat_tidak_seimbang",
+          "showIf": {
+            "equals": "Sangat tidak seimbang",
+            "fieldId": "keseimbangan_waktu"
+          },
+          "required": true,
+          "label": "Mohon berikan **detail lebih lanjut** mengenai *ketidakseimbangan waktu* yang Anda rasakan.",
+          "gridSpan": 2,
+          "aiReasoning": "Mengevaluasi **urgensi ketidakseimbangan** yang memerlukan *intervensi manajemen*."
+        },
+        {
+          "label": "Bagaimana Anda menilai **tingkat fokus dan komitmen psikologis** terhadap pekerjaan dibandingkan dengan *urusan personal*?",
+          "required": true,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Sangat seimbang"
+            },
+            {
+              "label": "Cukup seimbang",
+              "weight": 20
+            },
+            {
+              "label": "Agak tidak seimbang",
+              "weight": 50
+            },
+            {
+              "label": "Tidak seimbang",
+              "weight": 80
+            },
+            {
+              "label": "Sangat tidak seimbang",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai **keterlibatan kognitif** sebagai dimensi *keseimbangan psikologis*.",
+          "id": "keseimbangan_keterlibatan",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "fieldId": "keseimbangan_keterlibatan",
+            "equals": "Tidak seimbang"
+          },
+          "id": "keseimbangan_keterlibatan_detail_tidak_seimbang",
+          "type": "textarea",
+          "required": true,
+          "label": "Mohon berikan **detail lebih lanjut** mengenai *ketidakseimbangan keterlibatan* yang Anda rasakan.",
+          "aiReasoning": "Memahami **prioritas psikologis** responden dalam *konteks profesional vs personal*.",
+          "gridSpan": 2
+        },
+        {
+          "required": true,
+          "label": "Mohon berikan **detail lebih lanjut** mengenai *ketidakseimbangan keterlibatan* yang Anda rasakan.",
+          "gridSpan": 2,
+          "aiReasoning": "Menganalisis **disparitas komitmen** yang dapat mempengaruhi *kesejahteraan mental*.",
+          "showIf": {
+            "equals": "Sangat tidak seimbang",
+            "fieldId": "keseimbangan_keterlibatan"
+          },
+          "type": "textarea",
+          "id": "keseimbangan_keterlibatan_detail_sangat_tidak_seimbang"
+        },
+        {
+          "label": "Seberapa puas Anda dengan **tingkat kepuasan** dari *pekerjaan dan kehidupan luar pekerjaan* secara keseluruhan?",
+          "required": true,
+          "aiReasoning": "Mengukur **kepuasan holistik** sebagai indikator akhir dari *keseimbangan kehidupan-kerja*.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Sangat puas"
+            },
+            {
+              "weight": 20,
+              "label": "Cukup puas"
+            },
+            {
+              "weight": 50,
+              "label": "Netral"
+            },
+            {
+              "label": "Kurang puas",
+              "weight": 80
+            },
+            {
+              "label": "Sangat tidak puas",
+              "weight": 100
+            }
+          ],
+          "type": "radio",
+          "id": "keseimbangan_kepuasan"
+        },
+        {
+          "aiReasoning": "Mengidentifikasi **gap kepuasan** yang menghambat *kesejahteraan subjektif*.",
+          "gridSpan": 2,
+          "label": "Mohon jelaskan alasan mengapa Anda merasa **kurang puas** dengan *pekerjaan atau kehidupan luar pekerjaan* Anda.",
+          "required": true,
+          "showIf": {
+            "equals": "Kurang puas",
+            "fieldId": "keseimbangan_kepuasan"
+          },
+          "id": "keseimbangan_kepuasan_alasan_kurang_puas",
+          "type": "textarea"
+        },
+        {
+          "showIf": {
+            "equals": "Sangat tidak puas",
+            "fieldId": "keseimbangan_kepuasan"
+          },
+          "id": "keseimbangan_kepuasan_alasan_sangat_tidak_puas",
+          "type": "textarea",
+          "aiReasoning": "Menganalisis **faktor disrupsi utama** yang menyebabkan *ketidakpuasan ekstrem*.",
+          "gridSpan": 2,
+          "label": "Mohon jelaskan alasan mengapa Anda merasa **sangat tidak puas** dengan *pekerjaan atau kehidupan luar pekerjaan* Anda.",
+          "required": true
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Mengevaluasi **utilitas fasilitas organisasi** dalam mendukung *keseimbangan kehidupan-kerja*.",
+          "options": [
+            {
+              "label": "Sangat efektif",
+              "weight": 0
+            },
+            {
+              "weight": 20,
+              "label": "Cukup efektif"
+            },
+            {
+              "weight": 50,
+              "label": "Kurang efektif"
+            },
+            {
+              "weight": 80,
+              "label": "Tidak efektif"
+            },
+            {
+              "label": "Tidak ada fasilitas/dukungan",
+              "weight": 100
+            }
+          ],
+          "required": true,
+          "label": "Seberapa efektif Anda memanfaatkan **Flexible Working Arrangement (FWA)** atau *dukungan lingkungan kerja* lainnya?",
+          "type": "radio",
+          "id": "dukungan_ekosistem_fleksibilitas"
+        },
+        {
+          "showIf": {
+            "fieldId": "dukungan_ekosistem_fleksibilitas",
+            "equals": "Kurang efektif"
+          },
+          "type": "textarea",
+          "id": "dukungan_ekosistem_penjelasan_kurang_efektif",
+          "gridSpan": 2,
+          "aiReasoning": "Menggali **hambatan implementasi** kebijakan fleksibilitas di tingkat operasional.",
+          "required": true,
+          "label": "Mohon jelaskan mengapa pemanfaatan **fasilitas/dukungan** tersebut dirasa *kurang efektif*."
+        },
+        {
+          "id": "dukungan_ekosistem_penjelasan_tidak_efektif",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "dukungan_ekosistem_fleksibilitas",
+            "equals": "Tidak efektif"
+          },
+          "label": "Mohon jelaskan mengapa pemanfaatan **fasilitas/dukungan** tersebut dirasa *tidak efektif*.",
+          "required": true,
+          "aiReasoning": "Menganalisis **kegagalan sistemik** dalam penyediaan *dukungan keseimbangan kerja*.",
+          "gridSpan": 2
+        },
+        {
+          "showIf": {
+            "fieldId": "dukungan_ekosistem_fleksibilitas",
+            "equals": "Tidak ada fasilitas/dukungan"
+          },
+          "id": "dukungan_ekosistem_penjelasan_tidak_ada",
+          "type": "textarea",
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda merasa **tidak ada fasilitas/dukungan** yang tersedia atau dapat dimanfaatkan.",
+          "aiReasoning": "Mengidentifikasi **kekosongan kebijakan** yang menghambat *kesejahteraan karyawan*.",
+          "gridSpan": 2
+        }
+      ],
+      "stepNumber": 3
+    },
+    {
+      "stepNumber": 4,
+      "fields": [
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur **intensitas stres** sebagai indikator utama *beban kognitif* yang dialami responden.",
+          "options": [
+            {
+              "weight": 10,
+              "label": "Tidak pernah atau jarang sekali"
+            },
+            {
+              "weight": 40,
+              "label": "Kadang-kadang"
+            },
+            {
+              "label": "Sering",
+              "weight": 70
+            },
+            {
+              "weight": 95,
+              "label": "Hampir setiap hari"
+            }
+          ],
+          "label": "Seberapa sering Anda merasa **terbebani atau stres** akibat tuntutan pekerjaan kedinasan dalam sebulan terakhir?",
+          "required": true,
+          "id": "tingkatStresHarian",
+          "description": "Pilihlah frekuensi yang paling menggambarkan kondisi *psikologis* Anda saat ini.",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "equals": "Sering",
+            "fieldId": "tingkatStresHarian"
+          },
+          "id": "alasanStresHarianSering",
+          "type": "textarea",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan **faktor utama** yang menyebabkan Anda merasa terbebani atau stres tersebut."
+        },
+        {
+          "type": "textarea",
+          "id": "alasanStresHarianHampirSetiapHari",
+          "showIf": {
+            "equals": "Hampir setiap hari",
+            "fieldId": "tingkatStresHarian"
+          },
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan **faktor utama** yang menyebabkan Anda merasa terbebani atau stres tersebut."
+        },
+        {
+          "aiReasoning": "Gangguan tidur adalah *biomarker* krusial untuk mendeteksi **kelelahan emosional** yang kronis.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Tidak sama sekali",
+              "weight": 5
+            },
+            {
+              "label": "Jarang, hanya sesekali",
+              "weight": 30
+            },
+            {
+              "label": "Sering, beberapa kali seminggu",
+              "weight": 60
+            },
+            {
+              "weight": 85,
+              "label": "Hampir setiap malam"
+            }
+          ],
+          "label": "Apakah stres pekerjaan memengaruhi **kualitas tidur** Anda (misalnya: sulit tidur, sering terbangun, atau tidur tidak nyenyak)?",
+          "required": true,
+          "id": "kualitasTidur",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "equals": "Sering, beberapa kali seminggu",
+            "fieldId": "kualitasTidur"
+          },
+          "id": "dampakKualitasTidurSering",
+          "type": "textarea",
+          "gridSpan": 2,
+          "label": "Jelaskan dampak gangguan tidur ini terhadap **energi dan fokus** Anda di hari berikutnya.",
+          "required": true
+        },
+        {
+          "type": "textarea",
+          "id": "dampakKualitasTidurHampirSetiapMalam",
+          "showIf": {
+            "fieldId": "kualitasTidur",
+            "equals": "Hampir setiap malam"
+          },
+          "required": true,
+          "label": "Jelaskan dampak gangguan tidur ini terhadap **energi dan fokus** Anda di hari berikutnya.",
+          "gridSpan": 2
+        },
+        {
+          "id": "penurunanMotivasi",
+          "type": "radio",
+          "label": "Dalam enam bulan terakhir, apakah Anda merasakan **penurunan motivasi** atau antusiasme terhadap tugas pelayanan publik?",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Penurunan motivasi merupakan indikator *burnout* yang berdampak langsung pada **produktivitas organisasi**.",
+          "options": [
+            {
+              "weight": 10,
+              "label": "Tidak, motivasi saya tetap tinggi"
+            },
+            {
+              "label": "Sedikit penurunan, namun masih bisa diatasi",
+              "weight": 40
+            },
+            {
+              "label": "Cukup signifikan, saya merasa kurang bersemangat",
+              "weight": 70
+            },
+            {
+              "weight": 90,
+              "label": "Sangat drastis, saya merasa kehilangan minat"
+            }
+          ]
+        },
+        {
+          "type": "textarea",
+          "id": "alasanPenurunanMotivasiCukupSignifikan",
+          "showIf": {
+            "fieldId": "penurunanMotivasi",
+            "equals": "Cukup signifikan, saya merasa kurang bersemangat"
+          },
+          "gridSpan": 2,
+          "label": "Apa yang Anda yakini menjadi **penyebab utama** penurunan motivasi ini?",
+          "required": true
+        },
+        {
+          "gridSpan": 2,
+          "label": "Apa yang Anda yakini menjadi **penyebab utama** penurunan motivasi ini?",
+          "required": true,
+          "showIf": {
+            "fieldId": "penurunanMotivasi",
+            "equals": "Sangat drastis, saya merasa kehilangan minat"
+          },
+          "id": "alasanPenurunanMotivasiSangatDrastis",
+          "type": "textarea"
+        },
+        {
+          "label": "Seberapa sering Anda mengalami kesulitan untuk **mempertahankan fokus** akibat kelelahan mental?",
+          "required": true,
+          "options": [
+            {
+              "weight": 10,
+              "label": "Tidak pernah atau jarang"
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 40
+            },
+            {
+              "label": "Sering",
+              "weight": 70
+            },
+            {
+              "weight": 90,
+              "label": "Hampir setiap hari"
+            }
+          ],
+          "aiReasoning": "Defisit konsentrasi mencerminkan *penurunan fungsi kognitif* akibat **beban kerja berlebih**.",
+          "gridSpan": 2,
+          "type": "radio",
+          "id": "kesulitanKonsentrasi"
+        },
+        {
+          "gridSpan": 2,
+          "label": "Berikan contoh spesifik bagaimana kesulitan konsentrasi ini memengaruhi **kinerja atau aktivitas harian** Anda.",
+          "required": true,
+          "id": "dampakKesulitanKonsentrasiSering",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "kesulitanKonsentrasi",
+            "equals": "Sering"
+          }
+        },
+        {
+          "label": "Berikan contoh spesifik bagaimana kesulitan konsentrasi ini memengaruhi **kinerja atau aktivitas harian** Anda.",
+          "required": true,
+          "gridSpan": 2,
+          "showIf": {
+            "equals": "Hampir setiap hari",
+            "fieldId": "kesulitanKonsentrasi"
+          },
+          "type": "textarea",
+          "id": "dampakKesulitanKonsentrasiHampirSetiapHari"
+        },
+        {
+          "options": [
+            {
+              "label": "Sangat didukung",
+              "weight": 10
+            },
+            {
+              "label": "Cukup didukung",
+              "weight": 30
+            },
+            {
+              "label": "Kurang didukung",
+              "weight": 60
+            },
+            {
+              "weight": 85,
+              "label": "Tidak didukung sama sekali"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Dukungan sosial adalah *buffer* (penyangga) utama dalam memitigasi **risiko psikososial** di tempat kerja.",
+          "required": true,
+          "label": "Seberapa besar Anda merasa **didukung oleh rekan kerja atau atasan** dalam mengelola stres?",
+          "type": "radio",
+          "id": "dukunganLingkunganKerja"
+        },
+        {
+          "gridSpan": 2,
+          "label": "Mohon jelaskan mengapa Anda merasa **kurang didukung** dalam mengelola stres atau beban kerja.",
+          "required": true,
+          "showIf": {
+            "equals": "Kurang didukung",
+            "fieldId": "dukunganLingkunganKerja"
+          },
+          "type": "textarea",
+          "id": "alasanKurangDukunganKurang"
+        },
+        {
+          "label": "Mohon jelaskan mengapa Anda merasa **tidak didukung sama sekali** dalam mengelola stres atau beban kerja.",
+          "required": true,
+          "gridSpan": 2,
+          "showIf": {
+            "equals": "Tidak didukung sama sekali",
+            "fieldId": "dukunganLingkunganKerja"
+          },
+          "type": "textarea",
+          "id": "alasanKurangDukunganTidakSamaSekali"
+        },
+        {
+          "options": [
+            {
+              "label": "Tidak ada perubahan signifikan",
+              "weight": 5
+            },
+            {
+              "label": "Sedikit perubahan, namun masih terkendali",
+              "weight": 35
+            },
+            {
+              "weight": 70,
+              "label": "Cukup sering terjadi perubahan yang mengganggu"
+            },
+            {
+              "label": "Sangat sering dan sulit dikendalikan",
+              "weight": 95
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Perubahan perilaku adalah indikator *psikologis* yang memerlukan **intervensi dini**.",
+          "required": true,
+          "label": "Apakah Anda menyadari adanya **perubahan signifikan** pada suasana hati atau perilaku yang berkaitan dengan pekerjaan?",
+          "type": "radio",
+          "id": "perubahanMoodPerilaku"
+        },
+        {
+          "gridSpan": 2,
+          "label": "Deskripsikan perubahan suasana hati dan bagaimana hal tersebut memengaruhi **interaksi sosial** Anda.",
+          "required": true,
+          "id": "deskripsiPerubahanMoodCukupSering",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "perubahanMoodPerilaku",
+            "equals": "Cukup sering terjadi perubahan yang mengganggu"
+          }
+        },
+        {
+          "showIf": {
+            "fieldId": "perubahanMoodPerilaku",
+            "equals": "Sangat sering dan sulit dikendalikan"
+          },
+          "id": "deskripsiPerubahanMoodSangatSering",
+          "type": "textarea",
+          "label": "Deskripsikan perubahan suasana hati dan bagaimana hal tersebut memengaruhi **interaksi sosial** Anda.",
+          "required": true,
+          "gridSpan": 2
+        }
+      ],
+      "title": "Asesmen Beban Kognitif dan Risiko Psikososial",
+      "description": "Mengevaluasi tingkat stres, kelelahan emosional, dan risiko burnout berdasarkan adaptasi standar ISO 45003 untuk individu."
+    },
+    {
+      "stepNumber": 5,
+      "description": "Menilai kemampuan ASN untuk melepaskan diri secara mental dari pekerjaan saat di rumah serta tingkat kepuasan hidup secara keseluruhan.",
+      "title": "Evaluasi Detasemen Psikologis dan Kepuasan Hidup",
+      "fields": [
+        {
+          "description": "Penting untuk mengetahui apakah Anda mampu melakukan *switching off* dari beban kerja.",
+          "type": "radio",
+          "id": "detasemenPikiranKerja",
+          "options": [
+            {
+              "weight": 100,
+              "label": "Selalu"
+            },
+            {
+              "weight": 80,
+              "label": "Sering"
+            },
+            {
+              "weight": 50,
+              "label": "Kadang-kadang"
+            },
+            {
+              "label": "Jarang",
+              "weight": 20
+            },
+            {
+              "label": "Tidak Pernah",
+              "weight": 0
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur tingkat **detasemen psikologis** sebagai indikator utama *work-life balance*.",
+          "required": true,
+          "label": "Seberapa sering Anda merasa pikiran Anda masih terfokus pada **pekerjaan kedinasan** meskipun sudah berada di luar jam kerja?"
+        },
+        {
+          "required": true,
+          "label": "Mohon uraikan situasi spesifik yang membuat pikiran Anda **sulit lepas** dari pekerjaan.",
+          "aiReasoning": "Mengidentifikasi **pemicu stres** (stressor) yang menghambat proses pemulihan mental.",
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "penjelasanDetasemen",
+          "showIf": {
+            "fieldId": "detasemenPikiranKerja",
+            "equals": "Selalu"
+          }
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi **pemicu stres** (stressor) yang menghambat proses pemulihan mental.",
+          "label": "Mohon uraikan situasi spesifik yang membuat pikiran Anda **sulit lepas** dari pekerjaan.",
+          "required": true,
+          "type": "textarea",
+          "id": "penjelasanDetasemenSering",
+          "showIf": {
+            "fieldId": "detasemenPikiranKerja",
+            "equals": "Sering"
+          }
+        },
+        {
+          "id": "penjelasanWaktuLuang",
+          "type": "textarea",
+          "label": "Bagaimana kesulitan tersebut memengaruhi **kualitas waktu luang** dan interaksi sosial Anda?",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Menganalisis dampak *spillover* pekerjaan terhadap **kesejahteraan personal**."
+        },
+        {
+          "options": [
+            {
+              "weight": 100,
+              "label": "Sangat Tidak Puas"
+            },
+            {
+              "weight": 80,
+              "label": "Tidak Puas"
+            },
+            {
+              "weight": 50,
+              "label": "Cukup Puas"
+            },
+            {
+              "label": "Puas",
+              "weight": 20
+            },
+            {
+              "label": "Sangat Puas",
+              "weight": 0
+            }
+          ],
+          "aiReasoning": "Menilai tingkat **kepuasan hidup** (life satisfaction) sebagai dimensi krusial kesehatan mental.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Secara keseluruhan, seberapa puas Anda dengan **kehidupan pribadi** di luar pekerjaan kedinasan?",
+          "id": "kepuasanHidupPribadi",
+          "type": "radio"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Menggali akar permasalahan pada **domain non-pekerjaan** yang memengaruhi stabilitas emosional.",
+          "required": true,
+          "label": "Mohon jelaskan faktor utama yang menyebabkan **ketidakpuasan** terhadap kehidupan pribadi Anda.",
+          "showIf": {
+            "equals": "Sangat Tidak Puas",
+            "fieldId": "kepuasanHidupPribadi"
+          },
+          "id": "alasanKepuasanPribadi",
+          "type": "textarea"
+        },
+        {
+          "type": "textarea",
+          "id": "alasanKepuasanPribadiTidakPuas",
+          "showIf": {
+            "equals": "Tidak Puas",
+            "fieldId": "kepuasanHidupPribadi"
+          },
+          "gridSpan": 2,
+          "aiReasoning": "Menggali akar permasalahan pada **domain non-pekerjaan** yang memengaruhi stabilitas emosional.",
+          "required": true,
+          "label": "Mohon jelaskan faktor utama yang menyebabkan **ketidakpuasan** terhadap kehidupan pribadi Anda."
+        },
+        {
+          "options": [
+            {
+              "label": "Sangat Tidak Puas",
+              "weight": 100
+            },
+            {
+              "label": "Tidak Puas",
+              "weight": 80
+            },
+            {
+              "label": "Cukup Puas",
+              "weight": 50
+            },
+            {
+              "weight": 20,
+              "label": "Puas"
+            },
+            {
+              "weight": 0,
+              "label": "Sangat Puas"
+            }
+          ],
+          "aiReasoning": "Mengukur *self-efficacy* dan **kepuasan kerja** dalam konteks pelayanan publik.",
+          "gridSpan": 2,
+          "label": "Seberapa puas Anda dengan **kontribusi dan pencapaian** dalam karir sebagai Aparatur Sipil Negara?",
+          "required": true,
+          "type": "radio",
+          "id": "kepuasanKarirASN"
+        },
+        {
+          "showIf": {
+            "equals": "Sangat Tidak Puas",
+            "fieldId": "kepuasanKarirASN"
+          },
+          "id": "alasanKepuasanKarir",
+          "type": "textarea",
+          "gridSpan": 2,
+          "aiReasoning": "Mendeteksi adanya *burnout* atau **hambatan birokrasi** yang menurunkan motivasi kerja.",
+          "required": true,
+          "label": "Mohon jelaskan hambatan yang membuat Anda merasa **tidak puas** dengan pencapaian karir ASN Anda."
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan hambatan yang membuat Anda merasa **tidak puas** dengan pencapaian karir ASN Anda.",
+          "aiReasoning": "Mendeteksi adanya *burnout* atau **hambatan birokrasi** yang menurunkan motivasi kerja.",
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "alasanKepuasanKarirTidakPuas",
+          "showIf": {
+            "equals": "Tidak Puas",
+            "fieldId": "kepuasanKarirASN"
+          }
+        },
+        {
+          "id": "kelelahanMentalHarian",
+          "type": "radio",
+          "gridSpan": 2,
+          "aiReasoning": "Mendeteksi gejala awal **kelelahan emosional** (*emotional exhaustion*) sebagai komponen utama *burnout*.",
+          "options": [
+            {
+              "label": "Selalu",
+              "weight": 100
+            },
+            {
+              "weight": 80,
+              "label": "Sering"
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 50
+            },
+            {
+              "label": "Jarang",
+              "weight": 20
+            },
+            {
+              "label": "Tidak Pernah",
+              "weight": 0
+            }
+          ],
+          "label": "Seberapa sering Anda merasa **lelah secara mental atau emosional** setelah menyelesaikan pekerjaan harian?",
+          "required": true
+        },
+        {
+          "label": "Mohon jelaskan faktor dominan yang berkontribusi pada **kelelahan mental** yang Anda rasakan.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi *workload* atau **tekanan psikologis** yang melampaui kapasitas kognitif.",
+          "type": "textarea",
+          "id": "penjelasanKelelahanMental",
+          "showIf": {
+            "equals": "Selalu",
+            "fieldId": "kelelahanMentalHarian"
+          }
+        },
+        {
+          "label": "Mohon jelaskan faktor dominan yang berkontribusi pada **kelelahan mental** yang Anda rasakan.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi *workload* atau **tekanan psikologis** yang melampaui kapasitas kognitif.",
+          "showIf": {
+            "equals": "Sering",
+            "fieldId": "kelelahanMentalHarian"
+          },
+          "type": "textarea",
+          "id": "penjelasanKelelahanMentalSering"
+        },
+        {
+          "options": [
+            {
+              "weight": 100,
+              "label": "Ya, sangat sering"
+            },
+            {
+              "label": "Ya, cukup sering",
+              "weight": 80
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 50
+            },
+            {
+              "weight": 20,
+              "label": "Jarang"
+            },
+            {
+              "weight": 0,
+              "label": "Tidak Pernah"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai dampak **psikosomatis** dari stres kerja terhadap ritme sirkadian.",
+          "label": "Apakah Anda mengalami **gangguan pola tidur** akibat stres terkait pekerjaan?",
+          "required": true,
+          "id": "gangguanTidurKerja",
+          "type": "radio"
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan jenis **gangguan tidur** dan dampaknya terhadap produktivitas Anda.",
+          "aiReasoning": "Mengevaluasi tingkat keparahan **insomnia** atau gangguan tidur terkait beban kerja.",
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "penjelasanGangguanTidur",
+          "showIf": {
+            "fieldId": "gangguanTidurKerja",
+            "equals": "Ya, sangat sering"
+          }
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan jenis **gangguan tidur** dan dampaknya terhadap produktivitas Anda.",
+          "gridSpan": 2,
+          "aiReasoning": "Mengevaluasi tingkat keparahan **insomnia** atau gangguan tidur terkait beban kerja.",
+          "id": "penjelasanGangguanTidurCukup",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Ya, cukup sering",
+            "fieldId": "gangguanTidurKerja"
+          }
+        },
+        {
+          "options": [
+            {
+              "label": "Ya, sangat sering",
+              "weight": 100
+            },
+            {
+              "weight": 80,
+              "label": "Ya, cukup sering"
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 50
+            },
+            {
+              "label": "Jarang",
+              "weight": 20
+            },
+            {
+              "label": "Tidak Pernah",
+              "weight": 0
+            }
+          ],
+          "aiReasoning": "Mengukur indikator **kelelahan fisik** yang mengarah pada kondisi *chronic fatigue syndrome*.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Apakah Anda merasakan **kelelahan fisik kronis** yang tidak membaik meskipun sudah beristirahat?",
+          "type": "radio",
+          "id": "kelelahanFisikKronis"
+        },
+        {
+          "label": "Mohon jelaskan gejala **kelelahan fisik** dan dampaknya pada aktivitas harian Anda.",
+          "required": true,
+          "aiReasoning": "Menganalisis keterbatasan **kapasitas fisik** dalam menjalankan fungsi kedinasan.",
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "kelelahanFisikKronis",
+            "equals": "Ya, sangat sering"
+          },
+          "type": "textarea",
+          "id": "penjelasanKelelahanFisik"
+        },
+        {
+          "label": "Mohon jelaskan gejala **kelelahan fisik** dan dampaknya pada aktivitas harian Anda.",
+          "required": true,
+          "aiReasoning": "Menganalisis keterbatasan **kapasitas fisik** dalam menjalankan fungsi kedinasan.",
+          "gridSpan": 2,
+          "id": "penjelasanKelelahanFisikCukup",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Ya, cukup sering",
+            "fieldId": "kelelahanFisikKronis"
+          }
+        }
+      ]
+    },
+    {
+      "fields": [
+        {
+          "id": "pemahamanFWA",
+          "type": "radio",
+          "description": "Pemahaman yang jelas tentang FWA mendukung *pemanfaatan optimal* untuk keseimbangan kerja dan hidup.",
+          "options": [
+            {
+              "weight": 10,
+              "label": "Sangat memahami dan sering memanfaatkan"
+            },
+            {
+              "label": "Memahami, namun jarang memanfaatkan",
+              "weight": 30
+            },
+            {
+              "label": "Cukup memahami, namun ada keraguan",
+              "weight": 50
+            },
+            {
+              "weight": 70,
+              "label": "Kurang memahami"
+            },
+            {
+              "label": "Tidak memahami sama sekali",
+              "weight": 90
+            }
+          ],
+          "aiReasoning": "Mengukur **literasi kebijakan** sebagai fondasi utama dalam implementasi fleksibilitas kerja yang efektif.",
+          "gridSpan": 2,
+          "label": "Seberapa baik Anda memahami kebijakan **Flexible Working Arrangement (FWA)** yang berlaku di instansi Anda?",
+          "required": true
+        },
+        {
+          "id": "frekuensiFWA",
+          "type": "radio",
+          "description": "Frekuensi pemanfaatan FWA mencerminkan *adaptasi nyata* terhadap kebutuhan personal dan profesional.",
+          "label": "Dalam satu bulan terakhir, seberapa sering Anda memanfaatkan **opsi kerja fleksibel** (WFH, WFA, atau jam kerja fleksibel)?",
+          "required": true,
+          "options": [
+            {
+              "weight": 10,
+              "label": "Secara rutin (lebih dari 8 hari dalam sebulan)"
+            },
+            {
+              "weight": 30,
+              "label": "Cukup sering (4-8 hari dalam sebulan)"
+            },
+            {
+              "label": "Jarang (1-3 hari dalam sebulan)",
+              "weight": 50
+            },
+            {
+              "weight": 80,
+              "label": "Tidak pernah memanfaatkan"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menganalisis **tingkat adopsi** aktual karyawan terhadap fleksibilitas yang disediakan oleh organisasi."
+        },
+        {
+          "type": "radio",
+          "id": "dampakFWAProduktivitas",
+          "description": "Evaluasi dampak FWA terhadap produktivitas membantu mengukur *efektivitas kebijakan* secara objektif.",
+          "required": true,
+          "label": "Bagaimana Anda menilai dampak pemanfaatan FWA terhadap **produktivitas kerja** Anda?",
+          "gridSpan": 2,
+          "aiReasoning": "Mengevaluasi **korelasi positif** antara fleksibilitas kerja dengan output kinerja individu.",
+          "options": [
+            {
+              "label": "Meningkatkan produktivitas secara signifikan",
+              "weight": 10
+            },
+            {
+              "weight": 30,
+              "label": "Meningkatkan produktivitas sedikit"
+            },
+            {
+              "label": "Tidak ada perubahan signifikan",
+              "weight": 50
+            },
+            {
+              "weight": 70,
+              "label": "Menurunkan produktivitas sedikit"
+            },
+            {
+              "label": "Menurunkan produktivitas secara signifikan",
+              "weight": 90
+            }
+          ]
+        },
+        {
+          "type": "radio",
+          "description": "Dampak FWA pada kesejahteraan pribadi adalah *indikator kunci* keberhasilan program organisasi.",
+          "id": "dampakFWAKesejahteraan",
+          "label": "Bagaimana Anda menilai dampak pemanfaatan FWA terhadap **kesejahteraan pribadi** dan keseimbangan hidup?",
+          "required": true,
+          "options": [
+            {
+              "weight": 10,
+              "label": "Sangat positif, meningkatkan keseimbangan hidup"
+            },
+            {
+              "weight": 30,
+              "label": "Cukup positif, membantu menjaga keseimbangan"
+            },
+            {
+              "weight": 50,
+              "label": "Tidak ada dampak signifikan"
+            },
+            {
+              "label": "Cukup negatif, mengganggu keseimbangan",
+              "weight": 70
+            },
+            {
+              "label": "Sangat negatif, memperburuk keseimbangan hidup",
+              "weight": 90
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur **kualitas hidup** sebagai indikator keberhasilan program keseimbangan kerja-hidup."
+        },
+        {
+          "label": "Seberapa efektif Anda memanfaatkan **sistem kerja digital (SPBE)** dalam mendukung fleksibilitas kerja?",
+          "required": true,
+          "options": [
+            {
+              "label": "Sangat efektif, semua kebutuhan terpenuhi",
+              "weight": 10
+            },
+            {
+              "weight": 30,
+              "label": "Cukup efektif, sebagian besar kebutuhan terpenuhi"
+            },
+            {
+              "weight": 70,
+              "label": "Ada kendala signifikan yang menghambat efektivitas"
+            },
+            {
+              "weight": 90,
+              "label": "Tidak efektif sama sekali, lebih banyak hambatan"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai **kesiapan infrastruktur digital** sebagai enabler utama dalam ekosistem kerja modern.",
+          "description": "Efektivitas SPBE adalah *pilar utama* dalam mendukung FWA dan adaptasi kerja digital.",
+          "type": "radio",
+          "id": "penggunaanSPBE"
+        },
+        {
+          "showIf": {
+            "fieldId": "penggunaanSPBE",
+            "equals": "Ada kendala signifikan yang menghambat efektivitas"
+          },
+          "description": "Identifikasi kendala SPBE membantu *perbaikan infrastruktur* dan pelatihan yang lebih tepat sasaran.",
+          "type": "textarea",
+          "id": "kendalaSPBE",
+          "gridSpan": 4,
+          "aiReasoning": "Melakukan **analisis akar masalah** untuk perbaikan infrastruktur dan pelatihan teknis.",
+          "label": "Mohon jelaskan **kendala utama** yang Anda alami dalam memanfaatkan sistem kerja digital (SPBE).",
+          "required": true
+        },
+        {
+          "options": [
+            {
+              "weight": 10,
+              "label": "Tidak pernah merasa tertekan"
+            },
+            {
+              "weight": 30,
+              "label": "Jarang, hanya sesekali"
+            },
+            {
+              "weight": 60,
+              "label": "Kadang-kadang, cukup sering"
+            },
+            {
+              "weight": 80,
+              "label": "Sering, hampir setiap hari"
+            },
+            {
+              "label": "Selalu, sulit memisahkan diri dari pekerjaan",
+              "weight": 100
+            }
+          ],
+          "aiReasoning": "Mendeteksi risiko **Work Interference with Family (WIF)** dan potensi kelelahan mental (burnout).",
+          "gridSpan": 2,
+          "label": "Apakah Anda merasa ada **tekanan untuk tetap tersedia** (always-on) di luar jam kerja resmi?",
+          "required": true,
+          "id": "tekananKetersediaan",
+          "type": "radio",
+          "description": "Tekanan ketersediaan di luar jam kerja dapat mengindikasikan *risiko kelelahan* yang tinggi."
+        },
+        {
+          "id": "deskripsiTekanan",
+          "type": "textarea",
+          "description": "Penjelasan ini membantu memahami *akar masalah* dan merancang intervensi yang tepat.",
+          "showIf": {
+            "equals": "Selalu, sulit memisahkan diri dari pekerjaan",
+            "fieldId": "tekananKetersediaan"
+          },
+          "label": "Mohon uraikan **sifat tekanan** yang Anda rasakan untuk tetap tersedia di luar jam kerja.",
+          "required": true,
+          "gridSpan": 4,
+          "aiReasoning": "Menggali **konteks psikososial** untuk merancang intervensi kebijakan yang lebih manusiawi."
+        },
+        {
+          "type": "radio",
+          "description": "Ketersediaan sumber daya esensial untuk memastikan FWA dapat berjalan *tanpa menghambat kinerja*.",
+          "id": "sumberDayaFWA",
+          "options": [
+            {
+              "weight": 10,
+              "label": "Sangat memadai, tidak ada kendala"
+            },
+            {
+              "weight": 30,
+              "label": "Cukup memadai, kendala minor"
+            },
+            {
+              "label": "Kurang memadai, sering menjadi hambatan",
+              "weight": 70
+            },
+            {
+              "label": "Tidak memadai sama sekali, sangat menghambat",
+              "weight": 90
+            }
+          ],
+          "aiReasoning": "Memastikan **ketersediaan sarana kerja** sebagai prasyarat mutlak produktivitas jarak jauh.",
+          "gridSpan": 2,
+          "label": "Apakah Anda memiliki **sumber daya dan alat pendukung** yang memadai untuk bekerja secara efektif dalam skema FWA?",
+          "required": true
+        },
+        {
+          "id": "kekuranganSumberDaya",
+          "description": "Informasi ini krusial untuk *alokasi sumber daya* dan peningkatan fasilitas kerja.",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "sumberDayaFWA",
+            "equals": "Kurang memadai, sering menjadi hambatan"
+          },
+          "gridSpan": 4,
+          "aiReasoning": "Mengumpulkan data **gap fasilitas** untuk alokasi anggaran dan peningkatan sarana kerja.",
+          "label": "Mohon sebutkan **sumber daya atau alat** apa saja yang Anda rasa kurang memadai atau tidak tersedia.",
+          "required": true
+        }
+      ],
+      "title": "Pemanfaatan Ekosistem dan Fleksibilitas Kerja",
+      "description": "Meninjau sejauh mana ASN memanfaatkan kebijakan Flexible Working Arrangement (FWA) dan dukungan lingkungan kerja.",
+      "stepNumber": 6
+    }
+  ],
+  "trackDescription": "Memetakan sejauh mana masalah di luar pekerjaan (seperti dinamika keluarga, masalah rumah tangga, atau transisi krusial seperti pra-nikah/pra-cerai) beririsan dengan profesionalisme ASN. Tujuannya adalah melihat apakah instansi perlu memberikan fleksibilitas atau dukungan khusus agar ASN dapat mengelola tanggung jawab domestiknya dengan baik.",
+  "trackName": "Evaluasi Keseimbangan Kehidupan-Kerja ASN",
+  "methodologyContext": "Menggunakan framework Work-Life Interface (WLI) dan instrumen Work-Family Conflict Scale (WFCS) untuk mengukur irisan konflik domestik dan profesional. Pendekatan asesmen berbasis psikologi organisasi ini akan diintegrasikan dengan standar ISO 45003 untuk manajemen kesehatan psikososial di tempat kerja.",
+  "aiGenerationStatus": {
+    "updatedAt": "2026-07-24T03:04:51.276Z",
+    "phase": "COMPLETED",
+    "message": "Disimpan secara manual oleh Admin."
+  },
+  "preferredQuestionTypes": [
+    "radio_weight",
+    "conditional_logic",
+    "text_justification"
+  ],
+  "version": 3,
+  "generationLogs": [
+    {
+      "message": "Memulai sesi pipeline Enterprise Multi-Agent AI...",
+      "timestamp": "2026-07-23T02:29:38.508Z",
+      "type": "info"
+    },
+    {
+      "type": "info",
+      "timestamp": "2026-07-23T02:29:38.556Z",
+      "message": "FASE 1: Agen Master (Gemini 3.1 Pro) diaktifkan. Melakukan penetrasi jaringan internet dan restrukturisasi Otak AI..."
+    },
+    {
+      "message": "Merumuskan penyempurnaan Otak AI & Masterplan untuk domain: [Evaluasi Keseimbangan Kehidupan-Kerja ASN]...",
+      "timestamp": "2026-07-23T02:29:38.594Z",
+      "type": "info"
+    },
+    {
+      "message": "Otak AI dan Master Blueprint berhasil disempurnakan! Menyimpan konfigurasi ke database...",
+      "timestamp": "2026-07-23T02:30:51.696Z",
+      "type": "success"
+    },
+    {
+      "timestamp": "2026-07-23T02:30:51.797Z",
+      "message": "Mengekstrak temuan internet dan menyimpannya ke Vector Database (RAG)...",
+      "type": "info"
+    },
+    {
+      "type": "success",
+      "message": "Vector Database berhasil diperbarui.",
+      "timestamp": "2026-07-23T02:30:52.237Z"
+    },
+    {
+      "type": "info",
+      "timestamp": "2026-07-23T02:30:52.302Z",
+      "message": "FASE 2: Mengerahkan Agen Pekerja (Gemini 2.5 Flash) berbekal Otak AI yang baru. Memulai fabrikasi 6 seksi formulir..."
+    },
+    {
+      "message": "Meracik Kuesioner Batch 1 (Seksi 1 s/d3)...",
+      "timestamp": "2026-07-23T02:30:52.358Z",
+      "type": "info"
+    },
+    {
+      "timestamp": "2026-07-23T02:31:29.697Z",
+      "message": "Meracik Kuesioner Batch 2 (Seksi 4 s/d6)...",
+      "type": "info"
+    },
+    {
+      "timestamp": "2026-07-23T02:32:13.608Z",
+      "message": "Seluruh seksi formulir berhasil diracik dan digabungkan.",
+      "type": "success"
+    },
+    {
+      "type": "info",
+      "timestamp": "2026-07-23T02:32:13.639Z",
+      "message": "Membersihkan ID duplikat pada struktur formulir..."
+    },
+    {
+      "type": "info",
+      "message": "FASE 3: Agen Validator (QA) meninjau integritas logika 'ShowIf' (Dependency Tree)...",
+      "timestamp": "2026-07-23T02:32:13.695Z"
+    },
+    {
+      "type": "success",
+      "timestamp": "2026-07-23T02:33:45.268Z",
+      "message": "Verifikasi selesai. Struktur formulir 100% valid dan aman dari loop logic."
+    },
+    {
+      "type": "success",
+      "message": "PIPELINE SELESAI: Kuesioner skala Enterprise telah berhasil diintegrasikan!",
+      "timestamp": "2026-07-23T02:33:45.356Z"
+    }
+  ],
+  "aiPromptConfig": {
+    "riskFramework": "Occupational Health & Safety (OHS) - Psychosocial Risk Management (ISO 45003) dan Work-Family Conflict Scale (WFCS) diadaptasi untuk Asesmen Psikologis Individu",
+    "customScoringRubric": "Berikan skor 0-100 berdasarkan intensitas konflik peran (Work-Family Conflict). Skor 0-30: Keseimbangan terjaga, intervensi preventif. Skor 31-60: Konflik moderat, memerlukan penyesuaian habit. Skor 61-85: Konflik tinggi, risiko kelelahan (burnout), memerlukan intervensi psikologis segera. Skor 86-100: Krisis psikososial, memerlukan rujukan profesional. Penilaian harus didasarkan pada frekuensi gangguan domestik terhadap fokus kerja dan sebaliknya, merujuk pada standar ISO 45003.",
+    "researchSourcesCited": [
+      "Kementerian PANRB: Regulasi FWA dan Core Values BerAKHLAK",
+      "McDonald and Bradley: Indikator Work-Life Balance (Time, Involvement, Satisfaction)",
+      "ISO 45003: Manajemen Risiko Psikososial di Tempat Kerja",
+      "Work-Family Conflict Scale (WFCS) - WIF & FIW Indicators"
+    ],
+    "negativePrompts": "Dilarang menggunakan istilah: 'KPI', 'ROI', 'efisiensi operasional', 'target kuartal', 'manajemen SDM', 'produktivitas korporat', 'bottom-line', 'akuntabilitas bisnis'. Jangan memberikan saran yang bersifat instruksi administratif atau birokratis. Jangan menghakimi subjek atas kondisi domestik mereka. Jangan menggunakan nada bicara robotik atau terlalu formal.",
+    "mediaAnalysisFocus": "Teks respons kuesioner dan indikator metrik keseimbangan kerja.",
+    "expectedMetrics": [
+      "Keseimbangan Waktu (Time Balance) - Proporsi waktu antara pekerjaan kedinasan dan kehidupan pribadi.",
+      "Keseimbangan Keterlibatan (Involvement Balance) - Tingkat fokus dan komitmen psikologis pada pekerjaan vs urusan personal.",
+      "Keseimbangan Kepuasan (Satisfaction Balance) - Tingkat kepuasan yang dirasakan dari pekerjaan dan kehidupan di luar pekerjaan.",
+      "Interferensi Pekerjaan terhadap Kehidupan Pribadi (WIF) - Sejauh mana tuntutan pekerjaan mengganggu kehidupan personal.",
+      "Dukungan Ekosistem & Fleksibilitas (Ecosystem Support) - Pemanfaatan fasilitas FWA dan dukungan lingkungan kerja.",
+      "Interferensi Kehidupan Pribadi terhadap Pekerjaan (FIW) - Sejauh mana masalah domestik mengganggu performa kedinasan.",
+      "Beban Kognitif & Kelelahan Emosional (Cognitive Exhaustion) - Tingkat stres psikososial dan kelelahan mental harian.",
+      "Detasemen Psikologis (Psychological Detachment) - Kemampuan individu untuk melepaskan diri secara mental dari pekerjaan saat berada di rumah."
+    ],
+    "aiPersona": "Asesor Ahli Psikologi Industri dan Organisasi & Spesialis SDM Aparatur",
+    "customSystemPrompt": "Anda adalah Konselor Psikologi Organisasi yang berempati tinggi. Gunakan pendekatan IF-THEN: JIKA subjek melaporkan beban domestik tinggi, MAKA prioritaskan validasi emosional sebelum memberikan saran teknis. JIKA subjek menunjukkan tanda-tanda kelelahan, MAKA arahkan pada teknik pemulihan energi. Analisis harus kritis terhadap pola pikir yang mengabaikan kesehatan mental, namun tetap suportif dan hangat. Hindari bahasa korporat yang kaku; gunakan bahasa yang memanusiakan ASN sebagai individu.",
+    "expectedRecommendations": [
+      "Manajemen Batasan Psikologis dan Waktu (Time & Psychological Boundary Setting) - Penetapan batasan tegas antara jam dinas dan waktu pribadi, serta praktik mindfulness untuk transisi peran harian.",
+      "Manajemen Energi dan Pemulihan Fisik - Penerapan gaya hidup sehat, optimalisasi cuti tahunan, dan rutinitas relaksasi di luar lingkungan birokrasi untuk mencegah kelelahan kronis.",
+      "Pemanfaatan Dukungan Ekosistem dan Fleksibilitas - Optimalisasi kebijakan Flexible Working Arrangement (FWA) sesuai regulasi Kemenpan RB dan pemanfaatan Employee Assistance Program (EAP).",
+      "Peningkatan Literasi Digital dan Manajemen Prioritas - Penggunaan matriks urgensi tugas dan efisiensi kerja berbasis Sistem Pemerintahan Berbasis Elektronik (SPBE) untuk mengurangi beban kognitif.",
+      "Komunikasi Asertif dalam Relasi Profesional dan Domestik - Latihan komunikasi asertif dengan atasan terkait ekspektasi beban kerja, serta harmonisasi ekspektasi dengan anggota keluarga."
+    ],
+    "gradingStrictness": "supportive",
+    "reportTone": "consultative",
+    "formatInstructions": "Gunakan Markdown secara maksimal untuk kemudahan membaca: Gunakan penanda **teks tebal** untuk menyoroti nama metrik/istilah penting, *teks miring* untuk penekanan atau kutipan, dan gunakan awalan ### (Heading 3) untuk memisahkan sub-topik laporan agar sistem merendernya dengan rapi. Pastikan struktur laporan terdiri dari: ### Ringkasan Kondisi Psikososial, ### Analisis Konflik Peran, dan ### Rekomendasi Pemulihan.",
+    "customReadinessTiers": [
+      "Tingkat 1: Krisis Psikososial (Burnout Risk) - Ketidakseimbangan parah dengan indikasi kelelahan mental tinggi, membutuhkan rujukan profesional segera.",
+      "Tingkat 2: Rentan (Vulnerable) - Konflik peran moderat hingga tinggi, sering mengalami kelelahan kognitif dan kesulitan membagi fokus.",
+      "Tingkat 3: Stabil (Functional) - Mampu mengelola batasan waktu dan energi dengan cukup baik, namun rentan terhadap lonjakan beban kerja atau krisis domestik.",
+      "Tingkat 4: Optimal (Thriving) - Keseimbangan sangat baik, memiliki detasemen psikologis yang sehat, produktivitas tinggi, dan kepuasan hidup maksimal."
+    ],
+    "formPurpose": "custom",
+    "assessmentGoal": "Mengevaluasi secara komprehensif tingkat keseimbangan kehidupan-kerja (work-life balance) Aparatur Sipil Negara (ASN) secara individu, mengidentifikasi risiko kelelahan mental (burnout), dan memberikan rekomendasi strategis untuk meningkatkan kesejahteraan serta produktivitas.",
+    "customUiLabels": {
+      "riskLabel": "Critical Risks & Mitigation Map",
+      "executionLabel": "Action Plan Timeline",
+      "swotLabel": "Capability Matrix (SWOT)",
+      "roadmapLabel": "Rekomendasi Strategis",
+      "scoreLabel": "AI Readiness Score"
+    },
+    "expectedAnalysisBlocks": [
+      "Manajemen Waktu dan Transisi Peran: Distribusi jam kerja efektif harian, Kualitas waktu luang bersama keluarga",
+      "Evaluasi Beban Kognitif dan Emosional: Tingkat stres psikososial harian, Keterlibatan psikologis di luar jam kerja",
+      "Pemetaan Kepuasan dan Kesejahteraan Hidup: Pemenuhan kebutuhan aktualisasi diri, Kepuasan terhadap karir ASN",
+      "Deteksi Dini Risiko Burnout: Indikasi kelelahan fisik kronis, Penurunan motivasi pelayanan publik",
+      "Efektivitas Pemanfaatan Fleksibilitas Kerja: Pemanfaatan kebijakan FWA, Adaptasi sistem kerja digital SPBE",
+      "Interferensi Konflik Domestik dan Profesional: Dampak masalah keluarga terhadap fokus kerja, Gangguan tuntutan dinas pada kehidupan personal"
+    ]
+  },
+  "promoAssets": {
+    "instagram": {
+      "generatedAt": "2026-07-24T03:03:47.161Z",
+      "copywriting": "💼 ASN JUGA MANUSIA BIASA: DI MANA BATAS KERJA & KELUARGA?\n\nSeringkali konflik rumah tangga, dinamika keluarga, hingga fase transisi hidup menguras energi kita sebelum sempat menyentuh meja kerja. Sebagai ASN, profesionalisme dituntut tinggi, namun kesejahteraan mental Anda adalah fondasi utamanya.\n\nMelalui \"Evaluasi Keseimbangan Kehidupan-Kerja ASN\" berbasis AI dari Omnifit, kami membantu memetakan harmoni antara dedikasi kedinasan dan kebahagiaan domestik Anda.\n\nBerikut yang akan Anda dapatkan dari asesmen cerdas ini:\n📌 Peta Mitigasi Risiko Psikososial: Cegah burnout akibat beban mental ganda.\n📌 Rekomendasi Ekosistem Kerja: Panduan kebijakan fleksibilitas yang tepat sasaran.\n📌 Action Plan Harmonisasi Peran: Batasan psikologis yang tegas antara dinas & pribadi.\n📌 Insight Matrix Kesejahteraan: Data komprehensif untuk keputusan karier yang sehat.\n\nSaatnya ciptakan lingkungan kerja yang suportif dan manusiawi demi pelayanan publik yang optimal.\n\n👉 Klik link di bio untuk mencoba asesmen sekarang!\n\n#Omnifit #KeseimbanganKerja #ASNSejahtera #WorkLifeBalance #AIAssessment #ProfesionalismeASN #KesehatanMental",
+      "imagePrompt": "A modern 3D tech-startup style graphic with a clean, aesthetic UI/UX design. The background features a soft pastel gradient of teal and lavender with minimalist abstract 3D elements representing balance and harmony. Dominating the center is large, bold, clean typography featuring the brand name \"Omnifit\" at the top and the main hook \"Kerja Profesional, Hidup Seimbang.\" in high-contrast modern sans-serif letters. Sleek glassmorphism widgets, glowing AI-inspired icons, and subtle 3D shapes float around the text, creating a professional, balanced, and state-of-the-art visual vibe.",
+      "imageUrl": ""
+    }
+  },
+  "folder": "Zona ASN",
+  "isActive": true,
+  "formBuilderInstruction": "Aparatur Sipil Negara (ASN) yang sedang mengalami transisi kehidupan krusial atau beban domestik tinggi yang berpotensi menurunkan performa kerja. Fokus utama mencakup ASN dalam fase pra-nikah, masa pengasuhan anak, hingga proses perceraian yang memerlukan intervensi keseimbangan hidup.\nMenggunakan framework Work-Life Interface (WLI) dan instrumen Work-Family Conflict Scale (WFCS) untuk mengukur irisan konflik domestik dan profesional. Pendekatan asesmen berbasis psikologi organisasi ini akan diintegrasikan dengan standar ISO 45003 untuk manajemen kesehatan psikososial di tempat kerja.",
+  "trackIcon": "LayoutGrid",
+  "lastUpdated": "2026-07-24T03:04:51.276Z",
+  "expectedOutputs": [
+    "Peta Mitigasi Risiko Psikososial: Mengidentifikasi titik krusial beban mental dan konflik domestik Anda untuk mencegah penurunan performa kerja akibat kelelahan kronis.",
+    "Rekomendasi Penyesuaian Ekosistem Kerja: Panduan strategis dalam mengoptimalkan kebijakan fleksibilitas dan fasilitas kantor yang tepat sasaran sesuai kebutuhan keseimbangan hidup Anda.",
+    "Action Plan Harmonisasi Peran: Langkah konkret untuk membangun batasan psikologis yang tegas agar tanggung jawab kedinasan dan urusan pribadi berjalan selaras tanpa saling mengganggu.",
+    "Insight Matrix Kesejahteraan ASN: Analisis data komprehensif mengenai tingkat kepuasan dan keterlibatan Anda untuk pengambilan keputusan karier yang lebih sehat dan berkelanjutan."
+  ],
+  "specificTargetContext": "Aparatur Sipil Negara (ASN) yang sedang mengalami transisi kehidupan krusial atau beban domestik tinggi yang berpotensi menurunkan performa kerja. Fokus utama mencakup ASN dalam fase pra-nikah, masa pengasuhan anak, hingga proses perceraian yang memerlukan intervensi keseimbangan hidup."
+}

@@ -1,0 +1,2531 @@
+{
+  "id": "track_imported_1782117463716",
+  "customUSPs": [],
+  "isPaid": false,
+  "trackDescription": "Asesmen diagnostik awal hilirisasi riset Perguruan Tinggi yang memadukan pengukuran TKT dan KATSINOV. Dilengkapi validasi silang (cross-validation) otomatis oleh AI untuk memetakan potensi lisensi, spin-off, dan keselarasan dampak riset.",
+  "trackName": "Hilirisasi Riset Perguruan Tinggi ",
+  "methodologyContext": "Menggunakan framework TKT (Tingkat Kesiapan Teknologi) yang diintegrasikan dengan metodologi KATSINOV untuk mengukur kesiapan inovasi secara komprehensif. Proses validasi menggunakan pendekatan multi-kriteria (MCDA) yang didukung oleh algoritma AI untuk pemetaan kesiapan pasar dan mitigasi risiko komersialisasi.",
+  "aiGenerationStatus": {
+    "updatedAt": "2026-07-24T02:57:47.741Z",
+    "phase": "COMPLETED",
+    "message": "Disimpan secara manual oleh Admin."
+  },
+  "preferredQuestionTypes": [
+    "radio_weight",
+    "conditional_logic",
+    "file_upload",
+    "number_metric",
+    "text_justification"
+  ],
+  "researchNotesCache": "Berdasarkan penelusuran web, pengukuran kesiapan riset perguruan tinggi di Indonesia diatur oleh dua regulasi utama: Permenristekdikti No. 42 Tahun 2016 untuk Tingkat Kesiapan Teknologi (TKT) dengan skala 1-9, dan Permenristekdikti No. 29 Tahun 2019 untuk Tingkat Kesiapan Inovasi (KATSINOV) yang mencakup 7 aspek (teknologi, pasar, organisasi, kemitraan, risiko, manufaktur, investasi) dengan skala 1-6. Hilirisasi riset B2B didorong melalui program seperti SINERGI dan Kedaireka untuk menjembatani 'Lembah Kematian' (TKT 6-7) menuju komersialisasi. Transformasi menuju Entrepreneurial University menuntut peneliti untuk tidak hanya fokus pada publikasi, tetapi juga pada penciptaan spin-off atau lisensi kekayaan intelektual (KI) yang relevan dengan kebutuhan industri.",
+  "version": 10,
+  "isBestSeller": false,
+  "aiPromptConfig": {
+    "formPurpose": "custom",
+    "customReadinessTiers": [
+      "Tier 1 - Purwarupa Skala Lab (Skor 0-25): Teknologi berada di TKT 3-4 dan KATSINOV awal. Orientasi masih akademik tanpa model komersial B2B yang jelas.",
+      "Tier 2 - Validasi Lingkungan Simulasi (Skor 26-50): Teknologi mencapai TKT 5. Terdapat potensi pasar B2B namun perlindungan KI dan mitra industri belum solid.",
+      "Tier 3 - Transisi Lembah Kematian (Skor 51-75): Demonstrasi di lingkungan relevan (TKT 6-7). Memiliki MoU awal dan peta jalan sertifikasi, namun komitmen finansial B2B perlu diperkuat.",
+      "Tier 4 - Siap Skala Industri (Skor 76-100): Teknologi matang (TKT 8-9) dan KATSINOV tinggi. PKS B2B mengikat, KI terlindungi, dan rute hilirisasi tervalidasi penuh."
+    ],
+    "formatInstructions": "Gunakan penanda tebal ganda untuk penekanan variabel. DILARANG menggunakan tabel atau simbol bullet point harfiah di awal kalimat pada keluaran Anda. Setiap kalimat harus disambung murni dengan spasi. Kutip dan integrasikan justifikasi berbasis bukti di setiap analisis Anda.",
+    "reportTone": "investigative",
+    "expectedAnalysisBlocks": [
+      "Kesenjangan TKT dan KATSINOV: Analisis forensik klaim kesiapan teknologi, Evaluasi dokumen pengujian lapangan.",
+      "Validasi Rute Hilirisasi B2B: Evaluasi kesiapan mentalitas inventor, Korelasi komitmen waktu dengan model bisnis.",
+      "Risiko Kemitraan dan Pendanaan: Identifikasi validitas MoU seremonial, Analisis klausul komitmen finansial dan sumber daya riil.",
+      "Kepatuhan Regulasi dan Proteksi KI: Pemetaan kebutuhan sertifikasi ISO atau SNI, Audit kekuatan paten dan proyeksi nilai komersial."
+    ],
+    "customUiLabels": {
+      "scoreLabel": "AI Readiness Score",
+      "roadmapLabel": "Rekomendasi Strategis",
+      "swotLabel": "Capability Matrix (SWOT)",
+      "executionLabel": "Action Plan Timeline",
+      "riskLabel": "Critical Risks & Mitigation Map"
+    },
+    "assessmentGoal": "Melakukan kurasi awal (early triage) terhadap proposal hilirisasi riset Perguruan Tinggi untuk target pasar B2B (Perusahaan). Asesmen memvalidasi klaim kesiapan teknologi (TKT), keselarasan dampak dengan prioritas nasional (PRN/SDGs) dan metrik ESG, serta mendiagnosis kesiapan mentalitas komersialisasi inventor untuk memetakan mereka ke rute Lisensi atau Spin-off yang tepat guna menghindari jebakan 'Lembah Kematian' riset.",
+    "expectedRecommendations": [
+      "Penentuan Rute Hilirisasi: Berikan panduan eksplisit apakah riset didorong menuju Spin-off atau Lisensi KI ke korporasi B2B.",
+      "Peningkatan TKT dan KATSINOV: Langkah taktis untuk menguji purwarupa dari skala lab menuju lingkungan operasional relevan.",
+      "Pematangan Dokumen Kemitraan: Strategi mengubah MoU seremonial kampus menjadi Perjanjian Kerja Sama komersial B2B yang mengikat.",
+      "Navigasi Lembah Kematian: Panduan mendapatkan pendanaan lanjutan seperti program SINERGI atau LPDP untuk membiayai pengujian TKT lanjut.",
+      "Mitigasi Regulasi dan Perizinan: Langkah spesifik menghadapi bottleneck sertifikasi seperti BPOM atau SNI sejak fase purwarupa.",
+      "Integrasi Standar ESG dan ISO: Panduan penyelarasan operasional riset dengan standar keberlanjutan global dan manajemen mutu.",
+      "Valuasi dan Proteksi KI: Taktik penentuan valuasi Kekayaan Intelektual dan pengamanan paten sebelum negosiasi dengan mitra industri.",
+      "Penguatan Komitmen Tim Inventor: Rekomendasi restrukturisasi peran peneliti akademik agar tidak menghambat eksekusi bisnis komersial."
+    ],
+    "customSystemPrompt": "JIKA peserta mengklaim TKT 7 atau lebih tinggi NAMUN Lokasi Uji Coba tercatat Laboratorium, MAKA kunci metrik Kesiapan Teknologi maksimal 60 dan cetak PERINGATAN INFLASI TKT. JIKA komitmen waktu Inventor Hanya Penasihat Akademik TETAPI jalur hilirisasi memilih Membangun Startup/Spin-off, MAKA berikan bendera merah pada Validasi Rute Hilirisasi karena risiko gagal eksekusi tanpa kepemimpinan purna waktu sangat tinggi. JIKA inovasi selaras kuat dengan PRN/SDGs/ESG, MAKA berikan bobot tambahan pada metrik Potensi Dampak Sosial. JIKA dokumen kemitraan hanya berupa MoU institusi tanpa lampiran kontribusi riil, MAKA skor Kemitraan Awal maksimal 50.",
+    "mediaAnalysisFocus": "product-demo",
+    "expectedMetrics": [
+      "Kesiapan Teknologi (TKT 3-9 Validated)",
+      "Kesiapan Inovasi (KATSINOV 1-6 Aspek Pasar & Manufaktur)",
+      "Potensi Skalabilitas & Dampak Sosial (SDGs/PRN/ESG)",
+      "Validasi Pasar B2B & Kesiapan Komersialisasi",
+      "Komitmen Tim Inventor & Kemitraan Industri",
+      "Status Kekayaan Intelektual (KI) & Kepatuhan Regulasi (ISO/SNI)"
+    ],
+    "aiPersona": "Kurator Utama Hilirisasi Riset Akademik dan Inkubator Bisnis Kampus, dengan spesialisasi pada valuasi Kekayaan Intelektual B2B, validasi TKT/KATSINOV, audit kepatuhan ISO/ESG, dan transisi Spin-off vs Lisensi.",
+    "negativePrompts": "DILARANG keras membandingkan riset PT di tahap awal dengan startup komersial Silicon Valley yang sudah matang. DILARANG menghukum skor terlalu brutal jika aspek manufaktur massal belum ada, ingat ini adalah kurasi awal. DILARANG memberikan pujian kosong; setiap saran harus bersifat membangun dan mengarahkan ke perbaikan TKT atau dokumen komersial.",
+    "customScoringRubric": "Skor 0-25: Inovasi konseptual (TKT 1-3), fokus publikasi. Skor 26-50: Purwarupa lab (TKT 4-5), belum ada KI solid. Skor 51-75: Demonstrasi lingkungan relevan (TKT 6-7), MoU seremonial, visi B2B ada tapi komitmen lemah. Skor 76-100: Teknologi matang (TKT 8-9), PKS B2B mengikat, KI terlindungi, kepatuhan ISO/ESG terpetakan jelas.",
+    "actionPlanBehavior": "Prescriptive and milestone-driven, focusing on bridging the Valley of Death (TKT 6-7) towards successful B2B commercialization or licensing.",
+    "researchSourcesCited": [
+      "Peraturan Menteri Ristekdikti No. 42 Tahun 2016 tentang Pengukuran TKT.",
+      "Peraturan Menteri Ristekdikti No. 29 Tahun 2019 tentang KATSINOV.",
+      "Panduan Prioritas Riset Nasional (PRN) dan SDGs Indonesia.",
+      "Best Practices Technology Transfer Office (TTO) / Inkubator Universitas.",
+      "Standar Internasional (ISO) dan Kerangka Kerja ESG untuk Kepatuhan B2B."
+    ],
+    "riskFramework": "Fokus pada deteksi 'Red Flags Khas Kampus': 1) 'Sindrom TKT Palsu' (klaim TKT 8 tapi tidak ada bukti uji di luar lab). 2) 'Kemitraan Kosong' (MoU rektorat yang tidak ada hubungannya dengan adopsi riset spesifik). 3) 'Peneliti Super Sibuk' (Niat bikin spin-off tapi profesor menolak cuti mengajar dan eksekusi tim bisnis sangat lemah). 4) 'Buta Regulasi' (Klaim pasar besar tapi tidak sadar butuh uji klinis/ISO bertahun-tahun).",
+    "targetAudience": "startup",
+    "gradingStrictness": "standard"
+  },
+  "promoAssets": {
+    "instagram": {
+      "copywriting": "Riset Kampus Cuma Jadi Pajangan?\n\nBanyak startup spin-off kampus yang gagal di tengah jalan karena terjebak 'sindrom TKT palsu' dan buta regulasi pasar. Jangan biarkan riset bertahun-tahun Anda berakhir sia-sia!\n\nOmnifit hadir dengan sistem asesmen cerdas berbasis AI yang menggabungkan TKT dan KATSINOV untuk memetakan potensi komersialisasi riset Anda secara akurat.\n\nInilah yang akan Anda dapatkan:\n\n🔴 Peta Mitigasi Risiko Kritis: Deteksi dini 'Red Flags' riset untuk cegah kegagalan sebelum investasi besar.\n\n🎯 Rekomendasi Rute Komersialisasi: Tentukan jalur terbaik antara Spin-off atau Lisensi KI secara presisi.\n\n⚡ Action Plan Akselerasi: Ubah MoU seremonial menjadi kerja sama bisnis yang mengikat dan siap eksekusi.\n\n📊 Insight Matrix Kesiapan Pasar: Validasi objektif AI untuk keselarasan standar ESG, ISO, dan kebutuhan B2B.\n\nUbah riset akademis Anda menjadi bisnis berdaya saing global sekarang juga!\n\n🔗 Klik link di bio untuk mencoba Free Diagnostic Assessment dari Omnifit!\n\n#Omnifit #StartupIndonesia #HilirisasiRiset #SpinOffKampus #InovasiTeknologi #DeepTech #KomersialisasiRiset",
+      "imagePrompt": "A clean, modern social media graphic with tech-startup vibe. Features a central bold typography with the brand name \"Omnifit\" at the top and the main headline \"Ubah Riset Jadi Bisnis\" in large, striking 3D letters. The background is a sleek dark-mode UI/UX dashboard with glowing data visualization charts, network nodes, and futuristic AI validation graphics. Aesthetic 3D elements of a graduation cap seamlessly morphing into a launching rocket. Neon blue, purple, and emerald green lighting, high resolution, extremely detailed, professional corporate design.",
+      "generatedAt": "2026-07-24T02:57:18.861Z",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/teknopark-surakarta.firebasestorage.app/o/promo_assets%2Fumum%2Fpromo_1784861838716_220.png?alt=media"
+    }
+  },
+  "userCount": 0,
+  "price": 500000,
+  "lastUpdated": "2026-07-24T02:57:47.740Z",
+  "trackIcon": "Rocket",
+  "expectedOutputs": [
+    "Peta Mitigasi Risiko Kritis: Deteksi dini 'Red Flags' riset kampus seperti sindrom TKT palsu dan buta regulasi untuk mencegah kegagalan komersialisasi sebelum investasi besar dilakukan.",
+    "Rekomendasi Rute Komersialisasi Presisi: Dapatkan panduan strategis berbasis data untuk menentukan apakah riset Anda lebih layak dijalankan melalui skema Spin-off atau Lisensi KI demi memaksimalkan nilai ekonomi.",
+    "Action Plan Akselerasi Hilirisasi: Transformasikan dokumen riset menjadi rencana eksekusi taktis yang mengubah MoU seremonial menjadi kerja sama bisnis yang mengikat dan siap eksekusi.",
+    "Insight Matrix Kesiapan Pasar & Industri: Dapatkan gambaran komprehensif mengenai keselarasan teknologi Anda dengan standar ESG, ISO, serta kebutuhan pasar B2B melalui validasi AI yang objektif dan terukur."
+  ],
+  "specificTargetContext": "Target audiens adalah peneliti utama, ketua pusat studi, dan manajer inovasi di perguruan tinggi yang memiliki prototipe riset dengan kesiapan teknologi minimal TKT 3. Subjek harus memiliki orientasi komersialisasi atau kemitraan industri untuk memastikan riset dapat ditransformasikan menjadi produk bernilai ekonomi.",
+  "discountPercentage": 25,
+  "steps": [
+    {
+      "stepNumber": 1,
+      "fields": [
+        {
+          "id": "namaUsaha",
+          "type": "text",
+          "label": "Nama **Startup / Usaha**",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "gridSpan": 2,
+          "required": true,
+          "label": "Nama **Pengisi Formulir**",
+          "type": "text",
+          "id": "namaPengisi"
+        },
+        {
+          "gridSpan": 2,
+          "label": "Alamat **Email Aktif**",
+          "required": true,
+          "type": "text",
+          "id": "emailAktif",
+          "description": "Gunakan email perusahaan yang valid untuk korespondensi resmi."
+        },
+        {
+          "required": true,
+          "label": "Nomor **Telepon Aktif**",
+          "gridSpan": 2,
+          "description": "Nomor yang dapat dihubungi untuk verifikasi data.",
+          "id": "nomorTelepon",
+          "type": "number"
+        },
+        {
+          "type": "radio",
+          "id": "tingkatKesiapanTeknologi",
+          "description": "Merujuk pada **Permenristekdikti No. 42 Tahun 2016**.",
+          "options": [
+            {
+              "label": "TKT 1-3 (Konsep/Riset Dasar)",
+              "weight": 25
+            },
+            {
+              "label": "TKT 4-5 (Purwarupa Lab/Lingkungan Terkendali)",
+              "weight": 50
+            },
+            {
+              "label": "TKT 6-7 (Purwarupa Lingkungan Relevan/Uji Lapangan)",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "TKT 8-9 (Sistem Lengkap/Teruji Operasional)"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menentukan posisi maturitas teknologi untuk memetakan jalur hilirisasi yang tepat.",
+          "label": "Berapakah **Tingkat Kesiapan Teknologi (TKT)** riset Anda saat ini?",
+          "required": true
+        },
+        {
+          "id": "buktiUjiLapanganTKT67",
+          "type": "file",
+          "showIf": {
+            "fieldId": "tingkatKesiapanTeknologi",
+            "equals": "TKT 6-7 (Purwarupa Lingkungan Relevan/Uji Lapangan)"
+          },
+          "aiReasoning": "Memvalidasi klaim performa teknologi pada kondisi operasional yang mendekati nyata.",
+          "fileAccept": ".pdf",
+          "gridSpan": 2,
+          "label": "Unggah **laporan hasil pengujian lapangan** atau demonstrasi purwarupa di lingkungan relevan.",
+          "required": true
+        },
+        {
+          "id": "buktiUjiLapanganTKT89",
+          "type": "file",
+          "showIf": {
+            "equals": "TKT 8-9 (Sistem Lengkap/Teruji Operasional)",
+            "fieldId": "tingkatKesiapanTeknologi"
+          },
+          "gridSpan": 2,
+          "aiReasoning": "Memastikan teknologi telah teruji secara operasional dan siap untuk adopsi pasar.",
+          "fileAccept": ".pdf",
+          "required": true,
+          "label": "Unggah **laporan hasil pengujian sistem lengkap** atau bukti operasional di lingkungan nyata."
+        },
+        {
+          "description": "Merujuk pada aspek manufaktur dalam **KATSINOV**.",
+          "type": "radio",
+          "id": "kesiapanManufaktur",
+          "options": [
+            {
+              "weight": 0,
+              "label": "Belum ada pertimbangan manufaktur"
+            },
+            {
+              "weight": 25,
+              "label": "Konsep manufaktur awal telah dirancang"
+            },
+            {
+              "label": "Purwarupa telah diuji untuk kelayakan produksi",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Proses produksi telah divalidasi dan siap skala industri"
+            },
+            {
+              "label": "Produksi telah berjalan pada skala terbatas/komersial",
+              "weight": 100
+            }
+          ],
+          "aiReasoning": "Mengukur kemampuan transisi dari purwarupa laboratorium menuju produksi massal yang efisien.",
+          "gridSpan": 2,
+          "label": "Sejauh mana **kesiapan manufaktur** teknologi Anda untuk skala industri?",
+          "required": true
+        },
+        {
+          "id": "alasanManufaktur",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "kesiapanManufaktur",
+            "equals": "Belum ada pertimbangan manufaktur"
+          },
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi hambatan strategis dalam pengembangan kapasitas produksi.",
+          "required": true,
+          "label": "Mohon jelaskan **kendala atau alasan** belum adanya pertimbangan manufaktur."
+        },
+        {
+          "options": [
+            {
+              "weight": 0,
+              "label": "Belum ada perlindungan KI"
+            },
+            {
+              "weight": 50,
+              "label": "Dalam proses pengajuan paten/KI lainnya"
+            },
+            {
+              "weight": 100,
+              "label": "Sudah memiliki paten/KI terdaftar"
+            }
+          ],
+          "aiReasoning": "Menilai keamanan aset intelektual sebagai fondasi utama dalam komersialisasi B2B.",
+          "gridSpan": 2,
+          "label": "Bagaimana **status perlindungan Kekayaan Intelektual (KI)** untuk teknologi ini?",
+          "required": true,
+          "description": "Meliputi paten, hak cipta, merek, atau rahasia dagang.",
+          "type": "radio",
+          "id": "statusKekayaanIntelektual"
+        },
+        {
+          "id": "buktiKIPaten",
+          "type": "file",
+          "showIf": {
+            "fieldId": "statusKekayaanIntelektual",
+            "equals": "Sudah memiliki paten/KI terdaftar"
+          },
+          "label": "Unggah **dokumen sertifikat paten** atau bukti pendaftaran KI resmi.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Verifikasi legalitas kepemilikan KI untuk menjamin kebebasan beroperasi (Freedom to Operate).",
+          "fileAccept": ".pdf"
+        },
+        {
+          "type": "textarea",
+          "id": "alasanTanpaKI",
+          "showIf": {
+            "fieldId": "statusKekayaanIntelektual",
+            "equals": "Belum ada perlindungan KI"
+          },
+          "label": "Mohon jelaskan **alasan strategis** belum adanya perlindungan KI.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Memahami risiko eksposur teknologi terhadap kompetitor tanpa perlindungan hukum."
+        },
+        {
+          "options": [
+            {
+              "weight": 0,
+              "label": "Belum mengidentifikasi sama sekali"
+            },
+            {
+              "label": "Sudah mengidentifikasi, namun belum ada rencana aksi",
+              "weight": 25
+            },
+            {
+              "weight": 75,
+              "label": "Sudah mengidentifikasi dan memiliki rencana aksi"
+            },
+            {
+              "label": "Sudah memiliki sertifikasi/izin yang relevan",
+              "weight": 100
+            }
+          ],
+          "aiReasoning": "Mendeteksi risiko 'Buta Regulasi' yang dapat menghambat akses pasar dan legalitas produk.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Apakah Anda telah mengidentifikasi **standar regulasi** yang relevan untuk hilirisasi?",
+          "type": "radio",
+          "description": "Contoh: ISO, SNI, BPOM, atau izin sektoral lainnya.",
+          "id": "kepatuhanRegulasi"
+        },
+        {
+          "showIf": {
+            "fieldId": "kepatuhanRegulasi",
+            "equals": "Sudah memiliki sertifikasi/izin yang relevan"
+          },
+          "id": "buktiSertifikasiRegulasi",
+          "type": "file",
+          "gridSpan": 2,
+          "aiReasoning": "Memastikan kepatuhan terhadap standar industri sebagai syarat mutlak masuk pasar B2B.",
+          "fileAccept": ".pdf",
+          "label": "Unggah **dokumen sertifikasi atau izin** regulasi yang telah dimiliki.",
+          "required": true
+        },
+        {
+          "type": "textarea",
+          "id": "alasanButaRegulasi",
+          "showIf": {
+            "equals": "Belum mengidentifikasi sama sekali",
+            "fieldId": "kepatuhanRegulasi"
+          },
+          "label": "Mohon jelaskan **alasan** belum mengidentifikasi standar regulasi yang relevan.",
+          "required": true,
+          "aiReasoning": "Mengevaluasi tingkat kesadaran tim terhadap ekosistem hukum industri.",
+          "gridSpan": 2
+        }
+      ],
+      "title": "Evaluasi Kesiapan Teknologi (TKT)",
+      "description": "Pengukuran kematangan purwarupa berdasarkan framework TKT Kemenristekdikti (skala 3-9) untuk memvalidasi klaim pengujian di lingkungan lab hingga operasional."
+    },
+    {
+      "stepNumber": 2,
+      "fields": [
+        {
+          "label": "Sejauh mana inovasi Anda telah divalidasi oleh calon pengguna atau mitra potensial di **pasar B2B**?",
+          "required": true,
+          "options": [
+            {
+              "weight": 90,
+              "label": "Sudah ada Perjanjian Kerja Sama (PKS) atau Letter of Intent (LoI) mengikat dengan mitra B2B."
+            },
+            {
+              "weight": 70,
+              "label": "Sudah ada pilot project atau uji coba terbatas dengan mitra B2B dan mendapatkan umpan balik positif."
+            },
+            {
+              "label": "Sudah melakukan survei pasar atau wawancara mendalam dengan calon pengguna B2B dan mengidentifikasi kebutuhan.",
+              "weight": 40
+            },
+            {
+              "weight": 10,
+              "label": "Belum ada validasi pasar B2B secara formal."
+            }
+          ],
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "validasiPasarB2B",
+            "equals": "Sudah ada Perjanjian Kerja Sama (PKS) atau Letter of Intent (LoI) mengikat dengan mitra B2B."
+          },
+          "id": "validasiPasarB2B",
+          "description": "**Validasi pasar B2B** adalah kunci untuk memastikan produk Anda sesuai dengan kebutuhan industri.",
+          "type": "radio"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Memverifikasi keabsahan klaim validasi pasar melalui dokumen legal atau teknis yang dapat dipertanggungjawabkan.",
+          "fileAccept": ".pdf",
+          "label": "Unggah dokumen **bukti validasi pasar B2B** (PKS, LoI, laporan pilot project, hasil survei).",
+          "required": true,
+          "type": "file",
+          "id": "buktiValidasiPasarB2B",
+          "showIf": {
+            "fieldId": "validasiPasarB2B",
+            "equals": "Sudah ada Perjanjian Kerja Sama (PKS) atau Letter of Intent (LoI) mengikat dengan mitra B2B."
+          }
+        },
+        {
+          "showIf": {
+            "fieldId": "validasiPasarB2B",
+            "equals": "Belum ada validasi pasar B2B secara formal."
+          },
+          "type": "textarea",
+          "id": "justifikasiValidasiPasarB2B",
+          "gridSpan": 2,
+          "aiReasoning": "Menggali hambatan strategis atau operasional yang menyebabkan inovasi belum mendapatkan validasi pasar.",
+          "required": true,
+          "label": "Jelaskan alasan mengapa **validasi pasar B2B** belum dilakukan secara formal."
+        },
+        {
+          "required": true,
+          "label": "Bagaimana **kesiapan produksi** Anda untuk memenuhi skala kebutuhan pasar B2B?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Sudah memiliki fasilitas produksi atau perjanjian manufaktur dengan kapasitas memadai.",
+              "weight": 90
+            },
+            {
+              "label": "Sudah memiliki prototipe produksi yang siap untuk pilot scale, dengan rencana pengembangan kapasitas.",
+              "weight": 70
+            },
+            {
+              "label": "Sudah memiliki desain produksi dan daftar kebutuhan peralatan, namun belum ada fasilitas fisik.",
+              "weight": 40
+            },
+            {
+              "weight": 10,
+              "label": "Belum ada rencana detail untuk produksi atau penyediaan skala B2B."
+            }
+          ],
+          "description": "**Kesiapan produksi** menentukan kemampuan Anda memenuhi permintaan pasar industri secara konsisten.",
+          "type": "radio",
+          "id": "kesiapanProduksi",
+          "showIf": {
+            "fieldId": "kesiapanProduksi",
+            "equals": "Sudah memiliki fasilitas produksi atau perjanjian manufaktur dengan kapasitas memadai."
+          }
+        },
+        {
+          "required": true,
+          "label": "Unggah dokumen **bukti kesiapan produksi** (foto fasilitas, perjanjian manufaktur, laporan prototipe).",
+          "fileAccept": ".pdf",
+          "gridSpan": 2,
+          "aiReasoning": "Memastikan kapasitas manufaktur yang diklaim didukung oleh bukti fisik atau kontrak yang valid.",
+          "id": "buktiKesiapanProduksi",
+          "type": "file",
+          "showIf": {
+            "fieldId": "kesiapanProduksi",
+            "equals": "Sudah memiliki fasilitas produksi atau perjanjian manufaktur dengan kapasitas memadai."
+          }
+        },
+        {
+          "aiReasoning": "Mengidentifikasi celah kapabilitas teknis atau manajerial dalam persiapan manufaktur.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Jelaskan kendala utama yang menyebabkan belum adanya **rencana produksi** skala B2B.",
+          "showIf": {
+            "fieldId": "kesiapanProduksi",
+            "equals": "Belum ada rencana detail untuk produksi atau penyediaan skala B2B."
+          },
+          "type": "textarea",
+          "id": "justifikasiKesiapanProduksi"
+        },
+        {
+          "label": "Bagaimana tingkat **komitmen waktu tim inti** dalam mengelola hilirisasi menjadi entitas bisnis mandiri?",
+          "required": true,
+          "options": [
+            {
+              "label": "Tim inti berdedikasi penuh atau memiliki rencana transisi penuh dalam 6 bulan ke depan.",
+              "weight": 90
+            },
+            {
+              "label": "Tim inti memiliki alokasi waktu signifikan (minimal 50%) dan dukungan institusi untuk hilirisasi.",
+              "weight": 70
+            },
+            {
+              "label": "Tim inti masih terikat tugas utama (mengajar/riset) namun memiliki visi komersialisasi.",
+              "weight": 40
+            },
+            {
+              "label": "Komitmen waktu tim inti masih sangat terbatas dan belum ada rencana jelas.",
+              "weight": 10
+            }
+          ],
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "komitmenTimInventor",
+            "equals": "Tim inti berdedikasi penuh atau memiliki rencana transisi penuh dalam 6 bulan ke depan."
+          },
+          "type": "radio",
+          "description": "**Komitmen tim** adalah faktor krusial dalam keberhasilan spin-off atau lisensi teknologi.",
+          "id": "komitmenTimInventor"
+        },
+        {
+          "fileAccept": ".pdf",
+          "gridSpan": 2,
+          "aiReasoning": "Memvalidasi keseriusan sumber daya manusia dalam menjalankan operasional bisnis pasca-riset.",
+          "label": "Unggah dokumen **bukti komitmen tim** (surat pernyataan komitmen, struktur organisasi tim bisnis).",
+          "required": true,
+          "showIf": {
+            "equals": "Tim inti berdedikasi penuh atau memiliki rencana transisi penuh dalam 6 bulan ke depan.",
+            "fieldId": "komitmenTimInventor"
+          },
+          "type": "file",
+          "id": "buktiKomitmenTim"
+        },
+        {
+          "showIf": {
+            "equals": "Komitmen waktu tim inti masih sangat terbatas dan belum ada rencana jelas.",
+            "fieldId": "komitmenTimInventor"
+          },
+          "type": "textarea",
+          "id": "justifikasiKomitmenTim",
+          "aiReasoning": "Menganalisis hambatan struktural atau personal yang membatasi fokus tim pada komersialisasi.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Jelaskan tantangan yang menghambat **komitmen waktu tim inti** saat ini."
+        },
+        {
+          "options": [
+            {
+              "label": "Sudah ada Perjanjian Kerja Sama (PKS) atau kontrak lisensi yang mengikat dengan industri strategis.",
+              "weight": 90
+            },
+            {
+              "label": "Sudah ada Memorandum of Understanding (MoU) atau Letter of Intent (LoI) dengan industri yang spesifik dan aktif.",
+              "weight": 70
+            },
+            {
+              "label": "Hanya memiliki MoU seremonial tingkat rektorat atau belum ada kemitraan spesifik.",
+              "weight": 40
+            },
+            {
+              "weight": 10,
+              "label": "Belum ada kemitraan industri yang terjalin."
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Jelaskan status **kemitraan industri** yang relevan dan mengikat untuk adopsi inovasi Anda.",
+          "required": true,
+          "showIf": {
+            "fieldId": "kemitraanIndustri",
+            "equals": "Sudah ada Perjanjian Kerja Sama (PKS) atau kontrak lisensi yang mengikat dengan industri strategis."
+          },
+          "description": "**Kemitraan strategis** yang kuat menunjukkan potensi adopsi industri yang riil dan berkelanjutan.",
+          "id": "kemitraanIndustri",
+          "type": "radio"
+        },
+        {
+          "aiReasoning": "Memastikan adanya ikatan hukum yang menjamin keberlanjutan kolaborasi dengan pihak industri.",
+          "fileAccept": ".pdf",
+          "gridSpan": 2,
+          "label": "Unggah dokumen **bukti kemitraan industri** (PKS, kontrak lisensi, MoU spesifik).",
+          "required": true,
+          "type": "file",
+          "id": "buktiKemitraanIndustri",
+          "showIf": {
+            "fieldId": "kemitraanIndustri",
+            "equals": "Sudah ada Perjanjian Kerja Sama (PKS) atau kontrak lisensi yang mengikat dengan industri strategis."
+          }
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi kendala dalam membangun jejaring bisnis dengan sektor industri.",
+          "label": "Jelaskan alasan mengapa **kemitraan industri** belum terjalin atau masih bersifat seremonial.",
+          "required": true,
+          "type": "textarea",
+          "id": "justifikasiKemitraanIndustri",
+          "showIf": {
+            "fieldId": "kemitraanIndustri",
+            "equals": "Belum ada kemitraan industri yang terjalin."
+          }
+        },
+        {
+          "showIf": {
+            "fieldId": "statusKI",
+            "equals": "Paten/KI sudah granted dan terdaftar di yurisdiksi pasar target."
+          },
+          "description": "**Perlindungan KI** yang kuat adalah aset esensial untuk nilai komersial dan daya saing pasar.",
+          "id": "statusKI",
+          "type": "radio",
+          "options": [
+            {
+              "weight": 90,
+              "label": "Paten/KI sudah granted dan terdaftar di yurisdiksi pasar target."
+            },
+            {
+              "weight": 70,
+              "label": "Paten/KI sudah diajukan dan dalam proses pemeriksaan substantif."
+            },
+            {
+              "weight": 40,
+              "label": "Paten/KI sudah didaftarkan namun masih dalam tahap pengajuan awal."
+            },
+            {
+              "weight": 10,
+              "label": "Belum ada perlindungan KI formal untuk inovasi ini."
+            }
+          ],
+          "gridSpan": 2,
+          "required": true,
+          "label": "Bagaimana status **perlindungan Kekayaan Intelektual (KI)** dari inovasi Anda?"
+        },
+        {
+          "aiReasoning": "Memverifikasi legalitas perlindungan aset intelektual sebagai dasar keamanan investasi.",
+          "fileAccept": ".pdf",
+          "gridSpan": 2,
+          "label": "Unggah dokumen **bukti status KI** (sertifikat paten/KI, bukti pendaftaran).",
+          "required": true,
+          "showIf": {
+            "fieldId": "statusKI",
+            "equals": "Paten/KI sudah granted dan terdaftar di yurisdiksi pasar target."
+          },
+          "type": "file",
+          "id": "buktiStatusKI"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Menganalisis risiko bisnis akibat ketiadaan perlindungan KI pada inovasi yang akan dikomersialkan.",
+          "required": true,
+          "label": "Jelaskan alasan mengapa **perlindungan KI formal** belum dilakukan untuk inovasi ini.",
+          "id": "justifikasiStatusKI",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Belum ada perlindungan KI formal untuk inovasi ini.",
+            "fieldId": "statusKI"
+          }
+        },
+        {
+          "showIf": {
+            "fieldId": "potensiPendanaan",
+            "equals": "Sudah ada komitmen pendanaan dari investor atau mitra industri untuk tahap komersialisasi."
+          },
+          "type": "radio",
+          "description": "Ketersediaan **pendanaan** adalah indikator utama kesiapan inovasi untuk masuk ke pasar.",
+          "id": "potensiPendanaan",
+          "options": [
+            {
+              "label": "Sudah ada komitmen pendanaan dari investor atau mitra industri untuk tahap komersialisasi.",
+              "weight": 90
+            },
+            {
+              "weight": 70,
+              "label": "Sudah memiliki proposal investasi yang matang dan sedang dalam tahap negosiasi dengan calon investor."
+            },
+            {
+              "label": "Sudah menghitung kebutuhan investasi namun belum ada calon investor yang spesifik.",
+              "weight": 40
+            },
+            {
+              "weight": 10,
+              "label": "Belum ada proyeksi kebutuhan investasi dan sumber pendanaan yang jelas."
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Bagaimana proyeksi **kebutuhan investasi** dan sumber pendanaan untuk tahap komersialisasi?",
+          "required": true
+        },
+        {
+          "showIf": {
+            "fieldId": "potensiPendanaan",
+            "equals": "Sudah ada komitmen pendanaan dari investor atau mitra industri untuk tahap komersialisasi."
+          },
+          "type": "file",
+          "id": "buktiPotensiPendanaan",
+          "label": "Unggah dokumen **bukti potensi pendanaan** (LoI investor, proposal investasi).",
+          "required": true,
+          "fileAccept": ".pdf",
+          "aiReasoning": "Memastikan adanya dukungan finansial yang terukur untuk mendukung operasional bisnis.",
+          "gridSpan": 2
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiPotensiPendanaan",
+          "showIf": {
+            "fieldId": "potensiPendanaan",
+            "equals": "Belum ada proyeksi kebutuhan investasi dan sumber pendanaan yang jelas."
+          },
+          "label": "Jelaskan mengapa **proyeksi kebutuhan investasi** belum teridentifikasi dengan jelas.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi ketidaksiapan finansial dalam perencanaan bisnis jangka panjang."
+        },
+        {
+          "options": [
+            {
+              "label": "Kontribusi signifikan dan terukur pada beberapa PRN/SDGs/ESG, didukung data dan laporan dampak.",
+              "weight": 90
+            },
+            {
+              "weight": 70,
+              "label": "Kontribusi jelas pada satu atau dua PRN/SDGs/ESG, namun metrik dampak masih dalam pengembangan."
+            },
+            {
+              "label": "Memiliki potensi kontribusi pada PRN/SDGs/ESG, namun belum ada pemetaan atau pengukuran formal.",
+              "weight": 40
+            },
+            {
+              "label": "Belum ada pemetaan kontribusi pada PRN/SDGs/ESG.",
+              "weight": 10
+            }
+          ],
+          "gridSpan": 2,
+          "required": true,
+          "label": "Sejauh mana inovasi Anda berkontribusi pada **PRN, SDGs, dan metrik ESG**?",
+          "showIf": {
+            "fieldId": "dampakESG",
+            "equals": "Kontribusi signifikan dan terukur pada beberapa PRN/SDGs/ESG, didukung data dan laporan dampak."
+          },
+          "description": "Dampak positif pada **ESG** meningkatkan daya tarik inovasi bagi investor dan mitra global.",
+          "type": "radio",
+          "id": "dampakESG"
+        },
+        {
+          "showIf": {
+            "fieldId": "dampakESG",
+            "equals": "Kontribusi signifikan dan terukur pada beberapa PRN/SDGs/ESG, didukung data dan laporan dampak."
+          },
+          "type": "file",
+          "id": "buktiDampakESG",
+          "gridSpan": 2,
+          "fileAccept": ".pdf",
+          "aiReasoning": "Memvalidasi klaim keberlanjutan melalui data empiris yang terukur.",
+          "label": "Unggah dokumen **bukti dampak ESG/SDGs/PRN** (laporan dampak, studi kasus, publikasi terkait).",
+          "required": true
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Menganalisis kesadaran tim terhadap tanggung jawab sosial dan lingkungan dalam inovasi.",
+          "required": true,
+          "label": "Jelaskan alasan belum adanya **pemetaan kontribusi** terhadap PRN/SDGs/ESG.",
+          "showIf": {
+            "fieldId": "dampakESG",
+            "equals": "Belum ada pemetaan kontribusi pada PRN/SDGs/ESG."
+          },
+          "id": "justifikasiDampakESG",
+          "type": "textarea"
+        }
+      ],
+      "title": "Pengukuran Kesiapan Inovasi (KATSINOV)",
+      "description": "Analisis komprehensif menggunakan parameter KATSINOV untuk menilai aspek pasar, organisasi, dan manufaktur dari inovasi riset."
+    },
+    {
+      "stepNumber": 3,
+      "title": "Dampak Sosial & Keselarasan PRN/ESG",
+      "fields": [
+        {
+          "id": "kontribusiSDGPRN",
+          "description": "Pilih opsi yang paling sesuai dengan tingkat kontribusi inovasi Anda terhadap agenda pembangunan nasional dan global.",
+          "type": "radio",
+          "showIf": {
+            "equals": "Sangat relevan dan memiliki metrik dampak yang jelas",
+            "fieldId": "kontribusiSDGPRN"
+          },
+          "required": true,
+          "label": "Sejauh mana inovasi Anda berkontribusi pada **Prioritas Riset Nasional (PRN)** atau **Tujuan Pembangunan Berkelanjutan (SDGs)** Indonesia?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Tidak relevan/belum teridentifikasi",
+              "weight": 0
+            },
+            {
+              "label": "Relevan secara tidak langsung",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Relevan dengan 1-2 target spesifik"
+            },
+            {
+              "label": "Relevan dengan >2 target spesifik dan terukur",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Sangat relevan dan memiliki metrik dampak yang jelas"
+            }
+          ]
+        },
+        {
+          "id": "penjelasanKontribusiSDGPRN",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Sangat relevan dan memiliki metrik dampak yang jelas",
+            "fieldId": "kontribusiSDGPRN"
+          },
+          "label": "Mohon jelaskan secara rinci kontribusi inovasi Anda terhadap **PRN/SDGs** dan metrik dampak yang digunakan.",
+          "required": true,
+          "aiReasoning": "Memastikan validitas klaim dampak sosial dan lingkungan melalui penjelasan naratif yang terukur.",
+          "gridSpan": 2
+        },
+        {
+          "required": true,
+          "label": "Unggah dokumen pendukung (misalnya **laporan dampak**, studi kasus, atau publikasi terkait PRN/SDGs).",
+          "gridSpan": 2,
+          "fileAccept": ".pdf",
+          "type": "file",
+          "id": "buktiKontribusiSDGPRN",
+          "showIf": {
+            "fieldId": "kontribusiSDGPRN",
+            "equals": "Sangat relevan dan memiliki metrik dampak yang jelas"
+          }
+        },
+        {
+          "showIf": {
+            "fieldId": "kontribusiSDGPRN",
+            "equals": "Tidak relevan/belum teridentifikasi"
+          },
+          "type": "textarea",
+          "id": "justifikasiKontribusiSDGPRN",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon berikan justifikasi mengapa kontribusi inovasi Anda terhadap **PRN/SDGs** belum teridentifikasi atau tidak relevan."
+        },
+        {
+          "label": "Apakah Anda memiliki **metrik atau indikator spesifik** untuk mengukur dampak sosial dan/atau lingkungan dari inovasi Anda?",
+          "required": true,
+          "options": [
+            {
+              "label": "Belum ada",
+              "weight": 0
+            },
+            {
+              "label": "Dalam tahap identifikasi",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Ada, namun belum terukur secara sistematis"
+            },
+            {
+              "label": "Ada, terukur, dan dilaporkan secara internal",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Ada, terukur, dilaporkan secara eksternal, dan divalidasi"
+            }
+          ],
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "metrikDampakESG",
+            "equals": "Ada, terukur, dilaporkan secara eksternal, dan divalidasi"
+          },
+          "id": "metrikDampakESG",
+          "type": "radio",
+          "description": "Identifikasi apakah ada sistem pengukuran dampak **ESG** yang diterapkan."
+        },
+        {
+          "showIf": {
+            "fieldId": "metrikDampakESG",
+            "equals": "Ada, terukur, dilaporkan secara eksternal, dan divalidasi"
+          },
+          "type": "file",
+          "id": "buktiMetrikDampakESG",
+          "fileAccept": ".pdf",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Unggah **laporan dampak ESG** atau dokumen validasi eksternal (jika ada)."
+        },
+        {
+          "showIf": {
+            "fieldId": "metrikDampakESG",
+            "equals": "Belum ada"
+          },
+          "type": "textarea",
+          "id": "justifikasiMetrikDampakESG",
+          "required": true,
+          "label": "Mohon jelaskan mengapa **metrik dampak ESG** belum tersedia atau belum terukur.",
+          "gridSpan": 2
+        },
+        {
+          "label": "Bagaimana perusahaan Anda mengintegrasikan prinsip **Lingkungan, Sosial, dan Tata Kelola (ESG)** dalam operasional dan pengembangan produk?",
+          "required": true,
+          "options": [
+            {
+              "label": "Belum ada pertimbangan khusus",
+              "weight": 0
+            },
+            {
+              "label": "Pertimbangan awal, belum menjadi kebijakan formal",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Ada inisiatif sporadis, belum terstruktur"
+            },
+            {
+              "label": "Ada kebijakan internal yang sedang disusun/diimplementasikan",
+              "weight": 75
+            },
+            {
+              "label": "Memiliki kebijakan ESG formal yang terintegrasi dan dievaluasi berkala",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "kebijakanESGInternal",
+            "equals": "Memiliki kebijakan ESG formal yang terintegrasi dan dievaluasi berkala"
+          },
+          "type": "radio",
+          "id": "kebijakanESGInternal",
+          "description": "Evaluasi tingkat formalisasi dan implementasi prinsip **ESG** dalam struktur perusahaan."
+        },
+        {
+          "id": "buktiKebijakanESG",
+          "type": "file",
+          "showIf": {
+            "fieldId": "kebijakanESGInternal",
+            "equals": "Memiliki kebijakan ESG formal yang terintegrasi dan dievaluasi berkala"
+          },
+          "gridSpan": 2,
+          "fileAccept": ".pdf",
+          "label": "Unggah dokumen **kebijakan ESG internal** atau laporan keberlanjutan perusahaan.",
+          "required": true
+        },
+        {
+          "showIf": {
+            "fieldId": "kebijakanESGInternal",
+            "equals": "Belum ada pertimbangan khusus"
+          },
+          "type": "textarea",
+          "id": "justifikasiKebijakanESG",
+          "required": true,
+          "label": "Mohon jelaskan mengapa belum ada pertimbangan khusus atau **kebijakan ESG** yang terintegrasi.",
+          "gridSpan": 2
+        },
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Tidak relevan/belum diidentifikasi"
+            },
+            {
+              "label": "Relevan, namun belum ada rencana",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Relevan, dan sedang dalam proses identifikasi kebutuhan"
+            },
+            {
+              "label": "Relevan, dan sedang dalam proses pengajuan/persiapan",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Sudah memiliki sertifikasi yang relevan"
+            }
+          ],
+          "label": "Apakah inovasi atau proses produksi Anda memerlukan **sertifikasi lingkungan atau sosial** (misalnya ISO 14001, Fair Trade, SNI)?",
+          "required": true,
+          "id": "sertifikasiLingkunganSosial",
+          "type": "radio",
+          "description": "Identifikasi kebutuhan dan status sertifikasi relevan untuk kepatuhan dan kredibilitas pasar **B2B**.",
+          "showIf": {
+            "equals": "Sudah memiliki sertifikasi yang relevan",
+            "fieldId": "sertifikasiLingkunganSosial"
+          }
+        },
+        {
+          "required": true,
+          "label": "Unggah salinan **sertifikasi lingkungan atau sosial** yang relevan.",
+          "gridSpan": 2,
+          "fileAccept": ".pdf",
+          "showIf": {
+            "fieldId": "sertifikasiLingkunganSosial",
+            "equals": "Sudah memiliki sertifikasi yang relevan"
+          },
+          "type": "file",
+          "id": "buktiSertifikasiLingkunganSosial"
+        },
+        {
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan mengapa sertifikasi relevan belum menjadi prioritas atau belum ada rencana untuk pengajuannya.",
+          "type": "textarea",
+          "id": "justifikasiSertifikasiLingkunganSosial",
+          "showIf": {
+            "fieldId": "sertifikasiLingkunganSosial",
+            "equals": "Relevan, namun belum ada rencana"
+          }
+        },
+        {
+          "type": "textarea",
+          "id": "strategiPengelolaanLimbah",
+          "required": true,
+          "label": "Bagaimana **strategi pengelolaan limbah** atau meminimalkan dampak negatif terhadap lingkungan dari produk/proses inovasi Anda?",
+          "aiReasoning": "Menilai komitmen operasional perusahaan terhadap keberlanjutan lingkungan melalui manajemen limbah yang sistematis.",
+          "gridSpan": 2
+        },
+        {
+          "required": true,
+          "label": "Apakah inovasi Anda melibatkan atau memberikan **dampak positif langsung** kepada komunitas lokal atau kelompok rentan?",
+          "options": [
+            {
+              "label": "Tidak ada keterlibatan langsung",
+              "weight": 0
+            },
+            {
+              "label": "Potensi dampak, belum terealisasi",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Ada inisiatif kecil/sporadis"
+            },
+            {
+              "weight": 75,
+              "label": "Ada program keterlibatan komunitas yang terencana"
+            },
+            {
+              "weight": 100,
+              "label": "Memiliki program dampak sosial terukur dan berkelanjutan dengan komunitas"
+            }
+          ],
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "keterlibatanKomunitas",
+            "equals": "Memiliki program dampak sosial terukur dan berkelanjutan dengan komunitas"
+          },
+          "id": "keterlibatanKomunitas",
+          "description": "Evaluasi sejauh mana inovasi Anda berkontribusi pada kesejahteraan sosial di tingkat lokal.",
+          "type": "radio"
+        },
+        {
+          "gridSpan": 2,
+          "fileAccept": ".pdf",
+          "label": "Unggah laporan atau dokumentasi **program keterlibatan komunitas** Anda.",
+          "required": true,
+          "showIf": {
+            "fieldId": "keterlibatanKomunitas",
+            "equals": "Memiliki program dampak sosial terukur dan berkelanjutan dengan komunitas"
+          },
+          "id": "buktiKeterlibatanKomunitas",
+          "type": "file"
+        },
+        {
+          "id": "justifikasiKeterlibatanKomunitas",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "keterlibatanKomunitas",
+            "equals": "Tidak ada keterlibatan langsung"
+          },
+          "label": "Mohon jelaskan mengapa belum ada keterlibatan langsung atau program dampak sosial dengan komunitas.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "id": "transparansiTataKelola",
+          "description": "Identifikasi mekanisme tata kelola yang mendukung pelaporan dan pertanggungjawaban **ESG**.",
+          "type": "radio",
+          "showIf": {
+            "equals": "Memiliki kerangka tata kelola yang transparan, diaudit, dan dilaporkan secara publik",
+            "fieldId": "transparansiTataKelola"
+          },
+          "required": true,
+          "label": "Bagaimana Anda memastikan **transparansi dan akuntabilitas** dalam tata kelola perusahaan terkait dampak sosial dan lingkungan?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Belum ada mekanisme khusus"
+            },
+            {
+              "weight": 25,
+              "label": "Ada diskusi internal, belum formal"
+            },
+            {
+              "label": "Ada pelaporan internal terbatas",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Ada kerangka tata kelola yang jelas dan pelaporan berkala"
+            },
+            {
+              "weight": 100,
+              "label": "Memiliki kerangka tata kelola yang transparan, diaudit, dan dilaporkan secara publik"
+            }
+          ]
+        },
+        {
+          "label": "Unggah **laporan tata kelola perusahaan** atau hasil audit terkait transparansi ESG.",
+          "required": true,
+          "fileAccept": ".pdf",
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "transparansiTataKelola",
+            "equals": "Memiliki kerangka tata kelola yang transparan, diaudit, dan dilaporkan secara publik"
+          },
+          "type": "file",
+          "id": "buktiTransparansiTataKelola"
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiTransparansiTataKelola",
+          "showIf": {
+            "fieldId": "transparansiTataKelola",
+            "equals": "Belum ada mekanisme khusus"
+          },
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan mengapa belum ada mekanisme khusus untuk transparansi dan akuntabilitas tata kelola ESG."
+        },
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Belum ada alokasi"
+            },
+            {
+              "label": "Dipertimbangkan, belum dialokasikan",
+              "weight": 25
+            },
+            {
+              "label": "Ada alokasi kecil/insidental",
+              "weight": 50
+            },
+            {
+              "label": "Ada alokasi anggaran yang terencana",
+              "weight": 75
+            },
+            {
+              "label": "Memiliki anggaran keberlanjutan yang signifikan dan terintegrasi",
+              "weight": 100
+            }
+          ],
+          "label": "Apakah ada **alokasi anggaran spesifik** untuk inisiatif keberlanjutan atau ESG dalam rencana bisnis Anda?",
+          "required": true,
+          "description": "Tinjau komitmen finansial terhadap agenda keberlanjutan.",
+          "id": "anggaranKeberlanjutan",
+          "type": "radio",
+          "showIf": {
+            "equals": "Memiliki anggaran keberlanjutan yang signifikan dan terintegrasi",
+            "fieldId": "anggaranKeberlanjutan"
+          }
+        },
+        {
+          "gridSpan": 2,
+          "label": "Mohon berikan rincian alokasi anggaran untuk inisiatif keberlanjutan atau ESG.",
+          "required": true,
+          "type": "textarea",
+          "id": "rincianAnggaranKeberlanjutan",
+          "showIf": {
+            "fieldId": "anggaranKeberlanjutan",
+            "equals": "Memiliki anggaran keberlanjutan yang signifikan dan terintegrasi"
+          }
+        },
+        {
+          "gridSpan": 2,
+          "label": "Mohon jelaskan mengapa belum ada alokasi anggaran spesifik untuk inisiatif keberlanjutan atau ESG.",
+          "required": true,
+          "showIf": {
+            "fieldId": "anggaranKeberlanjutan",
+            "equals": "Belum ada alokasi"
+          },
+          "id": "justifikasiAnggaranKeberlanjutan",
+          "type": "textarea"
+        }
+      ],
+      "description": "Penilaian keselarasan riset dengan Prioritas Riset Nasional (PRN), Tujuan Pembangunan Berkelanjutan (SDGs), dan standar ESG."
+    },
+    {
+      "stepNumber": 4,
+      "description": "Evaluasi kesesuaian masalah dan solusi (problem-solution fit) serta kesiapan model bisnis untuk adopsi oleh pasar korporasi (B2B).",
+      "fields": [
+        {
+          "aiReasoning": "Memahami hambatan atau keterbatasan yang menyebabkan belum adanya validasi pasar formal untuk memitigasi risiko kegagalan komersialisasi.",
+          "gridSpan": 2,
+          "label": "Mohon jelaskan alasan mengapa **validasi pasar** belum dilakukan atau masih bersifat asumsi.",
+          "required": true,
+          "id": "justifikasiValidasiPasar",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "validasiPasarB2B",
+            "equals": "Belum ada validasi pasar B2B secara formal."
+          }
+        },
+        {
+          "label": "Unggah dokumen **laporan riset pasar primer** Anda.",
+          "required": true,
+          "gridSpan": 2,
+          "fileAccept": ".pdf",
+          "showIf": {
+            "equals": "Sudah melakukan survei pasar atau wawancara mendalam dengan calon pengguna B2B dan mengidentifikasi kebutuhan.",
+            "fieldId": "validasiPasarB2B"
+          },
+          "type": "file",
+          "id": "buktiRisetPasarPrimer"
+        },
+        {
+          "type": "file",
+          "id": "buktiPilotProject",
+          "showIf": {
+            "fieldId": "validasiPasarB2B",
+            "equals": "Sudah ada pilot project atau uji coba terbatas dengan mitra B2B dan mendapatkan umpan balik positif."
+          },
+          "label": "Unggah dokumen **bukti pilot project** atau uji coba terbatas dengan mitra B2B.",
+          "required": true,
+          "gridSpan": 2,
+          "fileAccept": ".pdf"
+        },
+        {
+          "type": "radio",
+          "id": "productMarketFit",
+          "required": true,
+          "label": "Bagaimana Anda mengukur **kesesuaian produk** (Product-Market Fit) dengan kebutuhan spesifik pasar B2B?",
+          "options": [
+            {
+              "weight": 0,
+              "label": "Belum ada metrik atau pengukuran spesifik."
+            },
+            {
+              "label": "Menggunakan umpan balik kualitatif dari uji coba terbatas.",
+              "weight": 50
+            },
+            {
+              "label": "Memiliki metrik kepuasan pelanggan awal dan tingkat adopsi dari pilot project.",
+              "weight": 75
+            },
+            {
+              "label": "Memiliki data retensi pelanggan, pertumbuhan penggunaan, dan testimoni kuat dari klien B2B.",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai sejauh mana inovasi telah divalidasi oleh pasar melalui metrik adopsi dan kepuasan pelanggan."
+        },
+        {
+          "showIf": {
+            "fieldId": "productMarketFit",
+            "equals": "Belum ada metrik atau pengukuran spesifik."
+          },
+          "id": "rencanaPengukuranPMF",
+          "type": "textarea",
+          "required": true,
+          "label": "Mohon jelaskan rencana Anda untuk mengukur **Product-Market Fit** di masa depan.",
+          "gridSpan": 2,
+          "aiReasoning": "Memastikan tim memiliki kerangka kerja strategis untuk memvalidasi keberterimaan pasar secara berkelanjutan."
+        },
+        {
+          "showIf": {
+            "fieldId": "productMarketFit",
+            "equals": "Memiliki metrik kepuasan pelanggan awal dan tingkat adopsi dari pilot project."
+          },
+          "id": "laporanMetrikPMF",
+          "type": "file",
+          "fileAccept": ".pdf",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Unggah laporan **metrik kepuasan pelanggan** atau tingkat adopsi dari pilot project."
+        },
+        {
+          "label": "Unggah data **retensi pelanggan**, pertumbuhan penggunaan, atau testimoni klien B2B.",
+          "required": true,
+          "fileAccept": ".pdf",
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "productMarketFit",
+            "equals": "Memiliki data retensi pelanggan, pertumbuhan penggunaan, dan testimoni kuat dari klien B2B."
+          },
+          "type": "file",
+          "id": "buktiPMF"
+        },
+        {
+          "options": [
+            {
+              "weight": 0,
+              "label": "Fokus pada publikasi ilmiah dan belum memikirkan komersialisasi."
+            },
+            {
+              "weight": 50,
+              "label": "Berencana lisensi teknologi ke perusahaan yang sudah ada."
+            },
+            {
+              "weight": 75,
+              "label": "Berencana membentuk spin-off/startup baru."
+            },
+            {
+              "label": "Sudah dalam proses negosiasi lisensi atau pembentukan spin-off dengan komitmen jelas.",
+              "weight": 100
+            }
+          ],
+          "aiReasoning": "Mengidentifikasi model bisnis yang dipilih untuk menentukan kesiapan tim dalam transisi dari riset ke pasar.",
+          "gridSpan": 2,
+          "label": "Jalur **komersialisasi utama** apa yang Anda rencanakan untuk inovasi ini?",
+          "required": true,
+          "type": "radio",
+          "id": "strategiKomersialisasi"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Memahami hambatan atau prioritas akademik yang menghambat proses hilirisasi.",
+          "required": true,
+          "label": "Mohon jelaskan alasan utama fokus pada **publikasi ilmiah** dan rencana komersialisasi di masa depan.",
+          "id": "alasanFokusPublikasi",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "strategiKomersialisasi",
+            "equals": "Fokus pada publikasi ilmiah dan belum memikirkan komersialisasi."
+          }
+        },
+        {
+          "required": true,
+          "label": "Bagaimana **komitmen waktu** tim inti untuk mengelola entitas bisnis (spin-off) ini?",
+          "options": [
+            {
+              "label": "Hanya sebagai penasihat/komisaris, fokus utama tetap di kampus.",
+              "weight": 0
+            },
+            {
+              "label": "Bersedia meluangkan waktu paruh waktu (kurang dari 50%) di luar jam kerja kampus.",
+              "weight": 25
+            },
+            {
+              "label": "Bersedia meluangkan waktu paruh waktu (lebih dari 50%) dan sedang mempertimbangkan cuti/non-aktif.",
+              "weight": 50
+            },
+            {
+              "label": "Bersedia cuti/non-aktif penuh dari kampus untuk fokus pada spin-off.",
+              "weight": 100
+            }
+          ],
+          "aiReasoning": "Menilai dedikasi sumber daya manusia yang krusial bagi keberlangsungan startup/spin-off.",
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "strategiKomersialisasi",
+            "equals": "Berencana membentuk spin-off/startup baru."
+          },
+          "id": "komitmenTimSpinOff",
+          "type": "radio"
+        },
+        {
+          "required": true,
+          "label": "Unggah dokumen **Letter of Intent (LoI)**, MoU, atau PKS terkait proses komersialisasi.",
+          "fileAccept": ".pdf",
+          "gridSpan": 2,
+          "id": "buktiKomersialisasi",
+          "type": "file",
+          "showIf": {
+            "fieldId": "strategiKomersialisasi",
+            "equals": "Sudah dalam proses negosiasi lisensi atau pembentukan spin-off dengan komitmen jelas."
+          }
+        },
+        {
+          "id": "statusKemitraanIndustri",
+          "type": "radio",
+          "label": "Bagaimana **status kemitraan** Anda dengan calon mitra industri B2B?",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur kekuatan jejaring industri yang mendukung adopsi teknologi.",
+          "options": [
+            {
+              "label": "Belum ada kontak atau kemitraan formal.",
+              "weight": 0
+            },
+            {
+              "label": "Memiliki MoU/Nota Kesepahaman umum dengan institusi/perusahaan.",
+              "weight": 25
+            },
+            {
+              "label": "Memiliki Perjanjian Kerja Sama (PKS) spesifik terkait pengembangan/uji coba inovasi.",
+              "weight": 75
+            },
+            {
+              "label": "Memiliki PKS yang mengikat secara komersial (misal: lisensi, joint venture, kontrak pembelian).",
+              "weight": 100
+            }
+          ]
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan rencana Anda untuk membangun **kemitraan industri B2B**.",
+          "gridSpan": 2,
+          "aiReasoning": "Memastikan adanya strategi proaktif dalam mencari mitra strategis.",
+          "id": "rencanaKemitraan",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Belum ada kontak atau kemitraan formal.",
+            "fieldId": "statusKemitraanIndustri"
+          }
+        },
+        {
+          "showIf": {
+            "fieldId": "statusKemitraanIndustri",
+            "equals": "Memiliki MoU/Nota Kesepahaman umum dengan institusi/perusahaan."
+          },
+          "id": "detailMoU",
+          "type": "textarea",
+          "gridSpan": 2,
+          "aiReasoning": "Memastikan MoU memiliki nilai substansial bagi pengembangan inovasi, bukan sekadar formalitas.",
+          "required": true,
+          "label": "Mohon jelaskan detail dan relevansi **MoU** yang dimiliki dengan adopsi riset spesifik."
+        },
+        {
+          "fileAccept": ".pdf",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Unggah dokumen **Perjanjian Kerja Sama (PKS)** spesifik terkait pengembangan/uji coba inovasi.",
+          "type": "file",
+          "id": "dokumenPKS",
+          "showIf": {
+            "fieldId": "statusKemitraanIndustri",
+            "equals": "Memiliki Perjanjian Kerja Sama (PKS) spesifik terkait pengembangan/uji coba inovasi."
+          }
+        },
+        {
+          "gridSpan": 2,
+          "fileAccept": ".pdf",
+          "label": "Unggah dokumen **PKS yang mengikat secara komersial**.",
+          "required": true,
+          "showIf": {
+            "fieldId": "statusKemitraanIndustri",
+            "equals": "Memiliki PKS yang mengikat secara komersial (misal: lisensi, joint venture, kontrak pembelian)."
+          },
+          "id": "dokumenPKSKomersial",
+          "type": "file"
+        },
+        {
+          "showIf": {
+            "fieldId": "kepatuhanRegulasi",
+            "equals": "Belum mengidentifikasi sama sekali"
+          },
+          "id": "alasanBelumRegulasi",
+          "type": "textarea",
+          "required": true,
+          "label": "Mohon jelaskan alasan mengapa **persyaratan regulasi** belum diidentifikasi.",
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi kesenjangan pemahaman terhadap kepatuhan hukum yang krusial bagi operasional B2B."
+        },
+        {
+          "fileAccept": ".pdf",
+          "gridSpan": 2,
+          "label": "Unggah bukti **pengajuan atau persiapan** sertifikasi/izin.",
+          "required": true,
+          "id": "buktiPengajuanRegulasi",
+          "type": "file",
+          "showIf": {
+            "fieldId": "kepatuhanRegulasi",
+            "equals": "Sudah mengidentifikasi dan memiliki rencana aksi"
+          }
+        },
+        {
+          "label": "Unggah dokumen **sertifikasi atau izin** yang telah dimiliki.",
+          "required": true,
+          "gridSpan": 2,
+          "fileAccept": ".pdf",
+          "id": "dokumenSertifikasiIzin",
+          "type": "file",
+          "showIf": {
+            "fieldId": "kepatuhanRegulasi",
+            "equals": "Sudah memiliki sertifikasi/izin yang relevan"
+          }
+        },
+        {
+          "label": "Bagaimana estimasi **potensi pasar B2B** (Total Addressable Market) dalam 3-5 tahun ke depan?",
+          "required": true,
+          "options": [
+            {
+              "label": "Belum ada estimasi formal atau data pendukung.",
+              "weight": 0
+            },
+            {
+              "weight": 50,
+              "label": "Estimasi berdasarkan riset sekunder, kurang dari Rp 10 Miliar."
+            },
+            {
+              "weight": 75,
+              "label": "Estimasi berdasarkan riset primer, antara Rp 10 Miliar hingga Rp 100 Miliar."
+            },
+            {
+              "weight": 100,
+              "label": "Estimasi berdasarkan riset primer dan validasi industri, lebih dari Rp 100 Miliar."
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai skala ekonomi dan daya tarik pasar dari inovasi yang ditawarkan.",
+          "id": "potensiPasarB2B",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "fieldId": "potensiPasarB2B",
+            "equals": "Belum ada estimasi formal atau data pendukung."
+          },
+          "id": "justifikasiEstimasiPasar",
+          "type": "textarea",
+          "required": true,
+          "label": "Mohon jelaskan dasar **estimasi potensi pasar B2B** Anda.",
+          "aiReasoning": "Memvalidasi metodologi perhitungan pasar agar estimasi tidak bersifat spekulatif.",
+          "gridSpan": 2
+        },
+        {
+          "id": "laporanRisetPasar",
+          "type": "file",
+          "showIf": {
+            "fieldId": "potensiPasarB2B",
+            "equals": "Estimasi berdasarkan riset primer, antara Rp 10 Miliar hingga Rp 100 Miliar."
+          },
+          "gridSpan": 2,
+          "fileAccept": ".pdf",
+          "label": "Unggah **laporan riset pasar primer** yang mendukung estimasi Anda.",
+          "required": true
+        },
+        {
+          "type": "file",
+          "id": "laporanRisetPasarValidasi",
+          "showIf": {
+            "fieldId": "potensiPasarB2B",
+            "equals": "Estimasi berdasarkan riset primer dan validasi industri, lebih dari Rp 100 Miliar."
+          },
+          "gridSpan": 2,
+          "fileAccept": ".pdf",
+          "required": true,
+          "label": "Unggah laporan riset primer dan **bukti validasi industri** yang mendukung estimasi Anda."
+        },
+        {
+          "label": "Model **pendapatan utama** apa yang akan diterapkan untuk inovasi ini?",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Menentukan keberlanjutan finansial melalui model monetisasi yang jelas.",
+          "options": [
+            {
+              "weight": 0,
+              "label": "Belum ada model pendapatan yang jelas."
+            },
+            {
+              "weight": 50,
+              "label": "Penjualan produk/layanan sekali bayar."
+            },
+            {
+              "weight": 75,
+              "label": "Model langganan (subscription) atau berbasis penggunaan (usage-based)."
+            },
+            {
+              "label": "Kombinasi model langganan dengan layanan nilai tambah atau lisensi.",
+              "weight": 100
+            }
+          ],
+          "id": "modelPendapatan",
+          "type": "radio"
+        },
+        {
+          "aiReasoning": "Memastikan tim memiliki visi komersial untuk mengubah inovasi menjadi arus kas.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan rencana Anda untuk mengembangkan **model pendapatan**.",
+          "showIf": {
+            "fieldId": "modelPendapatan",
+            "equals": "Belum ada model pendapatan yang jelas."
+          },
+          "type": "textarea",
+          "id": "rencanaModelPendapatan"
+        },
+        {
+          "required": true,
+          "label": "Apa **keunggulan kompetitif utama** inovasi Anda dibandingkan solusi yang sudah ada di pasar B2B?",
+          "aiReasoning": "Mengidentifikasi Unique Selling Proposition (USP) yang menjadi dasar daya saing produk.",
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "keunggulanKompetitif"
+        },
+        {
+          "gridSpan": 2,
+          "required": true,
+          "label": "Berapa estimasi **kebutuhan pendanaan** untuk mencapai tahap komersialisasi penuh?",
+          "type": "number",
+          "description": "Masukkan angka dalam Rupiah (Rp) tanpa titik atau koma.",
+          "id": "kebutuhanPendanaanKomersialisasi",
+          "showIf": {
+            "fieldId": "sumberPendanaan",
+            "equals": "Belum ada rencana pendanaan."
+          }
+        },
+        {
+          "type": "radio",
+          "id": "sumberPendanaan",
+          "required": true,
+          "label": "Dari mana **sumber pendanaan utama** yang Anda targetkan untuk komersialisasi ini?",
+          "gridSpan": 2,
+          "aiReasoning": "Menilai kematangan strategi pendanaan untuk mendukung operasional skala industri.",
+          "options": [
+            {
+              "weight": 0,
+              "label": "Belum ada rencana pendanaan."
+            },
+            {
+              "label": "Dana internal kampus/hibah riset.",
+              "weight": 25
+            },
+            {
+              "label": "Angel investor atau venture capital tahap awal.",
+              "weight": 75
+            },
+            {
+              "label": "Investor strategis industri atau kemitraan ekuitas.",
+              "weight": 100
+            }
+          ]
+        },
+        {
+          "showIf": {
+            "equals": "Belum ada rencana pendanaan.",
+            "fieldId": "sumberPendanaan"
+          },
+          "id": "rencanaSumberPendanaan",
+          "type": "textarea",
+          "aiReasoning": "Memastikan adanya langkah konkret dalam mengamankan modal untuk pertumbuhan.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan rencana Anda untuk mencari **sumber pendanaan**."
+        }
+      ],
+      "title": "Validasi Pasar B2B & Komersialisasi"
+    },
+    {
+      "stepNumber": 5,
+      "description": "Audit terhadap validitas dokumen kemitraan (MoU/PKS) dan evaluasi komitmen waktu serta mentalitas tim inventor dalam mengeksekusi hilirisasi.",
+      "fields": [
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Memastikan validitas dan kedalaman komitmen mitra industri untuk mendukung keberlanjutan teknologi.",
+          "label": "Jelaskan detail **kemitraan** yang sedang berjalan atau rencana inisiasi kemitraan Anda.",
+          "required": true,
+          "description": "Uraikan bentuk **kemitraan**, pihak terlibat, dan tujuan utamanya.",
+          "id": "penjelasanKemitraan",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "statusKemitraanIndustri",
+            "equals": "Memiliki Memorandum of Understanding (MoU) atau Letter of Intent (LoI) dengan industri yang spesifik dan aktif."
+          }
+        },
+        {
+          "description": "Sebutkan tantangan dan langkah-langkah yang akan diambil untuk membangun kemitraan.",
+          "id": "penjelasanKemitraanBelumAda",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Belum ada kemitraan industri yang terjalin.",
+            "fieldId": "statusKemitraanIndustri"
+          },
+          "label": "Jelaskan mengapa belum ada inisiasi **kemitraan** dan strategi Anda ke depan.",
+          "required": true,
+          "aiReasoning": "Mengidentifikasi hambatan strategis dalam membangun jejaring industri bagi inovasi yang belum memiliki mitra.",
+          "gridSpan": 2
+        },
+        {
+          "required": true,
+          "label": "Bagaimana **alokasi waktu** tim inti (peneliti utama/manajer proyek) untuk inisiatif hilirisasi ini?",
+          "options": [
+            {
+              "label": "Tim inti masih fokus penuh pada kegiatan akademik/riset dasar",
+              "weight": 10
+            },
+            {
+              "weight": 40,
+              "label": "Tim inti mengalokasikan waktu paruh waktu (<50%)"
+            },
+            {
+              "weight": 60,
+              "label": "Tim inti mengalokasikan waktu signifikan (>50%)"
+            },
+            {
+              "weight": 90,
+              "label": "Tim inti (minimal 1 orang) berstatus penuh waktu untuk inisiatif ini"
+            }
+          ],
+          "aiReasoning": "Menilai dedikasi sumber daya manusia sebagai faktor penentu keberhasilan transisi dari riset ke komersialisasi.",
+          "gridSpan": 2,
+          "type": "radio",
+          "id": "alokasiWaktuTimInti"
+        },
+        {
+          "aiReasoning": "Memverifikasi komitmen formal tim inti melalui bukti administratif yang sah.",
+          "label": "Unggah **surat tugas** atau dokumen pendukung alokasi waktu penuh tim inti.",
+          "gridSpan": 2,
+          "fileAccept": ".pdf",
+          "required": true,
+          "id": "buktiAlokasiWaktu",
+          "type": "file",
+          "description": "Dokumen resmi yang menunjukkan komitmen waktu penuh untuk hilirisasi.",
+          "showIf": {
+            "fieldId": "alokasiWaktuTimInti",
+            "equals": "Tim inti (minimal 1 orang) berstatus penuh waktu untuk inisiatif ini"
+          }
+        },
+        {
+          "id": "justifikasiAlokasiWaktu",
+          "description": "Uraikan kendala dan strategi untuk meningkatkan fokus tim pada hilirisasi.",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "alokasiWaktuTimInti",
+            "equals": "Tim inti masih fokus penuh pada kegiatan akademik/riset dasar"
+          },
+          "required": true,
+          "label": "Jelaskan alasan alokasi waktu tim inti dan rencana **peningkatan komitmen** ke depan.",
+          "aiReasoning": "Memahami kendala operasional yang menghambat fokus tim pada hilirisasi.",
+          "gridSpan": 2
+        },
+        {
+          "type": "radio",
+          "id": "validasiKebutuhanPasarB2B",
+          "aiReasoning": "Mengukur tingkat kesiapan pasar (market readiness) melalui bukti validasi yang konkret.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Belum ada validasi langsung dari calon pelanggan B2B",
+              "weight": 10
+            },
+            {
+              "weight": 40,
+              "label": "Survei atau diskusi awal dengan calon pelanggan B2B"
+            },
+            {
+              "label": "Memiliki Letter of Intent (LoI) atau bukti minat tertulis dari calon pelanggan B2B",
+              "weight": 70
+            },
+            {
+              "weight": 90,
+              "label": "Memiliki kontrak pilot project atau uji coba dengan calon pelanggan B2B"
+            }
+          ],
+          "label": "Sejauh mana Anda telah memvalidasi **kebutuhan dan minat pasar B2B** terhadap solusi Anda?",
+          "required": true
+        },
+        {
+          "showIf": {
+            "fieldId": "validasiKebutuhanPasarB2B",
+            "equals": "Memiliki kontrak pilot project atau uji coba dengan calon pelanggan B2B"
+          },
+          "type": "file",
+          "id": "buktiValidasiPasar",
+          "description": "Dokumen yang membuktikan minat atau keterlibatan calon pelanggan B2B.",
+          "required": true,
+          "gridSpan": 2,
+          "fileAccept": ".pdf",
+          "label": "Unggah dokumen **LoI**, laporan survei, atau kontrak pilot project.",
+          "aiReasoning": "Memvalidasi klaim keterlibatan pelanggan B2B dengan bukti dokumen yang dapat dipertanggungjawabkan."
+        },
+        {
+          "aiReasoning": "Menilai kesiapan strategis tim dalam melakukan penetrasi pasar secara terukur.",
+          "gridSpan": 2,
+          "label": "Jelaskan rencana Anda untuk memvalidasi **kebutuhan pasar B2B** dalam 6 bulan ke depan.",
+          "required": true,
+          "showIf": {
+            "equals": "Belum ada validasi langsung dari calon pelanggan B2B",
+            "fieldId": "validasiKebutuhanPasarB2B"
+          },
+          "type": "textarea",
+          "description": "Uraikan metodologi dan target validasi pasar yang akan dilakukan.",
+          "id": "rencanaValidasiPasar"
+        },
+        {
+          "options": [
+            {
+              "label": "Hanya sebatas diskusi atau konsultasi",
+              "weight": 10
+            },
+            {
+              "weight": 40,
+              "label": "Penyediaan data atau akses fasilitas non-finansial"
+            },
+            {
+              "label": "Keterlibatan dalam pengujian atau validasi prototipe (non-finansial)",
+              "weight": 60
+            },
+            {
+              "label": "Investasi finansial atau penyediaan sumber daya signifikan (SDM/infrastruktur)",
+              "weight": 90
+            }
+          ],
+          "aiReasoning": "Mengukur kedalaman dukungan mitra sebagai indikator keberhasilan komersialisasi.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Bagaimana bentuk **kontribusi mitra industri** dalam pengembangan teknologi atau inisiatif hilirisasi ini?",
+          "id": "kontribusiMitraIndustri",
+          "type": "radio"
+        },
+        {
+          "label": "Unggah bukti **investasi finansial** atau dokumen penyediaan sumber daya dari mitra.",
+          "aiReasoning": "Memastikan adanya dukungan sumber daya riil yang memperkuat posisi tawar teknologi.",
+          "required": true,
+          "fileAccept": ".pdf",
+          "gridSpan": 2,
+          "type": "file",
+          "description": "Dokumen yang menunjukkan komitmen finansial atau penyediaan sumber daya riil.",
+          "id": "buktiKontribusiMitra",
+          "showIf": {
+            "equals": "Investasi finansial atau penyediaan sumber daya signifikan (SDM/infrastruktur)",
+            "fieldId": "kontribusiMitraIndustri"
+          }
+        },
+        {
+          "showIf": {
+            "equals": "Keterlibatan dalam pengujian atau validasi prototipe (non-finansial)",
+            "fieldId": "kontribusiMitraIndustri"
+          },
+          "description": "Uraikan bentuk kontribusi non-finansial dan dampaknya pada pengembangan teknologi.",
+          "id": "detailKontribusiNonFinansial",
+          "type": "textarea",
+          "aiReasoning": "Mengevaluasi nilai tambah strategis dari mitra di luar aspek pendanaan.",
+          "gridSpan": 2,
+          "label": "Jelaskan detail **kontribusi non-finansial** dari mitra industri.",
+          "required": true
+        },
+        {
+          "required": true,
+          "label": "Apakah Anda memiliki **tim khusus** yang didedikasikan untuk aspek komersialisasi/bisnis?",
+          "gridSpan": 2,
+          "aiReasoning": "Menilai kapasitas organisasi dalam mengelola aspek bisnis yang seringkali menjadi kelemahan tim riset.",
+          "options": [
+            {
+              "weight": 10,
+              "label": "Belum ada tim khusus untuk aspek komersial"
+            },
+            {
+              "weight": 40,
+              "label": "Tim riset merangkap fungsi komersial"
+            },
+            {
+              "label": "Ada individu dengan latar belakang bisnis/komersial sebagai bagian dari tim",
+              "weight": 70
+            },
+            {
+              "weight": 90,
+              "label": "Memiliki tim inti yang didedikasikan untuk pengembangan bisnis dan komersialisasi"
+            }
+          ],
+          "id": "strukturTimKomersialisasi",
+          "type": "radio"
+        },
+        {
+          "id": "unggahCVTimKomersial",
+          "description": "Curriculum Vitae anggota tim dengan pengalaman relevan di bidang bisnis/komersial.",
+          "type": "file",
+          "showIf": {
+            "fieldId": "strukturTimKomersialisasi",
+            "equals": "Memiliki tim inti yang didedikasikan untuk pengembangan bisnis dan komersialisasi"
+          },
+          "required": true,
+          "gridSpan": 2,
+          "fileAccept": ".pdf",
+          "label": "Unggah **CV anggota tim** yang didedikasikan untuk pengembangan bisnis dan komersialisasi.",
+          "aiReasoning": "Memverifikasi kompetensi teknis dan manajerial tim komersial melalui rekam jejak profesional."
+        },
+        {
+          "description": "Uraikan strategi rekrutmen atau pengembangan kapasitas tim untuk fungsi komersial.",
+          "id": "rencanaPembentukanTimKomersial",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "strukturTimKomersialisasi",
+            "equals": "Belum ada tim khusus untuk aspek komersial"
+          },
+          "aiReasoning": "Melihat visi jangka panjang tim dalam membangun kapabilitas bisnis internal.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Jelaskan rencana Anda untuk membentuk atau memperkuat **tim komersialisasi**."
+        },
+        {
+          "id": "rencanaPendanaanHilirisasi",
+          "type": "radio",
+          "required": true,
+          "label": "Bagaimana rencana **pendanaan hilirisasi** Anda untuk jangka menengah (1-3 tahun)?",
+          "aiReasoning": "Menilai keberlanjutan finansial proyek melalui diversifikasi sumber pendanaan.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Belum ada rencana pendanaan spesifik",
+              "weight": 10
+            },
+            {
+              "weight": 40,
+              "label": "Mengandalkan hibah riset lanjutan dari pemerintah/universitas"
+            },
+            {
+              "weight": 70,
+              "label": "Sedang dalam proses penjajakan investor atau pendanaan eksternal"
+            },
+            {
+              "label": "Memiliki komitmen pendanaan dari investor atau mitra industri",
+              "weight": 90
+            }
+          ]
+        },
+        {
+          "label": "Unggah dokumen **komitmen pendanaan** dari investor atau mitra industri.",
+          "aiReasoning": "Memastikan adanya dukungan finansial yang mengikat untuk fase komersialisasi.",
+          "required": true,
+          "gridSpan": 2,
+          "fileAccept": ".pdf",
+          "id": "buktiKomitmenPendanaan",
+          "type": "file",
+          "description": "Dokumen Letter of Commitment, Term Sheet, atau perjanjian investasi.",
+          "showIf": {
+            "fieldId": "rencanaPendanaanHilirisasi",
+            "equals": "Memiliki komitmen pendanaan dari investor atau mitra industri"
+          }
+        },
+        {
+          "required": true,
+          "label": "Jelaskan strategi Anda untuk mendapatkan **pendanaan hilirisasi** dalam 12 bulan ke depan.",
+          "aiReasoning": "Mengevaluasi kesiapan tim dalam mengeksekusi rencana penggalangan dana.",
+          "gridSpan": 2,
+          "description": "Uraikan sumber pendanaan potensial, tahapan, dan target yang ingin dicapai.",
+          "id": "strategiPendanaan",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "rencanaPendanaanHilirisasi",
+            "equals": "Belum ada rencana pendanaan spesifik"
+          }
+        },
+        {
+          "type": "radio",
+          "id": "mekanismePengambilanKeputusan",
+          "aiReasoning": "Menilai kematangan tata kelola organisasi dalam menangani keputusan strategis bisnis.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 10,
+              "label": "Keputusan masih terpusat pada ketua tim riset/individu"
+            },
+            {
+              "weight": 40,
+              "label": "Melibatkan diskusi informal dengan pihak terkait"
+            },
+            {
+              "label": "Ada forum atau komite internal yang membahas strategi komersialisasi",
+              "weight": 70
+            },
+            {
+              "label": "Memiliki struktur tata kelola yang jelas untuk keputusan komersialisasi (misal: dewan direksi/komisaris)",
+              "weight": 90
+            }
+          ],
+          "label": "Bagaimana **mekanisme pengambilan keputusan** terkait strategi komersialisasi dan bisnis?",
+          "required": true
+        },
+        {
+          "required": true,
+          "label": "Jelaskan **struktur tata kelola** dan proses pengambilan keputusan komersialisasi Anda.",
+          "aiReasoning": "Memastikan adanya sistem check-and-balance dalam pengambilan keputusan bisnis.",
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "mekanismePengambilanKeputusan",
+            "equals": "Memiliki struktur tata kelola yang jelas untuk keputusan komersialisasi (misal: dewan direksi/komisaris)"
+          },
+          "id": "deskripsiTataKelola",
+          "description": "Uraikan peran dan tanggung jawab setiap pihak dalam pengambilan keputusan strategis.",
+          "type": "textarea"
+        },
+        {
+          "required": true,
+          "label": "Apakah ada **potensi konflik kepentingan** antara peran akademik dan komersial bagi tim inventor?",
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi risiko etika dan profesional yang dapat menghambat proses hilirisasi.",
+          "options": [
+            {
+              "label": "Potensi konflik belum teridentifikasi atau belum ada mitigasi",
+              "weight": 10
+            },
+            {
+              "weight": 40,
+              "label": "Potensi konflik teridentifikasi, namun belum ada rencana mitigasi formal"
+            },
+            {
+              "weight": 70,
+              "label": "Memiliki rencana mitigasi konflik kepentingan yang sedang berjalan"
+            },
+            {
+              "weight": 90,
+              "label": "Memiliki kebijakan dan prosedur formal untuk mengelola konflik kepentingan"
+            }
+          ],
+          "id": "potensiKonflikKepentingan",
+          "type": "radio"
+        },
+        {
+          "required": true,
+          "gridSpan": 2,
+          "fileAccept": ".pdf",
+          "showIf": {
+            "fieldId": "potensiKonflikKepentingan",
+            "equals": "Memiliki kebijakan dan prosedur formal untuk mengelola konflik kepentingan"
+          },
+          "description": "Dokumen resmi yang mengatur penanganan konflik kepentingan.",
+          "type": "file",
+          "id": "dokumenMitigasiKonflik",
+          "label": "Unggah dokumen **kebijakan atau prosedur formal** mitigasi konflik kepentingan.",
+          "aiReasoning": "Memastikan adanya kerangka kerja formal untuk menjaga integritas tim."
+        },
+        {
+          "type": "textarea",
+          "id": "penjelasanMitigasiKonflik",
+          "description": "Uraikan jenis konflik, dampaknya, dan langkah-langkah mitigasi yang akan atau sedang dilakukan.",
+          "showIf": {
+            "fieldId": "potensiKonflikKepentingan",
+            "equals": "Potensi konflik teridentifikasi, namun belum ada rencana mitigasi formal"
+          },
+          "aiReasoning": "Mengevaluasi kesadaran tim terhadap risiko etika dan langkah proaktif yang diambil.",
+          "gridSpan": 2,
+          "label": "Jelaskan potensi **konflik kepentingan** yang teridentifikasi dan rencana mitigasi Anda.",
+          "required": true
+        }
+      ],
+      "title": "Kemitraan Industri & Komitmen Tim"
+    },
+    {
+      "stepNumber": 6,
+      "description": "Pemetaan status perlindungan paten/hak cipta serta identifikasi kebutuhan sertifikasi industri (ISO/SNI) untuk memitigasi risiko hukum.",
+      "fields": [
+        {
+          "id": "statusPerlindunganKI",
+          "type": "radio",
+          "options": [
+            {
+              "weight": 90,
+              "label": "Sudah Terdaftar Paten/Paten Sederhana"
+            },
+            {
+              "label": "Sudah Terdaftar Hak Cipta/Merek",
+              "weight": 70
+            },
+            {
+              "label": "Dilindungi sebagai Rahasia Dagang",
+              "weight": 50
+            },
+            {
+              "weight": 40,
+              "label": "Dalam Proses Pendaftaran KI"
+            },
+            {
+              "weight": 10,
+              "label": "Belum Ada Perlindungan KI Formal"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menentukan tingkat legalitas dan keamanan aset intelektual sebagai fondasi utama valuasi bisnis.",
+          "label": "Bagaimana **status perlindungan Kekayaan Intelektual (KI)** untuk inovasi Anda saat ini?",
+          "required": true
+        },
+        {
+          "label": "Unggah dokumen **bukti pendaftaran Paten/Paten Sederhana** Anda (misal: sertifikat paten, nomor permohonan).",
+          "required": true,
+          "fileAccept": ".pdf",
+          "gridSpan": 2,
+          "showIf": {
+            "equals": "Sudah Terdaftar Paten/Paten Sederhana",
+            "fieldId": "statusPerlindunganKI"
+          },
+          "type": "file",
+          "id": "buktiPaten"
+        },
+        {
+          "gridSpan": 4,
+          "aiReasoning": "Memastikan adanya protokol keamanan internal untuk menjaga kerahasiaan inovasi yang tidak dipatenkan.",
+          "label": "Jelaskan **strategi dan langkah konkret** yang Anda lakukan untuk melindungi inovasi sebagai **Rahasia Dagang**.",
+          "required": true,
+          "showIf": {
+            "fieldId": "statusPerlindunganKI",
+            "equals": "Dilindungi sebagai Rahasia Dagang"
+          },
+          "type": "textarea",
+          "id": "strategiRahasiaDagang"
+        },
+        {
+          "type": "textarea",
+          "id": "rencanaPerlindunganKI",
+          "showIf": {
+            "fieldId": "statusPerlindunganKI",
+            "equals": "Belum Ada Perlindungan KI Formal"
+          },
+          "label": "Jelaskan alasan mengapa **belum ada perlindungan KI formal** dan rencana strategis Anda ke depan.",
+          "required": true,
+          "gridSpan": 4,
+          "aiReasoning": "Mengidentifikasi hambatan dalam proses pendaftaran KI dan komitmen perusahaan untuk mengamankan asetnya."
+        },
+        {
+          "required": true,
+          "label": "Jika inovasi memiliki paten, bagaimana hasil **analisis kekuatan paten** (klaim dan cakupan) yang telah dilakukan?",
+          "aiReasoning": "Menilai daya tahan hukum paten terhadap potensi tantangan atau pembatalan oleh pihak ketiga.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Sudah dianalisis dan memiliki klaim yang sangat kuat serta cakupan luas",
+              "weight": 95
+            },
+            {
+              "label": "Sudah dianalisis dan memiliki klaim yang cukup kuat",
+              "weight": 70
+            },
+            {
+              "weight": 40,
+              "label": "Sudah dianalisis namun memiliki klaim yang lemah atau cakupan terbatas"
+            },
+            {
+              "weight": 15,
+              "label": "Belum pernah dilakukan analisis kekuatan paten"
+            }
+          ],
+          "id": "analisisKekuatanPaten",
+          "type": "radio",
+          "showIf": {
+            "equals": "Sudah Terdaftar Paten/Paten Sederhana",
+            "fieldId": "statusPerlindunganKI"
+          }
+        },
+        {
+          "fileAccept": ".pdf",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Unggah **laporan analisis kekuatan paten** Anda.",
+          "id": "buktiAnalisisPaten",
+          "type": "file",
+          "showIf": {
+            "fieldId": "analisisKekuatanPaten",
+            "equals": "Sudah dianalisis dan memiliki klaim yang sangat kuat serta cakupan luas"
+          }
+        },
+        {
+          "aiReasoning": "Memastikan perusahaan memiliki rencana cadangan untuk memperkuat posisi hukum inovasi.",
+          "gridSpan": 4,
+          "label": "Jelaskan **strategi mitigasi** atau rencana perbaikan jika paten Anda memiliki klaim lemah atau belum dianalisis.",
+          "required": true,
+          "showIf": {
+            "fieldId": "analisisKekuatanPaten",
+            "equals": "Sudah dianalisis namun memiliki klaim yang lemah atau cakupan terbatas"
+          },
+          "type": "textarea",
+          "id": "mitigasiPatenLemah"
+        },
+        {
+          "type": "radio",
+          "id": "proyeksiNilaiKomersialKI",
+          "options": [
+            {
+              "weight": 90,
+              "label": "Sudah memiliki laporan valuasi KI dari pihak independen"
+            },
+            {
+              "weight": 60,
+              "label": "Sedang dalam proses valuasi KI"
+            },
+            {
+              "weight": 40,
+              "label": "Memiliki estimasi internal potensi nilai komersial"
+            },
+            {
+              "label": "Belum ada proyeksi nilai komersial KI",
+              "weight": 10
+            }
+          ],
+          "aiReasoning": "Mengukur potensi ekonomi dari aset intelektual untuk kepentingan investasi dan kemitraan.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Apakah inovasi Anda sudah memiliki **proyeksi nilai komersial** atau **valuasi Kekayaan Intelektual (KI)**?"
+        },
+        {
+          "fileAccept": ".pdf",
+          "gridSpan": 2,
+          "label": "Unggah **laporan valuasi KI** dari pihak independen.",
+          "required": true,
+          "id": "buktiValuasiKI",
+          "type": "file",
+          "showIf": {
+            "fieldId": "proyeksiNilaiKomersialKI",
+            "equals": "Sudah memiliki laporan valuasi KI dari pihak independen"
+          }
+        },
+        {
+          "label": "Jelaskan **dasar estimasi internal** potensi nilai komersial KI Anda.",
+          "required": true,
+          "aiReasoning": "Memvalidasi metodologi perhitungan nilai aset yang digunakan oleh internal perusahaan.",
+          "gridSpan": 4,
+          "showIf": {
+            "fieldId": "proyeksiNilaiKomersialKI",
+            "equals": "Memiliki estimasi internal potensi nilai komersial"
+          },
+          "type": "textarea",
+          "id": "estimasiInternalKI"
+        },
+        {
+          "type": "checkbox",
+          "id": "kebutuhanSertifikasiIndustri",
+          "label": "Pilih **sertifikasi industri** yang relevan dan dibutuhkan untuk inovasi Anda di target pasar B2B:",
+          "required": true,
+          "aiReasoning": "Mengidentifikasi standar kepatuhan yang menjadi syarat mutlak untuk masuk ke pasar B2B tertentu.",
+          "gridSpan": 4,
+          "options": [
+            {
+              "weight": 20,
+              "label": "ISO 9001 (Sistem Manajemen Mutu)"
+            },
+            {
+              "label": "ISO 14001 (Sistem Manajemen Lingkungan)",
+              "weight": 20
+            },
+            {
+              "label": "ISO 27001 (Sistem Manajemen Keamanan Informasi)",
+              "weight": 20
+            },
+            {
+              "weight": 20,
+              "label": "SNI (Standar Nasional Indonesia)"
+            },
+            {
+              "weight": 20,
+              "label": "BPOM (Badan Pengawas Obat dan Makanan)"
+            },
+            {
+              "weight": 20,
+              "label": "Sertifikasi Halal"
+            },
+            {
+              "weight": 10,
+              "label": "Sertifikasi Lainnya (Mohon Sebutkan)"
+            },
+            {
+              "label": "Tidak Ada Sertifikasi yang Diperlukan",
+              "weight": 0
+            }
+          ]
+        },
+        {
+          "label": "Sebutkan **sertifikasi lainnya** yang relevan.",
+          "required": true,
+          "aiReasoning": "Menangkap kebutuhan sertifikasi spesifik industri yang tidak tercantum dalam daftar standar.",
+          "gridSpan": 4,
+          "id": "spesifikasiSertifikasiLainnya",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "kebutuhanSertifikasiIndustri",
+            "equals": "Sertifikasi Lainnya (Mohon Sebutkan)"
+          }
+        },
+        {
+          "id": "justifikasiTanpaSertifikasi",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "kebutuhanSertifikasiIndustri",
+            "equals": "Tidak Ada Sertifikasi yang Diperlukan"
+          },
+          "label": "Jelaskan mengapa Anda berpendapat **tidak ada sertifikasi yang diperlukan** untuk inovasi Anda di pasar B2B.",
+          "required": true,
+          "gridSpan": 4,
+          "aiReasoning": "Memastikan bahwa keputusan untuk tidak mengambil sertifikasi didasarkan pada analisis pasar yang matang."
+        },
+        {
+          "type": "radio",
+          "id": "statusKepatuhanSertifikasi",
+          "gridSpan": 2,
+          "aiReasoning": "Menilai kesiapan operasional perusahaan dalam memenuhi standar industri yang diwajibkan.",
+          "options": [
+            {
+              "label": "Sudah memiliki semua sertifikasi yang relevan dan aktif",
+              "weight": 95
+            },
+            {
+              "weight": 70,
+              "label": "Beberapa sertifikasi sudah dimiliki, lainnya dalam proses"
+            },
+            {
+              "weight": 50,
+              "label": "Semua sertifikasi yang relevan sedang dalam proses pengajuan"
+            },
+            {
+              "weight": 15,
+              "label": "Belum memulai proses pengajuan sertifikasi yang relevan"
+            }
+          ],
+          "required": true,
+          "label": "Bagaimana **status kepatuhan** inovasi Anda terhadap sertifikasi utama yang relevan?"
+        },
+        {
+          "showIf": {
+            "fieldId": "statusKepatuhanSertifikasi",
+            "equals": "Sudah memiliki semua sertifikasi yang relevan dan aktif"
+          },
+          "id": "buktiSertifikasiAktif",
+          "type": "file",
+          "gridSpan": 2,
+          "fileAccept": ".pdf",
+          "required": true,
+          "label": "Unggah dokumen **bukti sertifikasi** yang sudah Anda miliki."
+        },
+        {
+          "showIf": {
+            "fieldId": "statusKepatuhanSertifikasi",
+            "equals": "Semua sertifikasi yang relevan sedang dalam proses pengajuan"
+          },
+          "id": "perkiraanWaktuSertifikasi",
+          "type": "textarea",
+          "label": "Jelaskan **perkiraan waktu penyelesaian** dan kendala yang dihadapi dalam proses sertifikasi.",
+          "required": true,
+          "gridSpan": 4,
+          "aiReasoning": "Memantau timeline kepatuhan untuk memastikan tidak ada hambatan operasional di masa depan."
+        },
+        {
+          "showIf": {
+            "fieldId": "statusKepatuhanSertifikasi",
+            "equals": "Belum memulai proses pengajuan sertifikasi yang relevan"
+          },
+          "id": "rencanaPengajuanSertifikasi",
+          "type": "textarea",
+          "aiReasoning": "Memastikan perusahaan memiliki peta jalan yang jelas untuk mencapai standar kepatuhan industri.",
+          "gridSpan": 4,
+          "label": "Jelaskan **rencana dan timeline** Anda untuk memulai proses pengajuan sertifikasi yang relevan.",
+          "required": true
+        },
+        {
+          "type": "radio",
+          "id": "analisisFTO",
+          "label": "Apakah Anda sudah melakukan **Analisis Kebebasan Beroperasi (Freedom to Operate - FTO)** untuk inovasi Anda?",
+          "required": true,
+          "aiReasoning": "Menilai risiko pelanggaran hak paten pihak lain yang dapat menghentikan operasional bisnis.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 90,
+              "label": "Sudah dilakukan analisis FTO komprehensif dan hasilnya positif"
+            },
+            {
+              "weight": 60,
+              "label": "Sedang dalam proses analisis FTO"
+            },
+            {
+              "label": "Belum dilakukan analisis FTO, namun telah melakukan penelusuran awal",
+              "weight": 30
+            },
+            {
+              "label": "Belum dilakukan analisis FTO dan tidak memiliki rencana dalam waktu dekat",
+              "weight": 10
+            }
+          ]
+        },
+        {
+          "required": true,
+          "label": "Unggah **laporan analisis FTO** Anda.",
+          "fileAccept": ".pdf",
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "analisisFTO",
+            "equals": "Sudah dilakukan analisis FTO komprehensif dan hasilnya positif"
+          },
+          "type": "file",
+          "id": "buktiLaporanFTO"
+        },
+        {
+          "showIf": {
+            "fieldId": "analisisFTO",
+            "equals": "Belum dilakukan analisis FTO dan tidak memiliki rencana dalam waktu dekat"
+          },
+          "id": "pemahamanRisikoFTO",
+          "type": "textarea",
+          "aiReasoning": "Mengukur kesadaran manajemen terhadap risiko hukum yang mungkin timbul akibat kurangnya analisis FTO.",
+          "gridSpan": 4,
+          "label": "Jelaskan **pemahaman Anda tentang risiko pelanggaran KI** pihak lain jika FTO belum dilakukan.",
+          "required": true
+        },
+        {
+          "type": "radio",
+          "id": "integrasiESG",
+          "options": [
+            {
+              "label": "Prinsip ESG terintegrasi penuh dalam desain produk/layanan dan operasional",
+              "weight": 95
+            },
+            {
+              "label": "Beberapa aspek ESG telah dipertimbangkan dan diimplementasikan",
+              "weight": 70
+            },
+            {
+              "weight": 40,
+              "label": "Memiliki kesadaran akan ESG namun belum ada implementasi formal"
+            },
+            {
+              "label": "Belum mempertimbangkan prinsip ESG",
+              "weight": 10
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "ESG kini menjadi standar penilaian utama bagi mitra B2B global dan investor.",
+          "required": true,
+          "label": "Bagaimana inovasi Anda mengintegrasikan **prinsip-prinsip ESG** (Environmental, Social, Governance) yang relevan untuk pasar B2B?"
+        },
+        {
+          "fileAccept": ".pdf",
+          "gridSpan": 2,
+          "label": "Unggah **laporan keberlanjutan** atau dokumen bukti integrasi ESG Anda.",
+          "required": true,
+          "id": "buktiIntegrasiESG",
+          "type": "file",
+          "showIf": {
+            "fieldId": "integrasiESG",
+            "equals": "Prinsip ESG terintegrasi penuh dalam desain produk/layanan dan operasional"
+          }
+        },
+        {
+          "required": true,
+          "label": "Jelaskan **rencana Anda** untuk mengimplementasikan prinsip ESG dalam inovasi dan operasional.",
+          "aiReasoning": "Memastikan adanya komitmen jangka panjang untuk mengadopsi standar keberlanjutan.",
+          "gridSpan": 4,
+          "id": "rencanaImplementasiESG",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "integrasiESG",
+            "equals": "Belum mempertimbangkan prinsip ESG"
+          }
+        },
+        {
+          "type": "textarea",
+          "id": "pemahamanRegulasiIndustri",
+          "gridSpan": 4,
+          "aiReasoning": "Menguji kemampuan perusahaan dalam memitigasi risiko regulasi yang dinamis.",
+          "label": "Uraikan **pemahaman Anda tentang regulasi kunci** yang relevan dengan inovasi Anda di pasar B2B, termasuk potensi perubahan regulasi di masa depan.",
+          "required": true
+        },
+        {
+          "required": true,
+          "label": "Apakah Anda mengidentifikasi adanya **potensi sengketa Kekayaan Intelektual (KI)** dengan pihak lain terkait inovasi Anda?",
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi ancaman hukum yang dapat menghambat komersialisasi produk.",
+          "options": [
+            {
+              "weight": 90,
+              "label": "Tidak ada potensi sengketa KI yang teridentifikasi"
+            },
+            {
+              "label": "Ada potensi sengketa minor yang sedang dimitigasi",
+              "weight": 60
+            },
+            {
+              "label": "Ada potensi sengketa signifikan yang belum terselesaikan",
+              "weight": 20
+            },
+            {
+              "weight": 10,
+              "label": "Tidak yakin atau belum melakukan penelusuran"
+            }
+          ],
+          "id": "potensiSengketaKI",
+          "type": "radio"
+        },
+        {
+          "label": "Jelaskan **deskripsi potensi sengketa KI** dan langkah-langkah mitigasi yang telah atau akan Anda ambil.",
+          "required": true,
+          "gridSpan": 4,
+          "aiReasoning": "Memastikan perusahaan memiliki strategi penanganan sengketa yang proaktif.",
+          "id": "deskripsiSengketaKI",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "potensiSengketaKI",
+            "equals": "Ada potensi sengketa minor yang sedang dimitigasi"
+          }
+        },
+        {
+          "showIf": {
+            "fieldId": "potensiSengketaKI",
+            "equals": "Tidak yakin atau belum melakukan penelusuran"
+          },
+          "type": "textarea",
+          "id": "langkahPenelusuranSengketa",
+          "aiReasoning": "Mendorong perusahaan untuk melakukan due diligence hukum secara menyeluruh.",
+          "gridSpan": 4,
+          "label": "Jelaskan **langkah-langkah** yang akan Anda ambil untuk memastikan tidak ada potensi sengketa KI.",
+          "required": true
+        }
+      ],
+      "title": "Kekayaan Intelektual & Kepatuhan Regulasi"
+    }
+  ],
+  "discountExpiry": null,
+  "generationLogs": [
+    {
+      "timestamp": "2026-07-23T05:54:17.524Z",
+      "message": "FASE 1: Architect Agent (Gemini 3.1 Pro) diaktifkan. Melakukan penetrasi jaringan & riset blueprint...",
+      "type": "info"
+    },
+    {
+      "message": "Otak AI dan Master Blueprint berhasil disempurnakan!",
+      "timestamp": "2026-07-23T05:55:25.796Z",
+      "type": "success"
+    },
+    {
+      "timestamp": "2026-07-23T05:55:26.018Z",
+      "message": "FASE 2: Fabricator Agent (Gemini 2.5 Flash) dikerahkan. Memproduksi 6 seksi formulir...",
+      "type": "info"
+    },
+    {
+      "type": "info",
+      "timestamp": "2026-07-23T05:55:26.792Z",
+      "message": "Meracik Kuesioner Batch 1..."
+    },
+    {
+      "type": "info",
+      "message": "Meracik Kuesioner Batch 2...",
+      "timestamp": "2026-07-23T05:56:10.834Z"
+    }
+  ],
+  "isDisplayedOnLanding": false,
+  "trialQuota": 0,
+  "isActive": true,
+  "formBuilderInstruction": "\n==================================================\nKONTEKS ANCHOR (ACUAN MUTLAK):\n- Profil Subjek Asesmen: Target audiens adalah peneliti utama, ketua pusat studi, dan manajer inovasi di perguruan tinggi yang memiliki prototipe riset dengan kesiapan teknologi minimal TKT 3. Subjek harus memiliki orientasi komersialisasi atau kemitraan industri untuk memastikan riset dapat ditransformasikan menjadi produk bernilai ekonomi.\n- Metodologi/Pendekatan: Menggunakan framework TKT (Tingkat Kesiapan Teknologi) yang diintegrasikan dengan metodologi KATSINOV untuk mengukur kesiapan inovasi secara komprehensif. Proses validasi menggunakan pendekatan multi-kriteria (MCDA) yang didukung oleh algoritma AI untuk pemetaan kesiapan pasar dan mitigasi risiko komersialisasi.\n==================================================\nTARGET AUDIENS: STARTUP. Fokus pada inovasi, pertumbuhan, efisiensi operasional, dan product-market fit.\n\nRancang kuesioner penilaian secara sistematis.\n\n\n\nATURAN KOMPOSISI PERTANYAAN MUTLAK (WAJIB DIPATUHI):\n- WAJIB maksimalkan penggunaan tipe \"radio\" atau \"select\" dengan array \"options\" berbobot (weight 0-100) untuk keperluan kalkulasi nilai otomatis.\n- TERAPKAN INTEROGASI BERLAPIS: Gunakan properti \"showIf\". Jika peserta merespon klaim besar pada opsi radio/select, WAJIB pancing pertanyaan baru bertipe \"file\" atau \"textarea\" untuk menagih bukti.\n- WAJIB sertakan tipe input \"file\" untuk menagih unggahan dokumen bukti (legalitas, laporan, portofolio, dll) guna menekan potensi manipulasi data.\n- Gunakan tipe \"number\" secara spesifik untuk menangkap data kuantitatif presisi (seperti Omzet, Jumlah Karyawan, Biaya, Persentase) agar data tidak tercampur teks.\n- Gunakan tipe \"textarea\" secara strategis untuk menuntut penjelasan, justifikasi, keluhan, atau uraian deskriptif yang mendalam dari peserta.",
+  "folderId": "marketing",
+  "stepOutlinesCache": [
+    {
+      "title": "Evaluasi Kesiapan Teknologi (TKT)",
+      "description": "Pengukuran kematangan purwarupa berdasarkan framework TKT Kemenristekdikti (skala 3-9) untuk memvalidasi klaim pengujian di lingkungan lab hingga operasional.",
+      "expertPersona": "Ahli Evaluasi TKT Kemenristekdikti",
+      "focusArea": "Kesiapan Teknologi (TKT 3-9 Validated)"
+    },
+    {
+      "title": "Pengukuran Kesiapan Inovasi (KATSINOV)",
+      "description": "Analisis komprehensif menggunakan parameter KATSINOV untuk menilai aspek pasar, organisasi, dan manufaktur dari inovasi riset.",
+      "expertPersona": "Analis KATSINOV & Inovasi Perguruan Tinggi",
+      "focusArea": "Kesiapan Inovasi (KATSINOV 1-6 Aspek Pasar & Manufaktur)"
+    },
+    {
+      "title": "Dampak Sosial & Keselarasan PRN/ESG",
+      "description": "Penilaian keselarasan riset dengan Prioritas Riset Nasional (PRN), Tujuan Pembangunan Berkelanjutan (SDGs), dan standar ESG.",
+      "expertPersona": "Spesialis Keberlanjutan & ESG",
+      "focusArea": "Potensi Skalabilitas & Dampak Sosial (SDGs/PRN/ESG)"
+    },
+    {
+      "focusArea": "Validasi Pasar B2B & Kesiapan Komersialisasi",
+      "expertPersona": "Konsultan Bisnis B2B & Strategi Komersialisasi",
+      "description": "Evaluasi kesesuaian masalah dan solusi (problem-solution fit) serta kesiapan model bisnis untuk adopsi oleh pasar korporasi (B2B).",
+      "title": "Validasi Pasar B2B & Komersialisasi"
+    },
+    {
+      "expertPersona": "Direktur Inkubator Bisnis Kampus",
+      "focusArea": "Komitmen Tim Inventor & Kemitraan Industri",
+      "title": "Kemitraan Industri & Komitmen Tim",
+      "description": "Audit terhadap validitas dokumen kemitraan (MoU/PKS) dan evaluasi komitmen waktu serta mentalitas tim inventor dalam mengeksekusi hilirisasi."
+    },
+    {
+      "description": "Pemetaan status perlindungan paten/hak cipta serta identifikasi kebutuhan sertifikasi industri (ISO/SNI) untuk memitigasi risiko hukum.",
+      "title": "Kekayaan Intelektual & Kepatuhan Regulasi",
+      "focusArea": "Status Kekayaan Intelektual (KI) & Kepatuhan Regulasi (ISO/SNI)",
+      "expertPersona": "Konsultan Kekayaan Intelektual & Regulasi Industri"
+    }
+  ]
+}

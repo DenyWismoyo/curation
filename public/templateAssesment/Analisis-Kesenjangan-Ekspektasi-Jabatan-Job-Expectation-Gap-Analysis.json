@@ -1,0 +1,1707 @@
+{
+  "version": 2,
+  "generationLogs": [
+    {
+      "message": "Memulai sesi pipeline Enterprise Multi-Agent AI...",
+      "timestamp": "2026-07-21T06:01:43.064Z",
+      "type": "info"
+    },
+    {
+      "message": "FASE 1: Agen Master (Gemini 3.1 Pro) diaktifkan. Melakukan penetrasi jaringan internet dan restrukturisasi Otak AI...",
+      "timestamp": "2026-07-21T06:01:43.088Z",
+      "type": "info"
+    },
+    {
+      "message": "Merumuskan penyempurnaan Otak AI & Masterplan untuk domain: [Analisis Kesenjangan Ekspektasi Jabatan (Job Expectation Gap Analysis)]...",
+      "timestamp": "2026-07-21T06:01:43.104Z",
+      "type": "info"
+    },
+    {
+      "type": "success",
+      "message": "Otak AI dan Master Blueprint berhasil disempurnakan! Menyimpan konfigurasi ke database...",
+      "timestamp": "2026-07-21T06:02:32.687Z"
+    },
+    {
+      "message": "Mengekstrak temuan internet dan menyimpannya ke Vector Database (RAG)...",
+      "timestamp": "2026-07-21T06:02:32.746Z",
+      "type": "info"
+    },
+    {
+      "message": "Vector Database berhasil diperbarui.",
+      "timestamp": "2026-07-21T06:02:32.938Z",
+      "type": "success"
+    },
+    {
+      "type": "info",
+      "message": "FASE 2: Mengerahkan Agen Pekerja (Gemini 2.5 Flash) berbekal Otak AI yang baru. Memulai fabrikasi 5 seksi formulir...",
+      "timestamp": "2026-07-21T06:02:32.980Z"
+    },
+    {
+      "type": "info",
+      "message": "Meracik Kuesioner Batch 1 (Seksi 1 s/d 3)...",
+      "timestamp": "2026-07-21T06:02:33.006Z"
+    },
+    {
+      "type": "info",
+      "message": "Meracik Kuesioner Batch 2 (Seksi 4 s/d 5)...",
+      "timestamp": "2026-07-21T06:03:05.774Z"
+    },
+    {
+      "timestamp": "2026-07-21T06:03:31.121Z",
+      "message": "Seluruh seksi formulir berhasil diracik dan digabungkan.",
+      "type": "success"
+    },
+    {
+      "type": "info",
+      "message": "Membersihkan ID duplikat pada struktur formulir...",
+      "timestamp": "2026-07-21T06:03:31.149Z"
+    },
+    {
+      "type": "info",
+      "timestamp": "2026-07-21T06:03:31.227Z",
+      "message": "FASE 3: Agen Validator (QA) meninjau integritas logika 'ShowIf' (Dependency Tree)..."
+    },
+    {
+      "type": "success",
+      "timestamp": "2026-07-21T06:04:41.294Z",
+      "message": "Verifikasi selesai. Struktur formulir 100% valid dan aman dari loop logic."
+    },
+    {
+      "type": "success",
+      "timestamp": "2026-07-21T06:04:41.350Z",
+      "message": "PIPELINE SELESAI: Kuesioner skala Enterprise telah berhasil diintegrasikan!"
+    }
+  ],
+  "aiPromptConfig": {
+    "negativePrompts": "Dilarang keras menggunakan istilah korporat seperti 'KPI', 'ROI', 'Profitability', 'B2B', 'Stakeholder Management', atau 'Output-based target'. Jangan memberikan saran yang bersifat instruksi administratif atau perintah atasan. Jangan menggunakan nada bicara yang kaku, dingin, atau menghakimi. Hindari kata-kata seperti 'Anda harus', 'Kegagalan', 'Ketidakmampuan', atau 'Evaluasi Kinerja'.",
+    "customScoringRubric": "Berikan skor 0-100 berdasarkan tingkat keselarasan psikologis. Skor 0-40: Disonansi Kognitif Akut (butuh intervensi segera). Skor 41-70: Ketidakselarasan Moderat (perlu penyesuaian pola pikir). Skor 71-100: Harmoni Fungsional (optimal). Penilaian didasarkan pada: 30% tingkat otonomi tugas, 30% kebermaknaan tugas, 20% umpan balik lingkungan, dan 20% efikasi diri.",
+    "researchSourcesCited": [
+      "Bui & Porter's Expectation-Performance Gap Framework",
+      "HR Best Practices on Performance Gap Analysis (Skills, Motivation, Environment, Capacity)"
+    ],
+    "riskFramework": "ISO 30414 (Human Resource Management) & Competency-Based Management Framework",
+    "actionPlanBehavior": "Rencana aksi harus disusun sebagai 'Jurnal Pertumbuhan Diri' yang berisi rutinitas psikologis harian. Fokus pada 3 pilar: (1) *Mindfulness* saat menghadapi beban kerja, (2) Teknik *Reframing* kognitif untuk memandang tugas sebagai sarana pengembangan diri, dan (3) Ritual *Self-Care* pasca-jam kerja untuk memulihkan energi mental. Rencana harus bersifat personal, dapat dilakukan secara mandiri, dan tidak melibatkan pihak ketiga.",
+    "expectedRecommendations": [
+      "Program Upskilling & Reskilling Terstruktur",
+      "Penyelarasan Ulang Deskripsi Pekerjaan (Job Redesign)",
+      "Sesi Coaching & Mentoring Intensif",
+      "Penyesuaian Beban Kerja & Delegasi Tugas",
+      "Peningkatan Akses Perangkat & Sumber Daya Kerja",
+      "Rotasi Peran atau Transfer Internal",
+      "Penetapan Ulang KPI & Target Kinerja (Goal Realignment)",
+      "Intervensi Kesejahteraan & Pencegahan Burnout",
+      "Penyusunan Performance Improvement Plan (PIP)"
+    ],
+    "customSystemPrompt": "Anda adalah seorang Konselor Psikologi Organisasi yang berempati. IF subjek menunjukkan keluhan ketidaksesuaian beban kerja, THEN lakukan validasi emosi terlebih dahulu sebelum melakukan analisis P-O Fit. Analisis harus bersifat suportif, reflektif, dan kritis terhadap akar penyebab disonansi, bukan menghakimi kinerja. Hindari bahasa birokrasi; gunakan bahasa yang memanusiakan individu.",
+    "aiPersona": "Senior HR Business Partner & Organizational Psychologist",
+    "expectedMetrics": [
+      "Kesenjangan Kompetensi Teknis (Technical Skills Gap)",
+      "Kesenjangan Motivasi & Perilaku (Motivation & Behavioral Gap)",
+      "Kesenjangan Kapasitas & Beban Kerja (Capacity & Workload Gap)",
+      "Kesenjangan Lingkungan & Dukungan (Environmental & Resource Gap)"
+    ],
+    "mediaAnalysisFocus": "Analisis teks respons untuk mendeteksi indikasi kebingungan peran, beban kerja berlebih, atau kurangnya dukungan manajerial.",
+    "gradingStrictness": "objective and developmental",
+    "targetAudience": "individual",
+    "customReadinessTiers": [
+      "Kritis (Critical Gap) - Membutuhkan intervensi PIP segera",
+      "Berkembang (Developing) - Membutuhkan pelatihan dan pendampingan intensif",
+      "Selaras (Aligned) - Memenuhi ekspektasi dasar dengan sedikit penyesuaian",
+      "Optimal (High Performing) - Melampaui ekspektasi dan siap untuk pengayaan peran"
+    ],
+    "formPurpose": "Mengevaluasi kesenjangan antara ekspektasi jabatan dan kenyataan kinerja serta kompetensi karyawan untuk menyusun strategi intervensi SDM yang tepat sasaran.",
+    "formatInstructions": "Gunakan Markdown secara maksimal untuk kemudahan membaca: Gunakan penanda **teks tebal** untuk menyoroti nama metrik/istilah penting, *teks miring* untuk penekanan atau kutipan, dan gunakan awalan ### (Heading 3) untuk memisahkan sub-topik laporan agar sistem merendernya dengan rapi. Pastikan setiap bagian memiliki alur naratif yang lembut dan menenangkan.",
+    "reportTone": "professional, consultative, and actionable",
+    "assessmentGoal": "Mengidentifikasi, mengukur, dan memitigasi kesenjangan antara ekspektasi peran (job expectations) dan realitas kinerja individu menggunakan kerangka kompetensi dan analisis beban kerja.",
+    "expectedAnalysisBlocks": [
+      "Analisis Kompetensi Inti: Kesenjangan keterampilan teknis, Kebutuhan pelatihan spesifik",
+      "Evaluasi Kesesuaian Peran: Keselarasan minat dan tugas, Tingkat adaptabilitas karyawan",
+      "Tinjauan Kapasitas Eksekusi: Manajemen beban kerja, Efisiensi penyelesaian tugas",
+      "Penilaian Faktor Lingkungan: Ketersediaan sumber daya kerja, Dukungan manajerial dan tim",
+      "Pemetaan Motivasi & Keterlibatan: Tingkat proaktivitas, Kepuasan terhadap ekspektasi karir",
+      "Identifikasi Risiko Kinerja: Potensi kelelahan kerja (burnout), Risiko atrisi atau demotivasi"
+    ],
+    "customUiLabels": {
+      "roadmapLabel": "Peta Jalan Intervensi SDM",
+      "swotLabel": "Matriks Kapabilitas & Kesenjangan",
+      "scoreLabel": "Indeks Keselarasan Ekspektasi",
+      "riskLabel": "Peta Risiko Kinerja & Retensi",
+      "executionLabel": "Timeline Rencana Aksi Perbaikan"
+    }
+  },
+  "expectedOutputs": [
+    "Peta Mitigasi Risiko Produktivitas: Deteksi dini hambatan kerja untuk mencegah penurunan kualitas pelayanan publik akibat ketidaksesuaian ekspektasi jabatan.",
+    "Rekomendasi Strategis Berbasis Data: Dapatkan solusi presisi seperti upskilling atau job redesign yang dirancang khusus untuk menutup celah kompetensi dan perilaku ASN.",
+    "Action Plan Terukur: Implementasikan langkah perbaikan konkret untuk menyelaraskan beban kerja dengan kapasitas riil demi mencapai target kinerja organisasi.",
+    "Insight Matrix Kinerja: Visualisasikan profil kesenjangan jabatan secara komprehensif sebagai acuan pengambilan keputusan manajemen SDM yang lebih efektif dan manusiawi."
+  ],
+  "trackIcon": "LayoutGrid",
+  "lastUpdated": "2026-07-23T02:24:55.752Z",
+  "formBuilderInstruction": "Mengukur jarak antara ekspektasi ASN terhadap bidang tugasnya dengan realitas pekerjaan teknis yang dihadapi sehari-hari di OPD tersebut. Pemetaan ini sangat berguna untuk mendeteksi akar masalah dari keluhan ketidakcocokan job desk yang berpotensi menurunkan produktivitas pelayanan.",
+  "isActive": true,
+  "specificTargetContext": "Subjek target adalah Aparatur Sipil Negara (ASN) pada Organisasi Perangkat Daerah (OPD) yang mengalami penurunan motivasi atau disonansi kognitif akibat ketidakselarasan antara uraian jabatan formal dengan beban kerja teknis aktual. Fokus utama mencakup staf operasional hingga manajer menengah yang berada dalam lingkungan birokrasi dengan dinamika tugas yang sering berubah.",
+  "folder": "Zona ASN",
+  "trackDescription": "Mengukur jarak antara ekspektasi ASN terhadap bidang tugasnya dengan realitas pekerjaan teknis yang dihadapi sehari-hari di OPD tersebut. Pemetaan ini sangat berguna untuk mendeteksi akar masalah dari keluhan ketidakcocokan job desk yang berpotensi menurunkan produktivitas pelayanan.",
+  "trackName": "Analisis Kesenjangan Ekspektasi Jabatan (Job Expectation Gap Analysis)",
+  "id": "track_1784613674845",
+  "steps": [
+    {
+      "stepNumber": 1,
+      "description": "Mengevaluasi sejauh mana individu memahami tanggung jawab utama, KPI, dan standar kinerja yang diharapkan oleh perusahaan.",
+      "fields": [
+        {
+          "id": "namaUsaha",
+          "type": "text",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Nama Lengkap Anda"
+        },
+        {
+          "type": "text",
+          "id": "namaPengisi",
+          "gridSpan": 2,
+          "label": "Jabatan",
+          "required": true
+        },
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Sangat tidak jelas, seringkali membingungkan"
+            },
+            {
+              "label": "Cukup jelas, namun ada beberapa area abu-abu",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Jelas, namun terkadang ada interpretasi berbeda"
+            },
+            {
+              "weight": 75,
+              "label": "Sangat jelas dan terperinci"
+            },
+            {
+              "weight": 100,
+              "label": "Sangat jelas, terperinci, dan selalu relevan"
+            }
+          ],
+          "required": true,
+          "label": "Seberapa jelas Anda memahami deskripsi tugas dan tanggung jawab utama peran Anda saat ini?",
+          "id": "pemahamanTugas",
+          "type": "radio"
+        },
+        {
+          "type": "radio",
+          "id": "ekspektasiRealita",
+          "label": "Bagaimana keselarasan antara ekspektasi Anda terhadap peran ini sebelum bergabung dengan realitas tugas yang Anda hadapi sehari-hari?",
+          "required": true,
+          "options": [
+            {
+              "label": "Sangat berbeda, banyak kejutan negatif",
+              "weight": 0
+            },
+            {
+              "weight": 25,
+              "label": "Cukup berbeda, ada beberapa penyesuaian besar"
+            },
+            {
+              "weight": 50,
+              "label": "Ada sedikit perbedaan, namun mudah diadaptasi"
+            },
+            {
+              "weight": 75,
+              "label": "Cukup selaras, sesuai dengan yang dibayangkan"
+            },
+            {
+              "weight": 100,
+              "label": "Sangat selaras, persis seperti yang diharapkan"
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "label": "Mohon jelaskan secara singkat area tugas atau aspek peran yang paling berbeda dari ekspektasi awal Anda.",
+          "required": true,
+          "gridSpan": 2,
+          "showIf": {
+            "equals": "Sangat berbeda, banyak kejutan negatif",
+            "fieldId": "ekspektasiRealita"
+          },
+          "id": "alasanPerbedaanEkspektasi",
+          "type": "textarea"
+        },
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Sangat tidak selaras, merasa terpaksa"
+            },
+            {
+              "weight": 25,
+              "label": "Kurang selaras, sering merasa bosan"
+            },
+            {
+              "weight": 50,
+              "label": "Cukup selaras, ada beberapa tugas yang menarik"
+            },
+            {
+              "label": "Selaras, sebagian besar tugas menarik",
+              "weight": 75
+            },
+            {
+              "label": "Sangat selaras, menikmati setiap tugas",
+              "weight": 100
+            }
+          ],
+          "label": "Seberapa besar minat pribadi Anda selaras dengan tugas-tugas utama yang Anda kerjakan saat ini?",
+          "required": true,
+          "type": "radio",
+          "id": "minatTugas"
+        },
+        {
+          "id": "kompetensiTeknis",
+          "type": "radio",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Sangat tidak yakin, sering kesulitan",
+              "weight": 0
+            },
+            {
+              "weight": 25,
+              "label": "Kurang yakin, butuh banyak bantuan"
+            },
+            {
+              "label": "Cukup yakin, bisa menyelesaikan dengan usaha ekstra",
+              "weight": 50
+            },
+            {
+              "label": "Yakin, mampu menyelesaikan sebagian besar tugas",
+              "weight": 75
+            },
+            {
+              "label": "Sangat yakin, menguasai semua tugas inti",
+              "weight": 100
+            }
+          ],
+          "label": "Seberapa yakin Anda dengan kompetensi teknis yang Anda miliki untuk menyelesaikan tugas-tugas inti peran Anda secara efektif?",
+          "required": true
+        },
+        {
+          "options": [
+            {
+              "label": "Sangat membutuhkan, ada banyak area yang perlu diperbaiki",
+              "weight": 0
+            },
+            {
+              "label": "Cukup membutuhkan, ada beberapa keterampilan kunci yang perlu diasah",
+              "weight": 50
+            },
+            {
+              "label": "Tidak terlalu membutuhkan, hanya sedikit penyegaran",
+              "weight": 75
+            },
+            {
+              "label": "Tidak membutuhkan, sudah merasa sangat kompeten",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Apakah Anda merasa membutuhkan pelatihan atau pengembangan keterampilan spesifik untuk meningkatkan kinerja Anda dalam peran ini?",
+          "required": true,
+          "type": "radio",
+          "id": "kebutuhanPelatihan"
+        },
+        {
+          "gridSpan": 2,
+          "label": "Mohon sebutkan jenis pelatihan atau keterampilan spesifik yang Anda rasa paling dibutuhkan saat ini.",
+          "required": true,
+          "showIf": {
+            "fieldId": "kebutuhanPelatihan",
+            "equals": "Sangat membutuhkan, ada banyak area yang perlu diperbaiki"
+          },
+          "type": "textarea",
+          "id": "jenisPelatihan"
+        },
+        {
+          "type": "radio",
+          "id": "adaptabilitasTugas",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Sangat sulit, sering merasa kewalahan"
+            },
+            {
+              "weight": 25,
+              "label": "Cukup sulit, butuh waktu lama untuk menyesuaikan diri"
+            },
+            {
+              "label": "Cukup mudah, bisa beradaptasi dengan sedikit usaha",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Mudah, cepat beradaptasi dengan perubahan"
+            },
+            {
+              "label": "Sangat mudah, melihat perubahan sebagai tantangan positif",
+              "weight": 100
+            }
+          ],
+          "label": "Seberapa mudah Anda beradaptasi dengan perubahan prioritas atau tugas baru yang muncul dalam pekerjaan Anda?",
+          "required": true
+        },
+        {
+          "label": "Seberapa jelas Anda melihat bagaimana pekerjaan Anda berkontribusi pada tujuan dan sasaran organisasi secara keseluruhan?",
+          "required": true,
+          "options": [
+            {
+              "label": "Sangat tidak jelas, merasa pekerjaan tidak berdampak",
+              "weight": 0
+            },
+            {
+              "label": "Kurang jelas, sulit melihat relevansinya",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Cukup jelas, memahami sebagian kontribusi"
+            },
+            {
+              "label": "Jelas, memahami kontribusi utama",
+              "weight": 75
+            },
+            {
+              "label": "Sangat jelas, merasa menjadi bagian integral dari pencapaian tujuan",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2,
+          "id": "kontribusiTujuan",
+          "type": "radio"
+        },
+        {
+          "required": true,
+          "label": "Bagaimana tingkat kepuasan Anda terhadap jalur karir dan peluang pengembangan yang Anda harapkan dari peran ini?",
+          "options": [
+            {
+              "weight": 0,
+              "label": "Sangat tidak puas, merasa tidak ada prospek"
+            },
+            {
+              "weight": 25,
+              "label": "Kurang puas, prospek tidak sesuai harapan"
+            },
+            {
+              "weight": 50,
+              "label": "Cukup puas, ada beberapa peluang yang menarik"
+            },
+            {
+              "weight": 75,
+              "label": "Puas, jalur karir cukup jelas dan menjanjikan"
+            },
+            {
+              "label": "Sangat puas, sesuai dengan ambisi karir",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2,
+          "type": "radio",
+          "id": "kepuasanKarir"
+        }
+      ],
+      "title": "Klarifikasi Ekspektasi & Pemahaman Peran"
+    },
+    {
+      "stepNumber": 2,
+      "title": "Evaluasi Kompetensi & Keterampilan Teknis",
+      "fields": [
+        {
+          "type": "radio",
+          "id": "keselarasanKeterampilanTeknis",
+          "required": true,
+          "label": "Seberapa selaras keterampilan teknis yang Anda miliki saat ini dengan tuntutan utama peran Anda?",
+          "options": [
+            {
+              "label": "Sangat Tidak Selaras",
+              "weight": 0
+            },
+            {
+              "label": "Cukup Selaras, Perlu Banyak Peningkatan",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Selaras, Namun Ada Beberapa Area Perbaikan"
+            },
+            {
+              "weight": 75,
+              "label": "Sangat Selaras, Hanya Perlu Sedikit Penyesuaian"
+            },
+            {
+              "label": "Sepenuhnya Selaras dan Optimal",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "type": "textarea",
+          "id": "areaPeningkatanKeterampilan",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Sebutkan 1-3 area keterampilan teknis spesifik yang menurut Anda paling membutuhkan peningkatan untuk mendukung kinerja Anda."
+        },
+        {
+          "id": "partisipasiPelatihanTeknis",
+          "type": "radio",
+          "label": "Dalam 12 bulan terakhir, apakah Anda telah mengikuti pelatihan atau sertifikasi teknis formal yang relevan dengan peran Anda?",
+          "required": true,
+          "options": [
+            {
+              "label": "Belum Pernah",
+              "weight": 0
+            },
+            {
+              "label": "Pernah, Namun Tidak Relevan",
+              "weight": 25
+            },
+            {
+              "weight": 75,
+              "label": "Pernah, dan Cukup Relevan"
+            },
+            {
+              "label": "Pernah, dan Sangat Relevan",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "showIf": {
+            "equals": "Belum Pernah",
+            "fieldId": "partisipasiPelatihanTeknis"
+          },
+          "type": "textarea",
+          "id": "alasanTidakPelatihan",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda belum pernah mengikuti pelatihan atau sertifikasi teknis formal yang relevan."
+        },
+        {
+          "required": true,
+          "label": "Jika Anda pernah mengikuti pelatihan/sertifikasi, mohon unggah bukti partisipasi atau sertifikat Anda.",
+          "fileAccept": ".pdf,.jpg,.png",
+          "gridSpan": 2,
+          "description": "Unggah dalam format PDF, JPG, atau PNG.",
+          "id": "buktiPelatihanTeknis",
+          "type": "file",
+          "showIf": {
+            "fieldId": "partisipasiPelatihanTeknis",
+            "equals": "Pernah, dan Sangat Relevan"
+          }
+        },
+        {
+          "label": "Seberapa efektif pelatihan atau sertifikasi yang Anda ikuti dalam meningkatkan kinerja teknis Anda?",
+          "required": true,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Tidak Efektif Sama Sekali"
+            },
+            {
+              "label": "Kurang Efektif",
+              "weight": 25
+            },
+            {
+              "label": "Cukup Efektif",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Efektif"
+            },
+            {
+              "weight": 100,
+              "label": "Sangat Efektif"
+            }
+          ],
+          "gridSpan": 2,
+          "showIf": {
+            "equals": "Pernah, dan Sangat Relevan",
+            "fieldId": "partisipasiPelatihanTeknis"
+          },
+          "type": "radio",
+          "id": "efektivitasPelatihan"
+        },
+        {
+          "type": "radio",
+          "id": "sumberDayaPengembangan",
+          "options": [
+            {
+              "weight": 0,
+              "label": "Tidak Memadai Sama Sekali"
+            },
+            {
+              "weight": 25,
+              "label": "Kurang Memadai"
+            },
+            {
+              "label": "Cukup Memadai",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Memadai"
+            },
+            {
+              "weight": 100,
+              "label": "Sangat Memadai"
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Apakah Anda memiliki akses yang memadai terhadap sumber daya (misalnya, perangkat lunak, alat, dokumentasi, mentor ahli) untuk mengembangkan keterampilan teknis Anda?",
+          "required": true
+        },
+        {
+          "gridSpan": 2,
+          "label": "Mohon jelaskan mengapa Anda merasa akses terhadap sumber daya pengembangan keterampilan teknis Anda tidak memadai.",
+          "required": true,
+          "type": "textarea",
+          "id": "justifikasiSumberDaya",
+          "showIf": {
+            "fieldId": "sumberDayaPengembangan",
+            "equals": "Tidak Memadai Sama Sekali"
+          }
+        },
+        {
+          "required": true,
+          "label": "Seberapa sering Anda merasa perlu mempelajari atau menerapkan keterampilan teknis baru untuk menyelesaikan tugas-tugas Anda secara efektif?",
+          "options": [
+            {
+              "label": "Jarang Sekali",
+              "weight": 0
+            },
+            {
+              "weight": 25,
+              "label": "Kadang-kadang"
+            },
+            {
+              "weight": 50,
+              "label": "Cukup Sering"
+            },
+            {
+              "weight": 75,
+              "label": "Sering"
+            },
+            {
+              "label": "Sangat Sering, Hampir Setiap Hari",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2,
+          "type": "radio",
+          "id": "frekuensiPembelajaranBaru"
+        },
+        {
+          "label": "Apakah ada tugas-tugas spesifik yang terasa lebih sulit atau memakan waktu lebih lama karena kesenjangan dalam keterampilan teknis Anda? Jika ada, sebutkan.",
+          "required": false,
+          "gridSpan": 2,
+          "id": "dampakKesenjanganProduktivitas",
+          "type": "textarea"
+        },
+        {
+          "type": "radio",
+          "id": "keyakinanMenguasaiSkillBaru",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Tidak Yakin Sama Sekali"
+            },
+            {
+              "weight": 25,
+              "label": "Kurang Yakin"
+            },
+            {
+              "label": "Cukup Yakin",
+              "weight": 50
+            },
+            {
+              "label": "Yakin",
+              "weight": 75
+            },
+            {
+              "label": "Sangat Yakin",
+              "weight": 100
+            }
+          ],
+          "required": true,
+          "label": "Seberapa yakin Anda dapat dengan cepat menguasai keterampilan teknis baru yang mungkin dibutuhkan di masa depan untuk peran Anda?"
+        }
+      ],
+      "description": "Mengukur kesenjangan antara keterampilan teknis yang dimiliki saat ini dengan yang dibutuhkan untuk menjalankan peran secara optimal."
+    },
+    {
+      "stepNumber": 3,
+      "fields": [
+        {
+          "options": [
+            {
+              "label": "Sangat Jarang",
+              "weight": 0
+            },
+            {
+              "label": "Jarang",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Kadang-kadang"
+            },
+            {
+              "weight": 75,
+              "label": "Sering"
+            },
+            {
+              "weight": 100,
+              "label": "Sangat Sering"
+            }
+          ],
+          "gridSpan": 2,
+          "required": true,
+          "label": "Seberapa sering Anda mengambil inisiatif untuk menyelesaikan tugas atau proyek di luar deskripsi pekerjaan formal Anda?",
+          "id": "motivasiProaktif",
+          "type": "radio"
+        },
+        {
+          "type": "textarea",
+          "id": "alasanTidakPuasKarir",
+          "label": "Mohon jelaskan mengapa Anda merasa tidak puas dengan keselarasan karir Anda.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda merasa tidak puas dengan keselarasan karir Anda.",
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "alasanTidakPuasKarir2"
+        },
+        {
+          "options": [
+            {
+              "weight": 0,
+              "label": "Sangat Tidak Selaras"
+            },
+            {
+              "label": "Tidak Selaras",
+              "weight": 25
+            },
+            {
+              "label": "Cukup Selaras",
+              "weight": 50
+            },
+            {
+              "label": "Selaras",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Sangat Selaras"
+            }
+          ],
+          "gridSpan": 2,
+          "required": true,
+          "label": "Apakah nilai-nilai pribadi Anda selaras dengan nilai-nilai yang dipromosikan dan dipraktikkan di lingkungan kerja Anda?",
+          "id": "kesesuaianNilai",
+          "type": "radio"
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan aspek ketidakselarasan antara nilai pribadi dan lingkungan kerja Anda.",
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "kesesuaianNilai",
+            "equals": "Sangat Tidak Selaras"
+          },
+          "id": "alasanTidakSelarasNilai",
+          "type": "textarea"
+        },
+        {
+          "gridSpan": 2,
+          "label": "Mohon jelaskan aspek ketidakselarasan antara nilai pribadi dan lingkungan kerja Anda.",
+          "required": true,
+          "showIf": {
+            "fieldId": "kesesuaianNilai",
+            "equals": "Tidak Selaras"
+          },
+          "type": "textarea",
+          "id": "alasanTidakSelarasNilai2"
+        },
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Sangat Kurang",
+              "weight": 0
+            },
+            {
+              "label": "Kurang",
+              "weight": 25
+            },
+            {
+              "label": "Cukup",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Memadai"
+            },
+            {
+              "label": "Sangat Memadai",
+              "weight": 100
+            }
+          ],
+          "required": true,
+          "label": "Seberapa besar Anda merasa tugas-tugas Anda saat ini memberikan tantangan yang memadai dan peluang untuk pengembangan keterampilan baru?",
+          "type": "radio",
+          "id": "tantanganPengembangan"
+        },
+        {
+          "type": "textarea",
+          "id": "alasanKurangTantangan",
+          "showIf": {
+            "equals": "Sangat Kurang",
+            "fieldId": "tantanganPengembangan"
+          },
+          "required": true,
+          "label": "Mohon uraikan mengapa Anda merasa kurang mendapatkan tantangan atau peluang pengembangan.",
+          "gridSpan": 2
+        },
+        {
+          "showIf": {
+            "fieldId": "tantanganPengembangan",
+            "equals": "Kurang"
+          },
+          "id": "alasanKurangTantangan2",
+          "type": "textarea",
+          "required": true,
+          "label": "Mohon uraikan mengapa Anda merasa kurang mendapatkan tantangan atau peluang pengembangan.",
+          "gridSpan": 2
+        },
+        {
+          "id": "pengakuanApresiasi",
+          "type": "radio",
+          "options": [
+            {
+              "weight": 0,
+              "label": "Sangat Jarang"
+            },
+            {
+              "weight": 25,
+              "label": "Jarang"
+            },
+            {
+              "weight": 50,
+              "label": "Kadang-kadang"
+            },
+            {
+              "label": "Sering",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Sangat Sering"
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Seberapa sering Anda merasa kontribusi dan upaya Anda diakui serta dihargai oleh atasan atau rekan kerja?",
+          "required": true
+        },
+        {
+          "label": "Mohon jelaskan situasi di mana Anda merasa kurang mendapatkan pengakuan atau apresiasi.",
+          "required": true,
+          "gridSpan": 2,
+          "showIf": {
+            "equals": "Sangat Jarang",
+            "fieldId": "pengakuanApresiasi"
+          },
+          "id": "alasanKurangApresiasi",
+          "type": "textarea"
+        },
+        {
+          "showIf": {
+            "fieldId": "pengakuanApresiasi",
+            "equals": "Jarang"
+          },
+          "type": "textarea",
+          "id": "alasanKurangApresiasi2",
+          "label": "Mohon jelaskan situasi di mana Anda merasa kurang mendapatkan pengakuan atau apresiasi.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "required": true,
+          "label": "Apakah Anda merasa dilibatkan dalam proses pengambilan keputusan yang secara langsung memengaruhi pekerjaan atau tim Anda?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Tidak Pernah"
+            },
+            {
+              "label": "Jarang",
+              "weight": 25
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Sering"
+            },
+            {
+              "label": "Selalu",
+              "weight": 100
+            }
+          ],
+          "type": "radio",
+          "id": "keterlibatanKeputusan"
+        },
+        {
+          "label": "Mohon berikan contoh situasi di mana Anda merasa tidak dilibatkan dalam pengambilan keputusan.",
+          "required": true,
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "keterlibatanKeputusan",
+            "equals": "Tidak Pernah"
+          },
+          "id": "alasanTidakDilibatkan",
+          "type": "textarea"
+        },
+        {
+          "required": true,
+          "label": "Mohon berikan contoh situasi di mana Anda merasa tidak dilibatkan dalam pengambilan keputusan.",
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "keterlibatanKeputusan",
+            "equals": "Jarang"
+          },
+          "id": "alasanTidakDilibatkan2",
+          "type": "textarea"
+        },
+        {
+          "type": "radio",
+          "id": "adaptabilitasPerubahan",
+          "required": true,
+          "label": "Bagaimana tingkat adaptabilitas Anda terhadap perubahan prioritas, proses kerja, atau teknologi baru di lingkungan kerja?",
+          "options": [
+            {
+              "label": "Sangat Sulit Beradaptasi",
+              "weight": 0
+            },
+            {
+              "weight": 25,
+              "label": "Sulit Beradaptasi"
+            },
+            {
+              "weight": 50,
+              "label": "Cukup Adaptif"
+            },
+            {
+              "label": "Adaptif",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Sangat Adaptif"
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan tantangan yang Anda hadapi dalam beradaptasi terhadap perubahan.",
+          "showIf": {
+            "equals": "Sangat Sulit Beradaptasi",
+            "fieldId": "adaptabilitasPerubahan"
+          },
+          "id": "alasanSulitAdaptasi",
+          "type": "textarea"
+        },
+        {
+          "showIf": {
+            "equals": "Sulit Beradaptasi",
+            "fieldId": "adaptabilitasPerubahan"
+          },
+          "type": "textarea",
+          "id": "alasanSulitAdaptasi2",
+          "label": "Mohon jelaskan tantangan yang Anda hadapi dalam beradaptasi terhadap perubahan.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Tidak Pernah",
+              "weight": 100
+            },
+            {
+              "weight": 75,
+              "label": "Jarang"
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 50
+            },
+            {
+              "label": "Sering",
+              "weight": 25
+            },
+            {
+              "label": "Sangat Sering",
+              "weight": 0
+            }
+          ],
+          "label": "Seberapa sering Anda mengalami perasaan lelah secara emosional atau fisik yang berlebihan (burnout) akibat pekerjaan Anda?",
+          "required": true,
+          "type": "radio",
+          "id": "potensiBurnout"
+        },
+        {
+          "showIf": {
+            "equals": "Sering",
+            "fieldId": "potensiBurnout"
+          },
+          "id": "penjelasanBurnout",
+          "type": "textarea",
+          "required": true,
+          "label": "Mohon jelaskan faktor-faktor yang berkontribusi terhadap perasaan burnout yang Anda alami.",
+          "gridSpan": 2
+        },
+        {
+          "showIf": {
+            "fieldId": "potensiBurnout",
+            "equals": "Sangat Sering"
+          },
+          "type": "textarea",
+          "id": "penjelasanBurnout2",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan faktor-faktor yang berkontribusi terhadap perasaan burnout yang Anda alami."
+        },
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Tidak Pernah",
+              "weight": 100
+            },
+            {
+              "weight": 75,
+              "label": "Jarang"
+            },
+            {
+              "weight": 50,
+              "label": "Kadang-kadang"
+            },
+            {
+              "weight": 25,
+              "label": "Sering"
+            },
+            {
+              "weight": 0,
+              "label": "Sangat Sering"
+            }
+          ],
+          "required": true,
+          "label": "Dalam enam bulan terakhir, apakah Anda pernah mempertimbangkan untuk mencari peluang kerja di luar peran atau organisasi Anda saat ini?",
+          "id": "keinginanAtrisi",
+          "type": "radio"
+        },
+        {
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan alasan utama Anda mempertimbangkan untuk mencari peluang di luar organisasi.",
+          "id": "alasanAtrisi",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "keinginanAtrisi",
+            "equals": "Kadang-kadang"
+          }
+        },
+        {
+          "gridSpan": 2,
+          "label": "Mohon jelaskan alasan utama Anda mempertimbangkan untuk mencari peluang di luar organisasi.",
+          "required": true,
+          "type": "textarea",
+          "id": "alasanAtrisi2",
+          "showIf": {
+            "equals": "Sering",
+            "fieldId": "keinginanAtrisi"
+          }
+        },
+        {
+          "gridSpan": 2,
+          "label": "Mohon jelaskan alasan utama Anda mempertimbangkan untuk mencari peluang di luar organisasi.",
+          "required": true,
+          "showIf": {
+            "equals": "Sangat Sering",
+            "fieldId": "keinginanAtrisi"
+          },
+          "id": "alasanAtrisi3",
+          "type": "textarea"
+        },
+        {
+          "type": "radio",
+          "id": "dampakPekerjaan",
+          "options": [
+            {
+              "label": "Sangat Kecil",
+              "weight": 0
+            },
+            {
+              "weight": 25,
+              "label": "Kecil"
+            },
+            {
+              "weight": 50,
+              "label": "Cukup"
+            },
+            {
+              "label": "Besar",
+              "weight": 75
+            },
+            {
+              "label": "Sangat Besar",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Seberapa besar Anda merasa pekerjaan Anda memiliki dampak yang berarti dan berkontribusi positif terhadap tujuan organisasi atau masyarakat?",
+          "required": true
+        },
+        {
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda merasa dampak pekerjaan Anda kurang signifikan.",
+          "showIf": {
+            "equals": "Sangat Kecil",
+            "fieldId": "dampakPekerjaan"
+          },
+          "id": "alasanDampakKecil",
+          "type": "textarea"
+        },
+        {
+          "showIf": {
+            "equals": "Kecil",
+            "fieldId": "dampakPekerjaan"
+          },
+          "type": "textarea",
+          "id": "alasanDampakKecil2",
+          "gridSpan": 2,
+          "label": "Mohon jelaskan mengapa Anda merasa dampak pekerjaan Anda kurang signifikan.",
+          "required": true
+        }
+      ],
+      "title": "Analisis Motivasi & Kesesuaian Perilaku",
+      "description": "Menilai tingkat motivasi, proaktivitas, dan kesesuaian budaya kerja individu terhadap tuntutan peran yang diberikan."
+    },
+    {
+      "description": "Mengidentifikasi apakah individu memiliki kapasitas waktu dan bandwidth mental yang cukup untuk memenuhi ekspektasi pekerjaan tanpa risiko kelelahan.",
+      "title": "Tinjauan Kapasitas & Manajemen Beban Kerja",
+      "fields": [
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Sangat Ringan",
+              "weight": 100
+            },
+            {
+              "label": "Cukup Ringan",
+              "weight": 75
+            },
+            {
+              "label": "Sesuai Ekspektasi",
+              "weight": 50
+            },
+            {
+              "weight": 25,
+              "label": "Cukup Berat"
+            },
+            {
+              "label": "Sangat Berat",
+              "weight": 0
+            }
+          ],
+          "label": "Bagaimana Anda menilai tingkat beban kerja harian Anda saat ini?",
+          "required": true,
+          "id": "bebanKerjaHarian",
+          "type": "radio"
+        },
+        {
+          "type": "radio",
+          "id": "penyelesaianTugasTepatWaktu",
+          "required": true,
+          "label": "Seberapa sering Anda mampu menyelesaikan semua tugas sesuai tenggat waktu yang ditetapkan?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Selalu"
+            },
+            {
+              "label": "Sering",
+              "weight": 75
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 50
+            },
+            {
+              "label": "Jarang",
+              "weight": 25
+            },
+            {
+              "weight": 0,
+              "label": "Tidak Pernah"
+            }
+          ]
+        },
+        {
+          "id": "alasanJarangTepatWaktu",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Jarang",
+            "fieldId": "penyelesaianTugasTepatWaktu"
+          },
+          "gridSpan": 2,
+          "label": "Mohon jelaskan faktor utama yang menghambat Anda menyelesaikan tugas tepat waktu.",
+          "required": true
+        },
+        {
+          "label": "Mohon uraikan alasan mendasar mengapa Anda tidak pernah mampu menyelesaikan tugas tepat waktu.",
+          "required": true,
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "penyelesaianTugasTepatWaktu",
+            "equals": "Tidak Pernah"
+          },
+          "type": "textarea",
+          "id": "alasanTidakPernahTepatWaktu"
+        },
+        {
+          "type": "radio",
+          "id": "prioritisasiTugas",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Sangat Jelas"
+            },
+            {
+              "label": "Cukup Jelas",
+              "weight": 75
+            },
+            {
+              "weight": 50,
+              "label": "Kadang Jelas, Kadang Tidak"
+            },
+            {
+              "label": "Kurang Jelas",
+              "weight": 25
+            },
+            {
+              "weight": 0,
+              "label": "Tidak Jelas Sama Sekali"
+            }
+          ],
+          "label": "Apakah Anda merasa memiliki kejelasan yang memadai dalam memprioritaskan tugas-tugas Anda?",
+          "required": true
+        },
+        {
+          "id": "waktuPengembanganDiri",
+          "type": "radio",
+          "label": "Apakah Anda memiliki cukup waktu untuk mengikuti pelatihan atau pengembangan diri yang relevan dengan pekerjaan Anda?",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Selalu Cukup"
+            },
+            {
+              "label": "Sering Cukup",
+              "weight": 75
+            },
+            {
+              "weight": 50,
+              "label": "Kadang Cukup"
+            },
+            {
+              "weight": 25,
+              "label": "Jarang Cukup"
+            },
+            {
+              "label": "Tidak Pernah Cukup",
+              "weight": 0
+            }
+          ]
+        },
+        {
+          "type": "radio",
+          "id": "dampakBebanKerjaKualitas",
+          "required": true,
+          "label": "Bagaimana beban kerja Anda saat ini memengaruhi kualitas hasil pekerjaan Anda?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Meningkatkan Kualitas",
+              "weight": 100
+            },
+            {
+              "label": "Tidak Berdampak",
+              "weight": 75
+            },
+            {
+              "weight": 50,
+              "label": "Sedikit Menurunkan Kualitas"
+            },
+            {
+              "label": "Cukup Menurunkan Kualitas",
+              "weight": 25
+            },
+            {
+              "label": "Sangat Menurunkan Kualitas",
+              "weight": 0
+            }
+          ]
+        },
+        {
+          "required": true,
+          "label": "Seberapa sering Anda bekerja di luar jam kerja normal (lembur)?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Tidak Pernah",
+              "weight": 100
+            },
+            {
+              "label": "Jarang",
+              "weight": 75
+            },
+            {
+              "weight": 50,
+              "label": "Kadang-kadang"
+            },
+            {
+              "weight": 25,
+              "label": "Sering"
+            },
+            {
+              "label": "Hampir Setiap Hari",
+              "weight": 0
+            }
+          ],
+          "type": "radio",
+          "id": "frekuensiLembur"
+        },
+        {
+          "showIf": {
+            "fieldId": "frekuensiLembur",
+            "equals": "Sering"
+          },
+          "id": "penyebabLembur",
+          "type": "textarea",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan penyebab utama Anda perlu bekerja di luar jam kerja normal."
+        },
+        {
+          "options": [
+            {
+              "weight": 100,
+              "label": "Sangat Efisien"
+            },
+            {
+              "weight": 75,
+              "label": "Cukup Efisien"
+            },
+            {
+              "weight": 50,
+              "label": "Rata-rata"
+            },
+            {
+              "label": "Kurang Efisien",
+              "weight": 25
+            },
+            {
+              "weight": 0,
+              "label": "Sangat Tidak Efisien"
+            }
+          ],
+          "gridSpan": 2,
+          "required": true,
+          "label": "Seberapa efisien proses kerja yang Anda jalani dalam menyelesaikan tugas-tugas utama?",
+          "type": "radio",
+          "id": "efisiensiProsesKerja"
+        },
+        {
+          "type": "textarea",
+          "id": "usulanPerbaikanKapasitas",
+          "required": false,
+          "label": "Jika ada, usulan apa yang Anda miliki untuk meningkatkan manajemen beban kerja atau efisiensi proses di unit Anda?",
+          "gridSpan": 2
+        }
+      ],
+      "stepNumber": 4
+    },
+    {
+      "description": "Mengevaluasi kecukupan fasilitas, perangkat kerja, serta dukungan dari manajemen dan rekan kerja dalam memfasilitasi pencapaian target.",
+      "fields": [
+        {
+          "id": "ketersediaanAlat",
+          "type": "radio",
+          "required": true,
+          "label": "Seberapa memadai peralatan dan perangkat lunak yang Anda gunakan untuk menyelesaikan tugas utama Anda?",
+          "options": [
+            {
+              "label": "Sangat Tidak Memadai",
+              "weight": 0
+            },
+            {
+              "weight": 25,
+              "label": "Cukup Memadai, namun ada kekurangan"
+            },
+            {
+              "weight": 50,
+              "label": "Memadai, namun perlu peningkatan"
+            },
+            {
+              "label": "Sangat Memadai",
+              "weight": 75
+            },
+            {
+              "label": "Optimal dan Mendukung Penuh",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "label": "Mohon jelaskan kekurangan atau ketidaksesuaian peralatan/perangkat lunak yang Anda alami.",
+          "required": true,
+          "gridSpan": 2,
+          "showIf": {
+            "equals": "Sangat Tidak Memadai",
+            "fieldId": "ketersediaanAlat"
+          },
+          "id": "justifikasiAlat",
+          "type": "textarea"
+        },
+        {
+          "type": "radio",
+          "id": "aksesInformasi",
+          "required": true,
+          "label": "Apakah Anda memiliki akses yang cukup terhadap informasi, data, atau pengetahuan yang relevan untuk mendukung pekerjaan Anda?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Sangat Terbatas, sering menghambat",
+              "weight": 0
+            },
+            {
+              "weight": 25,
+              "label": "Terbatas, kadang menghambat"
+            },
+            {
+              "weight": 50,
+              "label": "Cukup, namun perlu perbaikan"
+            },
+            {
+              "label": "Memadai dan mudah diakses",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Sangat Memadai dan komprehensif"
+            }
+          ]
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiInformasi",
+          "showIf": {
+            "fieldId": "aksesInformasi",
+            "equals": "Sangat Terbatas, sering menghambat"
+          },
+          "gridSpan": 2,
+          "label": "Mohon jelaskan hambatan akses informasi atau data yang Anda hadapi.",
+          "required": true
+        },
+        {
+          "type": "radio",
+          "id": "dukunganAtasan",
+          "required": true,
+          "label": "Seberapa sering Anda menerima umpan balik yang konstruktif dan dukungan dari atasan langsung Anda terkait kinerja dan pengembangan?",
+          "options": [
+            {
+              "label": "Jarang sekali atau tidak pernah",
+              "weight": 0
+            },
+            {
+              "weight": 25,
+              "label": "Kadang-kadang, namun tidak konsisten"
+            },
+            {
+              "label": "Cukup sering, namun bisa ditingkatkan",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Sering dan konsisten"
+            },
+            {
+              "label": "Sangat sering, proaktif, dan mendukung penuh",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "showIf": {
+            "equals": "Jarang sekali atau tidak pernah",
+            "fieldId": "dukunganAtasan"
+          },
+          "type": "textarea",
+          "id": "justifikasiAtasan",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda merasa kurang mendapatkan umpan balik atau dukungan dari atasan."
+        },
+        {
+          "options": [
+            {
+              "label": "Sangat kurang, sering terjadi miskomunikasi",
+              "weight": 0
+            },
+            {
+              "weight": 25,
+              "label": "Kurang mendukung, cenderung bekerja sendiri"
+            },
+            {
+              "label": "Cukup baik, namun ada ruang perbaikan",
+              "weight": 50
+            },
+            {
+              "label": "Baik dan saling mendukung",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Sangat baik, kolaboratif, dan sinergis"
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Bagaimana Anda menilai tingkat kolaborasi dan dukungan yang Anda terima dari rekan kerja dalam tim Anda?",
+          "required": true,
+          "id": "kolaborasiTim",
+          "type": "radio"
+        },
+        {
+          "id": "justifikasiTim",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Sangat kurang, sering terjadi miskomunikasi",
+            "fieldId": "kolaborasiTim"
+          },
+          "label": "Mohon jelaskan tantangan kolaborasi atau dukungan yang Anda alami dengan rekan kerja.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "type": "radio",
+          "id": "lingkunganFisik",
+          "required": true,
+          "label": "Apakah lingkungan kerja fisik Anda (misalnya, ruang kerja, pencahayaan, kenyamanan) mendukung produktivitas dan kesejahteraan Anda?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Sangat tidak mendukung, mengganggu konsentrasi",
+              "weight": 0
+            },
+            {
+              "label": "Kurang mendukung, ada beberapa ketidaknyamanan",
+              "weight": 25
+            },
+            {
+              "label": "Cukup mendukung, namun ada aspek yang perlu diperbaiki",
+              "weight": 50
+            },
+            {
+              "label": "Mendukung dan nyaman",
+              "weight": 75
+            },
+            {
+              "label": "Sangat mendukung, ergonomis, dan inspiratif",
+              "weight": 100
+            }
+          ]
+        },
+        {
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan aspek lingkungan kerja fisik yang menurut Anda tidak mendukung.",
+          "id": "justifikasiFisik",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "lingkunganFisik",
+            "equals": "Sangat tidak mendukung, mengganggu konsentrasi"
+          }
+        },
+        {
+          "options": [
+            {
+              "weight": 0,
+              "label": "Tidak ada kesempatan sama sekali"
+            },
+            {
+              "label": "Sangat terbatas, sulit diakses",
+              "weight": 25
+            },
+            {
+              "label": "Ada, namun kurang relevan atau frekuensinya rendah",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Cukup memadai dan relevan"
+            },
+            {
+              "label": "Sangat memadai, beragam, dan mendukung karir",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2,
+          "required": true,
+          "label": "Apakah Anda merasa memiliki kesempatan yang memadai untuk mengikuti pelatihan atau pengembangan keterampilan yang relevan dengan peran Anda?",
+          "id": "kesempatanPelatihan",
+          "type": "radio"
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiPelatihan",
+          "showIf": {
+            "fieldId": "kesempatanPelatihan",
+            "equals": "Tidak ada kesempatan sama sekali"
+          },
+          "label": "Mohon jelaskan mengapa Anda merasa kesempatan pelatihan kurang memadai atau tidak relevan.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "label": "Seberapa jelas ekspektasi dan tujuan pekerjaan yang ditetapkan untuk peran Anda?",
+          "required": true,
+          "options": [
+            {
+              "label": "Sangat tidak jelas, sering berubah-ubah",
+              "weight": 0
+            },
+            {
+              "label": "Kurang jelas, sering menimbulkan kebingungan",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Cukup jelas, namun ada beberapa area abu-abu"
+            },
+            {
+              "label": "Jelas dan mudah dipahami",
+              "weight": 75
+            },
+            {
+              "label": "Sangat jelas, terukur, dan selaras dengan tujuan",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2,
+          "id": "kejelasanEkspektasi",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "fieldId": "kejelasanEkspektasi",
+            "equals": "Sangat tidak jelas, sering berubah-ubah"
+          },
+          "id": "justifikasiEkspektasi",
+          "type": "textarea",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan mengapa ekspektasi pekerjaan Anda terasa tidak jelas atau membingungkan."
+        },
+        {
+          "id": "efisiensiProses",
+          "type": "radio",
+          "options": [
+            {
+              "label": "Sangat tidak efisien, sering menghambat",
+              "weight": 0
+            },
+            {
+              "weight": 25,
+              "label": "Kurang efisien, banyak birokrasi"
+            },
+            {
+              "label": "Cukup efisien, namun ada bottleneck",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Efisien dan mendukung pekerjaan"
+            },
+            {
+              "label": "Sangat efisien, streamlined, dan adaptif",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2,
+          "required": true,
+          "label": "Bagaimana Anda menilai efisiensi proses kerja dan prosedur internal dalam mendukung penyelesaian tugas Anda?"
+        },
+        {
+          "id": "justifikasiProses",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "efisiensiProses",
+            "equals": "Sangat tidak efisien, sering menghambat"
+          },
+          "label": "Mohon jelaskan proses kerja atau prosedur yang menurut Anda tidak efisien dan menghambat.",
+          "required": true,
+          "gridSpan": 2
+        }
+      ],
+      "title": "Penilaian Dukungan Lingkungan & Sumber Daya",
+      "stepNumber": 5
+    }
+  ],
+  "aiGenerationStatus": {
+    "updatedAt": "2026-07-21T06:04:41.318Z",
+    "phase": "COMPLETED",
+    "message": "Sukses! Formulir skala Enterprise (5 seksi) telah tervalidasi dan siap digunakan."
+  },
+  "preferredQuestionTypes": [
+    "radio_weight",
+    "number_metric",
+    "text_justification"
+  ],
+  "methodologyContext": "Menggunakan framework Person-Organization Fit (P-O Fit) dan Job Characteristics Model (JCM) untuk memetakan kesenjangan antara ekspektasi psikologis dan realitas fungsional. Analisis dilakukan melalui metode Gap Analysis berbasis kuesioner terstruktur yang divalidasi dengan teknik triangulasi data kualitatif untuk mengidentifikasi akar penyebab ketidakefektifan kinerja."
+}

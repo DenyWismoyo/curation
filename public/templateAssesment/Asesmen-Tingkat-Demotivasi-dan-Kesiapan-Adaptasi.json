@@ -1,0 +1,2446 @@
+{
+  "steps": [
+    {
+      "fields": [
+        {
+          "required": true,
+          "label": "Nama Lengkap Anda",
+          "gridSpan": 2,
+          "type": "text",
+          "id": "namaUsaha"
+        },
+        {
+          "gridSpan": 2,
+          "label": "Jabatan ",
+          "required": true,
+          "id": "namaPengisi",
+          "type": "text"
+        },
+        {
+          "required": true,
+          "label": "Seberapa sering Anda merasa lelah secara emosional akibat tuntutan pekerjaan Anda?",
+          "options": [
+            {
+              "label": "Tidak Pernah",
+              "weight": 100
+            },
+            {
+              "label": "Jarang",
+              "weight": 80
+            },
+            {
+              "weight": 50,
+              "label": "Kadang-kadang"
+            },
+            {
+              "weight": 25,
+              "label": "Sering"
+            },
+            {
+              "weight": 0,
+              "label": "Sangat Sering"
+            }
+          ],
+          "gridSpan": 2,
+          "type": "radio",
+          "id": "frekuensiKelelahanEmosional"
+        },
+        {
+          "options": [
+            {
+              "weight": 100,
+              "label": "Tidak Pernah"
+            },
+            {
+              "weight": 75,
+              "label": "Jarang"
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 45
+            },
+            {
+              "label": "Sering",
+              "weight": 20
+            },
+            {
+              "weight": 0,
+              "label": "Selalu"
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Apakah Anda merasa energi Anda terkuras habis di akhir hari kerja, bahkan setelah istirahat?",
+          "required": true,
+          "id": "energiTerkuras",
+          "type": "radio"
+        },
+        {
+          "label": "Apakah Anda mengalami gejala fisik seperti sakit kepala, gangguan tidur, atau masalah pencernaan yang Anda kaitkan dengan stres pekerjaan?",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Tidak Pernah"
+            },
+            {
+              "label": "Jarang",
+              "weight": 70
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 40
+            },
+            {
+              "label": "Sering",
+              "weight": 15
+            },
+            {
+              "weight": 0,
+              "label": "Sangat Sering"
+            }
+          ],
+          "type": "radio",
+          "id": "gejalaFisikStres"
+        },
+        {
+          "type": "textarea",
+          "id": "deskripsiGejalaFisik",
+          "showIf": {
+            "equals": "Sering",
+            "fieldId": "gejalaFisikStres"
+          },
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan lebih lanjut gejala fisik yang Anda alami dan seberapa sering terjadi."
+        },
+        {
+          "type": "textarea",
+          "id": "deskripsiGejalaFisikSangatSering",
+          "showIf": {
+            "equals": "Sangat Sering",
+            "fieldId": "gejalaFisikStres"
+          },
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan secara detail gejala fisik yang Anda alami, dampaknya, dan durasinya."
+        },
+        {
+          "type": "radio",
+          "id": "perasaanSinis",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Tidak Pernah",
+              "weight": 100
+            },
+            {
+              "label": "Jarang",
+              "weight": 70
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 40
+            },
+            {
+              "label": "Sering",
+              "weight": 15
+            },
+            {
+              "label": "Sangat Sering",
+              "weight": 0
+            }
+          ],
+          "label": "Seberapa sering Anda merasa sinis atau tidak peduli terhadap pekerjaan Anda atau orang-orang yang Anda layani?",
+          "required": true
+        },
+        {
+          "type": "radio",
+          "id": "keterikatanEmosional",
+          "label": "Apakah Anda merasa semakin menjauh secara emosional dari rekan kerja atau atasan Anda?",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Tidak Pernah"
+            },
+            {
+              "weight": 75,
+              "label": "Jarang"
+            },
+            {
+              "weight": 50,
+              "label": "Kadang-kadang"
+            },
+            {
+              "weight": 25,
+              "label": "Sering"
+            },
+            {
+              "label": "Selalu",
+              "weight": 0
+            }
+          ]
+        },
+        {
+          "type": "radio",
+          "id": "antusiasmeTugasBaru",
+          "label": "Seberapa besar antusiasme Anda saat memulai tugas baru atau proyek yang menantang?",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Sangat Antusias"
+            },
+            {
+              "weight": 75,
+              "label": "Cukup Antusias"
+            },
+            {
+              "label": "Biasa Saja",
+              "weight": 50
+            },
+            {
+              "label": "Kurang Antusias",
+              "weight": 25
+            },
+            {
+              "label": "Tidak Antusias Sama Sekali",
+              "weight": 0
+            }
+          ]
+        },
+        {
+          "label": "Apakah Anda merasa kemampuan Anda tidak dimanfaatkan sepenuhnya atau Anda kesulitan mencapai tujuan kerja Anda?",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Tidak Pernah",
+              "weight": 100
+            },
+            {
+              "label": "Jarang",
+              "weight": 70
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 40
+            },
+            {
+              "label": "Sering",
+              "weight": 15
+            },
+            {
+              "label": "Sangat Sering",
+              "weight": 0
+            }
+          ],
+          "id": "pemanfaatanKemampuan",
+          "type": "radio"
+        },
+        {
+          "id": "dampakKehidupanPribadi",
+          "type": "radio",
+          "required": true,
+          "label": "Apakah kelelahan atau stres dari pekerjaan mulai mempengaruhi kehidupan pribadi Anda (misalnya, hubungan, hobi, waktu luang)?",
+          "options": [
+            {
+              "label": "Tidak Pernah",
+              "weight": 100
+            },
+            {
+              "weight": 75,
+              "label": "Jarang"
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 50
+            },
+            {
+              "label": "Sering",
+              "weight": 25
+            },
+            {
+              "label": "Sangat Sering",
+              "weight": 0
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "type": "textarea",
+          "id": "alasanDampakPribadi",
+          "showIf": {
+            "fieldId": "dampakKehidupanPribadi",
+            "equals": "Sering"
+          },
+          "required": true,
+          "label": "Mohon jelaskan bagaimana kelelahan atau stres pekerjaan mempengaruhi kehidupan pribadi Anda.",
+          "gridSpan": 2
+        },
+        {
+          "showIf": {
+            "equals": "Sangat Sering",
+            "fieldId": "dampakKehidupanPribadi"
+          },
+          "id": "alasanDampakPribadiSangatSering",
+          "type": "textarea",
+          "required": true,
+          "label": "Mohon jelaskan secara rinci dampak kelelahan atau stres pekerjaan terhadap kehidupan pribadi Anda dan seberapa parah dampaknya.",
+          "gridSpan": 2
+        },
+        {
+          "options": [
+            {
+              "weight": 100,
+              "label": "Tidak Pernah"
+            },
+            {
+              "label": "Jarang",
+              "weight": 70
+            },
+            {
+              "weight": 40,
+              "label": "Kadang-kadang"
+            },
+            {
+              "label": "Sering",
+              "weight": 15
+            },
+            {
+              "weight": 0,
+              "label": "Sangat Sering"
+            }
+          ],
+          "gridSpan": 2,
+          "required": true,
+          "label": "Seberapa sering Anda mempertimbangkan untuk mencari pekerjaan lain atau mengundurkan diri dari pekerjaan Anda saat ini?",
+          "type": "radio",
+          "id": "niatMengundurkanDiri"
+        },
+        {
+          "label": "Mohon jelaskan alasan utama di balik pertimbangan Anda untuk mencari pekerjaan lain atau mengundurkan diri.",
+          "required": true,
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "niatMengundurkanDiri",
+            "equals": "Sering"
+          },
+          "id": "alasanNiatMengundurkanDiri",
+          "type": "textarea"
+        },
+        {
+          "gridSpan": 2,
+          "label": "Mohon jelaskan secara rinci alasan utama dan faktor pendorong di balik niat kuat Anda untuk mencari pekerjaan lain atau mengundurkan diri.",
+          "required": true,
+          "id": "alasanNiatMengundurkanDiriSangatSering",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Sangat Sering",
+            "fieldId": "niatMengundurkanDiri"
+          }
+        }
+      ],
+      "title": "Penilaian Kondisi Emosional & Kelelahan",
+      "description": "Mengevaluasi tingkat kelelahan fisik dan mental individu dalam rutinitas harian mereka.",
+      "stepNumber": 1
+    },
+    {
+      "description": "Mengukur sejauh mana individu merasa terasing, sinis, atau kehilangan makna terhadap pekerjaan dan lingkungannya.",
+      "title": "Evaluasi Keterikatan & Sinisme Kerja",
+      "fields": [
+        {
+          "id": "justifikasiKeterikatanEmosional",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "keterikatanEmosional",
+            "equals": "Kurang terikat, sering merasa biasa saja"
+          },
+          "placeholder": "Berikan penjelasan Anda di sini...",
+          "label": "Mohon jelaskan lebih lanjut mengapa Anda merasa kurang terikat atau acuh tak acuh terhadap pekerjaan Anda.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "placeholder": "Berikan penjelasan Anda di sini...",
+          "showIf": {
+            "equals": "Sama sekali tidak terikat, cenderung acuh tak acuh",
+            "fieldId": "keterikatanEmosional"
+          },
+          "type": "textarea",
+          "id": "justifikasiKeterikatanEmosionalKritis",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan secara rinci mengapa Anda merasa sama sekali tidak terikat dan cenderung acuh tak acuh."
+        },
+        {
+          "required": true,
+          "label": "Seberapa sering Anda merasa sinis atau skeptis terhadap inisiatif baru, perubahan kebijakan, atau tujuan organisasi?",
+          "options": [
+            {
+              "weight": 100,
+              "label": "Tidak pernah atau sangat jarang"
+            },
+            {
+              "label": "Kadang-kadang, namun masih bisa menerima",
+              "weight": 75
+            },
+            {
+              "label": "Cukup sering, sulit untuk melihat sisi positifnya",
+              "weight": 50
+            },
+            {
+              "weight": 0,
+              "label": "Hampir selalu, merasa pesimis dan menolak"
+            }
+          ],
+          "gridSpan": 2,
+          "id": "perasaanSinisme",
+          "type": "radio"
+        },
+        {
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan faktor-faktor yang menyebabkan Anda merasa sinis atau skeptis terhadap inisiatif di tempat kerja.",
+          "placeholder": "Berikan penjelasan Anda di sini...",
+          "showIf": {
+            "equals": "Cukup sering, sulit untuk melihat sisi positifnya",
+            "fieldId": "perasaanSinisme"
+          },
+          "id": "justifikasiPerasaanSinisme",
+          "type": "textarea"
+        },
+        {
+          "id": "justifikasiPerasaanSinismeKritis",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "perasaanSinisme",
+            "equals": "Hampir selalu, merasa pesimis dan menolak"
+          },
+          "placeholder": "Berikan penjelasan Anda di sini...",
+          "label": "Mohon jelaskan secara rinci mengapa Anda hampir selalu merasa pesimis dan menolak inisiatif baru.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "id": "dukunganRekanKerja",
+          "type": "radio",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Sangat kuat, merasa bagian dari tim yang solid"
+            },
+            {
+              "weight": 75,
+              "label": "Cukup kuat, ada dukungan namun tidak selalu konsisten"
+            },
+            {
+              "weight": 50,
+              "label": "Kurang kuat, sering merasa terisolasi atau kurang terhubung"
+            },
+            {
+              "label": "Sangat lemah, merasa tidak ada dukungan atau bahkan konflik",
+              "weight": 0
+            }
+          ],
+          "required": true,
+          "label": "Seberapa kuat Anda merasa didukung dan memiliki hubungan yang positif dengan rekan kerja Anda?"
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiDukunganRekanKerja",
+          "showIf": {
+            "equals": "Kurang kuat, sering merasa terisolasi atau kurang terhubung",
+            "fieldId": "dukunganRekanKerja"
+          },
+          "placeholder": "Berikan penjelasan Anda di sini...",
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda merasa kurang didukung atau terisolasi dari rekan kerja Anda.",
+          "gridSpan": 2
+        },
+        {
+          "gridSpan": 2,
+          "label": "Mohon jelaskan secara rinci mengapa Anda merasa sangat lemah dalam dukungan rekan kerja atau mengalami konflik.",
+          "required": true,
+          "placeholder": "Berikan penjelasan Anda di sini...",
+          "showIf": {
+            "equals": "Sangat lemah, merasa tidak ada dukungan atau bahkan konflik",
+            "fieldId": "dukunganRekanKerja"
+          },
+          "type": "textarea",
+          "id": "justifikasiDukunganRekanKerjaKritis"
+        },
+        {
+          "id": "kesempatanKompetensi",
+          "type": "radio",
+          "required": true,
+          "label": "Apakah Anda merasa memiliki kesempatan yang memadai untuk mengembangkan keterampilan dan kompetensi Anda di lingkungan kerja saat ini?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Selalu ada kesempatan dan saya aktif menggunakannya",
+              "weight": 100
+            },
+            {
+              "weight": 75,
+              "label": "Ada beberapa kesempatan, namun perlu inisiatif lebih"
+            },
+            {
+              "label": "Kesempatan terbatas, merasa stagnan dalam pengembangan diri",
+              "weight": 50
+            },
+            {
+              "label": "Tidak ada kesempatan sama sekali, merasa terhambat",
+              "weight": 0
+            }
+          ]
+        },
+        {
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda merasa kesempatan pengembangan kompetensi Anda terbatas atau stagnan.",
+          "placeholder": "Berikan penjelasan Anda di sini...",
+          "id": "justifikasiKesempatanKompetensi",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Kesempatan terbatas, merasa stagnan dalam pengembangan diri",
+            "fieldId": "kesempatanKompetensi"
+          }
+        },
+        {
+          "gridSpan": 2,
+          "label": "Mohon jelaskan secara rinci mengapa Anda merasa tidak ada kesempatan sama sekali untuk pengembangan diri.",
+          "required": true,
+          "placeholder": "Berikan penjelasan Anda di sini...",
+          "type": "textarea",
+          "id": "justifikasiKesempatanKompetensiKritis",
+          "showIf": {
+            "equals": "Tidak ada kesempatan sama sekali, merasa terhambat",
+            "fieldId": "kesempatanKompetensi"
+          }
+        },
+        {
+          "id": "otonomiKeputusan",
+          "type": "radio",
+          "options": [
+            {
+              "label": "Sangat besar, saya memiliki kendali penuh",
+              "weight": 100
+            },
+            {
+              "label": "Cukup besar, dengan beberapa batasan yang wajar",
+              "weight": 75
+            },
+            {
+              "weight": 50,
+              "label": "Terbatas, sering merasa harus mengikuti instruksi tanpa ruang gerak"
+            },
+            {
+              "label": "Sangat kecil, hampir tidak ada kebebasan dalam bekerja",
+              "weight": 0
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Seberapa besar kebebasan atau otonomi yang Anda rasakan dalam mengambil keputusan terkait cara Anda menyelesaikan pekerjaan?",
+          "required": true
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda merasa otonomi Anda terbatas dalam mengambil keputusan terkait pekerjaan.",
+          "gridSpan": 2,
+          "id": "justifikasiOtonomiKeputusan",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Terbatas, sering merasa harus mengikuti instruksi tanpa ruang gerak",
+            "fieldId": "otonomiKeputusan"
+          },
+          "placeholder": "Berikan penjelasan Anda di sini..."
+        },
+        {
+          "gridSpan": 2,
+          "label": "Mohon jelaskan secara rinci mengapa Anda merasa sangat kecil kebebasan dalam bekerja.",
+          "required": true,
+          "placeholder": "Berikan penjelasan Anda di sini...",
+          "type": "textarea",
+          "id": "justifikasiOtonomiKeputusanKritis",
+          "showIf": {
+            "fieldId": "otonomiKeputusan",
+            "equals": "Sangat kecil, hampir tidak ada kebebasan dalam bekerja"
+          }
+        },
+        {
+          "type": "radio",
+          "id": "kehilanganMinat",
+          "label": "Dalam beberapa waktu terakhir, seberapa sering Anda merasa kehilangan minat atau gairah terhadap aspek-aspek pekerjaan yang dulunya Anda nikmati?",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Tidak pernah atau sangat jarang"
+            },
+            {
+              "weight": 75,
+              "label": "Kadang-kadang, namun bisa pulih dengan cepat"
+            },
+            {
+              "label": "Cukup sering, sulit untuk menemukan kembali gairah itu",
+              "weight": 50
+            },
+            {
+              "weight": 0,
+              "label": "Hampir setiap saat, merasa hampa dan bosan"
+            }
+          ]
+        },
+        {
+          "showIf": {
+            "equals": "Cukup sering, sulit untuk menemukan kembali gairah itu",
+            "fieldId": "kehilanganMinat"
+          },
+          "id": "justifikasiKehilanganMinat",
+          "type": "textarea",
+          "placeholder": "Berikan penjelasan Anda di sini...",
+          "label": "Mohon jelaskan mengapa Anda merasa cukup sering kehilangan minat atau gairah terhadap pekerjaan Anda.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan secara rinci mengapa Anda hampir setiap saat merasa hampa dan bosan di tempat kerja.",
+          "gridSpan": 2,
+          "id": "justifikasiKehilanganMinatKritis",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "kehilanganMinat",
+            "equals": "Hampir setiap saat, merasa hampa dan bosan"
+          },
+          "placeholder": "Berikan penjelasan Anda di sini..."
+        },
+        {
+          "required": true,
+          "label": "Apakah pandangan sinis atau negatif Anda terhadap pekerjaan memengaruhi cara Anda berinteraksi dengan rekan kerja atau atasan?",
+          "options": [
+            {
+              "weight": 100,
+              "label": "Tidak, saya selalu profesional dalam interaksi"
+            },
+            {
+              "label": "Jarang, saya berusaha memisahkannya",
+              "weight": 75
+            },
+            {
+              "label": "Kadang-kadang, saya merasa lebih mudah tersinggung atau menarik diri",
+              "weight": 50
+            },
+            {
+              "weight": 0,
+              "label": "Sering, saya cenderung menunjukkan sikap negatif secara terbuka"
+            }
+          ],
+          "gridSpan": 2,
+          "type": "radio",
+          "id": "dampakSinismeInteraksi"
+        },
+        {
+          "gridSpan": 2,
+          "label": "Mohon jelaskan bagaimana pandangan sinis Anda kadang-kadang memengaruhi interaksi Anda di tempat kerja.",
+          "required": true,
+          "placeholder": "Berikan penjelasan Anda di sini...",
+          "type": "textarea",
+          "id": "justifikasiDampakSinismeInteraksi",
+          "showIf": {
+            "fieldId": "dampakSinismeInteraksi",
+            "equals": "Kadang-kadang, saya merasa lebih mudah tersinggung atau menarik diri"
+          }
+        },
+        {
+          "gridSpan": 2,
+          "label": "Mohon jelaskan secara rinci bagaimana pandangan sinis Anda sering memengaruhi interaksi Anda secara terbuka.",
+          "required": true,
+          "placeholder": "Berikan penjelasan Anda di sini...",
+          "showIf": {
+            "fieldId": "dampakSinismeInteraksi",
+            "equals": "Sering, saya cenderung menunjukkan sikap negatif secara terbuka"
+          },
+          "id": "justifikasiDampakSinismeInteraksiKritis",
+          "type": "textarea"
+        },
+        {
+          "type": "radio",
+          "id": "pertimbanganResign",
+          "label": "Dalam enam bulan terakhir, seberapa sering Anda mempertimbangkan untuk mencari pekerjaan lain atau mengundurkan diri dari posisi Anda saat ini?",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Tidak pernah",
+              "weight": 100
+            },
+            {
+              "weight": 75,
+              "label": "Jarang, hanya sesekali terlintas"
+            },
+            {
+              "label": "Cukup sering, saya aktif mencari alternatif",
+              "weight": 50
+            },
+            {
+              "label": "Sangat sering, saya sudah tidak betah",
+              "weight": 0
+            }
+          ]
+        },
+        {
+          "showIf": {
+            "equals": "Cukup sering, saya aktif mencari alternatif",
+            "fieldId": "pertimbanganResign"
+          },
+          "id": "justifikasiPertimbanganResign",
+          "type": "textarea",
+          "placeholder": "Berikan penjelasan Anda di sini...",
+          "required": true,
+          "label": "Mohon jelaskan alasan utama Anda cukup sering mempertimbangkan untuk mencari pekerjaan lain atau mengundurkan diri.",
+          "gridSpan": 2
+        },
+        {
+          "gridSpan": 2,
+          "label": "Mohon jelaskan secara rinci mengapa Anda sangat sering mempertimbangkan untuk mengundurkan diri dan merasa tidak betah.",
+          "required": true,
+          "placeholder": "Berikan penjelasan Anda di sini...",
+          "showIf": {
+            "equals": "Sangat sering, saya sudah tidak betah",
+            "fieldId": "pertimbanganResign"
+          },
+          "id": "justifikasiPertimbanganResignKritis",
+          "type": "textarea"
+        }
+      ],
+      "stepNumber": 2
+    },
+    {
+      "description": "Menganalisis pemenuhan kebutuhan dasar psikologis (otonomi, kompetensi, dan keterikatan) yang mendorong motivasi dari dalam diri.",
+      "fields": [
+        {
+          "required": true,
+          "label": "Seberapa besar Anda merasa memiliki kebebasan untuk menentukan cara kerja dan mengambil keputusan penting dalam tugas-tugas Anda?",
+          "options": [
+            {
+              "label": "Sangat terbatas",
+              "weight": 0
+            },
+            {
+              "weight": 25,
+              "label": "Cukup terbatas"
+            },
+            {
+              "label": "Terkadang",
+              "weight": 50
+            },
+            {
+              "label": "Sering",
+              "weight": 75
+            },
+            {
+              "label": "Sangat bebas",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2,
+          "id": "otonomiKerja",
+          "type": "radio"
+        },
+        {
+          "gridSpan": 4,
+          "required": true,
+          "label": "Jelaskan tantangan utama yang membatasi otonomi Anda dalam bekerja.",
+          "id": "penyebabOtonomiTerbatas",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "otonomiKerja",
+            "equals": "Sangat terbatas"
+          }
+        },
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Jarang sekali"
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Cukup sering"
+            },
+            {
+              "label": "Sering",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Hampir selalu"
+            }
+          ],
+          "required": true,
+          "label": "Seberapa sering Anda merasa tugas-tugas yang Anda lakukan menantang namun masih dalam jangkauan kemampuan Anda, sehingga Anda merasa berkembang?",
+          "id": "rasaKompetensi",
+          "type": "radio"
+        },
+        {
+          "id": "kebutuhanPengembanganKompetensi",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "rasaKompetensi",
+            "equals": "Jarang sekali"
+          },
+          "label": "Apa jenis dukungan atau pelatihan yang Anda rasa dapat meningkatkan kompetensi Anda saat ini?",
+          "required": true,
+          "gridSpan": 4
+        },
+        {
+          "label": "Seberapa kuat Anda merasakan dukungan dan koneksi positif dengan rekan kerja atau atasan Anda?",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Sangat lemah",
+              "weight": 0
+            },
+            {
+              "weight": 25,
+              "label": "Cukup lemah"
+            },
+            {
+              "weight": 50,
+              "label": "Netral"
+            },
+            {
+              "label": "Cukup kuat",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Sangat kuat"
+            }
+          ],
+          "type": "radio",
+          "id": "dukunganSosialKerja"
+        },
+        {
+          "required": true,
+          "label": "Ceritakan pengalaman yang membuat Anda merasa kurang terhubung atau didukung di lingkungan kerja.",
+          "gridSpan": 4,
+          "type": "textarea",
+          "id": "pengalamanKurangTerhubung",
+          "showIf": {
+            "fieldId": "dukunganSosialKerja",
+            "equals": "Sangat lemah"
+          }
+        },
+        {
+          "type": "radio",
+          "id": "maknaPekerjaan",
+          "label": "Seberapa jelas Anda melihat dampak positif dari pekerjaan Anda terhadap tujuan yang lebih besar atau nilai-nilai pribadi Anda?",
+          "required": true,
+          "options": [
+            {
+              "label": "Tidak jelas sama sekali",
+              "weight": 0
+            },
+            {
+              "label": "Kurang jelas",
+              "weight": 25
+            },
+            {
+              "label": "Cukup jelas",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Jelas"
+            },
+            {
+              "label": "Sangat jelas",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "type": "textarea",
+          "id": "harapanMaknaPekerjaan",
+          "showIf": {
+            "fieldId": "maknaPekerjaan",
+            "equals": "Tidak jelas sama sekali"
+          },
+          "label": "Apa yang bisa membuat Anda lebih memahami makna dan tujuan dari pekerjaan Anda?",
+          "required": true,
+          "gridSpan": 4
+        },
+        {
+          "id": "kesempatanBelajar",
+          "type": "radio",
+          "label": "Seberapa sering Anda merasa mendapatkan kesempatan untuk belajar hal baru atau mengembangkan keterampilan yang relevan dengan karir Anda?",
+          "required": true,
+          "options": [
+            {
+              "label": "Tidak pernah",
+              "weight": 0
+            },
+            {
+              "label": "Jarang",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Kadang-kadang"
+            },
+            {
+              "weight": 75,
+              "label": "Sering"
+            },
+            {
+              "weight": 100,
+              "label": "Sangat sering"
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "showIf": {
+            "equals": "Tidak pernah",
+            "fieldId": "kesempatanBelajar"
+          },
+          "id": "keterampilanInginDikembangkan",
+          "type": "textarea",
+          "gridSpan": 4,
+          "required": true,
+          "label": "Sebutkan keterampilan yang paling ingin Anda kembangkan saat ini untuk mendukung karir Anda."
+        },
+        {
+          "label": "Seberapa sering Anda merasa upaya dan kontribusi Anda diakui atau dihargai secara adil?",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Tidak pernah",
+              "weight": 0
+            },
+            {
+              "weight": 25,
+              "label": "Jarang"
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 50
+            },
+            {
+              "label": "Sering",
+              "weight": 75
+            },
+            {
+              "label": "Sangat sering",
+              "weight": 100
+            }
+          ],
+          "id": "apresiasiKontribusi",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "fieldId": "apresiasiKontribusi",
+            "equals": "Tidak pernah"
+          },
+          "type": "textarea",
+          "id": "bentukApresiasiHarapan",
+          "gridSpan": 4,
+          "required": true,
+          "label": "Bagaimana bentuk apresiasi yang paling Anda harapkan atau butuhkan agar merasa dihargai?"
+        }
+      ],
+      "title": "Pemetaan Motivasi Intrinsik",
+      "stepNumber": 3
+    },
+    {
+      "fields": [
+        {
+          "type": "radio",
+          "id": "pemulihanKegagalan",
+          "label": "Seberapa cepat Anda pulih dari kemunduran atau kegagalan dalam pekerjaan atau kehidupan pribadi?",
+          "required": true,
+          "options": [
+            {
+              "weight": 5,
+              "label": "Sangat sulit, butuh waktu sangat lama"
+            },
+            {
+              "weight": 25,
+              "label": "Cukup sulit, butuh waktu lama"
+            },
+            {
+              "weight": 50,
+              "label": "Membutuhkan waktu, namun pada akhirnya bisa bangkit"
+            },
+            {
+              "weight": 75,
+              "label": "Cepat, saya segera mencari solusi"
+            },
+            {
+              "weight": 95,
+              "label": "Sangat cepat, saya melihatnya sebagai pelajaran berharga"
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "showIf": {
+            "equals": "Sangat sulit, butuh waktu sangat lama",
+            "fieldId": "pemulihanKegagalan"
+          },
+          "type": "textarea",
+          "id": "alasanPemulihanSulit",
+          "label": "Mohon jelaskan mengapa Anda merasa sulit untuk pulih dari kemunduran atau kegagalan.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "label": "Mohon jelaskan tantangan yang Anda hadapi saat mencoba pulih dari kemunduran atau kegagalan.",
+          "required": true,
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "alasanPemulihanCukupSulit",
+          "showIf": {
+            "fieldId": "pemulihanKegagalan",
+            "equals": "Cukup sulit, butuh waktu lama"
+          }
+        },
+        {
+          "label": "Bagaimana Anda memandang tantangan atau perubahan yang akan datang dalam hidup Anda?",
+          "required": true,
+          "options": [
+            {
+              "weight": 5,
+              "label": "Sangat pesimis, cenderung melihat hambatan"
+            },
+            {
+              "weight": 25,
+              "label": "Cenderung pesimis, khawatir akan kesulitan"
+            },
+            {
+              "label": "Realistis, melihat potensi baik dan buruk",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Cenderung optimis, percaya bisa mengatasinya"
+            },
+            {
+              "weight": 95,
+              "label": "Sangat optimis, melihat peluang di setiap perubahan"
+            }
+          ],
+          "gridSpan": 2,
+          "type": "radio",
+          "id": "pandanganMasaDepan"
+        },
+        {
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda memiliki pandangan pesimis terhadap tantangan atau perubahan yang akan datang.",
+          "type": "textarea",
+          "id": "alasanPandanganPesimis",
+          "showIf": {
+            "fieldId": "pandanganMasaDepan",
+            "equals": "Sangat pesimis, cenderung melihat hambatan"
+          }
+        },
+        {
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan kekhawatiran Anda terkait tantangan atau perubahan yang akan datang.",
+          "id": "alasanPandanganCenderungPesimis",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Cenderung pesimis, khawatir akan kesulitan",
+            "fieldId": "pandanganMasaDepan"
+          }
+        },
+        {
+          "type": "radio",
+          "id": "manajemenEmosiKrisis",
+          "options": [
+            {
+              "label": "Sangat sulit mengelola, sering merasa kewalahan",
+              "weight": 5
+            },
+            {
+              "label": "Kadang berhasil, kadang tidak",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Cukup baik, dengan usaha saya bisa menenangkan diri"
+            },
+            {
+              "label": "Baik, saya memiliki strategi yang efektif",
+              "weight": 75
+            },
+            {
+              "weight": 95,
+              "label": "Sangat baik, saya tetap tenang dan fokus mencari solusi"
+            }
+          ],
+          "gridSpan": 2,
+          "required": true,
+          "label": "Bagaimana Anda mengelola emosi negatif atau stres saat menghadapi situasi krisis atau tekanan tinggi?"
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan tantangan spesifik yang Anda hadapi dalam mengelola emosi negatif atau stres.",
+          "gridSpan": 2,
+          "showIf": {
+            "equals": "Sangat sulit mengelola, sering merasa kewalahan",
+            "fieldId": "manajemenEmosiKrisis"
+          },
+          "id": "tantanganManajemenEmosi",
+          "type": "textarea"
+        },
+        {
+          "id": "keyakinanDiri",
+          "type": "radio",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Sangat rendah, sering meragukan diri",
+              "weight": 5
+            },
+            {
+              "label": "Rendah, butuh dorongan eksternal",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Cukup, saya yakin jika ada dukungan"
+            },
+            {
+              "label": "Tinggi, saya percaya pada kemampuan saya",
+              "weight": 75
+            },
+            {
+              "weight": 95,
+              "label": "Sangat tinggi, saya yakin bisa mengatasi apapun"
+            }
+          ],
+          "required": true,
+          "label": "Seberapa besar keyakinan Anda terhadap kemampuan diri untuk mencapai tujuan penting yang Anda tetapkan?"
+        },
+        {
+          "label": "Mohon jelaskan area atau situasi spesifik di mana Anda sering meragukan kemampuan diri Anda.",
+          "required": true,
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "areaKeraguanDiri",
+          "showIf": {
+            "equals": "Sangat rendah, sering meragukan diri",
+            "fieldId": "keyakinanDiri"
+          }
+        },
+        {
+          "gridSpan": 2,
+          "label": "Mohon jelaskan mengapa Anda merasa butuh dorongan eksternal untuk yakin pada kemampuan Anda.",
+          "required": true,
+          "id": "areaKeraguanDiriRendah",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Rendah, butuh dorongan eksternal",
+            "fieldId": "keyakinanDiri"
+          }
+        },
+        {
+          "id": "harapanMasaDepan",
+          "type": "radio",
+          "label": "Seberapa kuat harapan Anda bahwa Anda akan menemukan cara untuk mencapai tujuan Anda, bahkan saat menghadapi rintangan?",
+          "required": true,
+          "options": [
+            {
+              "label": "Hampir tidak ada, saya mudah menyerah",
+              "weight": 5
+            },
+            {
+              "weight": 25,
+              "label": "Kadang muncul, tapi sering hilang"
+            },
+            {
+              "label": "Cukup kuat, saya akan mencoba beberapa cara",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Kuat, saya selalu mencari alternatif"
+            },
+            {
+              "weight": 95,
+              "label": "Sangat kuat, saya yakin selalu ada jalan"
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "showIf": {
+            "equals": "Hampir tidak ada, saya mudah menyerah",
+            "fieldId": "harapanMasaDepan"
+          },
+          "id": "alasanHarapanRendah",
+          "type": "textarea",
+          "label": "Mohon jelaskan mengapa Anda merasa mudah menyerah atau harapan Anda sering hilang saat menghadapi rintangan.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "id": "pencarianSolusi",
+          "type": "radio",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Menunggu, berharap masalah akan selesai sendiri",
+              "weight": 5
+            },
+            {
+              "weight": 25,
+              "label": "Kadang mencari, tapi sering menunda"
+            },
+            {
+              "label": "Cukup proaktif, saya akan mencari beberapa opsi",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Proaktif, saya segera bertindak mencari solusi"
+            },
+            {
+              "label": "Sangat proaktif, saya selalu siap dengan rencana cadangan",
+              "weight": 95
+            }
+          ],
+          "label": "Ketika menghadapi masalah, apakah Anda cenderung aktif mencari solusi atau menunggu masalah tersebut berlalu dengan sendirinya?",
+          "required": true
+        },
+        {
+          "gridSpan": 2,
+          "label": "Mohon jelaskan mengapa Anda cenderung menunggu masalah selesai sendiri atau menunda pencarian solusi.",
+          "required": true,
+          "showIf": {
+            "equals": "Menunggu, berharap masalah akan selesai sendiri",
+            "fieldId": "pencarianSolusi"
+          },
+          "type": "textarea",
+          "id": "alasanMenungguSolusi"
+        },
+        {
+          "type": "radio",
+          "id": "dukunganSosial",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Tidak ada dukungan yang berarti",
+              "weight": 5
+            },
+            {
+              "label": "Sedikit, saya merasa sendirian",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Cukup, ada beberapa orang yang bisa diandalkan"
+            },
+            {
+              "weight": 75,
+              "label": "Baik, saya memiliki sistem dukungan yang kuat"
+            },
+            {
+              "label": "Sangat baik, saya merasa sepenuhnya didukung",
+              "weight": 95
+            }
+          ],
+          "required": true,
+          "label": "Seberapa baik Anda merasa didukung oleh lingkungan sosial (keluarga, teman, rekan kerja) saat menghadapi kesulitan?"
+        },
+        {
+          "label": "Mohon jelaskan dampak dari kurangnya dukungan sosial yang Anda rasakan saat menghadapi kesulitan.",
+          "required": true,
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "dukunganSosial",
+            "equals": "Tidak ada dukungan yang berarti"
+          },
+          "type": "textarea",
+          "id": "dampakKurangDukungan"
+        },
+        {
+          "type": "radio",
+          "id": "pembelajaranPengalaman",
+          "label": "Seberapa sering Anda merefleksikan kegagalan atau kesalahan di masa lalu untuk belajar dan meningkatkan diri?",
+          "required": true,
+          "options": [
+            {
+              "weight": 5,
+              "label": "Tidak pernah, saya cenderung melupakannya"
+            },
+            {
+              "label": "Jarang, saya tidak suka mengingatnya",
+              "weight": 25
+            },
+            {
+              "label": "Kadang, jika ada waktu luang",
+              "weight": 50
+            },
+            {
+              "label": "Sering, saya melihatnya sebagai kesempatan belajar",
+              "weight": 75
+            },
+            {
+              "weight": 95,
+              "label": "Selalu, itu bagian penting dari pertumbuhan saya"
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "gridSpan": 2,
+          "label": "Mohon jelaskan mengapa Anda cenderung tidak merefleksikan kegagalan atau kesalahan di masa lalu.",
+          "required": true,
+          "showIf": {
+            "equals": "Tidak pernah, saya cenderung melupakannya",
+            "fieldId": "pembelajaranPengalaman"
+          },
+          "id": "alasanTidakRefleksi",
+          "type": "textarea"
+        },
+        {
+          "required": true,
+          "label": "Seberapa cepat Anda menyesuaikan diri dengan perubahan mendadak dalam rutinitas atau lingkungan Anda?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 5,
+              "label": "Sangat lambat, saya sangat resisten terhadap perubahan"
+            },
+            {
+              "label": "Lambat, butuh waktu lama untuk terbiasa",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Cukup cepat, dengan sedikit usaha saya bisa beradaptasi"
+            },
+            {
+              "label": "Cepat, saya melihat perubahan sebagai hal yang biasa",
+              "weight": 75
+            },
+            {
+              "label": "Sangat cepat, saya menikmati tantangan baru dari perubahan",
+              "weight": 95
+            }
+          ],
+          "type": "radio",
+          "id": "adaptasiPerubahan"
+        },
+        {
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan tantangan spesifik yang membuat Anda resisten atau lambat dalam menyesuaikan diri dengan perubahan.",
+          "type": "textarea",
+          "id": "tantanganAdaptasi",
+          "showIf": {
+            "equals": "Sangat lambat, saya sangat resisten terhadap perubahan",
+            "fieldId": "adaptasiPerubahan"
+          }
+        },
+        {
+          "type": "radio",
+          "id": "kontrolKehidupan",
+          "label": "Seberapa besar Anda merasa memiliki kendali atas arah dan keputusan penting dalam hidup Anda?",
+          "required": true,
+          "options": [
+            {
+              "weight": 5,
+              "label": "Tidak sama sekali, saya merasa tidak berdaya"
+            },
+            {
+              "weight": 25,
+              "label": "Sedikit, banyak hal di luar kendali saya"
+            },
+            {
+              "weight": 50,
+              "label": "Cukup, saya bisa mengendalikan beberapa aspek"
+            },
+            {
+              "weight": 75,
+              "label": "Sebagian besar, saya adalah penentu utama"
+            },
+            {
+              "weight": 95,
+              "label": "Sepenuhnya, saya bertanggung jawab penuh atas hidup saya"
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "label": "Mohon jelaskan hal-hal yang Anda rasakan berada di luar kendali Anda dan bagaimana hal itu memengaruhi Anda.",
+          "required": true,
+          "gridSpan": 2,
+          "id": "halDiluarKontrol",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Tidak sama sekali, saya merasa tidak berdaya",
+            "fieldId": "kontrolKehidupan"
+          }
+        }
+      ],
+      "title": "Asesmen Kapasitas Resiliensi",
+      "description": "Menilai kemampuan individu untuk bangkit dari kegagalan, mengelola stres, dan mempertahankan optimisme di masa sulit.",
+      "stepNumber": 4
+    },
+    {
+      "title": "Evaluasi Kesiapan Menghadapi Perubahan",
+      "fields": [
+        {
+          "options": [
+            {
+              "weight": 0,
+              "label": "Tidak memahami sama sekali, merasa bingung."
+            },
+            {
+              "label": "Memahami sedikit, namun masih banyak pertanyaan.",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Cukup memahami garis besar, tapi detailnya belum jelas."
+            },
+            {
+              "weight": 75,
+              "label": "Memahami dengan baik, namun ada beberapa aspek yang perlu klarifikasi."
+            },
+            {
+              "label": "Memahami sepenuhnya dan melihat urgensinya dengan jelas.",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2,
+          "required": true,
+          "label": "Seberapa baik Anda memahami alasan atau kebutuhan mendesak di balik perubahan yang terjadi di lingkungan kerja Anda?",
+          "id": "pemahamanPerubahan",
+          "type": "radio"
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiPemahamanPerubahan",
+          "showIf": {
+            "equals": "Tidak memahami sama sekali, merasa bingung.",
+            "fieldId": "pemahamanPerubahan"
+          },
+          "label": "Mohon jelaskan mengapa Anda merasa kurang memahami perubahan tersebut.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda merasa kurang memahami perubahan tersebut.",
+          "showIf": {
+            "fieldId": "pemahamanPerubahan",
+            "equals": "Memahami sedikit, namun masih banyak pertanyaan."
+          },
+          "type": "textarea",
+          "id": "justifikasiPemahamanPerubahan2"
+        },
+        {
+          "id": "keinginanBeradaptasi",
+          "type": "radio",
+          "options": [
+            {
+              "weight": 0,
+              "label": "Sama sekali tidak ada keinginan, merasa terpaksa."
+            },
+            {
+              "label": "Ada sedikit keinginan, namun masih ragu dan enggan.",
+              "weight": 25
+            },
+            {
+              "label": "Cukup bersedia, jika ada dukungan yang memadai.",
+              "weight": 50
+            },
+            {
+              "label": "Bersedia dan termotivasi untuk mencoba beradaptasi.",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Sangat antusias dan siap menjadi bagian dari perubahan."
+            }
+          ],
+          "gridSpan": 2,
+          "required": true,
+          "label": "Bagaimana tingkat keinginan Anda untuk secara aktif berpartisipasi dan mendukung perubahan yang sedang atau akan berlangsung?"
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda merasa tidak memiliki keinginan atau ragu untuk berpartisipasi dalam perubahan.",
+          "gridSpan": 2,
+          "id": "justifikasiKeinginanBeradaptasi",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "keinginanBeradaptasi",
+            "equals": "Sama sekali tidak ada keinginan, merasa terpaksa."
+          }
+        },
+        {
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda merasa tidak memiliki keinginan atau ragu untuk berpartisipasi dalam perubahan.",
+          "showIf": {
+            "equals": "Ada sedikit keinginan, namun masih ragu dan enggan.",
+            "fieldId": "keinginanBeradaptasi"
+          },
+          "id": "justifikasiKeinginanBeradaptasi2",
+          "type": "textarea"
+        },
+        {
+          "options": [
+            {
+              "weight": 0,
+              "label": "Tidak memiliki pengetahuan sama sekali."
+            },
+            {
+              "label": "Memiliki sedikit pengetahuan dasar, namun belum cukup untuk bertindak.",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Cukup tahu apa yang harus dilakukan, tapi butuh panduan lebih lanjut."
+            },
+            {
+              "weight": 75,
+              "label": "Memiliki pengetahuan yang memadai dan bisa mulai menerapkan."
+            },
+            {
+              "weight": 100,
+              "label": "Memiliki pengetahuan mendalam dan siap membimbing orang lain."
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Apakah Anda merasa memiliki pengetahuan yang cukup tentang bagaimana cara mengimplementasikan perubahan atau tugas baru yang diharapkan dari Anda?",
+          "required": true,
+          "type": "radio",
+          "id": "pengetahuanImplementasi"
+        },
+        {
+          "showIf": {
+            "fieldId": "pengetahuanImplementasi",
+            "equals": "Tidak memiliki pengetahuan sama sekali."
+          },
+          "type": "textarea",
+          "id": "justifikasiPengetahuanImplementasi",
+          "label": "Mohon jelaskan pengetahuan apa yang Anda rasa masih kurang untuk mengimplementasikan perubahan.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "showIf": {
+            "equals": "Memiliki sedikit pengetahuan dasar, namun belum cukup untuk bertindak.",
+            "fieldId": "pengetahuanImplementasi"
+          },
+          "type": "textarea",
+          "id": "justifikasiPengetahuanImplementasi2",
+          "label": "Mohon jelaskan pengetahuan apa yang Anda rasa masih kurang untuk mengimplementasikan perubahan.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "options": [
+            {
+              "label": "Sama sekali tidak yakin, merasa tidak mampu.",
+              "weight": 0
+            },
+            {
+              "label": "Kurang yakin, merasa perlu banyak belajar lagi.",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Cukup yakin, dengan sedikit penyesuaian bisa berhasil."
+            },
+            {
+              "label": "Yakin dan percaya diri bisa menguasai keterampilan baru.",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Sangat yakin, keterampilan saya relevan dan adaptif."
+            }
+          ],
+          "gridSpan": 2,
+          "required": true,
+          "label": "Seberapa yakin Anda dengan kapasitas keterampilan dan kemampuan Anda saat ini untuk berhasil menerapkan perubahan yang diperlukan?",
+          "type": "radio",
+          "id": "kapasitasKeterampilan"
+        },
+        {
+          "id": "justifikasiKapasitasKeterampilan",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Sama sekali tidak yakin, merasa tidak mampu.",
+            "fieldId": "kapasitasKeterampilan"
+          },
+          "gridSpan": 2,
+          "label": "Mohon jelaskan keterampilan atau kemampuan apa yang Anda rasa masih perlu ditingkatkan.",
+          "required": true
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiKapasitasKeterampilan2",
+          "showIf": {
+            "fieldId": "kapasitasKeterampilan",
+            "equals": "Kurang yakin, merasa perlu banyak belajar lagi."
+          },
+          "required": true,
+          "label": "Mohon jelaskan keterampilan atau kemampuan apa yang Anda rasa masih perlu ditingkatkan.",
+          "gridSpan": 2
+        },
+        {
+          "required": true,
+          "label": "Bagaimana Anda menilai dukungan yang Anda terima (misalnya dari atasan, rekan kerja, atau sistem) untuk mempertahankan perubahan positif yang telah Anda lakukan?",
+          "options": [
+            {
+              "weight": 0,
+              "label": "Sangat kurang, merasa sendirian dalam beradaptasi."
+            },
+            {
+              "label": "Kurang memadai, dukungan yang ada tidak efektif.",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Cukup memadai, namun bisa lebih baik."
+            },
+            {
+              "weight": 75,
+              "label": "Memadai dan membantu saya dalam proses adaptasi."
+            },
+            {
+              "weight": 100,
+              "label": "Sangat baik, merasa didukung penuh dan dihargai."
+            }
+          ],
+          "gridSpan": 2,
+          "type": "radio",
+          "id": "dukunganPerubahan"
+        },
+        {
+          "label": "Mohon jelaskan jenis dukungan apa yang Anda butuhkan namun belum terpenuhi.",
+          "required": true,
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "justifikasiDukunganPerubahan",
+          "showIf": {
+            "equals": "Sangat kurang, merasa sendirian dalam beradaptasi.",
+            "fieldId": "dukunganPerubahan"
+          }
+        },
+        {
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan jenis dukungan apa yang Anda butuhkan namun belum terpenuhi.",
+          "showIf": {
+            "equals": "Kurang memadai, dukungan yang ada tidak efektif.",
+            "fieldId": "dukunganPerubahan"
+          },
+          "type": "textarea",
+          "id": "justifikasiDukunganPerubahan2"
+        },
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Sangat sering, saya sulit menerima hal baru.",
+              "weight": 0
+            },
+            {
+              "weight": 25,
+              "label": "Cukup sering, saya butuh waktu lama untuk beradaptasi."
+            },
+            {
+              "weight": 50,
+              "label": "Kadang-kadang, tergantung jenis perubahannya."
+            },
+            {
+              "label": "Jarang, saya cenderung terbuka terhadap hal baru.",
+              "weight": 75
+            },
+            {
+              "label": "Tidak pernah, saya selalu siap untuk perubahan.",
+              "weight": 100
+            }
+          ],
+          "required": true,
+          "label": "Dalam menghadapi perubahan, seberapa sering Anda merasa ada resistensi internal atau keengganan untuk meninggalkan cara lama?",
+          "id": "resistensiPerubahan",
+          "type": "radio"
+        },
+        {
+          "id": "justifikasiResistensiPerubahan",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Sangat sering, saya sulit menerima hal baru.",
+            "fieldId": "resistensiPerubahan"
+          },
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan alasan utama resistensi atau keengganan Anda terhadap perubahan."
+        },
+        {
+          "showIf": {
+            "equals": "Cukup sering, saya butuh waktu lama untuk beradaptasi.",
+            "fieldId": "resistensiPerubahan"
+          },
+          "id": "justifikasiResistensiPerubahan2",
+          "type": "textarea",
+          "required": true,
+          "label": "Mohon jelaskan alasan utama resistensi atau keengganan Anda terhadap perubahan.",
+          "gridSpan": 2
+        },
+        {
+          "options": [
+            {
+              "weight": 0,
+              "label": "Sangat sering, ketakutan itu melumpuhkan saya."
+            },
+            {
+              "label": "Cukup sering, membuat saya ragu untuk melangkah.",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Kadang-kadang, namun bisa saya atasi."
+            },
+            {
+              "label": "Jarang, saya melihat kegagalan sebagai pembelajaran.",
+              "weight": 75
+            },
+            {
+              "label": "Tidak pernah, saya percaya pada kemampuan saya.",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Apakah Anda merasakan ketakutan akan kegagalan atau kekhawatiran berlebihan saat mencoba hal baru atau beradaptasi dengan sistem baru?",
+          "required": true,
+          "id": "ketakutanKegagalan",
+          "type": "radio"
+        },
+        {
+          "label": "Mohon jelaskan lebih lanjut tentang ketakutan atau kekhawatiran yang Anda rasakan.",
+          "required": true,
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "justifikasiKetakutanKegagalan",
+          "showIf": {
+            "fieldId": "ketakutanKegagalan",
+            "equals": "Sangat sering, ketakutan itu melumpuhkan saya."
+          }
+        },
+        {
+          "gridSpan": 2,
+          "label": "Mohon jelaskan lebih lanjut tentang ketakutan atau kekhawatiran yang Anda rasakan.",
+          "required": true,
+          "showIf": {
+            "equals": "Cukup sering, membuat saya ragu untuk melangkah.",
+            "fieldId": "ketakutanKegagalan"
+          },
+          "type": "textarea",
+          "id": "justifikasiKetakutanKegagalan2"
+        },
+        {
+          "id": "inisiatifBelajar",
+          "type": "radio",
+          "options": [
+            {
+              "weight": 0,
+              "label": "Tidak pernah, saya menunggu instruksi."
+            },
+            {
+              "label": "Jarang, hanya jika benar-benar terpaksa.",
+              "weight": 25
+            },
+            {
+              "label": "Kadang-kadang, jika ada waktu luang.",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Cukup proaktif, saya mencari sumber daya yang relevan."
+            },
+            {
+              "weight": 100,
+              "label": "Sangat proaktif, saya selalu ingin belajar hal baru."
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Seberapa proaktif Anda dalam mencari informasi atau pelatihan tambahan untuk meningkatkan kesiapan Anda menghadapi perubahan?",
+          "required": true
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiInisiatifBelajar",
+          "showIf": {
+            "equals": "Tidak pernah, saya menunggu instruksi.",
+            "fieldId": "inisiatifBelajar"
+          },
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda kurang proaktif dalam mencari informasi atau pelatihan tambahan.",
+          "gridSpan": 2
+        },
+        {
+          "showIf": {
+            "fieldId": "inisiatifBelajar",
+            "equals": "Jarang, hanya jika benar-benar terpaksa."
+          },
+          "type": "textarea",
+          "id": "justifikasiInisiatifBelajar2",
+          "label": "Mohon jelaskan mengapa Anda kurang proaktif dalam mencari informasi atau pelatihan tambahan.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "label": "Mohon jelaskan alasan di balik pandangan pesimis Anda terhadap masa depan dan perubahan.",
+          "required": true,
+          "gridSpan": 2,
+          "id": "justifikasiPandanganMasaDepan",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "pandanganMasaDepan",
+            "equals": "Sangat pesimis, melihat banyak ancaman dan kesulitan."
+          }
+        },
+        {
+          "gridSpan": 2,
+          "label": "Mohon jelaskan alasan di balik pandangan pesimis Anda terhadap masa depan dan perubahan.",
+          "required": true,
+          "type": "textarea",
+          "id": "justifikasiPandanganMasaDepan2",
+          "showIf": {
+            "equals": "Cukup pesimis, merasa khawatir akan dampak negatif.",
+            "fieldId": "pandanganMasaDepan"
+          }
+        },
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Sangat menurunkan, saya merasa lelah dan demotivasi."
+            },
+            {
+              "label": "Cukup menurunkan, semangat saya berkurang.",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Tidak terlalu berpengaruh, saya tetap stabil."
+            },
+            {
+              "weight": 75,
+              "label": "Cukup meningkatkan, saya merasa tertantang dan bersemangat."
+            },
+            {
+              "weight": 100,
+              "label": "Sangat meningkatkan, saya merasa lebih berenergi dan termotivasi."
+            }
+          ],
+          "required": true,
+          "label": "Secara keseluruhan, bagaimana perubahan yang terjadi memengaruhi tingkat energi dan semangat Anda dalam bekerja?",
+          "type": "radio",
+          "id": "dampakPerubahan"
+        },
+        {
+          "label": "Mohon jelaskan dampak spesifik dari perubahan yang membuat energi dan semangat Anda menurun.",
+          "required": true,
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "justifikasiDampakPerubahan",
+          "showIf": {
+            "equals": "Sangat menurunkan, saya merasa lelah dan demotivasi.",
+            "fieldId": "dampakPerubahan"
+          }
+        },
+        {
+          "label": "Mohon jelaskan dampak spesifik dari perubahan yang membuat energi dan semangat Anda menurun.",
+          "required": true,
+          "gridSpan": 2,
+          "id": "justifikasiDampakPerubahan2",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Cukup menurunkan, semangat saya berkurang.",
+            "fieldId": "dampakPerubahan"
+          }
+        }
+      ],
+      "description": "Mengukur tingkat kesadaran, keinginan, dan kemampuan individu untuk beradaptasi dengan sistem, peran, atau lingkungan baru.",
+      "stepNumber": 5
+    },
+    {
+      "title": "Analisis Faktor Lingkungan & Dukungan",
+      "fields": [
+        {
+          "type": "radio",
+          "id": "dukunganSosialRekan",
+          "required": true,
+          "label": "Seberapa sering Anda merasa mendapatkan dukungan yang memadai dari rekan kerja atau atasan Anda saat menghadapi kesulitan?",
+          "options": [
+            {
+              "weight": 0,
+              "label": "Sangat jarang"
+            },
+            {
+              "weight": 25,
+              "label": "Jarang"
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Sering"
+            },
+            {
+              "label": "Sangat sering",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "id": "alasanDukunganKurang",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "dukunganSosialRekan",
+            "equals": "Sangat jarang"
+          },
+          "gridSpan": 4,
+          "required": true,
+          "label": "Mohon jelaskan situasi yang membuat Anda merasa kurang mendapatkan dukungan."
+        },
+        {
+          "label": "Mohon jelaskan situasi yang membuat Anda merasa kurang mendapatkan dukungan.",
+          "required": true,
+          "gridSpan": 4,
+          "showIf": {
+            "equals": "Jarang",
+            "fieldId": "dukunganSosialRekan"
+          },
+          "id": "alasanDukunganKurang2",
+          "type": "textarea"
+        },
+        {
+          "required": true,
+          "label": "Bagaimana Anda menilai keseimbangan antara beban kerja yang Anda miliki dengan waktu yang tersedia untuk menyelesaikannya?",
+          "options": [
+            {
+              "label": "Sangat tidak seimbang",
+              "weight": 0
+            },
+            {
+              "label": "Cukup tidak seimbang",
+              "weight": 25
+            },
+            {
+              "label": "Seimbang",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Cukup seimbang"
+            },
+            {
+              "weight": 100,
+              "label": "Sangat seimbang"
+            }
+          ],
+          "gridSpan": 2,
+          "id": "bebanKerjaKeseimbangan",
+          "type": "radio"
+        },
+        {
+          "label": "Jelaskan dampak ketidakseimbangan beban kerja ini terhadap kesejahteraan Anda.",
+          "required": true,
+          "gridSpan": 4,
+          "type": "textarea",
+          "id": "dampakBebanKerja",
+          "showIf": {
+            "equals": "Sangat tidak seimbang",
+            "fieldId": "bebanKerjaKeseimbangan"
+          }
+        },
+        {
+          "showIf": {
+            "equals": "Cukup tidak seimbang",
+            "fieldId": "bebanKerjaKeseimbangan"
+          },
+          "id": "dampakBebanKerja2",
+          "type": "textarea",
+          "gridSpan": 4,
+          "required": true,
+          "label": "Jelaskan dampak ketidakseimbangan beban kerja ini terhadap kesejahteraan Anda."
+        },
+        {
+          "id": "kontrolTugas",
+          "type": "radio",
+          "label": "Apakah Anda merasa memiliki kontrol yang cukup atas cara Anda menyelesaikan tugas-tugas Anda?",
+          "required": true,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Tidak sama sekali"
+            },
+            {
+              "label": "Sedikit",
+              "weight": 25
+            },
+            {
+              "label": "Cukup",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Banyak"
+            },
+            {
+              "label": "Sangat banyak",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "id": "alasanKontrolKurang",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Tidak sama sekali",
+            "fieldId": "kontrolTugas"
+          },
+          "gridSpan": 4,
+          "label": "Mengapa Anda merasa kurang memiliki kontrol atas tugas Anda?",
+          "required": true
+        },
+        {
+          "showIf": {
+            "fieldId": "kontrolTugas",
+            "equals": "Sedikit"
+          },
+          "id": "alasanKontrolKurang2",
+          "type": "textarea",
+          "gridSpan": 4,
+          "required": true,
+          "label": "Mengapa Anda merasa kurang memiliki kontrol atas tugas Anda?"
+        },
+        {
+          "required": true,
+          "label": "Berikan contoh spesifik di mana Anda merasa kurang dihargai atau diperlakukan tidak adil.",
+          "gridSpan": 4,
+          "type": "textarea",
+          "id": "contohKurangApresiasi",
+          "showIf": {
+            "fieldId": "apresiasiKontribusi",
+            "equals": "Sangat jarang"
+          }
+        },
+        {
+          "gridSpan": 4,
+          "label": "Berikan contoh spesifik di mana Anda merasa kurang dihargai atau diperlakukan tidak adil.",
+          "required": true,
+          "type": "textarea",
+          "id": "contohKurangApresiasi2",
+          "showIf": {
+            "fieldId": "apresiasiKontribusi",
+            "equals": "Jarang"
+          }
+        },
+        {
+          "id": "keadilanKebijakan",
+          "type": "radio",
+          "label": "Apakah Anda merasa bahwa kebijakan dan prosedur di lingkungan kerja Anda diterapkan secara konsisten dan adil untuk semua?",
+          "required": true,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Tidak sama sekali"
+            },
+            {
+              "weight": 25,
+              "label": "Jarang"
+            },
+            {
+              "weight": 50,
+              "label": "Cukup sering"
+            },
+            {
+              "weight": 75,
+              "label": "Sering"
+            },
+            {
+              "label": "Selalu",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "showIf": {
+            "fieldId": "keadilanKebijakan",
+            "equals": "Tidak sama sekali"
+          },
+          "id": "alasanKeadilanKurang",
+          "type": "textarea",
+          "required": true,
+          "label": "Jelaskan mengapa Anda merasa kebijakan tidak diterapkan secara adil.",
+          "gridSpan": 4
+        },
+        {
+          "gridSpan": 4,
+          "label": "Jelaskan mengapa Anda merasa kebijakan tidak diterapkan secara adil.",
+          "required": true,
+          "type": "textarea",
+          "id": "alasanKeadilanKurang2",
+          "showIf": {
+            "equals": "Jarang",
+            "fieldId": "keadilanKebijakan"
+          }
+        },
+        {
+          "id": "suasanaKerja",
+          "type": "radio",
+          "required": true,
+          "label": "Secara keseluruhan, bagaimana Anda menggambarkan suasana dan budaya di lingkungan kerja Anda saat ini?",
+          "options": [
+            {
+              "weight": 0,
+              "label": "Sangat negatif"
+            },
+            {
+              "label": "Cukup negatif",
+              "weight": 25
+            },
+            {
+              "label": "Netral",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Cukup positif"
+            },
+            {
+              "weight": 100,
+              "label": "Sangat positif"
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "gridSpan": 4,
+          "required": true,
+          "label": "Faktor-faktor apa saja yang paling berkontribusi pada suasana kerja yang negatif tersebut?",
+          "showIf": {
+            "fieldId": "suasanaKerja",
+            "equals": "Sangat negatif"
+          },
+          "type": "textarea",
+          "id": "faktorSuasanaNegatif"
+        },
+        {
+          "gridSpan": 4,
+          "required": true,
+          "label": "Faktor-faktor apa saja yang paling berkontribusi pada suasana kerja yang negatif tersebut?",
+          "showIf": {
+            "equals": "Cukup negatif",
+            "fieldId": "suasanaKerja"
+          },
+          "type": "textarea",
+          "id": "faktorSuasanaNegatif2"
+        },
+        {
+          "required": true,
+          "label": "Apakah Anda merasa memiliki kesempatan yang cukup untuk menyampaikan ide atau kekhawatiran Anda kepada pihak yang berwenang?",
+          "options": [
+            {
+              "label": "Tidak sama sekali",
+              "weight": 0
+            },
+            {
+              "label": "Sedikit",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Cukup"
+            },
+            {
+              "weight": 75,
+              "label": "Banyak"
+            },
+            {
+              "label": "Sangat banyak",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2,
+          "type": "radio",
+          "id": "kesempatanSampaikanIde"
+        },
+        {
+          "type": "textarea",
+          "id": "alasanKesempatanKurang",
+          "showIf": {
+            "equals": "Tidak sama sekali",
+            "fieldId": "kesempatanSampaikanIde"
+          },
+          "gridSpan": 4,
+          "required": true,
+          "label": "Mengapa Anda merasa kesempatan untuk menyampaikan ide atau kekhawatiran Anda terbatas?"
+        },
+        {
+          "id": "alasanKesempatanKurang2",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Sedikit",
+            "fieldId": "kesempatanSampaikanIde"
+          },
+          "gridSpan": 4,
+          "label": "Mengapa Anda merasa kesempatan untuk menyampaikan ide atau kekhawatiran Anda terbatas?",
+          "required": true
+        },
+        {
+          "label": "Seberapa sering Anda merasa bahwa masukan atau saran Anda dipertimbangkan dan ditindaklanjuti?",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Sangat jarang",
+              "weight": 0
+            },
+            {
+              "label": "Jarang",
+              "weight": 25
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 50
+            },
+            {
+              "label": "Sering",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Sangat sering"
+            }
+          ],
+          "id": "masukanDitindaklanjuti",
+          "type": "radio"
+        },
+        {
+          "id": "contohMasukanTidakDitindaklanjuti",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Sangat jarang",
+            "fieldId": "masukanDitindaklanjuti"
+          },
+          "label": "Berikan contoh situasi di mana masukan Anda tidak ditindaklanjuti.",
+          "required": true,
+          "gridSpan": 4
+        },
+        {
+          "gridSpan": 4,
+          "required": true,
+          "label": "Berikan contoh situasi di mana masukan Anda tidak ditindaklanjuti.",
+          "type": "textarea",
+          "id": "contohMasukanTidakDitindaklanjuti2",
+          "showIf": {
+            "fieldId": "masukanDitindaklanjuti",
+            "equals": "Jarang"
+          }
+        }
+      ],
+      "description": "Mengidentifikasi faktor eksternal seperti beban kerja, dukungan atasan/rekan, dan apresiasi yang memperburuk atau meringankan demotivasi.",
+      "stepNumber": 6
+    }
+  ],
+  "id": "track_1784612921402",
+  "trackName": "Asesmen Tingkat Demotivasi dan Kesiapan Adaptasi",
+  "trackDescription": "Digunakan untuk mengidentifikasi penyebab menurunnya motivasi kerja, kebosanan (plateau karir), atau resistensi ASN terhadap perubahan kebijakan/sistem. Asesmen ini berguna untuk memetakan pegawai mana yang sekadar butuh coaching ringan dan mana yang membutuhkan intervensi psikologis lebih dalam.",
+  "methodologyContext": "Menggunakan kombinasi framework Job Demands-Resources (JD-R) untuk menganalisis keseimbangan beban kerja dan dukungan, serta model ADKAR untuk mengukur kesiapan adaptasi perubahan. Pendekatan asesmen dilakukan melalui kombinasi psikometri berbasis perilaku dan wawancara mendalam berbasis kompetensi untuk memetakan kebutuhan intervensi.",
+  "preferredQuestionTypes": [
+    "radio_weight",
+    "conditional_logic",
+    "text_justification"
+  ],
+  "aiGenerationStatus": {
+    "message": "Sukses! Formulir skala Enterprise (6 seksi) telah tervalidasi dan siap digunakan.",
+    "phase": "COMPLETED",
+    "updatedAt": "2026-07-21T05:54:34.257Z"
+  },
+  "generationLogs": [
+    {
+      "message": "Memulai sesi pipeline Enterprise Multi-Agent AI...",
+      "timestamp": "2026-07-21T05:49:47.973Z",
+      "type": "info"
+    },
+    {
+      "type": "info",
+      "timestamp": "2026-07-21T05:49:48.021Z",
+      "message": "FASE 1: Agen Master (Gemini 3.1 Pro) diaktifkan. Melakukan penetrasi jaringan internet dan restrukturisasi Otak AI..."
+    },
+    {
+      "message": "Merumuskan penyempurnaan Otak AI & Masterplan untuk domain: [Asesmen Tingkat Demotivasi dan Kesiapan Adaptasi]...",
+      "timestamp": "2026-07-21T05:49:48.050Z",
+      "type": "info"
+    },
+    {
+      "timestamp": "2026-07-21T05:50:22.797Z",
+      "message": "Otak AI dan Master Blueprint berhasil disempurnakan! Menyimpan konfigurasi ke database...",
+      "type": "success"
+    },
+    {
+      "timestamp": "2026-07-21T05:50:22.844Z",
+      "message": "Mengekstrak temuan internet dan menyimpannya ke Vector Database (RAG)...",
+      "type": "info"
+    },
+    {
+      "timestamp": "2026-07-21T05:50:23.248Z",
+      "message": "Vector Database berhasil diperbarui.",
+      "type": "success"
+    },
+    {
+      "type": "info",
+      "timestamp": "2026-07-21T05:50:23.282Z",
+      "message": "FASE 2: Mengerahkan Agen Pekerja (Gemini 2.5 Flash) berbekal Otak AI yang baru. Memulai fabrikasi 6 seksi formulir..."
+    },
+    {
+      "type": "info",
+      "message": "Meracik Kuesioner Batch 1 (Seksi 1 s/d 3)...",
+      "timestamp": "2026-07-21T05:50:23.338Z"
+    },
+    {
+      "type": "info",
+      "message": "Meracik Kuesioner Batch 2 (Seksi 4 s/d 6)...",
+      "timestamp": "2026-07-21T05:50:55.050Z"
+    },
+    {
+      "type": "success",
+      "message": "Seluruh seksi formulir berhasil diracik dan digabungkan.",
+      "timestamp": "2026-07-21T05:51:37.093Z"
+    },
+    {
+      "type": "info",
+      "timestamp": "2026-07-21T05:51:37.119Z",
+      "message": "Membersihkan ID duplikat pada struktur formulir..."
+    },
+    {
+      "type": "info",
+      "timestamp": "2026-07-21T05:51:37.170Z",
+      "message": "FASE 3: Agen Validator (QA) meninjau integritas logika 'ShowIf' (Dependency Tree)..."
+    },
+    {
+      "message": "Verifikasi selesai. Struktur formulir 100% valid dan aman dari loop logic.",
+      "timestamp": "2026-07-21T05:54:34.199Z",
+      "type": "success"
+    },
+    {
+      "type": "success",
+      "timestamp": "2026-07-21T05:54:34.304Z",
+      "message": "PIPELINE SELESAI: Kuesioner skala Enterprise telah berhasil diintegrasikan!"
+    }
+  ],
+  "aiPromptConfig": {
+    "customReadinessTiers": [
+      "Kritis (Demotivasi Tinggi, Menolak Perubahan)",
+      "Rentan (Demotivasi Sedang, Ragu-ragu Beradaptasi)",
+      "Transisional (Motivasi Fluktuatif, Mulai Beradaptasi)",
+      "Optimal (Termotivasi Penuh, Sangat Adaptif)"
+    ],
+    "formPurpose": "custom",
+    "formatInstructions": "Gunakan Markdown secara maksimal untuk kemudahan membaca: Gunakan penanda **teks tebal** untuk menyoroti nama metrik/istilah penting, *teks miring* untuk penekanan atau kutipan, dan gunakan awalan ### (Heading 3) untuk memisahkan sub-topik laporan agar sistem merendernya dengan rapi. Pastikan struktur laporan terdiri dari: ### Ringkasan Reflektif, ### Analisis Kondisi Psikologis, ### Skor Kesiapan Adaptasi, dan ### Langkah Perbaikan Diri.",
+    "reportTone": "empathetic, consultative, and actionable",
+    "assessmentGoal": "Mengevaluasi tingkat kelelahan psikologis, mengidentifikasi akar penyebab demotivasi, dan mengukur kapasitas individu dalam beradaptasi terhadap perubahan untuk memberikan rekomendasi pemulihan yang personal.",
+    "expectedAnalysisBlocks": [
+      "Profil Demotivasi Utama: Pemicu stres utama, Gejala kelelahan fisik dan mental, Penurunan fokus dan kinerja.",
+      "Analisis Kesenjangan Adaptasi: Resistensi terhadap perubahan, Kurangnya keterampilan baru, Hambatan mental dan ketakutan akan kegagalan.",
+      "Evaluasi Kebutuhan Psikologis Dasar: Tingkat pemenuhan otonomi, Kebutuhan kompetensi kerja, Kebutuhan keterikatan sosial di lingkungan.",
+      "Pemetaan Kapasitas Resiliensi: Kemampuan bangkit dari kegagalan, Tingkat optimisme, Strategi manajemen emosi saat krisis.",
+      "Identifikasi Risiko Burnout: Risiko kesehatan mental berkelanjutan, Dampak psikosomatis, Potensi pengunduran diri (turnover intention).",
+      "Penilaian Faktor Lingkungan & Sistemik: Kualitas dukungan sosial, Ketidakseimbangan beban kerja, Persepsi keadilan dan apresiasi."
+    ],
+    "customUiLabels": {
+      "scoreLabel": "Adaptation & Resilience Score",
+      "roadmapLabel": "Rekomendasi Strategis",
+      "swotLabel": "Psychological Capability Matrix",
+      "executionLabel": "Action Plan Timeline",
+      "riskLabel": "Critical Risks & Mitigation Map"
+    },
+    "negativePrompts": "Dilarang menggunakan terminologi korporat seperti 'KPI', 'Key Performance Indicator', 'ROI', 'efisiensi operasional', 'target perusahaan', 'manajemen sumber daya manusia', atau 'produktivitas organisasi'. Jangan gunakan bahasa yang dingin, birokratis, atau menghakimi. Dilarang memberikan saran yang bersifat instruksi administratif atau perintah atasan. Jangan gunakan kata-kata seperti 'karyawan', 'staf', atau 'bawahan'; gunakan istilah 'individu', 'Anda', atau 'subjek'.",
+    "researchSourcesCited": [
+      "Maslach Burnout Inventory (MBI)",
+      "Self-Determination Theory (Deci & Ryan)",
+      "Prosci ADKAR Model",
+      "Psychological Capital (PsyCap) Framework"
+    ],
+    "riskFramework": "Maslach Burnout Inventory (MBI) & Prosci ADKAR Model for Individual Change",
+    "customScoringRubric": "Skor 0-100 ditentukan melalui agregasi dua dimensi: (1) JD-R Index (50%): Mengukur rasio antara beban kerja psikologis dan sumber daya pendukung. (2) ADKAR Readiness Index (50%): Mengukur kesiapan transisi dari Awareness hingga Reinforcement. Skor 0-40: Membutuhkan intervensi psikologis intensif. Skor 41-70: Membutuhkan restrukturisasi kebiasaan dan dukungan mental. Skor 71-100: Membutuhkan penguatan motivasi intrinsik dan tantangan baru. Berikan skor per metrik dengan justifikasi kualitatif yang empatik.",
+    "actionPlanBehavior": "Rencana aksi harus disusun sebagai 'Jurnal Pertumbuhan Pribadi' yang terdiri dari: (1) Latihan mindfulness harian untuk mereduksi kecemasan terhadap perubahan. (2) Kebiasaan mikro (micro-habits) untuk membangun kepercayaan diri digital secara bertahap. (3) Teknik refleksi diri untuk memetakan kembali nilai-nilai pribadi di luar peran pekerjaan. Seluruh rencana harus bersifat personal, humanis, dan berfokus pada kesehatan mental serta keseimbangan emosional individu.",
+    "expectedRecommendations": [
+      "Intervensi Pemulihan Burnout (Burnout Recovery Intervention)",
+      "Rekalibrasi Beban Kerja & Batasan (Workload & Boundary Recalibration)",
+      "Peningkatan Otonomi & Kontrol Kerja (Work Autonomy Enhancement)",
+      "Pelatihan Keterampilan Adaptasi & Upskilling (Adaptation Skills Training)",
+      "Sesi Konseling atau Coaching Psikologis (Psychological Counseling/Coaching)",
+      "Re-desain Tujuan Karir Jangka Pendek (Short-term Career Goal Redesign)",
+      "Pembangunan Sistem Dukungan Sebaya (Peer Support System Building)",
+      "Praktik Mindfulness & Manajemen Stres (Mindfulness & Stress Management)",
+      "Strategi Komunikasi Asertif untuk Negosiasi Peran (Assertive Communication Strategy)"
+    ],
+    "customSystemPrompt": "Anda adalah seorang Psikolog Konselor yang berfokus pada kesejahteraan individu. Gunakan logika IF-THEN: IF subjek menunjukkan resistensi digital, THEN analisis sebagai bentuk mekanisme pertahanan diri terhadap rasa takut akan ketidakmampuan (insecurity), bukan sebagai bentuk kemalasan. Analisis harus bersifat suportif, memvalidasi perasaan subjek, namun tetap kritis dalam membedah akar penyebab stagnasi. Hindari pendekatan menghakimi; gunakan teknik refleksi untuk membantu subjek menyadari pola perilaku mereka sendiri.",
+    "mediaAnalysisFocus": "Analisis teks respons kuesioner, sentimen bahasa (pesimisme vs optimisme), dan pola jawaban yang menunjukkan kelelahan emosional atau resistensi kognitif.",
+    "expectedMetrics": [
+      "Indeks Kelelahan Emosional (Emotional Exhaustion Index)",
+      "Tingkat Sinisme & Detasemen (Cynicism & Detachment Level)",
+      "Defisit Motivasi Intrinsik (Intrinsic Motivation Deficit)",
+      "Kapasitas Resiliensi Psikologis (Psychological Resilience Capacity)",
+      "Skor Kesiapan Adaptasi (Adaptation Readiness Score)"
+    ],
+    "aiPersona": "Psikolog Organisasi & Ahli Perilaku Kerja",
+    "gradingStrictness": "supportive",
+    "targetAudience": "individual"
+  },
+  "version": 2,
+  "folder": "Zona ASN",
+  "specificTargetContext": "Target audiens adalah ASN dengan masa kerja menengah hingga senior yang mengalami stagnasi karir atau resistensi terhadap transformasi digital dan kebijakan organisasi baru. Subjek mencakup individu yang menunjukkan penurunan produktivitas akibat kejenuhan peran atau ketidakpastian lingkungan kerja.",
+  "isActive": true,
+  "formBuilderInstruction": "Digunakan untuk mengidentifikasi penyebab menurunnya motivasi kerja, kebosanan (plateau karir), atau resistensi ASN terhadap perubahan kebijakan/sistem. Asesmen ini berguna untuk memetakan pegawai mana yang sekadar butuh coaching ringan dan mana yang membutuhkan intervensi psikologis lebih dalam.",
+  "expectedOutputs": [
+    "Peta Mitigasi Risiko Burnout: Identifikasi dini penyebab kelelahan emosional dan sinisme untuk mencegah penurunan produktivitas yang berdampak pada kinerja instansi.",
+    "Rekomendasi Intervensi Presisi: Dapatkan panduan langkah demi langkah untuk menentukan apakah pegawai memerlukan coaching ringan atau intervensi psikologis mendalam.",
+    "Action Plan Adaptasi Berkelanjutan: Transformasikan resistensi perubahan menjadi kesiapan adaptasi melalui strategi rekalibrasi beban kerja dan pengembangan keterampilan yang terukur.",
+    "Insight Matrix Kesiapan SDM: Visualisasikan profil psikologis dan motivasi pegawai dalam satu dashboard untuk pengambilan keputusan strategis berbasis data yang akurat."
+  ],
+  "trackIcon": "LayoutGrid",
+  "lastUpdated": "2026-07-23T02:27:21.254Z"
+}

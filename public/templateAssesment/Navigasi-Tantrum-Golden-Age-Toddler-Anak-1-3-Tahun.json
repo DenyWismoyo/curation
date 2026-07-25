@@ -1,0 +1,2055 @@
+{
+  "aiGenerationStatus": {
+    "phase": "COMPLETED",
+    "updatedAt": "2026-07-24T08:35:39.318Z",
+    "message": "Disimpan secara manual oleh Admin."
+  },
+  "preferredQuestionTypes": [
+    "radio_weight",
+    "conditional_logic",
+    "text_justification"
+  ],
+  "methodologyContext": "Menggunakan kerangka kerja Responsive Parenting dan teori perkembangan kognitif Jean Piaget yang diintegrasikan dengan metode observasi perilaku berbasis protokol Sensory Processing Measure (SPM). Pendekatan ini dilengkapi dengan instrumen refleksi diri untuk mengukur keselarasan antara respons emosional orang tua dan kebutuhan perkembangan anak.",
+  "trackDescription": "Asesmen mandiri untuk mengukur daya respons orang tua terhadap ledakan emosi anak usia 1-3 tahun serta evaluasi stimulasi sensorik dasar di rumah.",
+  "trackName": "Navigasi Tantrum & Golden Age Toddler Anak (1-3 Tahun)",
+  "customUSPs": [],
+  "id": "track_1784165685111",
+  "isPaid": true,
+  "expectedOutputs": [
+    "Peta Mitigasi Risiko Tantrum: Identifikasi pemicu emosional dan sensorik anak secara akurat untuk mencegah ledakan emosi sebelum terjadi.",
+    "Rekomendasi Respons Berbasis Sains: Dapatkan panduan teknik co-regulation yang teruji untuk menenangkan anak sekaligus membangun ikatan batin yang lebih kuat.",
+    "Action Plan Rutinitas Harian: Susun jadwal harian yang terstruktur dan adaptif sesuai tahap perkembangan kognitif untuk menciptakan kestabilan emosi di rumah.",
+    "Insight Matrix Pengasuhan: Evaluasi diri secara mendalam untuk mengenali pola respons Anda dan meningkatkan kapasitas pengasuhan yang lebih tenang serta solutif."
+  ],
+  "lastUpdated": "2026-07-24T08:35:39.318Z",
+  "trackIcon": "Baby",
+  "price": 200000,
+  "specificTargetContext": "Orang tua atau pengasuh utama dari anak usia 1-3 tahun yang sedang mengalami fase perkembangan emosional intens dan membutuhkan panduan regulasi diri. Target audiens mencakup individu yang berupaya meningkatkan efektivitas pola asuh responsif dan optimalisasi lingkungan stimulasi sensorik di rumah.",
+  "folder": "Parenting",
+  "promoAssets": {
+    "instagram": {
+      "carouselSlides": [
+        {
+          "textOnImage": "Anak Tantrum Terus?",
+          "imageUrl": "https://firebasestorage.googleapis.com/v0/b/teknopark-surakarta.firebasestorage.app/o/promo_assets%2Fnavigasi_tantrum___golden_age_toddler_anak__1_3_tahun_%2Fpromo_1784881842725_slide_1.png?alt=media",
+          "slideNumber": 1,
+          "imagePrompt": "Vertical Portrait Aspect Ratio 3:4. Flat vector illustration, corporate minimalist, Teal and Vibrant Orange on clean white background. A stylized visual of a stressed parent looking at a crying toddler. In the center, write the large, bold text \"Anak Tantrum Terus?\". No 3D, no photorealism."
+        },
+        {
+          "textOnImage": "4 Solusi Cerdas",
+          "imageUrl": "https://firebasestorage.googleapis.com/v0/b/teknopark-surakarta.firebasestorage.app/o/promo_assets%2Fnavigasi_tantrum___golden_age_toddler_anak__1_3_tahun_%2Fpromo_1784881872420_slide_2.png?alt=media",
+          "slideNumber": 2,
+          "imagePrompt": "Vertical Portrait Aspect Ratio 3:4. Flat vector illustration, clean modern UI aesthetic, Teal and Vibrant Orange on white background. Draw a dashboard UI with 3 floating cards. On the first card, write the text \"Peta Mitigasi\". On the second card, write the text \"Respons Sains\". On the third card, write the text \"Action Plan\". No 3D, no photorealism."
+        },
+        {
+          "imagePrompt": "Vertical Portrait Aspect Ratio 3:4. Flat vector illustration, infographic style, Teal and Vibrant Orange on white background. A step-by-step winding roadmap with 3 nodes. Next to node 1, write the text \"Pemetaan\". Next to node 2, write the text \"Evaluasi\". Next to node 3, write the text \"Audit\". No 3D, no photorealism.",
+          "slideNumber": 3,
+          "imageUrl": "https://firebasestorage.googleapis.com/v0/b/teknopark-surakarta.firebasestorage.app/o/promo_assets%2Fnavigasi_tantrum___golden_age_toddler_anak__1_3_tahun_%2Fpromo_1784881935737_slide_3.png?alt=media",
+          "textOnImage": "3 Langkah Mudah"
+        },
+        {
+          "imagePrompt": "Vertical Portrait Aspect Ratio 3:4. Flat vector illustration, corporate minimalist, Teal and Vibrant Orange on white background. A visual of a successful professional holding a document. On the document, write the large text \"Asesmen Sekarang!\". No 3D, no photorealism.",
+          "slideNumber": 4,
+          "imageUrl": "https://firebasestorage.googleapis.com/v0/b/teknopark-surakarta.firebasestorage.app/o/promo_assets%2Fnavigasi_tantrum___golden_age_toddler_anak__1_3_tahun_%2Fpromo_1784881952223_slide_4.png?alt=media",
+          "textOnImage": "Asesmen Sekarang!"
+        }
+      ],
+      "generatedAt": "2026-07-24T08:30:14.070Z",
+      "copywriting": "Pernah gak sih ngerasa frustrasi banget pas anak tantrum, sampai rasanya pengen ikut nangis? 💔\n\nMenghadapi anak usia 1-3 tahun (Golden Age) memang penuh tantangan. Saat emosi mereka meledak, seringkali kita sebagai orang tua ikut terpancing emosi karena bingung harus merespons seperti apa. 😭\n\nKabar baiknya, Anda tidak perlu melaluinya sendirian! Omnifit menghadirkan program \"Navigasi Tantrum & Golden Age Toddler\" sebagai solusi nyata untuk membantu Anda memahami si kecil lebih dalam. 🚀\n\nMelalui asesmen mandiri berbasis sains ini, Anda akan mendapatkan:\n🎯 Peta Mitigasi Risiko Tantrum: Deteksi pemicu emosi anak sebelum meledak.\n💡 Rekomendasi Respons Berbasis Sains: Teknik co-regulation untuk menenangkan anak dengan tenang.\n📊 Action Plan Rutinitas Harian: Jadwal adaptif demi kestabilan emosi anak.\n🧠 Insight Matrix Pengasuhan: Evaluasi mendalam kapasitas pengasuhan Anda.\n\nYuk, ubah momen tantrum menjadi momen bonding yang lebih kuat! Klik link di bio untuk mulai asesmen mandiri sekarang juga! 🌟\n\n#Omnifit #TantrumAnak #GoldenAgeToddler #ParentingAnak #AsesmenParenting #TipsParenting #TumbuhKembangAnak #ManajemenTantrum"
+    }
+  },
+  "userCount": 2,
+  "category": "Parenting",
+  "version": 2,
+  "researchNotesCache": "Penelitian ini mengintegrasikan kerangka Responsive Parenting yang berfokus pada co-regulation, teori perkembangan kognitif Jean Piaget (fase sensorimotor dan pra-operasional), serta Sensory Processing Measure (SPM) untuk mengidentifikasi pemicu tantrum berbasis sensori. Temuan menunjukkan bahwa tantrum pada usia 1-3 tahun sering kali merupakan irisan dari frustrasi kognitif akibat keterbatasan bahasa dan kelebihan beban sensori. Oleh karena itu, asesmen harus mencakup evaluasi respons emosional orang tua, profil sensori anak, dan kualitas stimulasi lingkungan. Modifikasi lingkungan dan validasi emosi terbukti lebih efektif daripada metode pendisiplinan tradisional dalam membangun kapasitas regulasi diri balita.",
+  "aiPromptConfig": {
+    "reportTone": "consultative, empatik, dan berbasis bukti",
+    "formatInstructions": "Gunakan bahasa Indonesia yang empatik, profesional, dan mudah dipahami. Format laporan dengan poin-poin yang jelas dan actionable sesuai kerangka Responsive Parenting.",
+    "formPurpose": "custom",
+    "customReadinessTiers": [
+      "Tingkat 1: Kritis (Regulasi emosi dan pemrosesan sensori sangat rentan, butuh intervensi ahli segera)",
+      "Tingkat 2: Berkembang (Pola asuh reaktif, butuh panduan terstruktur untuk co-regulation dan stimulasi)",
+      "Tingkat 3: Transisional (Pengasuhan responsif mulai konsisten, adaptasi lingkungan sensori cukup baik)",
+      "Tingkat 4: Optimal (Regulasi emosi, stimulasi kognitif Piagetian, dan manajemen sensori sangat selaras)"
+    ],
+    "targetMetricCount": 6,
+    "customUiLabels": {
+      "riskLabel": "Peta Risiko & Mitigasi Tantrum",
+      "executionLabel": "Rencana Aksi Harian",
+      "swotLabel": "Matriks Kapasitas Anak & Orang Tua",
+      "roadmapLabel": "Peta Jalan Pengasuhan Golden Age",
+      "scoreLabel": "Indeks Kesiapan Pengasuhan"
+    },
+    "expectedAnalysisBlocks": [
+      "Profil Tantrum dan Regulasi: Frekuensi dan intensitas episode, Kapasitas pemulihan emosi anak",
+      "Pemrosesan Sensori dan Pemicu: Sensitivitas terhadap stimulus lingkungan, Perilaku pencarian atau penghindaran sensori",
+      "Dinamika Pengasuhan Responsif: Kualitas co-regulation saat krisis, Keselarasan respons dengan kebutuhan anak",
+      "Pencapaian Kognitif Golden Age: Transisi sensorimotor ke pra-operasional, Kemampuan pemecahan masalah dan simbolik",
+      "Ekosistem Lingkungan Harian: Keteraturan rutinitas tidur dan makan, Manajemen waktu layar dan stimulasi aktif",
+      "Refleksi dan Kesiapan Orang Tua: Tingkat stres pengasuhan, Kapasitas adaptasi dan evaluasi diri"
+    ],
+    "assessmentGoal": "Melakukan penilaian komprehensif terhadap pola tantrum, pemrosesan sensori, stimulasi kognitif Piagetian, dan kualitas pengasuhan responsif pada anak usia 1-3 tahun.",
+    "expectedMetrics": [
+      "Kapasitas Regulasi Emosi Anak",
+      "Kualitas Respons Pengasuhan",
+      "Profil Pemrosesan Sensori",
+      "Perkembangan Kognitif & Bermain",
+      "Konsistensi Rutinitas Harian",
+      "Kapasitas Refleksi Diri Orang Tua"
+    ],
+    "mediaAnalysisFocus": "Analisis interaksi orang tua-anak, ekspresi emosi, respons non-verbal saat tantrum, dan reaksi terhadap stimulus sensori.",
+    "aiPersona": "Psikolog Perkembangan Anak & Ahli Responsive Parenting",
+    "customSystemPrompt": "Anda adalah Psikolog Perkembangan Anak tingkat ahli. Analisis data kuesioner orang tua mengenai tantrum anak (1-3 tahun) menggunakan kerangka Responsive Parenting, teori kognitif Piaget, dan Sensory Processing Measure (SPM). Berikan wawasan berbasis bukti dengan nada suportif. Fokus pada co-regulation, modifikasi sensori, dan panduan praktis yang dapat langsung diterapkan di rumah.",
+    "expectedRecommendations": [
+      "Teknik Co-Regulation dan Validasi Emosi Berbasis Responsive Parenting",
+      "Modifikasi Lingkungan Sensori Sesuai Profil Sensory Processing Measure (SPM)",
+      "Stimulasi Kognitif dan Bermain Simbolik Sesuai Tahap Perkembangan Piaget",
+      "Pembentukan Rutinitas Harian yang Konsisten untuk Meminimalisir Pemicu Tantrum",
+      "Praktik Refleksi Diri dan Manajemen Stres untuk Menjaga Kapasitas Pengasuhan"
+    ],
+    "researchSourcesCited": [
+      "Responsive Parenting Framework",
+      "Jean Piaget's Theory of Cognitive Development",
+      "Sensory Processing Measure (SPM) Protocols",
+      "American Academy of Pediatrics (AAP) Guidelines"
+    ],
+    "actionPlanBehavior": "Berikan langkah-langkah harian yang spesifik, berjenjang, dan mudah diterapkan untuk modifikasi perilaku, stimulasi kognitif, dan regulasi emosi.",
+    "riskFramework": "Sensory Processing Measure (SPM), Piaget's Cognitive Stages, & Responsive Parenting Framework",
+    "customScoringRubric": "Gunakan pendekatan suportif: 0-25 (Kritis), 26-50 (Berkembang), 51-75 (Transisional), 76-100 (Optimal). Nilai berdasarkan kapasitas regulasi emosi anak, kualitas co-regulation orang tua, adaptasi sensori, dan stimulasi kognitif.",
+    "negativePrompts": "Jangan menyalahkan orang tua, jangan memberikan diagnosis medis definitif, jangan menyarankan time-out yang mengisolasi, jangan mengabaikan aspek sensori sebagai pemicu tantrum.",
+    "targetAudience": "individual",
+    "isAdaptive": false,
+    "gradingStrictness": "supportive"
+  },
+  "isBestSeller": false,
+  "discountExpiry": null,
+  "discountPercentage": 60,
+  "steps": [
+    {
+      "title": "Pemetaan Frekuensi dan Intensitas Tantrum",
+      "fields": [
+        {
+          "required": true,
+          "label": "Nama Lengkap **Anak** Anda",
+          "gridSpan": 2,
+          "id": "namaUsaha",
+          "type": "text"
+        },
+        {
+          "required": true,
+          "label": "Nama Pengisi Form",
+          "gridSpan": 2,
+          "type": "text",
+          "id": "namaPengisi"
+        },
+        {
+          "type": "number",
+          "description": "Masukkan usia anak dalam satuan bulan untuk menentukan fase perkembangan.",
+          "id": "usiaAnak",
+          "label": "Usia Anak Anda (dalam bulan)",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "type": "select",
+          "id": "hubunganDenganAnak",
+          "options": [
+            {
+              "weight": 100,
+              "label": "Orang Tua Kandung"
+            },
+            {
+              "weight": 90,
+              "label": "Orang Tua Angkat"
+            },
+            {
+              "label": "Kakek/Nenek",
+              "weight": 80
+            },
+            {
+              "label": "Pengasuh Utama",
+              "weight": 70
+            },
+            {
+              "label": "Lainnya",
+              "weight": 60
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Hubungan Anda dengan **Anak**",
+          "required": true
+        },
+        {
+          "id": "pendidikanTerakhir",
+          "type": "select",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Sekolah Menengah Atas/Sederajat",
+              "weight": 25
+            },
+            {
+              "label": "Diploma (D1-D3)",
+              "weight": 50
+            },
+            {
+              "label": "Sarjana (S1)",
+              "weight": 75
+            },
+            {
+              "label": "Pascasarjana (S2/S3)",
+              "weight": 100
+            }
+          ],
+          "required": true,
+          "label": "Pendidikan Terakhir Anda"
+        },
+        {
+          "id": "frekuensiTantrum",
+          "type": "radio",
+          "description": "**Tantrum** adalah ledakan emosi yang tidak terkendali, seperti menangis keras, berteriak, atau menjatuhkan diri.",
+          "label": "Seberapa sering anak Anda mengalami **tantrum** dalam seminggu terakhir?",
+          "required": true,
+          "aiReasoning": "Mengukur prevalensi perilaku tantrum untuk menentukan tingkat urgensi intervensi emosional.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 25,
+              "label": "Hampir setiap hari (5-7 kali seminggu)"
+            },
+            {
+              "weight": 50,
+              "label": "Beberapa kali seminggu (2-4 kali seminggu)"
+            },
+            {
+              "weight": 75,
+              "label": "Sesekali (1 kali seminggu atau kurang)"
+            },
+            {
+              "weight": 100,
+              "label": "Jarang sekali atau tidak pernah"
+            }
+          ]
+        },
+        {
+          "id": "intensitasTantrum",
+          "type": "radio",
+          "options": [
+            {
+              "weight": 25,
+              "label": "Sangat intens, sulit ditenangkan, dan berlangsung lama"
+            },
+            {
+              "label": "Cukup intens, butuh waktu untuk menenangkan diri",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Sedang, bisa ditenangkan dengan sedikit bantuan"
+            },
+            {
+              "label": "Ringan, cepat berlalu dan mudah ditenangkan",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai kedalaman disregulasi emosi anak saat menghadapi pemicu stres.",
+          "label": "Bagaimana Anda menggambarkan **intensitas tantrum** anak Anda?",
+          "required": true
+        },
+        {
+          "description": "Contoh: Ketika tidak mendapatkan apa yang diinginkan, saat lelah, atau transisi aktivitas.",
+          "id": "pemicuTantrum",
+          "type": "textarea",
+          "required": true,
+          "label": "Apa yang paling sering menjadi **pemicu tantrum** anak Anda?",
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi pola pemicu eksternal atau internal yang memicu disregulasi emosi."
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Mengevaluasi gaya pengasuhan dan kemampuan regulasi emosi orang tua dalam situasi krisis.",
+          "options": [
+            {
+              "label": "Saya sering merasa panik atau frustrasi, kadang ikut meninggikan suara",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Saya mencoba menenangkan, namun kadang kehilangan kesabaran"
+            },
+            {
+              "label": "Saya berusaha tetap tenang dan mencari cara untuk mengalihkan perhatian",
+              "weight": 75
+            },
+            {
+              "label": "Saya selalu berusaha merespons dengan tenang dan suportif, memvalidasi perasaannya",
+              "weight": 100
+            }
+          ],
+          "required": true,
+          "label": "Bagaimana **reaksi Anda** saat anak mulai menunjukkan tanda-tanda tantrum?",
+          "id": "responsOrangTuaTantrum",
+          "type": "radio"
+        },
+        {
+          "type": "textarea",
+          "id": "strategiMenanganiTantrum",
+          "gridSpan": 2,
+          "aiReasoning": "Menilai efektivitas dan konsistensi metode penanganan yang diterapkan oleh pengasuh.",
+          "required": true,
+          "label": "Strategi apa yang paling sering Anda gunakan untuk **menangani tantrum** anak?"
+        },
+        {
+          "type": "radio",
+          "id": "pemulihanEmosiAnak",
+          "label": "Seberapa cepat anak Anda dapat **kembali tenang** setelah mengalami tantrum?",
+          "required": true,
+          "options": [
+            {
+              "label": "Sangat lama (lebih dari 15 menit) dan sulit pulih",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Cukup lama (10-15 menit) dengan bantuan intensif"
+            },
+            {
+              "label": "Sedang (5-10 menit) dengan sedikit bantuan",
+              "weight": 75
+            },
+            {
+              "label": "Cepat (kurang dari 5 menit) dan dapat menenangkan diri sendiri",
+              "weight": 100
+            }
+          ],
+          "aiReasoning": "Mengukur kapasitas resiliensi emosional dan kemampuan pemulihan diri anak.",
+          "gridSpan": 2
+        },
+        {
+          "required": true,
+          "label": "Apakah anak Anda menunjukkan **sensitivitas sensori** berlebihan terhadap stimulus lingkungan?",
+          "aiReasoning": "Mendeteksi adanya hambatan pemrosesan sensori yang mungkin berkontribusi pada perilaku tantrum.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 25,
+              "label": "Ya, sangat sering dan mengganggu aktivitasnya"
+            },
+            {
+              "weight": 50,
+              "label": "Ya, kadang-kadang dan cukup terlihat"
+            },
+            {
+              "label": "Jarang, hanya pada situasi tertentu",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Tidak, anak saya tampak nyaman dengan berbagai stimulus"
+            }
+          ],
+          "description": "Contoh: Menutup telinga saat ada suara keras, menghindari tekstur makanan tertentu, atau tidak suka cahaya terang.",
+          "id": "sensitivitasSensori",
+          "type": "radio"
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan lebih lanjut mengenai **sensitivitas sensori** yang Anda amati.",
+          "aiReasoning": "Memperdalam pemahaman mengenai profil sensori spesifik anak.",
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "justifikasiSensitivitas",
+          "showIf": {
+            "fieldId": "sensitivitasSensori",
+            "equals": "Ya, sangat sering dan mengganggu aktivitasnya"
+          }
+        },
+        {
+          "type": "radio",
+          "id": "durasiScreenTime",
+          "label": "Berapa rata-rata **durasi waktu layar** (screen time) anak Anda dalam sehari?",
+          "required": true,
+          "aiReasoning": "Menganalisis dampak paparan media digital terhadap perkembangan atensi dan regulasi emosi.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Lebih dari 3 jam"
+            },
+            {
+              "weight": 25,
+              "label": "2-3 jam"
+            },
+            {
+              "label": "1-2 jam",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Kurang dari 1 jam"
+            },
+            {
+              "label": "Tidak ada waktu layar sama sekali",
+              "weight": 100
+            }
+          ]
+        },
+        {
+          "showIf": {
+            "equals": "Lebih dari 3 jam",
+            "fieldId": "durasiScreenTime"
+          },
+          "id": "justifikasiScreenTime",
+          "type": "textarea",
+          "aiReasoning": "Memahami konteks penggunaan media digital dalam rutinitas harian anak.",
+          "gridSpan": 2,
+          "label": "Mohon jelaskan alasan durasi **waktu layar** tersebut.",
+          "required": true
+        },
+        {
+          "label": "Mohon jelaskan alasan durasi **waktu layar** tersebut.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Memahami konteks penggunaan media digital dalam rutinitas harian anak.",
+          "showIf": {
+            "fieldId": "durasiScreenTime",
+            "equals": "2-3 jam"
+          },
+          "type": "textarea",
+          "id": "justifikasiScreenTime2"
+        }
+      ],
+      "description": "Mengevaluasi pola, durasi, dan tingkat keparahan episode tantrum anak untuk mengukur kapasitas regulasi emosi dasar.",
+      "stepNumber": 1
+    },
+    {
+      "stepNumber": 2,
+      "fields": [
+        {
+          "type": "radio",
+          "id": "responsAwalTantrum",
+          "options": [
+            {
+              "weight": 50,
+              "label": "Saya segera mencoba mengalihkan perhatian anak dengan mainan atau aktivitas lain."
+            },
+            {
+              "weight": 90,
+              "label": "Saya langsung menenangkan anak dengan memeluk atau menggendongnya, sambil berbicara lembut."
+            },
+            {
+              "label": "Saya membiarkan anak meluapkan emosinya di tempat aman, lalu mendekat setelah ia sedikit tenang.",
+              "weight": 70
+            },
+            {
+              "weight": 10,
+              "label": "Saya merasa frustrasi dan terkadang meninggikan suara atau mengancam."
+            }
+          ],
+          "aiReasoning": "Mengidentifikasi gaya respons awal orang tua untuk menentukan tingkat regulasi emosi dalam situasi krisis.",
+          "gridSpan": 4,
+          "required": true,
+          "label": "Bagaimana **reaksi pertama** Anda saat anak mulai menunjukkan tantrum?"
+        },
+        {
+          "type": "radio",
+          "id": "strategiCoRegulasi",
+          "gridSpan": 4,
+          "aiReasoning": "Menilai sejauh mana orang tua mampu memfasilitasi regulasi emosi anak melalui interaksi yang suportif.",
+          "options": [
+            {
+              "weight": 95,
+              "label": "Mengidentifikasi dan menamai emosi anak ('Kamu marah ya karena...'), lalu menawarkan solusi."
+            },
+            {
+              "label": "Mengajak anak bernapas dalam-dalam atau melakukan aktivitas menenangkan seperti membaca buku.",
+              "weight": 80
+            },
+            {
+              "label": "Memberikan pilihan terbatas untuk mengalihkan fokus anak dari pemicu tantrum.",
+              "weight": 60
+            },
+            {
+              "weight": 30,
+              "label": "Menunggu tantrum reda dengan sendirinya tanpa intervensi langsung."
+            },
+            {
+              "weight": 15,
+              "label": "Saya belum memiliki strategi yang konsisten, seringkali respons saya berbeda-beda."
+            }
+          ],
+          "label": "Strategi **co-regulasi** apa yang paling sering Anda gunakan untuk membantu anak menenangkan diri?",
+          "required": true
+        },
+        {
+          "label": "Bagaimana Anda mengelola **emosi pribadi** saat menghadapi tantrum anak?",
+          "required": true,
+          "aiReasoning": "Mengukur kapasitas regulasi diri orang tua sebagai prasyarat utama dalam menangani krisis emosional anak.",
+          "gridSpan": 4,
+          "options": [
+            {
+              "weight": 90,
+              "label": "Saya berusaha menarik napas dalam-dalam atau menjauh sejenak (jika aman) untuk menenangkan diri sebelum merespons."
+            },
+            {
+              "weight": 75,
+              "label": "Saya mencoba mengingatkan diri bahwa ini adalah fase perkembangan normal anak."
+            },
+            {
+              "label": "Saya sering merasa kewalahan dan sulit mengendalikan emosi saya sendiri.",
+              "weight": 20
+            },
+            {
+              "weight": 40,
+              "label": "Saya cenderung merespons secara spontan sesuai perasaan saya saat itu."
+            }
+          ],
+          "id": "emosiOrangTuaSaatTantrum",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "equals": "Saya sering merasa kewalahan dan sulit mengendalikan emosi saya sendiri.",
+            "fieldId": "emosiOrangTuaSaatTantrum"
+          },
+          "type": "textarea",
+          "id": "justifikasiEmosiOrangTua",
+          "gridSpan": 4,
+          "aiReasoning": "Menggali akar penyebab stres pengasuhan untuk memberikan rekomendasi dukungan yang lebih spesifik.",
+          "label": "Mohon jelaskan lebih lanjut mengapa Anda merasa **kewalahan** saat anak tantrum.",
+          "required": true
+        },
+        {
+          "options": [
+            {
+              "label": "Selalu, saya mencoba memahami pemicu dan bagaimana saya bisa merespons lebih baik di kemudian hari.",
+              "weight": 95
+            },
+            {
+              "weight": 60,
+              "label": "Kadang-kadang, jika saya memiliki waktu dan energi."
+            },
+            {
+              "label": "Jarang, saya lebih fokus untuk melanjutkan aktivitas harian.",
+              "weight": 30
+            },
+            {
+              "label": "Tidak pernah, saya hanya ingin melupakan kejadian itu.",
+              "weight": 10
+            }
+          ],
+          "aiReasoning": "Menilai kesadaran orang tua terhadap pola perilaku anak sebagai langkah preventif di masa depan.",
+          "gridSpan": 4,
+          "label": "Apakah Anda meluangkan waktu untuk **refleksi pasca-tantrum** guna memahami pemicunya?",
+          "required": true,
+          "id": "refleksiPascaTantrum",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "equals": "Tidak pernah, saya hanya ingin melupakan kejadian itu.",
+            "fieldId": "refleksiPascaTantrum"
+          },
+          "type": "textarea",
+          "id": "justifikasiRefleksi",
+          "gridSpan": 4,
+          "aiReasoning": "Mengidentifikasi hambatan psikologis atau waktu yang menghalangi proses evaluasi pengasuhan.",
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda **tidak pernah** merefleksikan kejadian tantrum anak."
+        },
+        {
+          "id": "durasiScreenTimeHarian",
+          "type": "radio",
+          "options": [
+            {
+              "label": "Tidak ada sama sekali.",
+              "weight": 100
+            },
+            {
+              "label": "Kurang dari 1 jam.",
+              "weight": 90
+            },
+            {
+              "weight": 70,
+              "label": "1-2 jam."
+            },
+            {
+              "weight": 20,
+              "label": "Lebih dari 2 jam."
+            }
+          ],
+          "aiReasoning": "Menganalisis potensi pengaruh paparan media terhadap ambang batas toleransi stimulasi anak.",
+          "gridSpan": 4,
+          "label": "Berapa rata-rata durasi **waktu layar (screen time)** anak setiap hari?",
+          "required": true
+        },
+        {
+          "aiReasoning": "Memahami konteks penggunaan teknologi sebagai alat bantu pengasuhan atau kebutuhan anak.",
+          "gridSpan": 4,
+          "required": true,
+          "label": "Mohon jelaskan alasan utama mengapa anak menghabiskan waktu layar **lebih dari 2 jam**.",
+          "showIf": {
+            "equals": "Lebih dari 2 jam.",
+            "fieldId": "durasiScreenTimeHarian"
+          },
+          "type": "textarea",
+          "id": "justifikasiScreenTimeLama"
+        },
+        {
+          "label": "Seberapa **konsisten** respons Anda dan pengasuh lain dalam menghadapi tantrum?",
+          "required": true,
+          "options": [
+            {
+              "label": "Sangat konsisten, kami memiliki strategi yang disepakati bersama.",
+              "weight": 95
+            },
+            {
+              "weight": 70,
+              "label": "Cukup konsisten, ada beberapa perbedaan tapi umumnya sejalan."
+            },
+            {
+              "label": "Kurang konsisten, seringkali respons kami berbeda-beda.",
+              "weight": 40
+            },
+            {
+              "weight": 15,
+              "label": "Tidak konsisten sama sekali, setiap orang punya cara sendiri."
+            }
+          ],
+          "aiReasoning": "Mengukur keselarasan pola asuh antar pengasuh untuk memastikan stabilitas lingkungan anak.",
+          "gridSpan": 4,
+          "type": "radio",
+          "id": "konsistensiResponsPengasuh"
+        },
+        {
+          "label": "Mohon jelaskan tantangan di balik **inkonsistensi** respons pengasuhan.",
+          "required": true,
+          "aiReasoning": "Mengidentifikasi hambatan komunikasi atau perbedaan nilai antar pengasuh.",
+          "gridSpan": 4,
+          "id": "justifikasiInkonsistensi",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Tidak konsisten sama sekali, setiap orang punya cara sendiri.",
+            "fieldId": "konsistensiResponsPengasuh"
+          }
+        },
+        {
+          "required": true,
+          "label": "Apakah Anda dapat mengidentifikasi **pola pemicu** tantrum anak?",
+          "options": [
+            {
+              "label": "Ya, saya cukup yakin bisa mengenali pemicunya (misalnya, lapar, lelah, transisi, stimulasi berlebih).",
+              "weight": 90
+            },
+            {
+              "weight": 60,
+              "label": "Kadang-kadang, tapi tidak selalu jelas."
+            },
+            {
+              "weight": 30,
+              "label": "Jarang, tantrum seringkali terasa tiba-tiba dan tanpa alasan jelas."
+            },
+            {
+              "weight": 10,
+              "label": "Tidak, saya merasa tantrum anak saya tidak memiliki pola."
+            }
+          ],
+          "gridSpan": 4,
+          "aiReasoning": "Menilai kemampuan observasi orang tua terhadap kebutuhan dasar atau pemicu sensorik anak.",
+          "type": "radio",
+          "id": "identifikasiPemicuTantrum"
+        },
+        {
+          "showIf": {
+            "fieldId": "identifikasiPemicuTantrum",
+            "equals": "Ya, saya cukup yakin bisa mengenali pemicunya (misalnya, lapar, lelah, transisi, stimulasi berlebih)."
+          },
+          "id": "contohPemicuTantrum",
+          "type": "textarea",
+          "gridSpan": 4,
+          "aiReasoning": "Memvalidasi pemahaman orang tua terhadap pemicu spesifik yang dialami anak.",
+          "required": true,
+          "label": "Berikan contoh **pemicu tantrum** yang sering Anda amati."
+        },
+        {
+          "type": "radio",
+          "id": "tingkatStresPengasuhan",
+          "gridSpan": 4,
+          "aiReasoning": "Mengevaluasi kesejahteraan mental pengasuh sebagai faktor penentu kualitas interaksi dengan anak.",
+          "options": [
+            {
+              "label": "Sangat rendah, saya merasa tenang dan menikmati peran ini.",
+              "weight": 95
+            },
+            {
+              "label": "Rendah hingga sedang, ada tantangan tapi saya bisa mengelolanya.",
+              "weight": 70
+            },
+            {
+              "weight": 40,
+              "label": "Sedang hingga tinggi, saya sering merasa lelah dan kewalahan."
+            },
+            {
+              "weight": 15,
+              "label": "Sangat tinggi, saya merasa sangat tertekan dan butuh bantuan."
+            }
+          ],
+          "label": "Seberapa besar **tingkat stres** yang Anda rasakan dalam peran pengasuhan saat ini?",
+          "required": true
+        },
+        {
+          "showIf": {
+            "fieldId": "tingkatStresPengasuhan",
+            "equals": "Sangat tinggi, saya merasa sangat tertekan dan butuh bantuan."
+          },
+          "type": "textarea",
+          "id": "elaborasiStresPengasuhan",
+          "label": "Mohon jelaskan faktor utama yang membuat Anda merasa **sangat tertekan**.",
+          "required": true,
+          "aiReasoning": "Mengidentifikasi kebutuhan dukungan eksternal atau intervensi profesional bagi pengasuh.",
+          "gridSpan": 4
+        }
+      ],
+      "title": "Evaluasi Respons Pengasuhan Saat Krisis",
+      "description": "Menganalisis reaksi dan strategi intervensi orang tua saat anak mengalami tantrum menggunakan prinsip Responsive Parenting."
+    },
+    {
+      "description": "Mengidentifikasi sensitivitas sensori atau perilaku pencarian atau penghindaran sensori berdasarkan protokol Sensory Processing Measure (SPM).",
+      "fields": [
+        {
+          "type": "radio",
+          "id": "sensoriAuditori",
+          "description": "Observasi ini membantu memahami **sensitivitas pendengaran** anak Anda.",
+          "showIf": {
+            "equals": "Sangat terkejut, menangis intens, berusaha menghindar, atau sulit ditenangkan setelah terpapar suara.",
+            "fieldId": "sensoriAuditori"
+          },
+          "label": "Bagaimana anak Anda merespons **suara keras atau tak terduga** di lingkungan (misalnya, suara blender, klakson, gonggongan anjing)?",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Tidak menunjukkan reaksi khusus atau cepat beradaptasi."
+            },
+            {
+              "weight": 75,
+              "label": "Sedikit terkejut namun cepat pulih dan melanjutkan aktivitas."
+            },
+            {
+              "weight": 50,
+              "label": "Menunjukkan ketidaknyamanan ringan (misalnya, menutup telinga, merengek sebentar) namun dapat ditenangkan."
+            },
+            {
+              "label": "Sangat terkejut, menangis intens, berusaha menghindar, atau sulit ditenangkan setelah terpapar suara.",
+              "weight": 25
+            }
+          ]
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiSensoriAuditori",
+          "required": true,
+          "label": "Mohon jelaskan lebih lanjut situasi dan respons spesifik anak Anda terhadap suara tersebut.",
+          "gridSpan": 2,
+          "aiReasoning": "Menggali konteks mendalam mengenai pemicu auditori untuk menentukan tingkat keparahan gangguan sensori."
+        },
+        {
+          "required": true,
+          "label": "Apakah anak Anda menunjukkan **preferensi atau penolakan kuat** terhadap tekstur tertentu pada makanan atau pakaian?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Tidak ada preferensi atau penolakan yang signifikan terhadap tekstur."
+            },
+            {
+              "label": "Memiliki sedikit preferensi, namun masih mau mencoba hal baru atau memakai berbagai jenis pakaian.",
+              "weight": 75
+            },
+            {
+              "label": "Menolak beberapa tekstur makanan atau jenis pakaian tertentu, namun bisa dibujuk dengan strategi.",
+              "weight": 50
+            },
+            {
+              "weight": 25,
+              "label": "Sangat selektif terhadap tekstur makanan (picky eater ekstrem) atau tidak toleran terhadap jenis pakaian tertentu (misalnya, label, bahan kasar, jahitan)."
+            }
+          ],
+          "type": "radio",
+          "description": "Ini mengukur respons **taktil** anak terhadap sentuhan dan tekstur material.",
+          "id": "sensoriTaktilTekstur",
+          "showIf": {
+            "fieldId": "sensoriTaktilTekstur",
+            "equals": "Sangat selektif terhadap tekstur makanan (picky eater ekstrem) atau tidak toleran terhadap jenis pakaian tertentu (misalnya, label, bahan kasar, jahitan)."
+          }
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi pola penolakan taktil yang dapat membatasi asupan nutrisi atau kenyamanan fisik anak.",
+          "required": true,
+          "label": "Berikan contoh spesifik tekstur yang ditolak dan bagaimana hal itu memengaruhi rutinitas harian anak.",
+          "id": "justifikasiSensoriTaktilTekstur",
+          "type": "textarea"
+        },
+        {
+          "showIf": {
+            "fieldId": "sensoriVestibularProprioceptif",
+            "equals": "Terus-menerus bergerak, sulit duduk tenang, dan seringkali mencari sensasi fisik yang ekstrem (misalnya, menabrakkan diri ke benda/orang, berputar tanpa henti)."
+          },
+          "type": "radio",
+          "id": "sensoriVestibularProprioceptif",
+          "description": "Pertanyaan ini menilai kebutuhan anak akan input **vestibular (gerakan)** dan **proprioseptif (kesadaran tubuh)**.",
+          "required": true,
+          "label": "Seberapa sering anak Anda mencari **stimulasi fisik atau gerakan intens** (misalnya, melompat-lompat, berputar, menabrakkan diri, berguling)?",
+          "options": [
+            {
+              "label": "Sesuai dengan usia, menikmati aktivitas fisik yang bervariasi dan teratur.",
+              "weight": 100
+            },
+            {
+              "label": "Cukup aktif, kadang mencari gerakan yang lebih intens namun mudah diatur.",
+              "weight": 75
+            },
+            {
+              "label": "Seringkali terlihat gelisah dan terus-menerus mencari gerakan atau aktivitas fisik yang kuat.",
+              "weight": 50
+            },
+            {
+              "weight": 25,
+              "label": "Terus-menerus bergerak, sulit duduk tenang, dan seringkali mencari sensasi fisik yang ekstrem (misalnya, menabrakkan diri ke benda/orang, berputar tanpa henti)."
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "label": "Jelaskan bagaimana perilaku mencari stimulasi ini memengaruhi keamanan dan interaksi sosial anak Anda.",
+          "required": true,
+          "aiReasoning": "Mengevaluasi risiko keselamatan dan dampak sosial dari perilaku mencari sensasi fisik yang berlebihan.",
+          "gridSpan": 2,
+          "id": "justifikasiSensoriVestibularProprioceptif",
+          "type": "textarea"
+        },
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Tidak menunjukkan reaksi negatif, menerima sentuhan dengan nyaman.",
+              "weight": 100
+            },
+            {
+              "weight": 75,
+              "label": "Kadang terkejut namun cepat beradaptasi dan tidak menunjukkan ketidaknyamanan."
+            },
+            {
+              "weight": 50,
+              "label": "Menarik diri atau menunjukkan ketidaknyamanan ringan terhadap sentuhan tertentu."
+            },
+            {
+              "weight": 25,
+              "label": "Sangat menolak sentuhan ringan, menarik diri secara drastis, atau menjadi agresif saat disentuh tanpa persiapan."
+            }
+          ],
+          "label": "Bagaimana reaksi anak Anda terhadap **sentuhan ringan atau tak terduga** (misalnya, sentuhan dari orang lain, label baju, rumput)?",
+          "required": true,
+          "description": "Mengukur **sensitivitas taktil** anak terhadap sentuhan non-agresif.",
+          "type": "radio",
+          "id": "sensoriTaktilSentuhan",
+          "showIf": {
+            "fieldId": "sensoriTaktilSentuhan",
+            "equals": "Sangat menolak sentuhan ringan, menarik diri secara drastis, atau menjadi agresif saat disentuh tanpa persiapan."
+          }
+        },
+        {
+          "required": true,
+          "label": "Berikan contoh situasi spesifik di mana anak Anda menunjukkan reaksi ini dan bagaimana Anda mengatasinya.",
+          "gridSpan": 2,
+          "aiReasoning": "Memahami ambang batas toleransi sentuhan anak untuk memetakan strategi interaksi yang aman.",
+          "id": "justifikasiSensoriTaktilSentuhan",
+          "type": "textarea"
+        },
+        {
+          "showIf": {
+            "equals": "Menutup mata atau menghindar dari cahaya terang secara konsisten, atau terobsesi melihat pola/detail kecil dalam waktu lama.",
+            "fieldId": "sensoriVisual"
+          },
+          "id": "sensoriVisual",
+          "description": "Ini membantu menilai **pemrosesan visual** anak Anda.",
+          "type": "radio",
+          "required": true,
+          "label": "Apakah anak Anda menunjukkan **sensitivitas atau ketertarikan yang tidak biasa** terhadap cahaya terang, pola visual, atau detail kecil?",
+          "options": [
+            {
+              "label": "Perhatian visual normal sesuai usia, tidak ada sensitivitas berlebihan.",
+              "weight": 100
+            },
+            {
+              "label": "Kadang terpesona oleh cahaya atau pola tertentu, namun tidak mengganggu fungsi.",
+              "weight": 75
+            },
+            {
+              "weight": 50,
+              "label": "Seringkali terganggu oleh cahaya terang atau terlalu fokus pada detail visual yang kecil."
+            },
+            {
+              "label": "Menutup mata atau menghindar dari cahaya terang secara konsisten, atau terobsesi melihat pola/detail kecil dalam waktu lama.",
+              "weight": 25
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "id": "justifikasiSensoriVisual",
+          "type": "textarea",
+          "aiReasoning": "Mendeteksi adanya fiksasi visual atau hipersensitivitas cahaya yang dapat mengganggu fokus belajar.",
+          "gridSpan": 2,
+          "label": "Jelaskan observasi spesifik Anda terkait respons visual anak dan dampaknya pada aktivitas sehari-hari.",
+          "required": true
+        },
+        {
+          "description": "Mengukur **sensitivitas penciuman dan pengecapan** anak.",
+          "type": "radio",
+          "id": "sensoriOlfaktoriGustatori",
+          "showIf": {
+            "fieldId": "sensoriOlfaktoriGustatori",
+            "equals": "Sangat menolak atau muntah saat terpapar bau/rasa tertentu, bahkan dalam jumlah kecil."
+          },
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Tidak menunjukkan reaksi negatif yang signifikan terhadap bau/rasa kuat.",
+              "weight": 100
+            },
+            {
+              "label": "Kadang menunjukkan sedikit ekspresi tidak suka, namun cepat pulih dan tidak menghindar.",
+              "weight": 75
+            },
+            {
+              "label": "Menarik diri atau menunjukkan ketidaknyamanan terhadap bau/rasa tertentu.",
+              "weight": 50
+            },
+            {
+              "label": "Sangat menolak atau muntah saat terpapar bau/rasa tertentu, bahkan dalam jumlah kecil.",
+              "weight": 25
+            }
+          ],
+          "label": "Bagaimana reaksi anak Anda terhadap **bau atau rasa yang kuat** (misalnya, parfum, makanan pedas, bau masakan tertentu)?",
+          "required": true
+        },
+        {
+          "required": true,
+          "label": "Berikan contoh spesifik bau atau rasa yang memicu reaksi ini dan bagaimana Anda mengelola situasi tersebut.",
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi pemicu olfaktori/gustatori ekstrem yang berpotensi menyebabkan reaksi fisik (muntah/penolakan).",
+          "id": "justifikasiSensoriOlfaktoriGustatori",
+          "type": "textarea"
+        },
+        {
+          "required": true,
+          "label": "Bagaimana kemampuan **keseimbangan dan koordinasi motorik kasar** anak Anda dibandingkan anak seusianya?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Sangat baik, lincah, dan jarang terjatuh saat bergerak."
+            },
+            {
+              "label": "Cukup baik, kadang tersandung namun bisa mengatasinya dengan cepat.",
+              "weight": 75
+            },
+            {
+              "weight": 50,
+              "label": "Terlihat canggung, sering tersandung atau terjatuh, dan kesulitan dalam aktivitas motorik kasar (misalnya, melompat, berlari)."
+            },
+            {
+              "label": "Sangat kesulitan menjaga keseimbangan, sering terjatuh, atau tampak tidak menyadari posisi tubuhnya di ruang.",
+              "weight": 25
+            }
+          ],
+          "type": "radio",
+          "id": "motorikKasarKeseimbangan",
+          "description": "Ini menilai integrasi input vestibular dan proprioseptif untuk **gerakan terencana**.",
+          "showIf": {
+            "fieldId": "motorikKasarKeseimbangan",
+            "equals": "Sangat kesulitan menjaga keseimbangan, sering terjatuh, atau tampak tidak menyadari posisi tubuhnya di ruang."
+          }
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiMotorikKasarKeseimbangan",
+          "required": true,
+          "label": "Jelaskan tantangan spesifik yang dihadapi anak Anda terkait keseimbangan dan koordinasi motorik kasar.",
+          "gridSpan": 2,
+          "aiReasoning": "Menganalisis defisit motorik kasar yang mungkin berkaitan dengan gangguan integrasi sensori."
+        },
+        {
+          "required": true,
+          "label": "Seberapa baik anak Anda dapat mempertahankan **fokus dan perhatian** saat bermain atau melakukan aktivitas yang terstruktur?",
+          "options": [
+            {
+              "label": "Dapat fokus dengan baik pada satu aktivitas selama waktu yang wajar untuk usianya.",
+              "weight": 100
+            },
+            {
+              "label": "Cukup dapat fokus, namun mudah teralih jika ada stimulasi lain yang kuat.",
+              "weight": 75
+            },
+            {
+              "label": "Seringkali sulit mempertahankan fokus, mudah teralih, dan berpindah-pindah aktivitas dengan cepat.",
+              "weight": 50
+            },
+            {
+              "label": "Sangat sulit untuk fokus pada satu aktivitas, perhatian sangat singkat, atau tampak 'melamun' meskipun ada stimulasi.",
+              "weight": 25
+            }
+          ],
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "fokusPerhatianSensori",
+            "equals": "Sangat sulit untuk fokus pada satu aktivitas, perhatian sangat singkat, atau tampak 'melamun' meskipun ada stimulasi."
+          },
+          "id": "fokusPerhatianSensori",
+          "type": "radio",
+          "description": "Pemrosesan sensori yang efisien mendukung **kemampuan fokus**."
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Menilai sejauh mana distraksi sensori memengaruhi rentang perhatian anak dalam aktivitas harian.",
+          "required": true,
+          "label": "Berikan contoh situasi di mana anak Anda kesulitan fokus dan bagaimana lingkungan memengaruhinya.",
+          "id": "justifikasiFokusPerhatianSensori",
+          "type": "textarea"
+        },
+        {
+          "required": true,
+          "label": "Bagaimana reaksi anak Anda terhadap **perubahan rutinitas atau transisi** dari satu aktivitas ke aktivitas lain?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Mampu beradaptasi dengan baik terhadap perubahan kecil dan transisi."
+            },
+            {
+              "label": "Membutuhkan sedikit persiapan, namun akhirnya bisa beradaptasi dengan dukungan.",
+              "weight": 75
+            },
+            {
+              "weight": 50,
+              "label": "Seringkali menunjukkan ketidaknyamanan atau tantrum saat ada perubahan rutinitas atau transisi."
+            },
+            {
+              "label": "Sangat sulit menerima perubahan, tantrum intens dan berkepanjangan setiap kali ada transisi yang tidak terduga.",
+              "weight": 25
+            }
+          ],
+          "description": "Mengukur kemampuan **regulasi diri** anak dalam menghadapi perubahan.",
+          "type": "radio",
+          "id": "regulasiTransisi",
+          "showIf": {
+            "equals": "Sangat sulit menerima perubahan, tantrum intens dan berkepanjangan setiap kali ada transisi yang tidak terduga.",
+            "fieldId": "regulasiTransisi"
+          }
+        },
+        {
+          "label": "Jelaskan contoh transisi yang paling menantang bagi anak Anda dan bagaimana Anda biasanya merespons.",
+          "required": true,
+          "aiReasoning": "Mengevaluasi fleksibilitas kognitif dan emosional anak saat menghadapi perubahan lingkungan yang tidak terduga.",
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "justifikasiRegulasiTransisi"
+        },
+        {
+          "showIf": {
+            "equals": "Sangat sulit tidur, sering terbangun dengan gelisah, atau tidur tidak teratur dan mengganggu secara konsisten.",
+            "fieldId": "tidurSensori"
+          },
+          "id": "tidurSensori",
+          "type": "radio",
+          "description": "Pemrosesan sensori dapat memengaruhi kemampuan anak untuk **menenangkan diri dan tidur**.",
+          "required": true,
+          "label": "Bagaimana **kualitas tidur** anak Anda secara umum?",
+          "options": [
+            {
+              "weight": 100,
+              "label": "Tidur nyenyak, mudah tertidur, dan jarang terbangun di malam hari."
+            },
+            {
+              "label": "Cukup baik, kadang sulit tidur atau terbangun sekali, namun bisa kembali tidur sendiri.",
+              "weight": 75
+            },
+            {
+              "label": "Seringkali sulit tidur, sering terbangun, atau membutuhkan rutinitas tidur yang sangat spesifik dan intens.",
+              "weight": 50
+            },
+            {
+              "weight": 25,
+              "label": "Sangat sulit tidur, sering terbangun dengan gelisah, atau tidur tidak teratur dan mengganggu secara konsisten."
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiTidurSensori",
+          "aiReasoning": "Mengidentifikasi gangguan tidur yang mungkin berakar dari disregulasi sensori atau kecemasan.",
+          "gridSpan": 2,
+          "label": "Mohon uraikan pola tidur anak Anda dan faktor-faktor yang menurut Anda memengaruhinya.",
+          "required": true
+        }
+      ],
+      "title": "Observasi Pemrosesan Sensori Anak",
+      "stepNumber": 3
+    },
+    {
+      "description": "Menilai tahap perkembangan kognitif anak (sensorimotor ke pra-operasional) dan kualitas stimulasi bermain sesuai teori Jean Piaget.",
+      "fields": [
+        {
+          "required": true,
+          "label": "Bagaimana anak Anda berinteraksi dengan **mainan pemecahan masalah** (seperti menyusun balok atau puzzle)?",
+          "gridSpan": 2,
+          "aiReasoning": "Menilai kemampuan kognitif anak dalam memecahkan masalah sederhana secara mandiri.",
+          "options": [
+            {
+              "weight": 20,
+              "label": "Anak kesulitan memahami konsep dan cepat frustrasi."
+            },
+            {
+              "label": "Anak membutuhkan banyak bantuan dan arahan untuk menyelesaikan.",
+              "weight": 45
+            },
+            {
+              "weight": 70,
+              "label": "Anak dapat menyelesaikan dengan sedikit bantuan atau setelah beberapa percobaan."
+            },
+            {
+              "label": "Anak secara mandiri mencoba dan berhasil menyelesaikan masalah sederhana.",
+              "weight": 90
+            }
+          ],
+          "type": "radio",
+          "id": "interaksiMainanPemecahanMasalah"
+        },
+        {
+          "aiReasoning": "Memperoleh data kualitatif untuk memvalidasi tingkat kemandirian kognitif anak.",
+          "gridSpan": 2,
+          "label": "Mohon berikan **contoh spesifik** kemampuan pemecahan masalah anak Anda saat bermain.",
+          "required": true,
+          "showIf": {
+            "fieldId": "interaksiMainanPemecahanMasalah",
+            "equals": "Anak secara mandiri mencoba dan berhasil menyelesaikan masalah sederhana."
+          },
+          "type": "textarea",
+          "id": "contohInteraksiMainanPemecahanMasalah"
+        },
+        {
+          "id": "permainanPuraPura",
+          "type": "radio",
+          "aiReasoning": "Mengukur perkembangan fungsi eksekutif dan kemampuan simbolik anak melalui permainan imajinatif.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 15,
+              "label": "Belum menunjukkan minat atau kemampuan bermain pura-pura."
+            },
+            {
+              "label": "Kadang-kadang, jika distimulasi atau ditunjukkan contoh.",
+              "weight": 40
+            },
+            {
+              "weight": 75,
+              "label": "Sering menunjukkan permainan pura-pura sederhana secara spontan."
+            },
+            {
+              "weight": 95,
+              "label": "Sangat aktif dalam permainan pura-pura yang kompleks dan imajinatif."
+            }
+          ],
+          "label": "Sejauh mana anak Anda menunjukkan **permainan pura-pura** (imajinatif) secara spontan?",
+          "required": true
+        },
+        {
+          "id": "contohPermainanPuraPura",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Sangat aktif dalam permainan pura-pura yang kompleks dan imajinatif.",
+            "fieldId": "permainanPuraPura"
+          },
+          "aiReasoning": "Mengonfirmasi kedalaman imajinasi dan kreativitas anak dalam bermain.",
+          "gridSpan": 2,
+          "label": "Mohon berikan **contoh spesifik** permainan pura-pura yang sering dilakukan anak Anda.",
+          "required": true
+        },
+        {
+          "type": "radio",
+          "id": "frekuensiBermainEksploratif",
+          "required": true,
+          "label": "Seberapa sering anak diberikan kesempatan untuk **bermain eksploratif** (bebas tanpa instruksi)?",
+          "options": [
+            {
+              "weight": 10,
+              "label": "Jarang sekali atau tidak pernah."
+            },
+            {
+              "label": "Kadang-kadang (1-2 kali seminggu).",
+              "weight": 40
+            },
+            {
+              "label": "Cukup sering (3-4 kali seminggu).",
+              "weight": 70
+            },
+            {
+              "label": "Setiap hari atau hampir setiap hari.",
+              "weight": 90
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengevaluasi lingkungan stimulasi yang mendukung kemandirian dan eksplorasi sensorik anak."
+        },
+        {
+          "type": "textarea",
+          "id": "alasanJarangBermainEksploratif",
+          "showIf": {
+            "fieldId": "frekuensiBermainEksploratif",
+            "equals": "Jarang sekali atau tidak pernah."
+          },
+          "required": true,
+          "label": "Mohon jelaskan kendala yang membuat kesempatan **bermain eksploratif** jarang diberikan.",
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi hambatan orang tua dalam memfasilitasi waktu bermain bebas anak."
+        },
+        {
+          "type": "radio",
+          "id": "doronganBerpikirDalamBermain",
+          "label": "Bagaimana Anda memicu **kemampuan berpikir kritis** anak saat bermain bersama?",
+          "required": true,
+          "options": [
+            {
+              "label": "Jarang atau tidak pernah mengajukan pertanyaan yang mendorong pemikiran.",
+              "weight": 20
+            },
+            {
+              "label": "Kadang-kadang mengajukan pertanyaan, tetapi sering langsung memberikan jawaban.",
+              "weight": 50
+            },
+            {
+              "label": "Sering mengajukan pertanyaan dan memberi waktu anak untuk mencoba menjawab atau bertindak.",
+              "weight": 75
+            },
+            {
+              "weight": 90,
+              "label": "Secara konsisten mendorong anak untuk bereksperimen dan menemukan solusi sendiri."
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai kualitas interaksi orang tua dalam menstimulasi kognitif anak melalui pertanyaan terbuka."
+        },
+        {
+          "label": "Apakah anak mampu **mengategorikan objek** (seperti hewan, kendaraan, atau makanan) secara mandiri?",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur kemampuan klasifikasi kognitif anak sebagai indikator perkembangan intelektual.",
+          "options": [
+            {
+              "label": "Belum menunjukkan kemampuan mengkategorikan objek.",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Dapat mengkategorikan beberapa objek dengan bantuan atau petunjuk."
+            },
+            {
+              "label": "Sering dapat mengkategorikan objek yang familiar secara mandiri.",
+              "weight": 75
+            },
+            {
+              "label": "Secara konsisten dapat mengkategorikan berbagai objek dan mulai memahami konsep yang lebih abstrak.",
+              "weight": 90
+            }
+          ],
+          "type": "radio",
+          "id": "pengenalanKategoriObjek"
+        },
+        {
+          "label": "Berapa lama rata-rata **rentang perhatian (fokus)** anak pada satu aktivitas bermain?",
+          "required": true,
+          "aiReasoning": "Menilai durasi konsentrasi anak sebagai parameter kesiapan belajar dan regulasi diri.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 20,
+              "label": "Kurang dari 5 menit."
+            },
+            {
+              "label": "5-10 menit.",
+              "weight": 50
+            },
+            {
+              "label": "10-20 menit.",
+              "weight": 75
+            },
+            {
+              "weight": 90,
+              "label": "Lebih dari 20 menit."
+            }
+          ],
+          "type": "radio",
+          "id": "durasiFokusBermain"
+        },
+        {
+          "id": "alasanFokusSingkat",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "durasiFokusBermain",
+            "equals": "Kurang dari 5 menit."
+          },
+          "required": true,
+          "label": "Mohon jelaskan observasi Anda mengenai **durasi fokus** anak yang singkat.",
+          "aiReasoning": "Mencari tahu faktor eksternal atau internal yang mengganggu konsentrasi anak.",
+          "gridSpan": 2
+        },
+        {
+          "id": "frekuensiMembacaBuku",
+          "type": "radio",
+          "label": "Seberapa sering Anda melakukan **literasi dini** (membacakan buku/bercerita) dalam sehari?",
+          "required": true,
+          "options": [
+            {
+              "weight": 10,
+              "label": "Jarang sekali atau tidak pernah."
+            },
+            {
+              "label": "1-2 kali sehari.",
+              "weight": 60
+            },
+            {
+              "label": "3-4 kali sehari.",
+              "weight": 85
+            },
+            {
+              "weight": 100,
+              "label": "Lebih dari 4 kali sehari."
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur paparan bahasa dan stimulasi kognitif melalui aktivitas membaca bersama."
+        },
+        {
+          "options": [
+            {
+              "weight": 15,
+              "label": "Tidak tertarik sama sekali."
+            },
+            {
+              "weight": 45,
+              "label": "Kadang-kadang, jika didorong atau ditawarkan."
+            },
+            {
+              "label": "Sering menunjukkan minat dan berpartisipasi aktif.",
+              "weight": 75
+            },
+            {
+              "label": "Sangat antusias dan sering berinisiatif sendiri untuk melakukan kegiatan kreatif.",
+              "weight": 95
+            }
+          ],
+          "aiReasoning": "Menilai ekspresi diri dan perkembangan motorik halus anak melalui aktivitas kreatif.",
+          "gridSpan": 2,
+          "label": "Bagaimana minat anak terhadap **kegiatan kreatif** (melukis, mencoret-coret, atau bermain plastisin)?",
+          "required": true,
+          "id": "minatKegiatanKreatif",
+          "type": "radio"
+        }
+      ],
+      "title": "Asesmen Stimulasi Kognitif dan Bermain",
+      "stepNumber": 4
+    },
+    {
+      "description": "Mengevaluasi konsistensi jadwal tidur, makan, waktu layar, dan keteraturan lingkungan sebagai fondasi stabilitas emosi anak.",
+      "fields": [
+        {
+          "type": "radio",
+          "id": "rutinitasTidur",
+          "gridSpan": 2,
+          "aiReasoning": "Konsistensi ritme sirkadian sangat krusial untuk regulasi emosi dan fungsi kognitif anak.",
+          "options": [
+            {
+              "weight": 100,
+              "label": "Sangat konsisten, jarang ada perubahan."
+            },
+            {
+              "label": "Cukup konsisten, ada sedikit variasi.",
+              "weight": 75
+            },
+            {
+              "weight": 50,
+              "label": "Kadang-kadang konsisten, sering berubah."
+            },
+            {
+              "weight": 25,
+              "label": "Tidak konsisten, jam tidur dan bangun sangat bervariasi."
+            }
+          ],
+          "required": true,
+          "label": "Seberapa **konsisten** rutinitas tidur anak Anda (misalnya, jam tidur dan bangun yang sama setiap hari)?"
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan tantangan atau alasan di balik **inkonsistensi rutinitas tidur** anak Anda.",
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi hambatan spesifik dalam manajemen waktu tidur membantu menentukan intervensi yang tepat.",
+          "showIf": {
+            "equals": "Tidak konsisten, jam tidur dan bangun sangat bervariasi.",
+            "fieldId": "rutinitasTidur"
+          },
+          "id": "justifikasiTidur",
+          "type": "textarea"
+        },
+        {
+          "type": "radio",
+          "id": "rutinitasMakan",
+          "aiReasoning": "Rutinitas makan yang teratur mendukung stabilitas energi dan perilaku anak sepanjang hari.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Sangat teratur dan tenang.",
+              "weight": 100
+            },
+            {
+              "weight": 75,
+              "label": "Cukup teratur, kadang ada gangguan."
+            },
+            {
+              "label": "Sering tidak teratur atau penuh tantangan.",
+              "weight": 50
+            },
+            {
+              "label": "Sangat tidak teratur dan sering menjadi sumber konflik.",
+              "weight": 25
+            }
+          ],
+          "label": "Bagaimana **konsistensi rutinitas makan** anak Anda (misalnya, jadwal makan teratur, suasana makan yang tenang)?",
+          "required": true
+        },
+        {
+          "aiReasoning": "Memahami akar konflik saat makan membantu dalam merancang strategi pemberian makan yang lebih suportif.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon uraikan tantangan atau situasi yang membuat **rutinitas makan** anak Anda tidak teratur atau penuh konflik.",
+          "type": "textarea",
+          "id": "justifikasiMakan",
+          "showIf": {
+            "equals": "Sangat tidak teratur dan sering menjadi sumber konflik.",
+            "fieldId": "rutinitasMakan"
+          }
+        },
+        {
+          "label": "Berapa rata-rata **durasi waktu layar** (TV, tablet, ponsel) yang dihabiskan anak Anda setiap hari?",
+          "required": true,
+          "options": [
+            {
+              "label": "Tidak ada sama sekali.",
+              "weight": 100
+            },
+            {
+              "label": "Kurang dari 1 jam.",
+              "weight": 90
+            },
+            {
+              "label": "1-2 jam.",
+              "weight": 70
+            },
+            {
+              "label": "2-3 jam.",
+              "weight": 50
+            },
+            {
+              "weight": 25,
+              "label": "Lebih dari 3 jam."
+            }
+          ],
+          "aiReasoning": "Paparan layar berlebih berkorelasi dengan penurunan durasi atensi dan kualitas interaksi sosial anak.",
+          "gridSpan": 2,
+          "id": "durasiWaktuLayar",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "equals": "Lebih dari 3 jam.",
+            "fieldId": "durasiWaktuLayar"
+          },
+          "type": "textarea",
+          "id": "justifikasiWaktuLayar",
+          "required": true,
+          "label": "Mohon jelaskan alasan di balik penggunaan **waktu layar** yang tinggi pada anak Anda.",
+          "aiReasoning": "Mengetahui konteks penggunaan layar membantu memberikan alternatif aktivitas yang lebih edukatif.",
+          "gridSpan": 2
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Aktivitas fisik sangat penting untuk regulasi sensori dan perkembangan motorik kasar anak.",
+          "options": [
+            {
+              "weight": 100,
+              "label": "Setiap hari, minimal 1-2 jam."
+            },
+            {
+              "label": "Hampir setiap hari, sekitar 30-60 menit.",
+              "weight": 75
+            },
+            {
+              "label": "Beberapa kali seminggu.",
+              "weight": 50
+            },
+            {
+              "label": "Jarang atau tidak pernah.",
+              "weight": 25
+            }
+          ],
+          "label": "Seberapa sering anak Anda terlibat dalam **aktivitas fisik** atau bermain di luar ruangan setiap hari?",
+          "required": true,
+          "id": "aktivitasFisik",
+          "type": "radio"
+        },
+        {
+          "aiReasoning": "Mengidentifikasi hambatan akses fisik membantu dalam memberikan solusi praktis untuk meningkatkan mobilitas anak.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan kendala yang menyebabkan anak Anda **jarang atau tidak pernah** terlibat dalam aktivitas fisik.",
+          "showIf": {
+            "equals": "Jarang atau tidak pernah.",
+            "fieldId": "aktivitasFisik"
+          },
+          "type": "textarea",
+          "id": "justifikasiAktivitasFisik"
+        },
+        {
+          "required": true,
+          "label": "Bagaimana Anda menilai ketersediaan dan penggunaan **stimulasi kognitif** (mainan/materi edukatif) di rumah?",
+          "aiReasoning": "Lingkungan yang kaya stimulasi kognitif mendukung perkembangan fungsi eksekutif dan rasa ingin tahu anak.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Sangat memadai dan sering digunakan secara interaktif.",
+              "weight": 100
+            },
+            {
+              "label": "Cukup memadai, namun penggunaan kadang terbatas.",
+              "weight": 75
+            },
+            {
+              "weight": 50,
+              "label": "Terbatas, anak sering bosan atau kurang tertarik."
+            },
+            {
+              "weight": 25,
+              "label": "Sangat terbatas atau tidak ada."
+            }
+          ],
+          "type": "radio",
+          "id": "stimulasiKognitif"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Memahami keterbatasan sumber daya atau waktu orang tua untuk memberikan stimulasi yang tepat.",
+          "label": "Mohon jelaskan kendala di balik **keterbatasan stimulasi kognitif** di rumah.",
+          "required": true,
+          "id": "justifikasiStimulasiKognitif",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "stimulasiKognitif",
+            "equals": "Sangat terbatas atau tidak ada."
+          }
+        },
+        {
+          "options": [
+            {
+              "label": "Ya, kami memiliki beberapa adaptasi yang efektif.",
+              "weight": 100
+            },
+            {
+              "label": "Cukup, ada upaya namun belum optimal.",
+              "weight": 75
+            },
+            {
+              "label": "Belum banyak, kami masih mencari cara.",
+              "weight": 50
+            },
+            {
+              "weight": 25,
+              "label": "Tidak ada adaptasi khusus."
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Adaptasi lingkungan yang tepat dapat mengurangi beban sensori dan meminimalisir tantrum.",
+          "required": true,
+          "label": "Apakah lingkungan rumah telah disesuaikan untuk mendukung **kebutuhan sensori** anak?",
+          "type": "radio",
+          "id": "adaptasiSensori"
+        },
+        {
+          "showIf": {
+            "equals": "Tidak ada adaptasi khusus.",
+            "fieldId": "adaptasiSensori"
+          },
+          "id": "penjelasanAdaptasiSensori",
+          "type": "textarea",
+          "required": true,
+          "label": "Mohon jelaskan mengapa **belum ada adaptasi khusus** yang dilakukan di rumah.",
+          "gridSpan": 2,
+          "aiReasoning": "Mengetahui apakah kurangnya adaptasi disebabkan oleh kurangnya pengetahuan atau kendala praktis."
+        }
+      ],
+      "title": "Audit Rutinitas Harian dan Lingkungan",
+      "stepNumber": 5
+    },
+    {
+      "stepNumber": 6,
+      "title": "Refleksi Diri dan Manajemen Stres Orang Tua",
+      "fields": [
+        {
+          "id": "justifikasiStresPengasuhan",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Sangat tinggi, saya merasa sangat tertekan dan butuh bantuan.",
+            "fieldId": "tingkatStresPengasuhan"
+          },
+          "aiReasoning": "Menggali akar penyebab stres kronis untuk memahami beban mental yang dialami orang tua.",
+          "gridSpan": 2,
+          "label": "Mohon jelaskan lebih lanjut mengapa Anda merasa **kewalahan** atau **sangat lelah** dalam menjalankan peran pengasuhan.",
+          "required": true
+        },
+        {
+          "required": true,
+          "label": "Bagaimana **reaksi emosional** Anda saat menghadapi situasi tak terduga atau perubahan rutinitas yang memicu tantrum pada anak?",
+          "aiReasoning": "Mengukur regulasi emosi orang tua sebagai indikator utama ketahanan psikologis dalam pengasuhan.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Panik dan sulit mengendalikan emosi sendiri",
+              "weight": 0
+            },
+            {
+              "weight": 25,
+              "label": "Merasa frustrasi dan kadang bereaksi impulsif"
+            },
+            {
+              "weight": 50,
+              "label": "Mencoba menenangkan diri, namun seringkali kewalahan"
+            },
+            {
+              "label": "Mampu tetap tenang dan mencari solusi adaptif",
+              "weight": 75
+            },
+            {
+              "label": "Sangat tenang dan selalu menemukan cara efektif untuk beradaptasi",
+              "weight": 100
+            }
+          ],
+          "id": "responsTantangan",
+          "type": "radio"
+        },
+        {
+          "id": "justifikasiResponsTantangan",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Panik dan sulit mengendalikan emosi sendiri",
+            "fieldId": "responsTantangan"
+          },
+          "label": "Mohon uraikan pengalaman Anda saat merasa **panik atau frustrasi** ketika menghadapi tantrum yang tidak terduga.",
+          "required": true,
+          "aiReasoning": "Mendapatkan narasi kualitatif mengenai pemicu spesifik yang merusak kontrol diri orang tua.",
+          "gridSpan": 2
+        },
+        {
+          "aiReasoning": "Mengidentifikasi hambatan (waktu, energi, atau kesadaran) yang menghalangi proses evaluasi diri orang tua.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda **jarang atau tidak pernah** melakukan refleksi diri setelah episode tantrum anak terjadi.",
+          "showIf": {
+            "equals": "Jarang, saya lebih fokus untuk melanjutkan aktivitas harian.",
+            "fieldId": "refleksiPascaTantrum"
+          },
+          "id": "justifikasiRefleksiPascaTantrum",
+          "type": "textarea"
+        },
+        {
+          "type": "select",
+          "id": "strategiFrustrasi",
+          "label": "Strategi apa yang Anda gunakan untuk mengelola **frustrasi atau kemarahan** saat menghadapi perilaku menantang anak?",
+          "required": true,
+          "options": [
+            {
+              "label": "Tidak memiliki strategi khusus, seringkali meledak",
+              "weight": 0
+            },
+            {
+              "label": "Mencoba menenangkan diri, namun sering tidak berhasil",
+              "weight": 25
+            },
+            {
+              "label": "Mengambil jeda singkat atau mencari pengalihan",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Berbicara dengan pasangan/teman atau melakukan aktivitas relaksasi"
+            },
+            {
+              "label": "Memiliki rutinitas manajemen stres yang efektif dan konsisten",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai ketersediaan dan efektivitas mekanisme koping yang dimiliki orang tua."
+        },
+        {
+          "id": "justifikasiStrategiFrustrasi",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Tidak memiliki strategi khusus, seringkali meledak",
+            "fieldId": "strategiFrustrasi"
+          },
+          "label": "Mohon jelaskan lebih lanjut mengenai **kesulitan utama** yang Anda hadapi dalam mengelola frustrasi atau kemarahan.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Memahami hambatan spesifik yang membuat strategi manajemen stres orang tua tidak berjalan efektif."
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Menilai ketersediaan sistem pendukung sosial sebagai faktor protektif terhadap stres pengasuhan.",
+          "options": [
+            {
+              "weight": 0,
+              "label": "Sama sekali tidak ada dukungan"
+            },
+            {
+              "weight": 25,
+              "label": "Sangat minim, merasa sendirian"
+            },
+            {
+              "label": "Ada dukungan, namun tidak selalu sesuai kebutuhan",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Cukup memadai dan membantu"
+            },
+            {
+              "label": "Sangat kuat dan suportif",
+              "weight": 100
+            }
+          ],
+          "label": "Seberapa besar Anda merasa mendapatkan **dukungan yang memadai** dari lingkungan sekitar dalam perjalanan pengasuhan Anda?",
+          "required": true,
+          "type": "radio",
+          "id": "dukunganSosial"
+        },
+        {
+          "id": "justifikasiDukunganSosial",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Sama sekali tidak ada dukungan",
+            "fieldId": "dukunganSosial"
+          },
+          "aiReasoning": "Menggali konteks isolasi sosial yang dialami orang tua untuk memberikan rekomendasi dukungan yang tepat.",
+          "gridSpan": 2,
+          "label": "Mohon jelaskan mengapa Anda merasa **tidak ada atau sangat minim dukungan** dalam menjalankan peran pengasuhan.",
+          "required": true
+        },
+        {
+          "type": "radio",
+          "id": "perasaanBersalah",
+          "options": [
+            {
+              "label": "Hampir setiap kali",
+              "weight": 0
+            },
+            {
+              "weight": 25,
+              "label": "Seringkali"
+            },
+            {
+              "weight": 50,
+              "label": "Kadang-kadang"
+            },
+            {
+              "label": "Jarang",
+              "weight": 75
+            },
+            {
+              "label": "Tidak pernah",
+              "weight": 100
+            }
+          ],
+          "aiReasoning": "Mengukur beban psikologis berupa 'parental guilt' yang seringkali memperburuk kondisi kesehatan mental orang tua.",
+          "gridSpan": 2,
+          "label": "Seberapa sering Anda merasa **bersalah atau menyalahkan diri sendiri** atas tantrum atau kesulitan perilaku anak?",
+          "required": true
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiPerasaanBersalah",
+          "showIf": {
+            "equals": "Hampir setiap kali",
+            "fieldId": "perasaanBersalah"
+          },
+          "aiReasoning": "Mengeksplorasi pola pikir negatif yang mendasari perasaan bersalah orang tua.",
+          "gridSpan": 2,
+          "label": "Mohon jelaskan mengapa Anda merasa **bersalah atau menyalahkan diri sendiri** secara terus-menerus.",
+          "required": true
+        },
+        {
+          "id": "pencarianBantuan",
+          "type": "radio",
+          "gridSpan": 2,
+          "aiReasoning": "Menilai proaktifitas orang tua dalam mencari solusi profesional untuk masalah pengasuhan.",
+          "options": [
+            {
+              "weight": 0,
+              "label": "Belum pernah dan tidak berencana"
+            },
+            {
+              "label": "Belum pernah, namun sedang mempertimbangkan",
+              "weight": 25
+            },
+            {
+              "label": "Pernah mencari informasi mandiri (buku/artikel)",
+              "weight": 50
+            },
+            {
+              "label": "Pernah berkonsultasi singkat atau mengikuti webinar",
+              "weight": 75
+            },
+            {
+              "label": "Secara aktif terlibat dalam sesi konseling/terapi profesional",
+              "weight": 100
+            }
+          ],
+          "required": true,
+          "label": "Apakah Anda pernah mencari **informasi atau bantuan profesional** terkait tantangan pengasuhan atau perilaku anak?"
+        },
+        {
+          "showIf": {
+            "equals": "Belum pernah dan tidak berencana",
+            "fieldId": "pencarianBantuan"
+          },
+          "type": "textarea",
+          "id": "justifikasiPencarianBantuan",
+          "label": "Mohon jelaskan mengapa Anda **belum pernah mencari bantuan profesional** dan tidak berencana untuk melakukannya.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi stigma atau hambatan akses yang menghalangi orang tua mendapatkan bantuan profesional."
+        },
+        {
+          "gridSpan": 2,
+          "fileAccept": ".pdf,.jpg,.png",
+          "required": true,
+          "label": "Unggah **bukti keterlibatan** Anda dalam sesi konseling atau terapi profesional (misalnya: surat rujukan atau ringkasan konsultasi).",
+          "id": "buktiPencarianBantuan",
+          "type": "file",
+          "showIf": {
+            "equals": "Secara aktif terlibat dalam sesi konseling/terapi profesional",
+            "fieldId": "pencarianBantuan"
+          }
+        },
+        {
+          "label": "Seberapa sering Anda meluangkan waktu untuk **kesejahteraan diri sendiri** (self-care) di luar peran sebagai orang tua?",
+          "required": true,
+          "aiReasoning": "Mengukur keseimbangan antara peran pengasuhan dan kebutuhan pemulihan diri (self-care).",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Tidak pernah atau sangat jarang",
+              "weight": 0
+            },
+            {
+              "label": "Kadang-kadang, jika ada waktu luang sisa",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Beberapa kali sebulan"
+            },
+            {
+              "label": "Secara teratur, beberapa kali seminggu",
+              "weight": 75
+            },
+            {
+              "label": "Menjadikannya prioritas harian yang konsisten",
+              "weight": 100
+            }
+          ],
+          "id": "prioritasKesejahteraan",
+          "type": "radio"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Memahami kendala waktu atau prioritas yang membuat orang tua mengabaikan kebutuhan pribadinya.",
+          "label": "Mohon jelaskan mengapa Anda **tidak pernah atau sangat jarang** meluangkan waktu untuk kesejahteraan diri Anda.",
+          "required": true,
+          "showIf": {
+            "equals": "Tidak pernah atau sangat jarang",
+            "fieldId": "prioritasKesejahteraan"
+          },
+          "id": "justifikasiPrioritasKesejahteraan",
+          "type": "textarea"
+        },
+        {
+          "type": "radio",
+          "id": "keyakinanTantrum",
+          "label": "Seberapa **yakin** Anda dengan kemampuan diri dalam menangani episode tantrum anak di masa depan secara efektif?",
+          "required": true,
+          "options": [
+            {
+              "label": "Sama sekali tidak yakin",
+              "weight": 0
+            },
+            {
+              "label": "Kurang yakin, sering merasa tidak berdaya",
+              "weight": 25
+            },
+            {
+              "label": "Cukup yakin, namun masih sering ragu",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Yakin dan merasa memiliki strategi yang baik"
+            },
+            {
+              "label": "Sangat yakin dan siap menghadapi tantangan",
+              "weight": 100
+            }
+          ],
+          "aiReasoning": "Mengukur efikasi diri (self-efficacy) orang tua dalam menghadapi tantangan perilaku anak.",
+          "gridSpan": 2
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Mengeksplorasi sumber ketidakpercayaan diri orang tua dalam mengelola perilaku anak.",
+          "label": "Mohon jelaskan mengapa Anda merasa **tidak yakin atau tidak berdaya** dalam menangani tantrum anak.",
+          "required": true,
+          "showIf": {
+            "fieldId": "keyakinanTantrum",
+            "equals": "Sama sekali tidak yakin"
+          },
+          "type": "textarea",
+          "id": "justifikasiKeyakinanTantrum"
+        },
+        {
+          "aiReasoning": "Menilai keselarasan pola asuh antar pengasuh yang krusial bagi stabilitas emosi anak.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Sangat tidak konsisten, sering bertentangan"
+            },
+            {
+              "weight": 25,
+              "label": "Kurang konsisten, sering ada perbedaan signifikan"
+            },
+            {
+              "weight": 50,
+              "label": "Cukup konsisten, namun masih ada area yang perlu diselaraskan"
+            },
+            {
+              "weight": 75,
+              "label": "Sebagian besar konsisten dan saling mendukung"
+            },
+            {
+              "label": "Sangat konsisten dan memiliki kesepahaman yang kuat",
+              "weight": 100
+            }
+          ],
+          "required": true,
+          "label": "Bagaimana tingkat **konsistensi pendekatan pengasuhan** antara Anda dan pasangan atau pengasuh utama lainnya?",
+          "id": "konsistensiPengasuhan",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "fieldId": "konsistensiPengasuhan",
+            "equals": "Sangat tidak konsisten, sering bertentangan"
+          },
+          "id": "justifikasiKonsistensiPengasuhan",
+          "type": "textarea",
+          "aiReasoning": "Mengidentifikasi konflik dalam pola asuh yang dapat memicu kebingungan pada anak dan stres pada orang tua.",
+          "gridSpan": 2,
+          "label": "Mohon jelaskan mengapa pendekatan pengasuhan Anda dan pasangan/pengasuh lainnya **sangat tidak konsisten**.",
+          "required": true
+        }
+      ],
+      "description": "Mengukur tingkat stres pengasuhan dan kapasitas refleksi diri orang tua dalam menyelaraskan emosi mereka dengan kebutuhan anak."
+    }
+  ],
+  "isActive": true,
+  "formBuilderInstruction": "\n==================================================\nKONTEKS ANCHOR (ACUAN MUTLAK):\n- Profil Subjek Asesmen: Orang tua atau pengasuh utama dari anak usia 1-3 tahun yang sedang mengalami fase perkembangan emosional intens dan membutuhkan panduan regulasi diri. Target audiens mencakup individu yang berupaya meningkatkan efektivitas pola asuh responsif dan optimalisasi lingkungan stimulasi sensorik di rumah.\n- Metodologi/Pendekatan: Menggunakan kerangka kerja Responsive Parenting dan teori perkembangan kognitif Jean Piaget yang diintegrasikan dengan metode observasi perilaku berbasis protokol Sensory Processing Measure (SPM). Pendekatan ini dilengkapi dengan instrumen refleksi diri untuk mengukur keselarasan antara respons emosional orang tua dan kebutuhan perkembangan anak.\n==================================================\nTARGET AUDIENS: PERSONAL (INDIVIDUAL). Gunakan kata sapaan langsung (Anda, Bapak/Ibu) dan sesuaikan pertanyaan murni untuk ranah personal. DILARANG KERAS menanyakan aspek perusahaan, organisasi, atau legalitas bisnis.\n\nAnda adalah Psikolog Perkembangan Anak. Evaluasi tingkat stres orang tua dan berikan taktik regulasi emosi praktis saat menghadapi tantrum toddler. Jangan bersifat menghakimi jika orang tua merasa kelelahan.\nBuat pertanyaan radio_weight untuk menilai durasi screen time harian anak. Gunakan fitur showIf; JIKA screen time melebihi 2 jam, WAJIB munculkan pertanyaan textarea untuk menagih justifikasi mengapa anak diberikan akses layar yang lama.\n\n\n\nATURAN KOMPOSISI PERTANYAAN MUTLAK (WAJIB DIPATUHI):\n- WAJIB maksimalkan penggunaan tipe \"radio\" atau \"select\" dengan array \"options\" berbobot (weight 0-100) untuk keperluan kalkulasi nilai otomatis.\n- TERAPKAN INTEROGASI BERLAPIS: Gunakan properti \"showIf\". Jika peserta merespon klaim besar pada opsi radio/select, WAJIB pancing pertanyaan baru bertipe \"file\" atau \"textarea\" untuk menagih bukti.\n- Gunakan tipe \"textarea\" secara strategis untuk menuntut penjelasan, justifikasi, keluhan, atau uraian deskriptif yang mendalam dari peserta.",
+  "stepOutlinesCache": [
+    {
+      "title": "Pemetaan Frekuensi dan Intensitas Tantrum",
+      "description": "Mengevaluasi pola, durasi, dan tingkat keparahan episode tantrum anak untuk mengukur kapasitas regulasi emosi dasar.",
+      "focusArea": "Kapasitas Regulasi Emosi Anak",
+      "expertPersona": "Behavioral Child Psychologist"
+    },
+    {
+      "focusArea": "Kualitas Respons Pengasuhan",
+      "expertPersona": "Responsive Parenting Coach",
+      "description": "Menganalisis reaksi dan strategi intervensi orang tua saat anak mengalami tantrum menggunakan prinsip Responsive Parenting.",
+      "title": "Evaluasi Respons Pengasuhan Saat Krisis"
+    },
+    {
+      "description": "Mengidentifikasi sensitivitas sensori atau perilaku pencarian atau penghindaran sensori berdasarkan protokol Sensory Processing Measure (SPM).",
+      "title": "Observasi Pemrosesan Sensori Anak",
+      "focusArea": "Profil Pemrosesan Sensori",
+      "expertPersona": "Pediatric Occupational Therapist"
+    },
+    {
+      "focusArea": "Perkembangan Kognitif & Bermain",
+      "expertPersona": "Early Childhood Education Specialist",
+      "title": "Asesmen Stimulasi Kognitif dan Bermain",
+      "description": "Menilai tahap perkembangan kognitif anak (sensorimotor ke pra-operasional) dan kualitas stimulasi bermain sesuai teori Jean Piaget."
+    },
+    {
+      "expertPersona": "Family Routine Strategist",
+      "focusArea": "Konsistensi Rutinitas Harian",
+      "description": "Mengevaluasi konsistensi jadwal tidur, makan, waktu layar, dan keteraturan lingkungan sebagai fondasi stabilitas emosi anak.",
+      "title": "Audit Rutinitas Harian dan Lingkungan"
+    },
+    {
+      "focusArea": "Kapasitas Refleksi Diri Orang Tua",
+      "expertPersona": "Family Therapist & Counselor",
+      "description": "Mengukur tingkat stres pengasuhan dan kapasitas refleksi diri orang tua dalam menyelaraskan emosi mereka dengan kebutuhan anak.",
+      "title": "Refleksi Diri dan Manajemen Stres Orang Tua"
+    }
+  ],
+  "trialQuota": 0,
+  "isDisplayedOnLanding": true,
+  "generationLogs": [
+    {
+      "message": "FASE 1: Architect Agent (Gemini 3.1 Pro) diaktifkan. Melakukan penetrasi jaringan & riset blueprint...",
+      "timestamp": "2026-07-23T21:29:27.414Z",
+      "type": "info"
+    },
+    {
+      "message": "Otak AI dan Master Blueprint berhasil disempurnakan!",
+      "timestamp": "2026-07-23T21:30:23.319Z",
+      "type": "success"
+    },
+    {
+      "type": "info",
+      "timestamp": "2026-07-23T21:30:23.551Z",
+      "message": "FASE 2: Fabricator Agent (Gemini 2.5 Flash) dikerahkan. Memproduksi 6 seksi formulir..."
+    },
+    {
+      "timestamp": "2026-07-23T21:30:23.619Z",
+      "message": "Meracik Kuesioner Batch 1...",
+      "type": "info"
+    },
+    {
+      "type": "info",
+      "message": "Meracik Kuesioner Batch 2...",
+      "timestamp": "2026-07-23T21:31:24.968Z"
+    }
+  ]
+}

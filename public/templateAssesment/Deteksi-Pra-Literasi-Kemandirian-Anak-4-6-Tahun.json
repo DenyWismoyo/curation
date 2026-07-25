@@ -1,0 +1,2103 @@
+{
+  "version": 2,
+  "researchNotesCache": "Berdasarkan pencarian literatur, instrumen Early Childhood Development Index (ECDI) dari UNICEF mengukur empat domain utama: literasi-numerasi, fisik, sosio-emosional, dan pembelajaran. Menurut teori perkembangan kognitif Jean Piaget, anak usia 4-6 tahun berada pada Tahap Praoperasional, di mana mereka mengembangkan pemikiran simbolik dan bahasa melalui bermain peran (pretend play), sehingga pendekatan play-based assessment sangat direkomendasikan. Standar PAUD di Indonesia juga menekankan kemandirian sebagai indikator kunci, yang mencakup kemampuan fisik (bina diri), tanggung jawab, disiplin, dan regulasi emosi.",
+  "isBestSeller": false,
+  "aiPromptConfig": {
+    "researchSourcesCited": [
+      "Early Childhood Development Index (ECDI) UNICEF",
+      "Jean Piaget's Preoperational Stage Theory",
+      "Standar Nasional PAUD (Kemandirian & Pra-Literasi)"
+    ],
+    "customScoringRubric": "Berikan skor 0-100 berdasarkan pemenuhan indikator ECDI dan Piaget. Skor 0-40: Memerlukan intervensi intensif dan dukungan stimulasi dasar. Skor 41-70: Perkembangan sesuai usia dengan kebutuhan penguatan kemandirian. Skor 71-100: Perkembangan optimal dengan potensi akselerasi minat bakat. Setiap skor wajib menyertakan justifikasi observasi yang merujuk pada perilaku spesifik anak.",
+    "actionPlanBehavior": "Fokuskan rencana aksi pada perumusan intervensi psikologis yang hangat, pembentukan kebiasaan harian (habits) yang mendukung kemandirian, dan teknik mindfulness sederhana untuk menenangkan anak. Gunakan bahasa yang suportif, persuasif, dan mudah dipahami oleh orang tua untuk memastikan kolaborasi di rumah.",
+    "riskFramework": "Early Childhood Development Index (ECDI) & Piaget's Preoperational Stage Guidelines",
+    "negativePrompts": "Dilarang menggunakan bahasa medis yang terlalu teknis atau menakutkan bagi orang tua. Dilarang memberikan label negatif atau diagnosis klinis permanen (seperti 'gangguan' atau 'cacat'). Dilarang menggunakan kata-kata seperti 'gagal', 'bodoh', 'tertinggal jauh', atau 'tidak mampu'. Hindari penggunaan jargon akademik yang tidak dijelaskan maknanya.",
+    "customSystemPrompt": "Anda adalah Psikolog Anak yang ahli dalam deteksi dini. Gunakan logika IF-THEN: IF subjek menunjukkan resistensi pada tugas motorik, THEN analisis hambatan psikomotorik dan sarankan aktivitas bermain yang tidak menekan. IF subjek menunjukkan kemandirian fungsional tinggi, THEN berikan apresiasi dan sarankan pengayaan kognitif. Analisis harus bersifat suportif, observatif, dan berbasis empati, menghindari penghakiman klinis yang kaku.",
+    "aiPersona": "Chief Research Officer & Asesor Ahli Psikologi Perkembangan Anak (Spesialisasi PAUD)",
+    "expectedMetrics": [
+      "Kesadaran Fonemik & Pra-Membaca (Phonemic Awareness & Pre-Reading)",
+      "Keterampilan Pra-Menulis & Motorik Halus (Pre-Writing & Fine Motor Skills)",
+      "Kemandirian Fisik & Bina Diri (Physical Independence & Self-Care)",
+      "Regulasi Emosi & Kepercayaan Diri (Emotional Regulation & Confidence)",
+      "Kemandirian Sosial & Tanggung Jawab (Social Independence & Responsibility)",
+      "Perkembangan Kognitif & Pemecahan Masalah (Cognitive Development & Problem Solving)"
+    ],
+    "mediaAnalysisFocus": "Observasi perilaku anak saat bermain, kemandirian fisik dalam rutinitas harian, dan interaksi komunikasi dengan lingkungan sekitar.",
+    "expectedRecommendations": [
+      "Stimulasi Pra-Literasi Berbasis Bermain (Membaca Nyaring & Pengenalan Suara Huruf)",
+      "Aktivitas Sensori-Motorik untuk Memperkuat Otot Tangan dan Kesiapan Menulis",
+      "Pelatihan Bina Diri Bertahap (Toileting, Makan, dan Berpakaian Mandiri)",
+      "Pemberian Tanggung Jawab Sederhana di Rumah untuk Melatih Kemandirian Sosial",
+      "Validasi Emosi dan Pembuatan Rutinitas Harian yang Konsisten"
+    ],
+    "isAdaptive": false,
+    "gradingStrictness": "supportive",
+    "targetAudience": "individual",
+    "reportTone": "consultative, empatik, dan profesional",
+    "customReadinessTiers": [
+      "Berkembang Sangat Baik (Optimal Readiness)",
+      "Berkembang Sesuai Harapan (On-Track)",
+      "Mulai Berkembang (Emerging/Needs Stimulation)",
+      "Perlu Perhatian Khusus (Requires Intervention)"
+    ],
+    "targetBlockCount": null,
+    "formPurpose": "custom",
+    "formatInstructions": "Gunakan Markdown secara maksimal untuk kemudahan membaca: Gunakan penanda **teks tebal** untuk menyoroti nama metrik/istilah penting, *miring* untuk penekanan atau kutipan, dan gunakan awalan ### (Heading 3) untuk memisahkan sub-topik laporan agar sistem merendernya dengan rapi. Pastikan struktur laporan terdiri dari Ringkasan Eksekutif, Analisis Perkembangan, dan Rekomendasi Intervensi.",
+    "assessmentGoal": "Melakukan pemetaan komprehensif terhadap kesiapan belajar mandiri, pra-literasi, dan kemandirian fungsional anak usia 4-6 tahun menggunakan pendekatan observasi berbasis bermain (play-based assessment) berdasarkan kerangka ECDI dan teori kognitif Piaget.",
+    "customUiLabels": {
+      "scoreLabel": "Skor Kesiapan Perkembangan",
+      "swotLabel": "Matriks Kapasitas Anak",
+      "roadmapLabel": "Peta Jalan Stimulasi Anak",
+      "executionLabel": "Rencana Aksi Harian Orang Tua",
+      "riskLabel": "Peta Risiko & Mitigasi Perkembangan"
+    },
+    "targetMetricCount": 6,
+    "expectedAnalysisBlocks": [
+      "Analisis Pra-Literasi & Bahasa: Kesadaran fonemik, Penguasaan kosakata, Minat pada buku",
+      "Evaluasi Kesiapan Motorik Halus: Kesiapan pra-menulis, Koordinasi mata-tangan, Manipulasi objek kecil",
+      "Penilaian Kemandirian Fisik (Bina Diri): Keterampilan merawat diri, Kemandirian toileting, Kemandirian berpakaian",
+      "Observasi Regulasi Emosi: Pengendalian diri saat frustrasi, Kepercayaan diri dalam mencoba hal baru, Kemampuan menenangkan diri",
+      "Tinjauan Kemandirian Sosial: Interaksi dengan teman sebaya, Pengambilan inisiatif, Pelaksanaan tanggung jawab sederhana",
+      "Pemetaan Kognitif & Logika Dasar: Pemecahan masalah berbasis bermain, Pemahaman konsep dasar (warna/bentuk), Konsentrasi dan rentang perhatian"
+    ]
+  },
+  "price": 200000,
+  "trackIcon": "Puzzle",
+  "lastUpdated": "2026-07-24T09:04:07.945Z",
+  "expectedOutputs": [
+    "Peta Mitigasi Risiko Perkembangan: Identifikasi dini hambatan tumbuh kembang anak berdasarkan standar ECDI untuk mencegah kesenjangan literasi dan kemandirian sejak usia emas.",
+    "Rekomendasi Stimulasi Tepat Sasaran: Dapatkan panduan aktivitas berbasis bermain yang dirancang khusus untuk mengakselerasi kesiapan kognitif dan motorik anak sesuai tahap perkembangannya.",
+    "Action Plan Bina Diri Terstruktur: Transformasikan rutinitas harian menjadi langkah konkret untuk membangun kemandirian fisik dan tanggung jawab sosial anak secara konsisten di rumah.",
+    "Insight Matrix Kesiapan Transisi: Analisis mendalam yang memetakan kekuatan serta area pengembangan anak guna memastikan transisi jenjang pendidikan yang mulus dan penuh kepercayaan diri."
+  ],
+  "specificTargetContext": "Anak usia dini (4-6 tahun) yang berada pada fase transisi pra-sekolah dengan karakteristik perkembangan kognitif dan motorik yang sedang berkembang pesat. Subjek mencakup anak-anak dengan variasi latar belakang stimulasi lingkungan yang membutuhkan pemetaan kesiapan belajar mandiri.",
+  "folder": "Parenting",
+  "promoAssets": {
+    "instagram": {
+      "carouselSlides": [
+        {
+          "imagePrompt": "Vertical Portrait Aspect Ratio 3:4. Flat vector illustration, corporate minimalist, Teal and Vibrant Orange on clean white background. A stylized visual of a concerned parent looking at a playful child, with question marks floating around. In the center, write the large, bold text \"Khawatir Si Kecil?\". No 3D, no photorealism.",
+          "slideNumber": 1,
+          "imageUrl": "https://firebasestorage.googleapis.com/v0/b/teknopark-surakarta.firebasestorage.app/o/promo_assets%2Fdeteksi_pra_literasi___kemandirian_anak__4_6_tahun_%2Fpromo_1784883446351_slide_1.png?alt=media",
+          "textOnImage": "Khawatir Si Kecil?"
+        },
+        {
+          "imagePrompt": "Vertical Portrait Aspect Ratio 3:4. Flat vector illustration, clean modern UI aesthetic, Teal and Vibrant Orange on white background. Draw a UI with 3 floating cards. On the first card, write the text \"Deteksi Dini Risiko\". On the second card, write the text \"Stimulasi Bagi Anak\". On the third card, write the text \"Anak Lebih Mandiri\". No 3D, no photorealism.",
+          "slideNumber": 2,
+          "imageUrl": "https://firebasestorage.googleapis.com/v0/b/teknopark-surakarta.firebasestorage.app/o/promo_assets%2Fdeteksi_pra_literasi___kemandirian_anak__4_6_tahun_%2Fpromo_1784883771904_slide_2.png?alt=media",
+          "textOnImage": "Peta Tumbuh Kembang"
+        },
+        {
+          "slideNumber": 3,
+          "imagePrompt": "Vertical Portrait Aspect Ratio 3:4. Flat vector illustration, infographic style, Teal and Vibrant Orange on white background. A step-by-step winding roadmap with 3 nodes. Next to node 1, write the text \"Pra-Literasi & Bahasa\". Next to node 2, write the text \"Motorik & Pra-Menulis\". Next to node 3, write the text \"Mandiri\". No 3D, no photorealism.",
+          "textOnImage": "Langkah Mudah Deteksi",
+          "imageUrl": "https://firebasestorage.googleapis.com/v0/b/teknopark-surakarta.firebasestorage.app/o/promo_assets%2Fdeteksi_pra_literasi___kemandirian_anak__4_6_tahun_%2Fpromo_1784883710304_slide_3.png?alt=media"
+        },
+        {
+          "imagePrompt": "Vertical Portrait Aspect Ratio 3:4. Flat vector illustration, corporate minimalist, Teal and Vibrant Orange on white background. A visual of a happy, confident child in a school uniform, holding a small backpack, with a proud parent smiling beside them. On a clipboard, write the large text \"Siap Sekolah Hebat!\". No 3D, no photorealism.",
+          "slideNumber": 4,
+          "imageUrl": "https://firebasestorage.googleapis.com/v0/b/teknopark-surakarta.firebasestorage.app/o/promo_assets%2Fdeteksi_pra_literasi___kemandirian_anak__4_6_tahun_%2Fpromo_1784883644809_slide_4.png?alt=media",
+          "textOnImage": "Siap Sekolah Hebat!"
+        }
+      ],
+      "imagePrompt": "A modern 3D rendering of a futuristic tech startup mobile app interface for child development assessment. The background is a clean, pastel-colored aesthetic digital space with soft lighting. On the screen, bold 3D typography displays the brand name 'Omnifit' at the top, and the main headline 'Siapkan Si Kecil Masuk SD' in giant, vibrant, clean sans-serif font. The scene includes cute 3D educational toys, a glowing digital brain icon, and progress bar elements, blending technology with warm parenting vibes. High resolution, ultra-detailed, 8k, Octane render.",
+      "imageUrl": "",
+      "copywriting": "Moms, pernah kepikiran gak sih gimana nanti si Kecil pas masuk sekolah? Atau jangan-jangan, ada hal kecil yang bikin Bunda bertanya-tanya soal perkembangannya? Kadang bingung juga ya, si Kecil ini sebenarnya butuh bantuan di area mana sih? Mau mandiri, tapi kok masih sering minta tolong? Mau belajar, tapi gampang bosan?\n\nJangan sampai telat tahu ya, Moms. Masa emas 4-6 tahun itu penentu banget buat masa depannya. Omnifit hadir buat bantu Ayah Bunda menyingkap semua potensi tersembunyi si Kecil! Dengan program Deteksi Pra-Literasi & Kemandirian, kita bisa lho, 'mengintip' dunia mereka dan tahu persis apa yang dibutuhkan.\n\nApa aja sih yang Ayah Bunda dapetin dari program ini?\n\n✅ Peta Jalan Tumbuh Kembang: Jadi tahu lebih awal kalau ada area yang perlu perhatian ekstra, biar si Kecil gak ketinggalan jauh dari teman-temannya.\n\n💡 Panduan Stimulasi Asyik: Dapet ide aktivitas bermain yang seru dan pas banget buat optimalkan kecerdasan dan motoriknya, tanpa harus pusing mikirin kurikulum.\n\n🚀 Rencana Mandiri di Rumah: Ubah rutinitas harian jadi latihan kemandirian yang menyenangkan, biar si Kecil makin percaya diri dan bertanggung jawab.\n\n🌟 Siap Sekolah Hebat: Punya gambaran jelas tentang kesiapan anak buat masuk SD, jadi transisinya mulus tanpa drama dan penuh senyum.\n\nJangan tunda lagi, Moms! Kesempatan emas ini cuma datang sekali. Pastikan si Kecil punya fondasi yang kuat untuk masa depannya yang cerah.\n\nYuk, klik link di bio sekarang untuk daftar Deteksi Pra-Literasi & Kemandirian Omnifit dan berikan hadiah terbaik untuk masa depan si Kecil! Slot terbatas, lho, jangan sampai kehabisan!\n\n#Omnifit #DeteksiAnak #KemandirianAnak #PraLiterasi #AnakHebat #TumbuhKembangAnak #OrangTuaBijak #StimulasiAnak #KesiapanSekolah #ParentingIndonesia",
+      "generatedAt": "2026-07-24T08:56:50.010Z"
+    }
+  },
+  "userCount": 4,
+  "category": "Parenting",
+  "trackDescription": "Deskripsi singkat.Pemetaan awal untuk mengetahui minat bawaan, kemandirian rutinitas dasar, dan kesiapan transisi kognitif anak prasekolah.",
+  "trackName": "Deteksi Pra-Literasi & Kemandirian Anak (4-6 Tahun)",
+  "id": "track_1784164402585",
+  "customUSPs": [],
+  "isPaid": true,
+  "aiGenerationStatus": {
+    "phase": "COMPLETED",
+    "updatedAt": "2026-07-24T09:04:07.945Z",
+    "message": "Disimpan secara manual oleh Admin."
+  },
+  "preferredQuestionTypes": [
+    "radio_weight",
+    "conditional_logic",
+    "text_justification"
+  ],
+  "methodologyContext": "Menggunakan pendekatan observasi terstruktur berbasis instrumen perkembangan anak usia dini (Early Childhood Development Index/ECDI) dan teori perkembangan kognitif Jean Piaget. Integrasi metode asesmen formatif melalui pendekatan bermain (play-based assessment) untuk memvalidasi minat bawaan dan kemandirian fungsional.",
+  "isDisplayedOnLanding": true,
+  "trialQuota": 0,
+  "generationLogs": [
+    {
+      "message": "FASE 1: Architect Agent (Gemini 3.1 Pro) diaktifkan. Melakukan penetrasi jaringan & riset blueprint...",
+      "timestamp": "2026-07-23T21:41:28.202Z",
+      "type": "info"
+    },
+    {
+      "type": "success",
+      "message": "Otak AI dan Master Blueprint berhasil disempurnakan!",
+      "timestamp": "2026-07-23T21:42:26.709Z"
+    },
+    {
+      "message": "FASE 2: Fabricator Agent (Gemini 2.5 Flash) dikerahkan. Memproduksi 6 seksi formulir...",
+      "timestamp": "2026-07-23T21:42:26.890Z",
+      "type": "info"
+    },
+    {
+      "message": "Meracik Kuesioner Batch 1...",
+      "timestamp": "2026-07-23T21:42:26.971Z",
+      "type": "info"
+    }
+  ],
+  "isActive": true,
+  "formBuilderInstruction": "\n==================================================\nKONTEKS ANCHOR (ACUAN MUTLAK):\n- Profil Subjek Asesmen: Anak usia dini (4-6 tahun) yang berada pada fase transisi pra-sekolah dengan karakteristik perkembangan kognitif dan motorik yang sedang berkembang pesat. Subjek mencakup anak-anak dengan variasi latar belakang stimulasi lingkungan yang membutuhkan pemetaan kesiapan belajar mandiri.\n- Metodologi/Pendekatan: Menggunakan pendekatan observasi terstruktur berbasis instrumen perkembangan anak usia dini (Early Childhood Development Index/ECDI) dan teori perkembangan kognitif Jean Piaget. Integrasi metode asesmen formatif melalui pendekatan bermain (play-based assessment) untuk memvalidasi minat bawaan dan kemandirian fungsional.\n==================================================\nTARGET AUDIENS: PERSONAL (INDIVIDUAL). Gunakan kata sapaan langsung (Anda, Bapak/Ibu) dan sesuaikan pertanyaan murni untuk ranah personal. DILARANG KERAS menanyakan aspek perusahaan, organisasi, atau legalitas bisnis.\n\nAnda adalah Konselor Pendidikan Anak Usia Dini. Analisis pola asuh dalam membangun kemandirian anak (makan sendiri, toilet training). Susun roadmap stimulasi pra-literasi tanpa memaksa kemampuan akademis terlalu dini.\nFokus pada tipe pertanyaan radio berbobot mengenai kemampuan anak mengikuti instruksi dua langkah. Tambahkan input text_justification untuk menanyakan rutinitas bermain tak terstruktur yang paling sering dilakukan anak di rumah.\n\n\n\nATURAN KOMPOSISI PERTANYAAN MUTLAK (WAJIB DIPATUHI):\n- WAJIB maksimalkan penggunaan tipe \"radio\" atau \"select\" dengan array \"options\" berbobot (weight 0-100) untuk keperluan kalkulasi nilai otomatis.\n- TERAPKAN INTEROGASI BERLAPIS: Gunakan properti \"showIf\". Jika peserta merespon klaim besar pada opsi radio/select, WAJIB pancing pertanyaan baru bertipe \"file\" atau \"textarea\" untuk menagih bukti.\n- Gunakan tipe \"textarea\" secara strategis untuk menuntut penjelasan, justifikasi, keluhan, atau uraian deskriptif yang mendalam dari peserta.",
+  "stepOutlinesCache": [
+    {
+      "description": "Observasi kemampuan anak dalam mengenali suara, huruf, dan ketertarikan pada buku cerita.",
+      "title": "Deteksi Pra-Literasi & Bahasa",
+      "expertPersona": "Ahli Literasi Anak Usia Dini",
+      "focusArea": "Kesadaran Fonemik & Pra-Membaca (Phonemic Awareness & Pre-Reading)"
+    },
+    {
+      "expertPersona": "Terapis Okupasi Pediatrik",
+      "focusArea": "Keterampilan Pra-Menulis & Motorik Halus (Pre-Writing & Fine Motor Skills)",
+      "title": "Kesiapan Motorik Halus & Pra-Menulis",
+      "description": "Penilaian kemampuan koordinasi mata-tangan dan kekuatan jari anak melalui aktivitas menggambar atau meronce."
+    },
+    {
+      "expertPersona": "Pendidik PAUD (Spesialis Bina Diri)",
+      "focusArea": "Kemandirian Fisik & Bina Diri (Physical Independence & Self-Care)",
+      "title": "Kemandirian Fisik & Bina Diri",
+      "description": "Evaluasi kemampuan anak dalam melakukan aktivitas harian secara mandiri seperti makan, berpakaian, dan toileting."
+    },
+    {
+      "description": "Pemetaan cara anak mengelola perasaan frustrasi, mengekspresikan emosi, dan keberanian mencoba hal baru.",
+      "title": "Regulasi Emosi & Kepercayaan Diri",
+      "expertPersona": "Psikolog Perkembangan Anak",
+      "focusArea": "Regulasi Emosi & Kepercayaan Diri (Emotional Regulation & Confidence)"
+    },
+    {
+      "title": "Kemandirian Sosial & Tanggung Jawab",
+      "description": "Observasi interaksi anak dengan teman sebaya dan kemauan mengambil tanggung jawab sederhana di rumah.",
+      "expertPersona": "Konselor Keluarga & Anak",
+      "focusArea": "Kemandirian Sosial & Tanggung Jawab (Social Independence & Responsibility)"
+    },
+    {
+      "description": "Penilaian kemampuan logika dasar, pemahaman konsep, dan fokus anak saat menyelesaikan permainan atau teka-teki.",
+      "title": "Kognitif & Pemecahan Masalah (Berbasis Bermain)",
+      "focusArea": "Perkembangan Kognitif & Pemecahan Masalah (Cognitive Development & Problem Solving)",
+      "expertPersona": "Spesialis Asesmen Kognitif Anak"
+    }
+  ],
+  "steps": [
+    {
+      "stepNumber": 1,
+      "fields": [
+        {
+          "label": "Nama **Anak** Anda",
+          "required": true,
+          "gridSpan": 2,
+          "id": "namaUsaha",
+          "type": "text"
+        },
+        {
+          "gridSpan": 2,
+          "label": "Nama Lengkap Anda (**Orang Tua/Wali**)",
+          "required": false,
+          "type": "text",
+          "id": "namaPengisi"
+        },
+        {
+          "id": "usiaAnak",
+          "type": "number",
+          "label": "**Usia Anak** yang Diobservasi (dalam tahun)",
+          "required": true,
+          "gridSpan": 1
+        },
+        {
+          "type": "radio",
+          "id": "jenisKelaminAnak",
+          "gridSpan": 1,
+          "options": [
+            {
+              "label": "Laki-laki",
+              "weight": 50
+            },
+            {
+              "weight": 50,
+              "label": "Perempuan"
+            }
+          ],
+          "required": true,
+          "label": "**Jenis Kelamin** Anak"
+        },
+        {
+          "type": "select",
+          "id": "pendidikanTerakhirOrtu",
+          "label": "**Pendidikan Terakhir** Anda (Orang Tua/Wali)",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "SD/Sederajat",
+              "weight": 25
+            },
+            {
+              "label": "SMP/Sederajat",
+              "weight": 50
+            },
+            {
+              "label": "SMA/Sederajat",
+              "weight": 75
+            },
+            {
+              "weight": 90,
+              "label": "Diploma/Sarjana"
+            },
+            {
+              "weight": 100,
+              "label": "Pascasarjana"
+            }
+          ]
+        },
+        {
+          "id": "minatBuku",
+          "type": "radio",
+          "required": true,
+          "label": "Seberapa sering anak Anda menunjukkan **minat pada buku**, cerita bergambar, atau aktivitas membaca bersama?",
+          "options": [
+            {
+              "label": "Sangat jarang atau tidak sama sekali",
+              "weight": 0
+            },
+            {
+              "label": "Kadang-kadang, jika dipancing",
+              "weight": 25
+            },
+            {
+              "label": "Cukup sering, jika ada buku menarik",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Sering, bahkan meminta dibacakan"
+            },
+            {
+              "weight": 100,
+              "label": "Sangat sering, bisa fokus lama pada buku"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur tingkat keterpaparan dan ketertarikan anak terhadap literasi dini sebagai fondasi kemampuan membaca."
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi hambatan spesifik atau faktor lingkungan yang memengaruhi rendahnya minat baca anak.",
+          "required": true,
+          "label": "Mohon jelaskan mengapa anak Anda jarang menunjukkan minat pada buku atau aktivitas membaca.",
+          "type": "textarea",
+          "id": "justifikasiMinatBuku",
+          "showIf": {
+            "equals": "Sangat jarang atau tidak sama sekali",
+            "fieldId": "minatBuku"
+          }
+        },
+        {
+          "required": true,
+          "label": "Apakah anak Anda dapat mengenali beberapa **huruf alfabet atau angka dasar**?",
+          "gridSpan": 2,
+          "aiReasoning": "Menilai kesiapan kognitif anak dalam mengenali simbol grafis sebagai langkah awal literasi.",
+          "options": [
+            {
+              "label": "Belum sama sekali",
+              "weight": 0
+            },
+            {
+              "label": "Mengenali 1-5 huruf/angka",
+              "weight": 25
+            },
+            {
+              "label": "Mengenali 6-15 huruf/angka",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Mengenali lebih dari 15 huruf/angka"
+            },
+            {
+              "label": "Mengenali sebagian besar huruf/angka dan namanya",
+              "weight": 100
+            }
+          ],
+          "type": "radio",
+          "id": "mengenalHuruf"
+        },
+        {
+          "id": "buktiMengenalHuruf",
+          "type": "file",
+          "showIf": {
+            "equals": "Mengenali sebagian besar huruf/angka dan namanya",
+            "fieldId": "mengenalHuruf"
+          },
+          "label": "Mohon unggah contoh tulisan tangan anak atau foto aktivitas yang menunjukkan kemampuannya.",
+          "required": true,
+          "gridSpan": 2,
+          "fileAccept": ".jpg,.jpeg,.png,.pdf"
+        },
+        {
+          "aiReasoning": "Mengukur kesadaran fonologis yang krusial untuk kemampuan membaca dan mengeja di masa depan.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Belum mampu sama sekali",
+              "weight": 0
+            },
+            {
+              "label": "Kadang-kadang, dengan bantuan",
+              "weight": 25
+            },
+            {
+              "label": "Cukup sering, untuk kata-kata sederhana",
+              "weight": 50
+            },
+            {
+              "label": "Sering, untuk berbagai kata",
+              "weight": 75
+            },
+            {
+              "label": "Sangat baik, bahkan bisa membuat rima sederhana",
+              "weight": 100
+            }
+          ],
+          "required": true,
+          "label": "Bagaimana kemampuan anak Anda dalam **membedakan bunyi awal kata** (fonemik)?",
+          "id": "membedakanBunyi",
+          "type": "radio"
+        },
+        {
+          "options": [
+            {
+              "label": "Jarang, cenderung menggunakan kata-kata yang sama",
+              "weight": 0
+            },
+            {
+              "label": "Kadang-kadang, meniru kata baru",
+              "weight": 25
+            },
+            {
+              "label": "Cukup sering, mencoba kata-kata baru",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Sering, dengan kalimat yang bervariasi"
+            },
+            {
+              "label": "Sangat sering, dengan ekspresi yang kaya",
+              "weight": 100
+            }
+          ],
+          "aiReasoning": "Mengevaluasi perkembangan bahasa ekspresif sebagai indikator kemampuan komunikasi dan literasi.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Seberapa sering anak Anda menggunakan **kosakata baru** atau kalimat yang lebih kompleks?",
+          "id": "kosaKataAktif",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "equals": "Sangat sering, dengan ekspresi yang kaya",
+            "fieldId": "kosaKataAktif"
+          },
+          "id": "deskripsiKosaKata",
+          "type": "textarea",
+          "aiReasoning": "Memvalidasi kedalaman penguasaan bahasa anak melalui bukti konkret penggunaan kata.",
+          "gridSpan": 2,
+          "label": "Mohon berikan contoh 2-3 kosakata baru atau kalimat kompleks yang sering digunakan anak Anda.",
+          "required": true
+        },
+        {
+          "required": true,
+          "label": "Apakah anak Anda mampu mengikuti **instruksi dua langkah** sederhana?",
+          "options": [
+            {
+              "label": "Belum mampu sama sekali",
+              "weight": 0
+            },
+            {
+              "label": "Hanya mampu satu langkah",
+              "weight": 25
+            },
+            {
+              "label": "Kadang-kadang, dengan pengulangan",
+              "weight": 50
+            },
+            {
+              "label": "Sering, tanpa banyak pengulangan",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Selalu mampu, bahkan instruksi yang sedikit lebih kompleks"
+            }
+          ],
+          "aiReasoning": "Mengukur kemampuan pemrosesan auditori dan memori kerja yang diperlukan untuk mengikuti instruksi akademik.",
+          "gridSpan": 2,
+          "id": "ikutiInstruksiDuaLangkah",
+          "type": "radio"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Memverifikasi kemampuan kognitif anak dalam mengintegrasikan dua perintah sekaligus.",
+          "required": true,
+          "label": "Mohon berikan contoh instruksi dua langkah yang baru-baru ini berhasil diikuti oleh anak Anda.",
+          "showIf": {
+            "equals": "Selalu mampu, bahkan instruksi yang sedikit lebih kompleks",
+            "fieldId": "ikutiInstruksiDuaLangkah"
+          },
+          "type": "textarea",
+          "id": "contohInstruksiDuaLangkah"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Menganalisis kreativitas dan kemandirian anak dalam lingkungan bermain yang tidak terarah.",
+          "label": "Mohon jelaskan **rutinitas bermain tak terstruktur** (bermain bebas, peran, eksplorasi) anak Anda.",
+          "required": true,
+          "type": "textarea",
+          "id": "rutinitasBermain"
+        }
+      ],
+      "title": "Deteksi Pra-Literasi & Bahasa",
+      "description": "Observasi kemampuan anak dalam mengenali suara, huruf, dan ketertarikan pada buku cerita."
+    },
+    {
+      "stepNumber": 2,
+      "description": "Penilaian kemampuan koordinasi mata-tangan dan kekuatan jari anak melalui aktivitas menggambar atau meronce.",
+      "title": "Kesiapan Motorik Halus & Pra-Menulis",
+      "fields": [
+        {
+          "label": "Bagaimana cara anak Anda memegang **krayon atau pensil** saat menggambar atau mencoret-coret?",
+          "required": true,
+          "options": [
+            {
+              "weight": 25,
+              "label": "Menggenggam dengan seluruh telapak tangan (palmar grasp)"
+            },
+            {
+              "label": "Menggunakan jari-jari, namun masih kaku atau kurang stabil",
+              "weight": 50
+            },
+            {
+              "label": "Menggunakan tiga jari (tripod grasp) dengan cukup stabil",
+              "weight": 75
+            },
+            {
+              "label": "Menggunakan tiga jari (tripod grasp) dengan sangat stabil dan luwes",
+              "weight": 100
+            }
+          ],
+          "aiReasoning": "Menilai kematangan perkembangan motorik halus melalui teknik genggaman alat tulis sebagai fondasi pra-menulis.",
+          "gridSpan": 2,
+          "id": "pegangAlatTulis",
+          "type": "radio"
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan lebih lanjut observasi Anda mengenai cara anak memegang alat tulis.",
+          "gridSpan": 2,
+          "aiReasoning": "Menggali konteks hambatan motorik pada anak yang masih menggunakan genggaman telapak tangan.",
+          "showIf": {
+            "equals": "Menggenggam dengan seluruh telapak tangan (palmar grasp)",
+            "fieldId": "pegangAlatTulis"
+          },
+          "id": "justifikasiPegangAlatTulis",
+          "type": "textarea"
+        },
+        {
+          "required": true,
+          "label": "Unggah foto atau video singkat anak Anda saat memegang alat tulis.",
+          "fileAccept": ".jpg,.jpeg,.png,.mp4",
+          "gridSpan": 2,
+          "showIf": {
+            "equals": "Menggunakan tiga jari (tripod grasp) dengan sangat stabil dan luwes",
+            "fieldId": "pegangAlatTulis"
+          },
+          "id": "buktiPegangAlatTulis",
+          "type": "file"
+        },
+        {
+          "id": "gambarGarisDasar",
+          "type": "radio",
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur kontrol motorik halus untuk membentuk pola dasar yang diperlukan sebelum menulis huruf.",
+          "options": [
+            {
+              "weight": 25,
+              "label": "Belum bisa menggambar garis atau lingkaran"
+            },
+            {
+              "label": "Bisa menggambar garis, namun lingkaran belum sempurna",
+              "weight": 50
+            },
+            {
+              "label": "Bisa menggambar garis dan lingkaran dengan cukup baik",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Bisa menggambar garis dan lingkaran dengan sangat jelas dan rapi"
+            }
+          ],
+          "required": true,
+          "label": "Apakah anak Anda dapat menggambar **garis lurus (vertikal/horizontal) serta lingkaran** secara mandiri?"
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan tantangan yang dihadapi anak Anda dalam menggambar garis atau lingkaran.",
+          "gridSpan": 2,
+          "id": "justifikasiGambarGarisDasar",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "gambarGarisDasar",
+            "equals": "Belum bisa menggambar garis atau lingkaran"
+          }
+        },
+        {
+          "fileAccept": ".jpg,.jpeg,.png,.pdf",
+          "gridSpan": 2,
+          "label": "Unggah contoh gambar garis dan lingkaran yang dibuat anak Anda.",
+          "required": true,
+          "showIf": {
+            "equals": "Bisa menggambar garis dan lingkaran dengan sangat jelas dan rapi",
+            "fieldId": "gambarGarisDasar"
+          },
+          "id": "buktiGambarGarisDasar",
+          "type": "file"
+        },
+        {
+          "id": "gunaGunting",
+          "type": "radio",
+          "required": true,
+          "label": "Bagaimana kemampuan anak Anda dalam menggunakan **gunting** untuk memotong kertas?",
+          "options": [
+            {
+              "weight": 0,
+              "label": "Belum bisa menggunakan gunting sama sekali"
+            },
+            {
+              "weight": 25,
+              "label": "Bisa membuka dan menutup gunting, namun belum bisa memotong"
+            },
+            {
+              "label": "Bisa memotong garis lurus dengan bantuan",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Bisa memotong garis lurus secara mandiri"
+            },
+            {
+              "label": "Bisa memotong bentuk sederhana (misal: kotak, lingkaran) secara mandiri",
+              "weight": 100
+            }
+          ],
+          "aiReasoning": "Mengevaluasi koordinasi bilateral dan kekuatan otot tangan melalui aktivitas memotong.",
+          "gridSpan": 2
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiGunaGunting",
+          "showIf": {
+            "fieldId": "gunaGunting",
+            "equals": "Belum bisa menggunakan gunting sama sekali"
+          },
+          "gridSpan": 2,
+          "label": "Mohon jelaskan mengapa anak Anda belum bisa menggunakan gunting atau kesulitan dalam memotong.",
+          "required": true
+        },
+        {
+          "label": "Unggah foto atau video singkat anak Anda saat menggunakan gunting.",
+          "required": true,
+          "gridSpan": 2,
+          "fileAccept": ".jpg,.jpeg,.png,.mp4",
+          "showIf": {
+            "equals": "Bisa memotong bentuk sederhana (misal: kotak, lingkaran) secara mandiri",
+            "fieldId": "gunaGunting"
+          },
+          "type": "file",
+          "id": "buktiGunaGunting"
+        },
+        {
+          "required": true,
+          "label": "Apakah anak Anda dapat mengambil benda-benda kecil menggunakan **ujung jari (pincer grasp)**?",
+          "options": [
+            {
+              "label": "Belum bisa atau sangat kesulitan",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Bisa, namun masih sering terjatuh atau kurang presisi"
+            },
+            {
+              "label": "Bisa dengan cukup baik dan presisi",
+              "weight": 75
+            },
+            {
+              "label": "Bisa dengan sangat baik, cepat, dan presisi",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai presisi motorik halus yang krusial untuk memegang pensil dengan benar.",
+          "id": "manipulasiBendaKecil",
+          "type": "radio"
+        },
+        {
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan kesulitan yang dialami anak Anda saat memanipulasi benda kecil.",
+          "id": "justifikasiManipulasiBendaKecil",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "manipulasiBendaKecil",
+            "equals": "Belum bisa atau sangat kesulitan"
+          }
+        },
+        {
+          "label": "Seberapa mandiri anak Anda dalam **mengancingkan baju atau menarik resleting**?",
+          "required": true,
+          "aiReasoning": "Mengukur kemandirian bina diri yang melibatkan koordinasi mata-tangan dan kekuatan jari.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Belum bisa sama sekali dan tidak tertarik mencoba",
+              "weight": 0
+            },
+            {
+              "label": "Mencoba, namun membutuhkan bantuan penuh",
+              "weight": 25
+            },
+            {
+              "label": "Bisa dengan bantuan sebagian (misal: memulai kancing/resleting)",
+              "weight": 50
+            },
+            {
+              "label": "Bisa mengancingkan/meresletingkan sendiri dengan sedikit kesulitan",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Bisa mengancingkan/meresletingkan sendiri dengan lancar"
+            }
+          ],
+          "id": "pakaiPakaian",
+          "type": "radio"
+        },
+        {
+          "label": "Mohon jelaskan mengapa anak Anda belum bisa atau kesulitan dalam mengancingkan/meresletingkan pakaian.",
+          "required": true,
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "justifikasiPakaiPakaian",
+          "showIf": {
+            "fieldId": "pakaiPakaian",
+            "equals": "Belum bisa sama sekali dan tidak tertarik mencoba"
+          }
+        },
+        {
+          "label": "Bagaimana kemampuan anak Anda dalam **menyusun balok atau puzzle**?",
+          "required": true,
+          "options": [
+            {
+              "weight": 25,
+              "label": "Belum bisa menyusun balok atau puzzle"
+            },
+            {
+              "label": "Bisa menyusun balok, namun menara mudah roboh; puzzle butuh banyak bantuan",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Bisa menyusun balok menjadi menara stabil; puzzle bisa diselesaikan dengan sedikit bantuan"
+            },
+            {
+              "label": "Bisa menyusun balok menjadi menara tinggi dan stabil; puzzle bisa diselesaikan secara mandiri",
+              "weight": 100
+            }
+          ],
+          "aiReasoning": "Mengevaluasi kemampuan spasial dan kontrol motorik halus dalam menyusun objek.",
+          "gridSpan": 2,
+          "id": "susunBalokPuzzle",
+          "type": "radio"
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan kesulitan yang dialami anak Anda saat menyusun balok atau puzzle.",
+          "gridSpan": 2,
+          "showIf": {
+            "equals": "Belum bisa menyusun balok atau puzzle",
+            "fieldId": "susunBalokPuzzle"
+          },
+          "id": "justifikasiSusunBalokPuzzle",
+          "type": "textarea"
+        },
+        {
+          "fileAccept": ".jpg,.jpeg,.png,.mp4",
+          "gridSpan": 2,
+          "label": "Unggah foto atau video singkat anak Anda saat menyusun balok atau puzzle.",
+          "required": true,
+          "id": "buktiSusunBalokPuzzle",
+          "type": "file",
+          "showIf": {
+            "equals": "Bisa menyusun balok menjadi menara tinggi dan stabil; puzzle bisa diselesaikan secara mandiri",
+            "fieldId": "susunBalokPuzzle"
+          }
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Menilai motivasi intrinsik anak terhadap aktivitas yang membutuhkan keterampilan motorik halus.",
+          "options": [
+            {
+              "weight": 25,
+              "label": "Jarang sekali atau tidak tertarik"
+            },
+            {
+              "label": "Kadang-kadang, jika diajak atau disediakan alat",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Cukup sering, kadang berinisiatif sendiri"
+            },
+            {
+              "label": "Sangat sering, selalu berinisiatif dan menikmati aktivitas ini",
+              "weight": 100
+            }
+          ],
+          "label": "Seberapa sering anak Anda menunjukkan minat untuk **menggambar atau mewarnai**?",
+          "required": true,
+          "id": "minatMenggambar",
+          "type": "radio"
+        },
+        {
+          "gridSpan": 2,
+          "label": "Mohon jelaskan mengapa anak Anda kurang menunjukkan minat pada aktivitas menggambar/mewarnai.",
+          "required": true,
+          "showIf": {
+            "equals": "Jarang sekali atau tidak tertarik",
+            "fieldId": "minatMenggambar"
+          },
+          "id": "justifikasiMinatMenggambar",
+          "type": "textarea"
+        },
+        {
+          "id": "jiplakBentuk",
+          "type": "radio",
+          "options": [
+            {
+              "weight": 25,
+              "label": "Belum bisa menjiplak atau meniru"
+            },
+            {
+              "weight": 50,
+              "label": "Bisa menjiplak, namun hasilnya belum menyerupai bentuk asli"
+            },
+            {
+              "label": "Bisa menjiplak atau meniru dengan cukup baik",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Bisa menjiplak atau meniru dengan sangat baik dan akurat"
+            }
+          ],
+          "aiReasoning": "Mengukur kemampuan persepsi visual-motorik dalam meniru bentuk geometris.",
+          "gridSpan": 2,
+          "label": "Apakah anak Anda dapat **menjiplak atau meniru bentuk dasar**?",
+          "required": true
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiJiplakBentuk",
+          "showIf": {
+            "equals": "Belum bisa menjiplak atau meniru",
+            "fieldId": "jiplakBentuk"
+          },
+          "label": "Mohon jelaskan kesulitan yang dialami anak Anda saat menjiplak atau meniru bentuk.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "gridSpan": 2,
+          "fileAccept": ".jpg,.jpeg,.png,.pdf",
+          "label": "Unggah contoh hasil jiplakan atau tiruan bentuk yang dibuat anak Anda.",
+          "required": true,
+          "showIf": {
+            "equals": "Bisa menjiplak atau meniru dengan sangat baik dan akurat",
+            "fieldId": "jiplakBentuk"
+          },
+          "type": "file",
+          "id": "buktiJiplakBentuk"
+        },
+        {
+          "id": "dominasiTangan",
+          "type": "radio",
+          "label": "Apakah anak Anda menunjukkan **preferensi penggunaan tangan** tertentu?",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Menilai lateralitas tangan sebagai indikator kematangan perkembangan otak dan motorik.",
+          "options": [
+            {
+              "weight": 50,
+              "label": "Belum ada preferensi yang jelas, sering berganti tangan"
+            },
+            {
+              "weight": 75,
+              "label": "Mulai menunjukkan preferensi, namun kadang masih menggunakan tangan lain"
+            },
+            {
+              "weight": 100,
+              "label": "Sudah ada preferensi tangan yang jelas dan konsisten"
+            }
+          ]
+        },
+        {
+          "gridSpan": 2,
+          "label": "Mohon jelaskan observasi Anda mengenai penggunaan tangan anak dalam berbagai aktivitas.",
+          "required": true,
+          "id": "observasiDominasiTangan",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "dominasiTangan",
+            "equals": "Belum ada preferensi yang jelas, sering berganti tangan"
+          }
+        },
+        {
+          "required": true,
+          "label": "Bagaimana anak Anda memanipulasi **adonan mainan (play-doh)**?",
+          "aiReasoning": "Mengevaluasi kekuatan otot tangan dan kreativitas dalam memanipulasi media plastis.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Hanya meremas atau memukul-mukul tanpa tujuan",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Bisa meremas dan menggulung, namun belum bisa membentuk objek"
+            },
+            {
+              "weight": 75,
+              "label": "Bisa membentuk objek sederhana dengan bantuan"
+            },
+            {
+              "weight": 100,
+              "label": "Bisa membentuk berbagai objek secara mandiri dan kreatif"
+            }
+          ],
+          "id": "mainAdonanLilin",
+          "type": "radio"
+        },
+        {
+          "gridSpan": 2,
+          "label": "Mohon jelaskan mengapa anak Anda hanya meremas atau memukul-mukul adonan mainan tanpa tujuan.",
+          "required": true,
+          "type": "textarea",
+          "id": "justifikasiMainAdonanLilin",
+          "showIf": {
+            "fieldId": "mainAdonanLilin",
+            "equals": "Hanya meremas atau memukul-mukul tanpa tujuan"
+          }
+        },
+        {
+          "showIf": {
+            "equals": "Bisa membentuk berbagai objek secara mandiri dan kreatif",
+            "fieldId": "mainAdonanLilin"
+          },
+          "type": "file",
+          "id": "buktiMainAdonanLilin",
+          "fileAccept": ".jpg,.jpeg,.png",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Unggah foto hasil kreasi anak Anda dengan adonan mainan atau lilin."
+        }
+      ]
+    },
+    {
+      "title": "Kemandirian Fisik & Bina Diri",
+      "fields": [
+        {
+          "options": [
+            {
+              "label": "Selalu membutuhkan bantuan penuh.",
+              "weight": 0
+            },
+            {
+              "weight": 25,
+              "label": "Sering membutuhkan bantuan, namun kadang mencoba sendiri."
+            },
+            {
+              "weight": 75,
+              "label": "Mampu makan sendiri dengan sedikit pengawasan."
+            },
+            {
+              "label": "Sangat mandiri, mampu makan rapi dan menggunakan alat makan dengan baik.",
+              "weight": 100
+            }
+          ],
+          "aiReasoning": "Menilai kemampuan motorik halus dan kemandirian dasar anak dalam memenuhi kebutuhan nutrisi secara mandiri.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Bagaimana **kemandirian anak** Anda saat makan (misalnya, menggunakan sendok/garpu, makan tanpa bantuan signifikan)?",
+          "type": "radio",
+          "id": "kemandirianMakan"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Menggali hambatan spesifik (fisik atau perilaku) yang menghalangi anak untuk makan secara mandiri.",
+          "required": true,
+          "label": "Mohon jelaskan **tantangan atau alasan** mengapa anak Anda masih membutuhkan bantuan saat makan.",
+          "showIf": {
+            "equals": "Selalu membutuhkan bantuan penuh.",
+            "fieldId": "kemandirianMakan"
+          },
+          "type": "textarea",
+          "id": "alasanKemandirianMakan"
+        },
+        {
+          "label": "Bagaimana **kemandirian anak** dalam menggunakan toilet (misalnya, memberi tahu kebutuhan, melepas/memakai celana, membersihkan diri)?",
+          "required": true,
+          "options": [
+            {
+              "label": "Masih sepenuhnya bergantung pada bantuan.",
+              "weight": 0
+            },
+            {
+              "weight": 25,
+              "label": "Mulai memberi tahu kebutuhan, namun masih perlu bantuan penuh."
+            },
+            {
+              "label": "Mampu menggunakan toilet dengan sedikit bantuan (misal: membersihkan diri).",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Sangat mandiri, mampu mengurus diri sepenuhnya di toilet."
+            }
+          ],
+          "aiReasoning": "Mengukur kesiapan anak dalam mengelola fungsi ekskresi tubuh sebagai indikator kematangan bina diri.",
+          "gridSpan": 2,
+          "type": "radio",
+          "id": "kemandirianToileting"
+        },
+        {
+          "type": "radio",
+          "id": "kemandirianBerpakaian",
+          "required": true,
+          "label": "Seberapa mandiri anak Anda dalam **berpakaian dan melepas pakaiannya** sendiri?",
+          "gridSpan": 2,
+          "aiReasoning": "Mengevaluasi koordinasi motorik halus dan pemahaman urutan logis dalam aktivitas berpakaian.",
+          "options": [
+            {
+              "label": "Selalu membutuhkan bantuan penuh untuk berpakaian.",
+              "weight": 0
+            },
+            {
+              "label": "Mampu melepas pakaian, namun kesulitan memakai pakaian sendiri.",
+              "weight": 25
+            },
+            {
+              "label": "Mampu memakai pakaian sederhana sendiri, namun butuh bantuan untuk kancing/resleting.",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Sangat mandiri, mampu memakai dan melepas pakaian lengkap tanpa bantuan."
+            }
+          ]
+        },
+        {
+          "id": "mengikutiInstruksiDuaLangkah",
+          "type": "radio",
+          "label": "Apakah anak Anda mampu mengikuti **instruksi dua langkah** terkait bina diri (misalnya, 'Ambil sikat gigi dan sikat gigimu')?",
+          "required": true,
+          "aiReasoning": "Menilai kemampuan kognitif anak dalam memproses dan mengeksekusi urutan perintah kompleks dalam aktivitas sehari-hari.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Sangat jarang atau tidak mampu mengikuti instruksi dua langkah."
+            },
+            {
+              "label": "Kadang-kadang mampu, namun sering perlu pengulangan atau bantuan.",
+              "weight": 25
+            },
+            {
+              "label": "Sering mampu mengikuti instruksi dua langkah dengan jelas.",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Selalu mampu mengikuti instruksi dua langkah dengan baik dan cepat."
+            }
+          ]
+        },
+        {
+          "options": [
+            {
+              "weight": 0,
+              "label": "Tidak pernah atau sangat jarang menunjukkan inisiatif."
+            },
+            {
+              "weight": 25,
+              "label": "Kadang-kadang menunjukkan inisiatif, terutama jika diingatkan."
+            },
+            {
+              "weight": 75,
+              "label": "Sering menunjukkan inisiatif untuk beberapa kegiatan bina diri."
+            },
+            {
+              "label": "Secara konsisten menunjukkan inisiatif dalam berbagai kegiatan bina diri.",
+              "weight": 100
+            }
+          ],
+          "aiReasoning": "Mengukur motivasi intrinsik dan kesadaran anak terhadap tanggung jawab personal dalam rutinitas harian.",
+          "gridSpan": 2,
+          "label": "Seberapa sering anak Anda menunjukkan **inisiatif** untuk melakukan kegiatan bina diri (misalnya, mencuci tangan, merapikan mainan sederhana) tanpa diminta?",
+          "required": true,
+          "type": "radio",
+          "id": "inisiatifBinaDiri"
+        },
+        {
+          "type": "radio",
+          "id": "regulasiEmosiBinaDiri",
+          "gridSpan": 2,
+          "aiReasoning": "Menganalisis ketahanan emosional (resiliensi) anak saat menghadapi tantangan dalam tugas yang membutuhkan usaha.",
+          "options": [
+            {
+              "label": "Sering frustrasi, menangis, atau menyerah dengan cepat.",
+              "weight": 0
+            },
+            {
+              "weight": 25,
+              "label": "Menunjukkan sedikit frustrasi, namun bisa ditenangkan dengan bantuan."
+            },
+            {
+              "label": "Mampu mencoba lagi atau meminta bantuan dengan tenang.",
+              "weight": 75
+            },
+            {
+              "label": "Menunjukkan ketenangan dan mencoba mencari solusi atau meminta bantuan secara konstruktif.",
+              "weight": 100
+            }
+          ],
+          "label": "Bagaimana **reaksi emosi** anak Anda ketika menghadapi kesulitan dalam tugas bina diri (misalnya, tidak bisa mengancing baju, tumpah saat makan)?",
+          "required": true
+        },
+        {
+          "description": "Contoh: Anak saya suka bermain peran menjadi dokter, atau membangun menara tinggi dari balok.",
+          "type": "textarea",
+          "id": "rutinitasBermainTakTerstruktur",
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi preferensi aktivitas kreatif anak yang mendukung perkembangan imajinasi dan kemandirian bermain.",
+          "required": true,
+          "label": "Mohon jelaskan **rutinitas bermain tak terstruktur** apa yang paling sering dilakukan anak Anda di rumah (misalnya, bermain peran, membangun balok, menggambar bebas)?"
+        },
+        {
+          "type": "radio",
+          "id": "keterlibatanTugasRumahTangga",
+          "label": "Apakah anak Anda terlibat dalam **tugas rumah tangga sederhana** yang sesuai usianya (misalnya, merapikan mainan, membantu membereskan meja makan)?",
+          "required": true,
+          "aiReasoning": "Menilai partisipasi aktif anak dalam ekosistem keluarga sebagai bentuk pengembangan tanggung jawab sosial.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Tidak pernah terlibat atau menolak."
+            },
+            {
+              "label": "Kadang-kadang terlibat jika diminta, namun perlu pengawasan.",
+              "weight": 25
+            },
+            {
+              "label": "Sering terlibat dengan antusias dalam tugas sederhana.",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Secara aktif dan mandiri membantu dalam berbagai tugas rumah tangga sederhana."
+            }
+          ]
+        },
+        {
+          "type": "file",
+          "id": "buktiKemandirianFisik",
+          "showIf": {
+            "fieldId": "inisiatifBinaDiri",
+            "equals": "Secara konsisten menunjukkan inisiatif dalam berbagai kegiatan bina diri."
+          },
+          "gridSpan": 2,
+          "aiReasoning": "Memberikan bukti visual untuk memvalidasi tingkat kemandirian anak yang dilaporkan oleh orang tua.",
+          "fileAccept": ".jpg,.jpeg,.png,.mp4",
+          "required": false,
+          "label": "Jika anak Anda menunjukkan **kemandirian yang sangat baik** dalam beberapa aspek bina diri, Anda dapat mengunggah foto atau video singkat sebagai contoh."
+        }
+      ],
+      "description": "Evaluasi kemampuan anak dalam melakukan aktivitas harian secara mandiri seperti makan, berpakaian, dan toileting.",
+      "stepNumber": 3
+    },
+    {
+      "title": "Regulasi Emosi & Kepercayaan Diri",
+      "fields": [
+        {
+          "type": "radio",
+          "id": "re_frustrasi",
+          "options": [
+            {
+              "weight": 90,
+              "label": "Mencoba lagi dengan gigih, meminta bantuan jika diperlukan"
+            },
+            {
+              "label": "Menunjukkan sedikit kekesalan namun tetap mencoba",
+              "weight": 60
+            },
+            {
+              "label": "Mudah menyerah dan menunjukkan kekesalan (misal: menangis, melempar)",
+              "weight": 30
+            },
+            {
+              "label": "Menolak untuk mencoba sama sekali atau langsung marah",
+              "weight": 10
+            }
+          ],
+          "aiReasoning": "Mengukur ketahanan emosional dan kemampuan pemecahan masalah anak saat menghadapi hambatan.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Bagaimana **reaksi anak** Anda ketika menghadapi tugas yang menantang atau mengalami **frustrasi**?"
+        },
+        {
+          "id": "re_frustrasi_justifikasi",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "re_frustrasi",
+            "equals": "Menolak untuk mencoba sama sekali atau langsung marah"
+          },
+          "aiReasoning": "Memberikan ruang bagi orang tua untuk mendeskripsikan pola perilaku spesifik yang tidak tertangkap oleh pilihan ganda.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan lebih lanjut perilaku anak Anda saat **frustrasi**."
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Menilai tingkat kepercayaan diri dan keterbukaan anak terhadap pengalaman baru.",
+          "options": [
+            {
+              "weight": 95,
+              "label": "Selalu antusias dan berani mencoba"
+            },
+            {
+              "weight": 70,
+              "label": "Cukup sering mencoba, kadang perlu dorongan"
+            },
+            {
+              "label": "Jarang mencoba hal baru, cenderung menunggu atau menolak",
+              "weight": 40
+            },
+            {
+              "weight": 15,
+              "label": "Sangat enggan dan takut mencoba hal baru"
+            }
+          ],
+          "label": "Seberapa sering anak Anda menunjukkan **inisiatif** untuk mencoba aktivitas atau permainan baru?",
+          "required": true,
+          "id": "re_cobaBaru",
+          "type": "radio"
+        },
+        {
+          "required": true,
+          "label": "Mohon berikan contoh situasi di mana anak Anda **enggan mencoba hal baru** dan bagaimana Anda meresponsnya.",
+          "aiReasoning": "Mengidentifikasi hambatan psikologis atau ketakutan spesifik yang menghalangi anak untuk bereksplorasi.",
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "re_cobaBaru_justifikasi",
+          "showIf": {
+            "fieldId": "re_cobaBaru",
+            "equals": "Sangat enggan dan takut mencoba hal baru"
+          }
+        },
+        {
+          "id": "re_tenangDiri",
+          "type": "radio",
+          "options": [
+            {
+              "weight": 90,
+              "label": "Dapat menenangkan diri sendiri dalam waktu singkat"
+            },
+            {
+              "weight": 65,
+              "label": "Membutuhkan sedikit bantuan atau pelukan untuk menenangkan diri"
+            },
+            {
+              "label": "Sulit menenangkan diri, butuh waktu lama dan perhatian penuh",
+              "weight": 35
+            },
+            {
+              "label": "Tidak dapat menenangkan diri sendiri, terus menangis/marah dalam waktu lama",
+              "weight": 10
+            }
+          ],
+          "aiReasoning": "Mengevaluasi kapasitas regulasi diri (self-regulation) anak dalam mengelola emosi negatif.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Bagaimana anak Anda **menenangkan diri** setelah mengalami ledakan emosi (misal: marah, sedih yang intens)?"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Memahami strategi pendampingan orang tua dalam membantu anak mengelola krisis emosional.",
+          "required": true,
+          "label": "Mohon jelaskan metode yang biasa Anda gunakan untuk membantu anak **menenangkan diri** dan seberapa efektifnya.",
+          "showIf": {
+            "equals": "Tidak dapat menenangkan diri sendiri, terus menangis/marah dalam waktu lama",
+            "fieldId": "re_tenangDiri"
+          },
+          "id": "re_tenangDiri_justifikasi",
+          "type": "textarea"
+        },
+        {
+          "id": "re_ekspresiEmosi",
+          "type": "radio",
+          "gridSpan": 2,
+          "aiReasoning": "Menilai kecerdasan emosional anak dalam mengomunikasikan kondisi internalnya.",
+          "options": [
+            {
+              "weight": 90,
+              "label": "Ya, selalu dapat mengungkapkan dengan jelas"
+            },
+            {
+              "label": "Cukup sering, kadang perlu dibantu untuk mengidentifikasi perasaan",
+              "weight": 60
+            },
+            {
+              "label": "Jarang, lebih sering menunjukkan melalui perilaku (misal: merajuk, diam)",
+              "weight": 30
+            },
+            {
+              "weight": 10,
+              "label": "Tidak dapat mengungkapkan, hanya menunjukkan melalui ledakan emosi fisik"
+            }
+          ],
+          "required": true,
+          "label": "Apakah anak Anda dapat **mengungkapkan perasaannya** secara verbal atau melalui isyarat yang jelas?"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Menggali pola komunikasi non-verbal atau perilaku yang digunakan anak sebagai pengganti ekspresi verbal.",
+          "required": true,
+          "label": "Mohon jelaskan bagaimana anak Anda biasanya berkomunikasi saat memiliki **kebutuhan atau perasaan tertentu**.",
+          "showIf": {
+            "fieldId": "re_ekspresiEmosi",
+            "equals": "Tidak dapat mengungkapkan, hanya menunjukkan melalui ledakan emosi fisik"
+          },
+          "id": "re_ekspresiEmosi_justifikasi",
+          "type": "textarea"
+        },
+        {
+          "id": "re_responPujianKoreksi",
+          "type": "radio",
+          "options": [
+            {
+              "weight": 90,
+              "label": "Menerima dengan senang hati dan termotivasi"
+            },
+            {
+              "label": "Menerima, namun kadang terlihat sedikit malu atau acuh",
+              "weight": 60
+            },
+            {
+              "label": "Cenderung tidak peduli atau sedikit defensif",
+              "weight": 30
+            },
+            {
+              "label": "Menolak pujian atau menjadi sangat marah/sedih saat dikoreksi",
+              "weight": 10
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur penerimaan anak terhadap umpan balik (feedback) sebagai bagian dari perkembangan sosial-emosional.",
+          "required": true,
+          "label": "Bagaimana anak Anda merespons **pujian atau koreksi** yang diberikan dengan lembut?"
+        },
+        {
+          "type": "textarea",
+          "id": "re_responPujianKoreksi_justifikasi",
+          "showIf": {
+            "equals": "Menolak pujian atau menjadi sangat marah/sedih saat dikoreksi",
+            "fieldId": "re_responPujianKoreksi"
+          },
+          "aiReasoning": "Menganalisis sensitivitas anak terhadap kritik dan efektivitas metode komunikasi orang tua.",
+          "gridSpan": 2,
+          "label": "Mohon berikan contoh bagaimana anak Anda merespons **pujian atau koreksi**, dan bagaimana Anda mengatasinya.",
+          "required": true
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Menilai kemampuan kontrol impuls dan kesadaran sosial anak dalam konteks interaksi.",
+          "options": [
+            {
+              "label": "Selalu dapat menunggu dengan sabar",
+              "weight": 90
+            },
+            {
+              "weight": 65,
+              "label": "Cukup sering, kadang perlu diingatkan"
+            },
+            {
+              "weight": 35,
+              "label": "Sulit menunggu, sering menyela atau mengambil giliran orang lain"
+            },
+            {
+              "weight": 10,
+              "label": "Tidak dapat menunggu sama sekali, selalu ingin didahulukan"
+            }
+          ],
+          "required": true,
+          "label": "Apakah anak Anda dapat **menunggu giliran** saat bermain atau berinteraksi dengan orang lain?",
+          "type": "radio",
+          "id": "re_tungguGiliran"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi tingkat kesulitan anak dalam menunda kepuasan (delayed gratification).",
+          "required": true,
+          "label": "Mohon jelaskan tantangan yang Anda hadapi terkait kemampuan anak **menunggu giliran**.",
+          "showIf": {
+            "fieldId": "re_tungguGiliran",
+            "equals": "Tidak dapat menunggu sama sekali, selalu ingin didahulukan"
+          },
+          "type": "textarea",
+          "id": "re_tungguGiliran_justifikasi"
+        },
+        {
+          "type": "radio",
+          "id": "re_adaptasiPerubahan",
+          "aiReasoning": "Mengukur fleksibilitas kognitif dan stabilitas emosional anak terhadap perubahan lingkungan.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Mudah beradaptasi dan menerima perubahan",
+              "weight": 90
+            },
+            {
+              "weight": 60,
+              "label": "Cukup mudah, kadang perlu penjelasan singkat"
+            },
+            {
+              "weight": 30,
+              "label": "Sulit beradaptasi, sering menunjukkan penolakan atau kekesalan"
+            },
+            {
+              "label": "Sangat sulit, perubahan kecil bisa memicu ledakan emosi",
+              "weight": 10
+            }
+          ],
+          "required": true,
+          "label": "Bagaimana anak Anda **beradaptasi** terhadap perubahan kecil dalam rutinitas harian?"
+        },
+        {
+          "showIf": {
+            "fieldId": "re_adaptasiPerubahan",
+            "equals": "Sangat sulit, perubahan kecil bisa memicu ledakan emosi"
+          },
+          "type": "textarea",
+          "id": "re_adaptasiPerubahan_justifikasi",
+          "label": "Mohon berikan contoh situasi di mana anak Anda kesulitan **beradaptasi dengan perubahan** rutinitas.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Mendeteksi ketergantungan anak pada struktur yang kaku dan potensi kecemasan saat rutinitas berubah."
+        },
+        {
+          "options": [
+            {
+              "label": "Sangat sering dan aktif berimajinasi",
+              "weight": 95
+            },
+            {
+              "label": "Cukup sering, kadang perlu dipancing",
+              "weight": 70
+            },
+            {
+              "label": "Jarang, lebih suka permainan yang terstruktur",
+              "weight": 40
+            },
+            {
+              "label": "Tidak pernah atau sangat enggan terlibat dalam permainan imajinatif",
+              "weight": 15
+            }
+          ],
+          "aiReasoning": "Menilai perkembangan kognitif melalui kemampuan berpikir abstrak dan kreativitas.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Seberapa sering anak Anda terlibat dalam **permainan imajinatif** atau bermain peran?",
+          "id": "re_mainImajinatif",
+          "type": "radio"
+        },
+        {
+          "id": "re_mainImajinatif_justifikasi",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Tidak pernah atau sangat enggan terlibat dalam permainan imajinatif",
+            "fieldId": "re_mainImajinatif"
+          },
+          "required": true,
+          "label": "Mohon jelaskan jenis permainan yang paling sering dilakukan anak Anda jika bukan **permainan imajinatif**.",
+          "gridSpan": 2,
+          "aiReasoning": "Memahami preferensi aktivitas anak untuk menentukan profil gaya belajar dan minatnya."
+        }
+      ],
+      "description": "Pemetaan cara anak mengelola perasaan frustrasi, mengekspresikan emosi, dan keberanian mencoba hal baru.",
+      "stepNumber": 4
+    },
+    {
+      "stepNumber": 5,
+      "title": "Kemandirian Sosial & Tanggung Jawab",
+      "fields": [
+        {
+          "type": "radio",
+          "id": "interaksiTeman",
+          "gridSpan": 2,
+          "aiReasoning": "Menilai tingkat keterampilan sosial dan kepercayaan diri anak dalam membangun hubungan dengan teman sebaya.",
+          "options": [
+            {
+              "label": "Cenderung bermain sendiri dan menghindari interaksi.",
+              "weight": 10
+            },
+            {
+              "label": "Berinteraksi jika diajak, namun jarang memulai.",
+              "weight": 40
+            },
+            {
+              "label": "Aktif berinteraksi dan kadang memulai permainan.",
+              "weight": 70
+            },
+            {
+              "label": "Sangat aktif, mudah bergaul, dan sering menjadi pemimpin dalam permainan.",
+              "weight": 95
+            }
+          ],
+          "required": true,
+          "label": "Bagaimana anak Anda umumnya **berinteraksi** saat bermain dengan teman sebaya?"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Menggali hambatan psikologis atau perilaku yang menyebabkan anak menarik diri dari lingkungan sosial.",
+          "required": true,
+          "label": "Mohon jelaskan lebih lanjut mengapa anak Anda cenderung **bermain sendiri** atau menghindari interaksi.",
+          "showIf": {
+            "equals": "Cenderung bermain sendiri dan menghindari interaksi.",
+            "fieldId": "interaksiTeman"
+          },
+          "id": "justifikasiInteraksiTeman",
+          "type": "textarea"
+        },
+        {
+          "aiReasoning": "Mengukur perkembangan empati dan kemampuan anak dalam memahami konsep kepemilikan serta altruisme.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 15,
+              "label": "Sangat jarang atau tidak pernah."
+            },
+            {
+              "weight": 45,
+              "label": "Kadang-kadang, jika diingatkan."
+            },
+            {
+              "label": "Sering, terutama dengan orang yang dikenal.",
+              "weight": 75
+            },
+            {
+              "label": "Selalu, bahkan dengan orang yang baru dikenal.",
+              "weight": 90
+            }
+          ],
+          "required": true,
+          "label": "Apakah anak Anda menunjukkan **inisiatif untuk berbagi** mainan atau makanan dengan orang lain tanpa diminta?",
+          "type": "radio",
+          "id": "inisiatifBerbagi"
+        },
+        {
+          "label": "Mohon berikan contoh atau jelaskan situasi saat anak Anda **sangat jarang atau tidak pernah berbagi**.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Memahami konteks spesifik di mana anak merasa enggan untuk berbagi untuk menentukan apakah ini perilaku wajar atau perlu intervensi.",
+          "id": "justifikasiInisiatifBerbagi",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Sangat jarang atau tidak pernah.",
+            "fieldId": "inisiatifBerbagi"
+          }
+        },
+        {
+          "type": "radio",
+          "id": "resolusiKonflik",
+          "required": true,
+          "label": "Bagaimana reaksi anak Anda jika terjadi **konflik kecil** (misalnya, berebut mainan) saat bermain?",
+          "gridSpan": 2,
+          "aiReasoning": "Mengevaluasi kematangan emosional dan kemampuan problem-solving anak dalam situasi sosial yang menekan.",
+          "options": [
+            {
+              "weight": 10,
+              "label": "Menangis, marah, atau langsung menyerah."
+            },
+            {
+              "label": "Mencari bantuan orang dewasa untuk menyelesaikan.",
+              "weight": 40
+            },
+            {
+              "label": "Mencoba menyelesaikan sendiri dengan negosiasi sederhana.",
+              "weight": 70
+            },
+            {
+              "label": "Mampu mencari solusi bersama atau bergantian dengan teman.",
+              "weight": 90
+            }
+          ]
+        },
+        {
+          "required": true,
+          "label": "Mohon ceritakan pengalaman atau observasi Anda terkait reaksi anak saat **menghadapi konflik kecil**.",
+          "aiReasoning": "Mengidentifikasi pola regulasi emosi anak saat menghadapi frustrasi dalam interaksi sosial.",
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "justifikasiResolusiKonflik",
+          "showIf": {
+            "equals": "Menangis, marah, atau langsung menyerah.",
+            "fieldId": "resolusiKonflik"
+          }
+        },
+        {
+          "options": [
+            {
+              "weight": 10,
+              "label": "Tidak pernah atau selalu menolak."
+            },
+            {
+              "weight": 40,
+              "label": "Hanya jika diingatkan berulang kali."
+            },
+            {
+              "label": "Sering melakukannya setelah satu kali instruksi.",
+              "weight": 70
+            },
+            {
+              "weight": 95,
+              "label": "Secara mandiri dan konsisten tanpa diminta."
+            }
+          ],
+          "aiReasoning": "Menilai tingkat kemandirian dan tanggung jawab anak terhadap lingkungan sekitarnya.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Apakah anak Anda mampu menyelesaikan **tugas sederhana** di rumah secara mandiri?",
+          "type": "radio",
+          "id": "tanggungJawabRumah"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Mencari tahu hambatan motivasi atau kendala fisik yang menghalangi anak dalam menjalankan tanggung jawab rumah tangga.",
+          "label": "Mohon jelaskan mengapa anak Anda **tidak pernah atau selalu menolak** tugas sederhana di rumah.",
+          "required": true,
+          "id": "justifikasiTanggungJawabRumah",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Tidak pernah atau selalu menolak.",
+            "fieldId": "tanggungJawabRumah"
+          }
+        },
+        {
+          "id": "instruksiDuaLangkah",
+          "type": "radio",
+          "options": [
+            {
+              "weight": 15,
+              "label": "Sangat jarang atau hanya satu langkah."
+            },
+            {
+              "label": "Kadang-kadang, perlu diulang.",
+              "weight": 45
+            },
+            {
+              "weight": 75,
+              "label": "Sering, tanpa perlu diulang."
+            },
+            {
+              "weight": 90,
+              "label": "Selalu, dan dapat mengingat urutannya."
+            }
+          ],
+          "aiReasoning": "Mengukur kemampuan pemrosesan kognitif dan daya ingat jangka pendek anak dalam mengikuti arahan.",
+          "gridSpan": 2,
+          "label": "Seberapa sering anak Anda dapat mengikuti **instruksi dua langkah** sederhana?",
+          "required": true
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiInstruksiDuaLangkah",
+          "showIf": {
+            "fieldId": "instruksiDuaLangkah",
+            "equals": "Sangat jarang atau hanya satu langkah."
+          },
+          "label": "Mohon berikan contoh situasi di mana anak Anda **kesulitan mengikuti instruksi dua langkah**.",
+          "required": true,
+          "aiReasoning": "Menganalisis apakah kesulitan mengikuti instruksi disebabkan oleh faktor atensi atau pemahaman bahasa.",
+          "gridSpan": 2
+        },
+        {
+          "id": "konsepKepemilikan",
+          "type": "radio",
+          "label": "Apakah anak Anda memahami konsep **'milik saya' dan 'milik orang lain'** serta menghormati barang orang lain?",
+          "required": true,
+          "options": [
+            {
+              "weight": 10,
+              "label": "Sering mengambil barang orang lain tanpa izin."
+            },
+            {
+              "weight": 40,
+              "label": "Memahami, namun kadang masih mengambil tanpa izin."
+            },
+            {
+              "weight": 70,
+              "label": "Memahami dan umumnya meminta izin."
+            },
+            {
+              "weight": 95,
+              "label": "Sangat menghormati dan selalu meminta izin."
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai perkembangan kesadaran sosial dan batasan personal anak terhadap hak milik orang lain."
+        },
+        {
+          "label": "Mohon jelaskan lebih lanjut mengenai kebiasaan anak Anda **mengambil barang orang lain tanpa izin**.",
+          "required": true,
+          "aiReasoning": "Mengidentifikasi apakah perilaku mengambil barang tanpa izin merupakan masalah impulsivitas atau kurangnya pemahaman norma sosial.",
+          "gridSpan": 2,
+          "id": "justifikasiKonsepKepemilikan",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "konsepKepemilikan",
+            "equals": "Sering mengambil barang orang lain tanpa izin."
+          }
+        },
+        {
+          "options": [
+            {
+              "weight": 10,
+              "label": "Tidak menunjukkan reaksi atau tidak peduli."
+            },
+            {
+              "label": "Melihat, namun tidak tahu harus berbuat apa.",
+              "weight": 40
+            },
+            {
+              "weight": 70,
+              "label": "Mencoba menghibur dengan cara sederhana (misal: memeluk)."
+            },
+            {
+              "weight": 90,
+              "label": "Aktif menawarkan bantuan atau kenyamanan."
+            }
+          ],
+          "aiReasoning": "Mengukur kapasitas emosional anak dalam mengenali dan merespons perasaan orang lain (empati).",
+          "gridSpan": 2,
+          "label": "Bagaimana anak Anda merespons ketika melihat orang lain **sedih atau terluka**?",
+          "required": true,
+          "id": "empatiSederhana",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "equals": "Tidak menunjukkan reaksi atau tidak peduli.",
+            "fieldId": "empatiSederhana"
+          },
+          "type": "textarea",
+          "id": "justifikasiEmpatiSederhana",
+          "label": "Mohon jelaskan observasi Anda saat anak **tidak menunjukkan reaksi atau tidak peduli** terhadap kesedihan orang lain.",
+          "required": true,
+          "aiReasoning": "Mengevaluasi apakah kurangnya respons empati disebabkan oleh kesulitan dalam membaca ekspresi emosi atau perkembangan sosial yang belum matang.",
+          "gridSpan": 2
+        }
+      ],
+      "description": "Observasi interaksi anak dengan teman sebaya dan kemauan mengambil tanggung jawab sederhana di rumah."
+    },
+    {
+      "stepNumber": 6,
+      "fields": [
+        {
+          "id": "kognitif_warnaBentuk",
+          "type": "radio",
+          "description": "Observasi kemampuan anak dalam mengenali dan menyebutkan warna serta bentuk dasar.",
+          "options": [
+            {
+              "label": "Sulit mengidentifikasi atau membutuhkan bantuan penuh",
+              "weight": 10
+            },
+            {
+              "label": "Kadang-kadang dapat mengidentifikasi dengan sedikit bantuan",
+              "weight": 40
+            },
+            {
+              "label": "Sering dapat mengidentifikasi secara mandiri",
+              "weight": 70
+            },
+            {
+              "weight": 90,
+              "label": "Selalu dapat mengidentifikasi dengan cepat dan tepat"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Pertanyaan ini bertujuan untuk memetakan kemampuan kognitif dasar anak dalam melakukan kategorisasi visual dan pengenalan pola.",
+          "label": "Bagaimana anak Anda mengidentifikasi **warna dasar** (merah, biru, kuning) dan **bentuk dasar** (lingkaran, kotak, segitiga) saat bermain?",
+          "required": true
+        },
+        {
+          "aiReasoning": "Justifikasi ini diperlukan untuk memahami hambatan spesifik yang dialami anak dalam proses kognitif pengenalan visual.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan lebih lanjut mengapa anak Anda sulit mengidentifikasi **warna atau bentuk dasar**.",
+          "showIf": {
+            "fieldId": "kognitif_warnaBentuk",
+            "equals": "Sulit mengidentifikasi atau membutuhkan bantuan penuh"
+          },
+          "type": "textarea",
+          "id": "kognitif_warnaBentuk_justifikasi"
+        },
+        {
+          "options": [
+            {
+              "label": "Menyerah atau tidak tertarik sama sekali",
+              "weight": 10
+            },
+            {
+              "weight": 40,
+              "label": "Mencoba secara acak tanpa strategi jelas"
+            },
+            {
+              "label": "Mencoba dengan panduan atau petunjuk awal",
+              "weight": 70
+            },
+            {
+              "label": "Mencoba secara mandiri dan berhasil menyelesaikannya",
+              "weight": 90
+            }
+          ],
+          "aiReasoning": "Mengevaluasi kemampuan pemecahan masalah (problem solving) dan koordinasi mata-tangan anak melalui tugas spasial.",
+          "gridSpan": 2,
+          "label": "Ketika dihadapkan pada **mainan puzzle sederhana** (4-6 keping), bagaimana anak Anda mencoba menyelesaikannya?",
+          "required": true,
+          "description": "Mengevaluasi kemampuan pemecahan masalah dan koordinasi mata-tangan anak.",
+          "id": "kognitif_puzzle",
+          "type": "radio"
+        },
+        {
+          "label": "Mohon jelaskan mengapa anak Anda menunjukkan perilaku tersebut saat bermain **puzzle**.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Menggali faktor psikologis atau motorik yang menghambat anak dalam menyelesaikan tugas pemecahan masalah.",
+          "showIf": {
+            "fieldId": "kognitif_puzzle",
+            "equals": "Menyerah atau tidak tertarik sama sekali"
+          },
+          "type": "textarea",
+          "id": "kognitif_puzzle_justifikasi"
+        },
+        {
+          "type": "radio",
+          "id": "kognitif_konsentrasi",
+          "description": "Mengukur rentang perhatian dan konsentrasi anak dalam aktivitas bermain.",
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur rentang perhatian (attention span) sebagai indikator kematangan fungsi eksekutif otak.",
+          "options": [
+            {
+              "weight": 10,
+              "label": "Kurang dari 5 menit"
+            },
+            {
+              "weight": 40,
+              "label": "5-10 menit"
+            },
+            {
+              "weight": 70,
+              "label": "10-15 menit"
+            },
+            {
+              "weight": 90,
+              "label": "Lebih dari 15 menit"
+            }
+          ],
+          "required": true,
+          "label": "Berapa lama rata-rata anak Anda dapat **fokus pada satu aktivitas** bermain yang diminatinya sebelum beralih ke aktivitas lain?"
+        },
+        {
+          "id": "kognitif_konsentrasi_justifikasi",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "kognitif_konsentrasi",
+            "equals": "Kurang dari 5 menit"
+          },
+          "label": "Mohon jelaskan faktor-faktor yang mungkin mempengaruhi **rentang perhatian** anak Anda.",
+          "required": true,
+          "aiReasoning": "Mengidentifikasi distraktor eksternal atau internal yang membatasi durasi fokus anak.",
+          "gridSpan": 2
+        },
+        {
+          "description": "Menilai pemahaman instruksi dan kemampuan memproses informasi berurutan.",
+          "id": "kognitif_instruksiDuaLangkah",
+          "type": "radio",
+          "options": [
+            {
+              "label": "Hampir tidak pernah atau selalu membutuhkan pengulangan",
+              "weight": 10
+            },
+            {
+              "weight": 40,
+              "label": "Kadang-kadang dapat mengikuti dengan sedikit pengingat"
+            },
+            {
+              "label": "Sering dapat mengikuti tanpa banyak pengingat",
+              "weight": 70
+            },
+            {
+              "weight": 90,
+              "label": "Selalu dapat mengikuti instruksi dua langkah dengan baik"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai kemampuan memori kerja (working memory) dan pemrosesan informasi auditori.",
+          "required": true,
+          "label": "Seberapa sering anak Anda dapat mengikuti **instruksi dua langkah** yang diberikan secara berurutan?"
+        },
+        {
+          "showIf": {
+            "fieldId": "kognitif_instruksiDuaLangkah",
+            "equals": "Hampir tidak pernah atau selalu membutuhkan pengulangan"
+          },
+          "type": "textarea",
+          "id": "kognitif_instruksiDuaLangkah_justifikasi",
+          "required": true,
+          "label": "Mohon berikan contoh situasi di mana anak Anda kesulitan mengikuti **instruksi dua langkah**.",
+          "aiReasoning": "Menganalisis apakah kesulitan terletak pada kompleksitas bahasa atau kegagalan dalam retensi instruksi.",
+          "gridSpan": 2
+        },
+        {
+          "id": "kognitif_bermainPuraPura",
+          "description": "Mengukur perkembangan pemikiran simbolik dan imajinasi anak.",
+          "type": "radio",
+          "required": true,
+          "label": "Apakah anak Anda sering terlibat dalam **permainan pura-pura** (imajinatif)?",
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur perkembangan pemikiran simbolik yang krusial untuk kemampuan abstraksi dan empati.",
+          "options": [
+            {
+              "label": "Tidak pernah atau sangat jarang",
+              "weight": 10
+            },
+            {
+              "label": "Jarang, hanya jika diajak",
+              "weight": 40
+            },
+            {
+              "weight": 70,
+              "label": "Kadang-kadang memulai sendiri"
+            },
+            {
+              "weight": 90,
+              "label": "Sering sekali dan mengembangkan cerita sendiri"
+            }
+          ]
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Mencari tahu apakah kurangnya permainan imajinatif disebabkan oleh kurangnya stimulasi atau preferensi gaya belajar anak.",
+          "required": true,
+          "label": "Mohon jelaskan mengapa anak Anda jarang terlibat dalam **permainan pura-pura**.",
+          "id": "kognitif_bermainPuraPura_justifikasi",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "kognitif_bermainPuraPura",
+            "equals": "Tidak pernah atau sangat jarang"
+          }
+        },
+        {
+          "aiReasoning": "Mengobservasi inisiatif mandiri anak dalam menciptakan aktivitas tanpa arahan orang dewasa.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan **rutinitas bermain tak terstruktur** yang paling sering dilakukan anak Anda di rumah.",
+          "description": "Memberikan gambaran tentang inisiatif dan preferensi bermain bebas anak.",
+          "type": "textarea",
+          "id": "kognitif_rutinitasBermainBebas"
+        },
+        {
+          "options": [
+            {
+              "label": "Sulit memahami atau menghitung secara acak",
+              "weight": 10
+            },
+            {
+              "label": "Memahami dengan bantuan atau menghitung satu per satu",
+              "weight": 40
+            },
+            {
+              "weight": 70,
+              "label": "Memahami dengan baik dan dapat menghitung objek hingga 5"
+            },
+            {
+              "label": "Memahami dan dapat mengaplikasikan konsep jumlah hingga 10 dengan tepat",
+              "weight": 90
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai kemampuan numerasi dasar sebagai fondasi logika matematika.",
+          "label": "Bagaimana anak Anda menunjukkan pemahaman tentang **konsep jumlah sederhana**?",
+          "required": true,
+          "description": "Menilai pemahaman numerasi dasar dan kuantitas.",
+          "type": "radio",
+          "id": "kognitif_konsepJumlah"
+        },
+        {
+          "aiReasoning": "Menganalisis hambatan dalam pemahaman kuantitas untuk menentukan intervensi yang tepat.",
+          "gridSpan": 2,
+          "label": "Mohon jelaskan kesulitan yang dialami anak Anda dalam memahami **konsep jumlah sederhana**.",
+          "required": true,
+          "id": "kognitif_konsepJumlah_justifikasi",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "kognitif_konsepJumlah",
+            "equals": "Sulit memahami atau menghitung secara acak"
+          }
+        },
+        {
+          "type": "radio",
+          "description": "Mengevaluasi kemampuan anak dalam mengenali dan mereplikasi pola, indikator pemikiran logis awal.",
+          "id": "kognitif_polaSederhana",
+          "label": "Saat bermain dengan mainan yang memiliki pola, apakah anak Anda dapat **mengenali atau meniru pola** tersebut?",
+          "required": true,
+          "options": [
+            {
+              "weight": 10,
+              "label": "Tidak dapat mengenali atau meniru"
+            },
+            {
+              "weight": 40,
+              "label": "Dapat meniru dengan bantuan atau contoh"
+            },
+            {
+              "weight": 70,
+              "label": "Kadang-kadang dapat meniru secara mandiri"
+            },
+            {
+              "label": "Selalu dapat mengenali dan meniru pola sederhana secara mandiri",
+              "weight": 90
+            }
+          ],
+          "aiReasoning": "Mengevaluasi kemampuan berpikir logis dan pengenalan urutan (sequencing).",
+          "gridSpan": 2
+        },
+        {
+          "id": "kognitif_polaSederhana_justifikasi",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "kognitif_polaSederhana",
+            "equals": "Tidak dapat mengenali atau meniru"
+          },
+          "label": "Mohon jelaskan kesulitan anak Anda dalam **mengenali atau meniru pola** sederhana.",
+          "required": true,
+          "aiReasoning": "Mengidentifikasi apakah anak memiliki kesulitan dalam memproses informasi visual yang berulang.",
+          "gridSpan": 2
+        },
+        {
+          "required": true,
+          "label": "Ketika terjadi **konflik kecil** saat bermain dengan teman sebaya, bagaimana anak Anda mencoba menyelesaikannya?",
+          "aiReasoning": "Menilai kecerdasan emosional dan kemampuan pemecahan masalah sosial dalam situasi interpersonal.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Menangis, menyerah, atau menunggu orang dewasa",
+              "weight": 10
+            },
+            {
+              "weight": 40,
+              "label": "Meminta bantuan orang dewasa untuk menyelesaikan"
+            },
+            {
+              "weight": 70,
+              "label": "Mencoba bernegosiasi atau berbagi dengan sedikit arahan"
+            },
+            {
+              "label": "Mencari solusi bersama atau berbagi secara mandiri",
+              "weight": 90
+            }
+          ],
+          "id": "kognitif_masalahSosialBermain",
+          "description": "Menilai kemampuan pemecahan masalah sosial dan negosiasi anak dalam konteks bermain.",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "equals": "Menangis, menyerah, atau menunggu orang dewasa",
+            "fieldId": "kognitif_masalahSosialBermain"
+          },
+          "id": "kognitif_masalahSosialBermain_justifikasi",
+          "type": "textarea",
+          "gridSpan": 2,
+          "aiReasoning": "Memahami pola regulasi emosi anak saat menghadapi tantangan sosial.",
+          "label": "Mohon jelaskan lebih lanjut bagaimana anak Anda bereaksi terhadap **konflik kecil** saat bermain.",
+          "required": true
+        },
+        {
+          "id": "kognitif_kreativitasImajinasi",
+          "type": "radio",
+          "description": "Mengukur tingkat kreativitas dan imajinasi anak dalam bermain bebas.",
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur tingkat kreativitas dan kemampuan berpikir divergen anak.",
+          "options": [
+            {
+              "label": "Jarang sekali atau hanya meniru",
+              "weight": 10
+            },
+            {
+              "label": "Kadang-kadang dengan sedikit pancingan",
+              "weight": 40
+            },
+            {
+              "weight": 70,
+              "label": "Sering menciptakan cerita sederhana"
+            },
+            {
+              "label": "Sangat sering menciptakan cerita kompleks dan imajinatif",
+              "weight": 90
+            }
+          ],
+          "label": "Seberapa sering anak Anda menciptakan **cerita atau skenario baru** saat bermain?",
+          "required": true
+        },
+        {
+          "label": "Mohon jelaskan mengapa anak Anda jarang menciptakan **cerita atau skenario baru** saat bermain.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Menganalisis hambatan dalam ekspresi kreatif anak.",
+          "type": "textarea",
+          "id": "kognitif_kreativitasImajinasi_justifikasi",
+          "showIf": {
+            "equals": "Jarang sekali atau hanya meniru",
+            "fieldId": "kognitif_kreativitasImajinasi"
+          }
+        }
+      ],
+      "title": "Kognitif & Pemecahan Masalah (Berbasis Bermain)",
+      "description": "Penilaian kemampuan logika dasar, pemahaman konsep, dan fokus anak saat menyelesaikan permainan atau teka-teki."
+    }
+  ],
+  "discountPercentage": 60,
+  "discountExpiry": null
+}

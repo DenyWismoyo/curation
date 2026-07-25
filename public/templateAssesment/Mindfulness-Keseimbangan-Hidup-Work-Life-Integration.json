@@ -1,0 +1,2426 @@
+{
+  "lastUpdated": "2026-07-24T08:23:31.530Z",
+  "trackIcon": "HeartHandshake",
+  "expectedOutputs": [
+    "Peta Mitigasi Risiko Burnout: Identifikasi dini titik kritis kelelahan mental Anda agar dapat melakukan tindakan pencegahan sebelum produktivitas dan kesehatan emosional Anda terganggu.",
+    "Rekomendasi Intervensi Berbasis Sains: Dapatkan panduan langkah demi langkah yang teruji secara klinis untuk menurunkan reaktivitas stres dan meningkatkan kapasitas resiliensi mental Anda secara signifikan.",
+    "Action Plan Integrasi Kehidupan: Transformasikan rutinitas Anda dengan strategi praktis yang memastikan batasan kerja dan waktu personal tetap harmonis tanpa mengorbankan kualitas performa.",
+    "Insight Matrix Kesejahteraan Mental: Dapatkan pemahaman mendalam tentang beban kognitif dan kualitas transisi peran Anda melalui analisis data objektif untuk pengambilan keputusan hidup yang lebih sadar."
+  ],
+  "isActive": true,
+  "formBuilderInstruction": "\n==================================================\nKONTEKS ANCHOR (ACUAN MUTLAK):\n- Profil Subjek Asesmen: Profesional aktif dan individu yang mengalami kelelahan kognitif akibat beban kerja tinggi serta ketidakseimbangan antara tuntutan karier dan kehidupan pribadi. Target mencakup mereka yang mencari peningkatan ketahanan mental melalui teknik mindfulness berbasis bukti.\n- Metodologi/Pendekatan: Menggunakan instrumen psikometrik Perceived Stress Scale (PSS-10) dan WHO-5 Well-Being Index untuk mengukur tingkat stres serta kesejahteraan mental. Pendekatan integratif mengacu pada Mindfulness-Based Stress Reduction (MBSR) untuk membangun kesadaran diri dan efektivitas kerja.\n==================================================\nTARGET AUDIENS: PERSONAL (INDIVIDUAL). Gunakan kata sapaan langsung (Anda, Bapak/Ibu) dan sesuaikan pertanyaan murni untuk ranah personal. DILARANG KERAS menanyakan aspek perusahaan, organisasi, atau legalitas bisnis.\n\nmari kita sempurnakan otak ai nya dengan memperbanyak manajemen blok menjadi7 blok, dll\nserta daftar form pertanyaannya dengan bahasa yang mudah dipahami individu pengisi\n\n\n\nATURAN KOMPOSISI PERTANYAAN MUTLAK (WAJIB DIPATUHI):\n- WAJIB maksimalkan penggunaan tipe \"radio\" atau \"select\" dengan array \"options\" berbobot (weight 0-100) untuk keperluan kalkulasi nilai otomatis.\n- TERAPKAN INTEROGASI BERLAPIS: Gunakan properti \"showIf\". Jika peserta merespon klaim besar pada opsi radio/select, WAJIB pancing pertanyaan baru bertipe \"file\" atau \"textarea\" untuk menagih bukti.\n- Gunakan tipe \"textarea\" secara strategis untuk menuntut penjelasan, justifikasi, keluhan, atau uraian deskriptif yang mendalam dari peserta.",
+  "specificTargetContext": "Profesional aktif dan individu yang mengalami kelelahan kognitif akibat beban kerja tinggi serta ketidakseimbangan antara tuntutan karier dan kehidupan pribadi. Target mencakup mereka yang mencari peningkatan ketahanan mental melalui teknik mindfulness berbasis bukti.",
+  "promoAssets": {
+    "instagram": {
+      "imagePrompt": "A premium 3D graphic design for a modern tech startup campaign, optimized for Instagram. The background is a clean, aesthetic glassmorphism UI dashboard with soft, calming pastel gradients of lavender, mint green, and sky blue. Features bold, prominent 3D typography displaying the platform name \"Omnifit\" in a sleek modern font, and the high-impact headline \"Bebas Burnout, Kerja Seimbang\" in large, striking elegant letters. Surrounding the text are floating 3D minimalist objects: a stylized brain in a peaceful state, floating green leaves, a balance scale, and glowing abstract spheres. Clean composition, studio lighting, professional corporate wellness vibe, 8k resolution.",
+      "carouselSlides": [
+        {
+          "textOnImage": "Sudah Lelah Berjuang Sendirian?",
+          "imageUrl": "https://firebasestorage.googleapis.com/v0/b/teknopark-surakarta.firebasestorage.app/o/promo_assets%2Fmindfulness___keseimbangan_hidup__work_life_integration_%2Fpromo_1784881013616_slide_1.png?alt=media",
+          "slideNumber": 1,
+          "imagePrompt": "Vertical Portrait Aspect Ratio 3:4. Flat vector illustration, corporate minimalist, Teal and Vibrant Orange on clean white background. A stylized visual of a person holding a heavy clock and a laptop with a distressed expression. In the center, write the large, bold text \"Sudah Lelah Berjuang Sendirian?\". No 3D, no photorealism."
+        },
+        {
+          "textOnImage": "Benefit Utama Omnifit",
+          "imageUrl": "https://firebasestorage.googleapis.com/v0/b/teknopark-surakarta.firebasestorage.app/o/promo_assets%2Fmindfulness___keseimbangan_hidup__work_life_integration_%2Fpromo_1784881117056_slide_2.png?alt=media",
+          "slideNumber": 2,
+          "imagePrompt": "Vertical Portrait Aspect Ratio 3:4. Flat vector illustration, clean modern UI aesthetic, Teal and Vibrant Orange on white background. Draw a dashboard UI with 3 floating cards. On the first card, write the text \"Mitigasi Risiko Burnout\". On the second card, write the text \"Panduan Berbasis Sains\". On the third card, write the text \"Harmoni Kerja\". No 3D, no photorealism."
+        },
+        {
+          "slideNumber": 3,
+          "imagePrompt": "Vertical Portrait Aspect Ratio 3:4. Flat vector illustration, infographic style, Teal and Vibrant Orange on white background. A step-by-step winding roadmap with 3 nodes. Next to node 1, write the text \"Penilaian Stres\". Next to node 2, write the text \"Deteksi Burnout\". Next to node 3, write the text \"Integrasi Hidup\". No 3D, no photorealism.",
+          "textOnImage": "Alur Transformasi Anda",
+          "imageUrl": "https://firebasestorage.googleapis.com/v0/b/teknopark-surakarta.firebasestorage.app/o/promo_assets%2Fmindfulness___keseimbangan_hidup__work_life_integration_%2Fpromo_1784881169163_slide_3.png?alt=media"
+        },
+        {
+          "textOnImage": "Mulai Perubahan Sekarang",
+          "imageUrl": "https://firebasestorage.googleapis.com/v0/b/teknopark-surakarta.firebasestorage.app/o/promo_assets%2Fmindfulness___keseimbangan_hidup__work_life_integration_%2Fpromo_1784881184620_slide_4.png?alt=media",
+          "slideNumber": 4,
+          "imagePrompt": "Vertical Portrait Aspect Ratio 3:4. Flat vector illustration, corporate minimalist, Teal and Vibrant Orange on white background. A visual of a successful professional holding a document. On the document, write the large text \"Mulai Perubahan Sekarang\". No 3D, no photorealism."
+        }
+      ],
+      "generatedAt": "2026-07-24T08:16:24.155Z",
+      "copywriting": "Kerja keras sih boleh, tapi kalau tiap malam cuma bisa menatap langit-langit kamar sambil mikirin kerjaan besok... yakin kamu baik-baik saja? 🤯\n\nSeringkali kita memaksa tubuh untuk terus berlari, sampai lupa kalau otak dan mental juga punya batas maksimal. Coba cek, apakah kamu sedang merasakan tanda-tanda ini?\n\n• Selalu merasa lelah meski sudah tidur cukup 😴\n• Sulit fokus dan produktivitas terus menurun 📉\n• Cemas berlebihan memikirkan hari esok 😰\n• Work-life balance cuma jadi angan-angan belaka 💔\n\nJangan tunggu sampai kapasitas resiliensimu menyentuh angka nol dan semuanya benar-benar 'meledak'! \n\nOmnifit hadir sebagai *support system* terbaikmu untuk mengembalikan ketenangan pikiran melalui:\n\n📌 Asesmen Ilmiah Personalisasi: Deteksi dini gejala *burnout* yang kamu alami.\n📌 Analisis Beban Kognitif: Pahami batasan dan kapasitas mentalmu yang sebenarnya.\n📌 Rencana Aksi Teruji Klinis: Langkah nyata dan personal untuk memulihkan energimu.\n\nBayangkan bisa bekerja dengan performa terbaik tanpa harus mengorbankan waktu tidur, kesehatan fisik, dan kebahagiaan pribadimu. Kamu layak mendapatkan hidup yang lebih seimbang dan bahagia! 🧠✨\n\nYuk, ambil kendali atas kesehatan mentalmu hari ini! Klik link di bio untuk mulai perjalanan transformasimu bersama Omnifit sekarang. 🚀🎯\n\n#Omnifit #Mindfulness #WorkLifeIntegration #CegahBurnout #KesehatanMental #ResiliensiMental #SelfCareIndonesia #ProductivityHacks #MentalWellbeing",
+      "imageUrl": ""
+    }
+  },
+  "version": 5,
+  "aiPromptConfig": {
+    "assessmentGoal": "Mengukur tingkat stres (PSS-10), kesejahteraan mental (WHO-5), kelelahan kognitif, dan keseimbangan kerja-hidup profesional untuk merancang intervensi berbasis MBSR.",
+    "customUiLabels": {
+      "executionLabel": "Mulai Asesmen Kesadaran",
+      "riskLabel": "Tingkat Risiko Burnout",
+      "scoreLabel": "Skor Integrasi & Mindfulness",
+      "swotLabel": "Analisis Kekuatan & Kerentanan Mental",
+      "roadmapLabel": "Peta Jalan Kesejahteraan"
+    },
+    "expectedAnalysisBlocks": [
+      "Analisis Tingkat Stres (PSS-10): Evaluasi persepsi stres, Identifikasi pemicu stres utama",
+      "Evaluasi Kesejahteraan (WHO-5): Kualitas kesejahteraan emosional, Tingkat vitalitas harian",
+      "Deteksi Risiko Burnout: Tingkat kelelahan kognitif, Tingkat depersonalisasi profesional",
+      "Evaluasi Keseimbangan Kerja-Hidup: Kualitas batasan waktu kerja, Kualitas waktu personal",
+      "Pemetaan Kesadaran (Mindfulness): Evaluasi fokus saat ini, Identifikasi distraksi kognitif",
+      "Rekomendasi Intervensi MBSR: Strategi coping stress, Latihan mindfulness harian"
+    ],
+    "reportTone": "Suportif, profesional, empatik, berbasis bukti, dan berorientasi pada solusi praktis.",
+    "formatInstructions": "Berikan laporan dalam format terstruktur dengan poin-poin yang jelas, gunakan bahasa yang mudah dipahami oleh profesional awam, dan sertakan skor metrik secara terpusat di awal laporan.",
+    "customReadinessTiers": [
+      "Kritis (Burnout Tinggi & Distres Signifikan)",
+      "Rentan (Stres Sedang & Integrasi Buruk)",
+      "Fungsional (Kesejahteraan Cukup & Terkendali)",
+      "Optimal (Resilien & Terintegrasi Penuh)"
+    ],
+    "formPurpose": "custom",
+    "isAdaptive": false,
+    "gradingStrictness": "Empatis namun sangat objektif, berbasis data psikometri (PSS-10 & WHO-5) serta observasi perilaku klinis.",
+    "targetAudience": "individual",
+    "researchSourcesCited": [
+      "Perceived Stress Scale (PSS-10) by Cohen et al.",
+      "WHO-5 Well-Being Index",
+      "Mindfulness-Based Stress Reduction (MBSR) by Jon Kabat-Zinn",
+      "Maslach Burnout Inventory (MBI) Contextual Integration"
+    ],
+    "riskFramework": "Ambang Batas Klinis PSS-10 & WHO-5 Well-Being Index",
+    "customScoringRubric": "0-25: Kritis (Intervensi Segera), 26-50: Rentan (Butuh Modifikasi Gaya Hidup), 51-75: Fungsional (Pemeliharaan Berkala), 76-100: Optimal (Kesejahteraan Tinggi)",
+    "actionPlanBehavior": "Fokus pada langkah-langkah mikro yang dapat diintegrasikan ke dalam rutinitas kerja harian tanpa menambah beban kognitif.",
+    "negativePrompts": "Jangan memberikan diagnosis medis definitif. Jangan menyarankan pengobatan farmakologis. Jangan mengabaikan konteks beban kerja struktural dari perusahaan. Jangan menggunakan jargon psikologi tanpa penjelasan.",
+    "aiPersona": "Psikolog Klinis dan Pakar Kesejahteraan Karyawan (Enterprise Wellness Expert)",
+    "mediaAnalysisFocus": "Analisis teks respons kuesioner untuk mendeteksi pola bahasa yang menunjukkan kelelahan kognitif, sinisme profesional, atau kurangnya batasan waktu.",
+    "expectedMetrics": [
+      "Skor Perceived Stress Scale (PSS-10)",
+      "Indeks Kesejahteraan Mental (WHO-5)",
+      "Tingkat Kelelahan Emosional (Burnout)",
+      "Skor Work-Life Integration",
+      "Tingkat Kesadaran Diri (Mindfulness)",
+      "Beban Kognitif (Cognitive Load)",
+      "Kualitas Transisi Peran (Role Transition Quality)",
+      "Kapasitas Resiliensi Mental"
+    ],
+    "customSystemPrompt": "Anda adalah Psikolog Klinis dan Pakar Kesejahteraan Enterprise. Analisis respons pengguna secara ketat berdasarkan kerangka PSS-10 dan WHO-5. Berikan umpan balik yang suportif dan langkah-langkah praktis berbasis Mindfulness-Based Stress Reduction (MBSR) untuk meningkatkan work-life integration dan ketahanan mental.",
+    "expectedRecommendations": [
+      "Menerapkan teknik pernapasan sadar (mindful breathing) MBSR untuk menurunkan reaktivitas stres",
+      "Menetapkan batasan digital (digital detox) yang tegas setelah jam kerja",
+      "Menjadwalkan waktu transisi (buffer time) antara mode kerja dan mode personal",
+      "Melakukan latihan body scan harian untuk merilis ketegangan fisik akibat beban kognitif",
+      "Konsultasi lanjutan dengan profesional kesehatan mental jika skor WHO-5 di bawah ambang batas"
+    ]
+  },
+  "generationLogs": [
+    {
+      "message": "FASE 1: Architect Agent (Gemini 3.1 Pro) diaktifkan. Melakukan penetrasi jaringan & riset blueprint...",
+      "timestamp": "2026-07-23T21:17:22.599Z",
+      "type": "info"
+    },
+    {
+      "timestamp": "2026-07-23T21:18:03.678Z",
+      "message": "Otak AI dan Master Blueprint berhasil disempurnakan!",
+      "type": "success"
+    },
+    {
+      "type": "info",
+      "timestamp": "2026-07-23T21:18:04.573Z",
+      "message": "FASE 2: Fabricator Agent (Gemini 2.5 Flash) dikerahkan. Memproduksi 6 seksi formulir..."
+    },
+    {
+      "type": "info",
+      "message": "Meracik Kuesioner Batch 1...",
+      "timestamp": "2026-07-23T21:18:05.255Z"
+    },
+    {
+      "message": "Meracik Kuesioner Batch 2...",
+      "timestamp": "2026-07-23T21:18:51.153Z",
+      "type": "info"
+    },
+    {
+      "timestamp": "2026-07-23T21:19:30.347Z",
+      "message": "Seluruh seksi formulir berhasil diracik.",
+      "type": "success"
+    },
+    {
+      "message": "FASE 3: Polisher Agent (Gemini 3.1 Flash-Lite) diaktifkan. Melakukan QA Logika sekaligus memoles UI/UX form...",
+      "timestamp": "2026-07-23T21:19:30.613Z",
+      "type": "info"
+    },
+    {
+      "timestamp": "2026-07-23T21:19:31.248Z",
+      "message": "Memoles UI dan menyembuhkan logika pada Seksi 1: Penilaian Stres Persepsional...",
+      "type": "info"
+    },
+    {
+      "type": "info",
+      "timestamp": "2026-07-23T21:19:31.249Z",
+      "message": "Memoles UI dan menyembuhkan logika pada Seksi 4: Analisis Integrasi Kerja-Hidup..."
+    },
+    {
+      "message": "Memoles UI dan menyembuhkan logika pada Seksi 5: Pemetaan Kesadaran Diri (Mindfulness)...",
+      "timestamp": "2026-07-23T21:19:31.250Z",
+      "type": "info"
+    },
+    {
+      "message": "Memoles UI dan menyembuhkan logika pada Seksi 6: Kapasitas Resiliensi & Intervensi...",
+      "timestamp": "2026-07-23T21:19:31.250Z",
+      "type": "info"
+    },
+    {
+      "timestamp": "2026-07-23T21:19:31.249Z",
+      "message": "Memoles UI dan menyembuhkan logika pada Seksi 3: Deteksi Risiko Burnout...",
+      "type": "info"
+    },
+    {
+      "type": "info",
+      "message": "Memoles UI dan menyembuhkan logika pada Seksi 2: Evaluasi Kesejahteraan Mental...",
+      "timestamp": "2026-07-23T21:19:31.249Z"
+    },
+    {
+      "type": "success",
+      "message": "Proses Polishing & QA Logika selesai. Kuesioner kini tervalidasi dan estetik 100%.",
+      "timestamp": "2026-07-23T21:19:41.017Z"
+    },
+    {
+      "timestamp": "2026-07-23T21:19:41.117Z",
+      "message": "PIPELINE SELESAI: Kuesioner skala Enterprise telah berhasil diintegrasikan!",
+      "type": "success"
+    }
+  ],
+  "aiGenerationStatus": {
+    "message": "Disimpan secara manual oleh Admin.",
+    "updatedAt": "2026-07-24T08:23:31.530Z",
+    "phase": "COMPLETED"
+  },
+  "preferredQuestionTypes": [
+    "radio_weight",
+    "conditional_logic",
+    "text_justification"
+  ],
+  "methodologyContext": "Menggunakan instrumen psikometrik Perceived Stress Scale (PSS-10) dan WHO-5 Well-Being Index untuk mengukur tingkat stres serta kesejahteraan mental. Pendekatan integratif mengacu pada Mindfulness-Based Stress Reduction (MBSR) untuk membangun kesadaran diri dan efektivitas kerja.",
+  "trackDescription": "Evaluasi tingkat stres dan kesejahteraan mental Anda. Temukan wawasan berharga untuk meningkatkan fokus dan membangun integrasi yang lebih baik antara pekerjaan dan kehidupan sehari-hari.",
+  "trackName": "Mindfulness & Keseimbangan Hidup (Work-Life Integration)",
+  "id": "track_1783484607276",
+  "steps": [
+    {
+      "description": "Mengukur tingkat stres yang dirasakan pengguna menggunakan adaptasi instrumen PSS-10 untuk mengidentifikasi beban kognitif.",
+      "title": "Penilaian Stres Persepsional",
+      "fields": [
+        {
+          "type": "text",
+          "id": "namaUsaha",
+          "required": true,
+          "label": "Nama Lengkap Anda",
+          "gridSpan": 2
+        },
+        {
+          "type": "text",
+          "id": "namaPengisi",
+          "gridSpan": 2,
+          "label": "Nama Pengisi Form",
+          "required": true
+        },
+        {
+          "label": "Usia Anda (dalam tahun)",
+          "required": true,
+          "gridSpan": 1,
+          "id": "usia",
+          "type": "number"
+        },
+        {
+          "required": true,
+          "label": "Pendidikan Terakhir Anda",
+          "options": [
+            {
+              "weight": 25,
+              "label": "SMA/SMK Sederajat"
+            },
+            {
+              "label": "D3/D4",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "S1/Sarjana"
+            },
+            {
+              "label": "S2/Magister",
+              "weight": 90
+            },
+            {
+              "label": "S3/Doktor",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 1,
+          "id": "pendidikanTerakhir",
+          "type": "select"
+        },
+        {
+          "id": "profesiSaatIni",
+          "type": "text",
+          "gridSpan": 2,
+          "label": "Profesi atau Pekerjaan Utama Anda",
+          "required": true
+        },
+        {
+          "label": "Seberapa sering Anda merasa **gugup atau stres** dalam sebulan terakhir?",
+          "required": true,
+          "options": [
+            {
+              "label": "Tidak pernah",
+              "weight": 100
+            },
+            {
+              "weight": 75,
+              "label": "Hampir tidak pernah"
+            },
+            {
+              "weight": 50,
+              "label": "Kadang-kadang"
+            },
+            {
+              "label": "Cukup sering",
+              "weight": 25
+            },
+            {
+              "weight": 0,
+              "label": "Sangat sering"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur frekuensi manifestasi psikologis dari stres persepsional.",
+          "type": "radio",
+          "id": "q_stres_gugup"
+        },
+        {
+          "showIf": {
+            "fieldId": "q_stres_gugup",
+            "equals": "Sangat sering"
+          },
+          "type": "textarea",
+          "id": "justifikasi_stres_gugup",
+          "label": "Mohon jelaskan pemicu utama yang membuat Anda merasa **sangat sering gugup atau stres**.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Menggali akar penyebab stres untuk memberikan konteks kualitatif pada skor kuantitatif."
+        },
+        {
+          "type": "radio",
+          "id": "q_tidak_mampu_kendali",
+          "required": true,
+          "label": "Seberapa sering Anda merasa **tidak mampu mengendalikan** hal-hal penting dalam hidup Anda?",
+          "aiReasoning": "Menilai persepsi efikasi diri dan kontrol individu terhadap dinamika kehidupan.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Tidak pernah"
+            },
+            {
+              "weight": 75,
+              "label": "Hampir tidak pernah"
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 50
+            },
+            {
+              "weight": 25,
+              "label": "Cukup sering"
+            },
+            {
+              "label": "Sangat sering",
+              "weight": 0
+            }
+          ]
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasi_tidak_mampu_kendali",
+          "showIf": {
+            "fieldId": "q_tidak_mampu_kendali",
+            "equals": "Sangat sering"
+          },
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi hambatan eksternal atau internal yang menghalangi kontrol diri.",
+          "required": true,
+          "label": "Mohon jelaskan situasi spesifik yang membuat Anda merasa **tidak mampu mengendalikan** hal penting."
+        },
+        {
+          "label": "Seberapa sering Anda merasa **kesulitan mencapai keberhasilan** dalam mengatasi masalah pribadi?",
+          "required": true,
+          "aiReasoning": "Mengevaluasi tingkat kepercayaan diri dalam pemecahan masalah (problem-solving efficacy).",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 100,
+              "label": "Tidak pernah"
+            },
+            {
+              "label": "Hampir tidak pernah",
+              "weight": 75
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 50
+            },
+            {
+              "weight": 25,
+              "label": "Cukup sering"
+            },
+            {
+              "weight": 0,
+              "label": "Sangat sering"
+            }
+          ],
+          "id": "q_kesulitan_berhasil",
+          "type": "radio"
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan hambatan yang membuat Anda merasa **kesulitan mencapai keberhasilan**.",
+          "aiReasoning": "Memahami pola kegagalan yang dirasakan untuk menentukan intervensi yang tepat.",
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "justifikasi_kesulitan_berhasil",
+          "showIf": {
+            "equals": "Sangat sering",
+            "fieldId": "q_kesulitan_berhasil"
+          }
+        },
+        {
+          "required": true,
+          "label": "Seberapa sering Anda merasa **yakin dengan kemampuan** Anda untuk mengatasi masalah pribadi?",
+          "options": [
+            {
+              "weight": 100,
+              "label": "Sangat sering"
+            },
+            {
+              "weight": 75,
+              "label": "Cukup sering"
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 50
+            },
+            {
+              "weight": 25,
+              "label": "Hampir tidak pernah"
+            },
+            {
+              "label": "Tidak pernah",
+              "weight": 0
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur resiliensi kognitif dan keyakinan diri dalam menghadapi tantangan.",
+          "type": "radio",
+          "id": "q_yakin_atasi_masalah"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Menganalisis faktor yang melemahkan kepercayaan diri individu.",
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda merasa **tidak pernah yakin** dalam mengatasi masalah pribadi.",
+          "showIf": {
+            "fieldId": "q_yakin_atasi_masalah",
+            "equals": "Tidak pernah"
+          },
+          "id": "justifikasi_yakin_atasi_masalah",
+          "type": "textarea"
+        },
+        {
+          "required": true,
+          "label": "Seberapa sering Anda merasa bahwa segala sesuatu berjalan **sesuai keinginan** Anda?",
+          "gridSpan": 2,
+          "aiReasoning": "Menilai tingkat kepuasan terhadap alur kehidupan dan ekspektasi.",
+          "options": [
+            {
+              "weight": 100,
+              "label": "Sangat sering"
+            },
+            {
+              "weight": 75,
+              "label": "Cukup sering"
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 50
+            },
+            {
+              "weight": 25,
+              "label": "Hampir tidak pernah"
+            },
+            {
+              "label": "Tidak pernah",
+              "weight": 0
+            }
+          ],
+          "type": "radio",
+          "id": "q_semua_sesuai_keinginan"
+        },
+        {
+          "showIf": {
+            "fieldId": "q_semua_sesuai_keinginan",
+            "equals": "Tidak pernah"
+          },
+          "id": "justifikasi_semua_sesuai_keinginan",
+          "type": "textarea",
+          "gridSpan": 2,
+          "aiReasoning": "Menggali ketidaksesuaian antara realitas dan harapan hidup.",
+          "required": true,
+          "label": "Mohon jelaskan faktor yang membuat Anda merasa **tidak pernah** mencapai apa yang diinginkan."
+        },
+        {
+          "type": "radio",
+          "id": "q_tidak_atasi_semua",
+          "required": true,
+          "label": "Seberapa sering Anda merasa **tidak dapat mengatasi** semua hal yang harus dilakukan?",
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur beban kerja kognitif dan manajemen prioritas.",
+          "options": [
+            {
+              "label": "Tidak pernah",
+              "weight": 100
+            },
+            {
+              "weight": 75,
+              "label": "Hampir tidak pernah"
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 50
+            },
+            {
+              "label": "Cukup sering",
+              "weight": 25
+            },
+            {
+              "label": "Sangat sering",
+              "weight": 0
+            }
+          ]
+        },
+        {
+          "aiReasoning": "Mengidentifikasi apakah masalah berasal dari manajemen waktu atau beban kerja yang berlebihan.",
+          "gridSpan": 2,
+          "label": "Mohon jelaskan mengapa Anda merasa **sangat sering tidak dapat mengatasi** beban tugas Anda.",
+          "required": true,
+          "showIf": {
+            "fieldId": "q_tidak_atasi_semua",
+            "equals": "Sangat sering"
+          },
+          "id": "justifikasi_tidak_atasi_semua",
+          "type": "textarea"
+        },
+        {
+          "id": "q_kendali_gangguan",
+          "type": "radio",
+          "required": true,
+          "label": "Seberapa sering Anda mampu **mengendalikan gangguan** dalam hidup Anda?",
+          "aiReasoning": "Menilai kemampuan fokus dan ketahanan terhadap distraksi eksternal.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Sangat sering",
+              "weight": 100
+            },
+            {
+              "weight": 75,
+              "label": "Cukup sering"
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 50
+            },
+            {
+              "weight": 25,
+              "label": "Hampir tidak pernah"
+            },
+            {
+              "label": "Tidak pernah",
+              "weight": 0
+            }
+          ]
+        },
+        {
+          "aiReasoning": "Menganalisis sumber distraksi yang paling dominan dalam kehidupan individu.",
+          "gridSpan": 2,
+          "label": "Mohon jelaskan mengapa Anda merasa **tidak pernah mampu mengendalikan gangguan**.",
+          "required": true,
+          "type": "textarea",
+          "id": "justifikasi_kendali_gangguan",
+          "showIf": {
+            "equals": "Tidak pernah",
+            "fieldId": "q_kendali_gangguan"
+          }
+        },
+        {
+          "type": "radio",
+          "id": "q_kendali_iritasi",
+          "options": [
+            {
+              "label": "Sangat sering",
+              "weight": 100
+            },
+            {
+              "weight": 75,
+              "label": "Cukup sering"
+            },
+            {
+              "weight": 50,
+              "label": "Kadang-kadang"
+            },
+            {
+              "label": "Hampir tidak pernah",
+              "weight": 25
+            },
+            {
+              "label": "Tidak pernah",
+              "weight": 0
+            }
+          ],
+          "aiReasoning": "Mengukur regulasi emosi terhadap stimulus yang memicu kejengkelan.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Seberapa sering Anda merasa mampu **mengendalikan iritasi** (kejengkelan) dalam hidup Anda?"
+        },
+        {
+          "showIf": {
+            "equals": "Tidak pernah",
+            "fieldId": "q_kendali_iritasi"
+          },
+          "id": "justifikasi_kendali_iritasi",
+          "type": "textarea",
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda merasa **tidak pernah mampu mengendalikan iritasi**.",
+          "aiReasoning": "Memahami pemicu emosional yang sulit dikelola oleh individu.",
+          "gridSpan": 2
+        },
+        {
+          "required": true,
+          "label": "Seberapa sering Anda merasa **terbebani oleh hal-hal di luar kendali** Anda?",
+          "options": [
+            {
+              "weight": 100,
+              "label": "Tidak pernah"
+            },
+            {
+              "weight": 75,
+              "label": "Hampir tidak pernah"
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 50
+            },
+            {
+              "label": "Cukup sering",
+              "weight": 25
+            },
+            {
+              "label": "Sangat sering",
+              "weight": 0
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai tingkat kecemasan terhadap faktor eksternal yang tidak dapat diprediksi.",
+          "id": "q_terbebani_masalah",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "equals": "Sangat sering",
+            "fieldId": "q_terbebani_masalah"
+          },
+          "type": "textarea",
+          "id": "justifikasi_terbebani_masalah",
+          "aiReasoning": "Mengidentifikasi sumber stres eksternal yang paling signifikan.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan hal-hal di luar kendali yang membuat Anda merasa **sangat sering terbebani**."
+        },
+        {
+          "required": true,
+          "label": "Seberapa sering Anda merasa **kesulitan menumpuk** sehingga tidak dapat diatasi?",
+          "options": [
+            {
+              "label": "Tidak pernah",
+              "weight": 100
+            },
+            {
+              "label": "Hampir tidak pernah",
+              "weight": 75
+            },
+            {
+              "weight": 50,
+              "label": "Kadang-kadang"
+            },
+            {
+              "weight": 25,
+              "label": "Cukup sering"
+            },
+            {
+              "label": "Sangat sering",
+              "weight": 0
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur ambang batas stres saat menghadapi akumulasi masalah.",
+          "type": "radio",
+          "id": "q_kesulitan_menumpuk"
+        },
+        {
+          "showIf": {
+            "fieldId": "q_kesulitan_menumpuk",
+            "equals": "Sangat sering"
+          },
+          "id": "justifikasi_kesulitan_menumpuk",
+          "type": "textarea",
+          "required": true,
+          "label": "Mohon jelaskan situasi yang membuat Anda merasa **sangat sering kesulitan menumpuk**.",
+          "aiReasoning": "Menganalisis titik jenuh individu dalam menghadapi beban yang bertumpuk.",
+          "gridSpan": 2
+        }
+      ],
+      "stepNumber": 1
+    },
+    {
+      "description": "Menilai tingkat vitalitas dan kesejahteraan emosional harian berdasarkan kerangka WHO-5 Well-Being Index.",
+      "fields": [
+        {
+          "id": "ceriaBersemangat",
+          "type": "radio",
+          "required": true,
+          "label": "Dalam dua minggu terakhir, seberapa sering Anda merasa **ceria dan bersemangat**?",
+          "options": [
+            {
+              "weight": 5,
+              "label": "Tidak pernah"
+            },
+            {
+              "weight": 25,
+              "label": "Jarang"
+            },
+            {
+              "weight": 50,
+              "label": "Kadang-kadang"
+            },
+            {
+              "weight": 75,
+              "label": "Sering"
+            },
+            {
+              "weight": 95,
+              "label": "Sepanjang waktu"
+            }
+          ],
+          "aiReasoning": "Mengukur tingkat afek positif dan vitalitas emosional individu sebagai indikator kesejahteraan mental dasar.",
+          "gridSpan": 2
+        },
+        {
+          "required": true,
+          "label": "Dalam dua minggu terakhir, seberapa sering Anda merasa **tenang dan rileks**?",
+          "gridSpan": 2,
+          "aiReasoning": "Mengevaluasi tingkat kecemasan dan kemampuan individu untuk mencapai kondisi relaksasi mental.",
+          "options": [
+            {
+              "weight": 5,
+              "label": "Tidak pernah"
+            },
+            {
+              "label": "Jarang",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Kadang-kadang"
+            },
+            {
+              "label": "Sering",
+              "weight": 75
+            },
+            {
+              "label": "Sepanjang waktu",
+              "weight": 95
+            }
+          ],
+          "type": "radio",
+          "id": "tenangRileks"
+        },
+        {
+          "label": "Dalam dua minggu terakhir, seberapa sering Anda merasa **aktif dan penuh energi**?",
+          "required": true,
+          "options": [
+            {
+              "label": "Tidak pernah",
+              "weight": 5
+            },
+            {
+              "weight": 25,
+              "label": "Jarang"
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 50
+            },
+            {
+              "label": "Sering",
+              "weight": 75
+            },
+            {
+              "weight": 95,
+              "label": "Sepanjang waktu"
+            }
+          ],
+          "aiReasoning": "Menilai tingkat energi fisik dan mental yang berkorelasi langsung dengan produktivitas dan kesehatan psikologis.",
+          "gridSpan": 2,
+          "type": "radio",
+          "id": "aktifEnergi"
+        },
+        {
+          "required": true,
+          "label": "Dalam dua minggu terakhir, seberapa sering Anda merasa bahwa **hidup Anda penuh dengan hal-hal menarik**?",
+          "options": [
+            {
+              "weight": 5,
+              "label": "Tidak pernah"
+            },
+            {
+              "label": "Jarang",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Kadang-kadang"
+            },
+            {
+              "label": "Sering",
+              "weight": 75
+            },
+            {
+              "label": "Sepanjang waktu",
+              "weight": 95
+            }
+          ],
+          "aiReasoning": "Mengukur tingkat kepuasan hidup dan keterlibatan emosional individu terhadap lingkungan sekitarnya.",
+          "gridSpan": 2,
+          "id": "hidupMenarik",
+          "type": "radio"
+        },
+        {
+          "options": [
+            {
+              "label": "Tidak pernah",
+              "weight": 95
+            },
+            {
+              "label": "Jarang",
+              "weight": 75
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 50
+            },
+            {
+              "label": "Sering",
+              "weight": 25
+            },
+            {
+              "weight": 5,
+              "label": "Sangat sering"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menganalisis lokus kendali eksternal dan reaktivitas emosional terhadap stresor yang tidak dapat diintervensi.",
+          "label": "Dalam sebulan terakhir, seberapa sering Anda merasa **kesal karena hal-hal di luar kendali**?",
+          "required": true,
+          "type": "radio",
+          "id": "kesalLuarKendali"
+        },
+        {
+          "label": "Dalam sebulan terakhir, seberapa sering Anda merasa **yakin dalam menangani masalah pribadi**?",
+          "required": true,
+          "options": [
+            {
+              "weight": 5,
+              "label": "Tidak pernah"
+            },
+            {
+              "weight": 25,
+              "label": "Jarang"
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Sering"
+            },
+            {
+              "label": "Sangat sering",
+              "weight": 95
+            }
+          ],
+          "aiReasoning": "Mengukur efikasi diri (self-efficacy) individu dalam menghadapi tantangan hidup sehari-hari.",
+          "gridSpan": 2,
+          "type": "radio",
+          "id": "yakinTanganiMasalah"
+        },
+        {
+          "required": true,
+          "label": "Seberapa sering Anda merasa **lelah secara emosional** akibat tuntutan pekerjaan atau tanggung jawab harian?",
+          "aiReasoning": "Mengidentifikasi gejala awal burnout atau kelelahan kronis akibat beban kognitif dan emosional.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Tidak pernah",
+              "weight": 95
+            },
+            {
+              "weight": 75,
+              "label": "Jarang"
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 50
+            },
+            {
+              "weight": 25,
+              "label": "Sering"
+            },
+            {
+              "weight": 5,
+              "label": "Sangat sering"
+            }
+          ],
+          "id": "kelelahanEmosional",
+          "type": "radio"
+        },
+        {
+          "aiReasoning": "Menggali akar penyebab kelelahan emosional untuk memberikan rekomendasi intervensi yang tepat.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan lebih lanjut mengapa Anda merasa **lelah secara emosional**.",
+          "showIf": {
+            "fieldId": "kelelahanEmosional",
+            "equals": "Sering"
+          },
+          "type": "textarea",
+          "id": "justifikasiLelahEmosional"
+        },
+        {
+          "id": "justifikasiSangatLelahEmosional",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Sangat sering",
+            "fieldId": "kelelahanEmosional"
+          },
+          "gridSpan": 2,
+          "aiReasoning": "Menggali akar penyebab kelelahan emosional tingkat tinggi untuk identifikasi risiko kesehatan mental yang lebih serius.",
+          "label": "Mohon jelaskan lebih lanjut mengapa Anda merasa **sangat lelah secara emosional**.",
+          "required": true
+        },
+        {
+          "id": "batasanWaktuKerjaPribadi",
+          "type": "radio",
+          "label": "Bagaimana Anda menilai kemampuan Anda dalam **menetapkan batasan** antara waktu kerja dan waktu pribadi?",
+          "required": true,
+          "aiReasoning": "Menilai keseimbangan work-life balance sebagai faktor protektif terhadap stres kronis.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Sangat buruk",
+              "weight": 5
+            },
+            {
+              "label": "Buruk",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Cukup baik"
+            },
+            {
+              "label": "Baik",
+              "weight": 75
+            },
+            {
+              "label": "Sangat baik",
+              "weight": 95
+            }
+          ]
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiBatasanBuruk",
+          "showIf": {
+            "equals": "Buruk",
+            "fieldId": "batasanWaktuKerjaPribadi"
+          },
+          "label": "Mohon jelaskan **tantangan** yang Anda hadapi dalam menetapkan batasan waktu kerja dan pribadi.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi hambatan situasional atau perilaku yang menghalangi terciptanya batasan yang sehat."
+        },
+        {
+          "showIf": {
+            "fieldId": "batasanWaktuKerjaPribadi",
+            "equals": "Sangat buruk"
+          },
+          "type": "textarea",
+          "id": "justifikasiBatasanSangatBuruk",
+          "aiReasoning": "Mengevaluasi konsekuensi nyata dari ketidakmampuan menetapkan batasan terhadap kesehatan mental individu.",
+          "gridSpan": 2,
+          "label": "Mohon jelaskan secara rinci **dampak** dari batasan waktu yang sangat buruk terhadap kesejahteraan Anda.",
+          "required": true
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur kapasitas atensi dan kejernihan mental dalam menjalankan aktivitas sehari-hari.",
+          "options": [
+            {
+              "weight": 5,
+              "label": "Tidak pernah"
+            },
+            {
+              "weight": 25,
+              "label": "Jarang"
+            },
+            {
+              "weight": 50,
+              "label": "Kadang-kadang"
+            },
+            {
+              "label": "Sering",
+              "weight": 75
+            },
+            {
+              "label": "Sangat sering",
+              "weight": 95
+            }
+          ],
+          "required": true,
+          "label": "Seberapa sering Anda mampu **fokus sepenuhnya** pada satu tugas tanpa terdistraksi oleh pikiran lain?",
+          "id": "fokusTanpaDistraksi",
+          "type": "radio"
+        },
+        {
+          "aiReasoning": "Mengidentifikasi pemicu eksternal atau internal yang menurunkan efektivitas kognitif.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon sebutkan jenis **distraksi utama** yang sering mengganggu fokus Anda.",
+          "showIf": {
+            "fieldId": "fokusTanpaDistraksi",
+            "equals": "Jarang"
+          },
+          "type": "textarea",
+          "id": "distraksiUtama"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Menganalisis dampak fungsional dari gangguan atensi terhadap kualitas hidup individu.",
+          "label": "Mohon jelaskan bagaimana **ketidakmampuan fokus** memengaruhi produktivitas dan kesejahteraan Anda.",
+          "required": true,
+          "showIf": {
+            "fieldId": "fokusTanpaDistraksi",
+            "equals": "Tidak pernah"
+          },
+          "id": "distraksiParah",
+          "type": "textarea"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur tingkat resiliensi psikologis individu dalam menghadapi tekanan hidup.",
+          "options": [
+            {
+              "weight": 5,
+              "label": "Sangat lambat"
+            },
+            {
+              "weight": 25,
+              "label": "Lambat"
+            },
+            {
+              "label": "Cukup cepat",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Cepat"
+            },
+            {
+              "weight": 95,
+              "label": "Sangat cepat"
+            }
+          ],
+          "label": "Seberapa cepat Anda merasa dapat **pulih dari kesulitan** atau tantangan yang Anda alami?",
+          "required": true,
+          "type": "radio",
+          "id": "pulihDariKesulitan"
+        }
+      ],
+      "title": "Evaluasi Kesejahteraan Mental",
+      "stepNumber": 2
+    },
+    {
+      "stepNumber": 3,
+      "description": "Mengevaluasi tanda-tanda kelelahan emosional dan depersonalisasi akibat tuntutan karier yang tinggi.",
+      "title": "Deteksi Risiko Burnout",
+      "fields": [
+        {
+          "id": "justifikasiKelelahanEmosional",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Sangat sering",
+            "fieldId": "kelelahanEmosional"
+          },
+          "label": "Mohon jelaskan lebih lanjut mengenai situasi atau pemicu yang menyebabkan Anda merasa **sangat lelah secara emosional**.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi akar penyebab kelelahan emosional untuk memetakan tingkat risiko burnout secara spesifik."
+        },
+        {
+          "id": "sikapKerja",
+          "type": "radio",
+          "label": "Seberapa sering Anda merasa **sinis, acuh tak acuh, atau kurang empati** terhadap rekan kerja atau tugas Anda?",
+          "required": true,
+          "options": [
+            {
+              "weight": 90,
+              "label": "Tidak pernah"
+            },
+            {
+              "label": "Jarang",
+              "weight": 70
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 50
+            },
+            {
+              "label": "Sering",
+              "weight": 30
+            },
+            {
+              "label": "Sangat sering",
+              "weight": 10
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur indikator depersonalisasi yang merupakan salah satu dimensi utama dalam sindrom burnout."
+        },
+        {
+          "required": true,
+          "label": "Dapatkah Anda memberikan contoh spesifik kapan Anda merasakan sikap **sinis atau acuh tak acuh** tersebut?",
+          "gridSpan": 2,
+          "aiReasoning": "Menggali konteks perilaku sinis untuk memahami apakah hal tersebut dipicu oleh lingkungan kerja atau beban tugas.",
+          "showIf": {
+            "equals": "Sangat sering",
+            "fieldId": "sikapKerja"
+          },
+          "type": "textarea",
+          "id": "justifikasiSikapKerja"
+        },
+        {
+          "type": "radio",
+          "id": "efektivitasDiri",
+          "gridSpan": 2,
+          "aiReasoning": "Menilai penurunan efikasi diri yang sering menjadi konsekuensi dari kelelahan kerja kronis.",
+          "options": [
+            {
+              "label": "Tidak pernah",
+              "weight": 90
+            },
+            {
+              "weight": 70,
+              "label": "Jarang"
+            },
+            {
+              "weight": 50,
+              "label": "Kadang-kadang"
+            },
+            {
+              "weight": 30,
+              "label": "Sering"
+            },
+            {
+              "label": "Sangat sering",
+              "weight": 10
+            }
+          ],
+          "required": true,
+          "label": "Dalam pekerjaan Anda, seberapa sering Anda merasa **tidak mampu mencapai hasil yang berarti** atau merasa kurang kompeten?"
+        },
+        {
+          "label": "Mohon uraikan contoh situasi di mana Anda merasa **kurang mampu atau tidak kompeten** dalam pekerjaan Anda.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Menganalisis apakah perasaan kurang kompeten berasal dari beban kerja yang tidak realistis atau kurangnya dukungan.",
+          "id": "justifikasiEfektivitasDiri",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "efektivitasDiri",
+            "equals": "Sangat sering"
+          }
+        },
+        {
+          "type": "radio",
+          "id": "bebanKognitif",
+          "options": [
+            {
+              "label": "Tidak pernah",
+              "weight": 90
+            },
+            {
+              "weight": 70,
+              "label": "Jarang"
+            },
+            {
+              "weight": 50,
+              "label": "Kadang-kadang"
+            },
+            {
+              "label": "Sering",
+              "weight": 30
+            },
+            {
+              "label": "Sangat sering",
+              "weight": 10
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mendeteksi kelelahan kognitif yang menjadi sinyal awal penurunan performa akibat burnout.",
+          "required": true,
+          "label": "Seberapa sering Anda merasa pikiran Anda **terlalu penuh, sulit berkonsentrasi, atau mudah terdistraksi** saat bekerja?"
+        },
+        {
+          "showIf": {
+            "equals": "Sangat sering",
+            "fieldId": "bebanKognitif"
+          },
+          "id": "justifikasiBebanKognitif",
+          "type": "textarea",
+          "required": true,
+          "label": "Jelaskan tantangan spesifik yang Anda hadapi akibat **beban kognitif yang tinggi**.",
+          "aiReasoning": "Memahami hambatan mental yang paling mengganggu produktivitas individu.",
+          "gridSpan": 2
+        },
+        {
+          "required": true,
+          "label": "Seberapa mudah Anda beralih dari **mode kerja ke mode pribadi** setelah jam kerja berakhir?",
+          "options": [
+            {
+              "weight": 90,
+              "label": "Sangat mudah"
+            },
+            {
+              "label": "Cukup mudah",
+              "weight": 70
+            },
+            {
+              "weight": 50,
+              "label": "Agak sulit"
+            },
+            {
+              "label": "Sulit",
+              "weight": 30
+            },
+            {
+              "label": "Sangat sulit",
+              "weight": 10
+            }
+          ],
+          "aiReasoning": "Mengukur kemampuan pemulihan (recovery) individu untuk mencegah akumulasi stres.",
+          "gridSpan": 2,
+          "type": "radio",
+          "id": "transisiPeran"
+        },
+        {
+          "showIf": {
+            "equals": "Sangat sulit",
+            "fieldId": "transisiPeran"
+          },
+          "id": "justifikasiTransisiPeran",
+          "type": "textarea",
+          "aiReasoning": "Mengidentifikasi faktor eksternal atau internal yang menghalangi proses pemulihan mental.",
+          "gridSpan": 2,
+          "label": "Apa saja hambatan utama yang Anda alami saat mencoba **beralih dari mode kerja ke mode pribadi**?",
+          "required": true
+        },
+        {
+          "type": "radio",
+          "id": "kualitasTidur",
+          "aiReasoning": "Tidur adalah indikator biologis utama untuk menilai tingkat pemulihan fisik dan mental dari stres.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 90,
+              "label": "Sangat baik"
+            },
+            {
+              "label": "Cukup baik",
+              "weight": 70
+            },
+            {
+              "label": "Kurang baik",
+              "weight": 50
+            },
+            {
+              "label": "Buruk",
+              "weight": 30
+            },
+            {
+              "weight": 10,
+              "label": "Sangat buruk"
+            }
+          ],
+          "required": true,
+          "label": "Bagaimana **kualitas tidur** Anda secara umum dalam seminggu terakhir?"
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiKualitasTidur",
+          "showIf": {
+            "equals": "Sangat buruk",
+            "fieldId": "kualitasTidur"
+          },
+          "label": "Mohon jelaskan lebih detail mengenai **masalah tidur** yang Anda alami.",
+          "required": true,
+          "aiReasoning": "Menganalisis apakah gangguan tidur disebabkan oleh kecemasan kerja atau faktor gaya hidup.",
+          "gridSpan": 2
+        },
+        {
+          "id": "waktuPersonal",
+          "type": "radio",
+          "gridSpan": 2,
+          "aiReasoning": "Menilai keseimbangan kehidupan kerja (work-life balance) sebagai faktor protektif terhadap burnout.",
+          "options": [
+            {
+              "weight": 90,
+              "label": "Selalu"
+            },
+            {
+              "weight": 70,
+              "label": "Sering"
+            },
+            {
+              "weight": 50,
+              "label": "Kadang-kadang"
+            },
+            {
+              "label": "Jarang",
+              "weight": 30
+            },
+            {
+              "label": "Tidak pernah",
+              "weight": 10
+            }
+          ],
+          "required": true,
+          "label": "Apakah Anda merasa memiliki cukup **waktu dan energi** untuk melakukan aktivitas pribadi atau hobi?"
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiWaktuPersonal",
+          "showIf": {
+            "equals": "Tidak pernah",
+            "fieldId": "waktuPersonal"
+          },
+          "label": "Apa alasan utama Anda merasa tidak memiliki **waktu atau energi** untuk aktivitas pribadi?",
+          "required": true,
+          "aiReasoning": "Menggali hambatan sistemik atau personal yang menghalangi pemenuhan kebutuhan rekreasi.",
+          "gridSpan": 2
+        },
+        {
+          "id": "dukunganSosial",
+          "type": "radio",
+          "gridSpan": 2,
+          "aiReasoning": "Dukungan sosial berfungsi sebagai buffer (penyangga) terhadap dampak negatif stres kerja.",
+          "options": [
+            {
+              "label": "Sangat kuat",
+              "weight": 90
+            },
+            {
+              "label": "Cukup kuat",
+              "weight": 70
+            },
+            {
+              "label": "Netral",
+              "weight": 50
+            },
+            {
+              "weight": 30,
+              "label": "Kurang kuat"
+            },
+            {
+              "label": "Tidak ada",
+              "weight": 10
+            }
+          ],
+          "required": true,
+          "label": "Seberapa kuat Anda merasa **didukung oleh keluarga, teman, atau kolega** dalam menghadapi tantangan pekerjaan?"
+        },
+        {
+          "showIf": {
+            "equals": "Tidak ada",
+            "fieldId": "dukunganSosial"
+          },
+          "type": "textarea",
+          "id": "justifikasiDukunganSosial",
+          "gridSpan": 2,
+          "aiReasoning": "Memahami dampak isolasi sosial terhadap ketahanan mental individu.",
+          "required": true,
+          "label": "Mohon jelaskan perasaan Anda terkait **kurangnya dukungan sosial** dalam menghadapi tantangan pekerjaan."
+        },
+        {
+          "id": "gejalaFisik",
+          "type": "radio",
+          "options": [
+            {
+              "label": "Tidak pernah",
+              "weight": 90
+            },
+            {
+              "weight": 70,
+              "label": "Jarang"
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 50
+            },
+            {
+              "weight": 30,
+              "label": "Sering"
+            },
+            {
+              "weight": 10,
+              "label": "Sangat sering"
+            }
+          ],
+          "aiReasoning": "Burnout sering bermanifestasi dalam bentuk keluhan somatik (fisik) yang nyata.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Apakah Anda mengalami **gejala fisik** (sakit kepala, gangguan pencernaan, ketegangan otot) yang berkaitan dengan stres pekerjaan?"
+        },
+        {
+          "aiReasoning": "Mengidentifikasi tingkat keparahan dampak stres terhadap kesehatan fisik.",
+          "gridSpan": 2,
+          "label": "Sebutkan **gejala fisik spesifik** yang Anda alami dan seberapa sering hal itu terjadi.",
+          "required": true,
+          "showIf": {
+            "equals": "Sangat sering",
+            "fieldId": "gejalaFisik"
+          },
+          "id": "justifikasiGejalaFisik",
+          "type": "textarea"
+        },
+        {
+          "type": "radio",
+          "id": "perasaanTerjebak",
+          "label": "Seberapa sering Anda merasa **terjebak atau tertekan** oleh tuntutan pekerjaan tanpa ada jalan keluar yang jelas?",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur perasaan ketidakberdayaan (helplessness) yang merupakan prediktor kuat burnout.",
+          "options": [
+            {
+              "label": "Tidak pernah",
+              "weight": 90
+            },
+            {
+              "weight": 70,
+              "label": "Jarang"
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 50
+            },
+            {
+              "weight": 30,
+              "label": "Sering"
+            },
+            {
+              "label": "Sangat sering",
+              "weight": 10
+            }
+          ]
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiPerasaanTerjebak",
+          "showIf": {
+            "fieldId": "perasaanTerjebak",
+            "equals": "Sangat sering"
+          },
+          "gridSpan": 2,
+          "aiReasoning": "Menganalisis apakah perasaan terjebak disebabkan oleh faktor struktural atau persepsi individu.",
+          "label": "Mohon jelaskan lebih lanjut mengenai **perasaan terjebak atau tertekan** yang Anda alami dalam pekerjaan.",
+          "required": true
+        }
+      ]
+    },
+    {
+      "stepNumber": 4,
+      "description": "Menganalisis kualitas batasan waktu kerja dan efektivitas transisi peran antara kehidupan profesional dan personal.",
+      "title": "Analisis Integrasi Kerja-Hidup",
+      "fields": [
+        {
+          "aiReasoning": "Mengukur sejauh mana individu mampu memisahkan domain profesional dan personal untuk mencegah kelelahan.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 90,
+              "label": "Sangat jelas, saya jarang membawa pekerjaan ke ranah pribadi."
+            },
+            {
+              "weight": 70,
+              "label": "Cukup jelas, terkadang ada pengecualian."
+            },
+            {
+              "weight": 40,
+              "label": "Agak kabur, seringkali pekerjaan masuk ke waktu pribadi."
+            },
+            {
+              "weight": 10,
+              "label": "Tidak ada batasan sama sekali, pekerjaan selalu menyertai."
+            }
+          ],
+          "label": "Seberapa jelas **batasan** antara waktu kerja dan waktu pribadi Anda?",
+          "required": true,
+          "type": "radio",
+          "id": "batasanWaktuKerja"
+        },
+        {
+          "label": "Mohon jelaskan mengapa Anda merasa **tidak ada batasan** antara waktu kerja dan pribadi.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Menggali akar penyebab ketidakmampuan individu dalam menetapkan batasan kerja yang sehat.",
+          "showIf": {
+            "fieldId": "batasanWaktuKerja",
+            "equals": "Tidak ada batasan sama sekali, pekerjaan selalu menyertai."
+          },
+          "type": "textarea",
+          "id": "justifikasiBatasanWaktu"
+        },
+        {
+          "type": "radio",
+          "id": "gangguanWaktuPribadi",
+          "aiReasoning": "Mengevaluasi frekuensi intrusi pekerjaan ke dalam ruang privat yang seharusnya digunakan untuk pemulihan.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Hampir tidak pernah.",
+              "weight": 95
+            },
+            {
+              "label": "Jarang.",
+              "weight": 75
+            },
+            {
+              "weight": 45,
+              "label": "Cukup sering."
+            },
+            {
+              "label": "Sangat sering, hampir setiap hari.",
+              "weight": 15
+            }
+          ],
+          "required": true,
+          "label": "Seberapa sering Anda merasa waktu pribadi Anda **terganggu** oleh urusan pekerjaan?"
+        },
+        {
+          "label": "Mohon berikan contoh spesifik bagaimana waktu pribadi Anda sering **terganggu** oleh pekerjaan.",
+          "required": true,
+          "aiReasoning": "Mengidentifikasi pola gangguan spesifik yang paling merusak keseimbangan hidup individu.",
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "contohGangguanPribadi",
+          "showIf": {
+            "equals": "Sangat sering, hampir setiap hari.",
+            "fieldId": "gangguanWaktuPribadi"
+          }
+        },
+        {
+          "options": [
+            {
+              "weight": 90,
+              "label": "Sangat fleksibel, saya bisa mengatur jadwal dengan mudah."
+            },
+            {
+              "label": "Cukup fleksibel, dengan koordinasi.",
+              "weight": 70
+            },
+            {
+              "weight": 40,
+              "label": "Kurang fleksibel, sangat sulit menyesuaikan."
+            },
+            {
+              "label": "Tidak sama sekali, jadwal sangat kaku.",
+              "weight": 10
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai tingkat otonomi individu dalam mengelola waktu kerja untuk menyeimbangkan tuntutan hidup.",
+          "required": true,
+          "label": "Apakah Anda memiliki **fleksibilitas** untuk menyesuaikan jadwal kerja demi kebutuhan pribadi?",
+          "id": "fleksibilitasJadwal",
+          "type": "radio"
+        },
+        {
+          "id": "dampakKekakuanJadwal",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Tidak sama sekali, jadwal sangat kaku.",
+            "fieldId": "fleksibilitasJadwal"
+          },
+          "gridSpan": 2,
+          "aiReasoning": "Memahami konsekuensi psikologis dan sosial dari kurangnya fleksibilitas kerja.",
+          "required": true,
+          "label": "Mohon jelaskan dampak dari **kekakuan jadwal** kerja terhadap kehidupan pribadi Anda."
+        },
+        {
+          "type": "radio",
+          "id": "dukunganLingkunganKerja",
+          "required": true,
+          "label": "Seberapa besar **dukungan** yang Anda rasakan dari lingkungan kerja dalam menjaga keseimbangan hidup?",
+          "options": [
+            {
+              "label": "Sangat mendukung, ada kebijakan dan pemahaman yang baik.",
+              "weight": 90
+            },
+            {
+              "weight": 70,
+              "label": "Cukup mendukung, namun perlu inisiatif pribadi."
+            },
+            {
+              "weight": 40,
+              "label": "Kurang mendukung, seringkali ada tekanan."
+            },
+            {
+              "weight": 10,
+              "label": "Tidak mendukung sama sekali, hanya fokus pada hasil kerja."
+            }
+          ],
+          "aiReasoning": "Mengukur peran budaya organisasi dalam mendukung kesejahteraan mental karyawan.",
+          "gridSpan": 2
+        },
+        {
+          "id": "detailKurangnyaDukungan",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Tidak mendukung sama sekali, hanya fokus pada hasil kerja.",
+            "fieldId": "dukunganLingkunganKerja"
+          },
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda merasa lingkungan kerja **kurang mendukung** keseimbangan hidup.",
+          "gridSpan": 2,
+          "aiReasoning": "Menggali hambatan struktural atau kultural yang menghalangi keseimbangan kerja-hidup."
+        },
+        {
+          "type": "radio",
+          "id": "terbebaniLuarJamKerja",
+          "options": [
+            {
+              "label": "Hampir tidak pernah.",
+              "weight": 95
+            },
+            {
+              "label": "Jarang.",
+              "weight": 75
+            },
+            {
+              "weight": 45,
+              "label": "Cukup sering."
+            },
+            {
+              "label": "Sangat sering, hampir setiap hari.",
+              "weight": 15
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mendeteksi adanya ekspektasi berlebih yang melampaui jam kerja formal.",
+          "required": true,
+          "label": "Seberapa sering Anda merasa **terbebani** oleh tuntutan pekerjaan di luar jam kerja?"
+        },
+        {
+          "label": "Mohon jelaskan situasi yang membuat Anda merasa **terbebani** oleh pekerjaan di luar jam kerja.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi pemicu spesifik yang menyebabkan beban kerja berlebih di luar jam operasional.",
+          "showIf": {
+            "equals": "Sangat sering, hampir setiap hari.",
+            "fieldId": "terbebaniLuarJamKerja"
+          },
+          "type": "textarea",
+          "id": "situasiTerbebani"
+        },
+        {
+          "required": true,
+          "label": "Seberapa konsisten Anda meluangkan waktu untuk **aktivitas rekreasi atau hobi**?",
+          "options": [
+            {
+              "label": "Sangat konsisten, ini prioritas saya.",
+              "weight": 90
+            },
+            {
+              "weight": 70,
+              "label": "Cukup konsisten, setidaknya beberapa kali seminggu."
+            },
+            {
+              "weight": 40,
+              "label": "Jarang, hanya sesekali jika ada waktu luang."
+            },
+            {
+              "label": "Tidak pernah, tidak ada waktu atau energi.",
+              "weight": 10
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai kapasitas individu untuk melakukan aktivitas pemulihan (recovery) di luar pekerjaan.",
+          "type": "radio",
+          "id": "waktuRekreasiHobi"
+        },
+        {
+          "label": "Mohon jelaskan alasan utama mengapa Anda **tidak pernah atau jarang** meluangkan waktu untuk rekreasi.",
+          "required": true,
+          "aiReasoning": "Mengidentifikasi hambatan utama (waktu, energi, atau prioritas) dalam menjaga keseimbangan hidup.",
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "alasanTidakRekreasi",
+          "showIf": {
+            "equals": "Tidak pernah, tidak ada waktu atau energi.",
+            "fieldId": "waktuRekreasiHobi"
+          }
+        },
+        {
+          "required": true,
+          "label": "Setelah bekerja, seberapa banyak **energi yang tersisa** untuk kehidupan pribadi?",
+          "options": [
+            {
+              "weight": 90,
+              "label": "Sangat banyak, saya masih bersemangat."
+            },
+            {
+              "label": "Cukup banyak, bisa melakukan aktivitas ringan.",
+              "weight": 70
+            },
+            {
+              "weight": 40,
+              "label": "Sedikit, saya cenderung langsung istirahat."
+            },
+            {
+              "label": "Sangat sedikit atau tidak ada sama sekali, saya merasa terkuras.",
+              "weight": 10
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur tingkat kelelahan fisik dan mental setelah menyelesaikan tugas harian.",
+          "type": "radio",
+          "id": "energiPribadi"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Menganalisis bagaimana kelelahan kerja menggerogoti kualitas interaksi sosial dan perawatan diri.",
+          "label": "Mohon jelaskan dampak dari **kurangnya energi** terhadap kehidupan pribadi Anda.",
+          "required": true,
+          "showIf": {
+            "fieldId": "energiPribadi",
+            "equals": "Sangat sedikit atau tidak ada sama sekali, saya merasa terkuras."
+          },
+          "type": "textarea",
+          "id": "dampakKurangnyaEnergi"
+        },
+        {
+          "options": [
+            {
+              "weight": 95,
+              "label": "Hampir tidak pernah, saya tahu pentingnya istirahat."
+            },
+            {
+              "weight": 75,
+              "label": "Jarang, kadang-kadang saja."
+            },
+            {
+              "label": "Sering, ada rasa tidak enak.",
+              "weight": 45
+            },
+            {
+              "weight": 15,
+              "label": "Sangat sering, ini mengganggu pikiran saya."
+            }
+          ],
+          "aiReasoning": "Mendeteksi adanya tekanan psikologis internal terkait produktivitas dan hak untuk beristirahat.",
+          "gridSpan": 2,
+          "label": "Apakah Anda sering merasa **bersalah** ketika mengambil waktu istirahat?",
+          "required": true,
+          "id": "perasaanBersalahIstirahat",
+          "type": "radio"
+        },
+        {
+          "id": "konteksPerasaanBersalah",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "perasaanBersalahIstirahat",
+            "equals": "Sangat sering, ini mengganggu pikiran saya."
+          },
+          "gridSpan": 2,
+          "aiReasoning": "Menggali ekspektasi internal atau eksternal yang menyebabkan kecemasan saat beristirahat.",
+          "required": true,
+          "label": "Mohon jelaskan konteks atau situasi yang memicu **perasaan bersalah** tersebut."
+        },
+        {
+          "type": "radio",
+          "id": "efektivitasPerencanaanWaktu",
+          "required": true,
+          "label": "Seberapa efektif Anda **merencanakan dan mengelola waktu** untuk keseimbangan hidup?",
+          "aiReasoning": "Menilai kompetensi manajemen waktu individu sebagai alat untuk mencapai keseimbangan.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 90,
+              "label": "Sangat efektif, saya memiliki sistem yang baik."
+            },
+            {
+              "label": "Cukup efektif, dengan sedikit penyesuaian.",
+              "weight": 70
+            },
+            {
+              "weight": 40,
+              "label": "Kurang efektif, seringkali rencana berantakan."
+            },
+            {
+              "weight": 10,
+              "label": "Tidak efektif, saya kesulitan mengatur waktu."
+            }
+          ]
+        },
+        {
+          "showIf": {
+            "fieldId": "efektivitasPerencanaanWaktu",
+            "equals": "Tidak efektif, saya kesulitan mengatur waktu."
+          },
+          "id": "tantanganPerencanaanWaktu",
+          "type": "textarea",
+          "label": "Mohon jelaskan tantangan utama dalam **merencanakan dan mengelola waktu** Anda.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi faktor-faktor penghambat dalam efektivitas manajemen waktu individu."
+        }
+      ]
+    },
+    {
+      "stepNumber": 5,
+      "fields": [
+        {
+          "options": [
+            {
+              "label": "Hampir tidak pernah",
+              "weight": 0
+            },
+            {
+              "weight": 25,
+              "label": "Jarang"
+            },
+            {
+              "label": "Kadang-kadang",
+              "weight": 50
+            },
+            {
+              "label": "Sering",
+              "weight": 75
+            },
+            {
+              "label": "Sangat sering",
+              "weight": 100
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur tingkat kesadaran somatik sebagai fondasi dasar dalam praktik mindfulness.",
+          "required": true,
+          "label": "Seberapa sering Anda menyadari **napas** atau **sensasi fisik** tubuh Anda sepanjang hari?",
+          "type": "radio",
+          "id": "kesadaranNapas"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Mengevaluasi kemampuan individu untuk tetap hadir (present) dalam rutinitas sehari-hari.",
+          "options": [
+            {
+              "label": "Sangat tidak perhatian",
+              "weight": 0
+            },
+            {
+              "label": "Kurang perhatian",
+              "weight": 25
+            },
+            {
+              "label": "Cukup perhatian",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Perhatian"
+            },
+            {
+              "label": "Sangat perhatian",
+              "weight": 100
+            }
+          ],
+          "label": "Saat melakukan **aktivitas rutin** (seperti makan atau berjalan), seberapa penuh perhatian Anda terhadap pengalaman tersebut?",
+          "required": true,
+          "id": "perhatianAktivitasRutin",
+          "type": "radio"
+        },
+        {
+          "aiReasoning": "Menilai mekanisme koping kognitif saat menghadapi gangguan fokus.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Terjebak dan sulit kembali fokus"
+            },
+            {
+              "label": "Merasa frustrasi dan mencoba mengabaikannya",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Menyadari namun sulit mengendalikan"
+            },
+            {
+              "label": "Menyadari dan perlahan mengarahkan kembali fokus",
+              "weight": 75
+            },
+            {
+              "label": "Menyadari tanpa menghakimi dan dengan mudah kembali fokus",
+              "weight": 100
+            }
+          ],
+          "required": true,
+          "label": "Ketika pikiran Anda melayang atau terdistraksi, bagaimana Anda biasanya **merespons** kondisi tersebut?",
+          "type": "radio",
+          "id": "responsPikiranMengganggu"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Menggali akar penyebab hambatan kognitif pada individu yang kesulitan mengelola distraksi.",
+          "label": "Mohon jelaskan mengapa Anda merasa **terjebak** dan sulit kembali fokus saat pikiran terdistraksi.",
+          "required": true,
+          "id": "justifikasiSulitFokus",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "responsPikiranMengganggu",
+            "equals": "Terjebak dan sulit kembali fokus"
+          }
+        },
+        {
+          "id": "kesadaranEmosi",
+          "type": "radio",
+          "required": true,
+          "label": "Seberapa cepat Anda menyadari **perubahan emosi** atau suasana hati yang Anda alami?",
+          "options": [
+            {
+              "label": "Sangat lambat",
+              "weight": 0
+            },
+            {
+              "weight": 25,
+              "label": "Lambat"
+            },
+            {
+              "weight": 50,
+              "label": "Cukup cepat"
+            },
+            {
+              "label": "Cepat",
+              "weight": 75
+            },
+            {
+              "label": "Sangat cepat",
+              "weight": 100
+            }
+          ],
+          "aiReasoning": "Mengukur kecerdasan emosional melalui kecepatan deteksi perubahan afektif.",
+          "gridSpan": 2
+        },
+        {
+          "id": "justifikasiLambatSadarEmosi",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Sangat lambat",
+            "fieldId": "kesadaranEmosi"
+          },
+          "aiReasoning": "Mengidentifikasi hambatan internal yang menghalangi kesadaran emosional diri.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda merasa **sangat lambat** dalam menyadari perubahan emosi Anda."
+        },
+        {
+          "id": "reaksiTerhadapStres",
+          "type": "radio",
+          "aiReasoning": "Menganalisis pola reaktivitas vs responsivitas dalam manajemen stres.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Selalu bereaksi otomatis",
+              "weight": 0
+            },
+            {
+              "label": "Sering bereaksi otomatis",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Kadang mengambil jeda"
+            },
+            {
+              "label": "Sering mengambil jeda",
+              "weight": 75
+            },
+            {
+              "label": "Selalu mengambil jeda dan merespons sadar",
+              "weight": 100
+            }
+          ],
+          "label": "Ketika menghadapi **situasi menekan**, apakah Anda cenderung bereaksi otomatis atau mengambil jeda untuk merespons dengan sadar?",
+          "required": true
+        },
+        {
+          "id": "justifikasiReaksiOtomatis",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "reaksiTerhadapStres",
+            "equals": "Selalu bereaksi otomatis"
+          },
+          "label": "Mohon jelaskan mengapa Anda cenderung **selalu bereaksi otomatis** saat menghadapi situasi menekan.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Memahami pemicu perilaku impulsif di bawah tekanan."
+        },
+        {
+          "type": "radio",
+          "id": "fokusTengahGangguan",
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur ketahanan fokus (attentional resilience) terhadap stimulus eksternal.",
+          "options": [
+            {
+              "weight": 0,
+              "label": "Sangat sulit"
+            },
+            {
+              "label": "Sulit",
+              "weight": 25
+            },
+            {
+              "label": "Cukup mudah",
+              "weight": 50
+            },
+            {
+              "label": "Mudah",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Sangat mudah"
+            }
+          ],
+          "label": "Seberapa mudah Anda mempertahankan **fokus** pada tugas meskipun ada gangguan di sekitar?",
+          "required": true
+        },
+        {
+          "type": "radio",
+          "id": "praktikMindfulnessFormal",
+          "gridSpan": 2,
+          "aiReasoning": "Menilai komitmen dan disiplin individu dalam melatih kesadaran diri secara terstruktur.",
+          "options": [
+            {
+              "label": "Tidak pernah",
+              "weight": 0
+            },
+            {
+              "label": "Jarang (kurang dari sekali seminggu)",
+              "weight": 25
+            },
+            {
+              "label": "Kadang-kadang (1-2 kali seminggu)",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Sering (3-4 kali seminggu)"
+            },
+            {
+              "weight": 100,
+              "label": "Sangat sering (setiap hari)"
+            }
+          ],
+          "required": true,
+          "label": "Apakah Anda secara rutin meluangkan waktu untuk **praktik mindfulness formal** (seperti meditasi atau body scan)?"
+        },
+        {
+          "aiReasoning": "Memvalidasi kedalaman dan konsistensi praktik mindfulness yang dilakukan.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan jenis **praktik mindfulness** yang Anda lakukan secara rutin dan durasinya.",
+          "showIf": {
+            "equals": "Sangat sering (setiap hari)",
+            "fieldId": "praktikMindfulnessFormal"
+          },
+          "type": "textarea",
+          "id": "deskripsiPraktikMindfulness"
+        },
+        {
+          "id": "manfaatPraktikMindfulness",
+          "type": "radio",
+          "label": "Seberapa besar **manfaat** yang Anda rasakan dalam kehidupan sehari-hari dari praktik mindfulness?",
+          "required": true,
+          "aiReasoning": "Mengukur efikasi subjektif dari penerapan teknik mindfulness.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Tidak ada manfaat"
+            },
+            {
+              "label": "Sedikit manfaat",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Cukup bermanfaat"
+            },
+            {
+              "label": "Bermanfaat",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Sangat bermanfaat"
+            }
+          ]
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiTidakManfaatMindfulness",
+          "showIf": {
+            "equals": "Tidak ada manfaat",
+            "fieldId": "manfaatPraktikMindfulness"
+          },
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda merasa **tidak ada manfaat** dari praktik mindfulness yang Anda lakukan.",
+          "aiReasoning": "Mengidentifikasi potensi ketidakcocokan metode atau hambatan dalam praktik mindfulness.",
+          "gridSpan": 2
+        },
+        {
+          "required": true,
+          "label": "Seberapa sering Anda menyadari **pola pikir negatif** atau kecenderungan menghakimi diri sendiri saat muncul?",
+          "gridSpan": 2,
+          "aiReasoning": "Menilai kemampuan metakognitif dalam mendeteksi bias kognitif negatif.",
+          "options": [
+            {
+              "label": "Hampir tidak pernah",
+              "weight": 0
+            },
+            {
+              "label": "Jarang",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Kadang-kadang"
+            },
+            {
+              "weight": 75,
+              "label": "Sering"
+            },
+            {
+              "label": "Sangat sering",
+              "weight": 100
+            }
+          ],
+          "id": "kesadaranPolaPikirNegatif",
+          "type": "radio"
+        },
+        {
+          "required": true,
+          "label": "Bagaimana Anda menilai **kualitas tidur** dan istirahat Anda dalam seminggu terakhir?",
+          "options": [
+            {
+              "label": "Sangat buruk",
+              "weight": 0
+            },
+            {
+              "label": "Buruk",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Cukup"
+            },
+            {
+              "label": "Baik",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Sangat baik"
+            }
+          ],
+          "aiReasoning": "Menilai pemulihan fisik dan mental sebagai indikator kesejahteraan umum.",
+          "gridSpan": 2,
+          "type": "radio",
+          "id": "kualitasTidurIstirahat"
+        },
+        {
+          "type": "textarea",
+          "id": "faktorKualitasTidur",
+          "showIf": {
+            "fieldId": "kualitasTidurIstirahat",
+            "equals": "Sangat buruk"
+          },
+          "aiReasoning": "Menggali penyebab eksternal atau internal yang mengganggu pemulihan diri.",
+          "gridSpan": 2,
+          "label": "Mohon jelaskan faktor-faktor yang mungkin memengaruhi **kualitas tidur** dan istirahat Anda.",
+          "required": true
+        }
+      ],
+      "title": "Pemetaan Kesadaran Diri (Mindfulness)",
+      "description": "Mengukur tingkat fokus saat ini dan mengidentifikasi frekuensi distraksi kognitif selama jam kerja."
+    },
+    {
+      "description": "Menilai ketahanan mental secara keseluruhan untuk merancang rekomendasi koping stres berbasis MBSR.",
+      "title": "Kapasitas Resiliensi & Intervensi",
+      "fields": [
+        {
+          "id": "resiliensiBangkit",
+          "type": "radio",
+          "label": "Ketika menghadapi **tantangan atau kemunduran**, seberapa cepat Anda merasa mampu **bangkit kembali**?",
+          "required": true,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Sangat sulit dan butuh waktu lama"
+            },
+            {
+              "label": "Cukup sulit, butuh dukungan",
+              "weight": 25
+            },
+            {
+              "label": "Kadang-kadang, tergantung situasinya",
+              "weight": 50
+            },
+            {
+              "weight": 75,
+              "label": "Seringkali, dengan usaha"
+            },
+            {
+              "weight": 100,
+              "label": "Sangat mudah dan cepat"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur kapasitas resiliensi individu dalam memulihkan diri dari tekanan psikologis."
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan lebih lanjut mengapa Anda merasa **sulit untuk bangkit kembali**.",
+          "gridSpan": 2,
+          "aiReasoning": "Menggali akar penyebab hambatan psikologis saat individu mengalami kegagalan.",
+          "id": "penjelasanSulitBangkit",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "resiliensiBangkit",
+            "equals": "Sangat sulit dan butuh waktu lama"
+          }
+        },
+        {
+          "required": true,
+          "label": "Apa yang biasanya menjadi **sumber kekuatan atau dukungan utama** Anda saat menghadapi masa sulit?",
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi mekanisme koping eksternal atau internal yang dimiliki individu.",
+          "id": "sumberKekuatan",
+          "type": "textarea"
+        },
+        {
+          "type": "radio",
+          "id": "strategiStres",
+          "gridSpan": 2,
+          "aiReasoning": "Mengevaluasi efektivitas strategi koping yang digunakan individu dalam menghadapi stres.",
+          "options": [
+            {
+              "weight": 0,
+              "label": "Mengabaikannya atau menghindarinya"
+            },
+            {
+              "label": "Mencari pengalihan sementara (misal: hiburan berlebihan)",
+              "weight": 25
+            },
+            {
+              "label": "Beristirahat atau tidur lebih banyak",
+              "weight": 50
+            },
+            {
+              "label": "Berolahraga atau melakukan hobi",
+              "weight": 75
+            },
+            {
+              "weight": 90,
+              "label": "Berbicara dengan orang terdekat atau profesional"
+            },
+            {
+              "label": "Melakukan meditasi atau praktik kesadaran (mindfulness)",
+              "weight": 100
+            }
+          ],
+          "label": "Pilih **strategi utama** yang Anda gunakan untuk mengelola **tekanan atau stres** yang Anda rasakan:",
+          "required": true
+        },
+        {
+          "showIf": {
+            "fieldId": "strategiStres",
+            "equals": "Mengabaikannya atau menghindarinya"
+          },
+          "type": "textarea",
+          "id": "penjelasanAbaikanStres",
+          "aiReasoning": "Memahami alasan di balik perilaku penghindaran (avoidance coping) sebagai mekanisme pertahanan diri.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda memilih untuk **mengabaikan atau menghindarinya**."
+        },
+        {
+          "type": "radio",
+          "id": "minatMindfulness",
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur keterbukaan individu terhadap intervensi berbasis kesadaran diri.",
+          "options": [
+            {
+              "label": "Tidak tertarik sama sekali",
+              "weight": 0
+            },
+            {
+              "label": "Kurang tertarik",
+              "weight": 25
+            },
+            {
+              "weight": 50,
+              "label": "Cukup tertarik, ingin tahu lebih banyak"
+            },
+            {
+              "weight": 75,
+              "label": "Tertarik, bersedia mencoba"
+            },
+            {
+              "weight": 100,
+              "label": "Sangat tertarik, ingin segera memulai"
+            }
+          ],
+          "label": "Seberapa tertarik Anda untuk mempelajari **teknik-teknik mindfulness** untuk mengelola stres?",
+          "required": true
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan alasan Anda **kurang atau tidak tertarik** pada teknik mindfulness.",
+          "aiReasoning": "Mengidentifikasi hambatan persepsi atau stigma terhadap praktik mindfulness.",
+          "gridSpan": 2,
+          "id": "penjelasanKurangMinatMindfulness",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "minatMindfulness",
+            "equals": "Tidak tertarik sama sekali"
+          }
+        },
+        {
+          "type": "radio",
+          "id": "penerapanMindfulness",
+          "label": "Apakah Anda saat ini sudah menerapkan **praktik kesadaran (mindfulness)** dalam rutinitas harian Anda?",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Menilai konsistensi perilaku sadar yang sudah dilakukan individu.",
+          "options": [
+            {
+              "label": "Belum pernah sama sekali",
+              "weight": 0
+            },
+            {
+              "label": "Jarang sekali, hanya jika teringat",
+              "weight": 25
+            },
+            {
+              "label": "Kadang-kadang, beberapa kali seminggu",
+              "weight": 50
+            },
+            {
+              "label": "Sering, hampir setiap hari",
+              "weight": 75
+            },
+            {
+              "weight": 100,
+              "label": "Setiap hari, sudah menjadi kebiasaan"
+            }
+          ]
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Mencari tahu kendala praktis atau kurangnya akses informasi terkait mindfulness.",
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda **belum pernah menerapkan** praktik mindfulness.",
+          "showIf": {
+            "fieldId": "penerapanMindfulness",
+            "equals": "Belum pernah sama sekali"
+          },
+          "type": "textarea",
+          "id": "alasanBelumMindfulness"
+        },
+        {
+          "label": "Seberapa besar Anda merasa memiliki **kendali atas respons emosional** Anda terhadap situasi sulit?",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur regulasi emosi sebagai komponen kunci dari kecerdasan emosional.",
+          "options": [
+            {
+              "label": "Sangat kecil, sering merasa kewalahan",
+              "weight": 0
+            },
+            {
+              "weight": 25,
+              "label": "Kecil, kadang sulit mengendalikan"
+            },
+            {
+              "label": "Cukup, bisa mengelola tapi butuh usaha",
+              "weight": 50
+            },
+            {
+              "label": "Besar, umumnya bisa mengendalikan",
+              "weight": 75
+            },
+            {
+              "label": "Sangat besar, jarang kehilangan kendali",
+              "weight": 100
+            }
+          ],
+          "type": "radio",
+          "id": "kontrolEmosional"
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan **tantangan** yang Anda hadapi dalam mengendalikan respons emosional Anda.",
+          "aiReasoning": "Menganalisis pemicu emosional yang membuat individu merasa kehilangan kendali.",
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "penjelasanKurangKontrol",
+          "showIf": {
+            "equals": "Sangat kecil, sering merasa kewalahan",
+            "fieldId": "kontrolEmosional"
+          }
+        },
+        {
+          "id": "hambatanIntervensi",
+          "type": "textarea",
+          "required": true,
+          "label": "Apa **hambatan terbesar** yang Anda rasakan untuk memulai atau mempertahankan praktik yang mendukung **kesejahteraan mental** Anda?",
+          "aiReasoning": "Mengidentifikasi hambatan sistemik atau personal dalam upaya peningkatan kesehatan mental.",
+          "gridSpan": 2
+        }
+      ],
+      "stepNumber": 6
+    }
+  ]
+}

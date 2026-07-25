@@ -1,0 +1,2372 @@
+{
+  "trackName": "Agile Learner Index: Seberapa Cepat Kamu Beradaptasi?",
+  "trackDescription": "Di dunia yang berubah cepat, kemampuan belajar adalah kunci utama. Cek kecepatan adaptasimu dalam menyerap informasi, wawasan, dan keahlian baru.",
+  "steps": [
+    {
+      "fields": [
+        {
+          "required": true,
+          "label": "Nama Lengkap Anda",
+          "gridSpan": 2,
+          "id": "namaUsaha",
+          "type": "text"
+        },
+        {
+          "id": "namaPengisi",
+          "type": "text",
+          "gridSpan": 2,
+          "label": "Nama Panggilan",
+          "required": false
+        },
+        {
+          "gridSpan": 2,
+          "label": "Usia Anda (dalam tahun)",
+          "required": true,
+          "type": "number",
+          "id": "usiaAnda"
+        },
+        {
+          "options": [
+            {
+              "label": "Sekolah Menengah Atas/Sederajat",
+              "weight": 20
+            },
+            {
+              "label": "Diploma (D1-D3)",
+              "weight": 40
+            },
+            {
+              "label": "Sarjana (S1)",
+              "weight": 60
+            },
+            {
+              "label": "Magister (S2)",
+              "weight": 80
+            },
+            {
+              "label": "Doktor (S3)",
+              "weight": 90
+            }
+          ],
+          "gridSpan": 2,
+          "label": "Pendidikan Formal Terakhir Anda",
+          "required": true,
+          "id": "pendidikanTerakhir",
+          "type": "select"
+        },
+        {
+          "id": "profesiSaatIni",
+          "type": "text",
+          "required": true,
+          "label": "Profesi atau Jabatan Anda Saat Ini",
+          "gridSpan": 2
+        },
+        {
+          "type": "radio",
+          "id": "dekatiMasalahKompleks",
+          "options": [
+            {
+              "label": "Menghindari atau menunggu arahan",
+              "weight": 10
+            },
+            {
+              "label": "Mencari bantuan dari rekan atau atasan",
+              "weight": 40
+            },
+            {
+              "label": "Menganalisis secara sistematis dan memecah menjadi bagian kecil",
+              "weight": 70
+            },
+            {
+              "label": "Mencari solusi inovatif dan bereksperimen dengan pendekatan baru",
+              "weight": 95
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur tingkat kemandirian dan metodologi kognitif dalam memecahkan masalah yang tidak terstruktur.",
+          "label": "Bagaimana Anda mendekati **masalah kompleks** yang belum pernah ditemui sebelumnya?",
+          "required": true
+        },
+        {
+          "type": "radio",
+          "id": "kecepatanPahamiInformasiBaru",
+          "label": "Seberapa cepat Anda mampu memahami dan mengaplikasikan **konsep atau teknologi baru**?",
+          "required": true,
+          "options": [
+            {
+              "label": "Sangat lambat, butuh banyak waktu dan bimbingan",
+              "weight": 15
+            },
+            {
+              "label": "Cukup lambat, perlu usaha ekstra dan pengulangan",
+              "weight": 45
+            },
+            {
+              "label": "Sedang, bisa memahami dengan sedikit bantuan",
+              "weight": 65
+            },
+            {
+              "label": "Cukup cepat, bisa menguasai secara mandiri",
+              "weight": 85
+            },
+            {
+              "label": "Sangat cepat, sering menjadi orang pertama yang menguasai",
+              "weight": 98
+            }
+          ],
+          "aiReasoning": "Menilai kecepatan adaptasi kognitif dan kemampuan belajar mandiri (learning agility) individu.",
+          "gridSpan": 2
+        },
+        {
+          "id": "reaksiSudutPandangBerbeda",
+          "type": "radio",
+          "required": true,
+          "label": "Bagaimana reaksi Anda saat menghadapi **sudut pandang berbeda** yang menantang keyakinan Anda?",
+          "aiReasoning": "Mengevaluasi keterbukaan pikiran (open-mindedness) dan kemampuan mengintegrasikan perspektif beragam.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Menolak atau mengabaikannya",
+              "weight": 5
+            },
+            {
+              "label": "Merasa tidak nyaman dan mencoba mempertahankan pandangan sendiri",
+              "weight": 30
+            },
+            {
+              "label": "Mendengarkan, namun sulit untuk setuju atau berubah pikiran",
+              "weight": 55
+            },
+            {
+              "label": "Mempertimbangkan dengan pikiran terbuka",
+              "weight": 75
+            },
+            {
+              "weight": 90,
+              "label": "Mencoba memahami, mengintegrasikan, dan mencari nilai tambah dari perbedaan tersebut"
+            }
+          ]
+        },
+        {
+          "id": "adaptasiMetodeKerja",
+          "type": "radio",
+          "required": true,
+          "label": "Apa tindakan Anda saat **metode kerja lama** tidak lagi efektif dalam situasi yang berubah?",
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur fleksibilitas perilaku dan proaktifitas dalam melakukan transformasi cara kerja.",
+          "options": [
+            {
+              "label": "Tetap pada metode lama sambil berharap situasinya membaik",
+              "weight": 10
+            },
+            {
+              "label": "Mengeluh tentang perubahan dan kesulitan beradaptasi",
+              "weight": 35
+            },
+            {
+              "label": "Mencari alternatif yang sudah terbukti dari orang lain",
+              "weight": 60
+            },
+            {
+              "weight": 80,
+              "label": "Bereksperimen dengan cara-cara baru dan mengevaluasi hasilnya"
+            },
+            {
+              "weight": 95,
+              "label": "Secara proaktif mengembangkan dan mengusulkan metode baru yang lebih efektif"
+            }
+          ]
+        },
+        {
+          "aiReasoning": "Menilai ketangguhan mental (resilience) dan kemampuan refleksi kritis terhadap kegagalan.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Menyalahkan faktor eksternal atau orang lain",
+              "weight": 5
+            },
+            {
+              "weight": 25,
+              "label": "Merasa putus asa dan menghindari situasi serupa"
+            },
+            {
+              "label": "Mengabaikan dan berharap tidak terulang",
+              "weight": 40
+            },
+            {
+              "label": "Menganalisis penyebabnya dan mencoba memperbaiki di lain waktu",
+              "weight": 70
+            },
+            {
+              "weight": 90,
+              "label": "Mengubah pendekatan secara fundamental dan berbagi pelajaran dengan orang lain"
+            }
+          ],
+          "required": true,
+          "label": "Bagaimana Anda memproses **kesalahan atau kegagalan** untuk pengembangan diri?",
+          "type": "radio",
+          "id": "manfaatkanKesalahan"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur toleransi terhadap ambiguitas sebagai indikator kunci mental agility.",
+          "options": [
+            {
+              "label": "Sangat tidak nyaman, saya butuh kejelasan mutlak",
+              "weight": 10
+            },
+            {
+              "weight": 35,
+              "label": "Tidak nyaman, saya merasa cemas dan kesulitan berfungsi"
+            },
+            {
+              "weight": 60,
+              "label": "Cukup nyaman, saya bisa beradaptasi tapi butuh waktu"
+            },
+            {
+              "label": "Nyaman, saya melihatnya sebagai tantangan yang menarik",
+              "weight": 80
+            },
+            {
+              "label": "Sangat nyaman, saya justru berkembang dalam ketidakpastian dan mencari peluang",
+              "weight": 95
+            }
+          ],
+          "label": "Seberapa nyaman Anda bekerja dalam **situasi ambigu** atau penuh ketidakpastian?",
+          "required": true,
+          "id": "kenyamananSituasiTidakJelas",
+          "type": "radio"
+        },
+        {
+          "aiReasoning": "Memvalidasi kemampuan berpikir lateral dan aplikasi praktis dari kreativitas dalam pemecahan masalah.",
+          "gridSpan": 2,
+          "label": "Ceritakan satu contoh situasi di mana Anda berhasil memecahkan masalah dengan **cara kreatif/tidak konvensional**.",
+          "required": true,
+          "type": "textarea",
+          "id": "contohSolusiTidakKonvensional"
+        },
+        {
+          "id": "sumberBelajarMandiri",
+          "type": "select",
+          "aiReasoning": "Mengidentifikasi pola belajar individu dan komitmen terhadap pengembangan diri berkelanjutan.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Kursus online (Coursera, Udemy, dll.)",
+              "weight": 85
+            },
+            {
+              "label": "Buku, artikel ilmiah, atau jurnal profesional",
+              "weight": 75
+            },
+            {
+              "label": "Mentor, diskusi dengan ahli, atau komunitas profesional",
+              "weight": 70
+            },
+            {
+              "weight": 90,
+              "label": "Eksperimen langsung atau proyek pribadi"
+            },
+            {
+              "label": "Tutorial video atau blog sederhana",
+              "weight": 60
+            },
+            {
+              "label": "Saya jarang belajar mandiri di luar tuntutan pekerjaan",
+              "weight": 20
+            }
+          ],
+          "label": "Apa sumber utama Anda untuk **belajar mandiri** dan pengembangan keterampilan baru?",
+          "required": true
+        },
+        {
+          "showIf": {
+            "equals": "Saya jarang belajar mandiri di luar tuntutan pekerjaan",
+            "fieldId": "sumberBelajarMandiri"
+          },
+          "type": "textarea",
+          "id": "justifikasiBelajarMandiri",
+          "label": "Mohon jelaskan alasan Anda jarang melakukan **belajar mandiri**.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Mengeksplorasi hambatan psikologis atau situasional terhadap budaya belajar mandiri."
+        },
+        {
+          "showIf": {
+            "equals": "Kursus online (Coursera, Udemy, dll.)",
+            "fieldId": "sumberBelajarMandiri"
+          },
+          "type": "file",
+          "id": "buktiSertifikatKursus",
+          "gridSpan": 2,
+          "fileAccept": ".pdf,.jpg,.png",
+          "label": "Unggah **sertifikat penyelesaian kursus** Anda sebagai bukti pengembangan diri.",
+          "required": true
+        },
+        {
+          "label": "Jelaskan secara singkat **proyek atau eksperimen** yang pernah Anda lakukan secara mandiri.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Memverifikasi kedalaman keterlibatan praktis dalam proses belajar melalui eksperimen.",
+          "type": "textarea",
+          "id": "deskripsiEksperimenMandiri",
+          "showIf": {
+            "equals": "Eksperimen langsung atau proyek pribadi",
+            "fieldId": "sumberBelajarMandiri"
+          }
+        }
+      ],
+      "title": "Mental Agility: Navigasi Kompleksitas",
+      "description": "Simulasi skenario pemecahan masalah bisnis yang ambigu dan kompleks.",
+      "stepNumber": 1
+    },
+    {
+      "description": "Evaluasi cara merespons konflik dan berkolaborasi dengan tim lintas generasi atau fungsi.",
+      "title": "People Agility: Dinamika Kolaborasi",
+      "fields": [
+        {
+          "options": [
+            {
+              "label": "Saya secara proaktif mencari peluang kolaborasi dan membangun jembatan antar tim.",
+              "weight": 90
+            },
+            {
+              "label": "Saya sering berkolaborasi ketika ada kebutuhan yang jelas dan inisiatif dari pihak lain.",
+              "weight": 70
+            },
+            {
+              "label": "Saya berkolaborasi jika diminta atau jika proyek memang mengharuskan.",
+              "weight": 50
+            },
+            {
+              "label": "Saya cenderung fokus pada tugas tim saya sendiri dan jarang berinteraksi lintas fungsi.",
+              "weight": 30
+            },
+            {
+              "weight": 10,
+              "label": "Saya menghindari kolaborasi lintas fungsi karena sering menimbulkan kompleksitas."
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur tingkat proaktifitas individu dalam membangun sinergi lintas fungsi untuk mendukung kelincahan organisasi.",
+          "required": true,
+          "label": "Bagaimana Anda biasanya berinteraksi dengan rekan kerja dari **departemen atau tim yang berbeda** untuk mencapai tujuan bersama?",
+          "type": "radio",
+          "id": "kolaborasiLintasFungsi"
+        },
+        {
+          "id": "contohKolaborasiLintasFungsi",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "kolaborasiLintasFungsi",
+            "equals": "Saya secara proaktif mencari peluang kolaborasi dan membangun jembatan antar tim."
+          },
+          "label": "Mohon berikan satu contoh spesifik di mana Anda berhasil memfasilitasi **kolaborasi lintas fungsi** yang signifikan.",
+          "required": true,
+          "aiReasoning": "Memvalidasi klaim proaktifitas melalui bukti nyata keberhasilan kolaborasi yang pernah dilakukan.",
+          "gridSpan": 2
+        },
+        {
+          "label": "Seberapa sering Anda secara aktif mencari **umpan balik konstruktif** tentang kinerja atau pendekatan kerja Anda?",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Menilai keterbukaan individu terhadap evaluasi eksternal sebagai instrumen pengembangan diri.",
+          "options": [
+            {
+              "label": "Sangat sering, saya melihat umpan balik sebagai kunci pengembangan diri.",
+              "weight": 95
+            },
+            {
+              "weight": 75,
+              "label": "Sering, saya menghargai masukan untuk perbaikan."
+            },
+            {
+              "weight": 55,
+              "label": "Kadang-kadang, terutama saat ada proyek besar atau evaluasi."
+            },
+            {
+              "label": "Jarang, saya lebih suka mengevaluasi diri sendiri.",
+              "weight": 35
+            },
+            {
+              "weight": 15,
+              "label": "Tidak pernah, saya merasa sudah cukup tahu apa yang perlu dilakukan."
+            }
+          ],
+          "id": "mencariUmpanBalik",
+          "type": "radio"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Menggali hambatan psikologis atau preferensi kerja yang menyebabkan individu membatasi akses terhadap umpan balik.",
+          "label": "Mohon jelaskan mengapa Anda cenderung **lebih memilih evaluasi mandiri** dibandingkan mencari umpan balik.",
+          "required": true,
+          "id": "alasanJarangMencariUmpanBalik",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Jarang, saya lebih suka mengevaluasi diri sendiri.",
+            "fieldId": "mencariUmpanBalik"
+          }
+        },
+        {
+          "type": "textarea",
+          "id": "alasanTidakPernahMencariUmpanBalik",
+          "showIf": {
+            "equals": "Tidak pernah, saya merasa sudah cukup tahu apa yang perlu dilakukan.",
+            "fieldId": "mencariUmpanBalik"
+          },
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda merasa **tidak perlu mencari umpan balik** secara aktif.",
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi potensi bias kognitif atau kepercayaan diri berlebih yang menghambat proses pembelajaran."
+        },
+        {
+          "aiReasoning": "Mengukur kematangan emosional dan ketahanan (resilience) dalam merespons kritik profesional.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 90,
+              "label": "Menganalisis informasi, mencari akar masalah, dan segera merencanakan perbaikan."
+            },
+            {
+              "label": "Menerima dengan pikiran terbuka, meskipun mungkin ada sedikit rasa tidak nyaman, lalu merefleksikan.",
+              "weight": 70
+            },
+            {
+              "label": "Merasa tidak nyaman namun mencoba memahami perspektif pemberi umpan balik.",
+              "weight": 50
+            },
+            {
+              "label": "Cenderung defensif dan mencari pembenaran atas tindakan saya.",
+              "weight": 30
+            },
+            {
+              "weight": 10,
+              "label": "Menolak umpan balik tersebut karena merasa tidak relevan atau tidak adil."
+            }
+          ],
+          "required": true,
+          "label": "Ketika menerima **umpan balik yang menantang atau kritis**, bagaimana reaksi pertama Anda?",
+          "type": "radio",
+          "id": "menerimaUmpanBalik"
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan faktor yang membuat Anda merasa **defensif** saat menerima umpan balik.",
+          "aiReasoning": "Memahami pemicu perilaku defensif untuk menentukan strategi pengembangan soft skill yang tepat.",
+          "gridSpan": 2,
+          "showIf": {
+            "equals": "Cenderung defensif dan mencari pembenaran atas tindakan saya.",
+            "fieldId": "menerimaUmpanBalik"
+          },
+          "id": "alasanDefensifUmpanBalik",
+          "type": "textarea"
+        },
+        {
+          "showIf": {
+            "fieldId": "menerimaUmpanBalik",
+            "equals": "Menolak umpan balik tersebut karena merasa tidak relevan atau tidak adil."
+          },
+          "id": "alasanMenolakUmpanBalik",
+          "type": "textarea",
+          "label": "Mohon jelaskan alasan Anda **menolak umpan balik** tersebut.",
+          "required": true,
+          "aiReasoning": "Menganalisis rasionalisasi individu dalam menolak masukan eksternal.",
+          "gridSpan": 2
+        },
+        {
+          "label": "Seberapa fleksibel Anda dalam menyesuaikan **gaya komunikasi** agar efektif di lingkungan tim yang beragam?",
+          "required": true,
+          "options": [
+            {
+              "label": "Sangat fleksibel, saya secara aktif menyesuaikan pendekatan komunikasi untuk setiap audiens.",
+              "weight": 95
+            },
+            {
+              "label": "Cukup fleksibel, saya berusaha menyesuaikan jika diperlukan.",
+              "weight": 75
+            },
+            {
+              "label": "Kadang-kadang fleksibel, tergantung pada situasi dan tingkat kepentingan.",
+              "weight": 55
+            },
+            {
+              "label": "Jarang fleksibel, saya cenderung menggunakan gaya komunikasi standar saya.",
+              "weight": 35
+            },
+            {
+              "label": "Tidak fleksibel, saya percaya orang lain yang harus beradaptasi dengan gaya saya.",
+              "weight": 15
+            }
+          ],
+          "aiReasoning": "Menilai kemampuan adaptasi interpersonal sebagai kunci kolaborasi dalam tim yang heterogen.",
+          "gridSpan": 2,
+          "id": "adaptasiGayaKomunikasi",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "fieldId": "adaptasiGayaKomunikasi",
+            "equals": "Tidak fleksibel, saya percaya orang lain yang harus beradaptasi dengan gaya saya."
+          },
+          "type": "textarea",
+          "id": "alasanTidakFleksibelKomunikasi",
+          "aiReasoning": "Menggali pola pikir kaku dalam komunikasi yang dapat menghambat efektivitas kolaborasi.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda merasa **tidak perlu menyesuaikan gaya komunikasi** Anda."
+        },
+        {
+          "gridSpan": 2,
+          "required": true,
+          "label": "Bagaimana Anda membangun dan memelihara **hubungan profesional yang kuat** dan saling percaya, terutama dalam konteks perubahan yang cepat?",
+          "description": "Jelaskan strategi atau tindakan konkret yang Anda lakukan.",
+          "id": "membangunKepercayaan",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "kolaborasiLintasFungsi",
+            "equals": "Saya secara proaktif mencari peluang kolaborasi dan membangun jembatan antar tim."
+          }
+        },
+        {
+          "id": "resolusiKonflik",
+          "type": "radio",
+          "aiReasoning": "Mengukur kematangan dalam manajemen konflik sebagai prasyarat kolaborasi yang sehat.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Saya memfasilitasi diskusi terbuka, mencari akar masalah, dan mendorong solusi kolaboratif yang menguntungkan semua pihak.",
+              "weight": 90
+            },
+            {
+              "label": "Saya mencoba memahami semua perspektif dan mencari titik temu atau kompromi yang adil.",
+              "weight": 70
+            },
+            {
+              "label": "Saya menunggu pihak yang terlibat untuk mengambil inisiatif, namun siap berkontribusi jika diminta.",
+              "weight": 50
+            },
+            {
+              "label": "Saya cenderung menghindari konflik sebisa mungkin, berharap masalah akan selesai dengan sendirinya.",
+              "weight": 30
+            },
+            {
+              "label": "Saya cenderung memaksakan pandangan saya jika saya yakin itu adalah solusi terbaik.",
+              "weight": 10
+            }
+          ],
+          "required": true,
+          "label": "Ketika terjadi **perbedaan pendapat atau konflik** dalam tim, bagaimana pendekatan Anda untuk menyelesaikannya?"
+        },
+        {
+          "aiReasoning": "Mengidentifikasi ketakutan atau ketidakmampuan dalam menghadapi konfrontasi konstruktif.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda memilih pendekatan **menghindari konflik**.",
+          "type": "textarea",
+          "id": "alasanMenghindariKonflik",
+          "showIf": {
+            "equals": "Saya cenderung menghindari konflik sebisa mungkin, berharap masalah akan selesai dengan sendirinya.",
+            "fieldId": "resolusiKonflik"
+          }
+        },
+        {
+          "type": "textarea",
+          "id": "alasanMemaksakanPandangan",
+          "showIf": {
+            "equals": "Saya cenderung memaksakan pandangan saya jika saya yakin itu adalah solusi terbaik.",
+            "fieldId": "resolusiKonflik"
+          },
+          "aiReasoning": "Menganalisis kecenderungan otoriter atau kurangnya keterbukaan dalam pengambilan keputusan bersama.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda memilih pendekatan **memaksakan pandangan** Anda."
+        },
+        {
+          "type": "radio",
+          "id": "mempengaruhiRekanKerja",
+          "options": [
+            {
+              "label": "Sangat sering, saya memiliki kemampuan persuasif yang kuat dan didukung data.",
+              "weight": 90
+            },
+            {
+              "weight": 70,
+              "label": "Sering, saya bisa meyakinkan orang lain dengan argumen yang logis."
+            },
+            {
+              "label": "Kadang-kadang, tergantung pada kompleksitas ide dan audiens.",
+              "weight": 50
+            },
+            {
+              "label": "Jarang, saya kesulitan meyakinkan orang lain yang memiliki pandangan berbeda.",
+              "weight": 30
+            },
+            {
+              "label": "Tidak pernah, saya lebih suka mengikuti konsensus yang ada.",
+              "weight": 10
+            }
+          ],
+          "aiReasoning": "Menilai kemampuan persuasi dan kepemimpinan informal dalam mendorong perubahan.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Seberapa sering Anda berhasil **meyakinkan rekan kerja** untuk mengadopsi ide atau pendekatan baru yang awalnya mereka ragukan?"
+        },
+        {
+          "showIf": {
+            "equals": "Sangat sering, saya memiliki kemampuan persuasif yang kuat dan didukung data.",
+            "fieldId": "mempengaruhiRekanKerja"
+          },
+          "id": "contohMempengaruhiRekanKerja",
+          "type": "textarea",
+          "label": "Mohon berikan satu contoh singkat di mana Anda berhasil meyakinkan rekan kerja untuk **mengadopsi ide baru**.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Memvalidasi kemampuan persuasi melalui bukti keberhasilan implementasi ide."
+        },
+        {
+          "showIf": {
+            "fieldId": "mempengaruhiRekanKerja",
+            "equals": "Tidak pernah, saya lebih suka mengikuti konsensus yang ada."
+          },
+          "type": "textarea",
+          "id": "alasanTidakPernahMempengaruhi",
+          "aiReasoning": "Menggali alasan di balik sikap pasif dalam pengambilan keputusan atau inovasi.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda lebih memilih **mengikuti konsensus** yang ada."
+        },
+        {
+          "required": true,
+          "label": "Apakah Anda pernah secara proaktif menawarkan **bimbingan atau dukungan** kepada rekan kerja dalam mengembangkan keterampilan baru?",
+          "options": [
+            {
+              "label": "Ya, secara rutin saya aktif membimbing dan berbagi pengetahuan.",
+              "weight": 95
+            },
+            {
+              "label": "Ya, kadang-kadang saya menawarkan bantuan jika melihat ada kebutuhan.",
+              "weight": 75
+            },
+            {
+              "label": "Jarang, saya fokus pada pengembangan diri sendiri.",
+              "weight": 45
+            },
+            {
+              "label": "Tidak pernah, saya merasa itu bukan tanggung jawab saya.",
+              "weight": 15
+            }
+          ],
+          "aiReasoning": "Mengukur kontribusi individu terhadap pengembangan kapabilitas kolektif tim.",
+          "gridSpan": 2,
+          "type": "radio",
+          "id": "mentoringCoaching"
+        },
+        {
+          "showIf": {
+            "equals": "Ya, secara rutin saya aktif membimbing dan berbagi pengetahuan.",
+            "fieldId": "mentoringCoaching"
+          },
+          "id": "contohMentoringCoaching",
+          "type": "textarea",
+          "gridSpan": 2,
+          "aiReasoning": "Memvalidasi komitmen individu dalam berbagi pengetahuan dan pengembangan orang lain.",
+          "label": "Mohon berikan satu contoh singkat bagaimana Anda **membimbing rekan kerja** dalam mengembangkan keterampilan baru.",
+          "required": true
+        },
+        {
+          "type": "textarea",
+          "id": "alasanTidakPernahMentoring",
+          "showIf": {
+            "equals": "Tidak pernah, saya merasa itu bukan tanggung jawab saya.",
+            "fieldId": "mentoringCoaching"
+          },
+          "aiReasoning": "Mengidentifikasi hambatan budaya atau pola pikir individualis dalam organisasi.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda merasa **bimbingan rekan kerja** bukan tanggung jawab Anda."
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Menilai kemampuan adaptasi teknis dan komunikasi dalam ekosistem kerja digital.",
+          "required": true,
+          "label": "Dalam lingkungan kerja jarak jauh, bagaimana Anda memastikan **kolaborasi tetap efektif dan inklusif**?",
+          "type": "textarea",
+          "id": "kolaborasiVirtual"
+        },
+        {
+          "type": "radio",
+          "id": "keterbukaanIdeBaru",
+          "required": true,
+          "label": "Seberapa terbuka Anda terhadap **ide-ide baru** yang diusulkan rekan kerja, meskipun bertentangan dengan pandangan awal Anda?",
+          "options": [
+            {
+              "label": "Sangat terbuka dan antusias, saya selalu mencari perspektif baru untuk memperkaya solusi.",
+              "weight": 95
+            },
+            {
+              "label": "Cukup terbuka untuk mempertimbangkan, saya akan mengevaluasi secara objektif.",
+              "weight": 75
+            },
+            {
+              "weight": 55,
+              "label": "Terbuka jika ada bukti kuat atau argumen yang sangat meyakinkan."
+            },
+            {
+              "label": "Cenderung skeptis dan lebih memilih pendekatan yang sudah terbukti.",
+              "weight": 35
+            },
+            {
+              "weight": 15,
+              "label": "Menolak ide yang berbeda jika tidak sesuai dengan pandangan saya."
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur fleksibilitas kognitif dan keterbukaan terhadap inovasi dari perspektif orang lain."
+        },
+        {
+          "id": "alasanSkeptisIdeBaru",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Cenderung skeptis dan lebih memilih pendekatan yang sudah terbukti.",
+            "fieldId": "keterbukaanIdeBaru"
+          },
+          "gridSpan": 2,
+          "aiReasoning": "Menganalisis preferensi terhadap status quo dibandingkan inovasi.",
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda cenderung **skeptis terhadap ide baru**."
+        },
+        {
+          "showIf": {
+            "equals": "Menolak ide yang berbeda jika tidak sesuai dengan pandangan saya.",
+            "fieldId": "keterbukaanIdeBaru"
+          },
+          "id": "alasanMenolakIdeBaru",
+          "type": "textarea",
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda **menolak ide baru** yang berbeda.",
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi hambatan psikologis dalam menerima perubahan atau perspektif alternatif."
+        }
+      ],
+      "stepNumber": 2
+    },
+    {
+      "stepNumber": 3,
+      "description": "Penilaian reaksi terhadap perubahan mendadak dalam model bisnis atau restrukturisasi.",
+      "fields": [
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur tingkat kenyamanan individu terhadap ketidakpastian sebagai indikator utama resiliensi perubahan.",
+          "options": [
+            {
+              "label": "Sangat nyaman dan proaktif mencari solusi",
+              "weight": 90
+            },
+            {
+              "label": "Cukup nyaman dan beradaptasi dengan baik",
+              "weight": 70
+            },
+            {
+              "weight": 50,
+              "label": "Agak tidak nyaman namun tetap berusaha beradaptasi"
+            },
+            {
+              "label": "Sangat tidak nyaman dan merasa kesulitan",
+              "weight": 20
+            }
+          ],
+          "required": true,
+          "label": "Bagaimana Anda menyikapi **situasi kerja yang tidak jelas** atau sering berubah tanpa panduan yang pasti?",
+          "id": "toleransiAmbiguitas",
+          "type": "radio"
+        },
+        {
+          "id": "justifikasiAmbiguitas",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "toleransiAmbiguitas",
+            "equals": "Sangat tidak nyaman dan merasa kesulitan"
+          },
+          "gridSpan": 2,
+          "aiReasoning": "Menggali akar penyebab hambatan psikologis individu saat menghadapi ambiguitas.",
+          "label": "Mohon jelaskan mengapa Anda merasa **sangat tidak nyaman** dan kesulitan dalam situasi tersebut.",
+          "required": true
+        },
+        {
+          "options": [
+            {
+              "label": "Langsung beradaptasi dan mencari cara untuk mengoptimalkan",
+              "weight": 95
+            },
+            {
+              "label": "Membutuhkan sedikit waktu untuk memahami, lalu beradaptasi",
+              "weight": 75
+            },
+            {
+              "label": "Merasa keberatan namun pada akhirnya beradaptasi",
+              "weight": 45
+            },
+            {
+              "label": "Menolak perubahan dan mencari alasan untuk tidak menerapkannya",
+              "weight": 15
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai kecepatan dan sikap adaptasi operasional saat terjadi pergeseran strategis.",
+          "required": true,
+          "label": "Ketika **proses kerja atau model bisnis** di tim Anda berubah drastis, bagaimana reaksi awal Anda?",
+          "type": "radio",
+          "id": "adaptasiProsesKerja"
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan alasan Anda **menolak atau mencari alasan** untuk tidak menerapkan perubahan tersebut.",
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi hambatan resistensi terhadap perubahan sistemik.",
+          "id": "justifikasiPenolakanPerubahan",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "adaptasiProsesKerja",
+            "equals": "Menolak perubahan dan mencari alasan untuk tidak menerapkannya"
+          }
+        },
+        {
+          "id": "inisiasiPerubahan",
+          "type": "radio",
+          "label": "Seberapa sering Anda **menginisiasi atau mengusulkan perubahan** pada cara kerja, bahkan sebelum diminta?",
+          "required": true,
+          "options": [
+            {
+              "weight": 90,
+              "label": "Sangat sering, saya proaktif mencari perbaikan"
+            },
+            {
+              "label": "Cukup sering, jika ada peluang yang jelas",
+              "weight": 70
+            },
+            {
+              "label": "Kadang-kadang, jika benar-benar diperlukan",
+              "weight": 50
+            },
+            {
+              "weight": 25,
+              "label": "Jarang sekali, saya lebih suka mengikuti arahan"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur tingkat proaktifitas dan kepemimpinan dalam mendorong perbaikan berkelanjutan."
+        },
+        {
+          "aiReasoning": "Memahami batasan atau preferensi individu dalam mengambil inisiatif perubahan.",
+          "gridSpan": 2,
+          "label": "Mohon jelaskan mengapa Anda **jarang sekali menginisiasi perubahan** dan lebih suka mengikuti arahan.",
+          "required": true,
+          "showIf": {
+            "equals": "Jarang sekali, saya lebih suka mengikuti arahan",
+            "fieldId": "inisiasiPerubahan"
+          },
+          "id": "justifikasiJarangInisiasi",
+          "type": "textarea"
+        },
+        {
+          "type": "radio",
+          "id": "peluangDisrupsi",
+          "label": "Dalam menghadapi **disrupsi teknologi atau perubahan pasar**, apakah Anda cenderung melihatnya sebagai ancaman atau peluang?",
+          "required": true,
+          "options": [
+            {
+              "label": "Selalu sebagai peluang untuk inovasi dan pertumbuhan",
+              "weight": 95
+            },
+            {
+              "weight": 75,
+              "label": "Lebih banyak peluang daripada ancaman"
+            },
+            {
+              "label": "Seimbang antara peluang dan ancaman",
+              "weight": 55
+            },
+            {
+              "weight": 35,
+              "label": "Lebih banyak ancaman daripada peluang"
+            },
+            {
+              "label": "Selalu sebagai ancaman yang harus dihindari",
+              "weight": 10
+            }
+          ],
+          "aiReasoning": "Mengevaluasi pola pikir (growth mindset) dalam merespons tantangan eksternal yang disruptif.",
+          "gridSpan": 2
+        },
+        {
+          "showIf": {
+            "fieldId": "peluangDisrupsi",
+            "equals": "Selalu sebagai ancaman yang harus dihindari"
+          },
+          "id": "justifikasiAncamanDisrupsi",
+          "type": "textarea",
+          "gridSpan": 2,
+          "aiReasoning": "Menggali ketakutan atau keterbatasan perspektif dalam menghadapi perubahan industri.",
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda selalu melihat disrupsi sebagai **ancaman yang harus dihindari**."
+        },
+        {
+          "type": "radio",
+          "id": "belajarKegagalanPerubahan",
+          "options": [
+            {
+              "weight": 90,
+              "label": "Menganalisis penyebab kegagalan dan mengambil pelajaran untuk perbaikan"
+            },
+            {
+              "weight": 70,
+              "label": "Mengevaluasi kembali strategi dan mencoba pendekatan lain"
+            },
+            {
+              "label": "Merasa kecewa namun tetap melanjutkan tugas lain",
+              "weight": 40
+            },
+            {
+              "weight": 20,
+              "label": "Menyalahkan faktor eksternal dan kehilangan motivasi"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai ketangguhan (resiliensi) dan kemampuan refleksi diri setelah mengalami kegagalan.",
+          "label": "Ketika sebuah **inisiatif perubahan** yang Anda dukung tidak berjalan sesuai rencana, apa yang Anda lakukan?",
+          "required": true
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Menganalisis kecenderungan locus of control eksternal saat menghadapi kegagalan.",
+          "label": "Mohon jelaskan mengapa Anda **menyalahkan faktor eksternal** dan kehilangan motivasi saat inisiatif perubahan gagal.",
+          "required": true,
+          "type": "textarea",
+          "id": "justifikasiKegagalan",
+          "showIf": {
+            "fieldId": "belajarKegagalanPerubahan",
+            "equals": "Menyalahkan faktor eksternal dan kehilangan motivasi"
+          }
+        },
+        {
+          "id": "kesiapanEksperimen",
+          "type": "radio",
+          "label": "Seberapa bersedia Anda mencoba **pendekatan atau alat baru** yang belum terbukti efektif di lingkungan kerja Anda?",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur keterbukaan terhadap inovasi dan toleransi terhadap risiko eksperimental.",
+          "options": [
+            {
+              "label": "Sangat bersedia, saya suka bereksperimen",
+              "weight": 95
+            },
+            {
+              "weight": 75,
+              "label": "Cukup bersedia, jika ada potensi manfaat"
+            },
+            {
+              "weight": 45,
+              "label": "Agak ragu, saya lebih suka metode yang sudah teruji"
+            },
+            {
+              "label": "Sangat enggan, saya khawatir akan risiko kegagalan",
+              "weight": 15
+            }
+          ]
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi faktor penghambat utama dalam adopsi teknologi atau metode baru.",
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda **sangat enggan** mencoba pendekatan atau alat baru.",
+          "showIf": {
+            "fieldId": "kesiapanEksperimen",
+            "equals": "Sangat enggan, saya khawatir akan risiko kegagalan"
+          },
+          "id": "justifikasiEngganEksperimen",
+          "type": "textarea"
+        },
+        {
+          "id": "mengelolaStresPerubahan",
+          "type": "radio",
+          "label": "Bagaimana Anda mengelola **tingkat stres atau tekanan** saat menghadapi periode perubahan yang intens?",
+          "required": true,
+          "aiReasoning": "Menilai kematangan emosional dan mekanisme koping dalam situasi bertekanan tinggi.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 90,
+              "label": "Sangat efektif, saya memiliki strategi coping yang baik"
+            },
+            {
+              "label": "Cukup efektif, saya bisa mengatasinya meskipun butuh usaha",
+              "weight": 70
+            },
+            {
+              "label": "Kurang efektif, saya sering merasa kewalahan",
+              "weight": 40
+            },
+            {
+              "label": "Tidak efektif, saya kesulitan menghadapi tekanan perubahan",
+              "weight": 20
+            }
+          ]
+        },
+        {
+          "showIf": {
+            "equals": "Tidak efektif, saya kesulitan menghadapi tekanan perubahan",
+            "fieldId": "mengelolaStresPerubahan"
+          },
+          "id": "penjelasanStresTidakEfektif",
+          "type": "textarea",
+          "label": "Mohon jelaskan mengapa Anda merasa **tidak efektif** dalam mengelola stres atau tekanan akibat perubahan.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Menggali tantangan spesifik yang dihadapi individu dalam manajemen stres."
+        },
+        {
+          "label": "Seberapa aktif Anda membantu **rekan kerja atau tim** untuk beradaptasi dengan perubahan yang terjadi?",
+          "required": true,
+          "options": [
+            {
+              "label": "Sangat aktif, saya proaktif membimbing dan berbagi",
+              "weight": 95
+            },
+            {
+              "label": "Cukup aktif, saya membantu jika diminta",
+              "weight": 75
+            },
+            {
+              "weight": 45,
+              "label": "Pasif, saya fokus pada adaptasi diri sendiri"
+            },
+            {
+              "label": "Menghindar, saya tidak terlibat dalam proses adaptasi orang lain",
+              "weight": 15
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur peran individu sebagai agen perubahan (change agent) bagi lingkungan sekitarnya.",
+          "type": "radio",
+          "id": "dukunganRekanAdaptasi"
+        },
+        {
+          "showIf": {
+            "equals": "Menghindar, saya tidak terlibat dalam proses adaptasi orang lain",
+            "fieldId": "dukunganRekanAdaptasi"
+          },
+          "type": "textarea",
+          "id": "justifikasiMenghindarDukungan",
+          "gridSpan": 2,
+          "aiReasoning": "Memahami hambatan kolaborasi dalam konteks manajemen perubahan.",
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda memilih untuk **menghindar** dan tidak terlibat dalam proses adaptasi orang lain."
+        },
+        {
+          "id": "pengalamanMemimpinPerubahan",
+          "type": "radio",
+          "required": true,
+          "label": "Apakah Anda pernah **memimpin atau menjadi bagian inti** dari proyek perubahan signifikan di lingkungan kerja Anda?",
+          "aiReasoning": "Menilai rekam jejak kepemimpinan dalam mengelola transisi organisasi.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Ya, sering memimpin inisiatif perubahan",
+              "weight": 90
+            },
+            {
+              "label": "Ya, kadang terlibat sebagai bagian inti",
+              "weight": 70
+            },
+            {
+              "label": "Belum pernah secara langsung memimpin atau menjadi bagian inti",
+              "weight": 30
+            }
+          ]
+        },
+        {
+          "required": true,
+          "label": "Mohon deskripsikan secara singkat **proyek perubahan** yang pernah Anda pimpin.",
+          "gridSpan": 2,
+          "aiReasoning": "Memvalidasi pengalaman praktis dalam memimpin inisiatif perubahan.",
+          "type": "textarea",
+          "id": "deskripsiMemimpinPerubahan",
+          "showIf": {
+            "fieldId": "pengalamanMemimpinPerubahan",
+            "equals": "Ya, sering memimpin inisiatif perubahan"
+          }
+        },
+        {
+          "label": "Mohon deskripsikan secara singkat **peran Anda** dalam proyek perubahan tersebut.",
+          "required": true,
+          "aiReasoning": "Memvalidasi kontribusi spesifik dalam proyek perubahan.",
+          "gridSpan": 2,
+          "id": "deskripsiTerlibatPerubahan",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Ya, kadang terlibat sebagai bagian inti",
+            "fieldId": "pengalamanMemimpinPerubahan"
+          }
+        },
+        {
+          "id": "refleksiAdaptasiPribadi",
+          "type": "textarea",
+          "label": "Ceritakan satu contoh **perubahan besar** dalam karier atau hidup Anda. Apa pelajaran terpenting yang Anda petik?",
+          "required": true,
+          "aiReasoning": "Mengukur kemampuan refleksi kritis dan pembelajaran dari pengalaman adaptasi masa lalu.",
+          "gridSpan": 2
+        }
+      ],
+      "title": "Change Agility: Resiliensi Perubahan"
+    },
+    {
+      "fields": [
+        {
+          "options": [
+            {
+              "label": "Saya segera mencari solusi alternatif dan menyesuaikan rencana.",
+              "weight": 90
+            },
+            {
+              "label": "Saya menganalisis masalah untuk memahami akar penyebabnya sebelum bertindak.",
+              "weight": 70
+            },
+            {
+              "label": "Saya merasa frustrasi dan cenderung menunda penyelesaian masalah.",
+              "weight": 40
+            },
+            {
+              "weight": 10,
+              "label": "Saya cenderung menyerah jika hambatan terlalu besar."
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur ketahanan mental dan kemampuan pemecahan masalah secara proaktif saat menghadapi situasi krisis.",
+          "required": true,
+          "label": "Ketika Anda menghadapi **hambatan besar yang tidak terduga** dalam mencapai tujuan pribadi atau proyek belajar, bagaimana reaksi Anda?",
+          "id": "ra_hambatan",
+          "type": "radio"
+        },
+        {
+          "label": "Jelaskan contoh situasi dan solusi Anda saat **mencari alternatif** dan menyesuaikan rencana.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Memvalidasi kemampuan eksekusi strategis melalui bukti nyata dari tindakan proaktif yang diambil.",
+          "id": "ra_hambatan_solusi",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "ra_hambatan",
+            "equals": "Saya segera mencari solusi alternatif dan menyesuaikan rencana."
+          }
+        },
+        {
+          "required": true,
+          "label": "Mengapa Anda cenderung **menyerah** jika hambatan terlalu besar? Apa yang bisa membantu Anda?",
+          "aiReasoning": "Mengidentifikasi hambatan psikologis atau kurangnya dukungan yang menyebabkan penurunan motivasi.",
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "ra_hambatan_menyerah",
+          "showIf": {
+            "fieldId": "ra_hambatan",
+            "equals": "Saya cenderung menyerah jika hambatan terlalu besar."
+          }
+        },
+        {
+          "required": true,
+          "label": "Bagaimana kemampuan Anda untuk tetap **fokus pada tujuan utama** saat berada dalam situasi yang sangat menekan atau krisis pribadi?",
+          "options": [
+            {
+              "label": "Saya selalu dapat mempertahankan fokus dan prioritas dengan jelas.",
+              "weight": 95
+            },
+            {
+              "label": "Saya bisa fokus, tetapi membutuhkan waktu lebih untuk menenangkan diri.",
+              "weight": 75
+            },
+            {
+              "label": "Fokus saya sering terganggu, sulit menentukan prioritas.",
+              "weight": 45
+            },
+            {
+              "label": "Saya kesulitan berfungsi dan kehilangan arah saat di bawah tekanan.",
+              "weight": 15
+            }
+          ],
+          "aiReasoning": "Menilai stabilitas emosional dan kemampuan kognitif dalam menjaga prioritas di tengah tekanan tinggi.",
+          "gridSpan": 2,
+          "id": "ra_fokusTekanan",
+          "type": "radio"
+        },
+        {
+          "required": true,
+          "label": "Berikan contoh bagaimana Anda **mempertahankan fokus** dalam situasi krisis.",
+          "gridSpan": 2,
+          "aiReasoning": "Memverifikasi konsistensi perilaku dalam menjaga fokus melalui pengalaman nyata.",
+          "id": "ra_fokusTekanan_contoh",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "ra_fokusTekanan",
+            "equals": "Saya selalu dapat mempertahankan fokus dan prioritas dengan jelas."
+          }
+        },
+        {
+          "label": "Apa **tantangan terbesar** Anda dalam menjaga fokus di bawah tekanan?",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Menganalisis faktor penghambat utama yang mengganggu kinerja individu saat berada di bawah tekanan.",
+          "type": "textarea",
+          "id": "ra_fokusTekanan_tantangan",
+          "showIf": {
+            "equals": "Saya kesulitan berfungsi dan kehilangan arah saat di bawah tekanan.",
+            "fieldId": "ra_fokusTekanan"
+          }
+        },
+        {
+          "type": "radio",
+          "id": "ra_belajarGagal",
+          "aiReasoning": "Mengevaluasi pola pikir pertumbuhan (growth mindset) dan kemampuan refleksi diri pasca-kegagalan.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 90,
+              "label": "Saya segera menganalisis penyebab kegagalan, belajar darinya, dan merumuskan strategi baru."
+            },
+            {
+              "weight": 65,
+              "label": "Saya merefleksikan apa yang salah, tetapi terkadang sulit untuk mengambil langkah selanjutnya."
+            },
+            {
+              "weight": 35,
+              "label": "Saya merasa kecewa dan cenderung menghindari topik tersebut untuk sementara waktu."
+            },
+            {
+              "label": "Saya cenderung menyalahkan faktor eksternal atau orang lain.",
+              "weight": 10
+            }
+          ],
+          "required": true,
+          "label": "Ketika sebuah inisiatif pribadi atau proyek belajar **tidak mencapai hasil** yang diharapkan, apa respons Anda?"
+        },
+        {
+          "showIf": {
+            "fieldId": "ra_belajarGagal",
+            "equals": "Saya segera menganalisis penyebab kegagalan, belajar darinya, dan merumuskan strategi baru."
+          },
+          "id": "ra_belajarGagal_bangkit",
+          "type": "textarea",
+          "gridSpan": 2,
+          "aiReasoning": "Mengonfirmasi kemampuan individu dalam mengubah kegagalan menjadi pembelajaran yang konstruktif.",
+          "label": "Ceritakan pengalaman di mana Anda **belajar dari kegagalan** dan berhasil bangkit.",
+          "required": true
+        },
+        {
+          "showIf": {
+            "equals": "Saya cenderung menyalahkan faktor eksternal atau orang lain.",
+            "fieldId": "ra_belajarGagal"
+          },
+          "type": "textarea",
+          "id": "ra_belajarGagal_menyalahkan",
+          "required": true,
+          "label": "Menurut Anda, mengapa Anda cenderung **menyalahkan faktor eksternal**?",
+          "aiReasoning": "Mengeksplorasi mekanisme pertahanan diri yang menghambat akuntabilitas pribadi.",
+          "gridSpan": 2
+        },
+        {
+          "aiReasoning": "Mengukur tingkat inisiatif dan orientasi pada perbaikan berkelanjutan (kaizen) dalam bekerja.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Sangat sering, saya selalu mencari cara untuk meningkatkan efisiensi.",
+              "weight": 95
+            },
+            {
+              "label": "Cukup sering, saya mencoba berinovasi jika ada kesempatan.",
+              "weight": 70
+            },
+            {
+              "label": "Kadang-kadang, jika masalahnya sangat mengganggu.",
+              "weight": 40
+            },
+            {
+              "label": "Jarang, saya lebih suka mengikuti metode yang sudah ada.",
+              "weight": 15
+            }
+          ],
+          "required": true,
+          "label": "Seberapa sering Anda secara proaktif **mengidentifikasi inefisiensi** dalam alur kerja pribadi dan menerapkan solusi baru tanpa diminta?",
+          "id": "ra_inovasiProses",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "equals": "Sangat sering, saya selalu mencari cara untuk meningkatkan efisiensi.",
+            "fieldId": "ra_inovasiProses"
+          },
+          "id": "ra_inovasiProses_contoh",
+          "type": "textarea",
+          "label": "Berikan contoh **inovasi** yang pernah Anda terapkan dalam alur kerja pribadi Anda.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Memvalidasi kemampuan teknis dan kreativitas dalam mengoptimalkan proses kerja."
+        },
+        {
+          "required": true,
+          "label": "Apa yang membuat Anda **enggan mencoba metode baru**?",
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi resistensi terhadap perubahan dan preferensi terhadap status quo.",
+          "type": "textarea",
+          "id": "ra_inovasiProses_enggan",
+          "showIf": {
+            "fieldId": "ra_inovasiProses",
+            "equals": "Jarang, saya lebih suka mengikuti metode yang sudah ada."
+          }
+        },
+        {
+          "type": "radio",
+          "id": "ra_sumberDaya",
+          "aiReasoning": "Menilai kreativitas dan ketangguhan dalam mengelola keterbatasan untuk mencapai hasil.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Saya secara kreatif mencari alternatif atau memanfaatkan sumber daya yang ada secara maksimal.",
+              "weight": 90
+            },
+            {
+              "label": "Saya mencoba mencari solusi, tetapi terkadang merasa terhambat.",
+              "weight": 60
+            },
+            {
+              "weight": 30,
+              "label": "Saya cenderung menunda atau mengurangi ambisi tujuan tersebut."
+            },
+            {
+              "label": "Saya merasa tidak berdaya dan seringkali menyerah pada tujuan tersebut.",
+              "weight": 10
+            }
+          ],
+          "label": "Ketika dihadapkan pada **keterbatasan sumber daya** (waktu, alat, informasi) untuk mencapai tujuan, bagaimana Anda biasanya bertindak?",
+          "required": true
+        },
+        {
+          "showIf": {
+            "fieldId": "ra_sumberDaya",
+            "equals": "Saya secara kreatif mencari alternatif atau memanfaatkan sumber daya yang ada secara maksimal."
+          },
+          "id": "ra_sumberDaya_atasi",
+          "type": "textarea",
+          "aiReasoning": "Memverifikasi kemampuan pemecahan masalah secara kreatif dalam kondisi terbatas.",
+          "gridSpan": 2,
+          "label": "Bagikan contoh bagaimana Anda **mengatasi keterbatasan** sumber daya.",
+          "required": true
+        },
+        {
+          "label": "Apa yang bisa **memotivasi Anda** untuk tetap mencari solusi dalam keterbatasan?",
+          "required": true,
+          "aiReasoning": "Menggali pemicu motivasi intrinsik atau ekstrinsik yang dapat membantu individu bangkit dari rasa tidak berdaya.",
+          "gridSpan": 2,
+          "id": "ra_sumberDaya_motivasi",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Saya merasa tidak berdaya dan seringkali menyerah pada tujuan tersebut.",
+            "fieldId": "ra_sumberDaya"
+          }
+        },
+        {
+          "type": "radio",
+          "id": "ra_risikoTerukur",
+          "label": "Apakah Anda bersedia mengambil **risiko terukur** dalam proyek pribadi jika itu meningkatkan peluang terobosan, meskipun ada potensi kegagalan?",
+          "required": true,
+          "options": [
+            {
+              "weight": 90,
+              "label": "Ya, saya sering mengambil risiko terukur setelah mempertimbangkan konsekuensinya."
+            },
+            {
+              "weight": 70,
+              "label": "Ya, tetapi hanya jika potensi keuntungannya sangat besar dan risikonya minimal."
+            },
+            {
+              "label": "Tidak terlalu, saya lebih suka pendekatan yang aman dan pasti.",
+              "weight": 40
+            },
+            {
+              "label": "Tidak, saya menghindari risiko sebisa mungkin.",
+              "weight": 10
+            }
+          ],
+          "aiReasoning": "Mengukur keberanian dalam mengambil keputusan strategis yang berisiko namun berpotensi tinggi.",
+          "gridSpan": 2
+        },
+        {
+          "id": "ra_risikoTerukur_contoh",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Ya, saya sering mengambil risiko terukur setelah mempertimbangkan konsekuensinya.",
+            "fieldId": "ra_risikoTerukur"
+          },
+          "label": "Ceritakan pengalaman di mana Anda mengambil **risiko terukur** dan hasilnya.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Mengevaluasi kemampuan analisis risiko dan pengambilan keputusan berbasis data."
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi ketakutan atau hambatan mental yang membatasi pengambilan risiko yang sehat.",
+          "label": "Apa yang membuat Anda **enggan mengambil risiko**, bahkan yang terukur?",
+          "required": true,
+          "showIf": {
+            "fieldId": "ra_risikoTerukur",
+            "equals": "Tidak, saya menghindari risiko sebisa mungkin."
+          },
+          "id": "ra_risikoTerukur_enggan",
+          "type": "textarea"
+        },
+        {
+          "required": true,
+          "label": "Seberapa cepat Anda **menyesuaikan tujuan** atau strategi pribadi ketika keadaan eksternal membuat rencana awal kurang efektif?",
+          "aiReasoning": "Menilai fleksibilitas kognitif dan kecepatan adaptasi terhadap perubahan lingkungan.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Sangat cepat dan efektif, saya selalu siap mengubah arah.",
+              "weight": 95
+            },
+            {
+              "label": "Cukup cepat, saya bisa beradaptasi setelah mengevaluasi situasi.",
+              "weight": 75
+            },
+            {
+              "label": "Lambat, saya cenderung berpegang pada rencana awal selama mungkin.",
+              "weight": 45
+            },
+            {
+              "label": "Sangat lambat atau enggan, saya kesulitan menerima perubahan rencana.",
+              "weight": 15
+            }
+          ],
+          "id": "ra_adaptasiTujuan",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "fieldId": "ra_adaptasiTujuan",
+            "equals": "Sangat cepat dan efektif, saya selalu siap mengubah arah."
+          },
+          "id": "ra_adaptasiTujuan_contoh",
+          "type": "textarea",
+          "required": true,
+          "label": "Berikan contoh bagaimana Anda dengan cepat **menyesuaikan tujuan** pribadi Anda.",
+          "aiReasoning": "Memvalidasi kemampuan eksekusi dalam melakukan pivot strategi secara efektif.",
+          "gridSpan": 2
+        },
+        {
+          "id": "ra_adaptasiTujuan_penghalang",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "ra_adaptasiTujuan",
+            "equals": "Sangat lambat atau enggan, saya kesulitan menerima perubahan rencana."
+          },
+          "label": "Apa yang menjadi **penghalang utama** Anda dalam menyesuaikan rencana?",
+          "required": true,
+          "aiReasoning": "Menganalisis faktor psikologis atau struktural yang menghambat kelincahan dalam beradaptasi.",
+          "gridSpan": 2
+        },
+        {
+          "id": "ra_akuntabilitas",
+          "type": "radio",
+          "options": [
+            {
+              "label": "Saya mengambil tanggung jawab penuh, menganalisis kesalahan, dan mencari solusi perbaikan.",
+              "weight": 90
+            },
+            {
+              "label": "Saya mengakui peran saya, tetapi juga mempertimbangkan faktor eksternal.",
+              "weight": 70
+            },
+            {
+              "label": "Saya cenderung mencari alasan atau menyalahkan faktor di luar kendali saya.",
+              "weight": 40
+            },
+            {
+              "label": "Saya merasa tidak nyaman dan mencoba mengalihkan perhatian dari kegagalan tersebut.",
+              "weight": 10
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur tingkat akuntabilitas pribadi dan kematangan dalam menghadapi konsekuensi.",
+          "required": true,
+          "label": "Ketika komitmen pribadi tidak menghasilkan outcome yang diinginkan, bagaimana Anda **menangani situasi** tersebut?"
+        },
+        {
+          "aiReasoning": "Memverifikasi integritas dan komitmen individu dalam memperbaiki kesalahan secara mandiri.",
+          "gridSpan": 2,
+          "label": "Ceritakan pengalaman di mana Anda mengambil **akuntabilitas penuh** dan berhasil memperbaiki situasi.",
+          "required": true,
+          "showIf": {
+            "equals": "Saya mengambil tanggung jawab penuh, menganalisis kesalahan, dan mencari solusi perbaikan.",
+            "fieldId": "ra_akuntabilitas"
+          },
+          "type": "textarea",
+          "id": "ra_akuntabilitas_perbaikan"
+        },
+        {
+          "showIf": {
+            "equals": "Saya merasa tidak nyaman dan mencoba mengalihkan perhatian dari kegagalan tersebut.",
+            "fieldId": "ra_akuntabilitas"
+          },
+          "id": "ra_akuntabilitas_tidaknyaman",
+          "type": "textarea",
+          "label": "Apa yang bisa membantu Anda untuk lebih berani **menghadapi kegagalan** dan mengambil akuntabilitas?",
+          "required": true,
+          "aiReasoning": "Mengidentifikasi dukungan yang dibutuhkan untuk meningkatkan keberanian dalam mengambil tanggung jawab.",
+          "gridSpan": 2
+        },
+        {
+          "label": "Dalam situasi dengan banyak tugas mendesak, bagaimana Anda **menentukan prioritas** untuk mencapai hasil paling berdampak?",
+          "required": true,
+          "options": [
+            {
+              "label": "Saya menggunakan metode sistematis (misal: matriks Eisenhower) untuk memprioritaskan berdasarkan dampak dan urgensi.",
+              "weight": 95
+            },
+            {
+              "label": "Saya mencoba memprioritaskan berdasarkan urgensi, tetapi terkadang kewalahan.",
+              "weight": 70
+            },
+            {
+              "label": "Saya cenderung menangani tugas yang paling mudah atau yang paling saya sukai terlebih dahulu.",
+              "weight": 40
+            },
+            {
+              "weight": 15,
+              "label": "Saya kesulitan memprioritaskan dan seringkali merasa lumpuh oleh banyaknya pilihan."
+            }
+          ],
+          "aiReasoning": "Menilai kemampuan manajemen waktu dan prioritisasi strategis di bawah beban kerja tinggi.",
+          "gridSpan": 2,
+          "type": "radio",
+          "id": "ra_prioritasKekacauan"
+        },
+        {
+          "type": "textarea",
+          "id": "ra_prioritasKekacauan_metode",
+          "showIf": {
+            "fieldId": "ra_prioritasKekacauan",
+            "equals": "Saya menggunakan metode sistematis (misal: matriks Eisenhower) untuk memprioritaskan berdasarkan dampak dan urgensi."
+          },
+          "aiReasoning": "Memvalidasi penggunaan kerangka kerja sistematis dalam mengelola kompleksitas tugas.",
+          "gridSpan": 2,
+          "label": "Jelaskan **metode prioritisasi** yang Anda gunakan dan bagaimana itu membantu Anda.",
+          "required": true
+        },
+        {
+          "required": true,
+          "label": "Apa yang menjadi **tantangan terbesar** Anda dalam memprioritaskan tugas?",
+          "aiReasoning": "Menganalisis hambatan kognitif yang menyebabkan kesulitan dalam pengambilan keputusan prioritas.",
+          "gridSpan": 2,
+          "showIf": {
+            "equals": "Saya kesulitan memprioritaskan dan seringkali merasa lumpuh oleh banyaknya pilihan.",
+            "fieldId": "ra_prioritasKekacauan"
+          },
+          "type": "textarea",
+          "id": "ra_prioritasKekacauan_tantangan"
+        },
+        {
+          "options": [
+            {
+              "weight": 90,
+              "label": "Saya menetapkan tonggak pencapaian yang jelas, memberikan penghargaan diri, dan secara teratur meninjau kemajuan."
+            },
+            {
+              "label": "Saya mencoba tetap termotivasi, tetapi terkadang semangat saya menurun tanpa hasil instan.",
+              "weight": 60
+            },
+            {
+              "label": "Motivasi saya sering memudar seiring waktu jika hasilnya tidak segera terlihat.",
+              "weight": 30
+            },
+            {
+              "weight": 10,
+              "label": "Saya kesulitan mempertahankan komitmen untuk tujuan jangka panjang yang menantang."
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur ketekunan (grit) dan kemampuan manajemen diri dalam menjaga komitmen jangka panjang.",
+          "required": true,
+          "label": "Bagaimana Anda mempertahankan **motivasi dan upaya konsisten** saat mengejar tujuan jangka panjang yang menantang?",
+          "type": "radio",
+          "id": "ra_upayaJangkaPanjang"
+        },
+        {
+          "showIf": {
+            "fieldId": "ra_upayaJangkaPanjang",
+            "equals": "Saya menetapkan tonggak pencapaian yang jelas, memberikan penghargaan diri, dan secara teratur meninjau kemajuan."
+          },
+          "type": "textarea",
+          "id": "ra_upayaJangkaPanjang_strategi",
+          "gridSpan": 2,
+          "aiReasoning": "Memverifikasi efektivitas teknik manajemen diri yang digunakan untuk menjaga konsistensi.",
+          "required": true,
+          "label": "Bagikan **strategi Anda** untuk mempertahankan motivasi jangka panjang."
+        },
+        {
+          "required": true,
+          "label": "Apa yang bisa membantu Anda untuk tetap **berkomitmen** pada tujuan jangka panjang?",
+          "aiReasoning": "Mengidentifikasi kebutuhan dukungan untuk meningkatkan ketahanan dalam mencapai tujuan jangka panjang.",
+          "gridSpan": 2,
+          "showIf": {
+            "equals": "Saya kesulitan mempertahankan komitmen untuk tujuan jangka panjang yang menantang.",
+            "fieldId": "ra_upayaJangkaPanjang"
+          },
+          "id": "ra_upayaJangkaPanjang_tantangan",
+          "type": "textarea"
+        }
+      ],
+      "title": "Results Agility: Eksekusi dalam Krisis",
+      "description": "Skenario pencapaian target di bawah tekanan sumber daya yang terbatas.",
+      "stepNumber": 4
+    },
+    {
+      "stepNumber": 5,
+      "description": "Kuesioner reflektif mengenai pengenalan titik buta (blind spots) dan motivasi belajar.",
+      "title": "Self-Awareness: Refleksi Diri",
+      "fields": [
+        {
+          "required": true,
+          "label": "Bagaimana Anda **mengidentifikasi kekuatan** dan **area pengembangan diri** Anda dalam konteks pembelajaran dan adaptasi?",
+          "options": [
+            {
+              "weight": 100,
+              "label": "Sangat jelas, saya memiliki daftar spesifik dan strategi pengembangan."
+            },
+            {
+              "label": "Cukup jelas, saya tahu beberapa namun belum terstruktur.",
+              "weight": 75
+            },
+            {
+              "label": "Kadang-kadang, saya perlu bantuan untuk mengidentifikasi.",
+              "weight": 40
+            },
+            {
+              "label": "Sulit mengidentifikasi, saya tidak yakin.",
+              "weight": 10
+            }
+          ],
+          "aiReasoning": "Pertanyaan ini mengukur tingkat kesadaran diri (self-awareness) responden terhadap kompetensi yang dimiliki dan kebutuhan pengembangan pribadinya.",
+          "gridSpan": 2,
+          "id": "identifikasiKekuatanKelemahan",
+          "type": "radio"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Pertanyaan ini bertujuan untuk menggali hambatan kognitif atau psikologis yang menghalangi responden dalam melakukan refleksi diri.",
+          "label": "Mohon jelaskan mengapa Anda merasa **sulit mengidentifikasi** kekuatan dan area pengembangan diri Anda.",
+          "required": true,
+          "showIf": {
+            "equals": "Sulit mengidentifikasi, saya tidak yakin.",
+            "fieldId": "identifikasiKekuatanKelemahan"
+          },
+          "type": "textarea",
+          "id": "alasanSulitIdentifikasi"
+        },
+        {
+          "type": "radio",
+          "id": "proaktifUmpanBalik",
+          "aiReasoning": "Mengukur keterbukaan responden terhadap perspektif eksternal sebagai instrumen untuk validasi diri dan pertumbuhan profesional.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Sangat proaktif, saya rutin meminta dan menganalisis umpan balik.",
+              "weight": 100
+            },
+            {
+              "weight": 70,
+              "label": "Cukup proaktif, saya meminta jika ada kesempatan atau kebutuhan."
+            },
+            {
+              "label": "Jarang, saya menunggu umpan balik diberikan.",
+              "weight": 30
+            },
+            {
+              "label": "Tidak pernah, saya merasa tidak nyaman.",
+              "weight": 0
+            }
+          ],
+          "label": "Seberapa **proaktif** Anda dalam mencari **umpan balik (feedback)** mengenai kinerja atau gaya belajar Anda dari rekan kerja, atasan, atau mentor?",
+          "required": true
+        },
+        {
+          "id": "alasanTidakNyamanUmpanBalik",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "proaktifUmpanBalik",
+            "equals": "Tidak pernah, saya merasa tidak nyaman."
+          },
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi resistensi psikologis atau ketakutan terhadap evaluasi yang mungkin menghambat proses pembelajaran.",
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda merasa **tidak nyaman** atau tidak pernah mencari umpan balik."
+        },
+        {
+          "required": true,
+          "label": "Bagaimana **reaksi Anda** ketika menerima **umpan balik konstruktif** yang menyoroti area yang perlu Anda kembangkan?",
+          "options": [
+            {
+              "weight": 100,
+              "label": "Menerima dengan terbuka dan segera mencari cara untuk memperbaikinya."
+            },
+            {
+              "weight": 70,
+              "label": "Menerima, namun butuh waktu untuk mencerna dan merencanakan tindakan."
+            },
+            {
+              "label": "Merasa sedikit defensif pada awalnya, namun kemudian mencoba memahami.",
+              "weight": 40
+            },
+            {
+              "weight": 10,
+              "label": "Cenderung merasa tidak nyaman atau menolak validitas umpan balik tersebut."
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengevaluasi kematangan emosional dan kemampuan responden dalam mengelola kritik sebagai katalisator perbaikan diri.",
+          "id": "reaksiKritikKonstruktif",
+          "type": "radio"
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda cenderung merasa tidak nyaman atau **menolak validitas** umpan balik konstruktif.",
+          "aiReasoning": "Menggali pola pertahanan diri (defensive mechanism) yang muncul saat menghadapi masukan yang menantang ego atau keyakinan diri.",
+          "gridSpan": 2,
+          "id": "alasanMenolakKritik",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Cenderung merasa tidak nyaman atau menolak validitas umpan balik tersebut.",
+            "fieldId": "reaksiKritikKonstruktif"
+          }
+        },
+        {
+          "aiReasoning": "Membedakan antara motivasi intrinsik (pertumbuhan diri) dan ekstrinsik (tuntutan/tekanan) dalam pengembangan kompetensi.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Dorongan pribadi untuk terus berkembang dan relevan di masa depan.",
+              "weight": 100
+            },
+            {
+              "label": "Meningkatkan peluang karir dan pendapatan.",
+              "weight": 75
+            },
+            {
+              "weight": 50,
+              "label": "Mengikuti tren industri agar tidak tertinggal."
+            },
+            {
+              "label": "Hanya jika ada tuntutan atau paksaan dari lingkungan kerja.",
+              "weight": 10
+            }
+          ],
+          "label": "Apa yang menjadi **motivasi utama** Anda untuk melakukan **reskilling atau upskilling** secara mandiri di luar tuntutan pekerjaan?",
+          "required": true,
+          "type": "radio",
+          "id": "motivasiBelajarMandiri"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Menganalisis ketergantungan responden terhadap dorongan luar untuk memulai inisiatif pengembangan diri.",
+          "label": "Mohon jelaskan mengapa motivasi belajar mandiri Anda sangat bergantung pada **tuntutan eksternal**.",
+          "required": true,
+          "showIf": {
+            "equals": "Hanya jika ada tuntutan atau paksaan dari lingkungan kerja.",
+            "fieldId": "motivasiBelajarMandiri"
+          },
+          "id": "alasanMotivasiTuntutan",
+          "type": "textarea"
+        },
+        {
+          "id": "refleksiKegagalan",
+          "type": "radio",
+          "options": [
+            {
+              "weight": 100,
+              "label": "Menganalisis secara mendalam penyebabnya, mengidentifikasi pelajaran, dan merumuskan strategi perbaikan."
+            },
+            {
+              "weight": 70,
+              "label": "Mencoba memahami apa yang salah dan mencari solusi, namun kadang kurang terstruktur."
+            },
+            {
+              "label": "Cenderung fokus pada hasil negatif dan merasa frustrasi, sulit mengambil pelajaran.",
+              "weight": 30
+            },
+            {
+              "weight": 0,
+              "label": "Sering menyalahkan faktor eksternal atau kondisi yang tidak mendukung."
+            }
+          ],
+          "aiReasoning": "Mengukur ketangguhan (resilience) dan kemampuan belajar dari kesalahan (learning agility) sebagai bagian dari proses adaptasi.",
+          "gridSpan": 2,
+          "label": "Ketika Anda menghadapi **kegagalan atau hambatan** dalam mempelajari hal baru, bagaimana Anda merefleksikan pengalaman tersebut untuk pembelajaran di masa depan?",
+          "required": true
+        },
+        {
+          "id": "alasanMenyalahkanEksternal",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "refleksiKegagalan",
+            "equals": "Sering menyalahkan faktor eksternal atau kondisi yang tidak mendukung."
+          },
+          "aiReasoning": "Mengidentifikasi kecenderungan locus of control eksternal yang dapat menghambat tanggung jawab pribadi atas kegagalan.",
+          "gridSpan": 2,
+          "label": "Mohon jelaskan mengapa Anda cenderung **menyalahkan faktor eksternal** saat menghadapi kegagalan dalam pembelajaran.",
+          "required": true
+        },
+        {
+          "id": "rencanaPengembanganPribadi",
+          "type": "radio",
+          "options": [
+            {
+              "label": "Ya, saya memiliki PDP yang jelas dengan target dan langkah konkret.",
+              "weight": 100
+            },
+            {
+              "label": "Saya memiliki ide-ide pengembangan, namun belum menjadi rencana tertulis yang terstruktur.",
+              "weight": 60
+            },
+            {
+              "weight": 20,
+              "label": "Belum ada, saya belum memikirkannya secara serius."
+            }
+          ],
+          "aiReasoning": "Menilai tingkat kedisiplinan dan perencanaan strategis responden dalam mengelola pertumbuhan profesionalnya.",
+          "gridSpan": 2,
+          "label": "Apakah Anda memiliki **rencana pengembangan pribadi (PDP)** yang terstruktur untuk meningkatkan keterampilan Anda dalam 6-12 bulan ke depan?",
+          "required": true
+        },
+        {
+          "showIf": {
+            "fieldId": "rencanaPengembanganPribadi",
+            "equals": "Belum ada, saya belum memikirkannya secara serius."
+          },
+          "type": "textarea",
+          "id": "alasanBelumAdaPDP",
+          "gridSpan": 2,
+          "aiReasoning": "Mencari tahu apakah kurangnya rencana disebabkan oleh kurangnya prioritas, waktu, atau ketidaktahuan akan pentingnya PDP.",
+          "label": "Mohon jelaskan mengapa Anda belum memiliki **rencana pengembangan pribadi** yang terstruktur.",
+          "required": true
+        }
+      ]
+    },
+    {
+      "stepNumber": 6,
+      "fields": [
+        {
+          "options": [
+            {
+              "label": "Sangat cepat, sering menjadi rujukan bagi rekan kerja",
+              "weight": 100
+            },
+            {
+              "label": "Cepat, dapat menguasai secara mandiri dalam waktu singkat",
+              "weight": 80
+            },
+            {
+              "weight": 50,
+              "label": "Sedang, membutuhkan waktu dan sedikit bantuan"
+            },
+            {
+              "label": "Agak lambat, sering kesulitan dan butuh banyak bantuan",
+              "weight": 20
+            },
+            {
+              "label": "Sangat lambat, cenderung menghindari penggunaan tools baru",
+              "weight": 0
+            }
+          ],
+          "gridSpan": 2,
+          "required": true,
+          "label": "Seberapa cepat Anda menguasai **aplikasi atau platform digital baru** yang relevan dengan pekerjaan Anda?",
+          "showIf": {
+            "equals": "Sangat cepat, sering menjadi rujukan bagi rekan kerja",
+            "fieldId": "adopsiToolsBaru"
+          },
+          "type": "radio",
+          "id": "adopsiToolsBaru",
+          "description": "Evaluasi kecepatan Anda dalam mempelajari dan mengintegrasikan **teknologi digital baru** ke dalam alur kerja."
+        },
+        {
+          "label": "Apakah Anda secara proaktif mencari dan mengikuti **pelatihan atau kursus** untuk meningkatkan keterampilan digital Anda?",
+          "required": true,
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Selalu, secara rutin mengikuti program reskilling/upskilling",
+              "weight": 100
+            },
+            {
+              "label": "Sering, jika ada kesempatan dan relevan",
+              "weight": 80
+            },
+            {
+              "label": "Kadang-kadang, jika benar-benar dibutuhkan",
+              "weight": 50
+            },
+            {
+              "label": "Jarang, lebih suka belajar dari pengalaman langsung",
+              "weight": 20
+            },
+            {
+              "label": "Tidak pernah, merasa keterampilan saat ini sudah cukup",
+              "weight": 0
+            }
+          ],
+          "id": "inisiatifReskillingDigital",
+          "description": "Sejauh mana inisiatif Anda dalam melakukan **reskilling atau upskilling digital** secara mandiri.",
+          "type": "radio",
+          "showIf": {
+            "equals": "Selalu, secara rutin mengikuti program reskilling/upskilling",
+            "fieldId": "inisiatifReskillingDigital"
+          }
+        },
+        {
+          "label": "Mohon unggah **bukti sertifikasi atau partisipasi** pelatihan digital terbaru Anda.",
+          "required": true,
+          "gridSpan": 2,
+          "fileAccept": ".pdf,.jpg,.png",
+          "showIf": {
+            "fieldId": "inisiatifReskillingDigital",
+            "equals": "Selalu, secara rutin mengikuti program reskilling/upskilling"
+          },
+          "type": "file",
+          "id": "buktiReskillingDigital"
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan alasan Anda **jarang mengikuti pelatihan/kursus digital**.",
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "alasanTidakReskillingJarang",
+          "showIf": {
+            "equals": "Jarang, lebih suka belajar dari pengalaman langsung",
+            "fieldId": "inisiatifReskillingDigital"
+          }
+        },
+        {
+          "type": "textarea",
+          "id": "alasanTidakReskillingTidakPernah",
+          "showIf": {
+            "equals": "Tidak pernah, merasa keterampilan saat ini sudah cukup",
+            "fieldId": "inisiatifReskillingDigital"
+          },
+          "label": "Mohon jelaskan alasan Anda **tidak pernah mengikuti pelatihan/kursus digital**.",
+          "required": true,
+          "gridSpan": 2
+        },
+        {
+          "label": "Seberapa sering Anda mengidentifikasi peluang dan mengimplementasikan **alat otomatisasi** untuk meningkatkan efisiensi kerja?",
+          "required": true,
+          "options": [
+            {
+              "label": "Sangat sering, aktif mencari dan menerapkan solusi otomatisasi",
+              "weight": 100
+            },
+            {
+              "label": "Sering, jika ada alat yang jelas dapat membantu",
+              "weight": 80
+            },
+            {
+              "label": "Kadang-kadang, jika ada dorongan atau kebutuhan mendesak",
+              "weight": 50
+            },
+            {
+              "label": "Jarang, lebih suka cara manual yang sudah familiar",
+              "weight": 20
+            },
+            {
+              "label": "Tidak pernah, belum melihat relevansi otomatisasi",
+              "weight": 0
+            }
+          ],
+          "gridSpan": 2,
+          "showIf": {
+            "equals": "Tidak pernah, belum melihat relevansi otomatisasi",
+            "fieldId": "penggunaanOtomatisasi"
+          },
+          "type": "radio",
+          "description": "Tingkat inisiatif Anda dalam memanfaatkan teknologi untuk **otomatisasi proses kerja**.",
+          "id": "penggunaanOtomatisasi"
+        },
+        {
+          "required": true,
+          "label": "Mohon jelaskan mengapa Anda **belum melihat relevansi otomatisasi** dalam pekerjaan Anda.",
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "alasanTidakOtomatisasi",
+          "showIf": {
+            "fieldId": "penggunaanOtomatisasi",
+            "equals": "Tidak pernah, belum melihat relevansi otomatisasi"
+          }
+        },
+        {
+          "label": "Seberapa baik Anda memahami **tren teknologi terkini** yang berpotensi mempengaruhi industri atau peran Anda?",
+          "required": true,
+          "options": [
+            {
+              "label": "Sangat baik, aktif mengikuti dan menganalisis tren",
+              "weight": 100
+            },
+            {
+              "label": "Baik, cukup mengikuti berita dan diskusi",
+              "weight": 80
+            },
+            {
+              "label": "Cukup baik, mengetahui beberapa tren dasar",
+              "weight": 50
+            },
+            {
+              "weight": 20,
+              "label": "Kurang baik, hanya tahu jika ada yang memberitahu"
+            },
+            {
+              "label": "Tidak memahami sama sekali",
+              "weight": 0
+            }
+          ],
+          "gridSpan": 2,
+          "showIf": {
+            "equals": "Sangat baik, aktif mengikuti dan menganalisis tren",
+            "fieldId": "pemahamanTrenTeknologi"
+          },
+          "description": "Tingkat pemahaman Anda terhadap **perkembangan teknologi** yang relevan dengan bidang Anda.",
+          "id": "pemahamanTrenTeknologi",
+          "type": "radio"
+        },
+        {
+          "required": true,
+          "label": "Apakah Anda pernah terlibat dalam **proyek inovasi digital** yang menuntut penerapan teknologi baru?",
+          "options": [
+            {
+              "label": "Ya, sering terlibat dalam proyek inovasi digital",
+              "weight": 100
+            },
+            {
+              "label": "Ya, pernah terlibat (1-2 proyek)",
+              "weight": 70
+            },
+            {
+              "label": "Belum pernah, namun tertarik untuk mencoba",
+              "weight": 30
+            },
+            {
+              "label": "Belum pernah, dan tidak terlalu tertarik",
+              "weight": 0
+            }
+          ],
+          "gridSpan": 2,
+          "showIf": {
+            "equals": "Ya, sering terlibat dalam proyek inovasi digital",
+            "fieldId": "pengalamanProyekDigital"
+          },
+          "type": "radio",
+          "description": "Pengalaman praktis Anda dalam mengaplikasikan **teknologi digital baru** dalam konteks proyek nyata.",
+          "id": "pengalamanProyekDigital"
+        },
+        {
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan secara singkat **proyek digital** yang pernah Anda ikuti dan peran Anda di dalamnya.",
+          "id": "deskripsiProyekDigital",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "pengalamanProyekDigital",
+            "equals": "Ya, sering terlibat dalam proyek inovasi digital"
+          }
+        },
+        {
+          "gridSpan": 2,
+          "label": "Mohon jelaskan alasan Anda **belum pernah terlibat dan tidak tertarik** pada proyek digital.",
+          "required": true,
+          "showIf": {
+            "equals": "Belum pernah, dan tidak terlalu tertarik",
+            "fieldId": "pengalamanProyekDigital"
+          },
+          "id": "alasanTidakTertarikProyekDigital",
+          "type": "textarea"
+        },
+        {
+          "showIf": {
+            "fieldId": "adaptasiPerubahanPlatform",
+            "equals": "Sangat cepat dan proaktif, bahkan membantu rekan lain"
+          },
+          "description": "Kecepatan adaptasi Anda terhadap **perubahan atau penggantian platform** kerja digital.",
+          "type": "radio",
+          "id": "adaptasiPerubahanPlatform",
+          "label": "Ketika **platform kerja utama** mengalami pembaruan signifikan, seberapa cepat Anda beradaptasi?",
+          "required": true,
+          "options": [
+            {
+              "label": "Sangat cepat dan proaktif, bahkan membantu rekan lain",
+              "weight": 100
+            },
+            {
+              "weight": 80,
+              "label": "Cepat, dapat beradaptasi mandiri dengan sedikit penyesuaian"
+            },
+            {
+              "label": "Sedang, butuh waktu dan bantuan signifikan untuk beradaptasi",
+              "weight": 50
+            },
+            {
+              "weight": 20,
+              "label": "Lambat, sering merasa kesulitan dan resisten terhadap perubahan"
+            },
+            {
+              "label": "Sangat lambat, cenderung menolak atau menghindari platform baru",
+              "weight": 0
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "showIf": {
+            "equals": "Sangat efektif, selalu mengintegrasikan berbagai sumber data",
+            "fieldId": "manajemenInformasiDigital"
+          },
+          "description": "Kemampuan Anda dalam mengolah dan menggunakan **data digital** untuk tujuan strategis.",
+          "type": "radio",
+          "id": "manajemenInformasiDigital",
+          "options": [
+            {
+              "label": "Sangat efektif, selalu mengintegrasikan berbagai sumber data",
+              "weight": 100
+            },
+            {
+              "label": "Efektif, sering memanfaatkan beberapa sumber digital",
+              "weight": 80
+            },
+            {
+              "weight": 50,
+              "label": "Cukup efektif, kadang memanfaatkan sumber digital"
+            },
+            {
+              "weight": 20,
+              "label": "Kurang efektif, lebih mengandalkan informasi konvensional"
+            },
+            {
+              "label": "Tidak efektif, kesulitan mengelola informasi digital",
+              "weight": 0
+            }
+          ],
+          "gridSpan": 2,
+          "required": true,
+          "label": "Seberapa efektif Anda mengelola dan memanfaatkan **informasi dari berbagai sumber digital** untuk pengambilan keputusan?"
+        }
+      ],
+      "title": "Digital Agility: Kesiapan Disrupsi",
+      "description": "Asesmen kesiapan mengadopsi teknologi baru dan melakukan reskilling secara cepat."
+    }
+  ],
+  "id": "track_1784913894182",
+  "preferredQuestionTypes": [
+    "text_justification",
+    "conditional_logic",
+    "radio_weight"
+  ],
+  "aiGenerationStatus": {
+    "message": "Disimpan secara manual oleh Admin.",
+    "phase": "COMPLETED",
+    "updatedAt": "2026-07-24T17:42:43.099Z"
+  },
+  "methodologyContext": "Menggunakan framework Learning Agility dari Lombardo & Eichinger yang dikombinasikan dengan metode Adaptive Learning Assessment. Pendekatan ini mengukur empat dimensi utama: mental agility, people agility, change agility, dan results agility melalui simulasi kognitif berbasis skenario.",
+  "generationLogs": [
+    {
+      "type": "info",
+      "message": "FASE 1: Architect Agent (Gemini 3.1 Pro) diaktifkan. Melakukan penetrasi jaringan & riset blueprint...",
+      "timestamp": "2026-07-24T17:26:04.861Z"
+    },
+    {
+      "message": "Otak AI dan Master Blueprint berhasil disempurnakan!",
+      "timestamp": "2026-07-24T17:26:52.212Z",
+      "type": "success"
+    },
+    {
+      "type": "info",
+      "timestamp": "2026-07-24T17:26:52.389Z",
+      "message": "FASE 2: Fabricator Agent (Gemini 2.5 Flash) dikerahkan. Memproduksi 6 seksi formulir..."
+    },
+    {
+      "type": "info",
+      "message": "Meracik Kuesioner Batch 1...",
+      "timestamp": "2026-07-24T17:26:52.464Z"
+    }
+  ],
+  "aiPromptConfig": {
+    "targetAudience": "individual",
+    "gradingStrictness": "objective and developmental",
+    "isAdaptive": false,
+    "expectedRecommendations": [
+      "Rancang program reskilling mandiri berbasis microlearning untuk mempercepat adaptasi teknologi.",
+      "Ambil inisiatif pada proyek lintas fungsi (stretch assignments) untuk melatih kelincahan interpersonal.",
+      "Terapkan siklus umpan balik 360 derajat secara berkala untuk meningkatkan kesadaran diri.",
+      "Gunakan framework pemecahan masalah agile dalam menghadapi ambiguitas operasional.",
+      "Integrasikan eksperimen tools digital baru ke dalam alur kerja harian untuk membangun digital agility."
+    ],
+    "customSystemPrompt": "Bertindaklah sebagai asesor ahli tingkat enterprise. Analisis respons pengguna menggunakan prinsip Learning Agility Lombardo dan Eichinger yang dikombinasikan dengan kebutuhan reskilling di era digital. Berikan evaluasi yang tajam, objektif, dan berorientasi pada pengembangan kapasitas masa depan.",
+    "aiPersona": "Chief Research Officer & Enterprise Assessor",
+    "expectedMetrics": [
+      "Mental Agility",
+      "People Agility",
+      "Change Agility",
+      "Results Agility",
+      "Self-Awareness",
+      "Digital Agility"
+    ],
+    "mediaAnalysisFocus": "Fokus pada analisis semantik dari respons tekstual terhadap skenario simulasi bisnis.",
+    "negativePrompts": "Jangan gunakan jargon akademis yang membingungkan. Jangan memberikan penilaian negatif tanpa menyertakan langkah mitigasi yang konkret. Jangan abaikan konteks urgensi disrupsi teknologi.",
+    "researchSourcesCited": [
+      "Lombardo & Eichinger Learning Agility Framework",
+      "Adaptive Learning Assessment Methodologies",
+      "Digital Stress and Upskilling Research"
+    ],
+    "customScoringRubric": "Evaluasi respons berdasarkan kecepatan adaptasi, kedalaman refleksi, dan inisiatif proaktif. Skor 80-100 untuk Agile Champion, 60-79 untuk Adaptive Learner, 40-59 untuk Cautious Adopter, dan di bawah 40 untuk Rigid Performer.",
+    "actionPlanBehavior": "Hasilkan rencana aksi taktis 30-60-90 hari yang berfokus pada upskilling mandiri dan eksperimen praktis di tempat kerja.",
+    "riskFramework": "Skill Obsolescence & Adaptability Risk Matrix",
+    "expectedAnalysisBlocks": [
+      "Profil Kelincahan Kognitif: Pemecahan masalah kompleks, Kecepatan memproses informasi baru",
+      "Dinamika Interpersonal: Kolaborasi lintas fungsi, Keterbukaan terhadap umpan balik",
+      "Resiliensi Terhadap Perubahan: Toleransi terhadap ambiguitas, Adaptasi model bisnis",
+      "Orientasi Eksekusi dan Hasil: Fokus pada target di situasi sulit, Inovasi proses kerja",
+      "Pemetaan Kesadaran Diri: Pengenalan kekuatan dan kelemahan, Motivasi belajar mandiri",
+      "Kesiapan Disrupsi Teknologi: Kecepatan adopsi tools baru, Kapasitas reskilling digital"
+    ],
+    "customUiLabels": {
+      "executionLabel": "Action Plan Timeline",
+      "riskLabel": "Critical Risks & Mitigation Map",
+      "scoreLabel": "AI Readiness Score",
+      "swotLabel": "Capability Matrix (SWOT)",
+      "roadmapLabel": "Rekomendasi Strategis"
+    },
+    "targetMetricCount": 6,
+    "assessmentGoal": "Mengukur tingkat Learning Agility individu menggunakan framework Lombardo & Eichinger yang diperluas, berfokus pada reskilling dan upskilling mandiri di tengah disrupsi teknologi dan perubahan model bisnis.",
+    "customReadinessTiers": [
+      "Agile Champion (Sangat adaptif dan proaktif memimpin perubahan)",
+      "Adaptive Learner (Mampu beradaptasi dengan baik pada situasi baru)",
+      "Cautious Adopter (Membutuhkan waktu dan struktur untuk menerima perubahan)",
+      "Rigid Performer (Berisiko tinggi mengalami ketertinggalan kompetensi)"
+    ],
+    "formPurpose": "custom",
+    "formatInstructions": "Sajikan laporan dalam paragraf yang mengalir. Gunakan tanda baca standar untuk memisahkan ide. Pastikan setiap blok analisis dan rekomendasi dijabarkan secara terstruktur dan profesional.",
+    "reportTone": "consultative and forward-looking"
+  },
+  "researchNotesCache": "Berdasarkan riset, framework Learning Agility dari Lombardo & Eichinger (2000) mendefinisikan kelincahan belajar sebagai kemauan dan kemampuan untuk belajar dari pengalaman dan menerapkannya pada kondisi baru yang sulit. Dimensi utamanya meliputi Mental Agility, People Agility, Change Agility, dan Results Agility. Untuk konteks disrupsi teknologi dan reskilling, literatur modern sering menambahkan Self-Awareness serta Digital/Tech Agility sebagai faktor krusial dalam menghadapi digital stress dan kebutuhan upskilling adaptif.",
+  "version": 1,
+  "stepOutlinesCache": [
+    {
+      "title": "Mental Agility: Navigasi Kompleksitas",
+      "description": "Simulasi skenario pemecahan masalah bisnis yang ambigu dan kompleks.",
+      "focusArea": "Kapasitas kognitif dan kecepatan memproses informasi baru.",
+      "expertPersona": "Cognitive Psychologist"
+    },
+    {
+      "expertPersona": "Organizational Behaviorist",
+      "focusArea": "Kecerdasan emosional dan keterbukaan terhadap umpan balik.",
+      "title": "People Agility: Dinamika Kolaborasi",
+      "description": "Evaluasi cara merespons konflik dan berkolaborasi dengan tim lintas generasi atau fungsi."
+    },
+    {
+      "description": "Penilaian reaksi terhadap perubahan mendadak dalam model bisnis atau restrukturisasi.",
+      "title": "Change Agility: Resiliensi Perubahan",
+      "focusArea": "Toleransi terhadap ambiguitas dan kemauan bereksperimen.",
+      "expertPersona": "Change Management Consultant"
+    },
+    {
+      "description": "Skenario pencapaian target di bawah tekanan sumber daya yang terbatas.",
+      "title": "Results Agility: Eksekusi dalam Krisis",
+      "focusArea": "Fokus pada hasil, inovasi proses, dan ketangguhan.",
+      "expertPersona": "Performance Strategist"
+    },
+    {
+      "title": "Self-Awareness: Refleksi Diri",
+      "description": "Kuesioner reflektif mengenai pengenalan titik buta (blind spots) dan motivasi belajar.",
+      "focusArea": "Evaluasi diri objektif dan dorongan pengembangan mandiri.",
+      "expertPersona": "Executive Coach"
+    },
+    {
+      "focusArea": "Literasi digital dan kecepatan adopsi teknologi.",
+      "expertPersona": "Digital Transformation Lead",
+      "description": "Asesmen kesiapan mengadopsi teknologi baru dan melakukan reskilling secara cepat.",
+      "title": "Digital Agility: Kesiapan Disrupsi"
+    }
+  ],
+  "specificTargetContext": "Karyawan profesional di lingkungan kerja dinamis yang menghadapi disrupsi teknologi dan perubahan model bisnis yang cepat. Fokus utama adalah individu yang dituntut melakukan reskilling dan upskilling secara mandiri dalam durasi waktu yang singkat.",
+  "lastUpdated": "2026-07-24T17:42:43.099Z",
+  "trackIcon": "LayoutGrid",
+  "expectedOutputs": [
+    "Peta Mitigasi Risiko Karier: Identifikasi celah kompetensi Anda secara presisi untuk meminimalisir risiko obsolescensi skill di tengah disrupsi industri yang bergerak cepat.",
+    "Rekomendasi Strategis Terpersonalisasi: Dapatkan panduan langkah demi langkah untuk mengasah kelincahan belajar Anda melalui metode yang paling relevan dengan profil unik Anda.",
+    "Action Plan Berbasis Microlearning: Ubah hasil asesmen menjadi rencana aksi harian yang praktis dan terukur untuk mempercepat penguasaan keahlian baru secara konsisten.",
+    "Insight Matrix Agilitas Diri: Dapatkan pemahaman mendalam mengenai titik kekuatan dan kelemahan adaptasi Anda melalui visualisasi data komprehensif untuk pengambilan keputusan karier yang lebih tajam."
+  ],
+  "formBuilderInstruction": "\n==================================================\nKONTEKS ANCHOR (ACUAN MUTLAK):\n- Profil Subjek Asesmen: Karyawan profesional di lingkungan kerja dinamis yang menghadapi disrupsi teknologi dan perubahan model bisnis yang cepat. Fokus utama adalah individu yang dituntut melakukan reskilling dan upskilling secara mandiri dalam durasi waktu yang singkat.\n- Metodologi/Pendekatan: Menggunakan framework Learning Agility dari Lombardo & Eichinger yang dikombinasikan dengan metode Adaptive Learning Assessment. Pendekatan ini mengukur empat dimensi utama: mental agility, people agility, change agility, dan results agility melalui simulasi kognitif berbasis skenario.\n==================================================\nTARGET AUDIENS: PERSONAL (INDIVIDUAL). Gunakan kata sapaan langsung (Anda, Bapak/Ibu) dan sesuaikan pertanyaan murni untuk ranah personal. DILARANG KERAS menanyakan aspek perusahaan, organisasi, atau legalitas bisnis.\n\nRancang kuesioner penilaian secara sistematis.\n\n\n\nATURAN KOMPOSISI PERTANYAAN MUTLAK (WAJIB DIPATUHI):\n- Gunakan tipe \"textarea\" secara strategis untuk menuntut penjelasan, justifikasi, keluhan, atau uraian deskriptif yang mendalam dari peserta.\n- TERAPKAN INTEROGASI BERLAPIS: Gunakan properti \"showIf\". Jika peserta merespon klaim besar pada opsi radio/select, WAJIB pancing pertanyaan baru bertipe \"file\" atau \"textarea\" untuk menagih bukti.\n- WAJIB maksimalkan penggunaan tipe \"radio\" atau \"select\" dengan array \"options\" berbobot (weight 0-100) untuk keperluan kalkulasi nilai otomatis.",
+  "isActive": false,
+  "promoAssets": {
+    "instagram": {
+      "generatedAt": "2026-07-24T17:32:57.706Z",
+      "copywriting": "Dunia makin cepat, kamu merasa sering ketinggalan? Atau bingung gimana caranya biar tetap relevan di tengah perubahan yang nggak ada habisnya?\n\nKadang rasanya kayak lari di treadmill, udah berusaha tapi kok gitu-gitu aja, ya? Khawatir skill kamu jadi basi dan peluang lewat begitu aja?\n\nTenang! Omnifit punya solusinya! Kenalan yuk sama \"Agile Learner Index\", program revolusioner buat kamu yang mau tahu seberapa cepat kamu bisa beradaptasi dan belajar hal baru.\n\nDengan \"Agile Learner Index\", kamu bakal dapat banyak banget keuntungan, diantaranya:\n✅ Kamu bakal tahu persis skill apa yang perlu diasah biar kariermu makin melesat dan nggak gampang usang.\n💡 Dapet rekomendasi panduan belajar yang personal, khusus buat gaya kamu!\n🚀 Ada rencana aksi harian yang gampang diikuti, biar kamu jago skill baru satu per satu!\n📊 Paham banget kekuatan dan kelemahan adaptasimu, jadi makin pede ambil keputusan karier.\n\nJangan biarkan kesempatan emas ini terlewat! Cek \"Agile Learner Index\" sekarang juga dan jadi yang terdepan dalam setiap perubahan! Link di bio ya!\n\n#Omnifit #AgileLearnerIndex #AdaptasiCepat #SkillUp #Kariermelesat #BelajarItuKeren #InovasiDiri #SuksesMuda #JanganKetinggalan",
+      "carouselSlides": [
+        {
+          "slideNumber": 1,
+          "imagePrompt": "Vertical Portrait Aspect Ratio 3:4. Flat vector illustration, corporate minimalist, Teal and Vibrant Orange on clean white background. A stylized visual of a person looking puzzled at a rapidly changing, blurry background, representing feeling left behind or overwhelmed by fast changes. In the center, write the large, bold text \"Merasa Tertinggal?\". No 3D, no photorealism.",
+          "textOnImage": "Ketinggalan Zaman?",
+          "imageUrl": "https://firebasestorage.googleapis.com/v0/b/teknopark-surakarta.firebasestorage.app/o/promo_assets%2Fagile_learner_index__seberapa_cepat_kamu_beradaptasi_%2Fpromo_1784914619927_slide_1.png?alt=media"
+        },
+        {
+          "imageUrl": "https://firebasestorage.googleapis.com/v0/b/teknopark-surakarta.firebasestorage.app/o/promo_assets%2Fagile_learner_index__seberapa_cepat_kamu_beradaptasi_%2Fpromo_1784914526632_slide_2.png?alt=media",
+          "textOnImage": "Kamu Dapat Apa?",
+          "imagePrompt": "Vertical Portrait Aspect Ratio 3:4. Flat vector illustration, clean modern UI aesthetic, Teal and Vibrant Orange on white background. Draw a dashboard UI with 3 floating cards. On the first card, write the text \"Peta Risiko Karier\". On the second card, write the text \"Panduan Belajar Personal\". On the third card, write the text \"Rencana Aksi Harian\". No 3D, no photorealism.",
+          "slideNumber": 2
+        },
+        {
+          "imagePrompt": "Vertical Portrait Aspect Ratio 3:4. Flat vector illustration, infographic style, Teal and Vibrant Orange on white background. A step-by-step winding roadmap with 3 nodes. Next to node 1, write the text \"Kelincahan Mental\". Next to node 2, write the text \"Kolaborasi\". Next to node 3, write the text \"Adaptasi Digital\". No 3D, no photorealism.",
+          "slideNumber": 3,
+          "imageUrl": "https://firebasestorage.googleapis.com/v0/b/teknopark-surakarta.firebasestorage.app/o/promo_assets%2Fagile_learner_index__seberapa_cepat_kamu_beradaptasi_%2Fpromo_1784914574730_slide_3.png?alt=media",
+          "textOnImage": "Lewati Tahapan Ini!"
+        },
+        {
+          "slideNumber": 4,
+          "imagePrompt": "Vertical Portrait Aspect Ratio 3:4. Flat vector illustration, corporate minimalist, Teal and Vibrant Orange on white background. A visual of a confident individual, looking forward, with a glowing brain icon or a lightbulb over their head, symbolizing quick learning and adaptation. On a clipboard, write the large text \"Jadi Pembelajar Cepat!\". No 3D, no photorealism.",
+          "textOnImage": "Jadi Pembelajar Cepat!",
+          "imageUrl": "https://firebasestorage.googleapis.com/v0/b/teknopark-surakarta.firebasestorage.app/o/promo_assets%2Fagile_learner_index__seberapa_cepat_kamu_beradaptasi_%2Fpromo_1784914603770_slide_4.png?alt=media"
+        }
+      ]
+    },
+    "tiktok": {
+      "generatedAt": "2026-07-24T17:39:01.351Z",
+      "copywriting": "Dunia kok cepet banget berubah, ya? 😱 Kamu ngerasa sering ketinggalan info atau bingung harus mulai belajar apa biar skill gak kadaluarsa? Jangan-jangan, kamu butuh ngecek kecepatan adaptasimu!\n\nTenang, kamu gak sendirian! Banyak yang ngerasain hal yang sama. Tapi gimana caranya kita tetap relevan di tengah gempuran informasi dan teknologi baru? 🤔\n\nOmnifit punya solusinya: \"Agile Learner Index\"! Ini bukan cuma tes biasa, lho. Ini adalah 'peta' buat kamu tahu seberapa gesit otakmu menyerap hal baru.\n\nApa aja sih yang bakal kamu dapetin?\n\n✅ Peta Skill: Ketahui skill apa yang wajib kamu kuasai biar karier tetap aman dari disrupsi.\n💡 Panduan Belajar: Rekomendasi cara belajar yang paling cocok dan efektif buat kamu.\n🚀 Rencana Aksi Harian: Ubah hasil jadi langkah kecil yang gampang dilakuin setiap hari.\n🎯 Insight Diri: Pahami banget kekuatan dan kelemahan adaptasimu biar makin pede.\n\nProsesnya gampang banget dan seru! Mulai dari menguji mental agility, cara kamu kolaborasi, sampai seberapa siap kamu sama perubahan digital.\n\nJangan cuma mikir! Yuk, segera cek seberapa 'agile' kamu. Klik link di bio sekarang juga dan siap-siap jadi versi terbaik dirimu! Jangan sampai ketinggalan, kesempatan emas ini terbatas! ✨\n\n#Omnifit #AgileLearner #BelajarCepat #SkillMasaDepan #AdaptasiDiri #PengembanganDiri #KarirSukses",
+      "carouselSlides": [
+        {
+          "textOnImage": "Dunia Berubah Cepat?",
+          "imageUrl": "https://firebasestorage.googleapis.com/v0/b/teknopark-surakarta.firebasestorage.app/o/promo_assets%2Fagile_learner_index__seberapa_cepat_kamu_beradaptasi_%2Fpromo_1784914789758_slide_1.png?alt=media",
+          "slideNumber": 1,
+          "imagePrompt": "Vertical Portrait Aspect Ratio 3:4. Flat vector illustration, corporate minimalist, Teal and Vibrant Orange on clean white background. A stylized visual of a person looking puzzled at a rapidly spinning clock or gear. In the center, write the large, bold text \"Dunia Berubah Cepat?\". No 3D, no photorealism."
+        },
+        {
+          "imagePrompt": "Vertical Portrait Aspect Ratio 3:4. Flat vector illustration, clean modern UI aesthetic, Teal and Vibrant Orange on white background. Draw a dashboard UI with 3 floating cards. On the first card, write the text \"Peta Karier Aman\". On the second card, write the text \"Panduan Belajar Pas\". On the third card, write the text \"Rencana Aksi Mudah\". No 3D, no photorealism.",
+          "slideNumber": 2,
+          "textOnImage": "Peta Karier Aman"
+        },
+        {
+          "textOnImage": "Uji Kelincahanmu Sekarang!",
+          "imagePrompt": "Vertical Portrait Aspect Ratio 3:4. Flat vector illustration, infographic style, Teal and Vibrant Orange on white background. A step-by-step winding roadmap with 3 nodes. Next to node 1, write the text \"Mental Agility\". Next to node 2, write the text \"People Agility\". Next to node 3, write the text \"Change Agility\". No 3D, no photorealism.",
+          "slideNumber": 3
+        },
+        {
+          "imagePrompt": "Vertical Portrait Aspect Ratio 3:4. Flat vector illustration, corporate minimalist, Teal and Vibrant Orange on white background. A visual of a confident, smiling person (individual, gender-neutral) climbing a stylized upward graph or ladder, holding a glowing lightbulb. On a clipboard, write the large text \"Siap Adaptasi & Maju!\". No 3D, no photorealism.",
+          "slideNumber": 4,
+          "textOnImage": "Siap Adaptasi & Maju!"
+        }
+      ]
+    }
+  }
+}

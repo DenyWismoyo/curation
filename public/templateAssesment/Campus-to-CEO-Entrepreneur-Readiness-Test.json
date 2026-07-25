@@ -1,0 +1,1835 @@
+{
+  "aiGenerationStatus": {
+    "message": "Disimpan secara manual oleh Admin.",
+    "phase": "COMPLETED",
+    "updatedAt": "2026-07-24T15:48:28.057Z"
+  },
+  "preferredQuestionTypes": [
+    "radio_weight",
+    "conditional_logic",
+    "text_justification"
+  ],
+  "methodologyContext": "Menggunakan framework Lean Startup untuk validasi ide dan asesmen psikometrik berbasis Entrepreneurial Competency Model (ECM) untuk mengukur ketahanan mental serta eksekutif fungsi. Pendekatan ini dipadukan dengan Business Model Canvas (BMC) untuk mengevaluasi kesiapan operasional secara sistematis.",
+  "trackDescription": "Wujudkan mimpimu dari mahasiswa menjadi CEO! Asesmen komprehensif ini akan membantumu memetakan insting bisnis, menguji ide, dan memastikan kesiapan mental serta operasionalmu dalam membangun startup di sela kesibukan kampus.",
+  "trackName": "Campus to CEO: Entrepreneur Readiness Test",
+  "id": "track_1782195669598",
+  "steps": [
+    {
+      "stepNumber": 1,
+      "fields": [
+        {
+          "required": true,
+          "label": "Nama **Entitas Bisnis** Anda",
+          "gridSpan": 2,
+          "type": "text",
+          "id": "namaUsaha"
+        },
+        {
+          "gridSpan": 2,
+          "required": true,
+          "label": "Nama Lengkap **Founder/Pengisi**",
+          "type": "text",
+          "id": "namaPengisi"
+        },
+        {
+          "required": true,
+          "label": "Usia Anda saat ini",
+          "gridSpan": 1,
+          "id": "usiaAnda",
+          "type": "number"
+        },
+        {
+          "id": "pendidikanTerakhir",
+          "type": "select",
+          "aiReasoning": "Mengukur latar belakang akademis sebagai indikator dasar kapasitas kognitif dan disiplin diri.",
+          "gridSpan": 1,
+          "options": [
+            {
+              "weight": 20,
+              "label": "SMA/SMK"
+            },
+            {
+              "label": "D3",
+              "weight": 40
+            },
+            {
+              "weight": 60,
+              "label": "S1"
+            },
+            {
+              "weight": 80,
+              "label": "S2"
+            },
+            {
+              "weight": 90,
+              "label": "S3"
+            }
+          ],
+          "required": true,
+          "label": "Jenjang **pendidikan terakhir** yang sedang atau telah Anda tempuh"
+        },
+        {
+          "required": true,
+          "label": "Dalam pengembangan ide bisnis, apa yang paling **memotivasi** Anda?",
+          "options": [
+            {
+              "label": "Menciptakan sesuatu yang baru dan belum ada (Innovator)",
+              "weight": 80
+            },
+            {
+              "weight": 70,
+              "label": "Melihat peluang pasar yang bisa segera dieksekusi (Opportunist)"
+            },
+            {
+              "weight": 90,
+              "label": "Membangun sistem dan struktur bisnis yang kokoh (Builder)"
+            },
+            {
+              "label": "Mengembangkan keahlian spesifik menjadi solusi terbaik (Specialist)",
+              "weight": 60
+            }
+          ],
+          "aiReasoning": "Mengidentifikasi DNA kewirausahaan untuk memetakan gaya kepemimpinan dan orientasi strategis pendiri.",
+          "gridSpan": 2,
+          "type": "radio",
+          "description": "Ini membantu kami memahami profil **DNA kewirausahaan** Anda.",
+          "id": "motivasiBisnis"
+        },
+        {
+          "id": "responTekanan",
+          "description": "Evaluasi **ketahanan mental** Anda dalam situasi multi-tugas.",
+          "type": "radio",
+          "label": "Bagaimana Anda merespons **tekanan** saat menghadapi tenggat waktu akademik dan operasional bisnis secara bersamaan?",
+          "required": true,
+          "options": [
+            {
+              "label": "Merasa sangat tertekan dan sulit fokus pada keduanya",
+              "weight": 10
+            },
+            {
+              "label": "Mengalami stres namun tetap berusaha membagi waktu",
+              "weight": 40
+            },
+            {
+              "label": "Mampu mengatur prioritas dan mendelegasikan tugas",
+              "weight": 75
+            },
+            {
+              "label": "Menjadikan tekanan sebagai motivasi untuk bekerja lebih efisien",
+              "weight": 95
+            }
+          ],
+          "aiReasoning": "Mengevaluasi resiliensi mental dan kemampuan manajemen stres dalam kondisi multi-tugas yang intens.",
+          "gridSpan": 2
+        },
+        {
+          "id": "strategiKeseimbangan",
+          "description": "Ini mengukur kemampuan Anda dalam **manajemen waktu** dan pencegahan burnout.",
+          "type": "radio",
+          "required": true,
+          "label": "Strategi apa yang paling sering Anda gunakan untuk menjaga **keseimbangan** antara tuntutan akademik dan operasional bisnis?",
+          "aiReasoning": "Mengukur kematangan manajemen waktu dan kemampuan preventif terhadap risiko burnout.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Mengorbankan salah satu (akademik/bisnis) sesuai prioritas mendesak",
+              "weight": 20
+            },
+            {
+              "weight": 50,
+              "label": "Berusaha menyelesaikan keduanya secara paralel dengan sedikit istirahat"
+            },
+            {
+              "label": "Membuat jadwal ketat dan mematuhinya secara disiplin",
+              "weight": 70
+            },
+            {
+              "weight": 90,
+              "label": "Membangun tim atau sistem yang bisa berjalan mandiri"
+            }
+          ]
+        },
+        {
+          "required": true,
+          "label": "Seberapa besar **ketergantungan operasional** bisnis pada kehadiran fisik dan keputusan langsung Anda?",
+          "options": [
+            {
+              "weight": 10,
+              "label": "Sangat tinggi, bisnis berhenti jika saya tidak ada"
+            },
+            {
+              "label": "Cukup tinggi, saya harus selalu memantau dan mengambil keputusan",
+              "weight": 40
+            },
+            {
+              "label": "Sedang, ada beberapa tugas yang bisa didelegasikan",
+              "weight": 70
+            },
+            {
+              "weight": 95,
+              "label": "Rendah, tim atau sistem sudah bisa berjalan mandiri"
+            }
+          ],
+          "aiReasoning": "Mendeteksi risiko 'One-Man Show' yang menghambat skalabilitas dan keberlanjutan bisnis.",
+          "gridSpan": 2,
+          "type": "radio",
+          "id": "ketergantunganOperasional",
+          "description": "Deteksi risiko **'One-Man Show'** dan potensi kelangsungan bisnis."
+        },
+        {
+          "id": "justifikasiKetergantungan",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "ketergantunganOperasional",
+            "equals": "Sangat tinggi, bisnis berhenti jika saya tidak ada"
+          },
+          "required": true,
+          "label": "Mohon jelaskan alasan di balik **ketergantungan operasional** yang tinggi tersebut.",
+          "gridSpan": 2,
+          "aiReasoning": "Menggali akar masalah operasional untuk memberikan rekomendasi perbaikan sistem."
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiKetergantunganCukup",
+          "showIf": {
+            "equals": "Cukup tinggi, saya harus selalu memantau dan mengambil keputusan",
+            "fieldId": "ketergantunganOperasional"
+          },
+          "aiReasoning": "Mengidentifikasi hambatan dalam pendelegasian tugas pada level operasional.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan alasan di balik **ketergantungan operasional** tersebut."
+        },
+        {
+          "options": [
+            {
+              "label": "Merasa sangat kecewa dan butuh waktu lama untuk bangkit",
+              "weight": 15
+            },
+            {
+              "label": "Menganalisis penyebab kegagalan dan mencoba lagi",
+              "weight": 60
+            },
+            {
+              "weight": 80,
+              "label": "Mencari masukan dari mentor atau rekan untuk perbaikan"
+            },
+            {
+              "weight": 95,
+              "label": "Menganggap kegagalan sebagai pembelajaran dan segera mencari alternatif"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Menilai stabilitas emosional dan kemampuan adaptasi (agility) pendiri terhadap tantangan.",
+          "label": "Bagaimana Anda menjaga **keseimbangan emosional** saat menghadapi kegagalan atau penolakan dalam bisnis?",
+          "required": true,
+          "description": "Asesmen **resiliensi** dan stabilitas emosional Anda.",
+          "type": "radio",
+          "id": "manajemenKegagalan"
+        },
+        {
+          "type": "textarea",
+          "id": "buktiManajemenKegagalan",
+          "showIf": {
+            "fieldId": "manajemenKegagalan",
+            "equals": "Menganalisis penyebab kegagalan dan mencoba lagi"
+          },
+          "aiReasoning": "Memvalidasi kemampuan refleksi diri dan penerapan pembelajaran dari kegagalan.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Ceritakan satu contoh konkret bagaimana Anda **bangkit dari kegagalan** tersebut."
+        },
+        {
+          "showIf": {
+            "equals": "Mencari masukan dari mentor atau rekan untuk perbaikan",
+            "fieldId": "manajemenKegagalan"
+          },
+          "id": "buktiManajemenKegagalanMentor",
+          "type": "textarea",
+          "label": "Ceritakan satu contoh konkret bagaimana Anda **bangkit dari kegagalan** dengan bantuan mentor/rekan.",
+          "required": true,
+          "aiReasoning": "Mengukur keterbukaan pendiri terhadap umpan balik dan kolaborasi.",
+          "gridSpan": 2
+        },
+        {
+          "showIf": {
+            "equals": "Menganggap kegagalan sebagai pembelajaran dan segera mencari alternatif",
+            "fieldId": "manajemenKegagalan"
+          },
+          "id": "buktiManajemenKegagalanAlternatif",
+          "type": "textarea",
+          "label": "Ceritakan satu contoh konkret bagaimana Anda **bangkit dari kegagalan** dengan mencari alternatif baru.",
+          "required": true,
+          "aiReasoning": "Mengukur kemampuan pivot dan kreativitas dalam pemecahan masalah.",
+          "gridSpan": 2
+        },
+        {
+          "id": "tingkatKetelitian",
+          "type": "radio",
+          "description": "Ini mengukur tingkat **kehati-hatian** dan kesiapan Anda untuk skala bisnis.",
+          "aiReasoning": "Mengukur tingkat profesionalisme dan kesiapan infrastruktur data untuk skala bisnis.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Jarang mendokumentasikan, hanya mengandalkan ingatan",
+              "weight": 10
+            },
+            {
+              "weight": 30,
+              "label": "Mendokumentasikan jika ada waktu luang"
+            },
+            {
+              "weight": 60,
+              "label": "Mendokumentasikan hal-hal penting saja"
+            },
+            {
+              "label": "Selalu mendokumentasikan secara rinci dan terstruktur",
+              "weight": 90
+            }
+          ],
+          "required": true,
+          "label": "Seberapa teliti Anda dalam **mendokumentasikan** proses, keputusan, atau pembelajaran penting dalam bisnis?"
+        }
+      ],
+      "title": "Profiling DNA & Ketahanan Mental",
+      "description": "Mengukur stabilitas emosional, conscientiousness, dan profil BOSI pendiri dalam menghadapi tekanan akademik dan bisnis."
+    },
+    {
+      "title": "Validasi Masalah & Customer Discovery",
+      "fields": [
+        {
+          "id": "tingkatValidasiMasalah",
+          "type": "radio",
+          "required": true,
+          "label": "Seberapa jauh Anda telah melakukan **validasi masalah** dengan calon pelanggan di pasar nyata?",
+          "options": [
+            {
+              "weight": 0,
+              "label": "Belum ada validasi, hanya asumsi pribadi"
+            },
+            {
+              "weight": 30,
+              "label": "Validasi awal melalui observasi atau diskusi informal"
+            },
+            {
+              "weight": 60,
+              "label": "Validasi cukup mendalam melalui wawancara terstruktur (6-15 orang)"
+            },
+            {
+              "label": "Validasi ekstensif dengan data kuantitatif dan kualitatif (>15 orang)",
+              "weight": 90
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur kedalaman riset pasar untuk memastikan solusi yang dibangun menjawab kebutuhan nyata, bukan sekadar asumsi."
+        },
+        {
+          "label": "Jelaskan secara singkat **proses validasi masalah** yang Anda lakukan, termasuk metode dan temuan kuncinya.",
+          "required": true,
+          "aiReasoning": "Memvalidasi kualitas observasi awal untuk memastikan pendiri memiliki kepekaan terhadap masalah di lapangan.",
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "tingkatValidasiMasalah",
+            "equals": "Validasi awal melalui observasi atau diskusi informal"
+          },
+          "type": "textarea",
+          "id": "uraianProsesValidasi"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Memastikan data kualitatif yang diperoleh cukup valid untuk mendukung pengembangan solusi.",
+          "label": "Jelaskan secara rinci **proses validasi masalah** yang Anda lakukan, termasuk metode, jumlah responden, dan temuan paling signifikan.",
+          "required": true,
+          "id": "uraianProsesValidasiMendalam",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Validasi cukup mendalam melalui wawancara terstruktur (6-15 orang)",
+            "fieldId": "tingkatValidasiMasalah"
+          }
+        },
+        {
+          "aiReasoning": "Mengonfirmasi bahwa skala validasi sudah cukup besar untuk meminimalisir risiko kegagalan pasar.",
+          "gridSpan": 2,
+          "label": "Jelaskan secara komprehensif **proses validasi masalah** yang Anda lakukan, termasuk data kuantitatif dan temuan krusial yang membuktikan urgensi masalah.",
+          "required": true,
+          "type": "textarea",
+          "id": "uraianProsesValidasiEkstensif",
+          "showIf": {
+            "equals": "Validasi ekstensif dengan data kuantitatif dan kualitatif (>15 orang)",
+            "fieldId": "tingkatValidasiMasalah"
+          }
+        },
+        {
+          "gridSpan": 2,
+          "fileAccept": ".pdf,.docx,.xlsx",
+          "label": "Unggah **ringkasan laporan Customer Discovery** atau bukti validasi masalah Anda (transkrip wawancara, hasil survei, atau ringkasan temuan).",
+          "required": true,
+          "type": "file",
+          "id": "buktiValidasiMasalah",
+          "showIf": {
+            "equals": "Validasi ekstensif dengan data kuantitatif dan kualitatif (>15 orang)",
+            "fieldId": "tingkatValidasiMasalah"
+          }
+        },
+        {
+          "id": "statusMVT",
+          "type": "radio",
+          "label": "Apakah Anda sudah melakukan **Minimum Viable Test (MVT)** atau eksperimen berbiaya rendah untuk menguji asumsi solusi Anda?",
+          "required": true,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Belum melakukan"
+            },
+            {
+              "weight": 30,
+              "label": "Sedang merancang MVT"
+            },
+            {
+              "weight": 60,
+              "label": "Sudah melakukan MVT, masih tahap awal"
+            },
+            {
+              "label": "Sudah melakukan MVT dengan hasil terukur",
+              "weight": 90
+            }
+          ],
+          "aiReasoning": "Menilai kemampuan eksekusi pendiri dalam menguji asumsi solusi dengan sumber daya minimal.",
+          "gridSpan": 2
+        },
+        {
+          "showIf": {
+            "fieldId": "statusMVT",
+            "equals": "Sudah melakukan MVT, masih tahap awal"
+          },
+          "id": "deskripsiMVT",
+          "type": "textarea",
+          "aiReasoning": "Memastikan pendiri memahami alur eksperimen sederhana untuk menguji minat pasar.",
+          "gridSpan": 2,
+          "label": "Jelaskan **MVT** yang Anda lakukan, termasuk tujuan, metode, dan hasil awal yang diperoleh.",
+          "required": true
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Mengevaluasi apakah pendiri mampu membaca data hasil eksperimen untuk pengambilan keputusan strategis.",
+          "required": true,
+          "label": "Jelaskan **hasil MVT** secara rinci, termasuk hipotesis, metrik yang diukur, hasil kuantitatif, dan pembelajaran krusial.",
+          "showIf": {
+            "equals": "Sudah melakukan MVT dengan hasil terukur",
+            "fieldId": "statusMVT"
+          },
+          "type": "textarea",
+          "id": "hasilMVTTerukur"
+        },
+        {
+          "id": "buktiMVT",
+          "type": "file",
+          "showIf": {
+            "equals": "Sudah melakukan MVT dengan hasil terukur",
+            "fieldId": "statusMVT"
+          },
+          "required": true,
+          "label": "Unggah **dokumentasi hasil MVT** Anda (tangkapan layar, data eksperimen, atau ringkasan pembelajaran).",
+          "fileAccept": ".pdf,.png,.jpg,.jpeg",
+          "gridSpan": 2
+        },
+        {
+          "aiReasoning": "Membedakan antara minat akademis dengan komitmen pasar yang sebenarnya.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Belum ada validasi pasar nyata, hanya asumsi",
+              "weight": 0
+            },
+            {
+              "label": "Validasi terbatas dari lingkungan kampus/teman",
+              "weight": 30
+            },
+            {
+              "label": "Sudah ada validasi awal dari calon pelanggan di luar kampus",
+              "weight": 60
+            },
+            {
+              "weight": 90,
+              "label": "Sudah ada bukti traksi (pre-order/pengguna aktif) dari pasar nyata"
+            }
+          ],
+          "required": true,
+          "label": "Bagaimana Anda memastikan ide bisnis Anda memiliki **potensi pasar nyata** dan bukan sekadar proyek akademik?",
+          "type": "radio",
+          "id": "validasiPasarNyata"
+        },
+        {
+          "type": "textarea",
+          "id": "justifikasiValidasiPasar",
+          "showIf": {
+            "equals": "Validasi terbatas dari lingkungan kampus/teman",
+            "fieldId": "validasiPasarNyata"
+          },
+          "required": true,
+          "label": "Jelaskan secara spesifik **bukti atau alasan** yang membuat Anda yakin ide bisnis ini memiliki potensi pasar nyata.",
+          "gridSpan": 2,
+          "aiReasoning": "Menguji keyakinan pendiri berdasarkan data atau sinyal pasar yang telah diterima."
+        },
+        {
+          "type": "file",
+          "id": "buktiTraksiPasar",
+          "showIf": {
+            "fieldId": "validasiPasarNyata",
+            "equals": "Sudah ada bukti traksi (pre-order/pengguna aktif) dari pasar nyata"
+          },
+          "label": "Unggah **bukti traksi pasar** Anda (tangkapan layar pre-order, daftar pengguna awal, atau testimoni pelanggan).",
+          "required": true,
+          "gridSpan": 2,
+          "fileAccept": ".pdf,.png,.jpg,.jpeg"
+        }
+      ],
+      "description": "Mengevaluasi seberapa dalam mahasiswa memahami masalah target pasar melalui wawancara dan pengujian asumsi (Minimum Viable Test).",
+      "stepNumber": 2
+    },
+    {
+      "description": "Menganalisis elemen Business Model Canvas, khususnya proposisi nilai dan kecocokan dengan segmen pelanggan.",
+      "title": "Pemetaan Model Bisnis & Value Proposition",
+      "fields": [
+        {
+          "type": "radio",
+          "id": "pemahamanMasalah",
+          "label": "Seberapa dalam **pemahaman masalah** utama yang ingin diselesaikan oleh bisnis Anda bagi calon pelanggan?",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur validitas dasar dan kedalaman riset pasar untuk memastikan solusi yang ditawarkan relevan dengan kebutuhan nyata.",
+          "options": [
+            {
+              "label": "Berdasarkan asumsi pribadi atau pengamatan sekilas.",
+              "weight": 10
+            },
+            {
+              "label": "Diskusi informal dengan beberapa teman atau kenalan.",
+              "weight": 30
+            },
+            {
+              "label": "Wawancara terstruktur dengan >10 calon pelanggan potensial.",
+              "weight": 60
+            },
+            {
+              "label": "Wawancara mendalam dengan >20 calon pelanggan dan analisis data sekunder pasar.",
+              "weight": 90
+            }
+          ]
+        },
+        {
+          "aiReasoning": "Menguji kemampuan founder dalam mengartikulasikan keunggulan kompetitif yang berkelanjutan.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Jelaskan **keunikan solusi** dan **value proposition** utama yang membedakan bisnis Anda dari kompetitor di pasar.",
+          "type": "textarea",
+          "description": "Contoh: Solusi kami menawarkan X yang tidak dimiliki kompetitor Y, dengan manfaat Z bagi pelanggan.",
+          "id": "keunikanSolusi"
+        },
+        {
+          "type": "radio",
+          "id": "segmenPelanggan",
+          "options": [
+            {
+              "weight": 10,
+              "label": "Belum spesifik, target pasar masih umum."
+            },
+            {
+              "weight": 40,
+              "label": "Sudah ada gambaran demografi luas (misal: mahasiswa, pekerja muda)."
+            },
+            {
+              "weight": 70,
+              "label": "Niche pasar spesifik dengan karakteristik yang jelas (misal: mahasiswa teknik yang hobi coding)."
+            },
+            {
+              "weight": 95,
+              "label": "Persona pelanggan terdefinisi jelas dengan kebutuhan, perilaku, dan motivasi yang terperinci."
+            }
+          ],
+          "aiReasoning": "Menilai ketajaman fokus bisnis dalam menentukan target audiens yang paling mungkin melakukan konversi.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Seberapa spesifik Anda telah mengidentifikasi **segmen pelanggan** utama yang menjadi target pasar bisnis Anda?"
+        },
+        {
+          "id": "alasanBelumMVT",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Belum melakukan",
+            "fieldId": "statusMVT"
+          },
+          "aiReasoning": "Mengidentifikasi hambatan operasional atau teknis yang menghalangi founder untuk melakukan validasi pasar.",
+          "gridSpan": 2,
+          "label": "Mohon jelaskan alasan mengapa Anda belum melakukan **MVT (Minimum Viable Test)** atau masih dalam tahap perencanaan.",
+          "required": true
+        },
+        {
+          "id": "hasilPembelajaranMVT",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "statusMVT",
+            "equals": "Sudah melakukan MVT dengan hasil terukur"
+          },
+          "label": "Jelaskan **hasil utama MVT** dan pembelajaran krusial yang Anda dapatkan untuk pengembangan bisnis selanjutnya.",
+          "required": true,
+          "aiReasoning": "Mengevaluasi kemampuan founder dalam menerjemahkan data uji coba menjadi insight strategis.",
+          "gridSpan": 2
+        },
+        {
+          "showIf": {
+            "fieldId": "statusMVT",
+            "equals": "Sudah melakukan MVT dengan hasil terukur"
+          },
+          "type": "file",
+          "id": "unggahBuktiMVT",
+          "label": "Unggah **dokumentasi atau bukti hasil MVT** Anda (misal: laporan uji coba, data survei, atau video demo).",
+          "required": true,
+          "fileAccept": ".pdf,.jpg,.png,.mp4",
+          "gridSpan": 2
+        },
+        {
+          "type": "radio",
+          "id": "modelPendapatanAwal",
+          "options": [
+            {
+              "weight": 0,
+              "label": "Belum ada rencana pendapatan yang jelas."
+            },
+            {
+              "label": "Mengandalkan hibah, donasi, atau dana pribadi tanpa model bisnis yang teruji.",
+              "weight": 30
+            },
+            {
+              "label": "Sudah ada model pendapatan dasar (misal: penjualan produk/jasa langsung) namun belum teruji.",
+              "weight": 60
+            },
+            {
+              "label": "Model pendapatan teruji dengan bukti transaksi awal atau pra-penjualan.",
+              "weight": 90
+            }
+          ],
+          "aiReasoning": "Memastikan bisnis memiliki model monetisasi yang realistis dan terencana sejak dini.",
+          "gridSpan": 2,
+          "label": "Bagaimana rencana Anda untuk menghasilkan **pendapatan (revenue stream)** pada tahap awal (0-6 bulan)?",
+          "required": true
+        },
+        {
+          "type": "radio",
+          "id": "pemanfaatanSumberDayaKampus",
+          "required": true,
+          "label": "Sejauh mana Anda telah memanfaatkan **fasilitas dan ekosistem kampus** untuk mendukung pengembangan bisnis?",
+          "options": [
+            {
+              "label": "Belum memanfaatkan sama sekali.",
+              "weight": 0
+            },
+            {
+              "label": "Hanya memanfaatkan fasilitas umum (misal: perpustakaan, Wi-Fi).",
+              "weight": 20
+            },
+            {
+              "label": "Aktif mengikuti program inkubasi/mentoring kampus atau menggunakan fasilitas khusus (misal: co-working space).",
+              "weight": 70
+            },
+            {
+              "label": "Sangat aktif berkolaborasi dengan dosen/peneliti, memanfaatkan lab, dan mendapatkan dukungan signifikan dari kampus.",
+              "weight": 90
+            }
+          ],
+          "aiReasoning": "Mengukur sejauh mana founder memanfaatkan keunggulan kompetitif dari lingkungan akademik.",
+          "gridSpan": 2
+        },
+        {
+          "required": true,
+          "label": "Seberapa siap Anda untuk melakukan **iterasi atau pivot** pada model bisnis berdasarkan umpan balik pasar?",
+          "options": [
+            {
+              "label": "Tidak ada rencana untuk mengubah ide awal, yakin dengan konsep saat ini.",
+              "weight": 10
+            },
+            {
+              "label": "Akan mempertimbangkan perubahan kecil jika diperlukan.",
+              "weight": 40
+            },
+            {
+              "label": "Cukup fleksibel dan terbuka untuk iterasi signifikan pada produk/layanan.",
+              "weight": 70
+            },
+            {
+              "label": "Sangat terbuka untuk melakukan pivot strategis jika data pasar menunjukkan arah yang lebih menjanjikan.",
+              "weight": 95
+            }
+          ],
+          "aiReasoning": "Mengukur fleksibilitas mental dan ketahanan founder dalam menghadapi realitas pasar yang dinamis.",
+          "gridSpan": 2,
+          "id": "kesiapanIterasiPivot",
+          "type": "radio"
+        }
+      ],
+      "stepNumber": 3
+    },
+    {
+      "stepNumber": 4,
+      "description": "Menilai keberagaman keahlian tim, pendelegasian, dan strategi menjaga kelangsungan bisnis saat periode ujian kampus.",
+      "fields": [
+        {
+          "type": "radio",
+          "description": "Evaluasi keberagaman dan **struktur tim** Anda untuk mendukung skalabilitas.",
+          "id": "komposisiTim",
+          "showIf": {
+            "fieldId": "komposisiTim",
+            "equals": "Saya menjalankan semuanya sendiri (One-Man Show)."
+          },
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 10,
+              "label": "Saya menjalankan semuanya sendiri (One-Man Show)."
+            },
+            {
+              "weight": 40,
+              "label": "Ada beberapa individu yang membantu secara ad-hoc, namun belum ada struktur tim formal."
+            },
+            {
+              "weight": 70,
+              "label": "Memiliki tim inti dengan pembagian peran yang jelas, namun masih didominasi satu bidang keahlian."
+            },
+            {
+              "weight": 95,
+              "label": "Memiliki tim inti lintas disiplin dengan pembagian peran yang saling melengkapi."
+            }
+          ],
+          "required": true,
+          "label": "Bagaimana **komposisi tim inti** yang membantu Anda menjalankan inisiatif bisnis ini?"
+        },
+        {
+          "label": "Mohon jelaskan alasan Anda menjalankan bisnis sendiri dan bagaimana **rencana transisi** Anda untuk mengatasi keterbatasan ini ke depan.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Pertanyaan ini menggali urgensi dan kesiapan founder dalam melakukan delegasi untuk pertumbuhan bisnis.",
+          "showIf": {
+            "fieldId": "komposisiTim",
+            "equals": "Saya menjalankan semuanya sendiri (One-Man Show)."
+          },
+          "id": "justifikasiOneManShow",
+          "type": "textarea"
+        },
+        {
+          "label": "Mohon uraikan **peran spesifik** masing-masing anggota tim inti Anda dan bagaimana keahlian mereka saling melengkapi.",
+          "required": true,
+          "aiReasoning": "Memvalidasi sinergi tim dan pembagian peran yang efektif dalam operasional bisnis.",
+          "gridSpan": 2,
+          "showIf": {
+            "equals": "Memiliki tim inti lintas disiplin dengan pembagian peran yang saling melengkapi.",
+            "fieldId": "komposisiTim"
+          },
+          "id": "deskripsiTimLengkap",
+          "type": "textarea"
+        },
+        {
+          "showIf": {
+            "equals": "Bisnis sangat bergantung pada kehadiran saya; tanpa saya, operasional terhenti.",
+            "fieldId": "kemandirianOperasional"
+          },
+          "type": "radio",
+          "description": "Mengukur tingkat **ketergantungan bisnis** pada kehadiran founder.",
+          "id": "kemandirianOperasional",
+          "required": true,
+          "label": "Seberapa **mandiri operasional bisnis** Anda saat ini dari kehadiran fisik atau intervensi langsung Anda, terutama saat periode sibuk akademik?",
+          "options": [
+            {
+              "weight": 15,
+              "label": "Bisnis sangat bergantung pada kehadiran saya; tanpa saya, operasional terhenti."
+            },
+            {
+              "weight": 45,
+              "label": "Beberapa operasional bisa berjalan, namun keputusan penting harus dari saya."
+            },
+            {
+              "weight": 75,
+              "label": "Tim dapat menjalankan sebagian besar operasional harian, namun saya masih terlibat dalam strategi."
+            },
+            {
+              "label": "Bisnis memiliki sistem dan tim yang mampu beroperasi secara mandiri dengan pengawasan minimal dari saya.",
+              "weight": 90
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "aiReasoning": "Menilai kesiapan founder dalam membangun sistem yang tidak bergantung pada individu tertentu.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan **rencana mitigasi** Anda untuk memastikan bisnis tetap berjalan saat Anda tidak dapat hadir secara fisik.",
+          "showIf": {
+            "fieldId": "kemandirianOperasional",
+            "equals": "Bisnis sangat bergantung pada kehadiran saya; tanpa saya, operasional terhenti."
+          },
+          "type": "textarea",
+          "id": "mitigasiKetergantungan"
+        },
+        {
+          "required": true,
+          "label": "Apakah Anda sudah mendelegasikan **tugas-tugas operasional rutin** kepada anggota tim atau sistem?",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 10,
+              "label": "Belum, saya masih mengerjakan semua tugas operasional sendiri."
+            },
+            {
+              "label": "Kadang-kadang, untuk tugas yang tidak terlalu krusial.",
+              "weight": 40
+            },
+            {
+              "weight": 70,
+              "label": "Ya, sebagian besar tugas rutin sudah didelegasikan."
+            },
+            {
+              "label": "Ya, dengan sistem pendelegasian yang jelas dan terukur.",
+              "weight": 90
+            }
+          ],
+          "description": "Menilai efektivitas **pendelegasian** dalam tim Anda.",
+          "type": "radio",
+          "id": "pendelegasianTugas",
+          "showIf": {
+            "equals": "Belum, saya masih mengerjakan semua tugas operasional sendiri.",
+            "fieldId": "pendelegasianTugas"
+          }
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi hambatan psikologis atau teknis dalam proses pendelegasian tugas.",
+          "label": "Mohon jelaskan mengapa Anda belum mendelegasikan tugas operasional dan bagaimana **rencana implementasi** pendelegasian Anda di masa mendatang.",
+          "required": true,
+          "showIf": {
+            "fieldId": "pendelegasianTugas",
+            "equals": "Belum, saya masih mengerjakan semua tugas operasional sendiri."
+          },
+          "type": "textarea",
+          "id": "alasanBelumDelegasi"
+        },
+        {
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Sering merasa kewalahan dan sulit membagi fokus, salah satu aspek sering terabaikan.",
+              "weight": 10
+            },
+            {
+              "label": "Berusaha menyeimbangkan, namun sering terjadi benturan jadwal atau prioritas.",
+              "weight": 40
+            },
+            {
+              "weight": 70,
+              "label": "Memiliki jadwal yang terencana, namun fleksibel terhadap perubahan mendadak."
+            },
+            {
+              "weight": 95,
+              "label": "Memiliki sistem manajemen waktu yang efektif dan mampu beradaptasi dengan baik terhadap tekanan dari kedua sisi."
+            }
+          ],
+          "required": true,
+          "label": "Bagaimana Anda mengelola **waktu dan prioritas** antara tuntutan akademik dan operasional bisnis?",
+          "description": "Evaluasi kemampuan Anda dalam menyeimbangkan **dua peran penting** secara profesional.",
+          "type": "radio",
+          "id": "manajemenWaktuPrioritas",
+          "showIf": {
+            "equals": "Sering merasa kewalahan dan sulit membagi fokus, salah satu aspek sering terabaikan.",
+            "fieldId": "manajemenWaktuPrioritas"
+          }
+        },
+        {
+          "aiReasoning": "Menganalisis kemampuan manajemen diri founder dalam menghadapi tekanan ganda.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan **tantangan spesifik** yang Anda hadapi dalam manajemen waktu dan strategi apa yang Anda gunakan untuk mengatasinya.",
+          "showIf": {
+            "equals": "Sering merasa kewalahan dan sulit membagi fokus, salah satu aspek sering terabaikan.",
+            "fieldId": "manajemenWaktuPrioritas"
+          },
+          "id": "tantanganManajemenWaktu",
+          "type": "textarea"
+        },
+        {
+          "showIf": {
+            "fieldId": "dokumentasiSOP",
+            "equals": "Sebagian besar operasional inti sudah memiliki SOP yang jelas dan mudah diakses tim."
+          },
+          "id": "dokumentasiSOP",
+          "description": "Menilai tingkat **formalisasi dan standardisasi** operasional Anda.",
+          "type": "radio",
+          "required": true,
+          "label": "Apakah Anda memiliki **Standard Operating Procedure (SOP)** atau dokumentasi proses kerja untuk operasional inti bisnis Anda?",
+          "options": [
+            {
+              "weight": 10,
+              "label": "Belum ada sama sekali."
+            },
+            {
+              "label": "Ada beberapa catatan informal, namun belum terstruktur.",
+              "weight": 40
+            },
+            {
+              "weight": 70,
+              "label": "Beberapa proses inti sudah didokumentasikan secara sederhana."
+            },
+            {
+              "label": "Sebagian besar operasional inti sudah memiliki SOP yang jelas dan mudah diakses tim.",
+              "weight": 90
+            }
+          ],
+          "gridSpan": 2
+        },
+        {
+          "required": true,
+          "label": "Unggah contoh dokumen **SOP atau dokumentasi proses kerja** inti bisnis Anda.",
+          "fileAccept": ".pdf,.doc,.docx",
+          "gridSpan": 2,
+          "type": "file",
+          "id": "unggahSOP",
+          "showIf": {
+            "equals": "Sebagian besar operasional inti sudah memiliki SOP yang jelas dan mudah diakses tim.",
+            "fieldId": "dokumentasiSOP"
+          }
+        },
+        {
+          "showIf": {
+            "equals": "Belum ada sama sekali.",
+            "fieldId": "dokumentasiSOP"
+          },
+          "id": "rencanaSOP",
+          "type": "textarea",
+          "gridSpan": 2,
+          "aiReasoning": "Menilai kesadaran founder akan pentingnya dokumentasi untuk keberlangsungan bisnis.",
+          "required": true,
+          "label": "Mohon jelaskan mengapa belum ada SOP dan bagaimana **rencana Anda untuk mulai mendokumentasikan** proses kerja inti."
+        },
+        {
+          "required": true,
+          "label": "Apa **rencana darurat** Anda jika Anda harus absen dari operasional bisnis untuk jangka waktu yang signifikan?",
+          "options": [
+            {
+              "label": "Belum ada rencana spesifik, bisnis mungkin akan terhenti.",
+              "weight": 10
+            },
+            {
+              "weight": 40,
+              "label": "Mengandalkan tim untuk mengambil alih, namun tanpa panduan yang jelas."
+            },
+            {
+              "label": "Memiliki rencana sederhana untuk transisi tanggung jawab ke anggota tim kunci.",
+              "weight": 70
+            },
+            {
+              "label": "Memiliki rencana kontinuitas bisnis yang terdokumentasi dengan jelas, termasuk penunjukan PIC sementara dan akses informasi.",
+              "weight": 90
+            }
+          ],
+          "gridSpan": 2,
+          "showIf": {
+            "fieldId": "rencanaDaruratAbsen",
+            "equals": "Belum ada rencana spesifik, bisnis mungkin akan terhenti."
+          },
+          "description": "Mengukur kesiapan Anda menghadapi **ketidakhadiran founder** (Business Continuity Plan).",
+          "type": "radio",
+          "id": "rencanaDaruratAbsen"
+        },
+        {
+          "label": "Mohon jelaskan pemikiran Anda tentang pentingnya **rencana darurat** dan langkah awal apa yang akan Anda ambil untuk mengembangkannya.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Mengevaluasi pola pikir strategis founder dalam memitigasi risiko operasional.",
+          "type": "textarea",
+          "id": "pemikiranRencanaDarurat",
+          "showIf": {
+            "equals": "Belum ada rencana spesifik, bisnis mungkin akan terhenti.",
+            "fieldId": "rencanaDaruratAbsen"
+          }
+        }
+      ],
+      "title": "Operasional, Tim & Manajemen Waktu"
+    },
+    {
+      "fields": [
+        {
+          "required": true,
+          "label": "Seberapa jauh Anda telah melakukan **validasi masalah** yang ingin diselesaikan oleh bisnis Anda di pasar nyata?",
+          "options": [
+            {
+              "weight": 0,
+              "label": "Belum memulai"
+            },
+            {
+              "label": "Riset sekunder saja",
+              "weight": 20
+            },
+            {
+              "weight": 40,
+              "label": "Wawancara/survei terbatas"
+            },
+            {
+              "weight": 70,
+              "label": "Wawancara mendalam & observasi"
+            },
+            {
+              "label": "MVT/prototipe dengan feedback pasar",
+              "weight": 90
+            }
+          ],
+          "aiReasoning": "Mengukur tingkat kedalaman riset pasar untuk memastikan solusi yang dibangun menjawab kebutuhan nyata pelanggan.",
+          "gridSpan": 2,
+          "type": "radio",
+          "id": "validasiMasalah"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Memvalidasi kemampuan eksekusi dan analisis data pengisi dalam menginterpretasikan hasil pengujian produk.",
+          "required": true,
+          "label": "Mohon jelaskan hasil kunci dari **Minimum Viable Test (MVT)** atau prototipe yang Anda luncurkan, termasuk metrik yang diukur dan pembelajaran utama.",
+          "showIf": {
+            "fieldId": "validasiMasalah",
+            "equals": "MVT/prototipe dengan feedback pasar"
+          },
+          "id": "hasilMVT",
+          "type": "textarea"
+        },
+        {
+          "id": "buktiValidasiObservasi",
+          "type": "file",
+          "showIf": {
+            "equals": "Wawancara mendalam & observasi",
+            "fieldId": "validasiMasalah"
+          },
+          "gridSpan": 2,
+          "fileAccept": ".pdf,.doc,.docx,.zip",
+          "required": true,
+          "label": "Unggah **bukti validasi masalah** Anda (misal: ringkasan hasil survei, transkrip wawancara, laporan MVT singkat)."
+        },
+        {
+          "showIf": {
+            "equals": "MVT/prototipe dengan feedback pasar",
+            "fieldId": "validasiMasalah"
+          },
+          "id": "buktiValidasiMVT",
+          "type": "file",
+          "label": "Unggah **bukti validasi masalah** Anda (misal: ringkasan hasil survei, transkrip wawancara, laporan MVT singkat).",
+          "required": true,
+          "fileAccept": ".pdf,.doc,.docx,.zip",
+          "gridSpan": 2
+        },
+        {
+          "id": "tingkatAdopsi",
+          "type": "radio",
+          "aiReasoning": "Menilai traksi pasar dan seberapa besar minat pelanggan terhadap solusi yang ditawarkan.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 0,
+              "label": "Belum ada pengguna"
+            },
+            {
+              "label": "Beberapa pengguna uji coba",
+              "weight": 20
+            },
+            {
+              "weight": 40,
+              "label": "Puluhan pengguna aktif"
+            },
+            {
+              "weight": 70,
+              "label": "Ratusan pengguna aktif"
+            },
+            {
+              "weight": 95,
+              "label": "Ribuan pengguna aktif dengan pertumbuhan"
+            }
+          ],
+          "required": true,
+          "label": "Bagaimana **tingkat adopsi** atau penggunaan produk/layanan Anda oleh pelanggan awal?"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Mengonfirmasi data kuantitatif untuk memvalidasi klaim tingkat adopsi yang dipilih.",
+          "required": true,
+          "label": "Berapa rata-rata jumlah **pelanggan aktif bulanan** (Monthly Active Users/Customers) bisnis Anda dalam 3 bulan terakhir?",
+          "showIf": {
+            "fieldId": "tingkatAdopsi",
+            "equals": "Beberapa pengguna uji coba"
+          },
+          "id": "jumlahPelangganAktifBeberapa",
+          "type": "number"
+        },
+        {
+          "required": true,
+          "label": "Berapa rata-rata jumlah **pelanggan aktif bulanan** (Monthly Active Users/Customers) bisnis Anda dalam 3 bulan terakhir?",
+          "aiReasoning": "Mengonfirmasi data kuantitatif untuk memvalidasi klaim tingkat adopsi yang dipilih.",
+          "gridSpan": 2,
+          "type": "number",
+          "id": "jumlahPelangganAktifPuluhan",
+          "showIf": {
+            "equals": "Puluhan pengguna aktif",
+            "fieldId": "tingkatAdopsi"
+          }
+        },
+        {
+          "label": "Berapa rata-rata jumlah **pelanggan aktif bulanan** (Monthly Active Users/Customers) bisnis Anda dalam 3 bulan terakhir?",
+          "required": true,
+          "aiReasoning": "Mengonfirmasi data kuantitatif untuk memvalidasi klaim tingkat adopsi yang dipilih.",
+          "gridSpan": 2,
+          "id": "jumlahPelangganAktifRatusan",
+          "type": "number",
+          "showIf": {
+            "fieldId": "tingkatAdopsi",
+            "equals": "Ratusan pengguna aktif"
+          }
+        },
+        {
+          "showIf": {
+            "equals": "Ribuan pengguna aktif dengan pertumbuhan",
+            "fieldId": "tingkatAdopsi"
+          },
+          "id": "jumlahPelangganAktifRibuan",
+          "type": "number",
+          "aiReasoning": "Mengonfirmasi data kuantitatif untuk memvalidasi klaim tingkat adopsi yang dipilih.",
+          "gridSpan": 2,
+          "label": "Berapa rata-rata jumlah **pelanggan aktif bulanan** (Monthly Active Users/Customers) bisnis Anda dalam 3 bulan terakhir?",
+          "required": true
+        },
+        {
+          "id": "kondisiArusKas",
+          "type": "radio",
+          "aiReasoning": "Menilai kesehatan finansial dan keberlanjutan operasional bisnis secara mandiri.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "weight": 10,
+              "label": "Defisit signifikan"
+            },
+            {
+              "label": "Defisit kecil",
+              "weight": 30
+            },
+            {
+              "weight": 50,
+              "label": "Impas (break-even)"
+            },
+            {
+              "label": "Surplus kecil",
+              "weight": 70
+            },
+            {
+              "weight": 90,
+              "label": "Surplus signifikan"
+            }
+          ],
+          "required": true,
+          "label": "Bagaimana **kondisi arus kas** (cash flow) bisnis Anda saat ini?"
+        },
+        {
+          "id": "strategiArusKasDefisitSignifikan",
+          "type": "textarea",
+          "showIf": {
+            "fieldId": "kondisiArusKas",
+            "equals": "Defisit signifikan"
+          },
+          "required": true,
+          "label": "Mohon jelaskan **strategi mitigasi** Anda untuk mengatasi kondisi arus kas negatif ini.",
+          "gridSpan": 2,
+          "aiReasoning": "Menguji kemampuan manajerial dalam merencanakan pemulihan finansial."
+        },
+        {
+          "showIf": {
+            "equals": "Defisit kecil",
+            "fieldId": "kondisiArusKas"
+          },
+          "type": "textarea",
+          "id": "strategiArusKasDefisitKecil",
+          "gridSpan": 2,
+          "aiReasoning": "Menguji kemampuan manajerial dalam merencanakan pemulihan finansial.",
+          "required": true,
+          "label": "Mohon jelaskan **strategi mitigasi** Anda untuk mengatasi kondisi arus kas negatif ini."
+        },
+        {
+          "type": "radio",
+          "id": "sumberPendanaanUtama",
+          "label": "Apa **sumber pendanaan utama** bisnis Anda saat ini?",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi ketergantungan modal dan kemandirian finansial bisnis.",
+          "options": [
+            {
+              "weight": 30,
+              "label": "Dana pribadi/keluarga"
+            },
+            {
+              "label": "Hibah/kompetisi kampus",
+              "weight": 60
+            },
+            {
+              "label": "Pinjaman (non-bank)",
+              "weight": 40
+            },
+            {
+              "weight": 80,
+              "label": "Pendapatan dari penjualan"
+            },
+            {
+              "weight": 95,
+              "label": "Investor awal (angel/pra-seed)"
+            }
+          ]
+        },
+        {
+          "id": "pemanfaatanFasilitasKampus",
+          "type": "radio",
+          "required": true,
+          "label": "Seberapa efektif Anda memanfaatkan **fasilitas atau program dukungan** kewirausahaan dari kampus Anda?",
+          "aiReasoning": "Mengukur pemanfaatan ekosistem kampus sebagai akselerator pertumbuhan bisnis.",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Belum memanfaatkan",
+              "weight": 0
+            },
+            {
+              "label": "Memanfaatkan fasilitas dasar (ruang kerja)",
+              "weight": 30
+            },
+            {
+              "label": "Mengikuti program inkubasi/mentoring",
+              "weight": 60
+            },
+            {
+              "label": "Menerima hibah/pendanaan kampus",
+              "weight": 80
+            },
+            {
+              "label": "Menjadi bagian dari ekosistem inovasi kampus",
+              "weight": 95
+            }
+          ]
+        },
+        {
+          "showIf": {
+            "equals": "Menerima hibah/pendanaan kampus",
+            "fieldId": "pemanfaatanFasilitasKampus"
+          },
+          "type": "textarea",
+          "id": "dampakDukunganHibah",
+          "aiReasoning": "Memastikan efektivitas penggunaan dana hibah dalam mencapai milestone bisnis.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan bentuk dukungan yang Anda terima dan bagaimana hal tersebut **berdampak pada pertumbuhan bisnis** Anda."
+        },
+        {
+          "label": "Mohon jelaskan bentuk dukungan yang Anda terima dan bagaimana hal tersebut **berdampak pada pertumbuhan bisnis** Anda.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Memastikan efektivitas integrasi dalam ekosistem inovasi kampus.",
+          "type": "textarea",
+          "id": "dampakDukunganEkosistem",
+          "showIf": {
+            "fieldId": "pemanfaatanFasilitasKampus",
+            "equals": "Menjadi bagian dari ekosistem inovasi kampus"
+          }
+        }
+      ],
+      "title": "Traksi, Keuangan & Pemanfaatan Sumber Daya",
+      "description": "Mengukur efisiensi penggunaan modal, pencapaian traksi awal, dan pemanfaatan fasilitas atau hibah kampus.",
+      "stepNumber": 5
+    },
+    {
+      "stepNumber": 6,
+      "title": "Peta Jalan Pasca-Lulus & Skalabilitas",
+      "fields": [
+        {
+          "type": "radio",
+          "id": "komitmenPascaLulus",
+          "label": "Bagaimana **komitmen jangka panjang** Anda terhadap kelanjutan bisnis ini setelah menyelesaikan studi?",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Menilai keberlanjutan bisnis dan dedikasi pendiri sebagai faktor kunci mitigasi risiko pasca-kelulusan.",
+          "options": [
+            {
+              "label": "Sangat berkomitmen untuk melanjutkan",
+              "weight": 100
+            },
+            {
+              "label": "Berkomitmen dengan penyesuaian",
+              "weight": 70
+            },
+            {
+              "weight": 30,
+              "label": "Mungkin akan meninjau ulang"
+            },
+            {
+              "label": "Berencana untuk tidak melanjutkan",
+              "weight": 0
+            }
+          ]
+        },
+        {
+          "showIf": {
+            "equals": "Mungkin akan meninjau ulang",
+            "fieldId": "komitmenPascaLulus"
+          },
+          "id": "alasanKomitmen",
+          "type": "textarea",
+          "label": "Mohon jelaskan **pertimbangan utama** di balik keraguan Anda untuk melanjutkan bisnis.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Menggali hambatan spesifik yang membuat pendiri mempertimbangkan untuk berhenti agar dapat diberikan intervensi yang tepat."
+        },
+        {
+          "showIf": {
+            "equals": "Berencana untuk tidak melanjutkan",
+            "fieldId": "komitmenPascaLulus"
+          },
+          "id": "alasanTidakLanjut",
+          "type": "textarea",
+          "aiReasoning": "Memahami alasan penghentian bisnis untuk keperluan data evaluasi program inkubasi.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jelaskan **alasan strategis** di balik keputusan Anda untuk tidak melanjutkan bisnis ini."
+        },
+        {
+          "aiReasoning": "Mengevaluasi visi kepemimpinan dan ambisi pendiri dalam mengelola skala bisnis di masa depan.",
+          "gridSpan": 2,
+          "label": "Bagaimana Anda memproyeksikan **pertumbuhan bisnis** dalam 3 tahun ke depan dari perspektif Anda sebagai pendiri?",
+          "required": true,
+          "type": "textarea",
+          "description": "Contoh: Saya melihat diri saya memimpin tim yang lebih besar, dengan produk yang menjangkau pasar nasional dan dampak sosial yang lebih luas.",
+          "id": "proyeksiPertumbuhanPribadi"
+        },
+        {
+          "id": "rencanaPerluasanPasar",
+          "type": "radio",
+          "gridSpan": 2,
+          "aiReasoning": "Mengukur skalabilitas pasar dan kesiapan operasional bisnis untuk tumbuh melampaui lingkup lokal.",
+          "options": [
+            {
+              "label": "Belum ada rencana",
+              "weight": 0
+            },
+            {
+              "label": "Hanya di lingkup kampus/lokal",
+              "weight": 20
+            },
+            {
+              "weight": 50,
+              "label": "Menargetkan kota/provinsi lain"
+            },
+            {
+              "weight": 80,
+              "label": "Menargetkan pasar nasional"
+            },
+            {
+              "label": "Menargetkan pasar regional/internasional",
+              "weight": 100
+            }
+          ],
+          "required": true,
+          "label": "Sejauh mana **rencana ekspansi** jangkauan pasar untuk produk atau layanan Anda?"
+        },
+        {
+          "showIf": {
+            "equals": "Menargetkan kota/provinsi lain",
+            "fieldId": "rencanaPerluasanPasar"
+          },
+          "type": "textarea",
+          "id": "strategiPerluasanPasar",
+          "gridSpan": 2,
+          "aiReasoning": "Memvalidasi kesiapan rencana eksekusi bisnis dalam menghadapi pasar yang lebih luas.",
+          "required": true,
+          "label": "Jelaskan **strategi taktis** Anda untuk melakukan penetrasi ke kota atau provinsi lain."
+        },
+        {
+          "label": "Jelaskan **strategi komprehensif** Anda untuk mencapai skala pasar nasional.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Menilai kedalaman pemahaman pendiri mengenai logistik dan pemasaran skala nasional.",
+          "id": "strategiPerluasanPasarNasional",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Menargetkan pasar nasional",
+            "fieldId": "rencanaPerluasanPasar"
+          }
+        },
+        {
+          "type": "textarea",
+          "id": "strategiPerluasanPasarRegional",
+          "showIf": {
+            "fieldId": "rencanaPerluasanPasar",
+            "equals": "Menargetkan pasar regional/internasional"
+          },
+          "label": "Jelaskan **strategi ekspansi** Anda untuk menembus pasar regional atau internasional.",
+          "required": true,
+          "aiReasoning": "Mengevaluasi kesiapan bisnis untuk bersaing di level global atau regional.",
+          "gridSpan": 2
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Menilai kebutuhan modal sebagai indikator kecepatan pertumbuhan (growth velocity) yang direncanakan.",
+          "options": [
+            {
+              "weight": 80,
+              "label": "Tidak membutuhkan pendanaan eksternal"
+            },
+            {
+              "weight": 60,
+              "label": "Kurang dari Rp 50.000.000"
+            },
+            {
+              "weight": 40,
+              "label": "Rp 50.000.000 - Rp 200.000.000"
+            },
+            {
+              "weight": 20,
+              "label": "Lebih dari Rp 200.000.000"
+            }
+          ],
+          "label": "Berapa **estimasi kebutuhan pendanaan** yang diperlukan untuk mencapai visi pertumbuhan 1-2 tahun ke depan?",
+          "required": true,
+          "id": "estimasiKebutuhanPendanaan",
+          "type": "radio"
+        },
+        {
+          "showIf": {
+            "equals": "Kurang dari Rp 50.000.000",
+            "fieldId": "estimasiKebutuhanPendanaan"
+          },
+          "id": "alokasiDana",
+          "type": "textarea",
+          "aiReasoning": "Memastikan pendiri memiliki perencanaan keuangan yang sehat dan terarah.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jabarkan **alokasi penggunaan dana** tersebut secara rinci."
+        },
+        {
+          "type": "textarea",
+          "id": "alokasiDanaMenengah",
+          "showIf": {
+            "fieldId": "estimasiKebutuhanPendanaan",
+            "equals": "Rp 50.000.000 - Rp 200.000.000"
+          },
+          "aiReasoning": "Memastikan pendiri memiliki perencanaan keuangan yang sehat dan terarah.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Mohon jabarkan **alokasi penggunaan dana** tersebut secara rinci."
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Memastikan pendiri memiliki perencanaan keuangan yang sehat dan terarah.",
+          "label": "Mohon jabarkan **alokasi penggunaan dana** tersebut secara rinci.",
+          "required": true,
+          "showIf": {
+            "equals": "Lebih dari Rp 200.000.000",
+            "fieldId": "estimasiKebutuhanPendanaan"
+          },
+          "id": "alokasiDanaBesar",
+          "type": "textarea"
+        },
+        {
+          "gridSpan": 2,
+          "aiReasoning": "Menilai kapasitas pendiri dalam membangun organisasi yang mampu mendukung pertumbuhan.",
+          "options": [
+            {
+              "label": "Belum ada rencana penambahan tim",
+              "weight": 0
+            },
+            {
+              "label": "Akan merekrut 1-2 individu kunci",
+              "weight": 40
+            },
+            {
+              "label": "Akan merekrut 3-5 individu dengan beragam keahlian",
+              "weight": 70
+            },
+            {
+              "weight": 100,
+              "label": "Akan membangun tim yang lebih besar (>5 orang) dengan struktur jelas"
+            }
+          ],
+          "label": "Bagaimana **rencana pengembangan tim inti** untuk mendukung skalabilitas bisnis?",
+          "required": true,
+          "id": "rencanaPengembanganTim",
+          "type": "radio"
+        },
+        {
+          "required": true,
+          "label": "Sebutkan **peran kunci** yang paling mendesak untuk direkrut dalam tim Anda.",
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi kesenjangan kompetensi (skill gap) dalam tim saat ini.",
+          "showIf": {
+            "fieldId": "rencanaPengembanganTim",
+            "equals": "Akan merekrut 1-2 individu kunci"
+          },
+          "type": "textarea",
+          "id": "peranTimDibutuhkan"
+        },
+        {
+          "showIf": {
+            "fieldId": "rencanaPengembanganTim",
+            "equals": "Akan merekrut 3-5 individu dengan beragam keahlian"
+          },
+          "type": "textarea",
+          "id": "peranTimDibutuhkanMenengah",
+          "label": "Sebutkan **peran kunci** yang paling mendesak untuk direkrut dalam tim Anda.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi kesenjangan kompetensi (skill gap) dalam tim saat ini."
+        },
+        {
+          "showIf": {
+            "equals": "Akan membangun tim yang lebih besar (>5 orang) dengan struktur jelas",
+            "fieldId": "rencanaPengembanganTim"
+          },
+          "type": "textarea",
+          "id": "peranTimDibutuhkanBesar",
+          "gridSpan": 2,
+          "aiReasoning": "Mengidentifikasi kesenjangan kompetensi (skill gap) dalam tim saat ini.",
+          "required": true,
+          "label": "Sebutkan **peran kunci** yang paling mendesak untuk direkrut dalam tim Anda."
+        },
+        {
+          "options": [
+            {
+              "weight": 0,
+              "label": "Belum memikirkan"
+            },
+            {
+              "weight": 30,
+              "label": "Fokus pada kualitas produk/layanan"
+            },
+            {
+              "label": "Inovasi berkelanjutan",
+              "weight": 80
+            },
+            {
+              "label": "Membangun komunitas loyal",
+              "weight": 60
+            },
+            {
+              "weight": 100,
+              "label": "Memiliki hak kekayaan intelektual (HKI) atau teknologi unik"
+            }
+          ],
+          "gridSpan": 2,
+          "aiReasoning": "Mengevaluasi daya tahan (moat) bisnis terhadap ancaman kompetitor.",
+          "required": true,
+          "label": "Bagaimana Anda menjaga **keunggulan kompetitif** di tengah persaingan pasar yang semakin ketat?",
+          "type": "radio",
+          "id": "keunggulanKompetitif"
+        },
+        {
+          "type": "textarea",
+          "id": "strategiInovasi",
+          "showIf": {
+            "fieldId": "keunggulanKompetitif",
+            "equals": "Inovasi berkelanjutan"
+          },
+          "aiReasoning": "Memastikan pendiri memiliki budaya inovasi untuk tetap relevan di pasar.",
+          "gridSpan": 2,
+          "label": "Jelaskan **strategi inovasi berkelanjutan** yang Anda terapkan.",
+          "required": true
+        },
+        {
+          "type": "file",
+          "id": "buktiHKI",
+          "showIf": {
+            "equals": "Memiliki hak kekayaan intelektual (HKI) atau teknologi unik",
+            "fieldId": "keunggulanKompetitif"
+          },
+          "gridSpan": 2,
+          "fileAccept": ".pdf,.jpg,.png",
+          "required": true,
+          "label": "Unggah **dokumen bukti HKI** atau deskripsi teknis teknologi unik Anda."
+        },
+        {
+          "options": [
+            {
+              "weight": 0,
+              "label": "Masih sangat manual dan bergantung pada saya"
+            },
+            {
+              "weight": 40,
+              "label": "Beberapa proses sudah semi-otomatis"
+            },
+            {
+              "label": "Sebagian besar proses sudah otomatis dan terintegrasi",
+              "weight": 70
+            },
+            {
+              "weight": 100,
+              "label": "Seluruh operasional dirancang untuk skala besar"
+            }
+          ],
+          "aiReasoning": "Mengukur kesiapan infrastruktur operasional untuk mendukung pertumbuhan (scaling).",
+          "gridSpan": 2,
+          "label": "Seberapa siap **sistem operasional** Anda untuk menangani peningkatan volume transaksi secara signifikan?",
+          "required": true,
+          "id": "kesiapanSistemOperasional",
+          "type": "radio"
+        },
+        {
+          "required": true,
+          "label": "Jelaskan **rencana otomatisasi** untuk mengurangi ketergantungan operasional pada pendiri.",
+          "gridSpan": 2,
+          "aiReasoning": "Mendorong pendiri untuk membangun sistem yang mandiri (de-risking).",
+          "showIf": {
+            "equals": "Masih sangat manual dan bergantung pada saya",
+            "fieldId": "kesiapanSistemOperasional"
+          },
+          "id": "rencanaOtomatisasi",
+          "type": "textarea"
+        },
+        {
+          "id": "rencanaPengembanganDiri",
+          "type": "radio",
+          "label": "Apa **rencana pengembangan diri** Anda sebagai pendiri untuk mendukung pertumbuhan bisnis?",
+          "required": true,
+          "aiReasoning": "Menilai kesadaran pendiri akan pentingnya peningkatan kapasitas diri (founder-market fit).",
+          "gridSpan": 2,
+          "options": [
+            {
+              "label": "Belum ada rencana spesifik",
+              "weight": 0
+            },
+            {
+              "label": "Mengikuti kursus/pelatihan relevan",
+              "weight": 40
+            },
+            {
+              "weight": 70,
+              "label": "Mencari mentor berpengalaman"
+            },
+            {
+              "label": "Melanjutkan pendidikan ke jenjang lebih tinggi (misal: S2 kewirausahaan)",
+              "weight": 100
+            }
+          ]
+        },
+        {
+          "required": true,
+          "label": "Jelaskan **detail rencana pelatihan** yang akan Anda ikuti.",
+          "gridSpan": 2,
+          "aiReasoning": "Memastikan rencana pengembangan diri memiliki target yang terukur.",
+          "showIf": {
+            "equals": "Mengikuti kursus/pelatihan relevan",
+            "fieldId": "rencanaPengembanganDiri"
+          },
+          "type": "textarea",
+          "id": "detailRencanaPengembanganDiri"
+        },
+        {
+          "label": "Jelaskan **kriteria mentor** yang Anda cari untuk membimbing bisnis Anda.",
+          "required": true,
+          "aiReasoning": "Memastikan pendiri memiliki akses ke dukungan eksternal yang tepat.",
+          "gridSpan": 2,
+          "type": "textarea",
+          "id": "detailRencanaMentor",
+          "showIf": {
+            "equals": "Mencari mentor berpengalaman",
+            "fieldId": "rencanaPengembanganDiri"
+          }
+        },
+        {
+          "id": "detailRencanaPendidikanLanjut",
+          "type": "textarea",
+          "showIf": {
+            "equals": "Melanjutkan pendidikan ke jenjang lebih tinggi (misal: S2 kewirausahaan)",
+            "fieldId": "rencanaPengembanganDiri"
+          },
+          "label": "Jelaskan **tujuan pendidikan** yang ingin Anda capai untuk mendukung bisnis.",
+          "required": true,
+          "gridSpan": 2,
+          "aiReasoning": "Memahami bagaimana pendidikan formal akan berkontribusi pada skalabilitas bisnis."
+        },
+        {
+          "type": "radio",
+          "id": "potensiPendapatanPribadi",
+          "options": [
+            {
+              "label": "Belum ada proyeksi",
+              "weight": 0
+            },
+            {
+              "label": "Kurang dari Rp 5.000.000 per bulan",
+              "weight": 30
+            },
+            {
+              "label": "Rp 5.000.000 - Rp 15.000.000 per bulan",
+              "weight": 70
+            },
+            {
+              "weight": 100,
+              "label": "Lebih dari Rp 15.000.000 per bulan"
+            }
+          ],
+          "aiReasoning": "Menilai ekspektasi finansial pendiri terhadap keberlangsungan bisnis sebagai sumber penghasilan utama.",
+          "gridSpan": 2,
+          "required": true,
+          "label": "Bagaimana proyeksi **pendapatan pribadi** Anda dari bisnis ini dalam 1-2 tahun ke depan?"
+        }
+      ],
+      "description": "Mengevaluasi komitmen jangka panjang founder, visi pasca-lulus, dan kesiapan untuk scale-up atau pendanaan lanjutan."
+    }
+  ],
+  "isActive": true,
+  "formBuilderInstruction": "\n==================================================\nKONTEKS ANCHOR (ACUAN MUTLAK):\n- Profil Subjek Asesmen: Mahasiswa aktif tingkat akhir atau fresh graduate yang memiliki ambisi membangun startup dengan keterbatasan sumber daya. Subjek memiliki profil risiko tinggi, orientasi pada inovasi, dan kebutuhan akan validasi model bisnis di tengah tekanan akademik.\n- Metodologi/Pendekatan: Menggunakan framework Lean Startup untuk validasi ide dan asesmen psikometrik berbasis Entrepreneurial Competency Model (ECM) untuk mengukur ketahanan mental serta eksekutif fungsi. Pendekatan ini dipadukan dengan Business Model Canvas (BMC) untuk mengevaluasi kesiapan operasional secara sistematis.\n==================================================\nTARGET AUDIENS: PERSONAL (INDIVIDUAL). Gunakan kata sapaan langsung (Anda, Bapak/Ibu) dan sesuaikan pertanyaan murni untuk ranah personal. DILARANG KERAS menanyakan aspek perusahaan, organisasi, atau legalitas bisnis.\n\n\n==================================================\nKONTEKS ANCHOR (ACUAN MUTLAK):\n- Profil Subjek Asesmen: Mahasiswa aktif yang sedang menyeimbangkan beban akademik dengan inisiasi bisnis tahap awal (early-stage). Profil ini difokuskan pada individu dengan orientasi pertumbuhan tinggi yang membutuhkan validasi ide serta manajemen waktu operasional yang efisien.\n- Metodologi/Pendekatan: Menggunakan framework Entrepreneurial DNA (eDNA) yang dikombinasikan dengan metode Lean Startup untuk validasi ide serta instrumen asesmen psikometrik berbasis Big Five Personality Traits untuk mengukur ketahanan mental kewirausahaan.\n==================================================\nTARGET AUDIENS: PERSONAL (INDIVIDUAL). Gunakan kata sapaan langsung (Anda, Bapak/Ibu) dan sesuaikan pertanyaan murni untuk ranah personal. DILARANG KERAS menanyakan aspek perusahaan, organisasi, atau legalitas bisnis.\n\n\n==================================================\nKONTEKS ANCHOR (ACUAN MUTLAK):\n- Profil Subjek Asesmen: Mahasiswa aktif yang sedang menyeimbangkan beban akademik dengan inisiasi bisnis tahap awal (early-stage). Profil ini difokuskan pada individu dengan orientasi pertumbuhan tinggi yang membutuhkan validasi ide serta manajemen waktu operasional yang efisien.\n- Metodologi/Pendekatan: Menggunakan framework Entrepreneurial DNA (eDNA) yang dikombinasikan dengan metode Lean Startup untuk validasi ide serta instrumen asesmen psikometrik berbasis Big Five Personality Traits untuk mengukur ketahanan mental kewirausahaan.\n==================================================\nTARGET AUDIENS: PERSONAL (INDIVIDUAL). Gunakan kata sapaan langsung (Anda, Bapak/Ibu) dan sesuaikan pertanyaan murni untuk ranah personal. DILARANG KERAS menanyakan aspek perusahaan, organisasi, atau legalitas bisnis.\n\nRancang kuesioner penilaian secara sistematis.\n\n\n\nATURAN KOMPOSISI PERTANYAAN MUTLAK (WAJIB DIPATUHI):\n- WAJIB maksimalkan penggunaan tipe \"radio\" atau \"select\" dengan array \"options\" berbobot (weight 0-100) untuk keperluan kalkulasi nilai otomatis.\n- TERAPKAN INTEROGASI BERLAPIS: Gunakan properti \"showIf\". Jika peserta merespon klaim besar pada opsi radio/select, WAJIB pancing pertanyaan baru bertipe \"file\" atau \"textarea\" untuk menagih bukti.\n- Gunakan tipe \"textarea\" secara strategis untuk menuntut penjelasan, justifikasi, keluhan, atau uraian deskriptif yang mendalam dari peserta.\n\n\n\nATURAN KOMPOSISI PERTANYAAN MUTLAK (WAJIB DIPATUHI):\n- WAJIB maksimalkan penggunaan tipe \"radio\" atau \"select\" dengan array \"options\" berbobot (weight 0-100) untuk keperluan kalkulasi nilai otomatis.\n- TERAPKAN INTEROGASI BERLAPIS: Gunakan properti \"showIf\". Jika peserta merespon klaim besar pada opsi radio/select, WAJIB pancing pertanyaan baru bertipe \"file\" atau \"textarea\" untuk menagih bukti.\n- Gunakan tipe \"textarea\" secara strategis untuk menuntut penjelasan, justifikasi, keluhan, atau uraian deskriptif yang mendalam dari peserta.\n\n\n\nATURAN KOMPOSISI PERTANYAAN MUTLAK (WAJIB DIPATUHI):\n- WAJIB maksimalkan penggunaan tipe \"radio\" atau \"select\" dengan array \"options\" berbobot (weight 0-100) untuk keperluan kalkulasi nilai otomatis.\n- TERAPKAN INTEROGASI BERLAPIS: Gunakan properti \"showIf\". Jika peserta merespon klaim besar pada opsi radio/select, WAJIB pancing pertanyaan baru bertipe \"file\" atau \"textarea\" untuk menagih bukti.\n- Gunakan tipe \"textarea\" secara strategis untuk menuntut penjelasan, justifikasi, keluhan, atau uraian deskriptif yang mendalam dari peserta.",
+  "trackIcon": "GraduationCap",
+  "lastUpdated": "2026-07-24T15:48:28.057Z",
+  "expectedOutputs": [
+    "Peta Mitigasi Risiko Strategis: Identifikasi dini jebakan fatal seperti burnout dan proyek kampus yang tidak laku agar bisnis Anda tidak tumbang sebelum dimulai.",
+    "Rekomendasi Penyelarasan DNA Founder: Optimalkan kekuatan alami Anda dan delegasikan tugas yang tidak sesuai untuk membangun fondasi startup yang lebih efisien dan tangguh.",
+    "Action Plan Eksekusi Cerdas: Dapatkan langkah taktis terukur untuk memvalidasi ide bisnis dengan biaya nol dan sistemasi operasional agar tetap profit di tengah jadwal kuliah yang padat.",
+    "Insight Matrix Kesiapan Bisnis: Dapatkan gambaran menyeluruh mengenai potensi startup Anda melalui data objektif yang memetakan kesiapan mental, tim, dan traksi pasar secara akurat."
+  ],
+  "specificTargetContext": "Mahasiswa aktif tingkat akhir atau fresh graduate yang memiliki ambisi membangun startup dengan keterbatasan sumber daya. Subjek memiliki profil risiko tinggi, orientasi pada inovasi, dan kebutuhan akan validasi model bisnis di tengah tekanan akademik.",
+  "version": 6,
+  "generationLogs": [
+    {
+      "message": "FASE 1: Architect Agent (Gemini 3.1 Pro) diaktifkan. Melakukan penetrasi jaringan & riset blueprint...",
+      "timestamp": "2026-07-24T15:44:38.389Z",
+      "type": "info"
+    },
+    {
+      "timestamp": "2026-07-24T15:45:30.335Z",
+      "message": "Otak AI dan Master Blueprint berhasil disempurnakan!",
+      "type": "success"
+    },
+    {
+      "type": "info",
+      "timestamp": "2026-07-24T15:45:30.867Z",
+      "message": "FASE 2: Fabricator Agent (Gemini 2.5 Flash) dikerahkan. Memproduksi 6 seksi formulir..."
+    },
+    {
+      "message": "Meracik Kuesioner Batch 1...",
+      "timestamp": "2026-07-24T15:45:31.478Z",
+      "type": "info"
+    },
+    {
+      "type": "info",
+      "message": "Meracik Kuesioner Batch 2...",
+      "timestamp": "2026-07-24T15:46:13.280Z"
+    },
+    {
+      "type": "success",
+      "timestamp": "2026-07-24T15:46:46.896Z",
+      "message": "Seluruh seksi formulir berhasil diracik."
+    },
+    {
+      "timestamp": "2026-07-24T15:46:47.111Z",
+      "message": "FASE 3: Polisher Agent (Gemini 3.1 Flash-Lite) diaktifkan. Melakukan QA Logika sekaligus memoles UI/UX form...",
+      "type": "info"
+    },
+    {
+      "type": "info",
+      "message": "Memoles UI dan menyembuhkan logika pada Seksi 1: Profiling DNA & Ketahanan Mental...",
+      "timestamp": "2026-07-24T15:46:47.779Z"
+    },
+    {
+      "message": "Memoles UI dan menyembuhkan logika pada Seksi 2: Validasi Masalah & Customer Discovery...",
+      "timestamp": "2026-07-24T15:46:47.780Z",
+      "type": "info"
+    },
+    {
+      "message": "Memoles UI dan menyembuhkan logika pada Seksi 4: Operasional, Tim & Manajemen Waktu...",
+      "timestamp": "2026-07-24T15:46:47.781Z",
+      "type": "info"
+    },
+    {
+      "timestamp": "2026-07-24T15:46:47.782Z",
+      "message": "Memoles UI dan menyembuhkan logika pada Seksi 6: Peta Jalan Pasca-Lulus & Skalabilitas...",
+      "type": "info"
+    },
+    {
+      "type": "info",
+      "message": "Memoles UI dan menyembuhkan logika pada Seksi 3: Pemetaan Model Bisnis & Value Proposition...",
+      "timestamp": "2026-07-24T15:46:47.781Z"
+    },
+    {
+      "type": "info",
+      "timestamp": "2026-07-24T15:46:47.782Z",
+      "message": "Memoles UI dan menyembuhkan logika pada Seksi 5: Traksi, Keuangan & Pemanfaatan Sumber Daya..."
+    },
+    {
+      "type": "success",
+      "timestamp": "2026-07-24T15:46:59.793Z",
+      "message": "Proses Polishing & QA Logika selesai. Kuesioner kini tervalidasi dan estetik 100%."
+    },
+    {
+      "type": "success",
+      "timestamp": "2026-07-24T15:46:59.892Z",
+      "message": "PIPELINE SELESAI: Kuesioner skala Enterprise telah berhasil diintegrasikan!"
+    }
+  ],
+  "aiPromptConfig": {
+    "assessmentGoal": "Menganalisis profil DNA kewirausahaan mahasiswa (studentpreneur) menggunakan framework eDNA (BOSI), mengidentifikasi keseimbangan antara ambisi bisnis dan realitas akademik berdasarkan Big Five Personality Traits, serta mengevaluasi kesiapan inovasi mereka menggunakan metode Lean Startup dan BMC untuk masuk ke tahap inkubasi atau pendanaan awal.",
+    "targetRecommendationCount": 8,
+    "expectedAnalysisBlocks": [
+      "Profil Karakter (DNA) & Kesiapan Mental: Evaluasi tipe BOSI DNA, Ketahanan mental berbasis Big Five.",
+      "Validasi Ide & Potensi Skala: Analisis kedalaman Customer Discovery, Bukti tarikan di dunia nyata melalui Minimum Viable Test.",
+      "Kekuatan Tim & Keberagaman Keahlian: Evaluasi komposisi tim lintas disiplin, Pembagian peran yang melengkapi kelemahan founder.",
+      "Kemandirian Operasional & Manajemen Waktu: Analisis ketergantungan bisnis pada kehadiran pendiri, Strategi kelangsungan bisnis saat periode ujian.",
+      "Pemanfaatan Sumber Daya & Traksi Awal: Tinjauan efisiensi penggunaan modal, Pemanfaatan fasilitas dan hibah kampus.",
+      "Kesehatan Finansial & Roadmap Pasca-Lulus: Evaluasi arus kas saat ini, Kejelasan visi dan komitmen pendiri terhadap bisnis setelah lulus."
+    ],
+    "targetMetricCount": 6,
+    "customUiLabels": {
+      "roadmapLabel": "Peta Jalan Inkubasi",
+      "swotLabel": "Matriks Karakter & Potensi Bisnis",
+      "scoreLabel": "Indeks DNA Studentpreneur",
+      "riskLabel": "Risiko Eksekusi & Akademik",
+      "executionLabel": "Langkah Validasi Selanjutnya"
+    },
+    "formatInstructions": "Gunakan penanda tebal (**teks**) pada istilah kunci seperti **Product-Market Fit**, **Resourcefulness**, **Pivot**, dan **Bootstrapping**. Seluruh output harus dalam format JSON. Dilarang menggunakan simbol bullet point manual dalam nilai string.",
+    "customReadinessTiers": [
+      "DNA Pemimpi (Skor 0-30): Terjebak dalam Asumsi | Memiliki ide atau tugas kampus, namun belum melakukan validasi pasar yang nyata. Ketergantungan operasional pada founder sangat tinggi, rentan berhenti jika jadwal kuliah padat. Butuh pendampingan validasi dasar.",
+      "DNA Eksplorator (Skor 31-60): Langkah Pertama Berjalan | Sudah memiliki prototipe atau penjualan awal. Sedang berjuang menyeimbangkan waktu kuliah dan bisnis. Menunjukkan ketahanan dasar, namun model bisnis belum sepenuhnya stabil.",
+      "DNA Campus CEO (Skor 61-85): Traksi Terbukti & Tim Solid | Menunjukkan kemampuan eksekusi tinggi. Bisnis sudah menghasilkan pendapatan, memiliki tim lintas keahlian, dan mulai membangun sistem. Berpotensi untuk masuk program akselerator.",
+      "DNA Visioner Skalabel (Skor 86-100): Kematangan Pra-Lulus | Bisnis siap di-scale up atau mendapat pendanaan tahap awal. Ketergantungan operasional pada founder mahasiswa sudah minimal, traksi finansial positif, komitmen pasca-lulus jelas."
+    ],
+    "formPurpose": "custom",
+    "reportTone": "consultative, mentoring, and encouraging",
+    "gradingStrictness": "supportive",
+    "isAdaptive": false,
+    "targetAudience": "individual",
+    "negativePrompts": "DILARANG menggunakan bahasa korporat yang kaku. DILARANG menuntut metrik enterprise yang rumit seperti LTV/CAC ratio kompleks atau overhead korporat. Fokus pada bahasa mentoring yang membangun namun kritis terhadap validasi pasar.",
+    "researchSourcesCited": [
+      "Joe Abraham - Entrepreneurial DNA (BOSI Framework)",
+      "Eric Ries - The Lean Startup (Build-Measure-Learn for Students)",
+      "Big Five Personality Traits in Entrepreneurial Resilience Studies",
+      "Steve Blank - How to Build a Startup (Lean LaunchPad for Students)",
+      "Kemdikbudristek - Panduan Program Kreativitas Mahasiswa Kewirausahaan (PKM-K)",
+      "Nadia Al-Fayed - Minimum Viable Test (MVT) for Student Entrepreneurs"
+    ],
+    "riskFramework": "Mengidentifikasi 3 jebakan mahasiswa: 1. Jebakan Proyek Kampus (Ide bagus di atas kertas/PKM tapi tidak ada pasar nyata). 2. Founder Burnout (Gagal membagi waktu sehingga kuliah dan bisnis hancur bersamaan). 3. One-Man Show (Menjalankan semua sendiri tanpa delegasi/tim yang memadai).",
+    "customScoringRubric": "Skor 0-30: Perlu kembali ke tahap Customer Discovery. Skor 31-60: Perlu fokus pada penciptaan MVP/MVT yang bisa dijual dan manajemen waktu. Skor 61-85: Perlu fokus pada dokumentasi SOP dan mencari pendanaan awal/hibah. Skor 86-100: Fokus pada scale-up dan transisi kepemimpinan pasca lulus.",
+    "actionPlanBehavior": "Menghasilkan rencana aksi langkah demi langkah yang dapat dieksekusi di sela sela waktu kesibukan sebagai mahasiswa / fresh graduated",
+    "expectedRecommendations": [
+      "Validasi Pasar Akar Rumput: Melakukan wawancara langsung ke target pasar untuk memastikan masalah benar-benar ada.",
+      "Pembentukan Tim Lintas Disiplin: Merekrut Co-founder dari fakultas lain untuk melengkapi kelemahan teknis atau bisnis.",
+      "Sistematisasi Operasional Sederhana: Membuat checklist atau SOP sederhana agar bisnis tetap berjalan saat musim ujian kampus.",
+      "Pemanfaatan Hibah Kampus: Mengajukan proposal ke program inkubator kampus untuk suntikan dana tanpa ekuitas.",
+      "Pengembangan Minimum Viable Test (MVT): Fokus pada eksperimen berbiaya nyaris nol untuk menguji asumsi pasar secepat mungkin sebelum membangun MVP utuh.",
+      "Pemetaan DNA Kewirausahaan: Mengidentifikasi kekuatan utama founder untuk mendelegasikan tugas yang tidak sesuai dengan profil BOSI.",
+      "Peningkatan Ketahanan Mental: Mengikuti program mentoring di kampus untuk menjaga stabilitas emosional saat menghadapi kegagalan.",
+      "Perencanaan Transisi Pasca-Lulus: Menyusun peta jalan 12 bulan ke depan yang mencakup strategi pendanaan awal dan komitmen waktu penuh."
+    ],
+    "mediaAnalysisFocus": "Fokus pada analisis bukti traksi awal, dokumentasi customer discovery, dan struktur pembagian waktu (jadwal kuliah vs operasional bisnis).",
+    "expectedMetrics": [
+      "Resilience & Emotional Stability Index: Kemampuan bertahan dan membagi waktu antara tuntutan akademik dan operasional bisnis.",
+      "Problem-Validation Fit: Seberapa dalam mahasiswa memvalidasi masalah di pasar nyata melalui Customer Discovery dan Minimum Viable Test (MVT).",
+      "Entrepreneurial DNA Alignment: Kecenderungan profil DNA pendiri (BOSI) dan kesesuaiannya dengan model bisnis yang dijalankan.",
+      "Team Heterogeneity & Conscientiousness: Keberagaman latar belakang keahlian dalam tim serta tingkat kehati-hatian dalam eksekusi.",
+      "Resourcefulness & Bootstrapping: Kemampuan memanfaatkan fasilitas kampus atau modal minim untuk menghasilkan traksi maksimal.",
+      "Founder Dependency & Operational Agility: Tingkat ketergantungan bisnis pada kehadiran fisik mahasiswa pendiri saat musim ujian."
+    ],
+    "aiPersona": "Mentor Inkubator Bisnis Kampus & Profiler DNA Entrepreneur Muda",
+    "customSystemPrompt": "Anda adalah AI Mentor Inkubator Kampus. Gunakan framework Entrepreneurial DNA (BOSI), Big Five Personality Traits untuk menilai ketahanan mental, dan Lean Startup untuk evaluasi validasi ide. Berikan analisis yang empatik terhadap beban akademik mahasiswa namun tetap menuntut standar eksekusi bisnis yang nyata."
+  }
+}
