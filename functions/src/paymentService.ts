@@ -101,7 +101,9 @@ export const createPaymentInvoice = onCall({
           description: `Akses Modul Asesmen: ${packageName}`,
           redirectUrl: `https://omnifit.cloud/checkout/${transactionId}`,
           expiredAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-          // PERBAIKAN 1: Sisipkan transactionId kita ke Mayar agar dikembalikan via Webhook
+          
+          customField: transactionId,
+          custom_field: transactionId,
           reference_id: transactionId, 
           referenceId: transactionId 
         })
@@ -112,6 +114,12 @@ export const createPaymentInvoice = onCall({
       if (!response.ok || mayarData.statusCode !== 200) {
         console.error("Mayar Error:", mayarData);
         throw new Error(mayarData.messages || mayarData.message || "Gagal menghasilkan invoice dari gateway.");
+      }
+
+      // KUNCI PERBAIKAN: Paksa ganti domain default Mayar ke Custom Domain Anda
+      let finalPaymentLink = mayarData.data?.link || null;
+      if (finalPaymentLink) {
+        finalPaymentLink = finalPaymentLink.replace("deny-wismoyo.myr.id", "omnifit.myr.id");
       }
       
       await txRef.set({
@@ -124,7 +132,7 @@ export const createPaymentInvoice = onCall({
         amount: finalPrice,
         status: "PENDING",
         mayarTransactionId: mayarData.data?.id || null,
-        paymentLink: mayarData.data?.link || null,
+        paymentLink: finalPaymentLink, // Gunakan link yang sudah ditimpa domainnya
         createdAt: FieldValue.serverTimestamp(),
       });
       
@@ -162,13 +170,12 @@ export const mayarWebhook = onRequest({
     const data = req.body;
     const db = getFirestore(admin.app(), "curation");
 
-    // PERBAIKAN 2: Prioritaskan mencari reference_id yang kita sisipkan sebelumnya
-    let transactionId = data.reference_id || data.referenceId || data.custom_field; 
+    // KUNCI PERBAIKAN 2: Tangkap custom_field dari payload Mayar
+    let transactionId = data.custom_field || data.customField || data.reference_id || data.referenceId; 
 
-    // PERBAIKAN 3: Jika reference_id kosong (transaksi lama), gunakan link_id dari payload Mayar
-    // (Karena mayarTransactionId di Firestore Anda menyimpan ID Product/Link, bukan ID Transaksi)
+    // KUNCI PERBAIKAN 3: Fallback ke Link ID jika custom_field gagal tertangkap
     if (!transactionId) {
-      const linkIdFromMayar = data.link_id || data.payment_link_id; 
+      const linkIdFromMayar = data.link_id || data.payment_link_id || data.product_id; 
       
       if (linkIdFromMayar) {
         const txQuery = await db.collection("transactions").where("mayarTransactionId", "==", linkIdFromMayar).limit(1).get();
@@ -179,15 +186,16 @@ export const mayarWebhook = onRequest({
     }
     
     if (!transactionId) {
-      console.error("Webhook Error: Tidak dapat memetakan data Mayar ke Firestore", data);
-      res.status(400).send('Bad Request: Missing Transaction Mapping ID');
+      console.error("Webhook Error: Tidak dapat memetakan ID Transaksi", data);
+      res.status(400).send('Bad Request: Missing Transaction ID');
       return;
     }
 
-    // PERBAIKAN 4: Atasi masalah Huruf Besar/Kecil (Case Sensitivity) pada Status
+    // Pastikan variasi tulisan status aman dari case-sensitivity
     const currentStatus = String(data.status || "").toUpperCase();
 
     try {
+      // Mayar mengembalikan SETTLED atau SUCCESS jika pembayaran berhasil
       if (['SUCCESS', 'SETTLED', 'PAID', 'COMPLETED'].includes(currentStatus)) {
         const txRef = db.collection("transactions").doc(transactionId);
         const txSnap = await txRef.get();
@@ -198,6 +206,7 @@ export const mayarWebhook = onRequest({
           if (txData?.status !== 'PAID') {
             const tokenCode = Math.random().toString(36).substring(2, 8).toUpperCase();
             
+            // Ubah status PENDING menjadi PAID
             await txRef.update({
               status: "PAID",
               paidAt: FieldValue.serverTimestamp(),
@@ -215,6 +224,7 @@ export const mayarWebhook = onRequest({
               transactionId
             );
             
+            // B2C Auto Provisioning Token
             if (txData?.packageId) {
               const b2cRef = db.collection("corporate_tokens").doc("B2C");
               

@@ -1,6 +1,5 @@
 // src/app/checkout/[id]/page.tsx
 'use client';
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { doc, onSnapshot } from 'firebase/firestore';
@@ -13,7 +12,6 @@ import { toast } from 'sonner';
 export default function CheckoutQrisPage() {
   const params = useParams();
   const router = useRouter();
-  
   const [transaction, setTransaction] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -24,30 +22,28 @@ export default function CheckoutQrisPage() {
 
   useEffect(() => {
     if (!params.id) return;
-
-    // Flag lokal untuk mencegah double-redirect jika onSnapshot tertrigger beberapa kali dalam waktu berdekatan
     let hasTriggeredSuccess = false; 
 
-    // Real-Time Listener ke Firestore untuk memantau status dari Webhook Mayar
     const unsubscribe = onSnapshot(doc(db, 'transactions', params.id as string), (docSnap) => {
       if (docSnap.exists()) {
         const data = docSnap.data();
         setTransaction(data);
         setLoading(false);
 
-        // Menangkap sinyal sukses dari Webhook Mayar
-        if (data.status === 'PAID' && data.tokenCode && !hasTriggeredSuccess) {
-          hasTriggeredSuccess = true; // Kunci eksekusi
+        // KUNCI PERBAIKAN: Kebal terhadap format string dari webhook
+        const currentStatus = String(data.status).toUpperCase();
+        const isPaidStatus = ['PAID', 'SUCCESS', 'SETTLED', 'SETTLEMENT', 'COMPLETED'].includes(currentStatus);
+
+        if (isPaidStatus && data.tokenCode && !hasTriggeredSuccess) {
+          hasTriggeredSuccess = true; 
           setIsSuccess(true);
           
           toast.success("Pembayaran Berhasil! Mengarahkan ke Modul...");
-
-          // Set akses modul ke Session Storage
+          
           sessionStorage.setItem('active_token', data.tokenCode);
           sessionStorage.setItem('active_allowed_templates', JSON.stringify([data.packageId]));
           sessionStorage.setItem('active_model', 'flash');
-
-          // Alihkan pengguna ke ruang asesmen secara otomatis setelah jeda 2 detik
+          
           setTimeout(() => {
             window.location.href = '/assessment';
           }, 2000);
@@ -58,11 +54,8 @@ export default function CheckoutQrisPage() {
       }
     });
 
-    // Cleanup function: Memutuskan koneksi listener saat pengguna meninggalkan halaman
     return () => unsubscribe();
-    
-    // PERBAIKAN: isSuccess dihapus dari dependency array agar listener tidak restart saat sukses
-  }, [params.id, router]); 
+  }, [params.id, router]);
 
   if (loading) {
     return (
@@ -77,10 +70,9 @@ export default function CheckoutQrisPage() {
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] flex flex-col items-center justify-center p-6 relative overflow-hidden">
-      {/* Background Ornaments */}
       <div className="absolute top-[-10%] left-[-5%] w-[40vw] h-[40vw] bg-indigo-200/40 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-5%] w-[30vw] h-[30vw] bg-blue-200/40 rounded-full blur-[120px] pointer-events-none" />
-
+      
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -94,19 +86,19 @@ export default function CheckoutQrisPage() {
         >
           <ChevronLeft size={24} />
         </button>
-
+        
         <div className="mb-6 mt-4">
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Selesaikan Pembayaran</h1>
           <p className="text-sm font-medium text-slate-500 mt-2">
             Modul: <strong className="text-slate-800">{transaction?.packageName}</strong>
           </p>
         </div>
-
+        
         <div className="bg-slate-50 p-4 rounded-2xl ring-1 ring-slate-100 mb-8 inline-block w-full">
           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Tagihan</p>
           <p className="text-3xl font-black text-indigo-600">{formatRupiah(transaction?.amount || 0)}</p>
         </div>
-
+        
         {!isSuccess ? (
           <div className="flex flex-col items-center w-full">
             {transaction?.paymentLink ? (
@@ -117,7 +109,6 @@ export default function CheckoutQrisPage() {
                     Klik tombol di bawah ini untuk membuka halaman gateway Mayar. Anda dapat membayar menggunakan <strong>QRIS, Virtual Account, atau E-Wallet.</strong>
                   </p>
                   
-                  {/* Tautan Pembayaran - Target Blank agar membuka tab baru */}
                   <a 
                     href={transaction.paymentLink}
                     target="_blank"
@@ -127,7 +118,6 @@ export default function CheckoutQrisPage() {
                     Buka Halaman Pembayaran <ExternalLink size={18} />
                   </a>
                 </div>
-
                 <div className="flex items-center justify-center gap-3 text-sm font-bold text-slate-500 animate-pulse bg-slate-50 py-3 px-5 rounded-full ring-1 ring-slate-200">
                   <Loader2 className="w-4 h-4 animate-spin text-indigo-500" />
                   Sistem menunggu konfirmasi...
@@ -153,7 +143,7 @@ export default function CheckoutQrisPage() {
             <p className="text-sm text-slate-500">Menyiapkan ruang asesmen untuk Anda...</p>
           </motion.div>
         )}
-
+        
         <div className="mt-8 bg-indigo-50/50 p-4 rounded-xl border border-indigo-100 flex items-start gap-3 text-left">
           <ShieldCheck className="w-5 h-5 text-indigo-500 shrink-0 mt-0.5" />
           <p className="text-xs font-medium text-indigo-900/80 leading-relaxed">

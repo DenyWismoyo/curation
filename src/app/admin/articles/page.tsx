@@ -36,10 +36,11 @@ export default function AdminArticlesPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // STATE UNTUK AI GENERATOR
+  // STATE UNTUK AI GENERATOR (TEXT & IMAGE)
   const [templates, setTemplates] = useState<FormTemplate[]>([]);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>('');
   const [isGeneratingArticle, setIsGeneratingArticle] = useState(false);
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
   // Form State
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -52,7 +53,7 @@ export default function AdminArticlesPage() {
   const [isPublished, setIsPublished] = useState(true);
   const [iconName, setIconName] = useState('AILensIcon');
 
-  // Image State (3x4 Ratio)
+  // Image State (2x1 Ratio / Horizontal)
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null);
@@ -87,7 +88,7 @@ export default function AdminArticlesPage() {
     fetchTemplates();
   }, []);
 
-  // FUNGSI MEMICU AI COPYWRITER
+  // FUNGSI MEMICU AI COPYWRITER (TEKS)
   const handleGenerateAI = async () => {
     if (!selectedTemplateId) {
       return toast.warning("Pilih modul asesmen terlebih dahulu.");
@@ -124,6 +125,39 @@ export default function AdminArticlesPage() {
       toast.error('Gagal meracik artikel: ' + error.message, { id: 'ai-loading' });
     } finally {
       setIsGeneratingArticle(false);
+    }
+  };
+
+  // FUNGSI MEMICU AI GAMBAR (COVER)
+  const handleGenerateImage = async () => {
+    if (!title) {
+      return toast.warning("Ketik judul artikel terlebih dahulu agar AI memahami konteks gambar.");
+    }
+
+    setIsGeneratingImage(true);
+    toast.info("AI sedang merender gambar cover (Rasio 2:1)...", { id: 'ai-image' });
+
+    try {
+      const functions = getFunctions(undefined, 'asia-southeast2');
+      const generateImageFn = httpsCallable(functions, 'generateArticleImage');
+      
+      const result = await generateImageFn({ title, excerpt });
+      const data = result.data as any;
+
+      if (data.success) {
+        // Terapkan hasil langsung ke form
+        setExistingImageUrl(data.imageUrl);
+        setExistingStoragePath(data.storagePath);
+        setImagePreview(data.imageUrl);
+        setImageFile(null); // Kosongkan file jika ada upload manual sebelumnya agar tidak bertumpuk
+        
+        toast.success('Gambar cover berhasil dirender AI!', { id: 'ai-image' });
+      }
+    } catch (error: any) {
+      console.error(error);
+      toast.error('Gagal merender gambar: ' + error.message, { id: 'ai-image' });
+    } finally {
+      setIsGeneratingImage(false);
     }
   };
 
@@ -203,7 +237,6 @@ export default function AdminArticlesPage() {
         }
       }
 
-      // KUNCI PERBAIKAN: Menyertakan Tautan CTA secara otomatis ke database
       const payload: Partial<Article> = {
         title: title.trim(),
         excerpt: excerpt.trim(),
@@ -324,30 +357,43 @@ export default function AdminArticlesPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           
-          {/* UPLOAD GAMBAR 3x4 */}
+          {/* UPLOAD & RENDER GAMBAR HORIZONTAL (2:1 Ratio) */}
           <div className="space-y-2 md:col-span-3 flex flex-col sm:flex-row gap-5 items-start">
-            <div className="w-32 aspect-[3/4] shrink-0 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center overflow-hidden relative">
+            <div className="w-full sm:w-72 aspect-[2/1] shrink-0 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center overflow-hidden relative shadow-inner">
               {imagePreview ? (
                 <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
               ) : (
                 <div className="text-slate-300 flex flex-col items-center gap-2 p-4 text-center">
-                  <ImageIcon size={24} />
-                  <span className="text-[9px] font-bold uppercase tracking-widest">3:4 Portrait</span>
+                  <ImageIcon size={28} />
+                  <span className="text-[10px] font-black uppercase tracking-widest">Landscape 2:1</span>
                 </div>
               )}
             </div>
-            <div className="flex-1 space-y-2">
+            
+            <div className="flex-1 space-y-3 w-full">
               <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
-                <UploadCloud className="w-3.5 h-3.5"/> Gambar Cover (Rasio 3:4)
+                <UploadCloud className="w-3.5 h-3.5"/> Gambar Cover Artikel (Rasio 2:1)
               </label>
-              <Input
-                ref={fileInputRef}
-                type="file"
-                accept="image/png, image/jpeg, image/webp"
-                onChange={handleImageChange}
-                className="h-12 rounded-xl bg-slate-50 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[11px] file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer pt-2.5"
-              />
-              <p className="text-xs text-slate-400 font-medium">Opsional: Gambar dengan proporsi vertikal 3:4. Jika kosong, sistem akan menggunakan Ikon Representasi di bawah.</p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/png, image/jpeg, image/webp"
+                  onChange={handleImageChange}
+                  className="h-11 flex-1 rounded-xl bg-slate-50 file:mr-4 file:py-1.5 file:px-4 file:rounded-full file:border-0 file:text-[11px] file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer pt-2"
+                />
+                <Button 
+                  type="button" 
+                  onClick={handleGenerateImage} 
+                  disabled={isGeneratingImage || !title.trim()} 
+                  variant="outline"
+                  className="h-11 rounded-xl bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100 font-bold text-xs flex items-center justify-center gap-2 w-full sm:w-auto px-5 shadow-sm"
+                >
+                  {isGeneratingImage ? <Loader2 className="w-4 h-4 animate-spin" /> : <ImageIcon className="w-4 h-4" />}
+                  AI Render Cover
+                </Button>
+              </div>
+              <p className="text-xs text-slate-400 font-medium">Opsional: Format memanjang untuk hero banner. AI dapat merender otomatis berdasar Judul. Biarkan kosong untuk menggunakan ikon.</p>
             </div>
           </div>
 
@@ -446,11 +492,11 @@ export default function AdminArticlesPage() {
                   <tr key={item.id} className="hover:bg-slate-50/50 transition-colors group">
                     <td className="px-6 py-4">
                       {item.imageUrl ? (
-                        <div className="w-10 h-14 bg-slate-100 rounded-md overflow-hidden ring-1 ring-slate-200">
+                        <div className="w-14 h-10 bg-slate-100 rounded-md overflow-hidden ring-1 ring-slate-200">
                           <img src={item.imageUrl} alt="Cover" className="w-full h-full object-cover" />
                         </div>
                       ) : (
-                        <div className="w-10 h-14 bg-slate-50 rounded-md ring-1 ring-slate-200 flex items-center justify-center text-slate-300">
+                        <div className="w-14 h-10 bg-slate-50 rounded-md ring-1 ring-slate-200 flex items-center justify-center text-slate-300">
                           <ImageIcon size={16} />
                         </div>
                       )}
