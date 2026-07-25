@@ -28,6 +28,7 @@ export interface AssessmentDoc {
   status?: string;
   corporateEntity?: string;
   curatorAssessment?: any;
+  analyticsSummary?: any;
 }
 
 // ==========================================
@@ -242,6 +243,7 @@ function AdminDashboardContent() {
                   <th className="px-6 py-5">Identitas Usaha</th>
                   <th className="px-6 py-5">Kategori / Modul</th>
                   <th className="px-6 py-5 text-center">Skor Akhir</th>
+                  <th className="px-6 py-5">Analytics</th>
                   <th className="px-6 py-5">Status Validasi</th>
                   <th className="px-6 py-5 text-center">Aksi</th>
                 </tr>
@@ -251,6 +253,9 @@ function AdminDashboardContent() {
                   const finalScore = item.curatorAssessment?.verifiedScore || item.score || 0;
                   const isCuratorValidated = item.status === 'Curator_Validated';
                   const isCuratorDraft = item.status === 'Curator_Draft';
+                  const analyticsScore = item.analyticsSummary?.performanceScore;
+                  const analyticsBand = item.analyticsSummary?.performanceBand;
+                  const analyticsVersion = item.analyticsSummary?.version;
                   
                   return (
                     <tr key={item.id} className="hover:bg-slate-50/80 transition-colors group">
@@ -273,6 +278,26 @@ function AdminDashboardContent() {
                         <div className={`inline-flex items-center justify-center w-10 h-10 rounded-full font-black text-base ring-1 shadow-sm ${isCuratorValidated ? 'bg-emerald-50 text-emerald-700 ring-emerald-200' : 'bg-indigo-50 text-indigo-700 ring-indigo-200'}`}>
                           {finalScore}
                         </div>
+                      </td>
+
+                      <td className="px-6 py-4">
+                        {item.analyticsSummary ? (
+                          <div className="space-y-1">
+                            <div className="text-xs font-black text-slate-800">
+                              {analyticsScore ?? '-'} / 100
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <span className="inline-flex px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200">
+                                {analyticsBand || '-'}
+                              </span>
+                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                {analyticsVersion || '-'}
+                              </span>
+                            </div>
+                          </div>
+                        ) : (
+                          <span className="text-xs font-bold text-slate-400">Belum tersedia</span>
+                        )}
                       </td>
 
                       <td className="px-6 py-4">

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, Briefcase, CheckCircle2, Edit3, ShieldCheck } from 'lucide-react';
+import { X, Briefcase, CheckCircle2, Edit3, ShieldCheck, BarChart3 } from 'lucide-react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { AdminExportPDF } from './AdminExportPDF';
@@ -15,7 +15,7 @@ interface AdminAssessmentDetailProps {
 }
 
 export function AdminAssessmentDetail({ data, onClose }: AdminAssessmentDetailProps) {
-  const [activeTab, setActiveTab] = useState<'evaluasi' | 'input'>('evaluasi');
+  const [activeTab, setActiveTab] = useState<'evaluasi' | 'input' | 'analytics'>('evaluasi');
   
   // STATE UNTUK GABUNGAN DATA AI PUBLIK DAN INTERNAL
   const [mergedAiResult, setMergedAiResult] = useState(data.aiResult || {});
@@ -24,7 +24,7 @@ export function AdminAssessmentDetail({ data, onClose }: AdminAssessmentDetailPr
   const documentId = data.id || data.assessmentId;
   
   // Destructuring sisa data
-  const { formData, score, readinessLevel, trackType, namaUsaha, createdAt, corporateEntity, status, curatorAssessment, curatorNotes } = data;
+  const { formData, score, readinessLevel, trackType, namaUsaha, createdAt, corporateEntity, status, curatorAssessment, curatorNotes, analyticsSummary } = data;
 
   // EFEK UNTUK MENARIK DATA RAHASIA SAAT PANEL INI DIBUKA
   useEffect(() => {
@@ -107,6 +107,9 @@ export function AdminAssessmentDetail({ data, onClose }: AdminAssessmentDetailPr
           <button onClick={() => setActiveTab('input')} className={`px-4 py-3 text-sm font-bold border-b-2 transition-colors whitespace-nowrap ${activeTab === 'input' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-800'}`}>
             <span className="flex items-center gap-2"><Briefcase className="w-4 h-4"/> Data Input Peserta</span>
           </button>
+          <button onClick={() => setActiveTab('analytics')} className={`px-4 py-3 text-sm font-bold border-b-2 transition-colors whitespace-nowrap ${activeTab === 'analytics' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-800'}`}>
+            <span className="flex items-center gap-2"><BarChart3 className="w-4 h-4"/> Ringkasan Analytics</span>
+          </button>
         </div>
 
         {/* KONTEN */}
@@ -159,6 +162,81 @@ export function AdminAssessmentDetail({ data, onClose }: AdminAssessmentDetailPr
                   );
                 })}
               </div>
+            </div>
+          )}
+
+          {activeTab === 'analytics' && (
+            <div className="max-w-5xl mx-auto bg-white rounded-3xl ring-1 ring-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
+              <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
+                <BarChart3 className="w-5 h-5 text-indigo-600"/> Ringkasan Analytics Performa
+              </h3>
+
+              {!analyticsSummary ? (
+                <div className="rounded-2xl bg-slate-50 ring-1 ring-slate-200 p-4 text-sm font-semibold text-slate-600">
+                  Ringkasan analytics belum tersedia untuk assessment ini.
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="rounded-2xl bg-indigo-50 ring-1 ring-indigo-200 p-4">
+                      <p className="text-[11px] font-bold uppercase tracking-widest text-indigo-500">Performance Score</p>
+                      <p className="text-2xl font-black text-indigo-700 mt-1">{analyticsSummary.performanceScore ?? '-'} / 100</p>
+                    </div>
+                    <div className="rounded-2xl bg-emerald-50 ring-1 ring-emerald-200 p-4">
+                      <p className="text-[11px] font-bold uppercase tracking-widest text-emerald-500">Performance Band</p>
+                      <p className="text-2xl font-black text-emerald-700 mt-1">{analyticsSummary.performanceBand ?? '-'}</p>
+                    </div>
+                    <div className="rounded-2xl bg-slate-50 ring-1 ring-slate-200 p-4">
+                      <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500">Analytics Version</p>
+                      <p className="text-2xl font-black text-slate-700 mt-1">{analyticsSummary.version ?? '-'}</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="rounded-2xl bg-slate-50 ring-1 ring-slate-200 p-4">
+                      <p className="text-sm font-black text-slate-900 mb-3">Dimensi Skor</p>
+                      <div className="space-y-2 text-sm text-slate-700 font-semibold">
+                        <p>Business Readiness: {analyticsSummary.dimensions?.businessReadiness ?? '-'} / 100</p>
+                        <p>Data Quality: {analyticsSummary.dimensions?.dataQuality ?? '-'} / 100</p>
+                        <p>Consistency: {analyticsSummary.dimensions?.consistency ?? '-'} / 100</p>
+                        <p>Execution Clarity: {analyticsSummary.dimensions?.executionClarity ?? '-'} / 100</p>
+                      </div>
+                    </div>
+
+                    <div className="rounded-2xl bg-slate-50 ring-1 ring-slate-200 p-4">
+                      <p className="text-sm font-black text-slate-900 mb-3">Ringkasan Temuan</p>
+                      <p className="text-sm text-slate-700 font-semibold mb-3">{analyticsSummary.summary?.headline || '-'}</p>
+                      <ul className="space-y-2 text-sm text-slate-700 list-disc pl-5">
+                        {(analyticsSummary.summary?.keyFindings || []).map((finding: string, idx: number) => (
+                          <li key={`finding-${idx}`}>{finding}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="rounded-2xl bg-amber-50 ring-1 ring-amber-200 p-4">
+                      <p className="text-sm font-black text-amber-800 mb-3">Risiko Utama</p>
+                      <ul className="space-y-2 text-sm text-amber-900 list-disc pl-5">
+                        {(analyticsSummary.risks || []).length > 0 ? (
+                          (analyticsSummary.risks || []).map((risk: string, idx: number) => <li key={`risk-${idx}`}>{risk}</li>)
+                        ) : (
+                          <li>Tidak ada risiko kritikal pada ringkasan analytics.</li>
+                        )}
+                      </ul>
+                    </div>
+
+                    <div className="rounded-2xl bg-indigo-50 ring-1 ring-indigo-200 p-4">
+                      <p className="text-sm font-black text-indigo-800 mb-3">Fokus Rekomendasi</p>
+                      <ul className="space-y-2 text-sm text-indigo-900 list-disc pl-5">
+                        {(analyticsSummary.summary?.recommendedFocus || []).map((focus: string, idx: number) => (
+                          <li key={`focus-${idx}`}>{focus}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           )}
 
