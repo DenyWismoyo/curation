@@ -76,8 +76,9 @@ export default function ExplorePage() {
           if (!statsSnap.empty) {
             setPlatformStats(statsSnap.docs[0].data() as PlatformStat);
           }
-        } catch {
-          // Silently ignore if collection doesn't exist yet
+        } catch (statsErr) {
+          // platform_stats collection may not exist yet — non-critical
+          console.warn('platform_stats not available:', statsErr);
         }
       } catch (e) {
         console.error('Gagal load explore:', e);

@@ -49,11 +49,13 @@ const MILESTONES = [
 const SOCIAL_SHARE_TEXT = 'Saya baru saja menyelesaikan asesmen di @OmnifitAI — sistem AI assessment terbaik untuk bisnis dan pertumbuhan personal! 🚀 Coba sekarang di';
 const SHARE_URL = 'https://omnifit.ai';
 
-// Mask business name: show first word + "****"
+// Mask business name: show first 2 chars + *** for each word
 function maskName(name: string): string {
-  const parts = name.trim().split(' ');
-  if (parts.length <= 1) return parts[0].charAt(0) + '****';
-  return parts[0] + ' ' + parts.slice(1).map(() => '****').join(' ');
+  return name
+    .trim()
+    .split(' ')
+    .map(word => word.slice(0, 2) + '*'.repeat(Math.max(2, word.length - 2)))
+    .join(' ');
 }
 
 export default function KomunitasPage() {

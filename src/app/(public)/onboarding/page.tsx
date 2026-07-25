@@ -166,7 +166,7 @@ export default function OnboardingPage() {
               <Button
                 onClick={() => setStep(1)}
                 disabled={!purpose}
-                className="w-full mt-8 h-13 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-2xl text-sm disabled:opacity-40 disabled:cursor-not-allowed"
+                className="w-full mt-8 h-12 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-2xl text-sm disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Lanjut <ChevronRight size={16} className="ml-1" />
               </Button>
@@ -205,7 +205,7 @@ export default function OnboardingPage() {
               <Button
                 onClick={saveAndContinue}
                 disabled={!sector || saving}
-                className="w-full mt-8 h-13 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-2xl text-sm disabled:opacity-40"
+                className="w-full mt-8 h-12 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-2xl text-sm disabled:opacity-40"
               >
                 {saving ? (
                   <span className="flex items-center gap-2"><AiSparkIcon size={16} className="animate-spin" /> Menganalisis...</span>
