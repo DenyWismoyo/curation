@@ -37,6 +37,9 @@ export { assessmentPostProcessingAgent } from "./agents/assessment/postProcessin
 export { assessmentAnalyticsAgent } from "./agents/analytics/analyticsAgent";
 export { generateCopywriting, reviseSlidePrompt, reviseCopywriting } from "./agents/promo/copywriterAgent";
 export { renderSingleSlide } from "./agents/promo/imageRendererAgent";
+export { generateArticleFromTemplate } from "./agents/promo/articleAgent";
+export { batchGenerateSmartPricing } from "./agents/promo/pricingAgent";
+export { generateProgramIdentity } from "./agents/promo/identityAgent";
 
 // ============================================================================
 // INISIALISASI FIREBASE

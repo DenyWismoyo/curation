@@ -1,15 +1,16 @@
 'use client';
-
 import React, { useState, useEffect, useRef } from 'react';
-import { collection, query, orderBy, onSnapshot, doc, setDoc, deleteDoc, updateDoc } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, doc, setDoc, deleteDoc, updateDoc, where, getDocs } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { db } from '@/lib/firebase';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { Newspaper, Plus, Trash2, Edit3, Loader2, X, CheckCircle2, Eye, EyeOff, BookOpen, Image as ImageIcon, UploadCloud } from 'lucide-react';
+import { Newspaper, Plus, Trash2, Edit3, Loader2, X, CheckCircle2, BookOpen, Image as ImageIcon, UploadCloud, Sparkles, Wand2 } from 'lucide-react';
+import { FormTemplate } from '@/types/curation';
 
 interface Article {
   id: string;
@@ -25,6 +26,8 @@ interface Article {
   imageStoragePath?: string;
   createdAt: string;
   updatedAt: string;
+  linkedTemplateId?: string | null;
+  linkedTemplateName?: string | null;
 }
 
 export default function AdminArticlesPage() {
@@ -32,6 +35,11 @@ export default function AdminArticlesPage() {
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // STATE UNTUK AI GENERATOR
+  const [templates, setTemplates] = useState<FormTemplate[]>([]);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string>('');
+  const [isGeneratingArticle, setIsGeneratingArticle] = useState(false);
 
   // Form State
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -43,7 +51,7 @@ export default function AdminArticlesPage() {
   const [featured, setFeatured] = useState(false);
   const [isPublished, setIsPublished] = useState(true);
   const [iconName, setIconName] = useState('AILensIcon');
-  
+
   // Image State (3x4 Ratio)
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -51,6 +59,7 @@ export default function AdminArticlesPage() {
   const [existingStoragePath, setExistingStoragePath] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Fetch Articles
   useEffect(() => {
     const q = query(collection(db, 'articles'), orderBy('createdAt', 'desc'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -61,6 +70,62 @@ export default function AdminArticlesPage() {
     });
     return () => unsubscribe();
   }, []);
+
+  // Fetch Form Templates untuk Dropdown AI & Tautan CTA
+  useEffect(() => {
+    const fetchTemplates = async () => {
+      try {
+        const q = query(collection(db, 'form_templates'), where('isActive', '==', true));
+        const snap = await getDocs(q);
+        const data: FormTemplate[] = [];
+        snap.forEach(doc => data.push({ id: doc.id, ...doc.data() } as FormTemplate));
+        setTemplates(data);
+      } catch (error) {
+        console.error("Gagal memuat template", error);
+      }
+    };
+    fetchTemplates();
+  }, []);
+
+  // FUNGSI MEMICU AI COPYWRITER
+  const handleGenerateAI = async () => {
+    if (!selectedTemplateId) {
+      return toast.warning("Pilih modul asesmen terlebih dahulu.");
+    }
+    const targetTemplate = templates.find(t => t.id === selectedTemplateId);
+    if (!targetTemplate) return;
+
+    setIsGeneratingArticle(true);
+    toast.info("AI sedang meracik artikel. Mohon tunggu...", { id: 'ai-loading' });
+
+    try {
+      const functions = getFunctions(undefined, 'asia-southeast2');
+      const generateArticleFn = httpsCallable(functions, 'generateArticleFromTemplate');
+      
+      const payload = {
+        templateId: targetTemplate.id,
+        trackName: targetTemplate.trackName,
+        trackDescription: targetTemplate.trackDescription,
+        expectedOutputs: targetTemplate.expectedOutputs,
+        aiPromptConfig: targetTemplate.aiPromptConfig
+      };
+
+      const result = await generateArticleFn(payload);
+      const data = result.data as any;
+
+      if (data.success) {
+        setTitle(data.title);
+        setExcerpt(data.excerpt);
+        setContent(data.content);
+        toast.success('Berhasil! Artikel edukatif siap ditinjau.', { id: 'ai-loading' });
+      }
+    } catch (error: any) {
+      console.error(error);
+      toast.error('Gagal meracik artikel: ' + error.message, { id: 'ai-loading' });
+    } finally {
+      setIsGeneratingArticle(false);
+    }
+  };
 
   const handleCancelEdit = () => {
     setIsEditing(false);
@@ -77,6 +142,7 @@ export default function AdminArticlesPage() {
     setImagePreview(null);
     setExistingImageUrl(null);
     setExistingStoragePath(null);
+    setSelectedTemplateId('');
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
@@ -96,6 +162,7 @@ export default function AdminArticlesPage() {
     setExistingStoragePath(article.imageStoragePath || null);
     setImagePreview(article.imageUrl || null);
     setImageFile(null);
+    setSelectedTemplateId(article.linkedTemplateId || ''); 
     if (fileInputRef.current) fileInputRef.current.value = '';
     
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -113,7 +180,6 @@ export default function AdminArticlesPage() {
     if (!title.trim() || !excerpt.trim() || !content.trim()) {
       return toast.warning('Judul, kutipan, dan konten utama wajib diisi.');
     }
-
     setIsSubmitting(true);
     try {
       const articleId = isEditing && editingId ? editingId : `article_${Date.now()}`;
@@ -121,7 +187,6 @@ export default function AdminArticlesPage() {
       let finalImageUrl = existingImageUrl || '';
       let finalStoragePath = existingStoragePath || '';
 
-      // Upload Gambar Baru jika ada
       if (imageFile) {
         const storage = getStorage();
         const ext = imageFile.name.split('.').pop();
@@ -132,13 +197,13 @@ export default function AdminArticlesPage() {
         finalImageUrl = await getDownloadURL(storageRef);
         finalStoragePath = fileName;
 
-        // Hapus gambar lama jika edit
         if (isEditing && existingStoragePath) {
           const oldRef = ref(storage, existingStoragePath);
           await deleteObject(oldRef).catch(err => console.warn("Gambar lama tidak ditemukan:", err));
         }
       }
 
+      // KUNCI PERBAIKAN: Menyertakan Tautan CTA secara otomatis ke database
       const payload: Partial<Article> = {
         title: title.trim(),
         excerpt: excerpt.trim(),
@@ -150,7 +215,9 @@ export default function AdminArticlesPage() {
         iconName,
         imageUrl: finalImageUrl,
         imageStoragePath: finalStoragePath,
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
+        linkedTemplateId: selectedTemplateId || null, 
+        linkedTemplateName: templates.find(t => t.id === selectedTemplateId)?.trackName || null
       };
 
       if (!isEditing) {
@@ -223,6 +290,38 @@ export default function AdminArticlesPage() {
           )}
         </div>
 
+        {/* MODUL AI COPYWRITER PANEL & TAUTAN CTA */}
+        <div className={`p-5 rounded-2xl border flex flex-col sm:flex-row gap-4 items-end mb-2 ${isEditing ? 'bg-amber-50/50 border-amber-100' : 'bg-indigo-50/50 border-indigo-100'}`}>
+          <div className="flex-1 w-full space-y-2">
+            <label className={`text-[11px] font-black uppercase tracking-widest flex items-center gap-1.5 ${isEditing ? 'text-amber-800' : 'text-indigo-800'}`}>
+              <Sparkles className={`w-4 h-4 ${isEditing ? 'text-amber-600' : 'text-indigo-600'}`}/> Tautan CTA (Call to Action) Asesmen
+            </label>
+            <select 
+              value={selectedTemplateId} 
+              onChange={e => setSelectedTemplateId(e.target.value)}
+              className={`w-full h-12 rounded-xl bg-white border px-3 font-bold text-sm text-slate-700 outline-none focus:ring-2 shadow-sm cursor-pointer ${isEditing ? 'border-amber-200 focus:ring-amber-500' : 'border-indigo-200 focus:ring-indigo-500'}`}
+            >
+              <option value="">-- Tidak Terhubung ke Modul Asesmen Manapun --</option>
+              {templates.map(tpl => (
+                <option key={tpl.id} value={tpl.id}>{tpl.trackName}</option>
+              ))}
+            </select>
+            <p className={`text-xs font-medium ${isEditing ? 'text-amber-600/80' : 'text-indigo-500/80'}`}>
+              {isEditing ? 'Mengubah modul akan memperbarui Banner CTA di halaman artikel ini.' : 'Pilih modul, lalu tekan Racik Artikel agar AI menulis artikel edukasi otomatis.'}
+            </p>
+          </div>
+          {!isEditing && (
+            <Button 
+              onClick={handleGenerateAI} 
+              disabled={!selectedTemplateId || isGeneratingArticle}
+              className="h-12 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-sm shrink-0 w-full sm:w-auto transition-all"
+            >
+              {isGeneratingArticle ? <Loader2 className="w-4 h-4 animate-spin mr-2"/> : <Wand2 className="w-4 h-4 mr-2"/>}
+              Racik Artikel
+            </Button>
+          )}
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           
           {/* UPLOAD GAMBAR 3x4 */}
@@ -273,8 +372,8 @@ export default function AdminArticlesPage() {
           </div>
 
           <div className="space-y-2 md:col-span-3">
-            <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Konten Utama (Dukung format paragraf biasa)</label>
-            <Textarea value={content} onChange={e => setContent(e.target.value)} placeholder="Tulis isi artikel lengkap di sini..." className="bg-slate-50 rounded-xl min-h-[250px]" />
+            <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Konten Utama (Dukung format Markdown)</label>
+            <Textarea value={content} onChange={e => setContent(e.target.value)} placeholder="Tulis isi artikel lengkap di sini (mendukung penulisan Markdown)..." className="bg-slate-50 rounded-xl min-h-[350px] font-medium leading-relaxed" />
           </div>
 
           <div className="space-y-2">
@@ -283,7 +382,7 @@ export default function AdminArticlesPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Ikon Representasi (Jika Tanpa Gambar)</label>
+            <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Ikon Representasi</label>
             <select value={iconName} onChange={e => setIconName(e.target.value)} className="w-full h-12 rounded-xl bg-slate-50 border border-slate-200 px-3 font-bold text-sm text-slate-700 outline-none focus:ring-2 focus:ring-indigo-500">
               <option value="AILensIcon">Lensa AI (Analitik)</option>
               <option value="AiSparkIcon">Spark AI (Inovasi/Update)</option>
@@ -293,16 +392,17 @@ export default function AdminArticlesPage() {
             </select>
           </div>
 
-          <div className="flex items-center gap-4 pt-6">
+          <div className="flex items-center gap-4 pt-6 md:col-span-1">
             <label className="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" checked={isPublished} onChange={e => setIsPublished(e.target.checked)} className="w-4 h-4 text-indigo-600 rounded" />
-              <span className="text-sm font-bold text-slate-700">Publikasikan Langsung</span>
+              <span className="text-sm font-bold text-slate-700">Publikasikan</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" checked={featured} onChange={e => setFeatured(e.target.checked)} className="w-4 h-4 text-amber-500 rounded" />
-              <span className="text-sm font-bold text-amber-700">Jadikan Sorotan Utama</span>
+              <span className="text-sm font-bold text-amber-700">Sorotan Utama</span>
             </label>
           </div>
+
         </div>
 
         <div className="flex justify-end pt-4 border-t border-slate-100">

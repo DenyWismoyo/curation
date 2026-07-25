@@ -39,6 +39,7 @@ export const formBuilderArchitectAgent = onDocumentUpdated({
 
     const API_KEY = geminiApiKeySecret.value();
     const genAI = new GoogleGenerativeAI(API_KEY);
+
     const masterModel = genAI.getGenerativeModel({
       model: "gemini-3.1-pro-preview",
       tools: [{ googleSearch: {} } as any],
@@ -52,7 +53,7 @@ export const formBuilderArchitectAgent = onDocumentUpdated({
             researchNotes: { type: SchemaType.STRING },
             aiPromptConfig: {
               type: SchemaType.OBJECT,
-              // KUNCI PERBAIKAN: Sengaja tidak memasukkan targetAudience & formPurpose agar AI tidak berhalusinasi merubahnya
+              // KUNCI PERBAIKAN: Tidak memasukkan targetAudience & formPurpose agar AI tidak berhalusinasi merubahnya
               required: ["aiPersona", "assessmentGoal", "gradingStrictness", "reportTone", "expectedMetrics", "expectedAnalysisBlocks", "expectedRecommendations", "riskFramework", "customReadinessTiers", "customScoringRubric", "negativePrompts", "formatInstructions", "customSystemPrompt", "actionPlanBehavior"],
               properties: {
                 aiPersona: { type: SchemaType.STRING },
@@ -70,7 +71,18 @@ export const formBuilderArchitectAgent = onDocumentUpdated({
                 formatInstructions: { type: SchemaType.STRING },
                 customScoringRubric: { type: SchemaType.STRING },
                 actionPlanBehavior: { type: SchemaType.STRING },
-                researchSourcesCited: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } }
+                researchSourcesCited: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
+                // PERBAIKAN 1: Menambahkan customUiLabels ke dalam skema agar AI bisa memahaminya
+                customUiLabels: {
+                  type: SchemaType.OBJECT,
+                  properties: {
+                    scoreLabel: { type: SchemaType.STRING },
+                    swotLabel: { type: SchemaType.STRING },
+                    riskLabel: { type: SchemaType.STRING },
+                    roadmapLabel: { type: SchemaType.STRING },
+                    executionLabel: { type: SchemaType.STRING }
+                  }
+                }
               }
             },
             stepOutlines: {
@@ -92,16 +104,23 @@ export const formBuilderArchitectAgent = onDocumentUpdated({
     });
 
     const trackName = afterData.trackName || "Asesmen Umum";
-    const currentConfigStr = Object.keys(afterData.aiPromptConfig || {}).length > 0
-       ? JSON.stringify(afterData.aiPromptConfig, null, 2)
+    const existingConfig = afterData.aiPromptConfig || {};
+    const currentConfigStr = Object.keys(existingConfig).length > 0 
+       ? JSON.stringify(existingConfig, null, 2) 
        : "Belum ada konfigurasi awal, rumuskan dari nol.";
 
-    const targetMetricCount = afterData.aiPromptConfig?.targetMetricCount || 8;
-    const targetBlockCount = afterData.aiPromptConfig?.targetBlockCount || 6;
-    const targetTierCount = afterData.aiPromptConfig?.targetTierCount || 4;
-    const targetRecCount = afterData.aiPromptConfig?.targetRecommendationCount || 5;
+    const targetMetricCount = existingConfig.targetMetricCount || 8;
+    const targetBlockCount = existingConfig.targetBlockCount || 6;
+    const targetTierCount = existingConfig.targetTierCount || 4;
+    const targetRecCount = existingConfig.targetRecommendationCount || 5;
+
     const specificTargetContext = afterData.specificTargetContext || 'Tergantung konfigurasi targetAudience, dilarang meleset dari ini.';
     const methodologyContext = afterData.methodologyContext || 'Standar Global Terbaik yang paling relevan dengan profil.';
+
+    // PERBAIKAN 2: Instruksi dinamis khusus untuk AI meracik label UI jika modenya "custom"
+    const customUiInstruction = existingConfig.formPurpose === 'custom'
+      ? "\n- MODE MANUAL (CUSTOM) TERDETEKSI: Anda WAJIB meracik ulang data 'customUiLabels' (scoreLabel, swotLabel, riskLabel, roadmapLabel, executionLabel). Buatlah istilah yang relevan, inovatif, dan berbahasa Indonesia untuk metrik UI."
+      : "";
 
     const masterPrompt = `
       Anda adalah Chief Research Officer tingkat Enterprise. Topik program/asesmen: "${trackName}".
@@ -120,7 +139,7 @@ export const formBuilderArchitectAgent = onDocumentUpdated({
       - expectedMetrics: TEPAT ${targetMetricCount} metrik.
       - expectedAnalysisBlocks: TEPAT ${targetBlockCount} blok analisis. (Format 'Judul Blok: Sub-poin 1, Sub-poin 2')
       - customReadinessTiers: TEPAT ${targetTierCount} tingkatan (tiers).
-      - expectedRecommendations: TEPAT ${targetRecCount} rekomendasi.
+      - expectedRecommendations: TEPAT ${targetRecCount} rekomendasi.${customUiInstruction}
       
       LANGKAH 2: PEMBUATAN KERANGKA FORMULIR (stepOutlines)
       Berdasarkan "aiPromptConfig" yang BARU SAJA Anda sempurnakan, susun 5 hingga 8 Seksi kuesioner yang 100% sejajar dengan metrik tersebut.
@@ -132,21 +151,27 @@ export const formBuilderArchitectAgent = onDocumentUpdated({
     await logToTerminal(templateRef, "Otak AI dan Master Blueprint berhasil disempurnakan!", "success");
 
     // =========================================================================
-    // KUNCI PERBAIKAN: MERGE DATA (MELINDUNGI SETTINGAN UI DARI OVERWRITE AI)
+    // PERBAIKAN 3: MERGE DATA (MELINDUNGI SETTINGAN UI DARI OVERWRITE AI KECUALI MANUAL)
     // =========================================================================
-    const existingConfig = afterData.aiPromptConfig || {};
     
     const finalAiPromptConfig = {
       ...existingConfig,           // 1. Bawa semua data lama terlebih dahulu
       ...blueprint.aiPromptConfig, // 2. Timpa dengan kecerdasan / riset baru dari AI
       
-      // 3. KUNCI ABSOLUT: Timpa kembali secara paksa dengan settingan UI Admin 
-      // agar AI tidak bisa menghapus, menimpa, atau berhalusinasi!
+      // 3. KUNCI ABSOLUT: Pastikan target audience, purpose, dan adaptive tidak diganggu AI
       formPurpose: existingConfig.formPurpose || 'assessment',
       targetAudience: existingConfig.targetAudience || 'company',
-      customUiLabels: existingConfig.customUiLabels || {},
       isAdaptive: existingConfig.isAdaptive || false
     };
+
+    // LOGIKA PENENTU LABEL UI
+    if (existingConfig.formPurpose === 'custom' && blueprint.aiPromptConfig?.customUiLabels) {
+        // Jika mode manual, izinkan AI mengambil alih label UI
+        finalAiPromptConfig.customUiLabels = blueprint.aiPromptConfig.customUiLabels;
+    } else {
+        // Jika bukan, paksakan menggunakan label dari UI Admin agar tidak tertimpa halusinasi
+        finalAiPromptConfig.customUiLabels = existingConfig.customUiLabels || {};
+    }
 
     // Simpan konfigurasi yang telah digabungkan ke database
     await templateRef.update({

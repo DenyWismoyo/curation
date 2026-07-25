@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -16,7 +17,8 @@ interface TabGeneralProps {
 export function TabGeneral({ template, onChange }: TabGeneralProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isGeneratingAnchors, setIsGeneratingAnchors] = useState(false);
-  
+  const [isGeneratingIdentity, setIsGeneratingIdentity] = useState(false); // STATE BARU UNTUK IDENTITAS
+
   // STATE MARKETING KIT
   const [isGeneratingCopy, setIsGeneratingCopy] = useState(false);
   const [activePlatform, setActivePlatform] = useState<'instagram' | 'tiktok' | 'threads' | 'facebook'>('instagram');
@@ -57,6 +59,40 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
     const currentArr = template.expectedOutputs || [];
     const newArr = [...currentArr, 'Output Baru: Deskripsi singkat output ini'];
     onChange({ ...template, expectedOutputs: newArr });
+  };
+
+  // --- GENERATE IDENTITAS PROGRAM (JUDUL, DESKRIPSI, IKON) ---
+  const handleGenerateIdentity = async () => {
+    if (!template.trackName) {
+      toast.error("Nama program kosong", { description: "Isi draf nama program dasar terlebih dahulu agar AI punya referensi." });
+      return;
+    }
+    
+    setIsGeneratingIdentity(true);
+    try {
+      const functions = getFunctions(undefined, 'asia-southeast2');
+      const generateIdentityFn = httpsCallable(functions, 'generateProgramIdentity');
+      const result = await generateIdentityFn({ 
+        trackName: template.trackName, 
+        trackDescription: template.trackDescription,
+        targetAudience: template.aiPromptConfig?.targetAudience 
+      });
+      const data = result.data as any;
+      
+      if (data.success) {
+         onChange({ 
+           ...template, 
+           trackName: data.trackName,
+           trackDescription: data.trackDescription,
+           trackIcon: data.trackIcon
+         });
+         toast.success("Identitas program berhasil dipercantik!");
+      }
+    } catch(e: any) { 
+      toast.error("Gagal Enhance Identitas", { description: e.message }); 
+    } finally { 
+      setIsGeneratingIdentity(false); 
+    }
   };
 
   const handleGenerateOutputs = async () => {
@@ -107,27 +143,25 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
       
       if (data.success) {
         const currentAssets = (template.promoAssets as any) || {};
-        // Ambil slide lama (jika ada) untuk mempertahankan gambarnya
         const existingSlides = currentAssets[activePlatform]?.carouselSlides || [];
         
-        // Memetakan slide baru dan meng-inject imageUrl dari slide lama
         const preservedSlides = data.carouselSlides.map((newSlide: any, index: number) => {
           const existingImage = existingSlides[index]?.imageUrl;
           return existingImage ? { ...newSlide, imageUrl: existingImage } : newSlide;
         });
 
         onChange({ 
-          ...template, 
-          promoAssets: { 
-            ...currentAssets, 
-            [activePlatform]: { 
-              ...currentAssets[activePlatform], 
-              copywriting: data.copywriting, 
-              carouselSlides: preservedSlides, // Gunakan array yang sudah di-inject
-              generatedAt: new Date().toISOString() 
-            } 
-          } 
-        });
+           ...template, 
+           promoAssets: {
+             ...currentAssets,
+             [activePlatform]: {
+               ...currentAssets[activePlatform],
+               copywriting: data.copywriting,
+               carouselSlides: preservedSlides,
+               generatedAt: new Date().toISOString()
+             }
+           } 
+         });
         toast.success("Konsep Diperbarui (Gambar Anda tetap aman!)");
       }
     } catch(e: any) { toast.error("Gagal Generate", { description: e.message }); } finally { setIsGeneratingCopy(false); }
@@ -229,25 +263,36 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
   return (
     <div className="bg-white p-6 md:p-8 rounded-3xl ring-1 ring-slate-200 shadow-sm space-y-8">
       
-      <div className="mb-2">
-        <h3 className="text-xl font-black text-slate-900">Identitas Program</h3>
-        <p className="text-sm text-slate-500 font-medium">Tampilan yang akan dilihat peserta di halaman depan.</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 pb-4 border-b border-slate-100">
+        <div>
+          <h3 className="text-xl font-black text-slate-900">Identitas Program</h3>
+          <p className="text-sm text-slate-500 font-medium mt-1">Tampilan yang akan dilihat peserta di halaman depan katalog.</p>
+        </div>
+        <Button 
+          type="button" 
+          onClick={handleGenerateIdentity} 
+          disabled={isGeneratingIdentity}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl h-10 px-5 shadow-sm shrink-0 transition-all"
+        >
+          {isGeneratingIdentity ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Wand2 className="w-4 h-4 mr-2" />} 
+          AI Auto-Enhance
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Nama Program</label>
-          <Input value={template.trackName} onChange={e => onChange({ ...template, trackName: e.target.value })} className="rounded-xl h-12 bg-slate-50 font-bold" />
+          <Input value={template.trackName} onChange={e => onChange({ ...template, trackName: e.target.value })} className="rounded-xl h-12 bg-slate-50 font-bold border-slate-200" />
         </div>
         
         <div className="space-y-2">
           <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Icon (Lucide)</label>
-          <Input value={template.trackIcon} onChange={e => onChange({ ...template, trackIcon: e.target.value })} placeholder="Contoh: Rocket, Store" className="rounded-xl h-12 bg-slate-50 font-mono text-sm" />
+          <Input value={template.trackIcon} onChange={e => onChange({ ...template, trackIcon: e.target.value })} placeholder="Contoh: Rocket, Target, Brain" className="rounded-xl h-12 bg-slate-50 font-mono text-sm border-slate-200" />
         </div>
 
         <div className="space-y-2 md:col-span-2">
           <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Deskripsi Singkat</label>
-          <Textarea value={template.trackDescription} onChange={e => onChange({ ...template, trackDescription: e.target.value })} className="rounded-xl bg-slate-50 min-h-[100px]" placeholder="Jelaskan secara singkat tujuan form ini..." />
+          <Textarea value={template.trackDescription} onChange={e => onChange({ ...template, trackDescription: e.target.value })} className="rounded-xl bg-slate-50 border-slate-200 min-h-[100px] leading-relaxed font-medium" placeholder="Jelaskan secara singkat tujuan form ini..." />
         </div>
 
         {/* --- BLOK KONTEKS SPESIFIK & PROMPT ANCHORS --- */}
@@ -276,7 +321,7 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
         </div>
       </div>
 
-      <div className="space-y-4 p-6 bg-slate-50/80 rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden">
+      <div className="space-y-4 p-6 bg-slate-50/80 rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden mt-8">
         <div className="absolute top-0 left-0 w-1.5 h-full bg-indigo-500"></div>
         
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
@@ -490,6 +535,7 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
           </div>
         </div>
       </div>
+
     </div>
   );
 }

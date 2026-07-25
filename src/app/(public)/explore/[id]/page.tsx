@@ -1,11 +1,10 @@
-'use client';
-
 // src/app/(public)/explore/[id]/page.tsx
+'use client'; 
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { ArrowLeft, Calendar, Clock, Loader2, Share2, Check, BookOpen } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, Loader2, Share2, Check, BookOpen, Rocket } from 'lucide-react';
 import { AiSparkIcon, AILensIcon, GlobalTargetIcon, BrainIcon } from '@/types';
 import { toast } from 'sonner';
 
@@ -17,6 +16,8 @@ interface Article {
   iconName: string;
   imageUrl?: string;
   createdAt: string;
+  linkedTemplateId?: string;
+  linkedTemplateName?: string;
 }
 
 const getIconComponent = (iconName: string, className: string) => {
@@ -28,7 +29,56 @@ const getIconComponent = (iconName: string, className: string) => {
     case 'BookOpen': return <BookOpen size={64} className={className} />;
     default: return <BookOpen size={64} className={className} />;
   }
+}
+
+// -------------------------------------------------------------
+// ADAPTASI FUNGSI PARSER DARI UniversalAssessmentView.tsx
+// -------------------------------------------------------------
+const parseInlineText = (text: string) => {
+  const parts = text.split(/(\*\*.*?\*\*|\*.*?\*)/g);
+  return parts.map((part, index) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={index} className="font-black text-slate-900">{part.slice(2, -2)}</strong>;
+    } else if (part.startsWith('*') && part.endsWith('*')) {
+      return <em key={index} className="italic font-medium text-slate-800">{part.slice(1, -1)}</em>;
+    }
+    return part;
+  });
 };
+
+const MarkdownRenderer = ({ content }: { content: string }) => {
+  if (!content) return null;
+  const blocks = content.split(/\n\n+/);
+
+  return (
+    <div className="space-y-5 text-lg text-slate-700 leading-relaxed font-medium">
+      {blocks.map((block, bIdx) => {
+        const trimmed = block.trim();
+        if (trimmed.startsWith('### ')) {
+          return <h3 key={bIdx} className="text-2xl font-black text-slate-900 mt-10 mb-4">{parseInlineText(trimmed.slice(4))}</h3>;
+        } else if (trimmed.startsWith('## ')) {
+          return <h2 key={bIdx} className="text-3xl font-black text-slate-900 mt-12 mb-6 border-b border-slate-100 pb-2">{parseInlineText(trimmed.slice(3))}</h2>;
+        } else if (trimmed.startsWith('# ')) {
+          return <h1 key={bIdx} className="text-4xl font-black text-slate-900 mt-12 mb-6">{parseInlineText(trimmed.slice(2))}</h1>;
+        } else if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+          const items = trimmed.split('\n').filter(i => i.trim().length > 0);
+          return (
+            <ul key={bIdx} className="space-y-3 my-6">
+              {items.map((item, iIdx) => (
+                <li key={iIdx} className="flex items-start gap-3">
+                  <span className="text-indigo-500 mt-1.5 shrink-0 text-sm">●</span>
+                  <span className="leading-relaxed">{parseInlineText(item.replace(/^[-*]\s/, ''))}</span>
+                </li>
+              ))}
+            </ul>
+          );
+        }
+        return <p key={bIdx}>{parseInlineText(trimmed)}</p>;
+      })}
+    </div>
+  );
+};
+// -------------------------------------------------------------
 
 export default function ArticleDetailPage() {
   const params = useParams();
@@ -77,6 +127,26 @@ export default function ArticleDetailPage() {
 
   if (!article) return null;
 
+  // KOMPONEN CTA BANNER DINAMIS
+  const CTABanner = () => {
+    if (!article.linkedTemplateId) return null;
+    return (
+      <div className="bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-100 p-6 sm:p-8 rounded-[1.5rem] flex flex-col sm:flex-row items-center justify-between gap-6 my-8 shadow-sm">
+        <div className="flex-1 text-center sm:text-left">
+          <p className="text-[10px] font-black uppercase tracking-widest text-indigo-400 mb-2">Implementasi Langsung</p>
+          <h4 className="text-xl md:text-2xl font-black text-indigo-950 mb-1 leading-tight">Uji {article.linkedTemplateName || 'Kesiapan Anda'} Sekarang</h4>
+          <p className="text-indigo-700/80 text-sm font-medium">Beralih dari wawasan menjadi tindakan dengan instrumen analitik kami.</p>
+        </div>
+        <button 
+          onClick={() => router.push(`/katalog?buy=${article.linkedTemplateId}`)} 
+          className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-8 rounded-xl whitespace-nowrap shadow-md shadow-indigo-600/20 transition-all flex items-center gap-2 hover:-translate-y-0.5 w-full sm:w-auto justify-center"
+        >
+          <Rocket size={18} /> Mulai Asesmen
+        </button>
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-[#FAFAFA] pb-24 font-sans selection:bg-indigo-100">
       <div className="max-w-3xl mx-auto px-6 pt-8 pb-4">
@@ -124,9 +194,16 @@ export default function ArticleDetailPage() {
              )}
           </div>
 
-          <div className="prose prose-slate prose-lg max-w-none prose-headings:font-black prose-a:text-indigo-600 whitespace-pre-wrap leading-relaxed text-slate-700">
-            {article.content}
+          {/* CTA Banner Atas */}
+          <CTABanner />
+
+          {/* Render Markdown Murni */}
+          <div className="my-10">
+            <MarkdownRenderer content={article.content} />
           </div>
+
+          {/* CTA Banner Bawah */}
+          <CTABanner />
 
         </div>
       </article>
