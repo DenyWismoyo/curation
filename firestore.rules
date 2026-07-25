@@ -93,6 +93,42 @@ service cloud.firestore {
       allow read: if isAuthenticated() && (request.auth.uid == resource.data.userId || isSuperAdmin());
       allow write: if false; 
     }
+
+    // ============================================================
+    // KOLEKSI BARU: ENGAGEMENT & USER EXPERIENCE FEATURES
+    // ============================================================
+
+    // Notifikasi in-app per pengguna
+    match /notifications/{notifId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow update: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if false; // Hanya dibuat oleh Cloud Functions backend
+      allow delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+
+    // Artikel / konten edukasi (publik read, admin write)
+    match /articles/{articleId} {
+      allow read: if true;
+      allow write: if isSuperAdmin();
+    }
+
+    // Statistik platform (publik read, hanya backend yang write)
+    match /platform_stats/{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Journal eksekusi per asesmen (sub-collection)
+    match /assessments/{assessmentId}/journal/{entryId} {
+      allow read: if isAuthenticated() && (
+        get(/databases/$(database)/documents/assessments/$(assessmentId)).data.userId == request.auth.uid
+        || isSuperAdmin()
+      );
+      allow create, update: if isAuthenticated() &&
+        get(/databases/$(database)/documents/assessments/$(assessmentId)).data.userId == request.auth.uid;
+      allow delete: if isAuthenticated() &&
+        get(/databases/$(database)/documents/assessments/$(assessmentId)).data.userId == request.auth.uid;
+    }
     
     match /{document=**} { allow read, write: if false; }
   }

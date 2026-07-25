@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useCuration } from '@/hooks/useCuration';
 import { CurationLanding } from '@/app/components/curation/CurationLanding';
@@ -23,6 +23,7 @@ export default function Home() {
   const { user, role, loading, loginWithGoogle, logout } = useAuth();
   
   const [dbHistory, setDbHistory] = useState<CurationHistory[]>([]);
+  const [showOnboardingBanner, setShowOnboardingBanner] = useState(false);
 
   // 1. Tarik Data Riwayat dari Database secara REAL-TIME berdasarkan UID (userId)
   useEffect(() => {
@@ -62,6 +63,16 @@ export default function Home() {
 
     // Cleanup memori listener saat berpindah halaman
     return () => unsubscribe();
+  }, [user]);
+
+  // CHECK ONBOARDING STATUS
+  useEffect(() => {
+    if (!user?.uid) { setShowOnboardingBanner(false); return; }
+    getDoc(doc(db, 'users', user.uid)).then(snap => {
+      if (snap.exists() && snap.data()?.onboardingCompleted !== true) {
+        setShowOnboardingBanner(true);
+      }
+    }).catch(() => {});
   }, [user]);
 
   // ==========================================
@@ -127,6 +138,19 @@ export default function Home() {
 
   return (
     <main className="min-h-screen">
+      {/* ONBOARDING NUDGE BANNER */}
+      {showOnboardingBanner && (
+        <div className="fixed top-0 left-0 right-0 z-50 bg-indigo-600 text-white text-center px-4 py-2.5 flex items-center justify-center gap-3 text-sm font-bold shadow-lg">
+          <span>✨ Personalisasi pengalaman Anda!</span>
+          <button
+            onClick={() => router.push('/onboarding')}
+            className="underline underline-offset-2 hover:no-underline"
+          >
+            Mulai Onboarding →
+          </button>
+          <button onClick={() => setShowOnboardingBanner(false)} className="ml-2 opacity-60 hover:opacity-100 text-lg leading-none">×</button>
+        </div>
+      )}
       <CurationLanding
         onStart={() => router.push('/assessment')}
         history={combinedHistory}
