@@ -68,9 +68,6 @@ const sendMetaConversionEvent = async (
 // ============================================================================
 // FUNGSI 1: MEMBUAT TRANSAKSI MAYAR (SINGLE PAYMENT LINK)
 // ============================================================================
-// ============================================================================
-// FUNGSI 1: MEMBUAT TRANSAKSI MAYAR (SINGLE PAYMENT LINK)
-// ============================================================================
 export const createPaymentInvoice = onCall({
     memory: "256MiB",
     region: "asia-southeast2",
@@ -90,7 +87,6 @@ export const createPaymentInvoice = onCall({
     const transactionId = txRef.id;
 
     try {
-      // 1. PERBAIKAN: Gunakan endpoint URL yang valid untuk Single Payment Request
       const response = await fetch("https://api.mayar.id/hl/v1/payment/create", {
         method: "POST",
         headers: {
@@ -101,23 +97,23 @@ export const createPaymentInvoice = onCall({
           name: userName || "Pengguna",
           email: userEmail,
           amount: finalPrice,
-          mobile: "089900000000", // Fallback parameter wajib jika nomor HP tidak diminta di awal
+          mobile: "089900000000",
           description: `Akses Modul Asesmen: ${packageName}`,
           redirectUrl: `https://omnifit.cloud/checkout/${transactionId}`,
-          // 2. PERBAIKAN: Tambahkan parameter expiredAt yang diwajibkan oleh sistem Mayar
-          expiredAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // Invoice berlaku 24 jam
+          expiredAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+          // PERBAIKAN 1: Sisipkan transactionId kita ke Mayar agar dikembalikan via Webhook
+          reference_id: transactionId, 
+          referenceId: transactionId 
         })
       });
       
       const mayarData = await response.json();
       
-      // Validasi error jika Mayar mengembalikan selain status 200 OK
       if (!response.ok || mayarData.statusCode !== 200) {
         console.error("Mayar Error:", mayarData);
         throw new Error(mayarData.messages || mayarData.message || "Gagal menghasilkan invoice dari gateway.");
       }
       
-      // Simpan log transaksi ke Firestore
       await txRef.set({
         transactionId: transactionId,
         userId: request.auth.uid,
@@ -132,7 +128,6 @@ export const createPaymentInvoice = onCall({
         createdAt: FieldValue.serverTimestamp(),
       });
       
-      // [MARKETING EVENT] Kirim event InitiateCheckout ke Meta
       await sendMetaConversionEvent(
         metaPixelId.value(),
         metaAccessToken.value(),
@@ -165,25 +160,35 @@ export const mayarWebhook = onRequest({
     }
     
     const data = req.body;
-    let transactionId = data.reference_id; 
     const db = getFirestore(admin.app(), "curation");
 
-    // Fallback: Jika Mayar tidak mengembalikan reference_id, cari via mayarTransactionId
-    if (!transactionId && data.id) {
-      const txQuery = await db.collection("transactions").where("mayarTransactionId", "==", data.id).limit(1).get();
-      if (!txQuery.empty) {
-        transactionId = txQuery.docs[0].id;
+    // PERBAIKAN 2: Prioritaskan mencari reference_id yang kita sisipkan sebelumnya
+    let transactionId = data.reference_id || data.referenceId || data.custom_field; 
+
+    // PERBAIKAN 3: Jika reference_id kosong (transaksi lama), gunakan link_id dari payload Mayar
+    // (Karena mayarTransactionId di Firestore Anda menyimpan ID Product/Link, bukan ID Transaksi)
+    if (!transactionId) {
+      const linkIdFromMayar = data.link_id || data.payment_link_id; 
+      
+      if (linkIdFromMayar) {
+        const txQuery = await db.collection("transactions").where("mayarTransactionId", "==", linkIdFromMayar).limit(1).get();
+        if (!txQuery.empty) {
+          transactionId = txQuery.docs[0].id;
+        }
       }
     }
     
-    if (!transactionId || !data.status) {
-      res.status(400).send('Bad Request');
+    if (!transactionId) {
+      console.error("Webhook Error: Tidak dapat memetakan data Mayar ke Firestore", data);
+      res.status(400).send('Bad Request: Missing Transaction Mapping ID');
       return;
     }
 
+    // PERBAIKAN 4: Atasi masalah Huruf Besar/Kecil (Case Sensitivity) pada Status
+    const currentStatus = String(data.status || "").toUpperCase();
+
     try {
-      // Mayar biasanya mengirim status "SUCCESS" atau "PAID"
-      if (data.status === 'SUCCESS' || data.status === 'SETTLED' || data.status === 'PAID') {
+      if (['SUCCESS', 'SETTLED', 'PAID', 'COMPLETED'].includes(currentStatus)) {
         const txRef = db.collection("transactions").doc(transactionId);
         const txSnap = await txRef.get();
         
@@ -201,7 +206,6 @@ export const mayarWebhook = onRequest({
               tokenCode: `B2C-${tokenCode}`
             });
             
-            // [MARKETING EVENT] Kirim event Purchase ke Meta
             await sendMetaConversionEvent(
               metaPixelId.value(),
               metaAccessToken.value(),
@@ -211,7 +215,6 @@ export const mayarWebhook = onRequest({
               transactionId
             );
             
-            // AUTO-PROVISIONING Token B2C
             if (txData?.packageId) {
               const b2cRef = db.collection("corporate_tokens").doc("B2C");
               
@@ -236,9 +239,9 @@ export const mayarWebhook = onRequest({
         }
       }
       
-      res.status(200).send({ status: "success", message: "Webhook processed" });
+      res.status(200).send({ status: "success", message: "Webhook processed successfully" });
     } catch (error) {
-      console.error("Webhook Error:", error);
+      console.error("Webhook Execution Error:", error);
       res.status(500).send("Internal Server Error");
     }
   }
