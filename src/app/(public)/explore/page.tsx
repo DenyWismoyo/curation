@@ -1,262 +1,254 @@
-// src/app/(public)/explore/page.tsx
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import {
-  collection, query, where, getDocs, orderBy, limit
-} from 'firebase/firestore';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Search, Calendar, ArrowRight, BookOpen, Clock, Share2, Check, Loader2 } from 'lucide-react';
+import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { useAuth } from '@/contexts/AuthContext';
-import { motion } from 'framer-motion';
-import {
-  Search, Sparkles, BarChart2, ChevronRight, SlidersHorizontal
-} from 'lucide-react';
-import { AiSparkIcon, BrainIcon, InfinityWorkflowIcon } from '@/types';
-import { NotificationBell } from '@/app/components/shared/NotificationBell';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
+import { AiSparkIcon, AILensIcon, GlobalTargetIcon, BrainIcon } from '@/types';
 
-// ============================================================
-// TYPES
-// ============================================================
-interface TemplateCard {
+interface Article {
   id: string;
   title: string;
-  description: string;
-  trackType?: string;
-  difficulty?: string;
-  tags?: string[];
-  usageCount?: number;
-  isActive?: boolean;
+  excerpt: string;
+  category: string;
+  readTime: string;
+  featured: boolean;
+  iconName: string;
+  imageUrl?: string;
+  createdAt: string;
 }
 
-interface PlatformStat {
-  totalAssessments?: number;
-  totalUsers?: number;
-  avgScore?: number;
-}
+const CATEGORIES = ['Semua', 'Edukasi AI', 'Update Sistem', 'Studi Kasus', 'Praktik Terbaik'];
 
-const DIFFICULTY_COLORS: Record<string, string> = {
-  beginner: 'bg-emerald-50 text-emerald-600',
-  intermediate: 'bg-amber-50 text-amber-600',
-  advanced: 'bg-rose-50 text-rose-600',
-};
-
-const TRACK_ICONS: Record<string, React.ReactNode> = {
-  B2B: <BrainIcon size={18} className="text-indigo-600" />,
-  Startup: <AiSparkIcon size={18} className="text-purple-500" />,
-  Personal: <InfinityWorkflowIcon size={18} className="text-teal-500" />,
+const getIconComponent = (iconName: string, className: string) => {
+  switch (iconName) {
+    case 'AILensIcon': return <AILensIcon size={48} className={className} />;
+    case 'AiSparkIcon': return <AiSparkIcon size={48} className={className} />;
+    case 'GlobalTargetIcon': return <GlobalTargetIcon size={48} className={className} />;
+    case 'BrainIcon': return <BrainIcon size={48} className={className} />;
+    case 'BookOpen': return <BookOpen size={48} className={className} />;
+    default: return <BookOpen size={48} className={className} />;
+  }
 };
 
 export default function ExplorePage() {
-  const { user } = useAuth();
   const router = useRouter();
-
-  const [templates, setTemplates] = useState<TemplateCard[]>([]);
-  const [platformStats, setPlatformStats] = useState<PlatformStat>({});
-  const [search, setSearch] = useState('');
-  const [filterTag, setFilterTag] = useState('Semua');
+  const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeCategory, setActiveCategory] = useState('Semua');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        // Load active templates
-        const tmplQ = query(
-          collection(db, 'form_templates'),
-          where('isActive', '==', true),
-          orderBy('usageCount', 'desc'),
-          limit(24)
-        );
-        const tmplSnap = await getDocs(tmplQ);
-        setTemplates(tmplSnap.docs.map(d => ({ id: d.id, ...d.data() } as TemplateCard)));
-
-        // Try platform_stats (non-blocking)
-        try {
-          const statsSnap = await getDocs(collection(db, 'platform_stats'));
-          if (!statsSnap.empty) {
-            setPlatformStats(statsSnap.docs[0].data() as PlatformStat);
-          }
-        } catch (statsErr) {
-          // platform_stats collection may not exist yet — non-critical
-          console.warn('platform_stats not available:', statsErr);
-        }
-      } catch (e) {
-        console.error('Gagal load explore:', e);
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
+    const q = query(collection(db, 'articles'), where('isPublished', '==', true), orderBy('createdAt', 'desc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const data: Article[] = [];
+      snapshot.forEach((doc) => data.push({ id: doc.id, ...doc.data() } as Article));
+      setArticles(data);
+      setLoading(false);
+    });
+    return () => unsubscribe();
   }, []);
 
-  const allTags = ['Semua', ...Array.from(new Set(templates.flatMap(t => t.tags || []).filter(Boolean)))];
+  const handleCopyLink = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation(); 
+    const link = `${window.location.origin}/explore/${id}`;
+    navigator.clipboard.writeText(link);
+    setCopiedId(id);
+    toast.success('Tautan artikel berhasil disalin!');
+    setTimeout(() => setCopiedId(null), 2000);
+  };
 
-  const filtered = templates.filter(t => {
-    const matchesSearch = !search || t.title.toLowerCase().includes(search.toLowerCase()) || t.description?.toLowerCase().includes(search.toLowerCase());
-    const matchesTag = filterTag === 'Semua' || (t.tags || []).includes(filterTag);
-    return matchesSearch && matchesTag;
+  const filteredArticles = articles.filter(article => {
+    const matchesCategory = activeCategory === 'Semua' || article.category === activeCategory;
+    const matchesSearch = article.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          article.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
   });
 
+  const featuredArticle = filteredArticles.find(a => a.featured) || filteredArticles[0];
+  const regularArticles = filteredArticles.filter(a => a.id !== featuredArticle?.id);
+
   return (
-    <div className="min-h-screen bg-[#FAFAFA] pb-28 font-sans selection:bg-indigo-100">
-
-      {/* HERO */}
-      <div className="bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-700 text-white pt-14 pb-16 px-6 lg:px-12">
-        <div className="max-w-[1000px] mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <p className="text-indigo-200 text-xs font-bold uppercase tracking-widest mb-1">Jelajahi Program</p>
-              <h1 className="text-3xl font-black leading-tight">Temukan Modul<br/>Asesmen Anda</h1>
-            </div>
-            <NotificationBell />
+    <div className="min-h-screen bg-[#FAFAFA] font-sans pb-24 selection:bg-indigo-100">
+      
+      {/* HERO SECTION */}
+      <div className="bg-slate-900 pt-16 pb-20 px-6 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[40vw] h-[40vw] bg-indigo-500/20 rounded-full blur-[100px] pointer-events-none translate-x-1/2 -translate-y-1/2"></div>
+        <div className="max-w-6xl mx-auto relative z-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-indigo-200 text-[10px] font-black uppercase tracking-widest mb-6">
+            <BookOpen size={14} /> Pusat Wawasan
           </div>
-
-          {/* SEARCH */}
-          <div className="relative">
-            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight max-w-3xl mb-6">
+            Eksplorasi Wawasan, <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-blue-400">
+              Inovasi & Berita Terkini.
+            </span>
+          </h1>
+          <div className="relative max-w-xl">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
             <input
               type="text"
-              placeholder="Cari program asesmen..."
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              className="w-full h-12 pl-10 pr-4 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/50 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-white/30 transition-all"
+              placeholder="Cari artikel, panduan, atau update sistem..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full h-14 pl-12 pr-4 rounded-2xl bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white/20 transition-all backdrop-blur-md font-medium"
             />
           </div>
-
-          {/* PLATFORM STATS */}
-          {(platformStats.totalAssessments || platformStats.totalUsers) ? (
-            <div className="flex gap-6 mt-6">
-              {[
-                { label: 'Asesmen', value: platformStats.totalAssessments?.toLocaleString('id-ID') ?? '-' },
-                { label: 'Pengguna', value: platformStats.totalUsers?.toLocaleString('id-ID') ?? '-' },
-                { label: 'Rata-rata Skor', value: platformStats.avgScore ? `${platformStats.avgScore}/100` : '-' },
-              ].map(s => (
-                <div key={s.label}>
-                  <p className="text-2xl font-black text-white">{s.value}</p>
-                  <p className="text-[10px] font-bold text-indigo-200 uppercase tracking-widest mt-0.5">{s.label}</p>
-                </div>
-              ))}
-            </div>
-          ) : null}
         </div>
       </div>
 
-      <div className="max-w-[1000px] mx-auto px-6 lg:px-12 -mt-6">
-
-        {/* FILTER TAGS */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 mb-8 no-scrollbar">
-          <SlidersHorizontal size={14} className="text-slate-400 flex-shrink-0" />
-          {allTags.map(tag => (
+      <div className="max-w-6xl mx-auto px-6 -mt-8 relative z-20">
+        
+        {/* TABS CATEGORY */}
+        <div className="flex gap-2 overflow-x-auto custom-scrollbar bg-white p-2 rounded-2xl shadow-sm border border-slate-100 mb-10 w-fit max-w-full">
+          {CATEGORIES.map(category => (
             <button
-              key={tag}
-              onClick={() => setFilterTag(tag)}
-              className={`flex-shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all border ${
-                filterTag === tag
-                  ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
-                  : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-200'
+              key={category}
+              onClick={() => setActiveCategory(category)}
+              className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${
+                activeCategory === category
+                  ? 'bg-indigo-600 text-white shadow-md'
+                  : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
               }`}
             >
-              {tag}
+              {category}
             </button>
           ))}
         </div>
 
-        {/* LOADING */}
-        {loading && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-3xl h-52 ring-1 ring-slate-100 animate-pulse" />
-            ))}
+        {loading ? (
+          <div className="py-24 flex flex-col justify-center items-center text-slate-400">
+            <Loader2 className="w-10 h-10 animate-spin mb-4 text-indigo-500" />
+            <p className="font-bold text-xs uppercase tracking-widest">Memuat Wawasan...</p>
           </div>
-        )}
-
-        {/* EMPTY STATE */}
-        {!loading && filtered.length === 0 && (
-          <div className="bg-white rounded-3xl p-16 text-center ring-1 ring-slate-200">
-            <Sparkles size={48} className="text-slate-200 mx-auto mb-4" />
-            <h3 className="text-lg font-black text-slate-700 mb-2">
-              {search ? 'Program tidak ditemukan' : 'Belum ada program aktif'}
-            </h3>
-            <p className="text-sm text-slate-400">
-              {search ? `Coba kata kunci lain atau hapus filter.` : 'Program asesmen akan segera hadir.'}
-            </p>
+        ) : filteredArticles.length === 0 ? (
+          <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-200 shadow-sm">
+            <Search size={48} className="mx-auto text-slate-200 mb-4" />
+            <h3 className="text-lg font-black text-slate-800">Artikel tidak ditemukan</h3>
+            <p className="text-slate-500 font-medium mt-1">Coba gunakan kata kunci pencarian yang lain.</p>
           </div>
-        )}
-
-        {/* TEMPLATE GRID */}
-        {!loading && filtered.length > 0 && (
+        ) : (
           <>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">
-              {filtered.length} program tersedia
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {filtered.map((tmpl, i) => (
-                <motion.div
-                  key={tmpl.id}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.04 }}
-                  onClick={() => router.push(`/assessment?templateId=${tmpl.id}`)}
-                  className="bg-white rounded-3xl ring-1 ring-slate-200 shadow-sm hover:shadow-md hover:ring-indigo-200 cursor-pointer transition-all group overflow-hidden"
+            {/* FEATURED ARTICLE */}
+            {featuredArticle && (
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                onClick={() => router.push(`/explore/${featuredArticle.id}`)}
+                className="bg-white rounded-[2rem] border border-slate-200 p-3 shadow-sm hover:shadow-xl transition-all duration-500 group mb-10 cursor-pointer relative"
+              >
+                <button 
+                  onClick={(e) => handleCopyLink(e, featuredArticle.id)}
+                  className={`absolute top-6 right-6 z-20 p-3 rounded-xl shadow-sm transition-all ${copiedId === featuredArticle.id ? 'bg-emerald-500 text-white' : 'bg-white/80 backdrop-blur text-slate-600 hover:bg-indigo-600 hover:text-white'}`}
+                  title="Bagikan Tautan"
                 >
-                  {/* CARD HEADER */}
-                  <div className="bg-gradient-to-br from-indigo-50 to-purple-50 p-5 pb-4">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="w-10 h-10 bg-white rounded-2xl flex items-center justify-center shadow-sm">
-                        {TRACK_ICONS[tmpl.trackType || ''] || <BrainIcon size={18} className="text-indigo-600" />}
-                      </div>
-                      {tmpl.difficulty && (
-                        <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-lg ${DIFFICULTY_COLORS[tmpl.difficulty] || 'bg-slate-50 text-slate-500'}`}>
-                          {tmpl.difficulty}
-                        </span>
+                  {copiedId === featuredArticle.id ? <Check size={18} /> : <Share2 size={18} />}
+                </button>
+
+                <div className="flex flex-col md:flex-row gap-6 lg:gap-10">
+                  <div className="w-full md:w-[45%] lg:w-[40%] bg-slate-50 rounded-[1.5rem] flex items-center justify-center relative overflow-hidden ring-1 ring-slate-100 aspect-[4/3] md:aspect-[3/4]">
+                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 group-hover:scale-110 transition-transform duration-700"></div>
+                    {featuredArticle.imageUrl ? (
+                      <img src={featuredArticle.imageUrl} alt={featuredArticle.title} className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" />
+                    ) : (
+                      getIconComponent(featuredArticle.iconName, "text-indigo-500 transform group-hover:scale-110 transition-transform duration-500")
+                    )}
+                  </div>
+                  <div className="w-full md:w-1/2 py-4 md:py-8 pr-4 md:pr-8 flex flex-col justify-center">
+                    <div className="flex items-center gap-3 mb-4">
+                      <span className="px-3 py-1 bg-indigo-50 text-indigo-600 text-[10px] font-black uppercase tracking-widest rounded-lg">
+                        {featuredArticle.category}
+                      </span>
+                      <span className="flex items-center gap-1.5 text-xs font-bold text-slate-400">
+                        <Calendar size={14} /> {new Date(featuredArticle.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      </span>
+                    </div>
+                    <h2 className="text-2xl md:text-3xl font-black text-slate-900 leading-tight mb-4 group-hover:text-indigo-600 transition-colors">
+                      {featuredArticle.title}
+                    </h2>
+                    <p className="text-slate-500 font-medium leading-relaxed mb-8 line-clamp-3 md:line-clamp-4">
+                      {featuredArticle.excerpt}
+                    </p>
+                    <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-4">
+                      <span className="flex items-center gap-1.5 text-xs font-bold text-slate-400">
+                        <Clock size={14} /> Baca {featuredArticle.readTime}
+                      </span>
+                      <span className="flex items-center gap-2 text-sm font-bold text-indigo-600 group-hover:translate-x-2 transition-transform">
+                        Baca Selengkapnya <ArrowRight size={16} />
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* REGULAR ARTICLES GRID */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <AnimatePresence mode="popLayout">
+                {regularArticles.map((article, idx) => (
+                  <motion.div
+                    layout
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.3, delay: idx * 0.05 }}
+                    key={article.id}
+                    onClick={() => router.push(`/explore/${article.id}`)}
+                    className="bg-white rounded-[1.5rem] border border-slate-200 p-2 shadow-sm hover:shadow-lg transition-all duration-300 group cursor-pointer flex flex-col relative"
+                  >
+                    <button 
+                      onClick={(e) => handleCopyLink(e, article.id)}
+                      className={`absolute top-4 right-4 z-20 p-2.5 rounded-xl shadow-sm transition-all ${copiedId === article.id ? 'bg-emerald-500 text-white' : 'bg-white/80 backdrop-blur text-slate-500 hover:bg-indigo-600 hover:text-white'}`}
+                      title="Bagikan Tautan"
+                    >
+                      {copiedId === article.id ? <Check size={14} /> : <Share2 size={14} />}
+                    </button>
+
+                    <div className="aspect-[3/4] w-full bg-slate-50 rounded-[1.25rem] flex items-center justify-center relative overflow-hidden mb-4 ring-1 ring-slate-100">
+                      <div className="absolute inset-0 bg-gradient-to-br from-slate-100 to-slate-50 group-hover:scale-110 transition-transform duration-700"></div>
+                      {article.imageUrl ? (
+                        <img src={article.imageUrl} alt={article.title} className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" />
+                      ) : (
+                        <div className="relative z-10 transform group-hover:scale-110 transition-transform duration-500">
+                          {getIconComponent(article.iconName, "text-slate-400 group-hover:text-indigo-500 transition-colors")}
+                        </div>
                       )}
                     </div>
-                    <h3 className="font-black text-slate-900 text-sm leading-snug group-hover:text-indigo-700 transition-colors">
-                      {tmpl.title}
-                    </h3>
-                  </div>
-
-                  {/* CARD BODY */}
-                  <div className="p-5 pt-3">
-                    {tmpl.description && (
-                      <p className="text-xs text-slate-500 leading-relaxed line-clamp-2 mb-4">{tmpl.description}</p>
-                    )}
-                    <div className="flex items-center justify-between">
-                      <div className="flex flex-wrap gap-1">
-                        {(tmpl.tags || []).slice(0, 2).map(tag => (
-                          <span key={tag} className="text-[9px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md">
-                            {tag}
-                          </span>
-                        ))}
+                    
+                    <div className="px-3 pb-3 flex-1 flex flex-col">
+                      <div className="flex items-center gap-3 mb-3">
+                        <span className="px-2.5 py-1 bg-slate-100 text-slate-600 text-[9px] font-black uppercase tracking-widest rounded-md">
+                          {article.category}
+                        </span>
                       </div>
-                      <div className="flex items-center gap-1 text-xs text-slate-400 font-medium">
-                        {tmpl.usageCount ? (
-                          <><BarChart2 size={11} /> {tmpl.usageCount.toLocaleString('id-ID')}</>
-                        ) : (
-                          <ChevronRight size={14} className="text-indigo-400 group-hover:translate-x-0.5 transition-transform" />
-                        )}
+                      
+                      <h3 className="text-lg font-black text-slate-900 leading-snug mb-2 group-hover:text-indigo-600 transition-colors line-clamp-2">
+                        {article.title}
+                      </h3>
+                      
+                      <p className="text-sm text-slate-500 font-medium leading-relaxed mb-6 line-clamp-3">
+                        {article.excerpt}
+                      </p>
+                      
+                      <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-4">
+                        <span className="text-[11px] font-bold text-slate-400">
+                          {new Date(article.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
+                        </span>
+                        <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-indigo-50 transition-colors">
+                          <ArrowRight size={14} className="text-slate-400 group-hover:text-indigo-600" />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </div>
           </>
         )}
-
-        {/* BOTTOM CTA */}
-        <div className="mt-12 bg-gradient-to-r from-indigo-600 to-purple-600 p-8 rounded-3xl text-white text-center">
-          <AiSparkIcon size={36} className="mx-auto mb-3 opacity-80" />
-          <h3 className="font-black text-xl mb-2">Tidak menemukan yang tepat?</h3>
-          <p className="text-indigo-100 text-sm mb-5">Buat asesmen kustom dengan AI sesuai kebutuhan spesifik bisnis Anda</p>
-          <button
-            onClick={() => router.push('/assessment')}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-white text-indigo-700 font-black text-sm rounded-2xl hover:bg-indigo-50 transition-colors shadow-lg"
-          >
-            Buat Asesmen Kustom <ChevronRight size={16} />
-          </button>
-        </div>
-
       </div>
     </div>
   );

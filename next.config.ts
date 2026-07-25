@@ -1,3 +1,4 @@
+import type { NextConfig } from "next";
 import withPWA from "@ducanh2912/next-pwa";
 
 const withPWAConfig = withPWA({
@@ -11,9 +12,23 @@ const withPWAConfig = withPWA({
   },
 });
 
-const nextConfig = {
+const nextConfig: NextConfig = {
   // Tambahkan baris ini untuk membisukan error Next.js 16 Turbopack
   turbopack: {},
+  images: {
+    remotePatterns: [
+      // Google user profile photos (Firebase Auth / Google Sign-In)
+      {
+        protocol: 'https',
+        hostname: '*.googleusercontent.com',
+      },
+      // Google Cloud Storage (jika digunakan untuk user-uploaded assets)
+      {
+        protocol: 'https',
+        hostname: 'storage.googleapis.com',
+      },
+    ],
+  },
 };
 
 export default withPWAConfig(nextConfig);

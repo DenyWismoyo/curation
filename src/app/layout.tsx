@@ -6,11 +6,9 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import { Toaster } from 'sonner';
 
 // IMPORT KOMPONEN PWA PROMPT
-import { PWAInstallPrompt } from '@/app/components/shared/PWAInstallPrompt';
-// IMPORT KOMPONEN WIDGET OMNIAI
-import { GlobalFloatingWidget } from '@/app/components/shared/GlobalFloatingWidget';
+import { PWAInstallPrompt } from '@/components/shared';
 // IMPORT BOTTOM NAVIGATION MOBILE
-import { BottomNav } from '@/app/components/shared/BottomNav';
+import { BottomNav } from '@/components/shared';
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -62,14 +60,10 @@ export default function RootLayout({
         `}
       >
         <AuthProvider>
-        {children}
+          {children}
           
           <Toaster position="top-right" richColors />
           <PWAInstallPrompt />
-
-          
-          {/* WIDGET GABUNGAN AI & FEEDBACK */}
-          <GlobalFloatingWidget />
 
           {/* BOTTOM NAVIGATION MOBILE (PWA) */}
           <BottomNav />

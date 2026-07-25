@@ -7,7 +7,7 @@ import { db } from '@/lib/firebase';
 import { AdminExportPDF } from './AdminExportPDF';
 
 // IMPORT KOMPONEN UNIVERSAL (Sesuaikan path jika perlu)
-import { UniversalAssessmentView } from '@/app/components/shared/UniversalAssessmentView';
+import { UniversalAssessmentView } from '@/components/shared';
 
 interface AdminAssessmentDetailProps {
   data: any;

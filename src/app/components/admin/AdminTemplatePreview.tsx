@@ -9,8 +9,8 @@ import { Button } from '@/components/ui/button';
 
 // Import standar @react-pdf/renderer
 import { pdf } from '@react-pdf/renderer';
-import { AIPromptBlueprintPDF } from '@/app/components/shared/AIPromptBlueprintPDF';
-import { TemplateQuestionsPDF } from '@/app/components/shared/TemplateQuestionsPDF';
+import { AIPromptBlueprintPDF } from '@/components/shared';
+import { TemplateQuestionsPDF } from '@/components/shared';
 
 export function AdminTemplatePreview({ template }: { template: FormTemplate }) {
   const [currentStep, setCurrentStep] = useState(1);

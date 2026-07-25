@@ -10,6 +10,7 @@ import { motion } from 'framer-motion';
 import { ChevronLeft, TrendingUp, TrendingDown, Minus, Calendar, ExternalLink } from 'lucide-react';
 import { BrainIcon, DocExportIcon, AiSparkIcon } from '@/types';
 import { Button } from '@/components/ui/button';
+import { ScoreLineChart, AssessmentStatusBadge } from '@/components/domain/public';
 
 // ============================================================
 // TYPES
@@ -23,62 +24,6 @@ interface AssessmentRecord {
   status: string;
   createdAt: string;
   updatedAt?: string;
-}
-
-// ============================================================
-// MINI SVG LINE CHART
-// ============================================================
-function ScoreLineChart({ scores }: { scores: number[] }) {
-  if (scores.length < 2) return null;
-
-  const W = 280;
-  const H = 80;
-  const PAD = 10;
-  const minS = Math.max(0, Math.min(...scores) - 10);
-  const maxS = Math.min(100, Math.max(...scores) + 10);
-  const range = maxS - minS || 1;
-
-  const pts = scores.map((s, i) => {
-    const x = PAD + (i / (scores.length - 1)) * (W - PAD * 2);
-    const y = H - PAD - ((s - minS) / range) * (H - PAD * 2);
-    return `${x},${y}`;
-  });
-
-  const firstPt = pts[0].split(',');
-  const lastPt = pts[pts.length - 1].split(',');
-
-  return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-20" preserveAspectRatio="none">
-      {/* Fill area */}
-      <path
-        d={`M ${pts.join(' L ')} L ${lastPt[0]},${H - PAD} L ${firstPt[0]},${H - PAD} Z`}
-        fill="url(#scoreGrad)"
-        opacity="0.3"
-      />
-      {/* Line */}
-      <polyline
-        points={pts.join(' ')}
-        fill="none"
-        stroke="#4F46E5"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      {/* Dots */}
-      {pts.map((pt, i) => {
-        const [x, y] = pt.split(',');
-        return (
-          <circle key={i} cx={x} cy={y} r="4" fill="#4F46E5" stroke="white" strokeWidth="2" />
-        );
-      })}
-      <defs>
-        <linearGradient id="scoreGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#4F46E5" />
-          <stop offset="100%" stopColor="#4F46E5" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-    </svg>
-  );
 }
 
 // ============================================================

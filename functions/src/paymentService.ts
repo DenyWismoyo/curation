@@ -6,21 +6,19 @@ import * as admin from "firebase-admin";
 import { getFirestore, FieldValue } from "firebase-admin/firestore";
 import * as crypto from "crypto";
 
-const xenditSecretKey = defineSecret("XENDIT_SECRET_KEY");
+// Secret untuk Mayar & Meta
+const mayarApiKey = defineSecret("MAYAR_API_KEY");
 const metaPixelId = defineSecret("META_PIXEL_ID");
 const metaAccessToken = defineSecret("META_ACCESS_TOKEN");
 
 // ============================================================================
 // HELPER META CONVERSIONS API (CAPI)
 // ============================================================================
-
-// Helper hashing SHA-256 wajib dari Meta untuk privasi data pengguna
 const hashData = (data: string) => {
   if (!data) return "";
   return crypto.createHash("sha256").update(data.trim().toLowerCase()).digest("hex");
 };
 
-// Fungsi CAPI untuk mengirim event ke Meta
 const sendMetaConversionEvent = async (
   pixelId: string,
   accessToken: string,
@@ -33,11 +31,11 @@ const sendMetaConversionEvent = async (
     data: [
       {
         event_name: eventName,
-        event_time: Math.floor(Date.now() / 1000), // Waktu saat ini dalam detik Unix
-        event_id: transactionId, // ID unik untuk deduplikasi antara frontend (jika ada) dan backend
+        event_time: Math.floor(Date.now() / 1000),
+        event_id: transactionId,
         action_source: "website",
         user_data: {
-          em: [hashData(userEmail)], // Email di-hash menggunakan SHA-256
+          em: [hashData(userEmail)],
         },
         custom_data: {
           currency: "IDR",
@@ -56,7 +54,6 @@ const sendMetaConversionEvent = async (
         body: JSON.stringify(payload),
       }
     );
-
     const result = await response.json();
     if (!response.ok) {
       console.error(`[META CAPI] Error for ${eventName}:`, result);
@@ -69,13 +66,12 @@ const sendMetaConversionEvent = async (
 };
 
 // ============================================================================
-// FUNGSI 1: MEMBUAT INVOICE XENDIT (DIPANGGIL DARI FRONTEND)
+// FUNGSI 1: MEMBUAT TRANSAKSI MAYAR & GENERATE QRIS
 // ============================================================================
-export const createPaymentInvoice = onCall(
-  {
+export const createPaymentInvoice = onCall({
     memory: "256MiB",
     region: "asia-southeast2",
-    secrets: [xenditSecretKey, metaPixelId, metaAccessToken], // Menambahkan secrets Meta
+    secrets: [mayarApiKey, metaPixelId, metaAccessToken],
     cors: true,
   },
   async (request) => {
@@ -92,36 +88,31 @@ export const createPaymentInvoice = onCall(
     const transactionId = txRef.id;
 
     try {
-      // Encode API Key untuk Basic Auth Xendit (Format: "SecretKey:")
-      const base64Key = Buffer.from(`${xenditSecretKey.value()}:`).toString('base64');
-
-      // Panggil Xendit API menggunakan Native Fetch
-      const response = await fetch("https://api.xendit.co/v2/invoices", {
+      // Panggil API Mayar untuk Generate QRIS
+      // Catatan: Pastikan endpoint ini sesuai dengan dokumentasi Mayar API v1 untuk create QRIS
+      const response = await fetch("https://api.mayar.id/v1/payment/qris/create", {
         method: "POST",
         headers: {
-          "Authorization": `Basic ${base64Key}`,
+          "Authorization": `Bearer ${mayarApiKey.value()}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          external_id: transactionId,
           amount: finalPrice,
-          payer_email: userEmail,
+          customer_name: userName || "Pengguna",
+          customer_email: userEmail,
           description: `Akses Modul Asesmen: ${packageName}`,
-          // TODO: Ubah URL ini ke domain production Anda nantinya
-          success_redirect_url: `https://omnifit.cloud/dashboard`,
-          failure_redirect_url: `https://omnifit.cloud/pricing`,
-          currency: "IDR"
+          reference_id: transactionId, 
         })
       });
 
-      const invoice = await response.json();
+      const mayarData = await response.json();
 
       if (!response.ok) {
-        console.error("Xendit Error:", invoice);
-        throw new Error(invoice.message || "Gagal menghubungi gateway pembayaran.");
+        console.error("Mayar Error:", mayarData);
+        throw new Error(mayarData.message || "Gagal menghasilkan QRIS dari gateway.");
       }
 
-      // Simpan log transaksi dengan status PENDING
+      // Simpan log transaksi ke Firestore dengan status PENDING beserta data QRIS
       await txRef.set({
         transactionId: transactionId,
         userId: request.auth.uid,
@@ -131,8 +122,8 @@ export const createPaymentInvoice = onCall(
         packageName: packageName,
         amount: finalPrice,
         status: "PENDING",
-        invoiceUrl: invoice.invoice_url,
-        xenditInvoiceId: invoice.id,
+        mayarTransactionId: mayarData.data?.id || null,
+        qrisString: mayarData.data?.qris_string || mayarData.qris_string, // Sesuaikan struktur response Mayar
         createdAt: FieldValue.serverTimestamp(),
       });
 
@@ -146,7 +137,9 @@ export const createPaymentInvoice = onCall(
         transactionId
       );
 
-      return { checkoutUrl: invoice.invoice_url };
+      // Kembalikan ID Transaksi agar frontend bisa mengarahkan ke halaman internal
+      return { transactionId: transactionId };
+
     } catch (error: any) {
       console.error("Payment Error:", error);
       throw new HttpsError("internal", error.message || "Gagal membuat invoice pembayaran.");
@@ -155,53 +148,49 @@ export const createPaymentInvoice = onCall(
 );
 
 // ============================================================================
-// FUNGSI 2: WEBHOOK XENDIT (OTOMATISASI SAAT PEMBAYARAN BERHASIL)
+// FUNGSI 2: WEBHOOK MAYAR (OTOMATISASI SAAT PEMBAYARAN BERHASIL)
 // ============================================================================
-export const xenditWebhook = onRequest(
-  {
+export const mayarWebhook = onRequest({
     region: "asia-southeast2",
     cors: true,
-    secrets: [metaPixelId, metaAccessToken], // Menambahkan secrets Meta
+    secrets: [metaPixelId, metaAccessToken],
   },
   async (req, res) => {
-    // Xendit mengirim POST request
     if (req.method !== 'POST') {
       res.status(405).send('Method Not Allowed');
       return;
     }
-
+    
     const data = req.body;
     
-    // Pastikan ini notifikasi invoice yang valid
-    if (!data.external_id || !data.status) {
+    // Sesuaikan parameter id referensi berdasarkan payload webhook Mayar
+    const transactionId = data.reference_id; 
+
+    if (!transactionId || !data.status) {
       res.status(400).send('Bad Request');
       return;
     }
 
     try {
       const db = getFirestore(admin.app(), "curation");
-      const transactionId = data.external_id;
-
-      // Hanya proses jika statusnya PAID atau SETTLED
-      if (data.status === 'PAID' || data.status === 'SETTLED') {
+      
+      // Mayar biasanya mengirim status "SUCCESS" atau "PAID"
+      if (data.status === 'SUCCESS' || data.status === 'SETTLED' || data.status === 'PAID') {
         const txRef = db.collection("transactions").doc(transactionId);
         const txSnap = await txRef.get();
 
         if (txSnap.exists) {
           const txData = txSnap.data();
 
-          // Cegah double-processing
           if (txData?.status !== 'PAID') {
-            // 1. PINDAHKAN PEMBUATAN KODE KE SINI AGAR BISA DIBACA OLEH KODE DI BAWAHNYA
             const tokenCode = Math.random().toString(36).substring(2, 8).toUpperCase();
 
-            // 2. UPDATE TRANSAKSI DENGAN TOKEN TERSEBUT
             await txRef.update({
               status: "PAID",
               paidAt: FieldValue.serverTimestamp(),
-              paymentMethod: data.payment_method || 'UNKNOWN',
-              paymentChannel: data.payment_channel || 'UNKNOWN',
-              tokenCode: `B2C-${tokenCode}` // Garis merah pasti hilang sekarang
+              paymentMethod: "QRIS",
+              paymentChannel: "MAYAR",
+              tokenCode: `B2C-${tokenCode}`
             });
 
             // [MARKETING EVENT] Kirim event Purchase ke Meta
@@ -214,17 +203,14 @@ export const xenditWebhook = onRequest(
               transactionId
             );
 
-            // =========================================================
-            // AUTO-PROVISIONING: Generate Token B2C secara otomatis
-            // =========================================================
-if (txData?.packageId) {
+            // AUTO-PROVISIONING Token B2C
+            if (txData?.packageId) {
               const b2cRef = db.collection("corporate_tokens").doc("B2C");
               
               await b2cRef.set({
                 corporateName: "Penjualan B2C (Mandiri)",
                 modelType: "flash", 
                 totalTokens: FieldValue.increment(1),
-                // BUG FIX 3: Tambahkan timestamp agar data terindex di menu admin
                 createdAt: new Date().toISOString(), 
                 tokens: {
                   [tokenCode]: {
@@ -232,18 +218,16 @@ if (txData?.packageId) {
                     usedAt: null,
                     usedByNamaUsaha: null,
                     allowedTemplates: [txData.packageId],
-                    buyerEmail: txData.userEmail, // Simpan histori pembeli
+                    buyerEmail: txData.userEmail,
                     transactionId: transactionId
                   }
                 }
               }, { merge: true });
-              console.log(`[XENDIT WEBHOOK] Transaksi ${transactionId} sukses. Token B2C-${tokenCode} digenerate untuk ${txData.userEmail}`);
             }
           }
         }
       }
 
-      // WAJIB merespon 200 OK agar Xendit berhenti melakukan retry pengiriman webhook
       res.status(200).send({ status: "success", message: "Webhook processed" });
     } catch (error) {
       console.error("Webhook Error:", error);

@@ -1,6 +1,6 @@
-// src/app/admin/layout.tsx
 'use client';
 
+// src/app/admin/layout.tsx
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -8,8 +8,8 @@ import Link from 'next/link';
 import { 
   LayoutDashboard, Settings, KeyRound, LogOut, Menu, X, ShieldCheck, 
   PanelLeftClose, PanelLeftOpen, 
-  Tags, UserCheck, MessageSquareShare, // <-- Icon Baru
-  Handshake
+  Tags, UserCheck, MessageSquareShare, 
+  Handshake, Newspaper
 } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -40,15 +40,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
-  // DIUBAH: Menambahkan menu 'Ulasan & Feedback'
   const menuItems = [
     { name: 'Dasbor Utama', path: '/admin', icon: LayoutDashboard },
     { name: 'Manajemen Token', path: '/admin/tokens', icon: KeyRound },
     { name: 'Manajemen Asesor', path: '/admin/assessors', icon: UserCheck },
     { name: 'Template Form', path: '/admin/templates', icon: Settings },
     { name: 'Harga & Monetisasi', path: '/admin/pricing', icon: Tags },
-    { name: 'Ulasan & Feedback', path: '/admin/feedback', icon: MessageSquareShare }, // <-- Menu Baru
-    { name: 'Mitra & Kerjasama', path: '/admin/partners', icon: Handshake }, // <-- Menu Baru Ditambahkan
+    { name: 'Ulasan & Feedback', path: '/admin/feedback', icon: MessageSquareShare },
+    { name: 'Mitra & Kerjasama', path: '/admin/partners', icon: Handshake },
+    { name: 'Artikel & Wawasan', path: '/admin/articles', icon: Newspaper }, // <-- Menu CMS Artikel Baru
   ];
 
   return (
@@ -75,6 +75,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </Link>
               ))}
             </nav>
+
             <div className="p-4 border-t border-slate-100">
               <button onClick={() => { logout(); router.push('/'); }} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-rose-600 font-bold hover:bg-rose-50"><LogOut size={20}/> Keluar</button>
             </div>
@@ -110,7 +111,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <nav className="flex-1 py-6 px-3 space-y-2 overflow-y-auto custom-scrollbar">
           {!isSidebarCollapsed && <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 px-3">Menu Utama</p>}
           {menuItems.map((item) => {
-            const isActive = pathname === item.path;
+            const isActive = pathname.startsWith(item.path) && (item.path !== '/admin' || pathname === '/admin');
             return (
               <Link 
                 key={item.path}

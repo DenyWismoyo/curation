@@ -83,6 +83,7 @@ service cloud.firestore {
       allow write: if isSuperAdmin();
     }
     
+    match /articles/{document=**} { allow read: if isAuthenticated(); allow write: if isSuperAdmin(); }
     match /corporate_tags/{document=**} { allow read: if isAuthenticated(); allow write: if isSuperAdmin(); }
     match /curator_tokens/{document=**} { allow read: if isAuthenticated(); allow write: if isSuperAdmin(); }
     match /template_folders/{document=**} { allow read: if isAuthenticated(); allow write: if isSuperAdmin(); }

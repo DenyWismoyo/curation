@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CuratorExportPDF } from './PDFReportTemplate';
-import { UniversalAssessmentView } from '@/app/components/shared/UniversalAssessmentView';
+import { UniversalAssessmentView } from '@/components/shared';
 
 interface CuratorAssessmentDetailProps {
   data: any;

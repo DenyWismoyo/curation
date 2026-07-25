@@ -15,7 +15,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { BrainIcon, InfinityWorkflowIcon, DocExportIcon, AiSparkIcon } from '@/types';
-import { NotificationBell } from '@/app/components/shared/NotificationBell';
+import { NotificationBell } from '@/components/shared';
 
 // ============================================================
 // BADGE DEFINITIONS

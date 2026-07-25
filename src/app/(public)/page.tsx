@@ -140,7 +140,7 @@ export default function Home() {
     <main className="min-h-screen">
       {/* ONBOARDING NUDGE BANNER */}
       {showOnboardingBanner && (
-        <div className="fixed top-0 left-0 right-0 z-50 bg-indigo-600 text-white text-center px-4 py-2.5 flex items-center justify-center gap-3 text-sm font-bold shadow-lg">
+        <div className="fixed top-0 left-0 right-0 md:left-60 z-40 bg-indigo-600 text-white text-center px-4 py-2.5 flex items-center justify-center gap-3 text-sm font-bold shadow-lg">
           <span>✨ Personalisasi pengalaman Anda!</span>
           <button
             onClick={() => router.push('/onboarding')}

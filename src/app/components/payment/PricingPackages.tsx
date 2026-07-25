@@ -1,15 +1,15 @@
-// src/app/components/payment/PricingPackages.tsx
 'use client';
+
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db, functions } from '@/lib/firebase';
 import { httpsCallable } from 'firebase/functions';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as LucideIcons from 'lucide-react';
-
-import { 
-  X, Sparkles, CheckCircle2, ArrowRight, Loader2, 
-  MessageCircle, Users, Share2, Star, Copy, Check, Tag
+import {
+  X, Sparkles, CheckCircle2, ArrowRight, Loader2,
+  MessageCircle, Users, Share2, Star, Copy, Check, Tag, Grid3X3, Layers3, Compass
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { FormTemplate } from '@/types/curation';
@@ -17,8 +17,8 @@ import { User } from 'firebase/auth';
 import { toast } from 'sonner';
 
 // IMPORT CUSTOM ICONS
-import { 
-  AppModuleTealIcon, TechCardIcon, AILensIcon, InfinityWorkflowIcon, 
+import {
+  AppModuleTealIcon, TechCardIcon, AILensIcon, InfinityWorkflowIcon,
   BrainIcon, GlobalTargetIcon, AdminShieldIcon, AiSparkIcon
 } from '@/types';
 
@@ -28,9 +28,9 @@ interface PricingPackagesProps {
   user: User | null;
   onLoginRequest: () => void;
   autoOpenPackageId?: string | null;
+  asPage?: boolean;
 }
 
-// FUNGSI TEMA DINAMIS
 const getCategoryTheme = (title: string, category: string) => {
   const text = `${title} ${category}`.toLowerCase();
   if (text.includes('koperasi') || text.includes('kelurahan') || text.includes('komunitas') || text.includes('hijau') || text.includes('sampah') || text.includes('properti')) {
@@ -48,35 +48,33 @@ const getCategoryTheme = (title: string, category: string) => {
   return { bg: 'bg-indigo-50', text: 'text-indigo-600', ring: 'ring-indigo-200', btn: 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-600/20 text-white', pill: 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100', gradient: 'from-indigo-50/50 to-white' };
 };
 
-// FUNGSI FORMAT RUPIAH
 const formatRupiah = (angka: number) => {
   return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
 };
 
-// FUNGSI KALKULASI HARGA & DISKON
 const calculatePrice = (pkg: FormTemplate) => {
   if (!pkg.isPaid || !pkg.price) return { isFree: true, original: 0, final: 0, hasDiscount: false, percentage: 0 };
-  
   let isDiscountActive = Boolean(pkg.discountPercentage && pkg.discountPercentage > 0);
+  
   if (isDiscountActive && pkg.discountExpiry) {
     if (new Date(pkg.discountExpiry).getTime() < new Date().getTime()) {
-      isDiscountActive = false; // Diskon kadaluarsa
+      isDiscountActive = false;
     }
   }
+
   const final = isDiscountActive
     ? pkg.price - (pkg.price * (pkg.discountPercentage! / 100))
     : pkg.price;
-    
-  return { 
-    isFree: false, 
-    original: pkg.price, 
-    final, 
-    hasDiscount: isDiscountActive, 
-    percentage: pkg.discountPercentage || 0 
+        
+  return {
+    isFree: false,
+    original: pkg.price,
+    final,
+    hasDiscount: isDiscountActive,
+    percentage: pkg.discountPercentage || 0
   };
 };
 
-// FUNGSI PARSER UNTUK MEMISAHKAN "JUDUL: DESKRIPSI"
 const parseExpectedOutput = (blockStr: string) => {
   if (!blockStr) return { title: '', subs: '' };
   const colonIndex = blockStr.indexOf(':');
@@ -84,7 +82,8 @@ const parseExpectedOutput = (blockStr: string) => {
   return { title: blockStr.slice(0, colonIndex).trim(), subs: blockStr.slice(colonIndex + 1).trim() };
 };
 
-export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpenPackageId }: PricingPackagesProps) {
+export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpenPackageId, asPage = false }: PricingPackagesProps) {
+  const router = useRouter();
   const [packages, setPackages] = useState<FormTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState<string>('Semua');
@@ -116,6 +115,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
       });
       
       setPackages(data);
+
       if (autoOpenPackageId) {
         const targetPkg = data.find(p => p.id === autoOpenPackageId);
         if (targetPkg) {
@@ -140,16 +140,16 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
     }
 
     const priceInfo = calculatePrice(pkg);
-
+    
     if (priceInfo.isFree) {
-      // Free Module Flow
       const autoToken = `FREE-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
       sessionStorage.setItem('active_token', autoToken);
       sessionStorage.setItem('active_allowed_templates', JSON.stringify([pkg.id]));
       window.location.href = '/assessment';
     } else {
-      // Paid Module Flow -> Trigger Xendit Checkout
       setIsProcessingPayment(true);
+      toast.loading("Mempersiapkan kode QRIS Anda...", { id: 'qris_process' });
+      
       try {
         const createInvoice = httpsCallable(functions, 'createPaymentInvoice');
         const response = await createInvoice({
@@ -159,11 +159,15 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
           userEmail: user.email,
           userName: user.displayName || 'Pengguna',
         });
-        const data = response.data as { checkoutUrl: string };
+
+        const data = response.data as { transactionId: string };
+        toast.dismiss('qris_process');
         
-        toast.loading("Mengarahkan ke gerbang pembayaran...");
-        window.location.href = data.checkoutUrl;
+        // Arahkan ke halaman internal Checkout
+        router.push(`/checkout/${data.transactionId}`);
+
       } catch (error: any) {
+        toast.dismiss('qris_process');
         toast.error(error.message || "Terjadi kesalahan saat memproses pembayaran.");
         setIsProcessingPayment(false);
       }
@@ -173,6 +177,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
   const handleCopyLink = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
     if (typeof window === 'undefined') return;
+    
     const shareUrl = `${window.location.origin}/katalog?buy=${id}`;
     
     try {
@@ -189,14 +194,13 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
 
   const categories = ['Semua', ...Array.from(new Set(packages.map(p => p.category?.trim()).filter(Boolean)))];
   const filteredPackages = packages.filter(pkg => activeCategory === 'Semua' || pkg.category === activeCategory);
+  const freePackagesCount = packages.filter((pkg) => !pkg.isPaid || !pkg.price).length;
 
   const drawerTheme = checkoutPackage ? getCategoryTheme(checkoutPackage.trackName, checkoutPackage.category || '') : getCategoryTheme('', '');
   const DrawerIcon = checkoutPackage?.trackIcon && (LucideIcons as any)[checkoutPackage.trackIcon] 
                      ? (LucideIcons as any)[checkoutPackage.trackIcon] 
                      : AppModuleTealIcon;
   const OutputIcons = [AILensIcon, InfinityWorkflowIcon, BrainIcon, GlobalTargetIcon];
-
-  // Info Harga untuk Drawer Laci
   const checkoutPriceInfo = checkoutPackage ? calculatePrice(checkoutPackage) : null;
 
   return (
@@ -205,29 +209,93 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
         {isOpen && (
           <motion.div 
             key="main-pricing-modal"
-            initial={{ opacity: 0, y: '100%' }} 
+            initial={{ opacity: 0, y: asPage ? 0 : '100%' }} 
             animate={{ opacity: 1, y: 0 }} 
-            exit={{ opacity: 0, y: '100%' }}
+            exit={{ opacity: 0, y: asPage ? 0 : '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed inset-0 z-[100] bg-slate-50 flex flex-col w-full h-[100dvh] overflow-hidden"
+            className={`${asPage 
+              ? 'bg-[#FAFAFA] w-full min-h-screen flex flex-col' 
+              : 'fixed inset-0 z-[100] bg-slate-50 flex flex-col overflow-hidden w-full h-[100dvh]'
+            }`}
           >
+            {/* Header */}
             <div className="pt-4 sm:pt-6 px-4 sm:px-8 flex items-center justify-between shrink-0 z-30 relative">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 bg-indigo-600 text-white rounded-lg flex items-center justify-center shrink-0 shadow-inner">
-                  <TechCardIcon className="w-4 h-4" />
+              {asPage ? (
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 bg-indigo-600 text-white rounded-lg flex items-center justify-center shrink-0 shadow-inner">
+                    <TechCardIcon className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h2 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">Katalog Asesmen</h2>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest -mt-0.5">Pilih modul yang sesuai tujuan Anda</p>
+                  </div>
                 </div>
-                <h2 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">Katalog Asesmen</h2>
-              </div>
-              <button 
-                onClick={onClose} 
-                className="w-8 h-8 flex items-center justify-center text-slate-400 hover:bg-slate-200 hover:text-slate-900 rounded-full transition-colors shrink-0"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              ) : (
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 bg-indigo-600 text-white rounded-lg flex items-center justify-center shrink-0 shadow-inner">
+                    <TechCardIcon className="w-4 h-4" />
+                  </div>
+                  <h2 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">Katalog Asesmen</h2>
+                </div>
+              )}
+              {!asPage && (
+                <button
+                  onClick={onClose}
+                  className="w-8 h-8 flex items-center justify-center text-slate-400 hover:bg-slate-200 hover:text-slate-900 rounded-full transition-colors shrink-0"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              )}
             </div>
 
-            <div className="sticky top-0 z-20 bg-slate-50/90 backdrop-blur-md px-4 sm:px-8 py-3 mt-2 border-b border-slate-200/50 shadow-sm">
-              <div className="max-w-4xl mx-auto flex flex-wrap gap-1.5 max-h-[80px] overflow-y-auto custom-scrollbar">
+            <div className={`${asPage ? 'relative z-10' : 'flex-1 overflow-y-auto custom-scrollbar relative z-10'}`}>
+              {asPage && (
+                <section className="px-4 sm:px-8 pt-4 sm:pt-5 pb-2">
+                  <div className="max-w-5xl mx-auto rounded-[2rem] bg-gradient-to-br from-indigo-600 via-indigo-700 to-blue-700 text-white overflow-hidden shadow-[0_24px_60px_rgba(79,70,229,0.18)]">
+                    <div className="px-6 py-7 sm:px-8 sm:py-8 lg:px-10 lg:py-10 grid lg:grid-cols-[1.5fr_1fr] gap-6 items-end">
+                      <div>
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-[10px] font-black uppercase tracking-[0.2em] mb-4">
+                          <Compass className="w-3.5 h-3.5" />
+                          Navigasi Modul
+                        </div>
+                        <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black leading-tight tracking-tight max-w-2xl">
+                          Pilih modul asesmen yang paling relevan untuk target perkembangan Anda.
+                        </h3>
+                        <p className="text-sm sm:text-base text-indigo-100 font-medium leading-relaxed mt-3 max-w-2xl">
+                          Jelajahi katalog aktif, bandingkan fokus tiap modul, lalu mulai dari tema yang paling dekat dengan kebutuhan pribadi, tim, atau institusi Anda.
+                        </p>
+                      </div>
+                      
+                      <div className="grid grid-cols-3 gap-3">
+                        <div className="rounded-2xl bg-white/10 border border-white/15 px-4 py-4 backdrop-blur-sm">
+                          <div className="flex items-center gap-2 text-indigo-100 text-[10px] font-black uppercase tracking-widest mb-2">
+                            <Grid3X3 className="w-3.5 h-3.5" />
+                            Modul
+                          </div>
+                          <p className="text-2xl sm:text-3xl font-black">{packages.length}</p>
+                        </div>
+                        <div className="rounded-2xl bg-white/10 border border-white/15 px-4 py-4 backdrop-blur-sm">
+                          <div className="flex items-center gap-2 text-indigo-100 text-[10px] font-black uppercase tracking-widest mb-2">
+                            <Layers3 className="w-3.5 h-3.5" />
+                            Kategori
+                          </div>
+                          <p className="text-2xl sm:text-3xl font-black">{Math.max(categories.length - 1, 0)}</p>
+                        </div>
+                        <div className="rounded-2xl bg-white/10 border border-white/15 px-4 py-4 backdrop-blur-sm">
+                          <div className="flex items-center gap-2 text-indigo-100 text-[10px] font-black uppercase tracking-widest mb-2">
+                            <Sparkles className="w-3.5 h-3.5" />
+                            Gratis
+                          </div>
+                          <p className="text-2xl sm:text-3xl font-black">{freePackagesCount}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              )}
+
+              <div className="sticky top-0 z-20 bg-slate-50/90 backdrop-blur-md px-4 sm:px-8 py-3 mt-2 border-b border-slate-200/50 shadow-sm">
+                <div className={`flex flex-wrap gap-1.5 max-h-[80px] overflow-y-auto custom-scrollbar ${asPage ? 'max-w-5xl mx-auto' : 'max-w-4xl mx-auto'}`}>
                 {categories.map((cat) => (
                   <button
                     key={`cat-${cat}`}
@@ -242,10 +310,11 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                   </button>
                 ))}
               </div>
-            </div>
+              </div>
 
-            <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-4 sm:py-6 custom-scrollbar relative z-10">
-              <div className="max-w-4xl mx-auto w-full pb-20">
+              <div className="px-4 sm:px-8 py-4 sm:py-6">
+                <div className={`${asPage ? 'max-w-5xl' : 'max-w-4xl'} mx-auto w-full pb-20`}>
+                
                 {loading ? (
                   <div className="flex flex-col items-center justify-center py-32 text-slate-400">
                     <Loader2 className="w-8 h-8 animate-spin mb-4 text-indigo-500" />
@@ -259,7 +328,21 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                   </div>
                 ) : (
                   <>
-                    <div className="flex flex-col gap-3">
+                    {asPage && (
+                      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-5">
+                        <div>
+                          <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Katalog Aktif</p>
+                          <h3 className="text-xl sm:text-2xl font-black text-slate-900 leading-tight">
+                            {filteredPackages.length} modul siap dijelajahi
+                          </h3>
+                        </div>
+                        <p className="text-sm text-slate-500 font-medium max-w-md">
+                          Gunakan kategori untuk mempersempit pilihan, lalu buka detail modul untuk memahami output dan nilai tambahnya.
+                        </p>
+                      </div>
+                    )}
+                    
+                    <div className={`grid gap-3 ${asPage ? 'xl:grid-cols-2' : 'grid-cols-1'}`}>
                       <AnimatePresence mode="popLayout">
                         {filteredPackages.map((pkg) => {
                           const theme = getCategoryTheme(pkg.trackName, pkg.category || '');
@@ -279,7 +362,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                               transition={{ duration: 0.2 }}
                               key={`pkg-${pkg.id}`}
                               onClick={() => setCheckoutPackage(pkg)}
-                              className={`group relative bg-white rounded-2xl p-4 sm:p-5 flex items-center gap-4 cursor-pointer overflow-hidden border border-slate-200 hover:border-${theme.ring.replace('ring-', '')} transition-all shadow-sm hover:shadow-md`}
+                              className="group relative bg-white rounded-[1.75rem] p-4 sm:p-5 flex items-start gap-4 cursor-pointer overflow-hidden border border-slate-200 transition-all shadow-sm hover:shadow-xl hover:shadow-slate-200/70 hover:-translate-y-0.5 hover:border-slate-300"
                             >
                               <div className={`absolute -right-6 -bottom-6 w-32 h-32 opacity-[0.03] group-hover:opacity-[0.06] group-hover:scale-125 group-hover:-rotate-12 transition-all duration-700 pointer-events-none ${theme.text}`}>
                                 <IconComponent className="w-full h-full" />
@@ -299,7 +382,13 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                                   {pkg.trackName}
                                 </h3>
                                 
-                                <div className="flex items-center gap-3">
+                                {pkg.trackDescription && (
+                                  <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed line-clamp-2 mb-2.5 pr-2">
+                                    {pkg.trackDescription}
+                                  </p>
+                                )}
+                                
+                                <div className="flex flex-wrap items-center gap-2.5">
                                   <p className="text-[10px] sm:text-xs text-slate-500 font-medium truncate hidden sm:block">
                                     {pkg.category || 'Asesmen Mandiri'}
                                   </p>
@@ -308,11 +397,15 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                                       <Users className={`w-3 h-3 ${theme.text}`} /> {pkg.userCount.toLocaleString('id-ID')}+ Pengguna
                                     </span>
                                   )}
+                                  {priceInfo.isFree && (
+                                    <span className="inline-flex items-center px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-black uppercase tracking-widest border border-emerald-100">
+                                      Gratis
+                                    </span>
+                                  )}
                                 </div>
                               </div>
 
                               <div className="flex items-center gap-3 sm:gap-4 shrink-0 z-10">
-                                {/* Label Harga di Daftar */}
                                 <div className="hidden sm:flex flex-col items-end text-right">
                                   {priceInfo.isFree ? (
                                     <span className="text-emerald-600 font-black text-xs uppercase tracking-wider">Gratis</span>
@@ -329,7 +422,6 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                                     </>
                                   )}
                                 </div>
-
                                 <div className="flex items-center gap-1.5">
                                   <button
                                     onClick={(e) => handleCopyLink(e, pkg.id)}
@@ -359,7 +451,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                       </AnimatePresence>
                     </div>
 
-                    <div className="mt-8 bg-slate-900 rounded-2xl p-6 text-white flex flex-col md:flex-row items-center justify-between gap-5 shadow-lg relative overflow-hidden group">
+                    <div className="mt-8 bg-slate-900 rounded-[1.75rem] p-6 text-white flex flex-col md:flex-row items-center justify-between gap-5 shadow-lg relative overflow-hidden group">
                       <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-500/20 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-all group-hover:scale-150"></div>
                       
                       <div className="relative z-10 flex-1 text-center md:text-left">
@@ -385,6 +477,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                     </div>
                   </>
                 )}
+                </div>
               </div>
             </div>
           </motion.div>
@@ -418,8 +511,6 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
               </div>
 
               <div className="p-5 flex-1 overflow-y-auto custom-scrollbar space-y-6">
-                
-                {/* Header Info Modul */}
                 <div className="flex items-start gap-4">
                   <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-sm ring-1 ${drawerTheme.bg} ${drawerTheme.text} ${drawerTheme.ring}`}>
                     <DrawerIcon className="w-7 h-7" />
@@ -431,7 +522,6 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                 </div>
 
                 <div className="space-y-6">
-                  {/* === AREA BENEFIT DINAMIS (EXPECTED OUTPUTS) === */}
                   <div className={`${drawerTheme.bg} p-5 rounded-3xl ring-1 ${drawerTheme.ring} bg-opacity-40`}>
                     <h5 className={`text-[11px] font-black ${drawerTheme.text} uppercase tracking-widest mb-4 flex items-center gap-2`}>
                       <AiSparkIcon size={16} /> Nilai Tambah Untuk Anda
@@ -482,7 +572,6 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                       )}
                     </ul>
 
-                    {/* CUSTOM UNIQUE SELLING PROPOSITIONS DARI BACKEND */}
                     {checkoutPackage.customUSPs && checkoutPackage.customUSPs.length > 0 && (
                       <div className="mt-5 pt-5 border-t border-indigo-100/50">
                         <h5 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-1.5">
@@ -499,8 +588,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                       </div>
                     )}
                   </div>
-                  {/* ============================================== */}
-                  
+
                   <div className="bg-slate-50 p-4 rounded-3xl ring-1 ring-slate-200">
                     <h5 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-2">
                       <Share2 size={12} className="text-slate-400" /> Tautkan & Bagikan Modul
@@ -539,7 +627,6 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
 
               {/* FOOTER LACI - E-COMMERCE STYLE DENGAN HARGA */}
               <div className="p-4 sm:p-5 border-t border-slate-200 bg-white shrink-0 flex flex-row items-center justify-between gap-4 shadow-[0_-10px_20px_rgba(0,0,0,0.02)]">
-                
                 <div className="flex flex-col justify-center max-w-[45%]">
                   <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Investasi Anda</p>
                   
@@ -565,7 +652,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                 </div>
 
                 <Button 
-                  onClick={() => handleStartDecoy(checkoutPackage)} 
+                  onClick={() => handleStartDecoy(checkoutPackage)}
                   disabled={isProcessingPayment}
                   className="flex-1 h-12 rounded-xl bg-slate-900 text-white font-bold text-sm hover:bg-indigo-600 shadow-xl shadow-slate-900/10 transition-all flex items-center justify-center gap-2 group px-4"
                 >
@@ -575,7 +662,6 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                     <>Mulai Sesi <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" /></>
                   )}
                 </Button>
-                
               </div>
             </motion.div>
           </React.Fragment>

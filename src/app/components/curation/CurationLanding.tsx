@@ -1,11 +1,11 @@
-// src/app/components/curation/CurationLanding.tsx
 'use client';
 
+// src/app/components/curation/CurationLanding.tsx
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, History, Clock, ChevronRight, Loader2, LogOut, LayoutDashboard, Sparkles, ClipboardCheck, Box, Handshake, KeyRound, Mail, Lock, User as UserIcon } from 'lucide-react';
-import { EcosystemIcon, TechCardIcon, AdminShieldIcon, DocExportIcon, BrainIcon, GlobalTargetIcon } from '@/types';
+import { ArrowRight, History, Clock, ChevronRight, Loader2, LogOut, LayoutDashboard, ClipboardCheck, KeyRound, Mail, Lock, User as UserIcon, LibraryBig } from 'lucide-react';
+import { EcosystemIcon, AdminShieldIcon, DocExportIcon, BrainIcon, GlobalTargetIcon } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { CurationHistory } from '@/types/curation';
@@ -16,19 +16,13 @@ import { User } from 'firebase/auth';
 import { toast } from 'sonner';
 import { useMobileBack } from '@/hooks/useMobileBack';
 import { useAuth } from '@/contexts/AuthContext';
-
-// OPTIMASI: Menggunakan LazyMotion dan m untuk mengurangi ukuran bundle JavaScript awal
 import { LazyMotion, domAnimation, m, AnimatePresence, Variants } from 'framer-motion';
-
-// ==========================================
-// IMPLEMENTASI LAZY LOADING (DYNAMIC IMPORT)
-// ==========================================
 import dynamic from 'next/dynamic';
+
 const SystemCapabilitiesModal = dynamic(
   () => import('./SystemCapabilitiesModal').then((mod) => mod.SystemCapabilitiesModal),
   { ssr: false }
 );
-// ==========================================
 
 interface Props {
   onStart: () => void;
@@ -50,12 +44,9 @@ interface DraftItem {
 export function CurationLanding({ onStart, history, onLoadHistory, user, role, onLogin, onLogout }: Props) {
   const router = useRouter();
   const [isCapabilitiesModalOpen, setIsCapabilitiesModalOpen] = useState(false);
-
-  // State Data
   const [drafts, setDrafts] = useState<DraftItem[]>([]);
-  const [isFetchingData, setIsFetchingData] = useState(true); // OPTIMASI: State untuk Skeleton Loading
+  const [isFetchingData, setIsFetchingData] = useState(true); 
 
-  // State Autentikasi Email
   const { registerWithEmail, loginWithEmail, resetPassword } = useAuth();
   const [authMode, setAuthMode] = useState<'options' | 'login' | 'register' | 'reset'>('options');
   const [email, setEmail] = useState('');
@@ -67,7 +58,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-
     const fetchDrafts = async () => {
       setIsFetchingData(true);
       try {
@@ -104,11 +94,9 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
         setIsFetchingData(false);
       }
     };
-
     fetchDrafts();
   }, []);
 
-  // Redirect link pembagian lama ke halaman katalog baru
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
@@ -203,9 +191,8 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
   };
 
   return (
-    // OPTIMASI: LazyMotion memastikan animasi domAnimation hanya dimuat saat diperlukan
     <LazyMotion features={domAnimation}>
-      <div className="w-full min-h-screen flex items-center justify-center bg-[#FAFAFA] py-12 px-6 lg:px-12 relative overflow-hidden">
+      <div className="w-full min-h-screen bg-[#FAFAFA] py-8 lg:py-10 px-5 lg:px-10 relative overflow-hidden">
         
         {/* Animated Ornaments */}
         <m.div 
@@ -219,7 +206,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
           className="absolute bottom-[-10%] right-[-5%] w-[30vw] h-[30vw] bg-blue-200/40 rounded-full blur-[120px] pointer-events-none"
         />
 
-        <div className="max-w-7xl w-full flex flex-col lg:flex-row gap-12 lg:gap-20 items-start lg:items-center relative z-10">
+        <div className="max-w-7xl w-full mx-auto flex flex-col lg:flex-row gap-10 lg:gap-16 items-start relative z-10">
           
           {/* Kolom Kiri: Hero & Form/Login */}
           <m.div 
@@ -244,95 +231,38 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                 Platform analitik berbasis kecerdasan buatan untuk mendiagnosa akar masalah, memetakan potensi tersembunyi, dan merumuskan cetak biru solusi yang presisi — dirancang adaptif untuk pengembangan personal, konseling, hingga akselerasi ekosistem bisnis.
               </p>
 
-              {/* SEKSI ACTION BANNER */}
-              <div className="pt-4 flex flex-col gap-4 max-w-sm sm:max-w-md mx-auto lg:mx-0">
-                
-                <div onClick={() => setIsCapabilitiesModalOpen(true)} className="group relative cursor-pointer overflow-hidden rounded-[1.25rem] bg-slate-900 p-[2px] transition-all duration-300 hover:shadow-2xl hover:shadow-indigo-500/30 hover:-translate-y-1 w-full">
-                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-500 opacity-40 group-hover:opacity-100 transition-opacity duration-500 animate-pulse"></div>
-                  <div className="relative flex items-center justify-between gap-4 rounded-xl bg-slate-900 px-5 py-4 transition-all">
-                    <div className="flex items-center gap-4">
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-indigo-500/20 text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-colors duration-300">
-                        <EcosystemIcon className="h-6 w-6" />
-                      </div>
-                      <div className="text-left">
-                        <h4 className="text-base font-black text-white leading-tight mb-0.5">Apa itu Omnifit?</h4>
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest line-clamp-1">Pelajari Solusi & Cara Kerjanya</p>
-                      </div>
-                    </div>
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/10 text-white group-hover:bg-white group-hover:text-slate-900 transition-colors duration-300">
-                      <ArrowRight className="h-4 w-4" />
-                    </div>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 max-w-3xl mx-auto lg:mx-0">
+                {[
+                  { label: 'Modular', value: 'Multi-track' },
+                  { label: 'Navigasi', value: 'Lebih ringkas' },
+                  { label: 'Output', value: 'Actionable AI' },
+                  { label: 'Akses', value: 'Personal & institusi' },
+                ].map((item) => (
+                  <div key={item.label} className="rounded-2xl bg-white/75 backdrop-blur-sm border border-white px-4 py-3 shadow-sm text-left">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{item.label}</p>
+                    <p className="text-sm font-black text-slate-800">{item.value}</p>
                   </div>
-                </div>
+                ))}
+              </div>
 
-                <Link href="/katalog" className="block w-full">
-                  <div className="group relative cursor-pointer overflow-hidden rounded-[1.25rem] bg-indigo-600 p-[2px] transition-all duration-300 hover:-translate-y-1 w-full shadow-lg shadow-indigo-600/10">
-                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-pink-500 to-blue-500 opacity-60 group-hover:opacity-100 transition-opacity duration-500 animate-pulse"></div>
-                    <div className="absolute -inset-x-20 inset-y-0 bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:animate-[shimmer_2s_infinite] pointer-events-none" />
-                    
-                    <div className="relative flex items-center justify-between gap-5 rounded-xl bg-white px-5 py-4 transition-all group-hover:bg-white/95">
-                      <div className="flex items-center gap-4 flex-1 min-w-0">
-                        <div className="relative h-14 w-16 shrink-0 mr-2">
-                          <div className="absolute top-0 right-0 h-10 w-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center rotate-6 group-hover:rotate-12 group-hover:scale-105 transition-all duration-500"><Box className="w-5 h-5 text-blue-300" /></div>
-                          <div className="absolute bottom-0 left-0 h-11 w-11 rounded-xl bg-indigo-600 shadow-lg shadow-indigo-600/30 flex items-center justify-center -rotate-6 group-hover:rotate-0 group-hover:scale-110 transition-all duration-500 z-10"><TechCardIcon className="w-6 h-6 text-white" /></div>
-                          <div className="absolute -top-1 -left-1 h-6 w-6 rounded-full bg-amber-100 border border-amber-200 flex items-center justify-center shadow-sm group-hover:-translate-y-1.5 transition-transform duration-500 delay-75 z-20"><Sparkles className="w-3.5 h-3.5 text-amber-500" /></div>
-                        </div>
-                        <div className="text-left flex-1">
-                          <h4 className="text-base sm:text-[17px] font-black text-slate-900 group-hover:text-indigo-700 transition-colors leading-tight mb-1.5">Jelajahi Katalog Modul</h4>
-                          <div className="flex items-center gap-2">
-                            <span className="inline-flex items-center justify-center px-1.5 py-0.5 rounded flex-shrink-0 bg-indigo-50 border border-indigo-100 text-[9px] font-black text-indigo-600 uppercase tracking-widest">AI Powered</span>
-                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest line-clamp-1">Pilih & Mulai</p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-50 text-indigo-500 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300 shadow-sm ring-1 ring-indigo-100 group-hover:ring-indigo-500">
-                        <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-
-                <Link href="/mitra" className="block w-full">
-                  <m.div 
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="group relative cursor-pointer overflow-hidden rounded-[1.25rem] bg-white border border-slate-200 p-[2px] transition-all duration-500 hover:shadow-[0_8px_30px_rgb(79,70,229,0.12)] hover:border-indigo-300 w-full"
-                  >
-                    <m.div 
-                      animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
-                      transition={{ duration: 6, ease: 'linear', repeat: Infinity }}
-                      className="absolute inset-0 bg-[linear-gradient(270deg,rgba(79,70,229,0.08),rgba(236,72,153,0.08),rgba(59,130,246,0.08))] bg-[length:200%_200%] opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                    />
-                    <div className="relative flex items-center justify-between gap-4 rounded-xl bg-white px-5 py-4 transition-all group-hover:bg-white/95">
-                      <div className="flex items-center gap-4">
-                        <div className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-slate-50 border border-slate-100 group-hover:bg-indigo-50 group-hover:border-indigo-200 transition-colors duration-500">
-                          <GlobalTargetIcon className="h-6 w-6 text-slate-400 group-hover:text-indigo-600 transition-colors duration-500" />
-                          <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-emerald-400 rounded-full border-2 border-white animate-pulse shadow-sm"></div>
-                        </div>
-                        
-                        <div className="text-left">
-                          <h4 className="text-sm font-black text-slate-900 group-hover:text-indigo-700 transition-colors leading-tight mb-0.5">Ekosistem Kemitraan</h4>
-                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest line-clamp-1">Dipercaya Institusi Unggulan</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <div className="hidden sm:flex -space-x-2 mr-1">
-                          <m.div animate={{ y: [0, -2, 0] }} transition={{ duration: 2.5, repeat: Infinity, delay: 0 }} className="w-7 h-7 rounded-full border-2 border-white bg-indigo-100 flex items-center justify-center text-[8px] font-black text-indigo-600 z-30 shadow-sm">IT</m.div>
-                          <m.div animate={{ y: [0, -2, 0] }} transition={{ duration: 2.5, repeat: Infinity, delay: 0.3 }} className="w-7 h-7 rounded-full border-2 border-white bg-emerald-100 flex items-center justify-center text-[8px] font-black text-emerald-600 z-20 shadow-sm">GOV</m.div>
-                          <m.div animate={{ y: [0, -2, 0] }} transition={{ duration: 2.5, repeat: Infinity, delay: 0.6 }} className="w-7 h-7 rounded-full border-2 border-white bg-amber-100 flex items-center justify-center text-[8px] font-black text-amber-600 z-10 shadow-sm">EDU</m.div>
-                        </div>
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-50 text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500 group-hover:-rotate-45 shadow-sm">
-                          <ArrowRight className="h-4 w-4" />
-                        </div>
-                      </div>
-                    </div>
-                  </m.div>
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 pt-2">
+                <button
+                  onClick={() => setIsCapabilitiesModalOpen(true)}
+                  className="inline-flex items-center gap-2 font-bold text-slate-500 hover:text-indigo-600 bg-white shadow-sm ring-1 ring-slate-200 px-4 py-3 rounded-xl hover:bg-slate-50 transition-all"
+                >
+                  <EcosystemIcon className="w-4 h-4" />
+                  Apa itu Omnifit?
+                </button>
+                <Link href="/mitra" className="inline-flex items-center gap-2 font-bold text-slate-500 hover:text-indigo-600 bg-white shadow-sm ring-1 ring-slate-200 px-4 py-3 rounded-xl hover:bg-slate-50 transition-all">
+                  <GlobalTargetIcon className="w-4 h-4" />
+                  Ekosistem Mitra
                 </Link>
               </div>
             </m.div>
 
+            {/* AREA AUTENTIKASI ATAU DASHBOARD CEPAT */}
             {!user ? (
-              <m.div variants={fadeUpVariants} className="w-full max-w-md mx-auto lg:mx-0 space-y-4 pt-4">
+              <m.div variants={fadeUpVariants} className="w-full max-w-md mx-auto lg:mx-0 space-y-4 pt-4 border-t border-slate-200">
                 {authMode === 'options' ? (
                   <>
                     <Button size="lg" onClick={onLogin} className="w-full shadow-md bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:text-indigo-600 h-14 rounded-2xl text-base font-bold transition-all flex items-center justify-center gap-3">
@@ -344,17 +274,14 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                       </svg>
                       Masuk dengan Akun Google
                     </Button>
-
                     <div className="relative flex items-center py-2">
                       <div className="flex-grow border-t border-slate-200"></div>
                       <span className="flex-shrink-0 mx-4 text-slate-400 text-xs font-medium">ATAU</span>
                       <div className="flex-grow border-t border-slate-200"></div>
                     </div>
-
                     <Button size="lg" onClick={() => setAuthMode('register')} className="w-full shadow-md bg-indigo-600 text-white hover:bg-indigo-700 h-14 rounded-2xl text-base font-bold transition-all flex items-center justify-center gap-3">
                       Daftar dengan Email
                     </Button>
-
                     <p className="text-center text-sm text-slate-500 font-medium mt-2">
                       Sudah punya akun? <button onClick={() => setAuthMode('login')} className="text-indigo-600 font-bold hover:underline">Masuk di sini</button>
                     </p>
@@ -363,9 +290,8 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                   <form onSubmit={handleResetPassword} className="bg-white p-6 rounded-2xl ring-1 ring-slate-200 shadow-sm space-y-4 text-left">
                     <h3 className="text-lg font-black text-slate-900 mb-2">Atur Ulang Kata Sandi</h3>
                     <p className="text-xs font-medium text-slate-500 mb-4 leading-relaxed">
-                      Masukkan alamat email yang terhubung dengan akun Google Anda atau yang telah Anda daftarkan. Kami akan mengirimkan tautan untuk membuat kata sandi baru.
+                      Masukkan alamat email yang terhubung dengan akun Anda. Kami akan mengirimkan tautan untuk membuat kata sandi baru.
                     </p>
-
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
                       <Input
@@ -377,11 +303,9 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                         className="pl-10 h-12 rounded-xl bg-slate-50 border-slate-200"
                       />
                     </div>
-
                     <Button type="submit" disabled={authLoading} className="w-full h-12 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold transition-all mt-2">
                       {authLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Kirim Tautan'}
                     </Button>
-
                     <button type="button" onClick={() => setAuthMode('login')} className="w-full text-sm font-bold text-slate-500 hover:text-slate-800 mt-2">
                       Kembali ke Login
                     </button>
@@ -429,7 +353,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                         minLength={6}
                       />
                     </div>
-
                     {authMode === 'login' && (
                       <div className="flex justify-end mt-1">
                         <button type="button" onClick={() => setAuthMode('reset')} className="text-xs font-bold text-indigo-600 hover:underline">
@@ -437,7 +360,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                         </button>
                       </div>
                     )}
-
                     <Button type="submit" disabled={authLoading} className="w-full h-12 rounded-xl bg-slate-900 hover:bg-indigo-600 text-white font-bold transition-all mt-2">
                       {authLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : (authMode === 'register' ? 'Daftar & Lanjutkan' : 'Masuk')}
                     </Button>
@@ -450,26 +372,40 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                 <p className="text-xs text-slate-500 font-medium mt-4 text-center">Anda wajib masuk untuk menggunakan token dan menyimpan progres secara aman.</p>
               </m.div>
             ) : (
-              <m.div variants={fadeUpVariants} className="w-full max-w-md mx-auto lg:mx-0 space-y-4 pt-4">
-                <div className="flex items-center justify-between bg-white px-4 py-3 rounded-2xl ring-1 ring-slate-200 shadow-sm">
+              // JIKA USER SUDAH LOGIN, TAMPILKAN PANEL AKSES CEPAT
+              <m.div variants={fadeUpVariants} className="w-full max-w-md mx-auto lg:mx-0 space-y-4 pt-4 border-t border-slate-200">
+                <div className="flex items-center justify-between bg-white px-5 py-4 rounded-2xl ring-1 ring-slate-200 shadow-sm">
                   <div className="flex items-center gap-3 overflow-hidden">
-                    <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold shrink-0 text-lg">
                       {user.displayName?.charAt(0).toUpperCase() || 'U'}
                     </div>
                     <div className="truncate text-left">
-                      <p className="text-xs font-black text-slate-900 truncate">{user.displayName}</p>
-                      <p className="text-[10px] font-bold text-slate-500 truncate">{user.email}</p>
+                      <p className="text-sm font-black text-slate-900 truncate">{user.displayName}</p>
+                      <p className="text-xs font-bold text-slate-500 truncate">{user.email}</p>
                     </div>
                   </div>
-                  <button onClick={onLogout} className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors" title="Keluar">
-                    <LogOut size={16} />
+                  <button onClick={onLogout} className="p-2.5 text-rose-500 hover:bg-rose-50 rounded-xl transition-colors" title="Keluar">
+                    <LogOut size={18} />
                   </button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <Link href="/katalog" className="block w-full">
+                    <Button variant="outline" className="w-full h-12 rounded-xl border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-indigo-600 font-bold gap-2 shadow-sm">
+                      <LibraryBig size={16} /> Buka Katalog
+                    </Button>
+                  </Link>
+                  <Link href="/dashboard" className="block w-full">
+                    <Button variant="outline" className="w-full h-12 rounded-xl border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-indigo-600 font-bold gap-2 shadow-sm">
+                      <AdminShieldIcon size={16} /> Brankas Modul
+                    </Button>
+                  </Link>
                 </div>
 
                 {(role === 'admin_csrs' || role === 'admin_omnifit') && (
                   <Link href="/admin" className="block w-full">
                     <Button variant="outline" className="w-full h-12 rounded-xl border-indigo-200 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold gap-2">
-                      <LayoutDashboard size={18} /> Ke Dasbor Admin Omnifit
+                      <LayoutDashboard size={18} /> Dasbor Admin
                     </Button>
                   </Link>
                 )}
@@ -477,33 +413,24 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                 {(role === 'assessor') && (
                   <Link href="/assessor" className="block w-full">
                     <Button variant="outline" className="w-full h-12 rounded-xl border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold gap-2">
-                      <ClipboardCheck size={18} /> Ke Ruang Kerja Asesor
+                      <ClipboardCheck size={18} /> Ruang Kerja Asesor
                     </Button>
                   </Link>
                 )}
-
-                <Link href="/dashboard" className="block w-full">
-                  <Button variant="outline" className="w-full h-12 rounded-xl border-sky-200 bg-sky-50 text-sky-700 hover:bg-sky-100 font-bold gap-2 shadow-sm transition-all">
-                    <AdminShieldIcon size={18} /> Buka Brankas Modul Saya
-                  </Button>
-                </Link>
-
+                
                 <div className="pt-2">
                   <Link href="/token" className="block w-full">
                     <Button 
                       size="lg"
-                      className="w-full shadow-lg shadow-indigo-600/20 bg-slate-900 hover:bg-indigo-600 text-white rounded-2xl h-14 px-8 text-base font-bold transition-all duration-300 flex items-center justify-between group"
+                      className="w-full shadow-lg shadow-indigo-600/20 bg-slate-900 hover:bg-indigo-600 text-white rounded-2xl h-14 px-6 text-base font-bold transition-all duration-300 flex items-center justify-between group"
                     >
                       <div className="flex items-center gap-3">
                         <KeyRound className="w-5 h-5 text-indigo-400 group-hover:text-white transition-colors" />
-                        Mulai Asesmen (Input Token)
+                        Gunakan Token Akses
                       </div>
                       <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                     </Button>
                   </Link>
-                  <p className="text-xs text-slate-500 font-medium text-center mt-3">
-                    Punya kode akses dari institusi Anda? Masukkan di sini.
-                  </p>
                 </div>
               </m.div>
             )}
@@ -513,7 +440,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
           {(user || isFetchingData) && (
             <div className="w-full max-w-md flex flex-col gap-6 lg:gap-8 mx-auto lg:mx-0 shrink-0">
               
-              {/* OPTIMASI: SKELETON LOADING UI UNTUK MENUNGGU DATA */}
               {isFetchingData ? (
                 <>
                   <div className="w-full bg-white/40 border border-white/20 p-6 sm:p-8 rounded-[2rem] shadow-sm animate-pulse">
@@ -635,7 +561,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
               isLoggedIn={!!user}
             />
           )}
-
         </div>
       </div>
     </LazyMotion>

@@ -7,7 +7,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { ChevronLeft, Briefcase, ShieldCheck, Loader2, Mail, Phone, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { UniversalAssessmentView } from '@/app/components/shared/UniversalAssessmentView';
+import { UniversalAssessmentView } from '@/components/shared';
 import { AdminExportPDF } from '@/app/components/admin/AdminExportPDF';
 
 export default function AdminAssessmentDetailPage() {

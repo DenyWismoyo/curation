@@ -3,6 +3,8 @@
 import React, { Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { ChevronLeft } from 'lucide-react';
+import Link from 'next/link';
 
 // Import komponen aslinya secara utuh
 import { PricingPackages } from '@/app/components/payment/PricingPackages';
@@ -17,13 +19,21 @@ function KatalogContent() {
 
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
+      {/* Page header — hanya tampil di mobile (sidebar sudah ada di desktop) */}
+      <div className="md:hidden flex items-center gap-3 px-5 pt-5 pb-3 bg-white border-b border-slate-100">
+        <Link href="/" className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-50 transition-colors">
+          <ChevronLeft size={18} />
+        </Link>
+        <span className="text-sm font-black text-slate-800">Katalog Asesmen</span>
+      </div>
+
       {/* 
-        Kita panggil komponen aslinya di sini.
-        isOpen diset true agar modal katalog langsung terbuka saat halaman ini diakses.
-        onClose diatur agar mengembalikan user ke halaman utama (beranda).
+        asPage={true}: renders WITHOUT fixed overlay, respects sidebar offset dari layout.tsx 
+        isOpen={true}: selalu terbuka karena ini adalah halaman, bukan trigger dari tombol
       */}
       <PricingPackages
         isOpen={true}
+        asPage={true}
         onClose={() => router.push('/')}
         user={user}
         onLoginRequest={loginWithGoogle}

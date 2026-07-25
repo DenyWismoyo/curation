@@ -19,7 +19,7 @@ const OmniAiWidget = dynamic(
   { ssr: false }
 );
 
-export function GlobalFloatingWidget() {
+export function GlobalFeedbackWidget() {
   const { user } = useAuth();
 
   // State Management

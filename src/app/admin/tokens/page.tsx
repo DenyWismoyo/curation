@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 
 import { AdminTokenExportPDF } from '@/app/components/admin/AdminTokenExportPDF';
-import { TokenExportPDFButton } from '@/app/components/shared/TokenExportPDFButton'; 
+import { TokenExportPDFButton } from '@/components/shared'; 
 import { DocumentPresets } from '@/data/documentPromptTemplates';
 
 // === INTERFACES ===

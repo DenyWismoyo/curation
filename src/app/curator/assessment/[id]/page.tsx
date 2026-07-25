@@ -6,7 +6,7 @@ import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { ChevronLeft, Briefcase, ShieldCheck, Loader2, Edit3, CheckCircle2, MessageCircle, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { UniversalAssessmentView } from '@/app/components/shared/UniversalAssessmentView';
+import { UniversalAssessmentView } from '@/components/shared';
 
 // IMPORT KOMPONEN EXPORT
 import { CuratorExportPDF } from '@/app/components/curator/PDFReportTemplate';

@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { BrainIcon, AiSparkIcon, InfinityWorkflowIcon } from '@/types';
 import { toast } from 'sonner';
+import { PageHero } from '@/components/domain/public';
 
 // ============================================================
 // TYPES
@@ -116,22 +117,20 @@ export default function KomunitasPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] pb-28 font-sans selection:bg-indigo-100">
+    <div className="min-h-screen bg-[#FAFAFA] font-sans selection:bg-indigo-100">
 
-      {/* HERO */}
-      <div className="bg-gradient-to-br from-purple-600 via-indigo-700 to-indigo-600 text-white pt-14 pb-20 px-6 lg:px-12">
-        <div className="max-w-[800px] mx-auto text-center">
-          <div className="inline-flex w-16 h-16 bg-white/10 backdrop-blur-sm rounded-3xl items-center justify-center mb-5 ring-1 ring-white/20">
-            <Users size={32} className="text-white" />
-          </div>
-          <h1 className="text-3xl font-black mb-3">Komunitas Omnifit</h1>
-          <p className="text-purple-100 font-medium max-w-md mx-auto text-sm leading-relaxed">
-            Bergabunglah dengan ribuan pemimpin bisnis dan profesional yang menggunakan AI untuk tumbuh bersama.
-          </p>
+      <PageHero
+        centered
+        title="Komunitas Omnifit"
+        subtitle="Bergabunglah dengan ribuan pemimpin bisnis dan profesional yang menggunakan AI untuk tumbuh bersama."
+        className="from-purple-600 via-indigo-700 to-indigo-600"
+      >
+        <div className="inline-flex w-16 h-16 bg-white/10 backdrop-blur-sm rounded-3xl items-center justify-center ring-1 ring-white/20 mx-auto">
+          <Users size={32} className="text-white" />
         </div>
-      </div>
+      </PageHero>
 
-      <div className="max-w-[800px] mx-auto px-6 lg:px-12 -mt-8 space-y-8">
+      <div className="max-w-3xl mx-auto px-5 lg:px-10 mt-6 space-y-8">
 
         {/* PLATFORM MILESTONES */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

@@ -6,7 +6,7 @@ import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { X, Briefcase, ShieldCheck, Loader2, Edit3, CheckCircle2, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { UniversalAssessmentView } from '@/app/components/shared/UniversalAssessmentView';
+import { UniversalAssessmentView } from '@/components/shared';
 import { CuratorExportPDF } from '@/app/components/curator/PDFReportTemplate';
 
 export function AssessorAssessmentDetail({ data, onClose, onSaveSuccess }: any) {

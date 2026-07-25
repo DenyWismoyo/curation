@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { CurationFormData, AIResult } from '@/types/curation';
 import { PublicExportPDF } from './PublicExportPDF';
-import { UniversalAssessmentView } from '@/app/components/shared/UniversalAssessmentView';
+import { UniversalAssessmentView } from '@/components/shared';
 import { DocumentPresets } from '@/data/documentPromptTemplates';
 
 import { getFunctions, httpsCallable } from 'firebase/functions';
