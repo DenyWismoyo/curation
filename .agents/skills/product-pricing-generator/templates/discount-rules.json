@@ -1,0 +1,29 @@
+{
+  "productId": "string (product identifier)",
+  "basePrice": "number (primary selling price)",
+  "discountRules": [
+    {
+      "type": "string (options: 'volume', 'time-limited', 'promotional', 'loyalty')",
+      "name": "string (e.g., 'Early Bird Discount')",
+      "condition": "string (e.g., 'quantity >= 5', 'purchased before 2026-12-31')",
+      "discountPercent": "number (0-100)",
+      "validFrom": "ISO 8601 date (optional)",
+      "validUntil": "ISO 8601 date (optional)",
+      "enabled": "boolean"
+    }
+  ],
+  "volumeTiers": [
+    {
+      "minQuantity": "number (e.g., 1)",
+      "maxQuantity": "number (e.g., 9, or null for unlimited)",
+      "pricePerUnit": "number",
+      "discountPercent": "number (0-100)"
+    }
+  ],
+  "constraints": {
+    "minimumOrderQuantity": "number (minimum units per order)",
+    "minimumMarginPercent": "number (floor margin, e.g., 20)",
+    "maximumDiscountPercent": "number (cap on combined discounts, e.g., 40)"
+  },
+  "currency": "string (e.g., 'IDR', 'USD')"
+}

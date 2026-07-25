@@ -1,0 +1,28 @@
+{
+  "productId": "string (unique identifier)",
+  "productName": "string (e.g., 'Premium Fitness Assessment')",
+  "description": "string (short product description)",
+  "costBasis": {
+    "unitCost": "number (COGS per unit)",
+    "currency": "string (e.g., 'IDR', 'USD')"
+  },
+  "targetMarket": {
+    "segment": "string (e.g., 'B2B', 'B2C', 'Enterprise', 'Startup')",
+    "region": "string (e.g., 'Indonesia', 'Asia', 'Global')"
+  },
+  "competitorPricing": [
+    {
+      "competitor": "string",
+      "productName": "string",
+      "price": "number",
+      "notes": "string"
+    }
+  ],
+  "targetMargins": {
+    "min": "number (percentage, e.g., 30)",
+    "max": "number (percentage, e.g., 50)"
+  },
+  "pricingStrategy": "string (options: 'fixed-margin', 'competitive', 'value-based')",
+  "tier": "string (optional: 'starter', 'professional', 'enterprise')",
+  "notes": "string (any additional context)"
+}
