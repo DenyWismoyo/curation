@@ -1,5 +1,7 @@
 import { initializeApp, getApps, applicationDefault, cert } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
+import fs from 'fs';
+import path from 'path';
 
 const args = process.argv.slice(2);
 const dryRun = args.includes('--dry-run');
@@ -12,6 +14,18 @@ const getArg = (name, fallback) => {
 
 const databaseId = getArg('--database', 'curation');
 const collectionName = getArg('--collection', 'assessments');
+const projectId =
+  process.env.GOOGLE_CLOUD_PROJECT ||
+  process.env.GCLOUD_PROJECT ||
+  process.env.FIREBASE_PROJECT_ID ||
+  process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+
+const resolveCredentialsPath = () => {
+  const rawPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+  if (!rawPath) return null;
+  if (path.isAbsolute(rawPath)) return rawPath;
+  return path.resolve(process.cwd(), rawPath);
+};
 
 const createCredential = () => {
   if (process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_CLIENT_EMAIL && process.env.FIREBASE_PRIVATE_KEY) {
@@ -21,11 +35,22 @@ const createCredential = () => {
       privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
     });
   }
+
+  const credentialsPath = resolveCredentialsPath();
+  if (credentialsPath && fs.existsSync(credentialsPath)) {
+    const rawJson = fs.readFileSync(credentialsPath, 'utf8');
+    const serviceAccount = JSON.parse(rawJson);
+    return cert(serviceAccount);
+  }
+
   return applicationDefault();
 };
 
 if (getApps().length === 0) {
-  initializeApp({ credential: createCredential() });
+  initializeApp({
+    credential: createCredential(),
+    projectId: projectId,
+  });
 }
 
 const db = getFirestore(undefined, databaseId);

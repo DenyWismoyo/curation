@@ -8,8 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "autodoc": "node scripts/generate-doc.mjs",
-    "analytics:backfill": "node scripts/backfill-analytics-v2.mjs",
-    "analytics:backfill:dry": "node scripts/backfill-analytics-v2.mjs --dry-run"
+    "analytics:backfill": "node --env-file=.env.local scripts/backfill-analytics-v2.mjs",
+    "analytics:backfill:dry": "node --env-file=.env.local scripts/backfill-analytics-v2.mjs --dry-run"
   },
   "dependencies": {
     "@ducanh2912/next-pwa": "^10.2.9",
