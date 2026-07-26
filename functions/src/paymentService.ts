@@ -6,67 +6,42 @@ import * as admin from "firebase-admin";
 import { getFirestore, FieldValue } from "firebase-admin/firestore";
 import * as crypto from "crypto";
 
-// Secret untuk Mayar & Meta
 const mayarApiKey = defineSecret("MAYAR_API_KEY");
 const metaPixelId = defineSecret("META_PIXEL_ID");
 const metaAccessToken = defineSecret("META_ACCESS_TOKEN");
 
 // ============================================================================
-// HELPER META CONVERSIONS API (CAPI)
+// HELPER META CAPI
 // ============================================================================
 const hashData = (data: string) => {
   if (!data) return "";
   return crypto.createHash("sha256").update(data.trim().toLowerCase()).digest("hex");
 };
 
-const sendMetaConversionEvent = async (
-  pixelId: string,
-  accessToken: string,
-  eventName: string,
-  userEmail: string,
-  amount: number,
-  transactionId: string
-) => {
+const sendMetaConversionEvent = async (pixelId: string, accessToken: string, eventName: string, userEmail: string, amount: number, transactionId: string) => {
   const payload = {
-    data: [
-      {
-        event_name: eventName,
-        event_time: Math.floor(Date.now() / 1000),
-        event_id: transactionId,
-        action_source: "website",
-        user_data: {
-          em: [hashData(userEmail)],
-        },
-        custom_data: {
-          currency: "IDR",
-          value: amount,
-        },
-      },
-    ],
+    data: [{
+      event_name: eventName,
+      event_time: Math.floor(Date.now() / 1000),
+      event_id: transactionId,
+      action_source: "website",
+      user_data: { em: [hashData(userEmail)] },
+      custom_data: { currency: "IDR", value: amount },
+    }],
   };
-
   try {
-    const response = await fetch(
-      `https://graph.facebook.com/v19.0/${pixelId}/events?access_token=${accessToken}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      }
-    );
-    const result = await response.json();
-    if (!response.ok) {
-      console.error(`[META CAPI] Error for ${eventName}:`, result);
-    } else {
-      console.log(`[META CAPI] Event ${eventName} berhasil dikirim untuk ${userEmail}`);
-    }
+    await fetch(`https://graph.facebook.com/v19.0/${pixelId}/events?access_token=${accessToken}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
   } catch (error) {
-    console.error(`[META CAPI] Gagal mengirim HTTP request untuk ${eventName}:`, error);
+    console.error(`[META CAPI] Gagal mengirim:`, error);
   }
 };
 
 // ============================================================================
-// FUNGSI 1: MEMBUAT TRANSAKSI MAYAR (SINGLE PAYMENT LINK)
+// FUNGSI 1: MEMBUAT LINK PEMBAYARAN (SINGLE PAYMENT)
 // ============================================================================
 export const createPaymentInvoice = onCall({
     memory: "256MiB",
@@ -75,12 +50,8 @@ export const createPaymentInvoice = onCall({
     cors: true,
   },
   async (request) => {
-    if (!request.auth) throw new HttpsError("unauthenticated", "Akses ditolak. Silakan login.");
+    if (!request.auth) throw new HttpsError("unauthenticated", "Akses ditolak.");
     const { packageId, packageName, finalPrice, userEmail, userName } = request.data;
-    
-    if (!packageId || !finalPrice || !userEmail) {
-      throw new HttpsError("invalid-argument", "Data checkout tidak lengkap.");
-    }
     
     const db = getFirestore(admin.app(), "curation");
     const txRef = db.collection("transactions").doc();
@@ -101,7 +72,6 @@ export const createPaymentInvoice = onCall({
           description: `Akses Modul Asesmen: ${packageName}`,
           redirectUrl: `https://omnifit.cloud/checkout/${transactionId}`,
           expiredAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-          
           customField: transactionId,
           custom_field: transactionId,
           reference_id: transactionId, 
@@ -110,13 +80,8 @@ export const createPaymentInvoice = onCall({
       });
       
       const mayarData = await response.json();
-      
-      if (!response.ok || mayarData.statusCode !== 200) {
-        console.error("Mayar Error:", mayarData);
-        throw new Error(mayarData.messages || mayarData.message || "Gagal menghasilkan invoice dari gateway.");
-      }
+      if (!response.ok || mayarData.statusCode !== 200) throw new Error(mayarData.message || "Gagal membuat invoice");
 
-      // KUNCI PERBAIKAN: Paksa ganti domain default Mayar ke Custom Domain Anda
       let finalPaymentLink = mayarData.data?.link || null;
       if (finalPaymentLink) {
         finalPaymentLink = finalPaymentLink.replace("deny-wismoyo.myr.id", "omnifit.myr.id");
@@ -131,30 +96,75 @@ export const createPaymentInvoice = onCall({
         packageName: packageName,
         amount: finalPrice,
         status: "PENDING",
-        mayarTransactionId: mayarData.data?.id || null,
-        paymentLink: finalPaymentLink, // Gunakan link yang sudah ditimpa domainnya
+        mayarTransactionId: mayarData.data?.id || null, 
+        paymentLink: finalPaymentLink,
         createdAt: FieldValue.serverTimestamp(),
       });
       
-      await sendMetaConversionEvent(
-        metaPixelId.value(),
-        metaAccessToken.value(),
-        "InitiateCheckout",
-        userEmail,
-        finalPrice,
-        transactionId
-      );
-      
+      await sendMetaConversionEvent(metaPixelId.value(), metaAccessToken.value(), "InitiateCheckout", userEmail, finalPrice, transactionId);
       return { transactionId: transactionId };
     } catch (error: any) {
       console.error("Payment Error:", error);
-      throw new HttpsError("internal", error.message || "Gagal membuat invoice pembayaran.");
+      throw new HttpsError("internal", error.message || "Terjadi kegagalan komunikasi dengan Mayar");
     }
   }
 );
 
 // ============================================================================
-// FUNGSI 2: WEBHOOK MAYAR (OTOMATISASI SAAT PEMBAYARAN BERHASIL)
+// FUNGSI 2: GENERATE QRIS DINAMIS DENGAN METADATA
+// ============================================================================
+export const createDynamicQris = onCall({
+    memory: "256MiB",
+    region: "asia-southeast2",
+    secrets: [mayarApiKey],
+    cors: true,
+  },
+  async (request) => {
+    if (!request.auth) throw new HttpsError("unauthenticated", "Akses ditolak.");
+    const { transactionId, amount, userEmail, userName } = request.data;
+    
+    const db = getFirestore(admin.app(), "curation");
+    const txRef = db.collection("transactions").doc(transactionId);
+
+    try {
+      const response = await fetch("https://api.mayar.id/hl/v1/qrcode/create", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${mayarApiKey.value()}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          amount: amount,
+          reference_id: transactionId,
+          referenceId: transactionId,
+          customField: transactionId,
+          custom_field: transactionId,
+          email: userEmail,
+          name: userName || "Pengguna"
+        })
+      });
+      
+      const mayarData = await response.json();
+      if (!response.ok || mayarData.statusCode !== 200) {
+        throw new Error(mayarData.message || "Gagal membuat QRIS Dinamis");
+      }
+
+      const qrUrl = mayarData.data?.url;
+      
+      if (qrUrl) {
+        await txRef.update({ qrCodeUrl: qrUrl });
+      }
+      
+      return { qrUrl: qrUrl };
+    } catch (error: any) {
+      console.error("QRIS Error:", error);
+      throw new HttpsError("internal", error.message || "Gagal menghubungi Mayar QR API");
+    }
+  }
+);
+
+// ============================================================================
+// FUNGSI 3: WEBHOOK "ULTIMATE" (MENANGKAP NOTIFIKASI SUCCESS)
 // ============================================================================
 export const mayarWebhook = onRequest({
     region: "asia-southeast2",
@@ -167,91 +177,131 @@ export const mayarWebhook = onRequest({
       return;
     }
     
-    const data = req.body;
+    let payload = req.body;
+    if (typeof payload === 'string') {
+      try { payload = JSON.parse(payload); } catch(e) {}
+    }
+    
+    console.log("📥 [WEBHOOK RADAR] Payload mentah dari Mayar:", JSON.stringify(payload));
+
+    // 1. PENAMBALAN: Bypass event testing agar dashboard Mayar sukses melakukan validasi URL
+    if (payload.event === "testing" || payload.event === "ping") {
+      res.status(200).send({ status: "success", message: "Webhook connection test successful" });
+      return;
+    }
+
+    const mayarTx = payload.data ? payload.data : payload;
     const db = getFirestore(admin.app(), "curation");
+    
+    let txDocRef: admin.firestore.DocumentReference | null = null;
+    let txData: any = null;
 
-    // KUNCI PERBAIKAN 2: Tangkap custom_field dari payload Mayar
-    let transactionId = data.custom_field || data.customField || data.reference_id || data.referenceId; 
+    // 2. PENAMBALAN: Ekstraksi ID yang ketat (Tolak jika formatnya Array/Object)
+    let exactTxId = mayarTx.reference_id || mayarTx.referenceId || payload.reference_id;
+    
+    // Pastikan customField hanya diambil jika formatnya benar-benar String
+    if (!exactTxId && typeof mayarTx.customField === 'string') exactTxId = mayarTx.customField;
+    if (!exactTxId && typeof mayarTx.custom_field === 'string') exactTxId = mayarTx.custom_field;
 
-    // KUNCI PERBAIKAN 3: Fallback ke Link ID jika custom_field gagal tertangkap
-    if (!transactionId) {
-      const linkIdFromMayar = data.link_id || data.payment_link_id || data.product_id; 
-      
-      if (linkIdFromMayar) {
-        const txQuery = await db.collection("transactions").where("mayarTransactionId", "==", linkIdFromMayar).limit(1).get();
-        if (!txQuery.empty) {
-          transactionId = txQuery.docs[0].id;
+    // STRATEGI 1: Pencocokan Akurat via Reference ID
+    if (exactTxId && typeof exactTxId === 'string') {
+      try {
+        const docSnap = await db.collection("transactions").doc(exactTxId).get();
+        if (docSnap.exists) {
+          txDocRef = docSnap.ref;
+          txData = docSnap.data();
+        }
+      } catch (e) {
+        console.log(`⚠️ [WEBHOOK] Gagal mengambil dokumen by ID: ${exactTxId}`);
+      }
+    }
+
+    // STRATEGI 2: Pencocokan ID Link Mayar
+    if (!txDocRef) {
+      const possibleMayarIds = [mayarTx.productId, mayarTx.id, payload.productId, mayarTx.paymentLinkId].filter(Boolean);
+      for (const pId of possibleMayarIds) {
+        try {
+          const q = await db.collection("transactions").where("mayarTransactionId", "==", pId).limit(1).get();
+          if (!q.empty) {
+            txDocRef = q.docs[0].ref;
+            txData = q.docs[0].data();
+            break; 
+          }
+        } catch (e) {}
+      }
+    }
+
+    // STRATEGI 3: Pencarian via Email
+    if (!txDocRef) {
+      const emailPelanggan = mayarTx.customerEmail || mayarTx.email || payload.customerEmail;
+      if (emailPelanggan) {
+        try {
+          const fallbackQ = await db.collection("transactions")
+            .where("status", "==", "PENDING")
+            .where("userEmail", "==", emailPelanggan)
+            .get();
+          if (!fallbackQ.empty) {
+            const docs = fallbackQ.docs.sort((a, b) => (b.data().createdAt?.toMillis() || 0) - (a.data().createdAt?.toMillis() || 0));
+            txDocRef = docs[0].ref;
+            txData = docs[0].data();
+          }
+        } catch (fallbackErr: any) {
+          console.error("❌ [WEBHOOK] Fallback query error:", fallbackErr.message);
         }
       }
     }
     
-    if (!transactionId) {
-      console.error("Webhook Error: Tidak dapat memetakan ID Transaksi", data);
-      res.status(400).send('Bad Request: Missing Transaction ID');
+    if (!txDocRef || !txData) {
+      res.status(400).send('Transaction Not Found');
       return;
     }
 
-    // Pastikan variasi tulisan status aman dari case-sensitivity
-    const currentStatus = String(data.status || "").toUpperCase();
+    const currentStatus = String(mayarTx.status || payload.status || "").toUpperCase();
+    const transactionStatus = String(mayarTx.transactionStatus || "").toUpperCase();
 
     try {
-      // Mayar mengembalikan SETTLED atau SUCCESS jika pembayaran berhasil
-      if (['SUCCESS', 'SETTLED', 'PAID', 'COMPLETED'].includes(currentStatus)) {
-        const txRef = db.collection("transactions").doc(transactionId);
-        const txSnap = await txRef.get();
-        
-        if (txSnap.exists) {
-          const txData = txSnap.data();
+      if (
+        ['SUCCESS', 'SETTLED', 'PAID', 'COMPLETED'].includes(currentStatus) || 
+        ['PAID', 'SETTLED', 'SUCCESS'].includes(transactionStatus)
+      ) {
+        if (txData.status !== 'PAID') {
+          const rawToken = Math.random().toString(36).substring(2, 8).toUpperCase();
+          const finalTokenCode = `B2C-${rawToken}`; 
           
-          if (txData?.status !== 'PAID') {
-            const tokenCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-            
-            // Ubah status PENDING menjadi PAID
-            await txRef.update({
-              status: "PAID",
-              paidAt: FieldValue.serverTimestamp(),
-              paymentMethod: data.payment_method || "GATEWAY",
-              paymentChannel: "MAYAR",
-              tokenCode: `B2C-${tokenCode}`
-            });
-            
-            await sendMetaConversionEvent(
-              metaPixelId.value(),
-              metaAccessToken.value(),
-              "Purchase",
-              txData?.userEmail || "unknown@domain.com",
-              txData?.amount || data.amount,
-              transactionId
-            );
-            
-            // B2C Auto Provisioning Token
-            if (txData?.packageId) {
-              const b2cRef = db.collection("corporate_tokens").doc("B2C");
-              
-              await b2cRef.set({
-                corporateName: "Penjualan B2C (Mandiri)",
-                modelType: "flash", 
-                totalTokens: FieldValue.increment(1),
-                createdAt: new Date().toISOString(), 
-                tokens: {
-                  [tokenCode]: {
-                    isUsed: false,
-                    usedAt: null,
-                    usedByNamaUsaha: null,
-                    allowedTemplates: [txData.packageId],
-                    buyerEmail: txData.userEmail,
-                    transactionId: transactionId
-                  }
+          await txDocRef.update({
+            status: "PAID",
+            paidAt: FieldValue.serverTimestamp(),
+            paymentMethod: mayarTx.paymentMethod || mayarTx.payment_method || "GATEWAY",
+            paymentChannel: "MAYAR",
+            tokenCode: finalTokenCode
+          });
+          
+          await sendMetaConversionEvent(metaPixelId.value(), metaAccessToken.value(), "Purchase", txData.userEmail, txData.amount, txData.transactionId);
+          
+          if (txData.packageId) {
+            const b2cRef = db.collection("corporate_tokens").doc("B2C");
+            await b2cRef.set({
+              corporateName: "Penjualan B2C (Mandiri)",
+              modelType: "flash", 
+              totalTokens: FieldValue.increment(1),
+              createdAt: new Date().toISOString(), 
+              tokens: {
+                [finalTokenCode]: {
+                  isUsed: false,
+                  usedAt: null,
+                  usedByNamaUsaha: null,
+                  allowedTemplates: [txData.packageId],
+                  buyerEmail: txData.userEmail,
+                  transactionId: txData.transactionId
                 }
-              }, { merge: true });
-            }
+              }
+            }, { merge: true });
           }
         }
       }
-      
-      res.status(200).send({ status: "success", message: "Webhook processed successfully" });
+      res.status(200).send({ status: "success", message: "Webhook processed" });
     } catch (error) {
-      console.error("Webhook Execution Error:", error);
+      console.error("❌ [WEBHOOK EXECUTION ERROR]:", error);
       res.status(500).send("Internal Server Error");
     }
   }

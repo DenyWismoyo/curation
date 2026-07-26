@@ -296,7 +296,6 @@ export default function PricingManagerPage() {
         }
         return Promise.resolve();
       });
-
       await Promise.all(promises);
       
       setTemplates(prev => prev.map(t => {
@@ -306,7 +305,6 @@ export default function PricingManagerPage() {
         }
         return t;
       }));
-
       toast.success("Semua perubahan berhasil disimpan!");
     } catch (error) {
       console.error("Gagal update massal:", error);
@@ -321,6 +319,7 @@ export default function PricingManagerPage() {
     try {
       const b2cRef = doc(db, 'corporate_tokens', 'B2C');
       const tokenCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+      const fullToken = `B2C-${tokenCode}`;
       
       await setDoc(b2cRef, {
         corporateName: "Penjualan B2C (Mandiri)",
@@ -328,7 +327,7 @@ export default function PricingManagerPage() {
         totalTokens: increment(1),
         createdAt: new Date().toISOString(), 
         tokens: {
-          [tokenCode]: {
+          [fullToken]: {
             isUsed: false,
             usedAt: null,
             usedByNamaUsaha: null,
@@ -337,7 +336,6 @@ export default function PricingManagerPage() {
         }
       }, { merge: true });
 
-      const fullToken = `B2C-${tokenCode}`;
       setGeneratedTokens(prev => ({ ...prev, [templateId]: fullToken }));
       navigator.clipboard.writeText(fullToken);
       setCopiedTokens(prev => ({ ...prev, [templateId]: true }));
@@ -361,7 +359,7 @@ export default function PricingManagerPage() {
 
   const handleCopyShareLink = (templateId: string) => {
     if (typeof window !== 'undefined') {
-      const link = `${window.location.origin}/?buy=${templateId}`;
+      const link = `${window.location.origin}/katalog?buy=${templateId}`;
       navigator.clipboard.writeText(link);
       toast.success("Link Beli berhasil disalin!", {
         description: "Bagikan link ini agar pelanggan langsung diarahkan ke modul ini."
@@ -635,8 +633,8 @@ export default function PricingManagerPage() {
                     const isSelected = selectedTemplates.includes(template.id);
                     
                     // HIGHLIGHT CARD JIKA SEDANG DIPILIH (BATCH MODE)
-                    const highlightCardClass = isSelected
-                        ? 'border-l-[4px] border-l-indigo-600 border-t border-r border-b border-indigo-200 bg-indigo-50/40 shadow-md ring-1 ring-indigo-500'
+                    const highlightCardClass = isSelected 
+                        ? 'border-l-[4px] border-l-indigo-600 border-t border-r border-b border-indigo-200 bg-indigo-50/40 shadow-md ring-1 ring-indigo-500' 
                         : state.isDisplayedOnLanding && state.isActive
                         ? 'border-l-[4px] border-l-emerald-500 border-t border-r border-b border-slate-200 bg-emerald-50/10 hover:bg-emerald-50/30 shadow-sm' 
                         : 'border border-slate-200 bg-white/70 hover:bg-white opacity-80 hover:opacity-100 shadow-sm';
@@ -835,7 +833,6 @@ export default function PricingManagerPage() {
                             </div>
                           )}
                         </div>
-
                       </div>
                     );
                   })}

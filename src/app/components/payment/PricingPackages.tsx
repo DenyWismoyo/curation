@@ -7,9 +7,9 @@ import { db, functions } from '@/lib/firebase';
 import { httpsCallable } from 'firebase/functions';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as LucideIcons from 'lucide-react';
-import {
-  X, Sparkles, CheckCircle2, ArrowRight, Loader2,
-  MessageCircle, Users, Share2, Star, Copy, Check, Tag, Grid3X3, Layers3, Compass
+import { 
+  X, CheckCircle2, ArrowRight, Loader2, MessageCircle, 
+  Share2, Star, Copy, Check 
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { FormTemplate } from '@/types/curation';
@@ -17,9 +17,9 @@ import { User } from 'firebase/auth';
 import { toast } from 'sonner';
 
 // IMPORT CUSTOM ICONS
-import {
-  AppModuleTealIcon, TechCardIcon, AILensIcon, InfinityWorkflowIcon,
-  BrainIcon, GlobalTargetIcon, AdminShieldIcon, AiSparkIcon
+import { 
+  AppModuleTealIcon, TechCardIcon, AILensIcon, InfinityWorkflowIcon, 
+  BrainIcon, GlobalTargetIcon, AdminShieldIcon, AiSparkIcon 
 } from '@/types';
 
 interface PricingPackagesProps {
@@ -54,8 +54,8 @@ const formatRupiah = (angka: number) => {
 
 const calculatePrice = (pkg: FormTemplate) => {
   if (!pkg.isPaid || !pkg.price) return { isFree: true, original: 0, final: 0, hasDiscount: false, percentage: 0 };
-  let isDiscountActive = Boolean(pkg.discountPercentage && pkg.discountPercentage > 0);
   
+  let isDiscountActive = Boolean(pkg.discountPercentage && pkg.discountPercentage > 0);
   if (isDiscountActive && pkg.discountExpiry) {
     if (new Date(pkg.discountExpiry).getTime() < new Date().getTime()) {
       isDiscountActive = false;
@@ -65,7 +65,7 @@ const calculatePrice = (pkg: FormTemplate) => {
   const final = isDiscountActive
     ? pkg.price - (pkg.price * (pkg.discountPercentage! / 100))
     : pkg.price;
-        
+    
   return {
     isFree: false,
     original: pkg.price,
@@ -92,9 +92,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
   useEffect(() => {
-    if (isOpen) {
-      fetchPackages();
-    }
+    if (isOpen) fetchPackages();
   }, [isOpen]);
 
   const fetchPackages = async () => {
@@ -162,10 +160,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
 
         const data = response.data as { transactionId: string };
         toast.dismiss('qris_process');
-        
-        // Arahkan ke halaman internal Checkout
         router.push(`/checkout/${data.transactionId}`);
-
       } catch (error: any) {
         toast.dismiss('qris_process');
         toast.error(error.message || "Terjadi kesalahan saat memproses pembayaran.");
@@ -177,15 +172,12 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
   const handleCopyLink = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
     if (typeof window === 'undefined') return;
-    
     const shareUrl = `${window.location.origin}/katalog?buy=${id}`;
     
     try {
       await navigator.clipboard.writeText(shareUrl);
       setCopiedId(id);
-      toast.success("Tautan Modul Disalin!", {
-        description: "Tautan siap dibagikan ke partisipan atau jaringan kolega Anda."
-      });
+      toast.success("Tautan Modul Disalin!");
       setTimeout(() => setCopiedId(null), 2000);
     } catch (error) {
       toast.error("Gagal menyalin tautan.");
@@ -194,12 +186,12 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
 
   const categories = ['Semua', ...Array.from(new Set(packages.map(p => p.category?.trim()).filter(Boolean)))];
   const filteredPackages = packages.filter(pkg => activeCategory === 'Semua' || pkg.category === activeCategory);
-  const freePackagesCount = packages.filter((pkg) => !pkg.isPaid || !pkg.price).length;
-
+  
   const drawerTheme = checkoutPackage ? getCategoryTheme(checkoutPackage.trackName, checkoutPackage.category || '') : getCategoryTheme('', '');
   const DrawerIcon = checkoutPackage?.trackIcon && (LucideIcons as any)[checkoutPackage.trackIcon] 
-                     ? (LucideIcons as any)[checkoutPackage.trackIcon] 
-                     : AppModuleTealIcon;
+                      ? (LucideIcons as any)[checkoutPackage.trackIcon] 
+                      : AppModuleTealIcon;
+                      
   const OutputIcons = [AILensIcon, InfinityWorkflowIcon, BrainIcon, GlobalTargetIcon];
   const checkoutPriceInfo = checkoutPackage ? calculatePrice(checkoutPackage) : null;
 
@@ -218,265 +210,199 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
               : 'fixed inset-0 z-[100] bg-slate-50 flex flex-col overflow-hidden w-full h-[100dvh]'
             }`}
           >
-            {/* Header */}
-            <div className="pt-4 sm:pt-6 px-4 sm:px-8 flex items-center justify-between shrink-0 z-30 relative">
-              {asPage ? (
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 bg-indigo-600 text-white rounded-lg flex items-center justify-center shrink-0 shadow-inner">
-                    <TechCardIcon className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h2 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">Katalog Asesmen</h2>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest -mt-0.5">Pilih modul yang sesuai tujuan Anda</p>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 bg-indigo-600 text-white rounded-lg flex items-center justify-center shrink-0 shadow-inner">
-                    <TechCardIcon className="w-4 h-4" />
-                  </div>
-                  <h2 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">Katalog Asesmen</h2>
-                </div>
-              )}
-              {!asPage && (
-                <button
-                  onClick={onClose}
-                  className="w-8 h-8 flex items-center justify-center text-slate-400 hover:bg-slate-200 hover:text-slate-900 rounded-full transition-colors shrink-0"
-                >
+            {/* Tampilkan tombol close KHUSUS JIKA bentuknya modal/laci (!asPage) */}
+            {!asPage && (
+              <div className="pt-4 px-5 flex justify-end shrink-0 z-30 relative">
+                <button onClick={onClose} className="p-2 bg-white ring-1 ring-slate-200 rounded-full text-slate-500 hover:text-slate-900 transition-colors">
                   <X className="w-5 h-5" />
                 </button>
-              )}
-            </div>
+              </div>
+            )}
 
-            <div className={`${asPage ? 'relative z-10' : 'flex-1 overflow-y-auto custom-scrollbar relative z-10'}`}>
-              {asPage && (
-                <section className="px-4 sm:px-8 pt-4 sm:pt-5 pb-2">
-                  <div className="max-w-5xl mx-auto rounded-[2rem] bg-gradient-to-br from-indigo-600 via-indigo-700 to-blue-700 text-white overflow-hidden shadow-[0_24px_60px_rgba(79,70,229,0.18)]">
-                    <div className="px-6 py-7 sm:px-8 sm:py-8 lg:px-10 lg:py-10 grid lg:grid-cols-[1.5fr_1fr] gap-6 items-end">
-                      <div>
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-[10px] font-black uppercase tracking-[0.2em] mb-4">
-                          <Compass className="w-3.5 h-3.5" />
-                          Navigasi Modul
-                        </div>
-                        <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black leading-tight tracking-tight max-w-2xl">
-                          Pilih modul asesmen yang paling relevan untuk target perkembangan Anda.
-                        </h3>
-                        <p className="text-sm sm:text-base text-indigo-100 font-medium leading-relaxed mt-3 max-w-2xl">
-                          Jelajahi katalog aktif, bandingkan fokus tiap modul, lalu mulai dari tema yang paling dekat dengan kebutuhan pribadi, tim, atau institusi Anda.
-                        </p>
-                      </div>
-                      
-                      <div className="grid grid-cols-3 gap-3">
-                        <div className="rounded-2xl bg-white/10 border border-white/15 px-4 py-4 backdrop-blur-sm">
-                          <div className="flex items-center gap-2 text-indigo-100 text-[10px] font-black uppercase tracking-widest mb-2">
-                            <Grid3X3 className="w-3.5 h-3.5" />
-                            Modul
-                          </div>
-                          <p className="text-2xl sm:text-3xl font-black">{packages.length}</p>
-                        </div>
-                        <div className="rounded-2xl bg-white/10 border border-white/15 px-4 py-4 backdrop-blur-sm">
-                          <div className="flex items-center gap-2 text-indigo-100 text-[10px] font-black uppercase tracking-widest mb-2">
-                            <Layers3 className="w-3.5 h-3.5" />
-                            Kategori
-                          </div>
-                          <p className="text-2xl sm:text-3xl font-black">{Math.max(categories.length - 1, 0)}</p>
-                        </div>
-                        <div className="rounded-2xl bg-white/10 border border-white/15 px-4 py-4 backdrop-blur-sm">
-                          <div className="flex items-center gap-2 text-indigo-100 text-[10px] font-black uppercase tracking-widest mb-2">
-                            <Sparkles className="w-3.5 h-3.5" />
-                            Gratis
-                          </div>
-                          <p className="text-2xl sm:text-3xl font-black">{freePackagesCount}</p>
-                        </div>
-                      </div>
+            <div className={`${asPage ? 'relative z-10 w-full' : 'flex-1 overflow-y-auto custom-scrollbar relative z-10'}`}>
+              
+              {/* STICKY CATEGORY PILLS BAR 
+                  md:top-[80px] digunakan karena navbar desktop Anda tingginya h-20 (80px). 
+                  top-0 digunakan untuk mobile (atau layout non-page). 
+              */}
+              <div className={`sticky ${asPage ? 'top-0 md:top-[80px]' : 'top-0'} z-30 bg-[#FAFAFA]/95 backdrop-blur-md border-b border-slate-200/60 shadow-sm transition-all w-full`}>
+                <div className={`px-5 sm:px-8 py-3.5 sm:py-4 ${asPage ? 'max-w-6xl mx-auto' : 'max-w-4xl mx-auto'}`}>
+                  {/* Wrapper overflow-x-auto untuk swipe gampang di mobile */}
+                  <div className="flex items-center gap-2 overflow-x-auto custom-scrollbar pb-1 -mb-1">
+                    {categories.map((cat) => (
+                      <button
+                        key={`cat-${cat}`}
+                        onClick={() => setActiveCategory(cat as string)}
+                        className={`whitespace-nowrap px-4 py-2 rounded-xl text-[13px] sm:text-sm font-bold transition-all shrink-0 ${
+                          activeCategory === cat 
+                            ? 'bg-slate-900 text-white shadow-md shadow-slate-900/10' 
+                            : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200/80 hover:border-slate-300'
+                        }`}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* KONTEN UTAMA / DAFTAR KARTU */}
+              <div className="px-5 sm:px-8 py-6 sm:py-10">
+                <div className={`${asPage ? 'max-w-6xl' : 'max-w-4xl'} mx-auto w-full pb-20`}>
+                  
+                  {loading ? (
+                    <div className="flex flex-col items-center justify-center py-32 text-slate-400">
+                      <Loader2 className="w-8 h-8 animate-spin mb-4 text-indigo-500" />
+                      <p className="font-bold text-[11px] uppercase tracking-widest">Memuat Katalog...</p>
                     </div>
-                  </div>
-                </section>
-              )}
-
-              <div className="sticky top-0 z-20 bg-slate-50/90 backdrop-blur-md px-4 sm:px-8 py-3 mt-2 border-b border-slate-200/50 shadow-sm">
-                <div className={`flex flex-wrap gap-1.5 max-h-[80px] overflow-y-auto custom-scrollbar ${asPage ? 'max-w-5xl mx-auto' : 'max-w-4xl mx-auto'}`}>
-                {categories.map((cat) => (
-                  <button
-                    key={`cat-${cat}`}
-                    onClick={() => setActiveCategory(cat as string)}
-                    className={`relative px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition-all shrink-0 ${
-                      activeCategory === cat 
-                        ? 'bg-slate-900 text-white shadow-sm' 
-                        : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200/80 hover:border-slate-300'
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                ))}
-              </div>
-              </div>
-
-              <div className="px-4 sm:px-8 py-4 sm:py-6">
-                <div className={`${asPage ? 'max-w-5xl' : 'max-w-4xl'} mx-auto w-full pb-20`}>
-                
-                {loading ? (
-                  <div className="flex flex-col items-center justify-center py-32 text-slate-400">
-                    <Loader2 className="w-8 h-8 animate-spin mb-4 text-indigo-500" />
-                    <p className="font-bold text-[11px] uppercase tracking-widest">Memuat Katalog...</p>
-                  </div>
-                ) : packages.length === 0 ? (
-                  <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-300 shadow-sm">
-                    <TechCardIcon className="w-16 h-16 text-slate-200 mx-auto mb-4 grayscale opacity-50" />
-                    <h3 className="text-lg font-black text-slate-700">Katalog Belum Tersedia</h3>
-                    <p className="text-slate-500 text-sm mt-1 font-medium">Modul asesmen sedang diperbarui.</p>
-                  </div>
-                ) : (
-                  <>
-                    {asPage && (
-                      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-5">
-                        <div>
-                          <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Katalog Aktif</p>
-                          <h3 className="text-xl sm:text-2xl font-black text-slate-900 leading-tight">
-                            {filteredPackages.length} modul siap dijelajahi
-                          </h3>
-                        </div>
-                        <p className="text-sm text-slate-500 font-medium max-w-md">
-                          Gunakan kategori untuk mempersempit pilihan, lalu buka detail modul untuk memahami output dan nilai tambahnya.
-                        </p>
-                      </div>
-                    )}
-                    
-                    <div className={`grid gap-3 ${asPage ? 'xl:grid-cols-2' : 'grid-cols-1'}`}>
-                      <AnimatePresence mode="popLayout">
-                        {filteredPackages.map((pkg) => {
-                          const theme = getCategoryTheme(pkg.trackName, pkg.category || '');
-                          const IconComponent = pkg.trackIcon && (LucideIcons as any)[pkg.trackIcon] 
-                            ? (LucideIcons as any)[pkg.trackIcon] 
-                            : AppModuleTealIcon;
-                            
-                          const isCopied = copiedId === pkg.id;
-                          const priceInfo = calculatePrice(pkg);
-
-                          return (
-                            <motion.div
-                              layout
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, scale: 0.95 }}
-                              transition={{ duration: 0.2 }}
-                              key={`pkg-${pkg.id}`}
-                              onClick={() => setCheckoutPackage(pkg)}
-                              className="group relative bg-white rounded-[1.75rem] p-4 sm:p-5 flex items-start gap-4 cursor-pointer overflow-hidden border border-slate-200 transition-all shadow-sm hover:shadow-xl hover:shadow-slate-200/70 hover:-translate-y-0.5 hover:border-slate-300"
-                            >
-                              <div className={`absolute -right-6 -bottom-6 w-32 h-32 opacity-[0.03] group-hover:opacity-[0.06] group-hover:scale-125 group-hover:-rotate-12 transition-all duration-700 pointer-events-none ${theme.text}`}>
-                                <IconComponent className="w-full h-full" />
-                              </div>
+                  ) : packages.length === 0 ? (
+                    <div className="text-center py-20 bg-white rounded-[2rem] border border-dashed border-slate-300 shadow-sm">
+                      <TechCardIcon className="w-16 h-16 text-slate-200 mx-auto mb-4 grayscale opacity-50" />
+                      <h3 className="text-lg font-black text-slate-700">Katalog Belum Tersedia</h3>
+                      <p className="text-slate-500 text-sm mt-1 font-medium">Modul asesmen sedang diperbarui.</p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className={`grid gap-5 sm:gap-6 ${asPage ? 'lg:grid-cols-2' : 'grid-cols-1'}`}>
+                        <AnimatePresence mode="popLayout">
+                          {filteredPackages.map((pkg) => {
+                            const theme = getCategoryTheme(pkg.trackName, pkg.category || '');
+                            const IconComponent = pkg.trackIcon && (LucideIcons as any)[pkg.trackIcon] 
+                               ? (LucideIcons as any)[pkg.trackIcon] 
+                               : AppModuleTealIcon;
                               
-                              <div className={`w-12 h-12 shrink-0 rounded-[14px] flex items-center justify-center shadow-inner ring-1 ring-inset ${theme.bg} ${theme.text} ${theme.ring} group-hover:scale-105 transition-transform`}>
-                                <IconComponent className="w-6 h-6" />
-                              </div>
+                            const isCopied = copiedId === pkg.id;
+                            const priceInfo = calculatePrice(pkg);
 
-                              <div className="flex-1 min-w-0 z-10 py-0.5">
-                                <h3 className="text-sm sm:text-base font-black text-slate-900 leading-snug group-hover:text-indigo-600 transition-colors mb-1.5">
-                                  {pkg.isBestSeller && (
-                                    <span className="inline-flex items-center gap-1 bg-gradient-to-r from-amber-400 to-orange-500 text-white px-1.5 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest shadow-sm mr-2 align-middle -mt-0.5">
-                                      <Star className="w-2.5 h-2.5 fill-white" /> Hot
-                                    </span>
-                                  )}
-                                  {pkg.trackName}
-                                </h3>
-                                
-                                {pkg.trackDescription && (
-                                  <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed line-clamp-2 mb-2.5 pr-2">
-                                    {pkg.trackDescription}
-                                  </p>
-                                )}
-                                
-                                <div className="flex flex-wrap items-center gap-2.5">
-                                  <p className="text-[10px] sm:text-xs text-slate-500 font-medium truncate hidden sm:block">
-                                    {pkg.category || 'Asesmen Mandiri'}
-                                  </p>
-                                  {pkg.userCount && pkg.userCount > 0 && (
-                                    <span className="flex items-center gap-1 text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-                                      <Users className={`w-3 h-3 ${theme.text}`} /> {pkg.userCount.toLocaleString('id-ID')}+ Pengguna
-                                    </span>
-                                  )}
-                                  {priceInfo.isFree && (
-                                    <span className="inline-flex items-center px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-black uppercase tracking-widest border border-emerald-100">
-                                      Gratis
-                                    </span>
-                                  )}
+                            return (
+                              <motion.div
+                                layout
+                                initial={{ opacity: 0, y: 15 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                transition={{ duration: 0.2 }}
+                                key={`pkg-${pkg.id}`}
+                                onClick={() => setCheckoutPackage(pkg)}
+                                className="group relative bg-white rounded-3xl p-5 sm:p-6 flex flex-col cursor-pointer overflow-hidden border border-slate-200 transition-all shadow-sm hover:shadow-xl hover:shadow-indigo-500/5 hover:-translate-y-1 hover:border-indigo-200"
+                              >
+                                <div className={`absolute -right-6 -bottom-6 w-32 h-32 opacity-[0.02] group-hover:opacity-[0.06] group-hover:scale-125 group-hover:-rotate-12 transition-all duration-700 pointer-events-none ${theme.text}`}>
+                                  <IconComponent className="w-full h-full" />
                                 </div>
-                              </div>
-
-                              <div className="flex items-center gap-3 sm:gap-4 shrink-0 z-10">
-                                <div className="hidden sm:flex flex-col items-end text-right">
-                                  {priceInfo.isFree ? (
-                                    <span className="text-emerald-600 font-black text-xs uppercase tracking-wider">Gratis</span>
-                                  ) : (
-                                    <>
-                                      {priceInfo.hasDiscount && (
-                                        <span className="text-slate-400 line-through text-[10px] font-bold leading-none mb-0.5">
-                                          {formatRupiah(priceInfo.original)}
+                                
+                                {/* ATAS: Ikon & Info */}
+                                <div className="flex items-start gap-4 w-full min-w-0">
+                                  <div className={`w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-2xl flex items-center justify-center shadow-sm ring-1 ring-inset ${theme.bg} ${theme.text} ${theme.ring} group-hover:scale-105 transition-transform`}>
+                                    <IconComponent className="w-6 h-6 sm:w-7 sm:h-7" />
+                                  </div>
+                                  
+                                  <div className="flex-1 min-w-0 pt-0.5">
+                                    <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                                      {pkg.isBestSeller && (
+                                        <span className="inline-flex items-center gap-1 bg-gradient-to-r from-amber-400 to-orange-500 text-white px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest shadow-sm">
+                                          <Star className="w-3 h-3 fill-white" /> Hot
                                         </span>
                                       )}
-                                      <span className="text-slate-900 font-black text-sm leading-none">
-                                        {formatRupiah(priceInfo.final)}
+                                      <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase tracking-widest truncate">
+                                        {pkg.category || 'Asesmen Mandiri'}
                                       </span>
-                                    </>
-                                  )}
-                                </div>
-                                <div className="flex items-center gap-1.5">
-                                  <button
-                                    onClick={(e) => handleCopyLink(e, pkg.id)}
-                                    className={`p-2 rounded-full transition-colors flex ${
-                                      isCopied ? 'bg-emerald-100 text-emerald-600' : `text-slate-400 hover:${theme.text} hover:${theme.bg}`
-                                    }`}
-                                    title={isCopied ? "Tersalin!" : "Salin Tautan"}
-                                  >
-                                    {isCopied ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
-                                  </button>
-                                  
-                                  <Button
-                                    size="sm"
-                                    className={`h-9 px-4 sm:px-5 rounded-xl text-xs font-bold shadow-sm transition-all group-hover:shadow-md ${
-                                      priceInfo.isFree
-                                        ? 'bg-slate-900 text-white hover:bg-slate-800'
-                                        : theme.btn
-                                    }`}
-                                  >
-                                    Buka
-                                  </Button>
-                                </div>
-                              </div>
-                            </motion.div>
-                          );
-                        })}
-                      </AnimatePresence>
-                    </div>
+                                    </div>
 
-                    <div className="mt-8 bg-slate-900 rounded-[1.75rem] p-6 text-white flex flex-col md:flex-row items-center justify-between gap-5 shadow-lg relative overflow-hidden group">
-                      <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-500/20 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-all group-hover:scale-150"></div>
-                      
-                      <div className="relative z-10 flex-1 text-center md:text-left">
-                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/10 text-indigo-200 rounded-full text-[9px] font-black uppercase tracking-widest mb-2">
-                          <AiSparkIcon size={12} /> Custom Enterprise
+                                    <h3 className="text-base sm:text-lg font-black text-slate-900 leading-tight group-hover:text-indigo-600 transition-colors mb-2">
+                                      {pkg.trackName}
+                                    </h3>
+                                    
+                                    {pkg.trackDescription && (
+                                      <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed line-clamp-2 pr-2">
+                                        {pkg.trackDescription}
+                                      </p>
+                                    )}
+                                  </div>
+                                </div>
+
+                                {/* BAWAH: Harga & Aksi (Responsif & Tahan Banting) */}
+                                <div className="w-full flex flex-row items-center justify-between mt-5 pt-4 border-t border-slate-100 z-10">
+                                  
+                                  {/* Area Harga */}
+                                  <div className="flex flex-col items-start justify-center">
+                                    {priceInfo.isFree ? (
+                                      <span className="text-emerald-600 font-black text-sm uppercase tracking-wider">Gratis</span>
+                                    ) : (
+                                      <>
+                                        {priceInfo.hasDiscount && (
+                                          <div className="flex items-center gap-1.5 mb-0.5">
+                                            <span className="text-slate-400 line-through text-[10px] sm:text-[11px] font-bold leading-none">
+                                              {formatRupiah(priceInfo.original)}
+                                            </span>
+                                            <span className="bg-rose-100 text-rose-600 text-[8px] sm:text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider">
+                                              -{priceInfo.percentage}%
+                                            </span>
+                                          </div>
+                                        )}
+                                        <span className="text-slate-900 font-black text-base sm:text-lg leading-none">
+                                          {formatRupiah(priceInfo.final)}
+                                        </span>
+                                      </>
+                                    )}
+                                  </div>
+
+                                  {/* Area Tombol */}
+                                  <div className="flex items-center gap-2">
+                                    <button
+                                      onClick={(e) => handleCopyLink(e, pkg.id)}
+                                      className={`p-2.5 rounded-xl transition-colors flex shadow-sm border ${
+                                        isCopied ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : `bg-white border-slate-200 text-slate-400 hover:${theme.text} hover:bg-slate-50`
+                                      }`}
+                                      title={isCopied ? "Tersalin!" : "Salin Tautan"}
+                                    >
+                                      {isCopied ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
+                                    </button>
+                                    
+                                    <Button
+                                      size="sm"
+                                      className={`h-10 px-5 sm:px-6 rounded-xl text-xs sm:text-sm font-bold shadow-sm transition-all group-hover:shadow-md ${
+                                        priceInfo.isFree
+                                          ? 'bg-slate-900 text-white hover:bg-slate-800'
+                                          : theme.btn
+                                      }`}
+                                    >
+                                      Buka Modul
+                                    </Button>
+                                  </div>
+
+                                </div>
+                              </motion.div>
+                            );
+                          })}
+                        </AnimatePresence>
+                      </div>
+
+                      {/* Banner Custom Enterprise */}
+                      <div className="mt-10 bg-slate-900 rounded-3xl p-6 sm:p-8 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none transition-all group-hover:scale-150"></div>
+                        
+                        <div className="relative z-10 flex-1 text-center md:text-left">
+                          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-indigo-200 rounded-full text-[10px] font-black uppercase tracking-widest mb-3 border border-white/10">
+                            <AiSparkIcon size={14} /> Custom Enterprise
+                          </div>
+                          <h3 className="text-xl sm:text-2xl font-black text-white mb-2">Butuh Modul Khusus?</h3>
+                          <p className="text-slate-300 font-medium text-sm leading-relaxed max-w-lg mx-auto md:mx-0">
+                            Rancang formulir matriks asesmen eksklusif dan terintegrasi untuk kebutuhan spesifik Korporasi, Riset, atau Institusi Anda.
+                          </p>
                         </div>
-                        <h3 className="text-lg font-black text-white mb-1">Butuh Modul Khusus?</h3>
-                        <p className="text-slate-300 font-medium text-xs sm:text-sm leading-relaxed max-w-md">
-                          Rancang formulir matriks asesmen eksklusif dan terintegrasi untuk kebutuhan Korporasi atau Institusi Anda.
-                        </p>
+                        <div className="relative z-10 shrink-0 w-full md:w-auto">
+                          <a 
+                            href="https://wa.me/6285777117587?text=Halo%20Admin%20Omnifit,%20saya%20tertarik%20untuk%20berdiskusi%20mengenai%20pembuatan%20modul%20asesmen%20custom." 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center justify-center gap-2 w-full md:w-auto px-8 py-4 bg-[#25D366] hover:bg-[#1ebd5a] text-white rounded-2xl text-sm font-bold transition-all shadow-lg"
+                          >
+                            <MessageCircle className="w-5 h-5" />
+                            Hubungi Tim Kami
+                          </a>
+                        </div>
                       </div>
-                      <div className="relative z-10 shrink-0 w-full md:w-auto">
-                        <a 
-                          href="https://wa.me/6285777117587?text=Halo%20Admin%20Omnifit,%20saya%20tertarik%20untuk%20berdiskusi%20mengenai%20pembuatan%20modul%20asesmen%20custom." 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center gap-2 w-full md:w-auto px-6 py-3 bg-[#25D366] hover:bg-[#1ebd5a] text-white rounded-xl text-sm font-bold transition-all shadow-md"
-                        >
-                          <MessageCircle className="w-4 h-4" />
-                          Hubungi Tim Kami
-                        </a>
-                      </div>
-                    </div>
-                  </>
-                )}
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -484,6 +410,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
         )}
       </AnimatePresence>
 
+      {/* LACI / MODAL CHECKOUT TETAP SAMA */}
       <AnimatePresence>
         {checkoutPackage && checkoutPriceInfo && (
           <React.Fragment key="checkout-drawer-fragment">
@@ -571,7 +498,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                         </>
                       )}
                     </ul>
-
+                    
                     {checkoutPackage.customUSPs && checkoutPackage.customUSPs.length > 0 && (
                       <div className="mt-5 pt-5 border-t border-indigo-100/50">
                         <h5 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-1.5">
@@ -625,7 +552,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                 </div>
               </div>
 
-              {/* FOOTER LACI - E-COMMERCE STYLE DENGAN HARGA */}
+              {/* FOOTER LACI */}
               <div className="p-4 sm:p-5 border-t border-slate-200 bg-white shrink-0 flex flex-row items-center justify-between gap-4 shadow-[0_-10px_20px_rgba(0,0,0,0.02)]">
                 <div className="flex flex-col justify-center max-w-[45%]">
                   <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Investasi Anda</p>
@@ -650,7 +577,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                     </div>
                   )}
                 </div>
-
+                
                 <Button 
                   onClick={() => handleStartDecoy(checkoutPackage)}
                   disabled={isProcessingPayment}

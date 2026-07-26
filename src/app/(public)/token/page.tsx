@@ -47,7 +47,8 @@ export default function TokenPage() {
       }
 
       const batchData = docSnap.data();
-      const tokenData = batchData.tokens[tokenCode];
+      // Cari menggunakan key tanpa prefix ATAU menggunakan token utuh
+      const tokenData = batchData.tokens[tokenCode] || batchData.tokens[cleanToken];
 
       if (!tokenData) {
         setErrorMsg('Kode token tidak valid atau tidak terdaftar.');
