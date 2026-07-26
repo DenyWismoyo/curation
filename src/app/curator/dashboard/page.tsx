@@ -106,7 +106,8 @@ export default function CuratorDashboard() {
 
         if (finalScopes.length === 0 && user.email) {
           const assessorDoc = await getDoc(doc(db, 'assessors', user.email)).catch(() => null);
-          const assessorProgram = typeof assessorDoc?.data()?.programName === 'string' ? assessorDoc.data().programName.trim() : '';
+          const assessorData = assessorDoc?.data() as { programName?: unknown } | undefined;
+          const assessorProgram = typeof assessorData?.programName === 'string' ? assessorData.programName.trim() : '';
           if (assessorProgram) {
             finalScopes = [assessorProgram];
           }

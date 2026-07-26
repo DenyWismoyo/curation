@@ -66,6 +66,16 @@ export default function AssessorDashboardPage() {
     };
   }, []);
 
+  useEffect(() => {
+    if (selectedOrganization === '__all__') {
+      return;
+    }
+
+    if (!scopeOrganizations.includes(selectedOrganization)) {
+      setSelectedOrganization('__all__');
+    }
+  }, [scopeOrganizations, selectedOrganization]);
+
   const fetchAssessorData = async () => {
     setLoading(true);
     try {

@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { BriefcaseBusiness, Loader2, LogIn, Mail, ShieldCheck } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
-export default function B2BLoginPage() {
+function B2BLoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, loading, loginWithEmail, loginWithGoogle } = useAuth();
@@ -127,5 +127,20 @@ export default function B2BLoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function B2BLoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 p-4 flex items-center justify-center">
+        <div className="text-white flex items-center gap-2 text-sm font-bold">
+          <Loader2 className="w-4 h-4 animate-spin" /> Menyiapkan login B2B...
+        </div>
+      </div>
+    }
+    >
+      <B2BLoginPageContent />
+    </Suspense>
   );
 }

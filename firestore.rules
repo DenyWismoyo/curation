@@ -120,6 +120,11 @@ service cloud.firestore {
           && exists(/databases/$(database)/documents/assessors/$(request.auth.token.email))
           && get(/databases/$(database)/documents/assessors/$(request.auth.token.email)).data.programName == orgName
         )
+        || (
+          isCurator()
+          && exists(/databases/$(database)/documents/assessors/$(request.auth.token.email))
+          && get(/databases/$(database)/documents/assessors/$(request.auth.token.email)).data.programName == orgName
+        )
         || hasOrgInField(request.auth.uid, 'allowedOrganizations', orgName)
         || hasOrgInField(request.auth.uid, 'organizationScopes', orgName)
         || hasOrgInField(request.auth.uid, 'accessibleOrganizations', orgName)

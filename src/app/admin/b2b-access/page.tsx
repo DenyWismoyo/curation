@@ -155,19 +155,19 @@ export default function AdminB2BAccessPage() {
       }
 
       let syncNotes: string[] = [];
-      if (systemRole === 'assessor' && parsedOrganizations.length > 0) {
+      if ((systemRole === 'assessor' || systemRole === 'curator') && parsedOrganizations.length > 0) {
         const assessorProgram = parsedOrganizations[0];
         await setDoc(doc(db, 'assessors', email), {
           assessorName: displayName.trim() || email,
           assessorEmail: email,
-          role: 'assessor',
+          role: systemRole,
           programName: assessorProgram,
           b2bIntegrated: true,
           linkedOrganizations: parsedOrganizations,
           updatedAt: new Date().toISOString(),
         }, { merge: true });
 
-        syncNotes.push(`profil assessor tersinkron ke program ${assessorProgram}`);
+        syncNotes.push(`profil ${systemRole} tersinkron ke program ${assessorProgram}`);
       }
 
       if (enableCuratorToken && parsedOrganizations.length > 0) {
@@ -192,7 +192,7 @@ export default function AdminB2BAccessPage() {
         role: systemRole,
         personas: selectedPersonas,
         organizations: parsedOrganizations,
-        syncedAssessor: systemRole === 'assessor',
+        syncedAssessor: systemRole === 'assessor' || systemRole === 'curator',
         generatedCuratorToken: enableCuratorToken,
         action: 'grant_or_update',
         createdAt: serverTimestamp(),
