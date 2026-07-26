@@ -112,6 +112,21 @@ service cloud.firestore {
       allow read: if true; 
       allow write: if isSuperAdmin() || isAdminCSRS(); 
     }
+
+    match /onboarding_agent_metrics/{document=**} {
+      allow read: if isSuperAdmin() || isAdminCSRS();
+      allow write: if false;
+    }
+
+    match /onboarding_agent_logs/{document=**} {
+      allow read: if isSuperAdmin() || isAdminCSRS();
+      allow write: if false;
+    }
+            // ATURAN BARU UNTUK ROADMAP
+    match /roadmaps/{document=**} { 
+      allow read: if true; 
+      allow write: if isSuperAdmin() || isAdminCSRS(); 
+    }
     
     match /{document=**} { allow read, write: if false; }
   }

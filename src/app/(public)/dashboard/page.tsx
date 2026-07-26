@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Copy, Check, Clock, ChevronLeft, 
-  FolderKanban, ArrowUpRight
+  FolderKanban, ArrowUpRight, Sparkles
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
@@ -158,13 +158,24 @@ export default function CustomerDashboard() {
               </div>
             </div>
 
-            <Button 
-              onClick={() => router.push('/workspace')} 
-              className="w-full md:w-auto bg-slate-900 hover:bg-indigo-600 text-white rounded-xl h-12 px-6 font-bold shadow-lg shadow-slate-900/10 hover:shadow-indigo-600/20 transition-all group"
-            >
-              <FolderKanban className="w-4 h-4 mr-2" /> 
-              Buka OS Workspace
-            </Button>
+            <div className="w-full md:w-auto flex flex-col sm:flex-row gap-2">
+              <Button
+                onClick={() => router.push('/onboarding?force=1')}
+                variant="outline"
+                className="w-full md:w-auto bg-white border-indigo-200 text-indigo-700 hover:bg-indigo-50 rounded-xl h-12 px-5 font-bold"
+              >
+                <Sparkles className="w-4 h-4 mr-2" />
+                Ulangi Onboarding
+              </Button>
+
+              <Button 
+                onClick={() => router.push('/workspace')} 
+                className="w-full md:w-auto bg-slate-900 hover:bg-indigo-600 text-white rounded-xl h-12 px-6 font-bold shadow-lg shadow-slate-900/10 hover:shadow-indigo-600/20 transition-all group"
+              >
+                <FolderKanban className="w-4 h-4 mr-2" /> 
+                Buka OS Workspace
+              </Button>
+            </div>
           </div>
         </div>
       </div>

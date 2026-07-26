@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db, functions } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
@@ -58,6 +58,7 @@ const STEPS = ['Tujuan', 'Sektor', 'Rekomendasi AI'];
 export default function OnboardingPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [step, setStep] = useState(0);
   const [purpose, setPurpose] = useState<string | null>(null);
@@ -68,6 +69,8 @@ export default function OnboardingPage() {
   const [adaptiveSteps, setAdaptiveSteps] = useState<AdaptivePlanStep[]>([]);
   const [adaptiveModules, setAdaptiveModules] = useState<AdaptivePlanModule[]>([]);
   const [checking, setChecking] = useState(true);
+  const [completedWithoutForce, setCompletedWithoutForce] = useState(false);
+  const forceMode = searchParams.get('force') === '1';
 
   useEffect(() => {
     if (loading) return;
@@ -77,10 +80,11 @@ export default function OnboardingPage() {
     const checkOnboarding = async () => {
       try {
         const snap = await getDoc(doc(db, 'users', user.uid));
-        if (snap.exists() && snap.data()?.onboardingCompleted === true) {
-          router.replace('/dashboard');
+        if (!forceMode && snap.exists() && snap.data()?.onboardingCompleted === true) {
+          setCompletedWithoutForce(true);
           return;
         }
+        setCompletedWithoutForce(false);
       } catch (e) {
         // If error, let them proceed
       } finally {
@@ -89,7 +93,7 @@ export default function OnboardingPage() {
     };
 
     checkOnboarding();
-  }, [user, loading]);
+  }, [user, loading, forceMode, router]);
 
   const saveAndContinue = async () => {
     if (!user || !purpose || !sector) return;
@@ -128,6 +132,38 @@ export default function OnboardingPage() {
     return (
       <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center">
         <AiSparkIcon size={40} className="text-indigo-600 animate-pulse" />
+      </div>
+    );
+  }
+
+  if (completedWithoutForce) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-[#FAFAFA] to-purple-50 flex items-center justify-center px-6 py-10">
+        <div className="w-full max-w-lg bg-white rounded-3xl ring-1 ring-slate-200 p-8 text-center shadow-sm">
+          <div className="inline-flex w-16 h-16 bg-indigo-600 rounded-2xl items-center justify-center mb-4 shadow-lg shadow-indigo-500/25">
+            <AiSparkIcon size={30} className="text-white" />
+          </div>
+          <h1 className="text-2xl font-black text-slate-900 mb-2">Onboarding Sudah Selesai</h1>
+          <p className="text-sm text-slate-500 mb-6">
+            Anda tetap bisa mengulangi onboarding kapan saja untuk memperbarui prioritas dan rekomendasi AI.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Button
+              variant="outline"
+              onClick={() => router.push('/dashboard')}
+              className="flex-1 h-11 rounded-xl border-slate-200 text-slate-600 font-bold"
+            >
+              Kembali ke Dashboard
+            </Button>
+            <Button
+              onClick={() => router.replace('/onboarding?force=1')}
+              className="flex-1 h-11 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold"
+            >
+              Ulangi Onboarding
+            </Button>
+          </div>
+        </div>
       </div>
     );
   }

@@ -12,7 +12,8 @@ import {
   Handshake, Newspaper,
   MapPinned,
   Radar,
-  Percent
+  Percent,
+  Activity
 } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -53,6 +54,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: 'Mitra & Kerjasama', path: '/admin/partners', icon: Handshake },
     { name: 'Audit Referral', path: '/admin/referrals', icon: Radar },
     { name: 'Program Affiliate', path: '/admin/affiliate-program', icon: Percent },
+    { name: 'Onboarding Metrics', path: '/admin/onboarding-metrics', icon: Activity },
     { name: 'Artikel & Wawasan', path: '/admin/articles', icon: Newspaper }, // <-- Menu CMS Artikel Baru
     { name: 'Roadmap & Rencana', path: '/admin/roadmap', icon: MapPinned }, // <-- Menu Roadmap Baru
   ];
