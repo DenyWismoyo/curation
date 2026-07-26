@@ -9,7 +9,8 @@ import {
   LayoutDashboard, Settings, KeyRound, LogOut, Menu, X, ShieldCheck, 
   PanelLeftClose, PanelLeftOpen, 
   Tags, UserCheck, MessageSquareShare, 
-  Handshake, Newspaper
+  Handshake, Newspaper,
+  MapPinned
 } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -49,6 +50,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: 'Ulasan & Feedback', path: '/admin/feedback', icon: MessageSquareShare },
     { name: 'Mitra & Kerjasama', path: '/admin/partners', icon: Handshake },
     { name: 'Artikel & Wawasan', path: '/admin/articles', icon: Newspaper }, // <-- Menu CMS Artikel Baru
+    { name: 'Roadmap & Rencana', path: '/admin/roadmap', icon: MapPinned }, // <-- Menu Roadmap Baru
   ];
 
   return (

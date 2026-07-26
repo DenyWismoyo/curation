@@ -6,7 +6,6 @@ service cloud.firestore {
     function isAuthenticated() { return request.auth != null; }
     function isSuperAdmin() { return request.auth != null && request.auth.token.email == 'deny.wismoyo@gmail.com'; }
     
-    // FUNGSI PINTAR: Mengecek hak asesor
     function isAssessor() {
       return isAuthenticated() && (
         (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'assessor') ||
@@ -14,7 +13,6 @@ service cloud.firestore {
       );
     }
 
-    // FUNGSI BARU: Mengecek hak Admin CSRS agar tidak terblokir
     function isAdminCSRS() {
       return isAuthenticated() && (
         (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin_csrs') ||
@@ -27,108 +25,54 @@ service cloud.firestore {
     }
 
     match /assessments/{assessmentId} {
-      // PERBAIKAN: Ubah menjadi 'if true' agar link dashboard asesmen bisa dibagikan 
-      // kepada atasan / rekan kerja user meskipun mereka belum login.
       allow read: if true; 
-      
-      // UPDATE: Hanya pemilik, Assessor, Admin CSRS, atau SuperAdmin
       allow update: if isAuthenticated() && (
         request.auth.uid == resource.data.userId || 
         isSuperAdmin() || 
         isAssessor() ||
         isAdminCSRS()
       );
-      
       allow create: if isAuthenticated();
       allow delete: if isSuperAdmin();
 
-      // ==========================================
-      // SECURITY RULE UNTUK DOCUMENT SPLITTING
-      // ==========================================
-      // Sub-koleksi rahasia tetap dikunci ketat HANYA untuk Admin & Assessor
       match /internal/details {
          allow read: if isSuperAdmin() || isAssessor() || isAdminCSRS();
          allow write: if false; 
       }
+      
+      match /journal/{entryId} {
+        allow read: if isAuthenticated() && (get(/databases/$(database)/documents/assessments/$(assessmentId)).data.userId == request.auth.uid || isSuperAdmin());
+        allow create, update, delete: if isAuthenticated() && get(/databases/$(database)/documents/assessments/$(assessmentId)).data.userId == request.auth.uid;
+      }
     }
 
-    match /form_templates/{document=**} {
-      allow read: if true; 
-      allow write: if isSuperAdmin();
-    }
-
+    match /form_templates/{document=**} { allow read: if true; allow write: if isSuperAdmin(); }
     match /corporate_tokens/{document=**} {
       allow read: if isAuthenticated();
       allow create, delete: if isSuperAdmin();
       allow update: if isSuperAdmin() || isAssessor() || isAdminCSRS();
     }
     
-    match /feedbacks/{document=**} {
-      allow create: if true; 
-      allow read, update, delete: if isSuperAdmin(); 
-    }
-    
-    match /adaptive_question_banks/{document=**} { 
-      allow read: if isSuperAdmin() || isAdminCSRS(); 
-      allow write: if false; 
-    }
-
-    match /landing_partners/{document=**} {
-      allow read: if true; 
-      allow write: if isSuperAdmin();
-    }
-
-    match /assessors/{document=**} {
-      allow read: if isAuthenticated();
-      allow write: if isSuperAdmin();
-    }
-    
-    match /articles/{document=**} { allow read: if isAuthenticated(); allow write: if isSuperAdmin(); }
+    match /feedbacks/{document=**} { allow create: if true; allow read, update, delete: if isSuperAdmin(); }
+    match /adaptive_question_banks/{document=**} { allow read: if isSuperAdmin() || isAdminCSRS(); allow write: if false; }
+    match /landing_partners/{document=**} { allow read: if true; allow write: if isSuperAdmin(); }
+    match /assessors/{document=**} { allow read: if isAuthenticated(); allow write: if isSuperAdmin(); }
     match /corporate_tags/{document=**} { allow read: if isAuthenticated(); allow write: if isSuperAdmin(); }
     match /curator_tokens/{document=**} { allow read: if isAuthenticated(); allow write: if isSuperAdmin(); }
     match /template_folders/{document=**} { allow read: if isAuthenticated(); allow write: if isSuperAdmin(); }
     match /business_vectors/{document=**} { allow read: if isAuthenticated(); allow write: if false; }
     match /template_research_vectors/{document=**} { allow read: if isSuperAdmin(); allow write: if false; }
-    
-    match /transactions/{transactionId} {
-      allow read: if isAuthenticated() && (request.auth.uid == resource.data.userId || isSuperAdmin());
-      allow write: if false; 
-    }
-
-    // ============================================================
-    // KOLEKSI BARU: ENGAGEMENT & USER EXPERIENCE FEATURES
-    // ============================================================
-
-    // Notifikasi in-app per pengguna
+    match /transactions/{transactionId} { allow read: if isAuthenticated() && (request.auth.uid == resource.data.userId || isSuperAdmin()); allow write: if false; }
+    match /platform_stats/{document=**} { allow read: if true; allow write: if false; }
     match /notifications/{notifId} {
-      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
-      allow update: if isAuthenticated() && resource.data.userId == request.auth.uid;
-      allow create: if false; // Hanya dibuat oleh Cloud Functions backend
-      allow delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow read, update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if false;
     }
 
-    // Artikel / konten edukasi (publik read, admin write)
-    match /articles/{articleId} {
-      allow read: if true;
-      allow write: if isSuperAdmin();
-    }
-
-    // Statistik platform (publik read, hanya backend yang write)
-    match /platform_stats/{document=**} {
-      allow read: if true;
-      allow write: if false;
-    }
-
-    // Journal eksekusi per asesmen (sub-collection)
-    match /assessments/{assessmentId}/journal/{entryId} {
-      allow read: if isAuthenticated() && (
-        get(/databases/$(database)/documents/assessments/$(assessmentId)).data.userId == request.auth.uid
-        || isSuperAdmin()
-      );
-      allow create, update: if isAuthenticated() &&
-        get(/databases/$(database)/documents/assessments/$(assessmentId)).data.userId == request.auth.uid;
-      allow delete: if isAuthenticated() &&
-        get(/databases/$(database)/documents/assessments/$(assessmentId)).data.userId == request.auth.uid;
+    // PERBAIKAN RULES ARTICLES: Publik bisa membaca, Admin/SuperAdmin bisa menulis
+    match /articles/{document=**} { 
+      allow read: if true; 
+      allow write: if isSuperAdmin() || isAdminCSRS(); 
     }
     
     match /{document=**} { allow read, write: if false; }

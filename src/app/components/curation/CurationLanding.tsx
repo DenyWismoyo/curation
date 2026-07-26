@@ -1,10 +1,9 @@
 'use client';
-
 // src/app/components/curation/CurationLanding.tsx
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, History, Clock, ChevronRight, Loader2, LogOut, LayoutDashboard, ClipboardCheck, KeyRound, Mail, Lock, User as UserIcon, LibraryBig } from 'lucide-react';
+import { ArrowRight, History, Clock, ChevronRight, Loader2, LogOut, LayoutDashboard, ClipboardCheck, KeyRound, Mail, Lock, User as UserIcon, LibraryBig, MapPinned } from 'lucide-react';
 import { EcosystemIcon, AdminShieldIcon, DocExportIcon, BrainIcon, GlobalTargetIcon } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -45,7 +44,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
   const router = useRouter();
   const [isCapabilitiesModalOpen, setIsCapabilitiesModalOpen] = useState(false);
   const [drafts, setDrafts] = useState<DraftItem[]>([]);
-  const [isFetchingData, setIsFetchingData] = useState(true); 
+  const [isFetchingData, setIsFetchingData] = useState(true);
 
   const { registerWithEmail, loginWithEmail, resetPassword } = useAuth();
   const [authMode, setAuthMode] = useState<'options' | 'login' | 'register' | 'reset'>('options');
@@ -193,7 +192,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
   return (
     <LazyMotion features={domAnimation}>
       <div className="w-full min-h-screen bg-[#FAFAFA] py-8 lg:py-10 px-5 lg:px-10 relative overflow-hidden">
-        
+         
         {/* Animated Ornaments */}
         <m.div 
           animate={{ scale: [1, 1.05, 1], opacity: [0.4, 0.6, 0.4] }}
@@ -245,6 +244,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                 ))}
               </div>
 
+              {/* AREA TOMBOL CTA */}
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 pt-2">
                 <button
                   onClick={() => setIsCapabilitiesModalOpen(true)}
@@ -256,6 +256,12 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                 <Link href="/mitra" className="inline-flex items-center gap-2 font-bold text-slate-500 hover:text-indigo-600 bg-white shadow-sm ring-1 ring-slate-200 px-4 py-3 rounded-xl hover:bg-slate-50 transition-all">
                   <GlobalTargetIcon className="w-4 h-4" />
                   Ekosistem Mitra
+                </Link>
+
+                {/* TOMBOL ROADMAP BARU */}
+                <Link href="/roadmap" className="inline-flex items-center gap-2 font-bold text-indigo-600 hover:text-white bg-indigo-50 hover:bg-indigo-600 shadow-sm ring-1 ring-indigo-200 px-4 py-3 rounded-xl transition-all group">
+                  <MapPinned className="w-4 h-4 group-hover:animate-bounce" />
+                  Roadmap AI 2026
                 </Link>
               </div>
             </m.div>
@@ -274,14 +280,17 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                       </svg>
                       Masuk dengan Akun Google
                     </Button>
+
                     <div className="relative flex items-center py-2">
                       <div className="flex-grow border-t border-slate-200"></div>
                       <span className="flex-shrink-0 mx-4 text-slate-400 text-xs font-medium">ATAU</span>
                       <div className="flex-grow border-t border-slate-200"></div>
                     </div>
+
                     <Button size="lg" onClick={() => setAuthMode('register')} className="w-full shadow-md bg-indigo-600 text-white hover:bg-indigo-700 h-14 rounded-2xl text-base font-bold transition-all flex items-center justify-center gap-3">
                       Daftar dengan Email
                     </Button>
+
                     <p className="text-center text-sm text-slate-500 font-medium mt-2">
                       Sudah punya akun? <button onClick={() => setAuthMode('login')} className="text-indigo-600 font-bold hover:underline">Masuk di sini</button>
                     </p>
@@ -292,6 +301,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                     <p className="text-xs font-medium text-slate-500 mb-4 leading-relaxed">
                       Masukkan alamat email yang terhubung dengan akun Anda. Kami akan mengirimkan tautan untuk membuat kata sandi baru.
                     </p>
+
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
                       <Input
@@ -303,9 +313,11 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                         className="pl-10 h-12 rounded-xl bg-slate-50 border-slate-200"
                       />
                     </div>
+                    
                     <Button type="submit" disabled={authLoading} className="w-full h-12 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold transition-all mt-2">
                       {authLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Kirim Tautan'}
                     </Button>
+                    
                     <button type="button" onClick={() => setAuthMode('login')} className="w-full text-sm font-bold text-slate-500 hover:text-slate-800 mt-2">
                       Kembali ke Login
                     </button>
@@ -353,6 +365,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                         minLength={6}
                       />
                     </div>
+
                     {authMode === 'login' && (
                       <div className="flex justify-end mt-1">
                         <button type="button" onClick={() => setAuthMode('reset')} className="text-xs font-bold text-indigo-600 hover:underline">
@@ -360,6 +373,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                         </button>
                       </div>
                     )}
+
                     <Button type="submit" disabled={authLoading} className="w-full h-12 rounded-xl bg-slate-900 hover:bg-indigo-600 text-white font-bold transition-all mt-2">
                       {authLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : (authMode === 'register' ? 'Daftar & Lanjutkan' : 'Masuk')}
                     </Button>
@@ -369,6 +383,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                     </button>
                   </form>
                 )}
+                
                 <p className="text-xs text-slate-500 font-medium mt-4 text-center">Anda wajib masuk untuk menggunakan token dan menyimpan progres secara aman.</p>
               </m.div>
             ) : (
@@ -561,6 +576,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
               isLoggedIn={!!user}
             />
           )}
+
         </div>
       </div>
     </LazyMotion>

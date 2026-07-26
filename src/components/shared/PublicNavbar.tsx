@@ -8,7 +8,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LibraryBig, FolderKanban, TrendingUp, Users, User,
-  KeyRound, LogOut, Compass, ShoppingBag, ChevronDown, Receipt
+  KeyRound, LogOut, Compass, ShoppingBag, ChevronDown, Receipt, MapPinned
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -22,6 +22,7 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { href: '/explore',   label: 'Explore',  icon: <Compass size={16} strokeWidth={2} /> },
   { href: '/katalog',   label: 'Katalog',  icon: <LibraryBig size={16} strokeWidth={2} /> },
+  { href: '/roadmap',   label: 'Roadmap',  icon: <MapPinned size={16} strokeWidth={2} /> },
   { href: '/dashboard', label: 'Brankas',  icon: <FolderKanban size={16} strokeWidth={2} />, requiresAuth: true },
   { href: '/progress',  label: 'Progres',  icon: <TrendingUp size={16} strokeWidth={2} />, requiresAuth: true },
   { href: '/komunitas', label: 'Komunitas',icon: <Users size={16} strokeWidth={2} /> },
