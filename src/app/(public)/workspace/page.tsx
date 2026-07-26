@@ -26,7 +26,7 @@ export default function ExecutionWorkspacePage() {
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/');
+      router.push('/login?next=/workspace');
       return;
     }
 

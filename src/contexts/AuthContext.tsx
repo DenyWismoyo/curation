@@ -13,7 +13,9 @@ import {
   sendPasswordResetEmail
 } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { auth, googleProvider, db } from '@/lib/firebase';
+import { httpsCallable } from 'firebase/functions';
+import { auth, googleProvider, db, functions } from '@/lib/firebase';
+import { ensureReferralVisitorId, getStoredReferralAttribution } from '@/lib/referralAttribution';
 
 interface AuthContextType {
   user: User | null;
@@ -70,6 +72,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 createdAt: new Date().toISOString()
               });
             }
+          }
+
+          try {
+            const referral = getStoredReferralAttribution();
+            const visitorId = ensureReferralVisitorId();
+
+            if (referral?.affiliateCode && visitorId) {
+              const bindAttribution = httpsCallable(functions, 'bindReferralAttributionToUser');
+              await bindAttribution({ visitorId });
+            }
+          } catch (bindError) {
+            console.warn('Gagal bind referral attribution saat login:', bindError);
           }
           
           setRole(currentRole);

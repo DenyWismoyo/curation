@@ -20,6 +20,14 @@ service cloud.firestore {
       );
     }
 
+    function isAffiliateOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+
+    function isOpsAdmin() {
+      return isSuperAdmin() || isAdminCSRS() || isAssessor();
+    }
+
     match /users/{userId} {
       allow read, write: if isAuthenticated() && (request.auth.uid == userId || request.auth.token.email == userId || isSuperAdmin());
     }
@@ -63,6 +71,36 @@ service cloud.firestore {
     match /business_vectors/{document=**} { allow read: if isAuthenticated(); allow write: if false; }
     match /template_research_vectors/{document=**} { allow read: if isSuperAdmin(); allow write: if false; }
     match /transactions/{transactionId} { allow read: if isAuthenticated() && (request.auth.uid == resource.data.userId || isSuperAdmin()); allow write: if false; }
+
+    match /affiliates/{affiliateCode} {
+      allow read: if isOpsAdmin() || isAffiliateOwner(resource.data.ownerUid);
+
+      allow create: if isAuthenticated()
+        && request.auth.uid == request.resource.data.ownerUid
+        && request.auth.token.email == request.resource.data.ownerEmail;
+
+      allow update: if isOpsAdmin() || (
+        isAffiliateOwner(resource.data.ownerUid)
+        && request.resource.data.ownerUid == resource.data.ownerUid
+        && request.resource.data.ownerEmail == resource.data.ownerEmail
+        && request.resource.data.commissionRate == resource.data.commissionRate
+        && request.resource.data.status == resource.data.status
+        && request.resource.data.stats == resource.data.stats
+      );
+
+      allow delete: if isSuperAdmin();
+    }
+
+    match /affiliate_commissions/{commissionId} {
+      allow read: if isOpsAdmin() || (isAuthenticated() && request.auth.uid == resource.data.affiliateOwnerUid);
+      allow create, update, delete: if false;
+    }
+
+    match /referral_attributions/{visitorId} {
+      allow read: if isOpsAdmin() || (isAuthenticated() && request.auth.uid == resource.data.boundUserUid);
+      allow create, update, delete: if false;
+    }
+
     match /platform_stats/{document=**} { allow read: if true; allow write: if false; }
     match /notifications/{notifId} {
       allow read, update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;

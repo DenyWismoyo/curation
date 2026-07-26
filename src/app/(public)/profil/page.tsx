@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronLeft, Settings, LogOut, Bell,
   TrendingUp, Trophy, Star, Target, Zap,
-  CheckCircle2, BarChart3, Award, ExternalLink
+  CheckCircle2, BarChart3, Award, ExternalLink, HandCoins
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
@@ -127,7 +127,7 @@ export default function ProfilPage() {
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/');
+      router.push('/login?next=/profil');
       return;
     }
     if (user) fetchStats();
@@ -320,6 +320,7 @@ export default function ProfilPage() {
                   { label: 'Lihat Progress', desc: 'Timeline & perbandingan skor', href: '/progress', icon: <TrendingUp size={20} className="text-emerald-600" />, hover: 'hover:border-emerald-200 hover:bg-emerald-50/30' },
                   { label: 'Buka Workspace', desc: 'Action plan & jurnal eksekusi', href: '/workspace', icon: <InfinityWorkflowIcon size={20} className="text-indigo-600" />, hover: 'hover:border-indigo-200 hover:bg-indigo-50/30' },
                   { label: 'Jelajahi Program', desc: 'Temukan modul baru', href: '/explore', icon: <AiSparkIcon size={20} className="text-purple-500" />, hover: 'hover:border-purple-200 hover:bg-purple-50/30' },
+                  { label: 'Portal Affiliate', desc: 'Link referral & data payout', href: '/affiliate', icon: <HandCoins size={20} className="text-amber-600" />, hover: 'hover:border-amber-200 hover:bg-amber-50/30' },
                 ].map((a, i) => (
                   <button
                     key={i}
@@ -460,6 +461,7 @@ export default function ProfilPage() {
                     { label: 'Dashboard', href: '/dashboard' },
                     { label: 'Workspace OS', href: '/workspace' },
                     { label: 'Katalog Modul', href: '/katalog' },
+                    { label: 'Portal Affiliate', href: '/affiliate' },
                     { label: 'Ekosistem Mitra', href: '/mitra' },
                   ].map(link => (
                     <button

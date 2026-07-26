@@ -4,12 +4,14 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { db, functions } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, ArrowLeft, Building2, User, Rocket, Users, Landmark } from 'lucide-react';
+import { ChevronRight, ArrowLeft, Building2, User, Rocket, Users, Landmark, Loader2, Sparkles, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AiSparkIcon } from '@/types';
+import { httpsCallable } from 'firebase/functions';
+import { toast } from 'sonner';
 
 // ============================================================
 // DATA
@@ -30,12 +32,25 @@ const SECTORS: Record<string, string[]> = {
   Pemerintah: ['Desa & Kelurahan', 'Pemerintah Daerah', 'Kementerian', 'BUMN', 'LSM', 'Yayasan', 'Badan Riset', 'Lainnya'],
 };
 
-const AI_RECOMMENDATIONS: Record<string, { title: string; desc: string; cta: string; href: string }[]> = {
-  B2B: [{ title: 'Audit Kesiapan Enterprise', desc: 'Identifikasi gap & peluang ekspansi B2B Anda', cta: 'Mulai Asesmen', href: '/assessment' }],
-  Personal: [{ title: 'Personal Growth Blueprint', desc: 'Peta jalan pengembangan kapasitas personal', cta: 'Mulai Asesmen', href: '/assessment' }],
-  Startup: [{ title: 'Startup Maturity Index', desc: 'Validasi model bisnis & kesiapan traction', cta: 'Mulai Asesmen', href: '/assessment' }],
-  Komunitas: [{ title: 'Komunitas Capacity Check', desc: 'Evaluasi ekosistem dan potensi dampak', cta: 'Mulai Asesmen', href: '/assessment' }],
-  Pemerintah: [{ title: 'Governance Readiness Audit', desc: 'Pemetaan tata kelola & efektivitas program', cta: 'Mulai Asesmen', href: '/assessment' }],
+type AdaptivePlanStep = {
+  title: string;
+  whyNow: string;
+  action: string;
+};
+
+type AdaptivePlanModule = {
+  moduleId: string;
+  moduleName: string;
+  reason: string;
+  estimatedImpact: string;
+};
+
+type AdaptivePlanResponse = {
+  summary?: string;
+  steps?: AdaptivePlanStep[];
+  recommendedModules?: AdaptivePlanModule[];
+  source?: string;
+  warning?: string;
 };
 
 const STEPS = ['Tujuan', 'Sektor', 'Rekomendasi AI'];
@@ -48,11 +63,15 @@ export default function OnboardingPage() {
   const [purpose, setPurpose] = useState<string | null>(null);
   const [sector, setSector] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [generatingPlan, setGeneratingPlan] = useState(false);
+  const [adaptiveSummary, setAdaptiveSummary] = useState('');
+  const [adaptiveSteps, setAdaptiveSteps] = useState<AdaptivePlanStep[]>([]);
+  const [adaptiveModules, setAdaptiveModules] = useState<AdaptivePlanModule[]>([]);
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
     if (loading) return;
-    if (!user) { router.push('/'); return; }
+    if (!user) { router.push('/login?next=/onboarding'); return; }
 
     // Skip onboarding if already completed
     const checkOnboarding = async () => {
@@ -75,16 +94,32 @@ export default function OnboardingPage() {
   const saveAndContinue = async () => {
     if (!user || !purpose || !sector) return;
     setSaving(true);
+    setGeneratingPlan(true);
     try {
       await updateDoc(doc(db, 'users', user.uid), {
         preferences: { purpose, sector },
         onboardingCompleted: true,
         onboardingCompletedAt: new Date().toISOString(),
       });
+
+      const callable = httpsCallable(functions, 'generateAdaptiveOnboardingPlan');
+      const response = await callable({ purpose, sector });
+      const payload = response.data as AdaptivePlanResponse;
+
+      setAdaptiveSummary(payload.summary || 'Berikut rencana prioritas Anda berdasarkan profil onboarding.');
+      setAdaptiveSteps(Array.isArray(payload.steps) ? payload.steps.slice(0, 5) : []);
+      setAdaptiveModules(Array.isArray(payload.recommendedModules) ? payload.recommendedModules.slice(0, 4) : []);
+
+      if (payload.warning) {
+        toast.info('Adaptive agent menggunakan mode fallback sementara.');
+      }
+
       setStep(2);
     } catch (e) {
       console.error('Gagal simpan onboarding:', e);
+      toast.error('Gagal menyusun rekomendasi onboarding adaptif. Silakan coba lagi.');
     } finally {
+      setGeneratingPlan(false);
       setSaving(false);
     }
   };
@@ -96,8 +131,6 @@ export default function OnboardingPage() {
       </div>
     );
   }
-
-  const recs = purpose ? AI_RECOMMENDATIONS[purpose] : [];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-[#FAFAFA] to-purple-50 flex flex-col items-center justify-center px-6 pb-10 font-sans selection:bg-indigo-100">
@@ -204,11 +237,11 @@ export default function OnboardingPage() {
 
               <Button
                 onClick={saveAndContinue}
-                disabled={!sector || saving}
+                disabled={!sector || saving || generatingPlan}
                 className="w-full mt-8 h-12 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-2xl text-sm disabled:opacity-40"
               >
-                {saving ? (
-                  <span className="flex items-center gap-2"><AiSparkIcon size={16} className="animate-spin" /> Menganalisis...</span>
+                {saving || generatingPlan ? (
+                  <span className="flex items-center gap-2"><AiSparkIcon size={16} className="animate-spin" /> Menyusun Rekomendasi Adaptif...</span>
                 ) : (
                   <span className="flex items-center gap-2">Lihat Rekomendasi AI <ChevronRight size={16} /></span>
                 )}
@@ -230,34 +263,76 @@ export default function OnboardingPage() {
                 </motion.div>
                 <h2 className="text-2xl font-black text-slate-900 mb-2">Profil Anda Tersimpan! 🎉</h2>
                 <p className="text-sm text-slate-500">
-                  Berdasarkan profil <strong>{PURPOSES.find(p => p.id === purpose)?.label}</strong> – <strong>{sector}</strong>, AI kami merekomendasikan:
+                  Berdasarkan profil <strong>{PURPOSES.find(p => p.id === purpose)?.label}</strong> – <strong>{sector}</strong>, AI kami menyusun rencana 5 langkah prioritas.
                 </p>
               </div>
 
+              <div className="bg-white p-5 rounded-2xl ring-1 ring-indigo-100 mb-4">
+                <p className="text-xs font-black uppercase tracking-widest text-indigo-600 mb-2">Ringkasan Adaptif</p>
+                <p className="text-sm text-slate-600 leading-relaxed">
+                  {adaptiveSummary || 'Rencana onboarding Anda sedang diprioritaskan agar lebih relevan dengan tujuan saat ini.'}
+                </p>
+              </div>
+
+              <div className="space-y-3 mb-5">
+                <p className="text-xs font-black uppercase tracking-widest text-slate-500">5 Langkah yang Direkomendasikan</p>
+                {adaptiveSteps.length === 0 ? (
+                  <div className="bg-white p-5 rounded-2xl ring-1 ring-slate-200 text-slate-500 text-sm flex items-center gap-2">
+                    <Loader2 size={16} className="animate-spin" />
+                    Menyiapkan langkah prioritas...
+                  </div>
+                ) : (
+                  adaptiveSteps.map((stepItem, index) => (
+                    <motion.div
+                      key={`${stepItem.title}-${index}`}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 + index * 0.06 }}
+                      className="bg-white p-4 rounded-2xl ring-1 ring-slate-200 shadow-sm"
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-6 h-6 rounded-full bg-indigo-600 text-white text-[11px] font-black flex items-center justify-center">{index + 1}</div>
+                        <p className="font-black text-slate-900 text-sm">{stepItem.title}</p>
+                      </div>
+                      <p className="text-xs text-slate-500 mb-2">{stepItem.whyNow}</p>
+                      <p className="text-xs text-indigo-700 font-semibold">Aksi cepat: {stepItem.action}</p>
+                    </motion.div>
+                  ))
+                )}
+              </div>
+
               <div className="space-y-4">
-                {recs.map((rec, i) => (
+                {adaptiveModules.map((rec, i) => (
                   <motion.div
-                    key={i}
+                    key={`${rec.moduleId}-${i}`}
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 + i * 0.1 }}
                     className="bg-white p-6 rounded-2xl ring-2 ring-indigo-100 shadow-sm"
                   >
                     <div className="flex items-start gap-3 mb-4">
-                      <AiSparkIcon size={20} className="text-indigo-600 mt-0.5 flex-shrink-0" />
+                      <Target size={20} className="text-indigo-600 mt-0.5 flex-shrink-0" />
                       <div>
-                        <h3 className="font-black text-slate-900 text-base">{rec.title}</h3>
-                        <p className="text-sm text-slate-500 mt-0.5">{rec.desc}</p>
+                        <h3 className="font-black text-slate-900 text-base">{rec.moduleName}</h3>
+                        <p className="text-sm text-slate-500 mt-0.5">{rec.reason}</p>
+                        <p className="text-xs text-indigo-700 mt-1 font-semibold">Dampak: {rec.estimatedImpact}</p>
                       </div>
                     </div>
                     <Button
-                      onClick={() => router.push(rec.href)}
+                      onClick={() => router.push(`/katalog?buy=${rec.moduleId}`)}
                       className="w-full h-11 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl"
                     >
-                      {rec.cta}
+                      Pilih Modul Ini
                     </Button>
                   </motion.div>
                 ))}
+
+                {adaptiveModules.length === 0 && (
+                  <div className="bg-white p-6 rounded-2xl ring-1 ring-slate-200 text-center">
+                    <Sparkles className="w-6 h-6 text-indigo-500 mx-auto mb-2" />
+                    <p className="text-sm text-slate-600">Belum ada modul spesifik yang bisa dicocokkan. Anda tetap bisa eksplor katalog lengkap.</p>
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-3 mt-4">

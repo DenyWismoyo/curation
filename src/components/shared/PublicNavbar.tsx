@@ -8,7 +8,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LibraryBig, FolderKanban, TrendingUp, Users, User,
-  KeyRound, LogOut, Compass, ShoppingBag, ChevronDown, Receipt, MapPinned
+  KeyRound, LogOut, Compass, ChevronDown, Receipt, MapPinned, LogIn
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -204,13 +204,13 @@ export function PublicNavbar() {
           </>
         ) : (
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => { /* Tambahkan logika modal login Anda di sini */ }}
+            <Link
+              href="/login"
               className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-slate-600 hover:text-indigo-600 text-sm font-bold transition-colors"
             >
-              <User size={16} />
+              <LogIn size={16} />
               Masuk ke Akun
-            </button>
+            </Link>
             <Link
               href="/katalog"
               className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold shadow-lg shadow-indigo-600/20 transition-all duration-300"

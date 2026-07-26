@@ -7,6 +7,7 @@ import { db } from '@/lib/firebase';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { AiSparkIcon, AILensIcon, GlobalTargetIcon, BrainIcon } from '@/types';
+import { shareOrCopy } from '@/lib/share';
 
 interface Article {
   id: string;
@@ -52,13 +53,24 @@ export default function ExplorePage() {
     return () => unsubscribe();
   }, []);
 
-  const handleCopyLink = (e: React.MouseEvent, id: string) => {
+  const handleCopyLink = async (e: React.MouseEvent, id: string, title: string) => {
     e.stopPropagation(); 
     const link = `${window.location.origin}/explore/${id}`;
-    navigator.clipboard.writeText(link);
-    setCopiedId(id);
-    toast.success('Tautan artikel berhasil disalin!');
-    setTimeout(() => setCopiedId(null), 2000);
+    try {
+      const result = await shareOrCopy({
+        title: `Explore Omnifit - ${title}`,
+        text: `Baca insight terbaru dari Omnifit: ${title}`,
+        url: link,
+      });
+
+      if (result === 'copied') {
+        setCopiedId(id);
+        toast.success('Tautan artikel berhasil disalin.');
+        setTimeout(() => setCopiedId(null), 2000);
+      }
+    } catch {
+      toast.error('Gagal membagikan tautan artikel.');
+    }
   };
 
   const filteredArticles = articles.filter(article => {
@@ -141,7 +153,7 @@ export default function ExplorePage() {
                 className="bg-white rounded-[2rem] border border-slate-200 p-3 sm:p-5 shadow-sm hover:shadow-xl transition-all duration-500 group mb-12 cursor-pointer relative flex flex-col"
               >
                 <button 
-                  onClick={(e) => handleCopyLink(e, featuredArticle.id)}
+                  onClick={(e) => handleCopyLink(e, featuredArticle.id, featuredArticle.title)}
                   className={`absolute top-6 sm:top-8 right-6 sm:right-8 z-20 p-3 rounded-xl shadow-sm transition-all ${copiedId === featuredArticle.id ? 'bg-emerald-500 text-white' : 'bg-white/80 backdrop-blur text-slate-600 hover:bg-indigo-600 hover:text-white'}`}
                   title="Bagikan Tautan"
                 >
@@ -204,7 +216,7 @@ export default function ExplorePage() {
                     className="bg-white rounded-[1.5rem] border border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300 group cursor-pointer flex flex-col relative overflow-hidden"
                   >
                     <button 
-                      onClick={(e) => handleCopyLink(e, article.id)}
+                      onClick={(e) => handleCopyLink(e, article.id, article.title)}
                       className={`absolute top-4 right-4 z-20 p-2.5 rounded-xl shadow-sm transition-all ${copiedId === article.id ? 'bg-emerald-500 text-white' : 'bg-white/80 backdrop-blur text-slate-500 hover:bg-indigo-600 hover:text-white'}`}
                       title="Bagikan Tautan"
                     >

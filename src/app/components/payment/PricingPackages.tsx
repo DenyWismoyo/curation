@@ -15,6 +15,12 @@ import { Button } from '@/components/ui/button';
 import { FormTemplate } from '@/types/curation';
 import { User } from 'firebase/auth';
 import { toast } from 'sonner';
+import {
+  DEFAULT_ATTRIBUTION_MODEL,
+  ensureReferralVisitorId,
+  getStoredReferralAttribution,
+} from '@/lib/referralAttribution';
+import { shareOrCopy } from '@/lib/share';
 
 // IMPORT CUSTOM ICONS
 import { 
@@ -90,6 +96,18 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
   const [checkoutPackage, setCheckoutPackage] = useState<FormTemplate | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [storedAffiliateCode, setStoredAffiliateCode] = useState<string>('');
+  const [attributionVisitorId, setAttributionVisitorId] = useState<string>('');
+  const [attributionModel, setAttributionModel] = useState(DEFAULT_ATTRIBUTION_MODEL);
+
+  useEffect(() => {
+    const stored = getStoredReferralAttribution();
+    const visitorId = ensureReferralVisitorId();
+
+    setStoredAffiliateCode(stored?.affiliateCode || '');
+    setAttributionVisitorId(visitorId || '');
+    setAttributionModel(stored?.attributionModel || DEFAULT_ATTRIBUTION_MODEL);
+  }, []);
 
   useEffect(() => {
     if (isOpen) fetchPackages();
@@ -149,6 +167,9 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
       toast.loading("Mempersiapkan kode QRIS Anda...", { id: 'qris_process' });
       
       try {
+        const latestAttribution = getStoredReferralAttribution();
+        const latestVisitorId = ensureReferralVisitorId();
+
         const createInvoice = httpsCallable(functions, 'createPaymentInvoice');
         const response = await createInvoice({
           packageId: pkg.id,
@@ -156,6 +177,9 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
           finalPrice: priceInfo.final,
           userEmail: user.email,
           userName: user.displayName || 'Pengguna',
+          affiliateCode: latestAttribution?.affiliateCode || storedAffiliateCode || undefined,
+          attributionVisitorId: latestVisitorId || attributionVisitorId || undefined,
+          attributionModel: latestAttribution?.attributionModel || attributionModel || DEFAULT_ATTRIBUTION_MODEL,
         });
 
         const data = response.data as { transactionId: string };
@@ -169,18 +193,25 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
     }
   };
 
-  const handleCopyLink = async (e: React.MouseEvent, id: string) => {
+  const handleCopyLink = async (e: React.MouseEvent, id: string, trackName: string) => {
     e.stopPropagation();
     if (typeof window === 'undefined') return;
     const shareUrl = `${window.location.origin}/katalog?buy=${id}`;
     
     try {
-      await navigator.clipboard.writeText(shareUrl);
-      setCopiedId(id);
-      toast.success("Tautan Modul Disalin!");
-      setTimeout(() => setCopiedId(null), 2000);
+      const result = await shareOrCopy({
+        title: `Omnifit - ${trackName}`,
+        text: `Saya merekomendasikan modul ${trackName} di Omnifit. Cek detailnya di sini.`,
+        url: shareUrl,
+      });
+
+      if (result === 'copied') {
+        setCopiedId(id);
+        toast.success('Tautan modul berhasil disalin.');
+        setTimeout(() => setCopiedId(null), 2000);
+      }
     } catch (error) {
-      toast.error("Gagal menyalin tautan.");
+      toast.error('Gagal membagikan tautan modul.');
     }
   };
 
@@ -348,7 +379,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                                   {/* Area Tombol */}
                                   <div className="flex items-center gap-2">
                                     <button
-                                      onClick={(e) => handleCopyLink(e, pkg.id)}
+                                      onClick={(e) => handleCopyLink(e, pkg.id, pkg.trackName)}
                                       className={`p-2.5 rounded-xl transition-colors flex shadow-sm border ${
                                         isCopied ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : `bg-white border-slate-200 text-slate-400 hover:${theme.text} hover:bg-slate-50`
                                       }`}
@@ -525,7 +556,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                         {`${window.location.origin}/katalog?buy=${checkoutPackage.id}`}
                       </div>
                       <Button
-                        onClick={(e) => handleCopyLink(e, checkoutPackage.id)}
+                        onClick={(e) => handleCopyLink(e, checkoutPackage.id, checkoutPackage.trackName)}
                         className={`h-8 px-4 rounded-lg text-xs font-bold transition-all shrink-0 ${
                           copiedId === checkoutPackage.id 
                             ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' 

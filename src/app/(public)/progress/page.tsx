@@ -50,7 +50,7 @@ export default function ProgressPage() {
   const [isFetching, setIsFetching] = useState(true);
 
   useEffect(() => {
-    if (!loading && !user) { router.push('/'); return; }
+    if (!loading && !user) { router.push('/login?next=/progress'); return; }
     if (user) fetchRecords();
   }, [user, loading]);
 

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, History, Clock, ChevronRight, Loader2, LogOut, LayoutDashboard, ClipboardCheck, KeyRound, Mail, Lock, User as UserIcon, LibraryBig, MapPinned } from 'lucide-react';
+import { ArrowRight, History, Clock, ChevronRight, Loader2, LogOut, LayoutDashboard, ClipboardCheck, KeyRound, Mail, Lock, User as UserIcon, LibraryBig, MapPinned, Share2, ShieldCheck, Sparkles } from 'lucide-react';
 import { EcosystemIcon, AdminShieldIcon, DocExportIcon, BrainIcon, GlobalTargetIcon } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,6 +17,7 @@ import { useMobileBack } from '@/hooks/useMobileBack';
 import { useAuth } from '@/contexts/AuthContext';
 import { LazyMotion, domAnimation, m, AnimatePresence, Variants } from 'framer-motion';
 import dynamic from 'next/dynamic';
+import { shareOrCopy } from '@/lib/share';
 
 const SystemCapabilitiesModal = dynamic(
   () => import('./SystemCapabilitiesModal').then((mod) => mod.SystemCapabilitiesModal),
@@ -52,6 +53,21 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [authLoading, setAuthLoading] = useState(false);
+
+  const handleShareOmnifit = async () => {
+    try {
+      const result = await shareOrCopy({
+        title: 'Omnifit - Smart Assessment System',
+        text: 'Coba Omnifit untuk asesmen AI personal, komunitas, dan bisnis.',
+        url: 'https://omnifit.cloud',
+      });
+      if (result === 'copied') {
+        toast.success('Link aplikasi berhasil disalin.');
+      }
+    } catch {
+      toast.error('Gagal membagikan link aplikasi.');
+    }
+  };
 
   useMobileBack(isCapabilitiesModalOpen, () => setIsCapabilitiesModalOpen(false));
 
@@ -220,22 +236,22 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
             
             <m.div variants={fadeUpVariants} className="space-y-6">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 leading-[1.15] text-balance">
-                Omnifit Platform <br className="hidden sm:block"/> 
+                Omnifit Platform <br className="hidden sm:block"/>
                 <span className="text-indigo-600 bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-600">
-                  Smart Assessment System
+                  Adaptive Intelligence for Growth
                 </span>
               </h1>
               
               <p className="text-base sm:text-lg text-slate-500 max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed text-balance">
-                Platform analitik berbasis kecerdasan buatan untuk mendiagnosa akar masalah, memetakan potensi tersembunyi, dan merumuskan cetak biru solusi yang presisi — dirancang adaptif untuk pengembangan personal, konseling, hingga akselerasi ekosistem bisnis.
+                Platform asesmen AI yang membantu Anda membaca situasi secara jernih, menyusun prioritas tindakan, dan mengeksekusi rencana tumbuh dengan lebih cepat.
               </p>
 
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 max-w-3xl mx-auto lg:mx-0">
                 {[
-                  { label: 'Modular', value: 'Multi-track' },
-                  { label: 'Navigasi', value: 'Lebih ringkas' },
-                  { label: 'Output', value: 'Actionable AI' },
-                  { label: 'Akses', value: 'Personal & institusi' },
+                  { label: 'Framework', value: 'Context-Aware AI' },
+                  { label: 'Kecepatan', value: 'Insight Instan' },
+                  { label: 'Output', value: 'Action Plan Nyata' },
+                  { label: 'Skala', value: 'Personal - Enterprise' },
                 ].map((item) => (
                   <div key={item.label} className="rounded-2xl bg-white/75 backdrop-blur-sm border border-white px-4 py-3 shadow-sm text-left">
                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{item.label}</p>
@@ -258,11 +274,36 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                   Ekosistem Mitra
                 </Link>
 
+                <button
+                  onClick={handleShareOmnifit}
+                  className="inline-flex items-center gap-2 font-bold text-slate-500 hover:text-indigo-600 bg-white shadow-sm ring-1 ring-slate-200 px-4 py-3 rounded-xl hover:bg-slate-50 transition-all"
+                >
+                  <Share2 className="w-4 h-4" />
+                  Bagikan Aplikasi
+                </button>
+
                 {/* TOMBOL ROADMAP BARU */}
                 <Link href="/roadmap" className="inline-flex items-center gap-2 font-bold text-indigo-600 hover:text-white bg-indigo-50 hover:bg-indigo-600 shadow-sm ring-1 ring-indigo-200 px-4 py-3 rounded-xl transition-all group">
                   <MapPinned className="w-4 h-4 group-hover:animate-bounce" />
                   Roadmap AI 2026
                 </Link>
+              </div>
+
+              <div className="rounded-2xl bg-gradient-to-r from-indigo-600 to-blue-600 p-4 sm:p-5 text-white shadow-lg shadow-indigo-500/20 max-w-3xl mx-auto lg:mx-0">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <div>
+                    <p className="text-[10px] uppercase tracking-widest font-black text-indigo-100 mb-1">Rekomendasi Adaptif</p>
+                    <h3 className="text-base sm:text-lg font-black">Mulai Onboarding 2 Menit untuk Pilih Modul Paling Relevan</h3>
+                    <p className="text-xs sm:text-sm text-indigo-100 mt-1">AI akan menyusun 5 langkah prioritas dan merekomendasikan modul katalog yang sesuai profil Anda.</p>
+                  </div>
+                  <Link
+                    href={user ? '/onboarding' : '/login?next=/onboarding'}
+                    className="inline-flex items-center justify-center gap-2 h-11 px-4 rounded-xl bg-white text-indigo-700 hover:bg-indigo-50 font-black text-sm whitespace-nowrap"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    Mulai Onboarding
+                  </Link>
+                </div>
               </div>
             </m.div>
 
@@ -449,6 +490,20 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                 </div>
               </m.div>
             )}
+
+            <m.div variants={fadeUpVariants} className="w-full max-w-xl mx-auto lg:mx-0 pt-3">
+              <div className="rounded-2xl bg-white/75 border border-slate-200 px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div className="flex items-center gap-2 text-slate-600">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                  <p className="text-xs font-semibold">Kami menjaga privasi dan keamanan data asesmen Anda.</p>
+                </div>
+                <div className="flex items-center gap-3 text-xs font-bold">
+                  <Link href="/privasi" className="text-slate-500 hover:text-indigo-600">Kebijakan Privasi</Link>
+                  <span className="text-slate-300">|</span>
+                  <Link href="/kebijakan" className="text-slate-500 hover:text-indigo-600">Syarat & Kebijakan</Link>
+                </div>
+              </div>
+            </m.div>
           </m.div>
 
           {/* Kolom Kanan: Draft & History Cards */}

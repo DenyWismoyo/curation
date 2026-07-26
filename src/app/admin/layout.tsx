@@ -10,7 +10,9 @@ import {
   PanelLeftClose, PanelLeftOpen, 
   Tags, UserCheck, MessageSquareShare, 
   Handshake, Newspaper,
-  MapPinned
+  MapPinned,
+  Radar,
+  Percent
 } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -49,6 +51,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: 'Harga & Monetisasi', path: '/admin/pricing', icon: Tags },
     { name: 'Ulasan & Feedback', path: '/admin/feedback', icon: MessageSquareShare },
     { name: 'Mitra & Kerjasama', path: '/admin/partners', icon: Handshake },
+    { name: 'Audit Referral', path: '/admin/referrals', icon: Radar },
+    { name: 'Program Affiliate', path: '/admin/affiliate-program', icon: Percent },
     { name: 'Artikel & Wawasan', path: '/admin/articles', icon: Newspaper }, // <-- Menu CMS Artikel Baru
     { name: 'Roadmap & Rencana', path: '/admin/roadmap', icon: MapPinned }, // <-- Menu Roadmap Baru
   ];

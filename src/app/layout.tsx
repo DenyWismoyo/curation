@@ -27,8 +27,35 @@ export const viewport: Viewport = {
 
 // METADATA DENGAN TAMBAHAN MANIFEST PWA
 export const metadata: Metadata = {
-  title: 'Omnifit',
+  metadataBase: new URL('https://omnifit.cloud'),
+  title: {
+    default: 'Omnifit',
+    template: '%s | Omnifit',
+  },
   description: 'Platform analitik AI universal untuk mengevaluasi kelayakan riset, ekosistem bisnis, dan korporasi menuju akselerasi global.',
+  keywords: ['omnifit', 'ai assessment', 'katalog asesmen', 'explore insight', 'analitik ai'],
+  openGraph: {
+    type: 'website',
+    locale: 'id_ID',
+    url: 'https://omnifit.cloud',
+    siteName: 'Omnifit',
+    title: 'Omnifit - Smart Assessment System',
+    description: 'Asesmen AI untuk personal, komunitas, dan bisnis. Temukan insight dan action plan berbasis data.',
+    images: [
+      {
+        url: '/opengraph-image',
+        width: 1200,
+        height: 630,
+        alt: 'Omnifit Smart Assessment System',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Omnifit - Smart Assessment System',
+    description: 'Asesmen AI untuk personal, komunitas, dan bisnis. Temukan insight dan action plan berbasis data.',
+    images: ['/twitter-image'],
+  },
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,

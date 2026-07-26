@@ -308,7 +308,7 @@ export default function AssessmentPage({ params }: { params: Promise<{ trackId: 
         aiResult={state.aiResult}
         onRestart={() => {
           actions.restart();
-          router.push('/');
+          router.push('/login?next=/assessment');
         }}
       />
     );

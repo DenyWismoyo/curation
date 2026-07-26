@@ -63,7 +63,7 @@ export default function AssessmentIndexPage() {
         onBack={() => {
           sessionStorage.removeItem('active_token'); 
           sessionStorage.removeItem('active_allowed_templates'); 
-          router.push('/');
+          router.push('/login?next=/assessment');
         }} 
       />
     </main>

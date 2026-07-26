@@ -36,7 +36,7 @@ export default function RiwayatTransaksiPage() {
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/');
+      router.push('/login?next=/riwayat');
       return;
     }
 

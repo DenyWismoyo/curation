@@ -7,10 +7,12 @@ import { db } from '@/lib/firebase';
 import { ArrowLeft, Calendar, Clock, Loader2, Share2, Check, BookOpen, Rocket } from 'lucide-react';
 import { AiSparkIcon, AILensIcon, GlobalTargetIcon, BrainIcon } from '@/types';
 import { toast } from 'sonner';
+import { shareOrCopy } from '@/lib/share';
 
 interface Article {
   title: string;
   content: string;
+  excerpt?: string;
   category: string;
   readTime: string;
   iconName: string;
@@ -109,11 +111,22 @@ export default function ArticleDetailPage() {
     fetchArticle();
   }, [params.id, router]);
 
-  const handleShare = () => {
-    navigator.clipboard.writeText(window.location.href);
-    setCopied(true);
-    toast.success('Tautan berhasil disalin!');
-    setTimeout(() => setCopied(false), 2000);
+  const handleShare = async () => {
+    if (!article) return;
+    try {
+      const result = await shareOrCopy({
+        title: `Explore Omnifit - ${article.title}`,
+        text: article.excerpt || 'Insight terbaru dari Omnifit Explore.',
+        url: window.location.href,
+      });
+      if (result === 'copied') {
+        setCopied(true);
+        toast.success('Tautan berhasil disalin.');
+        setTimeout(() => setCopied(false), 2000);
+      }
+    } catch {
+      toast.error('Gagal membagikan tautan.');
+    }
   };
 
   if (loading) {

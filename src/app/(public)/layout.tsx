@@ -1,7 +1,9 @@
 // src/app/(public)/layout.tsx
 import React from 'react';
+import { Suspense } from 'react';
 import { PublicNavbar } from '@/components/shared/PublicNavbar';
 import { GlobalFloatingWidget } from '@/components/shared';
+import { ReferralAttributionTracker } from '@/components/shared';
 
 /**
  * Layout untuk semua public routes (/, /katalog, /progress, /komunitas, /profil, dll.)
@@ -17,6 +19,10 @@ export default function PublicLayout({
 }) {
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
+      <Suspense fallback={null}>
+        <ReferralAttributionTracker />
+      </Suspense>
+
       {/* Desktop Top Navbar - hidden on mobile */}
       <PublicNavbar />
 

@@ -53,7 +53,7 @@ export default function CustomerDashboard() {
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/');
+      router.push('/login?next=/dashboard');
       return;
     }
 

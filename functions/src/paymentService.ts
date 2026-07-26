@@ -10,6 +10,26 @@ const mayarApiKey = defineSecret("MAYAR_API_KEY");
 const metaPixelId = defineSecret("META_PIXEL_ID");
 const metaAccessToken = defineSecret("META_ACCESS_TOKEN");
 
+type AttributionModel = "first_click_30d" | "last_click_30d";
+const DEFAULT_ATTRIBUTION_MODEL: AttributionModel = "last_click_30d";
+
+const sanitizeAffiliateCode = (value: string): string =>
+  String(value || "")
+    .trim()
+    .toUpperCase()
+    .replace(/[^A-Z0-9-]/g, "");
+
+const sanitizeVisitorId = (value: string): string =>
+  String(value || "")
+    .trim()
+    .replace(/[^a-zA-Z0-9_-]/g, "");
+
+const normalizeAttributionModel = (value: unknown): AttributionModel => {
+  const model = String(value || "").toLowerCase();
+  if (model === "first_click_30d") return "first_click_30d";
+  return "last_click_30d";
+};
+
 // ============================================================================
 // HELPER META CAPI
 // ============================================================================
@@ -51,7 +71,16 @@ export const createPaymentInvoice = onCall({
   },
   async (request) => {
     if (!request.auth) throw new HttpsError("unauthenticated", "Akses ditolak.");
-    const { packageId, packageName, finalPrice, userEmail, userName } = request.data;
+    const {
+      packageId,
+      packageName,
+      finalPrice,
+      userEmail,
+      userName,
+      affiliateCode,
+      attributionVisitorId,
+      attributionModel,
+    } = request.data;
     
     const db = getFirestore(admin.app(), "curation");
     const txRef = db.collection("transactions").doc();
@@ -87,6 +116,57 @@ export const createPaymentInvoice = onCall({
         finalPaymentLink = finalPaymentLink.replace("deny-wismoyo.myr.id", "omnifit.myr.id");
       }
       
+      const normalizedAffiliateCode = sanitizeAffiliateCode(String(affiliateCode || ""));
+      const normalizedVisitorId = sanitizeVisitorId(String(attributionVisitorId || ""));
+      const normalizedAttributionModel = normalizeAttributionModel(attributionModel || DEFAULT_ATTRIBUTION_MODEL);
+
+      let resolvedAffiliateCode = normalizedAffiliateCode;
+      let attributionSource = normalizedAffiliateCode ? "request_payload" : "none";
+
+      if (normalizedVisitorId && normalizedVisitorId.length >= 12) {
+        const traceRef = db.collection("referral_attributions").doc(normalizedVisitorId);
+        const traceSnap = await traceRef.get();
+
+        if (traceSnap.exists) {
+          const traceData = traceSnap.data() || {};
+          const traceBoundUid = String(traceData.boundUserUid || "");
+          const traceExpiry = Number(traceData.expiresAtMs || 0);
+          const traceModel = normalizeAttributionModel(traceData.attributionModel || normalizedAttributionModel);
+
+          const isBoundValid = !traceBoundUid || traceBoundUid === request.auth.uid;
+          const isTraceAlive = Number.isFinite(traceExpiry) && traceExpiry > Date.now();
+
+          if (isBoundValid && isTraceAlive) {
+            const codeFromFirst = sanitizeAffiliateCode(String(traceData?.firstClick?.affiliateCode || ""));
+            const codeFromLast = sanitizeAffiliateCode(String(traceData?.lastClick?.affiliateCode || ""));
+
+            const selectedCode = traceModel === "first_click_30d" ? codeFromFirst : codeFromLast;
+            if (selectedCode) {
+              resolvedAffiliateCode = selectedCode;
+              attributionSource = "referral_trace";
+            }
+          }
+        }
+      }
+
+      let affiliatePayload: Record<string, unknown> = {};
+
+      if (resolvedAffiliateCode) {
+        const affiliateSnap = await db.collection("affiliates").doc(resolvedAffiliateCode).get();
+        if (affiliateSnap.exists) {
+          const affiliateData = affiliateSnap.data() || {};
+          const isActive = String(affiliateData.status || "ACTIVE").toUpperCase() === "ACTIVE";
+          if (isActive && String(affiliateData.ownerUid || "") !== request.auth.uid) {
+            affiliatePayload = {
+              affiliateCode: resolvedAffiliateCode,
+              affiliateOwnerUid: affiliateData.ownerUid || "",
+              affiliateRateSnapshot: Number(affiliateData.commissionRate ?? 0.1),
+              affiliateAttachedAt: FieldValue.serverTimestamp(),
+            };
+          }
+        }
+      }
+
       await txRef.set({
         transactionId: transactionId,
         userId: request.auth.uid,
@@ -98,8 +178,20 @@ export const createPaymentInvoice = onCall({
         status: "PENDING",
         mayarTransactionId: mayarData.data?.id || null, 
         paymentLink: finalPaymentLink,
+        attributionModel: normalizedAttributionModel,
+        attributionSource,
+        attributionVisitorId: normalizedVisitorId || null,
         createdAt: FieldValue.serverTimestamp(),
+        ...affiliatePayload,
       });
+
+      if (normalizedVisitorId && normalizedVisitorId.length >= 12) {
+        await db.collection("referral_attributions").doc(normalizedVisitorId).set({
+          lastCheckoutAt: FieldValue.serverTimestamp(),
+          lastTransactionId: transactionId,
+          updatedAt: FieldValue.serverTimestamp(),
+        }, { merge: true });
+      }
       
       await sendMetaConversionEvent(metaPixelId.value(), metaAccessToken.value(), "InitiateCheckout", userEmail, finalPrice, transactionId);
       return { transactionId: transactionId };

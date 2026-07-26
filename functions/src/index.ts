@@ -41,6 +41,10 @@ export { generateArticleFromTemplate } from "./agents/promo/articleAgent";
 export { batchGenerateSmartPricing } from "./agents/promo/pricingAgent";
 export { generateProgramIdentity } from "./agents/promo/identityAgent";
 export { generateArticleImage } from "./agents/promo/articleImageAgent";
+export { createOrGetAffiliateProfile, attachAffiliateToTransaction, updateAffiliatePayoutProfile, adminReviewAffiliatePayout, adminMarkAffiliateCommissionPaid, getAffiliateProgramConfigPublic, adminUpdateAffiliateProgramConfig } from "./agents/affiliate/affiliateAgent";
+export { affiliateCommissionAgent } from "./agents/affiliate/commissionAgent";
+export { upsertReferralAttribution, bindReferralAttributionToUser } from "./agents/affiliate/attributionAgent";
+export { generateAdaptiveOnboardingPlan } from "./agents/onboarding/adaptiveOnboardingAgent";
 
 // ============================================================================
 // INISIALISASI FIREBASE

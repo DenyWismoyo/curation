@@ -20,6 +20,7 @@ export { GlobalFloatingWidget } from '@/app/components/shared/GlobalFloatingWidg
 export { NotificationBell } from '@/app/components/shared/NotificationBell';
 export { OmniAiWidget } from '@/app/components/shared/OmniAiWidget';
 export { PWAInstallPrompt } from '@/app/components/shared/PWAInstallPrompt';
+export { ReferralAttributionTracker } from '@/app/components/shared/ReferralAttributionTracker';
 export { SocialShareCard } from '@/app/components/shared/SocialShareCard';
 export { TemplateQuestionsPDF } from '@/app/components/shared/TemplateQuestionsPDF';
 export { TokenBatchPDFDocument } from '@/app/components/shared/TokenBatchPDFDocument';
