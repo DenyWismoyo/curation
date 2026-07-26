@@ -13,6 +13,20 @@ service cloud.firestore {
       );
     }
 
+    function isCurator() {
+      return isAuthenticated() && (
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'curator') ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.token.email)) && get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role == 'curator')
+      );
+    }
+
+    function isAdminOmnifit() {
+      return isAuthenticated() && (
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin_omnifit') ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.token.email)) && get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role == 'admin_omnifit')
+      );
+    }
+
     function isAdminCSRS() {
       return isAuthenticated() && (
         (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin_csrs') ||
@@ -24,21 +38,110 @@ service cloud.firestore {
       return isAuthenticated() && request.auth.uid == uid;
     }
 
+    function isB2BAdmin() {
+      return isSuperAdmin() || isAdminCSRS() || isAdminOmnifit();
+    }
+
     function isOpsAdmin() {
-      return isSuperAdmin() || isAdminCSRS() || isAssessor();
+      return isSuperAdmin() || isAdminCSRS() || isAdminOmnifit() || isAssessor();
+    }
+
+    function isAssessmentOwner() {
+      return isAuthenticated() && request.auth.uid == resource.data.userId;
+    }
+
+    function isPublicAssessment() {
+      return resource.data.allowPublicRead == true
+        || resource.data.publicResult == true
+        || resource.data.shareable == true;
+    }
+
+    function isAssessorProgramMatch() {
+      return isAssessor()
+        && exists(/databases/$(database)/documents/assessors/$(request.auth.token.email))
+        && get(/databases/$(database)/documents/assessors/$(request.auth.token.email)).data.programName == resource.data.corporateEntity;
+    }
+
+    function isCuratorProgramMatch() {
+      return isCurator()
+        && exists(/databases/$(database)/documents/assessors/$(request.auth.token.email))
+        && get(/databases/$(database)/documents/assessors/$(request.auth.token.email)).data.programName == resource.data.corporateEntity;
+    }
+
+    function hasOrgScopeFromUserDoc(userDocId) {
+      return exists(/databases/$(database)/documents/users/$(userDocId)) && (
+        (
+          ('allowedOrganizations' in get(/databases/$(database)/documents/users/$(userDocId)).data)
+          && resource.data.corporateEntity in get(/databases/$(database)/documents/users/$(userDocId)).data.allowedOrganizations
+        )
+        ||
+        (
+          ('organizationScopes' in get(/databases/$(database)/documents/users/$(userDocId)).data)
+          && resource.data.corporateEntity in get(/databases/$(database)/documents/users/$(userDocId)).data.organizationScopes
+        )
+        ||
+        (
+          ('accessibleOrganizations' in get(/databases/$(database)/documents/users/$(userDocId)).data)
+          && resource.data.corporateEntity in get(/databases/$(database)/documents/users/$(userDocId)).data.accessibleOrganizations
+        )
+      );
+    }
+
+    function hasOrganizationScopeAccess() {
+      return isAuthenticated() && (
+        hasOrgScopeFromUserDoc(request.auth.uid)
+        || hasOrgScopeFromUserDoc(request.auth.token.email)
+      );
+    }
+
+    function hasOrgInField(userDocId, fieldName, orgName) {
+      return exists(/databases/$(database)/documents/users/$(userDocId))
+        && (fieldName in get(/databases/$(database)/documents/users/$(userDocId)).data)
+        && orgName in get(/databases/$(database)/documents/users/$(userDocId)).data[fieldName];
+    }
+
+    function canReadAssessment() {
+      return isPublicAssessment()
+        || isAssessmentOwner()
+        || isSuperAdmin()
+        || isAdminCSRS()
+        || isAdminOmnifit()
+        || isAssessorProgramMatch()
+        || isCuratorProgramMatch()
+        || hasOrganizationScopeAccess();
+    }
+
+    function canAccessOrganization(orgName) {
+      return isSuperAdmin()
+        || isAdminCSRS()
+        || isAdminOmnifit()
+        || (
+          isAssessor()
+          && exists(/databases/$(database)/documents/assessors/$(request.auth.token.email))
+          && get(/databases/$(database)/documents/assessors/$(request.auth.token.email)).data.programName == orgName
+        )
+        || hasOrgInField(request.auth.uid, 'allowedOrganizations', orgName)
+        || hasOrgInField(request.auth.uid, 'organizationScopes', orgName)
+        || hasOrgInField(request.auth.uid, 'accessibleOrganizations', orgName)
+        || hasOrgInField(request.auth.token.email, 'allowedOrganizations', orgName)
+        || hasOrgInField(request.auth.token.email, 'organizationScopes', orgName)
+        || hasOrgInField(request.auth.token.email, 'accessibleOrganizations', orgName);
     }
 
     match /users/{userId} {
-      allow read, write: if isAuthenticated() && (request.auth.uid == userId || request.auth.token.email == userId || isSuperAdmin());
+      allow read: if isAuthenticated() && (request.auth.uid == userId || request.auth.token.email == userId || isB2BAdmin());
+      allow write: if isAuthenticated() && (request.auth.uid == userId || request.auth.token.email == userId || isB2BAdmin());
     }
 
     match /assessments/{assessmentId} {
-      allow read: if true; 
+      allow read: if canReadAssessment(); 
       allow update: if isAuthenticated() && (
         request.auth.uid == resource.data.userId || 
         isSuperAdmin() || 
         isAssessor() ||
-        isAdminCSRS()
+        (isCurator() && canAccessOrganization(resource.data.corporateEntity)) ||
+        isAdminCSRS() ||
+        isAdminOmnifit()
       );
       allow create: if isAuthenticated();
       allow delete: if isSuperAdmin();
@@ -64,13 +167,49 @@ service cloud.firestore {
     match /feedbacks/{document=**} { allow create: if true; allow read, update, delete: if isSuperAdmin(); }
     match /adaptive_question_banks/{document=**} { allow read: if isSuperAdmin() || isAdminCSRS(); allow write: if false; }
     match /landing_partners/{document=**} { allow read: if true; allow write: if isSuperAdmin(); }
-    match /assessors/{document=**} { allow read: if isAuthenticated(); allow write: if isSuperAdmin(); }
-    match /corporate_tags/{document=**} { allow read: if isAuthenticated(); allow write: if isSuperAdmin(); }
-    match /curator_tokens/{document=**} { allow read: if isAuthenticated(); allow write: if isSuperAdmin(); }
+    match /assessors/{document=**} { allow read: if isAuthenticated(); allow write: if isSuperAdmin() || isB2BAdmin(); }
+    match /corporate_tags/{orgId} {
+      allow read: if isAuthenticated() && canAccessOrganization(orgId);
+      allow write: if isAuthenticated() && canAccessOrganization(orgId) && (isSuperAdmin() || isB2BAdmin() || isAssessor() || isCurator());
+    }
+    match /curator_tokens/{document=**} { allow read: if isAuthenticated(); allow write: if isSuperAdmin() || isB2BAdmin(); }
     match /template_folders/{document=**} { allow read: if isAuthenticated(); allow write: if isSuperAdmin(); }
     match /business_vectors/{document=**} { allow read: if isAuthenticated(); allow write: if false; }
     match /template_research_vectors/{document=**} { allow read: if isSuperAdmin(); allow write: if false; }
     match /transactions/{transactionId} { allow read: if isAuthenticated() && (request.auth.uid == resource.data.userId || isSuperAdmin()); allow write: if false; }
+
+    match /b2b_action_tracker/{actionId} {
+      allow read: if isAuthenticated() && canAccessOrganization(resource.data.corporateEntity);
+      allow create: if isAuthenticated()
+        && request.resource.data.createdByUid == request.auth.uid
+        && canAccessOrganization(request.resource.data.corporateEntity);
+      allow update: if isAuthenticated()
+        && canAccessOrganization(resource.data.corporateEntity)
+        && (isOpsAdmin() || request.auth.uid == resource.data.ownerUid || request.auth.uid == resource.data.createdByUid);
+      allow delete: if isSuperAdmin() || isAdminCSRS() || isAdminOmnifit();
+    }
+
+    match /b2b_dashboard_access_logs/{logId} {
+      allow read: if isSuperAdmin() || isAdminCSRS() || isAdminOmnifit();
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    match /b2b_access_admin_logs/{logId} {
+      allow read: if isB2BAdmin();
+      allow create: if isB2BAdmin();
+      allow update, delete: if false;
+    }
+
+    match /b2b_curator_audit_logs/{logId} {
+      allow read: if isB2BAdmin();
+      allow create: if isAuthenticated()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.corporateEntity is string
+        && canAccessOrganization(request.resource.data.corporateEntity)
+        && (isCurator() || isAssessor() || isB2BAdmin());
+      allow update, delete: if false;
+    }
 
     match /affiliates/{affiliateCode} {
       allow read: if isOpsAdmin() || isAffiliateOwner(resource.data.ownerUid);

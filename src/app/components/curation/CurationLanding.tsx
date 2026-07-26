@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, History, Clock, ChevronRight, Loader2, LogOut, LayoutDashboard, ClipboardCheck, KeyRound, Mail, Lock, User as UserIcon, LibraryBig, MapPinned, Share2, ShieldCheck, Sparkles } from 'lucide-react';
+import { ArrowRight, History, Clock, ChevronRight, Loader2, LogOut, LayoutDashboard, ClipboardCheck, KeyRound, Mail, Lock, User as UserIcon, LibraryBig, MapPinned, Share2, ShieldCheck, Sparkles, BriefcaseBusiness } from 'lucide-react';
 import { EcosystemIcon, AdminShieldIcon, DocExportIcon, BrainIcon, GlobalTargetIcon } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -29,7 +29,7 @@ interface Props {
   history: CurationHistory[];
   onLoadHistory: (item: CurationHistory) => void;
   user: User | null;
-  role: 'user' | 'admin_omnifit' | 'admin_csrs' | 'assessor' | null;
+  role: 'user' | 'admin_omnifit' | 'admin_csrs' | 'assessor' | 'curator' | null;
   onLogin: () => void;
   onLogout: () => void;
 }
@@ -281,6 +281,11 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                   <Share2 className="w-4 h-4" />
                   Bagikan Aplikasi
                 </button>
+
+                <Link href="/b2b/login" className="inline-flex items-center gap-2 font-bold text-slate-500 hover:text-indigo-600 bg-white shadow-sm ring-1 ring-slate-200 px-4 py-3 rounded-xl hover:bg-slate-50 transition-all">
+                  <BriefcaseBusiness className="w-4 h-4" />
+                  Login B2B
+                </Link>
 
                 {/* TOMBOL ROADMAP BARU */}
                 <Link href="/roadmap" className="inline-flex items-center gap-2 font-bold text-indigo-600 hover:text-white bg-indigo-50 hover:bg-indigo-600 shadow-sm ring-1 ring-indigo-200 px-4 py-3 rounded-xl transition-all group">

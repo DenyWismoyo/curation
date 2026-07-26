@@ -13,8 +13,59 @@ import {
   MapPinned,
   Radar,
   Percent,
-  Activity
+  Activity,
+  BriefcaseBusiness,
+  UserCog,
+  ChevronDown,
+  ChevronRight
 } from 'lucide-react';
+
+type AdminMenuItem = {
+  name: string;
+  path: string;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
+};
+
+type AdminMenuGroup = {
+  key: string;
+  label: string;
+  items: AdminMenuItem[];
+};
+
+const adminMenuGroups: AdminMenuGroup[] = [
+  {
+    key: 'core',
+    label: 'Core Admin',
+    items: [
+      { name: 'Dasbor Utama', path: '/admin', icon: LayoutDashboard },
+      { name: 'Manajemen Token', path: '/admin/tokens', icon: KeyRound },
+      { name: 'Manajemen Asesor', path: '/admin/assessors', icon: UserCheck },
+      { name: 'Template Form', path: '/admin/templates', icon: Settings },
+      { name: 'Artikel & Wawasan', path: '/admin/articles', icon: Newspaper },
+      { name: 'Roadmap & Rencana', path: '/admin/roadmap', icon: MapPinned },
+    ],
+  },
+  {
+    key: 'growth',
+    label: 'Growth & Partnership',
+    items: [
+      { name: 'Harga & Monetisasi', path: '/admin/pricing', icon: Tags },
+      { name: 'Ulasan & Feedback', path: '/admin/feedback', icon: MessageSquareShare },
+      { name: 'Mitra & Kerjasama', path: '/admin/partners', icon: Handshake },
+      { name: 'Audit Referral', path: '/admin/referrals', icon: Radar },
+      { name: 'Program Affiliate', path: '/admin/affiliate-program', icon: Percent },
+      { name: 'Onboarding Metrics', path: '/admin/onboarding-metrics', icon: Activity },
+    ],
+  },
+  {
+    key: 'b2b',
+    label: 'B2B Pilot',
+    items: [
+      { name: 'B2B Pilot Dashboard', path: '/admin/b2b-pilot', icon: BriefcaseBusiness },
+      { name: 'Akses Role B2B', path: '/admin/b2b-access', icon: UserCog },
+    ],
+  },
+];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { user, role, loading, logout } = useAuth();
@@ -22,16 +73,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [openDesktopGroups, setOpenDesktopGroups] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(adminMenuGroups.map((group) => [group.key, true]))
+  );
+  const [openMobileGroups, setOpenMobileGroups] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(adminMenuGroups.map((group) => [group.key, true]))
+  );
 
   useEffect(() => {
     if (!loading && (!user || role !== 'admin_csrs')) {
       router.push('/'); 
     }
   }, [user, role, loading, router]);
-
-  useEffect(() => {
-    setIsMobileMenuOpen(false);
-  }, [pathname]);
 
   if (loading || role !== 'admin_csrs') {
     return (
@@ -44,20 +97,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
-  const menuItems = [
-    { name: 'Dasbor Utama', path: '/admin', icon: LayoutDashboard },
-    { name: 'Manajemen Token', path: '/admin/tokens', icon: KeyRound },
-    { name: 'Manajemen Asesor', path: '/admin/assessors', icon: UserCheck },
-    { name: 'Template Form', path: '/admin/templates', icon: Settings },
-    { name: 'Harga & Monetisasi', path: '/admin/pricing', icon: Tags },
-    { name: 'Ulasan & Feedback', path: '/admin/feedback', icon: MessageSquareShare },
-    { name: 'Mitra & Kerjasama', path: '/admin/partners', icon: Handshake },
-    { name: 'Audit Referral', path: '/admin/referrals', icon: Radar },
-    { name: 'Program Affiliate', path: '/admin/affiliate-program', icon: Percent },
-    { name: 'Onboarding Metrics', path: '/admin/onboarding-metrics', icon: Activity },
-    { name: 'Artikel & Wawasan', path: '/admin/articles', icon: Newspaper }, // <-- Menu CMS Artikel Baru
-    { name: 'Roadmap & Rencana', path: '/admin/roadmap', icon: MapPinned }, // <-- Menu Roadmap Baru
-  ];
+  const allMenuItems = adminMenuGroups.flatMap((group) => group.items);
+
+  const isItemActive = (path: string) => pathname.startsWith(path) && (path !== '/admin' || pathname === '/admin');
+
+  const toggleDesktopGroup = (key: string) => {
+    setOpenDesktopGroups((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const toggleMobileGroup = (key: string) => {
+    setOpenMobileGroups((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50 font-sans text-slate-900">
@@ -75,13 +125,47 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-slate-400 hover:bg-slate-100 rounded-xl"><X size={20}/></button>
             </div>
             
-            <nav className="flex-1 py-6 px-4 space-y-2 overflow-y-auto">
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 px-3">Menu Utama</p>
-              {menuItems.map((item) => (
-                <Link key={item.path} href={item.path} className={`flex items-center gap-3 px-3 py-3 rounded-xl font-bold ${pathname === item.path ? 'bg-indigo-50 text-indigo-700' : 'text-slate-500'}`}>
-                  <item.icon size={20} className={pathname === item.path ? 'text-indigo-600' : 'text-slate-400'} /> {item.name}
-                </Link>
-              ))}
+            <nav className="flex-1 py-6 px-4 space-y-4 overflow-y-auto">
+              {adminMenuGroups.map((group) => {
+                const isOpen = openMobileGroups[group.key] ?? true;
+                const hasActiveItem = group.items.some((item) => isItemActive(item.path));
+
+                return (
+                  <div key={group.key} className="space-y-2">
+                    <button
+                      type="button"
+                      onClick={() => toggleMobileGroup(group.key)}
+                      className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-[11px] font-black uppercase tracking-wider transition-colors ${
+                        hasActiveItem ? 'text-indigo-600 bg-indigo-50/70' : 'text-slate-400 hover:bg-slate-50'
+                      }`}
+                    >
+                      <span>{group.label}</span>
+                      {isOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                    </button>
+
+                    {isOpen && (
+                      <div className="space-y-1">
+                        {group.items.map((item) => {
+                          const isActive = isItemActive(item.path);
+                          return (
+                            <Link
+                              key={item.path}
+                              href={item.path}
+                              onClick={() => setIsMobileMenuOpen(false)}
+                              className={`flex items-center gap-3 px-3 py-3 rounded-xl font-bold transition-colors ${
+                                isActive ? 'bg-indigo-50 text-indigo-700' : 'text-slate-500 hover:bg-slate-50'
+                              }`}
+                            >
+                              <item.icon size={20} className={isActive ? 'text-indigo-600' : 'text-slate-400'} />
+                              {item.name}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </nav>
 
             <div className="p-4 border-t border-slate-100">
@@ -116,24 +200,66 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           )}
         </div>
         
-        <nav className="flex-1 py-6 px-3 space-y-2 overflow-y-auto custom-scrollbar">
-          {!isSidebarCollapsed && <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 px-3">Menu Utama</p>}
-          {menuItems.map((item) => {
-            const isActive = pathname.startsWith(item.path) && (item.path !== '/admin' || pathname === '/admin');
-            return (
-              <Link 
-                key={item.path}
-                href={item.path} 
-                title={isSidebarCollapsed ? item.name : ''}
-                className={`flex items-center gap-3 px-3 py-3 rounded-xl font-bold transition-all ${
-                  isActive ? 'bg-indigo-50 text-indigo-700' : 'text-slate-500 hover:bg-slate-50 hover:text-indigo-600'
-                } ${isSidebarCollapsed ? 'justify-center' : ''}`}
-              >
-                <item.icon size={20} className={isActive ? 'text-indigo-600' : 'text-slate-400 shrink-0'} /> 
-                {!isSidebarCollapsed && <span className="whitespace-nowrap">{item.name}</span>}
-              </Link>
-            );
-          })}
+        <nav className="flex-1 py-6 px-3 space-y-3 overflow-y-auto custom-scrollbar">
+          {isSidebarCollapsed ? (
+            allMenuItems.map((item) => {
+              const isActive = isItemActive(item.path);
+
+              return (
+                <Link
+                  key={item.path}
+                  href={item.path}
+                  title={item.name}
+                  className={`flex items-center justify-center px-3 py-3 rounded-xl font-bold transition-all ${
+                    isActive ? 'bg-indigo-50 text-indigo-700' : 'text-slate-500 hover:bg-slate-50 hover:text-indigo-600'
+                  }`}
+                >
+                  <item.icon size={20} className={isActive ? 'text-indigo-600' : 'text-slate-400 shrink-0'} />
+                </Link>
+              );
+            })
+          ) : (
+            adminMenuGroups.map((group) => {
+              const isOpen = openDesktopGroups[group.key] ?? true;
+              const hasActiveItem = group.items.some((item) => isItemActive(item.path));
+
+              return (
+                <div key={group.key} className="space-y-2">
+                  <button
+                    type="button"
+                    onClick={() => toggleDesktopGroup(group.key)}
+                    className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors ${
+                      hasActiveItem ? 'text-indigo-600 bg-indigo-50/70' : 'text-slate-400 hover:bg-slate-50'
+                    }`}
+                  >
+                    <span>{group.label}</span>
+                    {isOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                  </button>
+
+                  {isOpen && (
+                    <div className="space-y-1">
+                      {group.items.map((item) => {
+                        const isActive = isItemActive(item.path);
+
+                        return (
+                          <Link
+                            key={item.path}
+                            href={item.path}
+                            className={`flex items-center gap-3 px-3 py-3 rounded-xl font-bold transition-all ${
+                              isActive ? 'bg-indigo-50 text-indigo-700' : 'text-slate-500 hover:bg-slate-50 hover:text-indigo-600'
+                            }`}
+                          >
+                            <item.icon size={20} className={isActive ? 'text-indigo-600' : 'text-slate-400 shrink-0'} />
+                            <span className="whitespace-nowrap">{item.name}</span>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })
+          )}
         </nav>
         
         <div className="p-4 border-t border-slate-100 shrink-0">

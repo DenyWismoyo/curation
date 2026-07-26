@@ -7,6 +7,8 @@ import { db } from '@/lib/firebase';
 import { ChevronLeft, Briefcase, ShieldCheck, Loader2, Edit3, CheckCircle2, MessageCircle, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { UniversalAssessmentView } from '@/components/shared';
+import { useAuth } from '@/contexts/AuthContext';
+import { logCuratorAuditEvent } from '@/lib/b2b-curator-audit';
 
 // IMPORT KOMPONEN EXPORT
 import { CuratorExportPDF } from '@/app/components/curator/PDFReportTemplate';
@@ -14,6 +16,7 @@ import { CuratorExportPDF } from '@/app/components/curator/PDFReportTemplate';
 export default function CuratorAssessmentDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const { user, role, loading: authLoading } = useAuth();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [masterTags, setMasterTags] = useState<string[]>([]);
@@ -35,15 +38,54 @@ export default function CuratorAssessmentDetailPage() {
   const [documentNotes, setDocumentNotes] = useState<string>('');
   const [metricsNotes, setMetricsNotes] = useState<string>('');
   const [swotNotes, setSwotNotes] = useState<string>('');
+  const auditOpenLoggedRef = useRef(false);
+
+  const hasRoleAccess = (currentRole: string | null): boolean => (
+    currentRole === 'curator' || currentRole === 'assessor' || currentRole === 'admin_csrs' || currentRole === 'admin_omnifit'
+  );
+
+  const toStringArray = (raw: unknown): string[] => {
+    if (!Array.isArray(raw)) {
+      return [];
+    }
+
+    return raw.map((entry) => (typeof entry === 'string' ? entry.trim() : '')).filter(Boolean);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
+      if (authLoading) return;
+      if (!user || !hasRoleAccess(role)) {
+        router.replace('/curator');
+        return;
+      }
       if (!params.id) return;
       try {
         const docRef = doc(db, 'assessments', params.id as string);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const d = { id: docSnap.id, ...docSnap.data() } as any;
+
+          const userDocByUid = await getDoc(doc(db, 'users', user.uid)).catch(() => null);
+          const userDocByEmail = user.email ? await getDoc(doc(db, 'users', user.email)).catch(() => null) : null;
+          const profile = userDocByUid?.data() || userDocByEmail?.data() || {};
+
+          const organizationScopes = Array.from(new Set([
+            ...toStringArray(profile.allowedOrganizations),
+            ...toStringArray(profile.organizationScopes),
+            ...toStringArray(profile.accessibleOrganizations),
+          ]));
+
+          const targetOrganization = typeof d.corporateEntity === 'string' ? d.corporateEntity : '';
+          const isAdmin = role === 'admin_csrs' || role === 'admin_omnifit';
+          const allowedByScope = targetOrganization ? organizationScopes.includes(targetOrganization) : false;
+
+          if (!isAdmin && !allowedByScope && role !== 'assessor') {
+            alert('Akses ditolak. Anda tidak memiliki scope untuk organization ini.');
+            router.replace('/curator/dashboard');
+            return;
+          }
+
           setData(d);
           
           const aiRes = d.aiResult || {};
@@ -56,6 +98,23 @@ export default function CuratorAssessmentDetailPage() {
           setDocumentNotes(d.curatorAssessment?.documentNotes || '');
           setMetricsNotes(d.curatorAssessment?.metricsNotes || '');
           setSwotNotes(d.curatorAssessment?.swotNotes || '');
+
+          if (!auditOpenLoggedRef.current && user) {
+            auditOpenLoggedRef.current = true;
+            const action = d.status === 'Curator_Validated' ? 'open_assessment' : 'open_draft';
+            logCuratorAuditEvent({
+              action,
+              userId: user.uid,
+              userEmail: user.email || '',
+              role: role || 'unknown',
+              corporateEntity: typeof d.corporateEntity === 'string' ? d.corporateEntity : 'unknown',
+              assessmentId: d.id,
+              assessmentStatusBefore: typeof d.status === 'string' ? d.status : '',
+              routePath: `/curator/assessment/${d.id}`,
+            }).catch((error) => {
+              console.warn('Gagal menyimpan audit log open curator assessment:', error);
+            });
+          }
 
           if (d.corporateEntity) {
             const tagsDocRef = doc(db, 'corporate_tags', d.corporateEntity);
@@ -73,7 +132,7 @@ export default function CuratorAssessmentDetailPage() {
       }
     };
     fetchData();
-  }, [params.id, router]);
+  }, [authLoading, params.id, role, router, user]);
 
   // AUTOSAVE LOGIC
   useEffect(() => {
@@ -111,6 +170,27 @@ export default function CuratorAssessmentDetailPage() {
         status: 'Curator_Validated', validatedAt: new Date().toISOString(),
         curatorAssessment: { verifiedScore: Number(curatorScore), verifiedLevel: curatorLevel, finalRoute: curatorRoute, tags: selectedTags, customBlockNotes, documentNotes, metricsNotes, swotNotes }
       });
+
+      if (user) {
+        await logCuratorAuditEvent({
+          action: 'finalize_assessment',
+          userId: user.uid,
+          userEmail: user.email || '',
+          role: role || 'unknown',
+          corporateEntity: typeof data.corporateEntity === 'string' ? data.corporateEntity : 'unknown',
+          assessmentId: data.id,
+          assessmentStatusBefore: typeof data.status === 'string' ? data.status : '',
+          details: {
+            finalizedScore: Number(curatorScore),
+            finalizedLevel: curatorLevel,
+            tagCount: selectedTags.length,
+          },
+          routePath: `/curator/assessment/${data.id}`,
+        }).catch((error) => {
+          console.warn('Gagal menyimpan audit log finalize curator:', error);
+        });
+      }
+
       alert('Data telah difinalisasi secara permanen!');
       router.push('/curator/dashboard');
     } catch (error) { alert('Gagal terhubung ke database.'); } finally { setIsFinalizing(false); }

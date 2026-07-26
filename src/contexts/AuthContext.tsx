@@ -19,7 +19,7 @@ import { ensureReferralVisitorId, getStoredReferralAttribution } from '@/lib/ref
 
 interface AuthContextType {
   user: User | null;
-  role: 'user' | 'admin_omnifit' | 'admin_csrs' | 'assessor' | null;
+  role: 'user' | 'admin_omnifit' | 'admin_csrs' | 'assessor' | 'curator' | null;
   loading: boolean;
   loginWithGoogle: () => Promise<void>;
   registerWithEmail: (email: string, password: string, name: string) => Promise<void>;
@@ -32,7 +32,7 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [role, setRole] = useState<'user' | 'admin_omnifit' | 'admin_csrs' | 'assessor' | null>(null);
+  const [role, setRole] = useState<'user' | 'admin_omnifit' | 'admin_csrs' | 'assessor' | 'curator' | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -41,19 +41,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       
       if (currentUser) {
         try {
-          let currentRole: any = 'user';
+          let currentRole: 'user' | 'admin_omnifit' | 'admin_csrs' | 'assessor' | 'curator' = 'user';
+          const validRoles = new Set(['user', 'admin_omnifit', 'admin_csrs', 'assessor', 'curator']);
+
+          const pickRole = (raw: unknown): typeof currentRole => {
+            if (typeof raw === 'string' && validRoles.has(raw)) {
+              return raw as typeof currentRole;
+            }
+            return 'user';
+          };
 
           // 1. Cek apakah Admin mendaftarkan role menggunakan ID berupa Email
           const emailRef = doc(db, 'users', currentUser.email || '');
           const emailSnap = await getDoc(emailRef).catch(() => null);
+          const roleFromEmailDoc = emailSnap?.exists() ? pickRole(emailSnap.data().role) : null;
 
-          if (emailSnap && emailSnap.exists() && emailSnap.data().role === 'assessor') {
-            currentRole = 'assessor';
+          if (roleFromEmailDoc) {
+            currentRole = roleFromEmailDoc;
+          }
+
+          if (emailSnap && emailSnap.exists()) {
             // Sinkronisasi data ke ID UID agar ke depannya sesuai standar Firestore
             await setDoc(doc(db, 'users', currentUser.uid), { 
               email: currentUser.email,
               displayName: currentUser.displayName,
-              role: 'assessor', 
+              role: currentRole,
               updatedAt: new Date().toISOString() 
             }, { merge: true });
           } else {
@@ -62,7 +74,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             const userSnap = await getDoc(userRef);
             
             if (userSnap.exists()) {
-              currentRole = userSnap.data().role || 'user';
+              currentRole = pickRole(userSnap.data().role);
             } else {
               // Registrasi user baru di Firestore
               await setDoc(userRef, {
