@@ -1,7 +1,7 @@
 // src/app/admin/templates/page.tsx
 'use client';
 import React, { useState, useEffect, Suspense, useMemo } from 'react';
-import { collection, getDocs, doc, setDoc, deleteDoc, updateDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, setDoc, deleteDoc, updateDoc, writeBatch } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FormTemplate } from '@/types/curation';
@@ -246,9 +246,13 @@ function TemplateBuilderContent() {
     setEditingFolder(null);
 
     try {
-      await setDoc(doc(db, 'template_folders', newName), { name: newName, updatedAt: new Date().toISOString() });
-      await deleteDoc(doc(db, 'template_folders', oldName));
-      await Promise.all(templatesToUpdate.map(t => updateDoc(doc(db, 'form_templates', t.id), { folder: newName })));
+      const batch = writeBatch(db);
+      batch.set(doc(db, 'template_folders', newName), { name: newName, updatedAt: new Date().toISOString() });
+      batch.delete(doc(db, 'template_folders', oldName));
+      templatesToUpdate.forEach(t => {
+        batch.update(doc(db, 'form_templates', t.id), { folder: newName });
+      });
+      await batch.commit();
       toast.success("Nama folder berhasil diubah.");
     } catch (e) {
       console.error(e);
@@ -266,8 +270,12 @@ function TemplateBuilderContent() {
     if (activeFolder === folderName) router.push('?folder=Semua');
 
     try {
-      await deleteDoc(doc(db, 'template_folders', folderName));
-      await Promise.all(templatesToUpdate.map(t => updateDoc(doc(db, 'form_templates', t.id), { folder: null })));
+      const batch = writeBatch(db);
+      batch.delete(doc(db, 'template_folders', folderName));
+      templatesToUpdate.forEach(t => {
+        batch.update(doc(db, 'form_templates', t.id), { folder: null });
+      });
+      await batch.commit();
       toast.success("Folder berhasil dihapus.");
     } catch (e) {
        console.error(e);
@@ -327,7 +335,11 @@ function TemplateBuilderContent() {
     setTemplates(prev => prev.map(t => selectedTemplates.includes(t.id) ? { ...t, folder: finalFolderValue || undefined } : t));
     
     try {
-      await Promise.all(selectedTemplates.map(id => updateDoc(doc(db, 'form_templates', id), { folder: finalFolderValue })));
+      const batch = writeBatch(db);
+      selectedTemplates.forEach(id => {
+        batch.update(doc(db, 'form_templates', id), { folder: finalFolderValue });
+      });
+      await batch.commit();
       setSelectedTemplates([]);
       toast.success(`${selectedTemplates.length} Template dipindahkan ke ${targetFolder}.`);
     } catch(e) {
@@ -342,7 +354,11 @@ function TemplateBuilderContent() {
     setTemplates(prev => prev.filter(t => !selectedTemplates.includes(t.id)));
     
     try {
-      await Promise.all(selectedTemplates.map(id => deleteDoc(doc(db, 'form_templates', id))));
+      const batch = writeBatch(db);
+      selectedTemplates.forEach(id => {
+        batch.delete(doc(db, 'form_templates', id));
+      });
+      await batch.commit();
       toast.success(`${selectedTemplates.length} Template berhasil dihapus.`);
       setSelectedTemplates([]);
     } catch(e) {
