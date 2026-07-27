@@ -18,8 +18,6 @@ export async function processAIAssessment(
     timeout: 540000 
   });
 
-  console.log("Mengirim payload data ke Cloud Function...");
-
   try {
     const result = await processCuration({
       formData,
@@ -30,12 +28,11 @@ export async function processAIAssessment(
     });
 
     const data = result.data as { assessmentId: string, aiResult: AIResult };
-    console.log("Berhasil menerima respons AI! ID:", data.assessmentId);
 
     return { assessmentId: data.assessmentId, aiResult: data.aiResult };
 
-  } catch (err: any) {
+  } catch (err) {
     console.error("Gagal terhubung ke server:", err);
-    throw new Error(err.message || "Gagal memproses data atau waktu tunggu habis. Silakan coba lagi.");
+    throw new Error(err instanceof Error ? err.message : "Gagal memproses data atau waktu tunggu habis. Silakan coba lagi.");
   }
 }
