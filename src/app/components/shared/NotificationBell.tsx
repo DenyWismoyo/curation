@@ -4,7 +4,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bell, X, CheckCheck, Clock, Sparkles, ShieldCheck, Trophy } from 'lucide-react';
-import { collection, query, where, onSnapshot, updateDoc, doc, orderBy, limit } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, updateDoc, doc, orderBy, limit, writeBatch } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
@@ -96,9 +96,18 @@ export function NotificationBell({ className = '' }: NotificationBellProps) {
 
   const markAllRead = async () => {
     const unread = notifications.filter(n => !n.isRead);
-    await Promise.allSettled(
-      unread.map(n => updateDoc(doc(db, 'notifications', n.id), { isRead: true }))
-    );
+    if (unread.length === 0) return;
+
+    const batch = writeBatch(db);
+    unread.forEach(n => {
+      batch.update(doc(db, 'notifications', n.id), { isRead: true });
+    });
+
+    try {
+      await batch.commit();
+    } catch (error) {
+      console.error('Error marking all notifications as read:', error);
+    }
   };
 
   const handleNotifClick = (notif: NotificationItem) => {
