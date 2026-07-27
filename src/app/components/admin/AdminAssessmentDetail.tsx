@@ -36,12 +36,10 @@ export function AdminAssessmentDetail({ data, onClose }: AdminAssessmentDetailPr
       }
       
       try {
-        console.log(`Mengambil data internal untuk ID: ${documentId}...`);
         const internalDocRef = doc(db, 'assessments', documentId, 'internal', 'details');
         const internalSnap = await getDoc(internalDocRef);
         
         if (internalSnap.exists()) {
-          console.log("✅ Data internal berhasil ditemukan dan digabungkan!");
           // Gabungkan data publik dari tabel dengan data rahasia dari sub-collection
           setMergedAiResult((prev: any) => ({ ...prev, ...internalSnap.data() }));
         } else {
