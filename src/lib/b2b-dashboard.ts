@@ -27,6 +27,7 @@ export interface DashboardAssessmentRecord {
   readinessLevel?: string;
   formData?: Record<string, unknown>;
   analyticsSummary?: DashboardAnalyticsSummary;
+  aiResult?: { risks?: string[] };
   curatorAssessment?: DashboardCuratorAssessment;
 }
 
@@ -578,7 +579,21 @@ export function buildSummaryNarrative(snapshot: B2BDashboardSnapshot): string {
 }
 
 export function getUniqueRiskLabels(records: DashboardAssessmentRecord[]): string[] {
-  return summarizeRiskList(records);
+
+  const risks = new Set<string>();
+
+  for (const record of records) {
+
+    if (record.aiResult?.risks) {
+
+      record.aiResult.risks.forEach(r => risks.add(r));
+
+    }
+
+  }
+
+  return Array.from(risks);
+
 }
 
 export function getUniqueFocusLabels(records: DashboardAssessmentRecord[]): string[] {
