@@ -40,18 +40,18 @@ export const assessmentPostProcessingAgent = onDocumentUpdated({
     await Promise.allSettled([
       (async () => {
         if (updatedDocDataForBg.score !== undefined) {
-          const { generateAndStoreVectorEmbedding } = await import("../../vectorService");
+          const { generateAndStoreVectorEmbedding } = await import("../../general/vectorService");
           await generateAndStoreVectorEmbedding(assessmentId, updatedDocDataForBg, API_KEY);
         }
       })(),
       (async () => {
-        const { generateInternalPDF } = await import("../../documentGenerator");
+        const { generateInternalPDF } = await import("../../general/documentGenerator");
         await generateInternalPDF(assessmentId, updatedDocDataForBg, 'user');
         await generateInternalPDF(assessmentId, updatedDocDataForBg, 'curator');
       })(),
       (async () => {
         if (smtpEmail && smtpPassword && updatedDocDataForBg.userEmail) {
-          const { sendAssessmentEmail } = await import("../../emailService");
+          const { sendAssessmentEmail } = await import("../../email/emailService");
           await sendAssessmentEmail(smtpEmail, smtpPassword, {
             targetEmail: String(updatedDocDataForBg.userEmail),
             namaUsaha: String(updatedDocDataForBg.namaUsaha),

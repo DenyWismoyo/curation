@@ -1,5 +1,7 @@
 'use client';
+
 // src/app/components/curation/CurationLanding.tsx
+
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -73,6 +75,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
+
     const fetchDrafts = async () => {
       setIsFetchingData(true);
       try {
@@ -208,7 +211,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
   return (
     <LazyMotion features={domAnimation}>
       <div className="w-full min-h-screen bg-[#FAFAFA] py-8 lg:py-10 px-5 lg:px-10 relative overflow-hidden">
-         
+        
         {/* Animated Ornaments */}
         <m.div 
           animate={{ scale: [1, 1.05, 1], opacity: [0.4, 0.6, 0.4] }}
@@ -231,7 +234,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
             className="flex-1 space-y-8 text-center lg:text-left w-full"
           >
             <m.div variants={fadeUpVariants} className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-[1.5rem] shadow-xl shadow-slate-200/50 ring-1 ring-slate-100 mb-2 overflow-hidden">
-              <Image src="/logo.png" alt="Omnifit Logo" width={80} height={80} className="w-full h-full object-contain p-2" priority />
+              <Image src="/logo.png" alt="Omnifit Logo" width={80} height={80} className="w-full h-full object-contain p-2" priority unoptimized />
             </m.div>
             
             <m.div variants={fadeUpVariants} className="space-y-6">
@@ -273,7 +276,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                   <GlobalTargetIcon className="w-4 h-4" />
                   Ekosistem Mitra
                 </Link>
-
                 <button
                   onClick={handleShareOmnifit}
                   className="inline-flex items-center gap-2 font-bold text-slate-500 hover:text-indigo-600 bg-white shadow-sm ring-1 ring-slate-200 px-4 py-3 rounded-xl hover:bg-slate-50 transition-all"
@@ -281,7 +283,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                   <Share2 className="w-4 h-4" />
                   Bagikan Aplikasi
                 </button>
-
                 <Link href="/b2b/login" className="inline-flex items-center gap-2 font-bold text-slate-500 hover:text-indigo-600 bg-white shadow-sm ring-1 ring-slate-200 px-4 py-3 rounded-xl hover:bg-slate-50 transition-all">
                   <BriefcaseBusiness className="w-4 h-4" />
                   Login B2B
@@ -310,6 +311,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                   </Link>
                 </div>
               </div>
+
             </m.div>
 
             {/* AREA AUTENTIKASI ATAU DASHBOARD CEPAT */}
@@ -326,17 +328,14 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                       </svg>
                       Masuk dengan Akun Google
                     </Button>
-
                     <div className="relative flex items-center py-2">
                       <div className="flex-grow border-t border-slate-200"></div>
                       <span className="flex-shrink-0 mx-4 text-slate-400 text-xs font-medium">ATAU</span>
                       <div className="flex-grow border-t border-slate-200"></div>
                     </div>
-
                     <Button size="lg" onClick={() => setAuthMode('register')} className="w-full shadow-md bg-indigo-600 text-white hover:bg-indigo-700 h-14 rounded-2xl text-base font-bold transition-all flex items-center justify-center gap-3">
                       Daftar dengan Email
                     </Button>
-
                     <p className="text-center text-sm text-slate-500 font-medium mt-2">
                       Sudah punya akun? <button onClick={() => setAuthMode('login')} className="text-indigo-600 font-bold hover:underline">Masuk di sini</button>
                     </p>
@@ -347,7 +346,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                     <p className="text-xs font-medium text-slate-500 mb-4 leading-relaxed">
                       Masukkan alamat email yang terhubung dengan akun Anda. Kami akan mengirimkan tautan untuk membuat kata sandi baru.
                     </p>
-
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
                       <Input
@@ -509,6 +507,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                 </div>
               </div>
             </m.div>
+
           </m.div>
 
           {/* Kolom Kanan: Draft & History Cards */}
@@ -586,6 +585,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                           <span className="text-[9px] font-black text-emerald-600 uppercase tracking-wider">Live Sync</span>
                         </div>
                       </div>
+                      
                       <m.div variants={staggerContainer} initial="hidden" animate="visible" className="max-h-[400px] overflow-y-auto pr-2 custom-scrollbar flex flex-col gap-3 relative z-10">
                         {history.map((item, idx) => (
                           <m.div 
@@ -605,9 +605,11 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                                 {new Date(item.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                               </span>
                             </div>
+                            
                             <h4 className="font-bold text-slate-900 text-base group-hover:text-indigo-600 truncate mb-3 transition-colors">
                               {item.namaUsaha}
                             </h4>
+
                             <div className="flex items-center justify-between pt-3 border-t border-slate-50">
                               <div className="flex items-center gap-1.5">
                                 <div className="p-1 bg-emerald-50 rounded-full">

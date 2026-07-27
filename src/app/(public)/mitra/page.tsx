@@ -41,19 +41,23 @@ export default function EkosistemMitraPage() {
         const qPartners = query(collection(db, 'landing_partners'), where('isActive', '==', true), orderBy('order', 'asc'));
         const snapPartners = await getDocs(qPartners);
         setPartners(snapPartners.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      } catch (error) {
+        console.error("Gagal memuat ekosistem:", error);
+      }
 
+      try {
         const qFeedbacks = query(collection(db, 'feedbacks'), orderBy('createdAt', 'desc'));
         const snapFeedbacks = await getDocs(qFeedbacks);
-        
+
         let fetchedFeedbacks = snapFeedbacks.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         fetchedFeedbacks = fetchedFeedbacks.filter((f: any) => f.rating >= 4 && f.message && f.message.length > 10);
-        
+
         // Hanya memotong 3 ulasan secara acak
         const shuffledFeedbacks = fetchedFeedbacks.sort(() => 0.5 - Math.random()).slice(0, 3);
         setTestimonials(shuffledFeedbacks);
-
-      } catch (error) {
-        console.error("Gagal memuat ekosistem:", error);
+      } catch (feedbackError) {
+        console.warn('Akses feedback publik tidak tersedia:', feedbackError);
+        setTestimonials([]);
       } finally {
         setLoading(false);
       }

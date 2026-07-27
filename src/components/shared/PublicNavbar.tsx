@@ -1,6 +1,7 @@
 'use client';
 
 // src/components/shared/PublicNavbar.tsx
+
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -32,7 +33,7 @@ export function PublicNavbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout } = useAuth();
-
+  
   // State untuk Dropdown Profil
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -74,6 +75,7 @@ export function PublicNavbar() {
               height={22}
               className="object-contain brightness-0 invert"
               onError={() => {}}
+              unoptimized
             />
           </div>
           <div>

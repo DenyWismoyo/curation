@@ -1,5 +1,6 @@
-// src/app/token/page.tsx
 'use client';
+
+// src/app/token/page.tsx
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -34,6 +35,7 @@ export default function TokenPage() {
     }
 
     const [corpId, tokenCode] = cleanToken.split('-');
+
     setIsValidating(true);
 
     try {
@@ -47,6 +49,7 @@ export default function TokenPage() {
       }
 
       const batchData = docSnap.data();
+      
       // Cari menggunakan key tanpa prefix ATAU menggunakan token utuh
       const tokenData = batchData.tokens[tokenCode] || batchData.tokens[cleanToken];
 
@@ -76,6 +79,7 @@ export default function TokenPage() {
 
       // Redirect ke halaman asesmen
       router.push('/assessment');
+
     } catch (error) {
       console.error("Error validating token:", error);
       setErrorMsg('Terjadi kesalahan pada server saat memvalidasi token.');
@@ -104,7 +108,7 @@ export default function TokenPage() {
       >
         <div className="flex justify-center mb-8">
           <div className="w-16 h-16 bg-white rounded-[1.5rem] shadow-xl shadow-slate-200/50 ring-1 ring-slate-100 flex items-center justify-center overflow-hidden">
-             <Image src="/logo.png" alt="Omnifit Logo" width={60} height={60} className="object-contain p-2" priority />
+             <Image src="/logo.png" alt="Omnifit Logo" width={60} height={60} className="object-contain p-2" priority unoptimized />
           </div>
         </div>
 

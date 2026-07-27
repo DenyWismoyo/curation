@@ -328,27 +328,64 @@ export default function AdminB2BPilotDashboardPage() {
         }
 
         if (scopedOrganizations.length > 1) {
-          if (scopedOrganizations.length > 10) {
-            setRecords([]);
-            setAccessError('Organization scope lebih dari 10 tenant belum bisa di-query aman sekaligus. Kurangi scope atau pecah akun akses.');
-            setLoading(false);
-            return;
+          const chunks: string[][] = [];
+          for (let index = 0; index < scopedOrganizations.length; index += 10) {
+            chunks.push(scopedOrganizations.slice(index, index + 10));
           }
 
-          const scopedQuery = query(
-            collection(db, 'assessments'),
-            where('corporateEntity', 'in', scopedOrganizations),
-          );
+          const cacheByChunk = new Map<number, DashboardAssessmentRecord[]>();
+          const unsubs = chunks.map((orgChunk, chunkIndex) => {
+            const scopedQuery = query(
+              collection(db, 'assessments'),
+              where('corporateEntity', 'in', orgChunk),
+            );
 
-          unsubscribe = onSnapshot(
-            scopedQuery,
-            (snapshot) => parseSnapshot(snapshot as unknown as { docs: Array<{ id: string; data: () => Record<string, unknown> }> }),
-            (error) => {
-              console.error('Gagal memuat dashboard B2B pilot (multi org scope):', error);
-              setAccessError('Akses data multi-tenant scope gagal diproses.');
-              setLoading(false);
-            },
-          );
+            return onSnapshot(
+              scopedQuery,
+              (snapshot) => {
+                const parsed = snapshot.docs.map((document) => {
+                  const data = document.data() as Record<string, unknown>;
+                  return {
+                    id: document.id,
+                    createdAt: normalizeFirestoreDate(data.createdAt),
+                    corporateEntity: typeof data.corporateEntity === 'string' ? data.corporateEntity : undefined,
+                    trackType: typeof data.trackType === 'string' ? data.trackType : undefined,
+                    namaUsaha: typeof data.namaUsaha === 'string' ? data.namaUsaha : undefined,
+                    status: typeof data.status === 'string' ? data.status : undefined,
+                    score: typeof data.score === 'number' ? data.score : undefined,
+                    readinessLevel: typeof data.readinessLevel === 'string' ? data.readinessLevel : undefined,
+                    formData: (typeof data.formData === 'object' && data.formData && !Array.isArray(data.formData))
+                      ? (data.formData as Record<string, unknown>)
+                      : undefined,
+                    analyticsSummary: (typeof data.analyticsSummary === 'object' && data.analyticsSummary && !Array.isArray(data.analyticsSummary))
+                      ? (data.analyticsSummary as DashboardAssessmentRecord['analyticsSummary'])
+                      : undefined,
+                    curatorAssessment: (typeof data.curatorAssessment === 'object' && data.curatorAssessment && !Array.isArray(data.curatorAssessment))
+                      ? (data.curatorAssessment as DashboardAssessmentRecord['curatorAssessment'])
+                      : undefined,
+                  } satisfies DashboardAssessmentRecord;
+                });
+
+                cacheByChunk.set(chunkIndex, parsed);
+
+                const merged = Array.from(cacheByChunk.values())
+                  .flat()
+                  .sort((left, right) => new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime());
+
+                setRecords(merged);
+                setLoading(false);
+              },
+              (error) => {
+                console.error('Gagal memuat dashboard B2B pilot (multi org scope):', error);
+                setAccessError('Akses data multi-tenant scope gagal diproses.');
+                setLoading(false);
+              },
+            );
+          });
+
+          unsubscribe = () => {
+            unsubs.forEach((unsub) => unsub());
+          };
           return;
         }
 
