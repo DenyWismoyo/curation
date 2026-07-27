@@ -1,79 +1,45 @@
-# 🚀 Smart Curation & Assessment Platform (Enterprise Edition)
+# Omnifit Curation & Assessment Platform
 
-Platform *web* cerdas berskala *enterprise* yang dirancang untuk mendigitalisasi, mengotomatisasi, dan mengakselerasi alur kerja asesmen serta kurasi data. Didukung oleh integrasi Kecerdasan Buatan (AI) terpusat dan arsitektur *serverless* dari Firebase, sistem ini mengeliminasi inefisiensi birokrasi melalui pembuatan formulir dinamis, evaluasi otomatis, dan ekstraksi dokumen PDF secara *real-time*.
+Omnifit adalah platform asesmen adaptif berbasis AI untuk membantu individu, organisasi, dan institusi mengambil keputusan berbasis data perilaku, risiko, dan rekomendasi aksi.
 
-![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
-![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
-![Enterprise Ready](https://img.shields.io/badge/Enterprise-Ready-00C853?style=for-the-badge)
+## Ringkasan Produk
 
----
+- **Core value**: mengubah hasil asesmen dari sekadar skor menjadi keputusan yang bisa dijalankan.
+- **Use case utama**: B2C (pengembangan personal), B2B (HR/talent/readiness), B2G/B2P (program publik, edukasi, dan tata kelola SDM).
+- **Model operasional**: assessment-as-a-service dengan dukungan katalog template, dashboard hasil, dan rekomendasi tindak lanjut.
 
-## 📈 Business Value & Target Use Cases
+## Kapabilitas Platform
 
-Sistem ini dirancang sangat fleksibel dan dapat diadaptasi untuk berbagai kebutuhan industri dan sektor publik:
+- Dynamic form dan adaptive track.
+- Analisis AI untuk diagnosis gap, risiko, dan prioritas intervensi.
+- Dashboard berbasis peran (admin, kurator, asesor, pengguna).
+- Integrasi Firebase (Auth, Firestore, Functions) untuk skala dan keamanan.
+- Output laporan dan dukungan alur kurasi end-to-end.
 
-1. 🏛️ **Tata Kelola "Smart Hub" & Administrasi Publik:** Berfungsi sebagai modul inti dalam ekosistem digital pemerintah daerah untuk mengevaluasi kelayakan program masyarakat, mendata unit perlindungan komunitas, hingga manajemen perizinan secara transparan.
-2. 🤝 **Kolaborasi Model Pentahelix:** Platform ideal untuk memfasilitasi, mengkurasi, dan menilai proposal inovasi silang sektor yang melibatkan pemerintah, akademisi, badan usaha, komunitas, dan media secara terpusat.
-3. 🏢 **Corporate HR & Talent Acquisition:** Memungkinkan perusahaan melakukan asesmen kompetensi karyawan atau kandidat secara dinamis, dilengkapi dengan rekomendasi profil berbasis AI.
-4. 🎓 **EdTech & Sertifikasi:** Mengotomatisasi ujian, penilaian akreditasi, dan penerbitan laporan kelulusan.
+## Struktur Dokumen Pendukung
 
----
+Dokumen berikut disiapkan untuk memperkuat pemahaman bisnis dan pengambilan keputusan:
 
-## ✨ Fitur Komersial Unggulan
+1. [Apa Itu Omnifit](public/docs/apa_itu_omnifit.md)
+2. [Redefinisi Omnifit Assessment](public/docs/redefinisi-omnifit-assessment.md)
+3. [Proyeksi Harga Template Assessment](public/docs/proyeksi-harga-template-assessment.md)
+4. [Estimasi Biaya Pembuatan Aplikasi Omnifit](public/docs/estimasi-biaya-pembuatan-aplikasi-omnifit.md)
+5. [KAK Implementasi Omnifit](public/docs/kak-implementasi-omnifit.md)
+6. [TOR Inisiatif Omnifit](public/docs/tor-inisiatif-omnifit.md)
+7. [Value Ekonomi, Sosial, dan Valuasi Omnifit](public/docs/value-ekonomi-sosial-dan-valuasi-omnifit.md)
 
-1. 🧩 **Dynamic Wizard & Adaptive Tracks:** Pengguna dapat memilih jalur (*track*) yang relevan dan sistem akan menyajikan formulir yang beradaptasi secara dinamis sesuai kebutuhan asesmen.
-2. 🤖 **AI-Powered Decision Support:** Sistem secara otonom menganalisis parameter input menggunakan AI (*Generative AI Service*) untuk merumuskan *AI Prompt Blueprint* dan memberikan rekomendasi objektif kepada tim kurator.
-3. 📄 **High-Fidelity PDF Generation:** Pembuatan *Universal Assessment View* dan *Report Template* berformat PDF dengan standar profesional langsung dari antarmuka aplikasi.
-4. 🔐 **Enterprise-Grade RBAC:** Dasbor terisolasi untuk peran **Admin**, **Curator**, dan **Public User** guna memastikan alur kerja yang terstruktur dan terukur.
-5. 🛠️ **No-Code Template Builder:** Admin dapat membuat atau memodifikasi formulir asesmen baru (*Tab Form Builder*) serta mengkalibrasi instruksi AI (*Tab AI Config*) tanpa memerlukan *deployment* ulang.
+## Dokumen Operasional Produk Lainnya
 
----
+- [Manual Landing](public/docs/landing.md)
+- [Manual Dashboard](public/docs/dashboard.md)
+- [Manual Katalog](public/docs/katalog.md)
+- [Manual Mitra](public/docs/mitra.md)
+- [Manual Assessor](public/docs/assessor.md)
+- [Manual Curator](public/docs/curator.md)
+- [Ketentuan Benefit B2B](public/docs/b2b-ketentuan-benefit.md)
+- [Program Affiliate](public/docs/program-affiliate-omnifit.md)
 
-## 🛡️ Keamanan & Kepatuhan (Security & Compliance)
+## Catatan
 
-Sebagai produk komersial, keamanan data adalah prioritas utama:
-1. **Data Isolation:** Implementasi ketat *Firestore Security Rules* (`firestore.rules`) menjamin bahwa setiap lapisan peran hanya dapat mengakses dan memodifikasi data yang menjadi wewenangnya.
-2. **API Security:** Kredensial AI dan logika pemrosesan data berat diamankan secara penuh di lapisan *backend* (Firebase Cloud Functions) untuk mencegah kebocoran *prompt* atau API Key.
-3. **Privacy-First AI:** Data dikelola secara selektif sebelum dikirim ke layanan AI untuk menjaga kerahasiaan informasi sensitif institusi.
-
----
-
-## 🏗️ Arsitektur Sistem Skala Besar
-
-Dibangun dengan arsitektur *serverless* modern untuk menjamin skalabilitas (*auto-scaling*) saat terjadi lonjakan trafik pengguna dan menekan biaya pemeliharaan *server* konvensional.
-
-```mermaid
-graph TD
-    subgraph Frontend ["Frontend (Next.js App Router)"]
-        UI["UI Components<br/>(Tailwind + Shadcn UI)"]
-        Context["Contexts & Hooks<br/>(AuthContext, useCuration, usePDFExport)"]
-        Pages["Role-based Dashboards<br/>(Admin, Curator, Public)"]
-    end
-
-    subgraph Backend ["Firebase Serverless Backend"]
-        Auth["Authentication & Identity"]
-        Firestore[("Cloud Firestore<br/>(Rules & Indexes)")]
-        Functions["Cloud Functions<br/>(Node.js Microservices)"]
-    end
-
-    subgraph Core_Services ["Microservices Integration"]
-        AI["AI Analysis Service<br/>(Prompt Engine)"]
-        PDF["PDF Generator<br/>(React PDF)"]
-        Email["Automated Email Service"]
-    end
-
-    %% Connections
-    UI --> Context
-    Context --> Pages
-    
-    Pages -->|Secure Login| Auth
-    Pages -->|Read/Write Data| Firestore
-    Pages -->|Trigger Actions| Functions
-
-    Functions --> AI
-    Functions --> Email
-    Functions --> PDF
-
-
-
+- Semua estimasi biaya, valuasi, dan proyeksi dalam dokumen pendukung menggunakan asumsi bisnis awal dan perlu divalidasi berkala (minimal per kuartal).
+- Dokumen ini dapat dijadikan basis diskusi investor, mitra strategis, dan perencanaan implementasi.
