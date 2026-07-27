@@ -2,11 +2,11 @@
 
 // src/components/shared/PublicNavbar.tsx
 
-import React, { useState, useRef, useEffect } from 'react'
+import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import {
   LibraryBig,
   FolderKanban,
@@ -22,6 +22,16 @@ import {
   LogIn,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  DropdownMenuGroup,
+} from '@/components/ui/dropdown-menu'
+import { Button } from '@/components/ui/button'
 
 interface NavItem {
   href: string
@@ -70,10 +80,6 @@ export function PublicNavbar() {
   const router = useRouter()
   const { user, logout } = useAuth()
 
-  // State untuk Dropdown Profil
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const dropdownRef = useRef<HTMLDivElement>(null)
-
   const isActive = (href: string) =>
     href === '/' ? pathname === '/' : pathname?.startsWith(href)
 
@@ -86,38 +92,23 @@ export function PublicNavbar() {
     }
   }
 
-  // Menutup dropdown jika klik di luar elemen
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsDropdownOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
-
   return (
-    <header className="hidden md:flex fixed top-0 left-0 right-0 h-20 bg-white/80 backdrop-blur-md border-b border-slate-100 z-40 shadow-sm items-center justify-between px-6 lg:px-12 transition-all">
+    <header className="hidden md:flex fixed top-0 left-0 right-0 h-20 bg-background/80 backdrop-blur-md border-b z-40 items-center justify-between px-6 lg:px-12">
       {/* Brand & Kiri */}
       <div className="flex items-center gap-8">
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center shadow-md shadow-indigo-200 group-hover:scale-105 transition-transform">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center shadow-md shadow-primary/20 group-hover:scale-105 transition-transform">
             <Image
               src="/logo.png"
               alt="Omnifit"
               width={22}
               height={22}
               className="object-contain brightness-0 invert"
-              onError={() => {}}
               unoptimized
             />
           </div>
           <div>
-            <span className="text-base font-black text-slate-900 tracking-tight">
+            <span className="text-base font-black text-foreground tracking-tight">
               Omnifit
             </span>
           </div>
@@ -137,15 +128,15 @@ export function PublicNavbar() {
                   relative px-4 py-2 rounded-xl text-sm font-bold transition-all
                   ${
                     active
-                      ? 'text-indigo-700'
-                      : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+                      ? 'text-primary-foreground'
+                      : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                   }
                 `}
               >
                 {active && (
                   <motion.div
                     layoutId="navbar-active"
-                    className="absolute inset-0 bg-indigo-50 rounded-xl -z-10"
+                    className="absolute inset-0 bg-primary/10 rounded-xl -z-10"
                     transition={{ type: 'spring', stiffness: 500, damping: 40 }}
                   />
                 )}
@@ -162,114 +153,84 @@ export function PublicNavbar() {
       <div className="flex items-center gap-4">
         {user ? (
           <>
-            <div className="flex items-center gap-3 pl-4 border-l border-slate-100">
-              {/* Dropdown Profil & Menu Checkout/Riwayat */}
-              <div className="relative" ref={dropdownRef}>
-                <button
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className={`flex items-center gap-2.5 p-1.5 pr-3 rounded-xl transition-all group border ${isDropdownOpen ? 'bg-slate-50 border-slate-100 ring-1 ring-slate-200' : 'bg-transparent border-transparent hover:bg-slate-50'}`}
-                >
-                  {user.photoURL ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={user.photoURL}
-                      alt={user.displayName || 'User'}
-                      width={32}
-                      height={32}
-                      className="rounded-[10px] w-8 h-8 object-cover ring-2 ring-transparent group-hover:ring-indigo-200 transition-all"
-                      referrerPolicy="no-referrer"
-                    />
-                  ) : (
-                    <div className="w-8 h-8 rounded-[10px] bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm">
-                      {user.displayName?.charAt(0).toUpperCase() || 'U'}
-                    </div>
-                  )}
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-xs font-bold text-slate-700 leading-tight truncate max-w-[100px]">
-                      {user.displayName?.split(' ')[0] || 'Pengguna'}
-                    </span>
-                    <ChevronDown
-                      size={14}
-                      className={`text-slate-400 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180 text-indigo-500' : ''}`}
-                    />
-                  </div>
-                </button>
-
-                <AnimatePresence>
-                  {isDropdownOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      transition={{ duration: 0.15 }}
-                      className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl ring-1 ring-slate-100 p-2 flex flex-col gap-1 z-50 origin-top-right"
-                    >
-                      <div className="px-3 py-2 mb-1 border-b border-slate-100">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">
-                          Akun Saya
-                        </p>
-                        <p className="text-sm font-bold text-slate-900 truncate">
-                          {user.email}
-                        </p>
+            <div className="flex items-center gap-3 pl-4 border-l">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="flex items-center gap-2.5 p-1.5 pr-3 h-auto">
+                    {user.photoURL ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={user.photoURL}
+                        alt={user.displayName || 'User'}
+                        width={32}
+                        height={32}
+                        className="rounded-[10px] w-8 h-8 object-cover"
+                        referrerPolicy="no-referrer"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 rounded-[10px] bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
+                        {user.displayName?.charAt(0).toUpperCase() || 'U'}
                       </div>
-
-                      <Link
-                        href="/profil"
-                        onClick={() => setIsDropdownOpen(false)}
-                        className="flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-colors"
-                      >
+                    )}
+                    <div className="flex items-center gap-1.5">
+                       <span className="text-xs font-bold text-foreground leading-tight truncate max-w-[100px]">
+                        {user.displayName?.split(' ')[0] || 'Pengguna'}
+                      </span>
+                      <ChevronDown size={14} className="text-muted-foreground" />
+                    </div>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-64" align="end">
+                  <DropdownMenuLabel className="font-normal">
+                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                      Akun Saya
+                    </p>
+                    <p className="text-sm font-bold text-foreground truncate mt-1">
+                      {user.email}
+                    </p>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem asChild>
+                      <Link href="/profil" className="flex items-center gap-3 cursor-pointer">
                         <User size={16} /> Profil Lengkap
                       </Link>
-
-                      {/* Tautan Riwayat/Tagihan mengarah ke /riwayat */}
-                      <Link
-                        href="/riwayat"
-                        onClick={() => setIsDropdownOpen(false)}
-                        className="flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-colors"
-                      >
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                       <Link href="/riwayat" className="flex items-center gap-3 cursor-pointer">
                         <Receipt size={16} /> Riwayat & Tagihan
                       </Link>
-
-                      <div className="h-px bg-slate-100 my-1 mx-2"></div>
-
-                      <button
-                        onClick={() => {
-                          setIsDropdownOpen(false)
-                          handleLogout()
-                        }}
-                        className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-rose-600 hover:bg-rose-50 rounded-xl transition-colors"
-                      >
-                        <LogOut size={16} /> Keluar
-                      </button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:bg-destructive/10 focus:text-destructive">
+                    <LogOut size={16} className="mr-3" />
+                    Keluar
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
 
-            <Link
-              href="/token"
-              className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-indigo-600 text-white text-sm font-bold shadow-sm hover:shadow-md transition-all duration-300"
-            >
-              <KeyRound size={16} />
-              Gunakan Token
-            </Link>
+            <Button asChild>
+              <Link href="/token">
+                <KeyRound size={16} className="mr-2" />
+                Gunakan Token
+              </Link>
+            </Button>
           </>
         ) : (
           <div className="flex items-center gap-3">
-            <Link
-              href="/login"
-              className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-slate-600 hover:text-indigo-600 text-sm font-bold transition-colors"
-            >
-              <LogIn size={16} />
-              Masuk ke Akun
-            </Link>
-            <Link
-              href="/katalog"
-              className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold shadow-sm hover:shadow-md transition-all duration-300"
-            >
-              Mulai Eksplorasi
-            </Link>
+            <Button variant="ghost" asChild>
+              <Link href="/login">
+                <LogIn size={16} className="mr-2" />
+                Masuk
+              </Link>
+            </Button>
+            <Button asChild>
+              <Link href="/katalog">
+                Mulai Eksplorasi
+              </Link>
+            </Button>
           </div>
         )}
       </div>

@@ -108,7 +108,7 @@ export function BottomNav() {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
       {/* Blur backdrop */}
-      <div className="bg-white/80 backdrop-blur-xl border-t border-slate-100 shadow-[0_-8px_32px_rgba(0,0,0,0.06)]">
+      <div className="bg-background/80 backdrop-blur-xl border-t border-border shadow-lg">
         <div className="flex items-stretch justify-around px-2 safe-area-bottom" style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 8px)' }}>
           {navItems.map((item) => {
             const active = isActive(item.href);
@@ -121,14 +121,14 @@ export function BottomNav() {
                 key={item.href}
                 href={item.href}
                 className={`flex flex-col items-center justify-center gap-1 py-2 px-3 flex-1 relative transition-all duration-200 min-h-[56px] ${
-                  active ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'
+                  active ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 {/* Active indicator pill */}
                 {active && (
                   <motion.div
                     layoutId="bottom-nav-active"
-                    className="absolute inset-x-2 top-1 h-[2px] bg-indigo-600 rounded-full"
+                    className="absolute inset-x-2 top-1 h-[2px] bg-primary rounded-full"
                     transition={{ type: 'spring', stiffness: 500, damping: 40 }}
                   />
                 )}
@@ -149,7 +149,7 @@ export function BottomNav() {
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
                         exit={{ scale: 0 }}
-                        className="absolute -top-1 -right-1 min-w-[14px] h-[14px] bg-red-500 text-white text-[8px] font-black rounded-full flex items-center justify-center px-0.5"
+                        className="absolute -top-1 -right-1 min-w-[14px] h-[14px] bg-destructive text-destructive-foreground text-[9px] font-extrabold rounded-full flex items-center justify-center px-0.5"
                       >
                         {totalBadge > 9 ? '9+' : totalBadge}
                       </motion.div>
@@ -164,14 +164,14 @@ export function BottomNav() {
                         animate={{ scale: [1, 1.3, 1] }}
                         transition={{ repeat: Infinity, duration: 1.5 }}
                         exit={{ scale: 0 }}
-                        className="absolute -top-1 -right-1 w-3 h-3 bg-amber-500 rounded-full"
+                        className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-500 rounded-full"
                       />
                     )}
                   </AnimatePresence>
                 </div>
 
                 {/* Label */}
-                <span className={`text-[9px] font-bold tracking-wide transition-all ${active ? 'text-indigo-600' : 'text-slate-400'}`}>
+                <span className={`text-[9px] font-bold tracking-wide transition-all ${active ? 'text-primary' : 'text-muted-foreground'}`}>
                   {item.label}
                 </span>
               </Link>

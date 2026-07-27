@@ -10,6 +10,7 @@ import { CurationLanding } from '@/app/components/curation/CurationLanding';
 import { CurationDashboard } from '@/app/components/curation/CurationDashboard';
 import { useAuth } from '@/contexts/AuthContext';
 import { CurationHistory } from '@/types/curation';
+import { X } from 'lucide-react';
 
 // IMPORT CUSTOM ICON
 import { BrainIcon } from '@/types';
@@ -21,7 +22,7 @@ export default function Home() {
   const router = useRouter();
   const { state, actions } = useCuration();
   const { user, role, loading, loginWithGoogle, logout } = useAuth();
-  
+
   const [dbHistory, setDbHistory] = useState<CurationHistory[]>([]);
   const [showOnboardingBanner, setShowOnboardingBanner] = useState(false);
 
@@ -41,7 +42,7 @@ export default function Home() {
 
     const unsubscribe = onSnapshot(q, (snap) => {
       const historyData: CurationHistory[] = [];
-      
+
       snap.forEach((doc) => {
         const data = doc.data();
         historyData.push({
@@ -55,7 +56,7 @@ export default function Home() {
           result: data.aiResult || data.originalAiResult,
         });
       });
-      
+
       setDbHistory(historyData);
     }, (error) => {
       console.error("Gagal mengambil riwayat real-time dari database:", error);
@@ -126,12 +127,12 @@ export default function Home() {
   // UI LOADING MENGGUNAKAN CUSTOM BRAIN ICON
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#FAFAFA]">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-background">
         <div className="w-14 h-14 mb-4 relative flex items-center justify-center">
-          <div className="absolute inset-0 rounded-full border-[4px] border-indigo-100 border-t-indigo-600 animate-spin" />
-          <BrainIcon size={24} className="text-indigo-600 animate-pulse" />
+          <div className="absolute inset-0 rounded-full border-[4px] border-secondary border-t-primary animate-spin" />
+          <BrainIcon size={24} className="text-primary animate-pulse" />
         </div>
-        <p className="text-slate-500 font-medium tracking-wide">Memuat Sistem...</p>
+        <p className="text-muted-foreground font-medium tracking-wide">Memuat Sistem...</p>
       </div>
     );
   }
@@ -140,7 +141,7 @@ export default function Home() {
     <main className="min-h-screen">
       {/* ONBOARDING NUDGE BANNER */}
       {showOnboardingBanner && (
-        <div className="fixed top-0 left-0 right-0 md:left-60 z-40 bg-indigo-600 text-white text-center px-4 py-2.5 flex items-center justify-center gap-3 text-sm font-bold shadow-lg">
+        <div className="fixed top-0 left-0 right-0 md:left-60 z-40 bg-primary text-primary-foreground text-center px-4 py-2.5 flex items-center justify-center gap-3 text-sm font-bold shadow-lg">
           <span>✨ Personalisasi pengalaman Anda!</span>
           <button
             onClick={() => router.push('/onboarding')}
@@ -148,7 +149,9 @@ export default function Home() {
           >
             Mulai Onboarding →
           </button>
-          <button onClick={() => setShowOnboardingBanner(false)} className="ml-2 opacity-60 hover:opacity-100 text-lg leading-none">×</button>
+          <button onClick={() => setShowOnboardingBanner(false)} className="ml-2 opacity-60 hover:opacity-100">
+            <X size={18} />
+          </button>
         </div>
       )}
       <CurationLanding
