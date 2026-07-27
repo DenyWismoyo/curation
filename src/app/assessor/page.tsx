@@ -196,12 +196,16 @@ export default function AssessorDashboardPage() {
             chunks.push(allocationData.allowedTemplates.slice(i, i + 10));
           }
 
-          let fetchedModules: any[] = [];
-          for (const chunk of chunks) {
+          const fetchPromises = chunks.map(async (chunk) => {
             const qTpls = query(collection(db, 'form_templates'), where('__name__', 'in', chunk));
             const snapTpls = await getDocs(qTpls);
-            snapTpls.forEach(t => fetchedModules.push({ id: t.id, ...t.data() }));
-          }
+            const docs: any[] = [];
+            snapTpls.forEach(t => docs.push({ id: t.id, ...t.data() }));
+            return docs;
+          });
+
+          const results = await Promise.all(fetchPromises);
+          const fetchedModules = results.flat();
 
           setAllowedModules(fetchedModules);
           // Set template pertama sebagai yang aktif secara default
