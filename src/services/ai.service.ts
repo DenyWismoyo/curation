@@ -31,8 +31,8 @@ export async function processAIAssessment(
 
     return { assessmentId: data.assessmentId, aiResult: data.aiResult };
 
-  } catch (err: any) {
+  } catch (err) {
     console.error("Gagal terhubung ke server:", err);
-    throw new Error(err.message || "Gagal memproses data atau waktu tunggu habis. Silakan coba lagi.");
+    throw new Error(err instanceof Error ? err.message : "Gagal memproses data atau waktu tunggu habis. Silakan coba lagi.");
   }
 }
