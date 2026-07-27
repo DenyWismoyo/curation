@@ -40,12 +40,17 @@ export const weeklyActionPlanNudge = onSchedule({
     try {
       const assessmentsRef = db.collection("assessments");
       const snapshot = await assessmentsRef.where("status", "==", "COMPLETED").get();
-
       if (snapshot.empty) return;
 
+      // PEMBARUAN: Konfigurasi SMTP Hostinger
       const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: { user: smtpEmail, pass: smtpPassword },
+        host: "smtp.hostinger.com",
+        port: 465,
+        secure: true,
+        auth: { 
+          user: smtpEmail, 
+          pass: smtpPassword 
+        },
       });
 
       const batchPromises = snapshot.docs.map(async (doc) => {
@@ -53,23 +58,22 @@ export const weeklyActionPlanNudge = onSchedule({
         // pada data.userEmail dan data.namaUsaha
         const data = doc.data() as any; 
         const actionPlan = data.aiResult?.customActionPlan;
-
+        
         if (!actionPlan || !Array.isArray(actionPlan)) return;
-
+        
         const totalTasks = actionPlan.length;
         const completedTasks = actionPlan.filter((t: any) => t.isCompleted).length;
         
         if (completedTasks === totalTasks) return; 
-
+        
         const pendingTasks = actionPlan.filter((t: any) => !t.isCompleted);
         const focusTasks = pendingTasks.slice(0, 2);
-
         const task1 = focusTasks[0];
         const task2 = focusTasks[1];
         
         const task1CalUrl = task1 ? createGoogleCalendarUrl(task1.task, task1.contextualTip || '') : '';
         const task2CalUrl = task2 ? createGoogleCalendarUrl(task2.task, task2.contextualTip || '') : '';
-
+        
         const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
         
         // [PERBAIKAN 2]: Menghapus backtick (```) di poin nomor 6 agar 
@@ -89,7 +93,7 @@ export const weeklyActionPlanNudge = onSchedule({
           
           Tugas 2: ${task2 ? `${task2.task} (${task2.contextualTip || '-'})` : '-'}
           ${task2 ? `Link Kalender Tugas 2: ${task2CalUrl}` : ''}
-
+          
           ATURAN DESAIN & KONTEN (MUTLAK):
           1. Gaya bahasa: Profesional, hangat, dan memotivasi (jangan seperti robot). Singkat saja maksimal 3 paragraf.
           2. Desain HTML: Gunakan inline CSS modern, font sans-serif (Inter/Roboto), background putih, dan sentuhan warna elegan.
@@ -98,7 +102,7 @@ export const weeklyActionPlanNudge = onSchedule({
           5. Tanda Tangan: "Tim Sukses Anda di Omnifit"
           6. OUTPUT HANYA KODE HTML MURNI. JANGAN menggunakan format markdown block.
         `;
-
+        
         const aiResult = await model.generateContent(prompt);
         let htmlBody = aiResult.response.text().trim();
         
@@ -106,23 +110,22 @@ export const weeklyActionPlanNudge = onSchedule({
         if (htmlBody.startsWith('\`\`\`')) {
             htmlBody = htmlBody.replace(/^\`\`\`(html)?/gi, '').replace(/\`\`\`$/g, '').trim();
         }
-
+        
         if (data.userEmail) {
             await transporter.sendMail({
                 // [PERBAIKAN 3]: Gunakan string concatenation standar 
                 // agar terhindar dari conflict template literal di pengirim email
                 from: '"Omnifit Coach" <' + smtpEmail + '>',
                 to: data.userEmail,
-                subject: `Fokus Eksekusi Minggu Ini: ${data.namaUsaha} 🚀`,
+                subject: `Fokus Eksekusi Minggu Ini: ${data.namaUsaha}`, // Perbaikan syntax penutup backtick disini
                 html: htmlBody,
             });
             console.log(`[NUDGE SENT] Email Senin Pagi + Kalender dikirim ke: ${data.userEmail}`);
         }
       });
-
+      
       await Promise.all(batchPromises);
-      console.log(`✅ Proses Weekly Nudge & Calendar Integration Selesai.`);
-
+      console.log(`Proses Weekly Nudge & Calendar Integration Selesai.`);
     } catch (error: any) {
       console.error("Gagal menjalankan Weekly Nudge:", error);
     }

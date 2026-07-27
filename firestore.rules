@@ -46,6 +46,52 @@ service cloud.firestore {
       return isSuperAdmin() || isAdminCSRS() || isAdminOmnifit() || isAssessor();
     }
 
+    function isSelfUserDoc(userId) {
+      return isAuthenticated() && (request.auth.uid == userId || request.auth.token.email == userId);
+    }
+
+    function isSafeSelfUserCreate() {
+      return (
+        !('role' in request.resource.data)
+        || request.resource.data.role == 'user'
+        || canInheritRoleFromEmailDoc()
+      )
+      && !('b2bPersonas' in request.resource.data)
+      && !('b2bOrganizationIds' in request.resource.data)
+      && !('allowedOrganizations' in request.resource.data)
+      && !('organizationScopes' in request.resource.data)
+      && !('accessibleOrganizations' in request.resource.data)
+      && !('b2bAccess' in request.resource.data);
+    }
+
+    function canInheritRoleFromEmailDoc() {
+      return request.auth.token.email is string
+        && exists(/databases/$(database)/documents/users/$(request.auth.token.email))
+        && (
+          !('role' in get(/databases/$(database)/documents/users/$(request.auth.token.email)).data)
+          || request.resource.data.role == get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role
+        );
+    }
+
+    function isSafeSelfRoleTransition() {
+      return request.resource.data.role == resource.data.role
+        || (
+          !('role' in resource.data)
+          && request.resource.data.role == 'user'
+        )
+        || canInheritRoleFromEmailDoc();
+    }
+
+    function isSafeSelfUserSecurityFieldsUnchanged() {
+      return isSafeSelfRoleTransition()
+        && request.resource.data.b2bPersonas == resource.data.b2bPersonas
+        && request.resource.data.b2bOrganizationIds == resource.data.b2bOrganizationIds
+        && request.resource.data.allowedOrganizations == resource.data.allowedOrganizations
+        && request.resource.data.organizationScopes == resource.data.organizationScopes
+        && request.resource.data.accessibleOrganizations == resource.data.accessibleOrganizations
+        && request.resource.data.b2bAccess == resource.data.b2bAccess;
+    }
+
     function isAssessmentOwner() {
       return isAuthenticated() && request.auth.uid == resource.data.userId;
     }
@@ -134,8 +180,10 @@ service cloud.firestore {
     }
 
     match /users/{userId} {
-      allow read: if isAuthenticated() && (request.auth.uid == userId || request.auth.token.email == userId || isB2BAdmin());
-      allow write: if isAuthenticated() && (request.auth.uid == userId || request.auth.token.email == userId || isB2BAdmin());
+      allow read: if isAuthenticated() && (isSelfUserDoc(userId) || isB2BAdmin());
+      allow create: if isB2BAdmin() || (isSelfUserDoc(userId) && isSafeSelfUserCreate());
+      allow update: if isB2BAdmin() || (isSelfUserDoc(userId) && isSafeSelfUserSecurityFieldsUnchanged());
+      allow delete: if isB2BAdmin();
     }
 
     match /assessments/{assessmentId} {
@@ -172,7 +220,14 @@ service cloud.firestore {
     match /feedbacks/{document=**} { allow create: if true; allow read, update, delete: if isSuperAdmin(); }
     match /adaptive_question_banks/{document=**} { allow read: if isSuperAdmin() || isAdminCSRS(); allow write: if false; }
     match /landing_partners/{document=**} { allow read: if true; allow write: if isSuperAdmin(); }
-    match /assessors/{document=**} { allow read: if isAuthenticated(); allow write: if isSuperAdmin() || isB2BAdmin(); }
+    match /assessors/{assessorId} {
+      allow read: if isB2BAdmin() || (isAuthenticated() && request.auth.token.email == assessorId);
+      allow write: if isSuperAdmin() || isB2BAdmin();
+    }
+    match /b2b_organizations/{orgId} {
+      allow read: if isB2BAdmin();
+      allow write: if isB2BAdmin();
+    }
     match /corporate_tags/{orgId} {
       allow read: if isAuthenticated() && canAccessOrganization(orgId);
       allow write: if isAuthenticated() && canAccessOrganization(orgId) && (isSuperAdmin() || isB2BAdmin() || isAssessor() || isCurator());

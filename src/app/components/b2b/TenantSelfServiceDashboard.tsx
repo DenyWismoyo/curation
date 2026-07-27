@@ -185,20 +185,34 @@ export function TenantSelfServiceDashboard({ persona }: { persona: PersonaView }
           return;
         }
 
-        if (scopedOrganizations.length <= 10) {
-          const scopedQuery = query(collection(db, 'assessments'), where('corporateEntity', 'in', scopedOrganizations));
-          unsubscribeAssessments = onSnapshot(scopedQuery, (snapshot) => {
-            const next = snapshot.docs
-              .map((item) => parseRecord(item.id, item.data() as Record<string, unknown>))
-              .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-            setRecords(next);
-            setLoading(false);
-          });
-          return;
+        const chunks: string[][] = [];
+        for (let index = 0; index < scopedOrganizations.length; index += 10) {
+          chunks.push(scopedOrganizations.slice(index, index + 10));
         }
 
-        setError('Scope organization lebih dari 10 tenant belum didukung di mode self-service ini.');
-        setLoading(false);
+        const cacheByChunk = new Map<number, DashboardAssessmentRecord[]>();
+        const unsubs = chunks.map((orgChunk, chunkIndex) => {
+          const scopedQuery = query(collection(db, 'assessments'), where('corporateEntity', 'in', orgChunk));
+          return onSnapshot(scopedQuery, (snapshot) => {
+            const parsed = snapshot.docs.map((item) => parseRecord(item.id, item.data() as Record<string, unknown>));
+            cacheByChunk.set(chunkIndex, parsed);
+
+            const merged = Array.from(cacheByChunk.values())
+              .flat()
+              .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+            setRecords(merged);
+            setLoading(false);
+          }, (watchError) => {
+            console.error('Gagal memuat scope multi-tenant B2B:', watchError);
+            setError('Terjadi kendala saat memuat sebagian scope organization B2B.');
+            setLoading(false);
+          });
+        });
+
+        unsubscribeAssessments = () => {
+          unsubs.forEach((unsub) => unsub());
+        };
       } catch (err) {
         console.error('Gagal memuat tenant self-service dashboard:', err);
         setError('Terjadi kesalahan saat memuat dashboard B2B tenant.');

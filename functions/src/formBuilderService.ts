@@ -6,7 +6,7 @@ import { getFirestore } from "firebase-admin/firestore";
 import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 import { buildMegaAgentPrompt } from "./promt/formBuilderPrompt";
 import { buildAIConfigPrompt } from "./promt/aiConfigPrompt";
-import { storeTemplateResearchVector } from "./vectorService";
+import { storeTemplateResearchVector } from "./general/vectorService";
 
 const geminiApiKeySecret = defineSecret("GEMINI_API_KEY");
 

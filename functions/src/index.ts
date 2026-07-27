@@ -13,15 +13,15 @@ import { buildAssessmentPrompt, getSystemPrompt } from "./promt/promptTemplate";
 // ============================================================================
 // EXPORT FUNGSI MODULAR
 // ============================================================================
-export { generatePDFReport } from "./documentGenerator";
-export { matchBusinessWithIndustry } from "./vectorService";
+export { generatePDFReport } from "./general/documentGenerator";
+export { matchBusinessWithIndustry } from "./general/vectorService";
 // export { generateFormTemplateFromAI } from "./formBuilderService";
-export { createPaymentInvoice, mayarWebhook } from "./paymentService";
-export { chatWithOmniAi } from "./omniAiService";
+export { createPaymentInvoice, mayarWebhook } from "./general/paymentService";
+export { chatWithOmniAi } from "./general/omniAiService";
 export { generateActionPlanChecklist, generateSubTaskChecklist } from "./actionPlanService";
 export { generateTemplateSellingPoints, generatePromptAnchors } from "./outputService";
-export { weeklyActionPlanNudge } from "./nudgeService";
-export { generateAdaptiveQuestions, evaluateMacroBranching, manualTriggerRAGSeed } from "./adaptiveValidationService";
+export { weeklyActionPlanNudge } from "./email/nudgeService";
+export { generateAdaptiveQuestions, evaluateMacroBranching, manualTriggerRAGSeed } from "./general/adaptiveValidationService";
 export { enhanceFieldLogic, enhanceStepLogic } from "./fieldEnhancerService";
 // TAMBAHKAN EXPORT FUNGSI BARU DI SINI:
 export { generateAdvancedPrompts } from "./promptEnhancerService";
@@ -45,6 +45,7 @@ export { createOrGetAffiliateProfile, attachAffiliateToTransaction, updateAffili
 export { affiliateCommissionAgent } from "./agents/affiliate/commissionAgent";
 export { upsertReferralAttribution, bindReferralAttributionToUser } from "./agents/affiliate/attributionAgent";
 export { generateAdaptiveOnboardingPlan } from "./agents/onboarding/adaptiveOnboardingAgent";
+export { adminUpsertB2BOrganization, adminListB2BOrganizations, adminSetB2BUserAccess, adminRevokeB2BUserAccess } from "./agents/b2b/organizationAgent";
 
 // ============================================================================
 // INISIALISASI FIREBASE

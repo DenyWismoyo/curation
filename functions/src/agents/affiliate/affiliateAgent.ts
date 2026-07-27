@@ -60,7 +60,7 @@ const isAdminOperator = async (uid: string, email: string): Promise<boolean> => 
 
   const roleUid = String(byUid?.data()?.role || "").toLowerCase();
   const roleEmail = String(byEmail?.data()?.role || "").toLowerCase();
-  const allowed = ["admin_csrs", "assessor", "admin"];
+  const allowed = ["admin_csrs", "admin_omnifit", "admin"];
 
   return allowed.includes(roleUid) || allowed.includes(roleEmail);
 };

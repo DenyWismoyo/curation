@@ -16,8 +16,11 @@ export const sendAssessmentEmail = async (
   data: EmailData
 ) => {
   try {
+    // PEMBARUAN: Konfigurasi SMTP Hostinger
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.hostinger.com",
+      port: 465,
+      secure: true, // Gunakan true untuk port 465
       auth: {
         user: smtpEmail,
         pass: smtpPassword,
@@ -28,7 +31,7 @@ export const sendAssessmentEmail = async (
       // REBRANDING: Nama Pengirim Email
       from: `"Omnifit Notification" <${smtpEmail}>`,
       to: data.targetEmail,
-      subject: `🚀 Laporan Hasil Asesmen AI: ${data.namaUsaha}`,
+      subject: `Laporan Hasil Asesmen AI: ${data.namaUsaha}`,
       html: `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; border: 1px solid #e2e8f0; border-radius: 20px; background-color: #ffffff;">
           <div style="text-align: center; margin-bottom: 20px;">
@@ -59,7 +62,6 @@ export const sendAssessmentEmail = async (
               </tr>
             </table>
           </div>
-
           <p style="color: #475569; font-size: 15px; margin-bottom: 24px;">Laporan matriks lengkap, pemetaan risiko (SWOT), dan rekomendasi <i>Action Plan</i> dapat Anda akses melalui tautan permanen di bawah ini:</p>
           
           <div style="text-align: center;">
@@ -67,18 +69,17 @@ export const sendAssessmentEmail = async (
               Buka Dashboard Laporan
             </a>
           </div>
-
           <p style="margin-top: 40px; font-size: 12px; color: #94a3b8; text-align: center; border-top: 1px solid #f1f5f9; padding-top: 20px;">
             * Terimakasih Telah Berpartisipasi.<br><br>
-            © ${new Date().getFullYear()} Omnifit Analytics
+              ${new Date().getFullYear()} Omnifit Analytics
           </p>
         </div>
       `,
     };
-
+    
     await transporter.sendMail(mailOptions);
-    console.log(`✅ Email berhasil dikirim ke: ${data.targetEmail}`);
+    console.log(`Email berhasil dikirim ke: ${data.targetEmail}`);
   } catch (error) {
-    console.error("❌ Kesalahan saat mengirim email:", error);
+    console.error("Kesalahan saat mengirim email:", error);
   }
 };

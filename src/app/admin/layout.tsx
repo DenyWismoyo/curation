@@ -71,6 +71,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const { user, role, loading, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const canAccessAdmin = role === 'admin_csrs' || role === 'admin_omnifit';
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [openDesktopGroups, setOpenDesktopGroups] = useState<Record<string, boolean>>(() =>
@@ -81,12 +82,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   );
 
   useEffect(() => {
-    if (!loading && (!user || role !== 'admin_csrs')) {
+    if (!loading && (!user || !canAccessAdmin)) {
       router.push('/'); 
     }
-  }, [user, role, loading, router]);
+  }, [user, canAccessAdmin, loading, router]);
 
-  if (loading || role !== 'admin_csrs') {
+  if (loading || !canAccessAdmin) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="flex flex-col items-center gap-3">

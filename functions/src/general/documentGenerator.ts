@@ -4,7 +4,7 @@ import * as admin from "firebase-admin";
 import { getFirestore } from "firebase-admin/firestore";
 import React from "react";
 import ReactPDF from "@react-pdf/renderer";
-import { UniversalPDFDocument } from "./templates/UniversalPDFDocument";
+import { UniversalPDFDocument } from "../templates/UniversalPDFDocument";
 
 /**
  * FUNGSI 1: DIPANGGIL OLEH FRONTEND (USER / ADMIN / CURATOR)
