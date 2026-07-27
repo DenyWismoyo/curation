@@ -210,19 +210,9 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
 
   return (
     <LazyMotion features={domAnimation}>
-      <div className="w-full min-h-screen bg-[#FAFAFA] py-8 lg:py-10 px-5 lg:px-10 relative overflow-hidden">
+      <div className="w-full min-h-screen bg-slate-50 py-8 lg:py-12 px-5 lg:px-10 relative overflow-hidden">
         
-        {/* Animated Ornaments */}
-        <m.div 
-          animate={{ scale: [1, 1.05, 1], opacity: [0.4, 0.6, 0.4] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-[-10%] left-[-5%] w-[40vw] h-[40vw] bg-indigo-200/40 rounded-full blur-[120px] pointer-events-none"
-        />
-        <m.div 
-          animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-          className="absolute bottom-[-10%] right-[-5%] w-[30vw] h-[30vw] bg-blue-200/40 rounded-full blur-[120px] pointer-events-none"
-        />
+        {/* Removed Animated Ornaments for a cleaner enterprise look */}
 
         <div className="max-w-7xl w-full mx-auto flex flex-col lg:flex-row gap-10 lg:gap-16 items-start relative z-10">
           
@@ -233,64 +223,64 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
             animate="visible"
             className="flex-1 space-y-8 text-center lg:text-left w-full"
           >
-            <m.div variants={fadeUpVariants} className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-[1.5rem] shadow-xl shadow-slate-200/50 ring-1 ring-slate-100 mb-2 overflow-hidden">
+            <m.div variants={fadeUpVariants} className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-xl shadow-sm ring-1 ring-slate-200 mb-2 overflow-hidden">
               <Image src="/logo.png" alt="Omnifit Logo" width={80} height={80} className="w-full h-full object-contain p-2" priority unoptimized />
             </m.div>
             
             <m.div variants={fadeUpVariants} className="space-y-6">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 leading-[1.15] text-balance">
                 Omnifit Platform <br className="hidden sm:block"/>
-                <span className="text-indigo-600 bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-600">
+                <span className="text-indigo-600">
                   Adaptive Intelligence for Growth
                 </span>
               </h1>
               
-              <p className="text-base sm:text-lg text-slate-500 max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed text-balance">
+              <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed text-balance">
                 Platform asesmen AI yang membantu Anda membaca situasi secara jernih, menyusun prioritas tindakan, dan mengeksekusi rencana tumbuh dengan lebih cepat.
               </p>
 
               {/* AREA TOMBOL CTA */}
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 pt-2">
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-2">
                 <button
                   onClick={() => setIsCapabilitiesModalOpen(true)}
-                  className="inline-flex items-center gap-2 font-bold text-slate-500 hover:text-indigo-600 bg-white shadow-sm ring-1 ring-slate-200 px-4 py-3 rounded-xl hover:bg-slate-50 transition-all"
+                  className="inline-flex items-center gap-2 font-bold text-slate-600 hover:text-indigo-600 bg-white shadow-sm ring-1 ring-slate-200 px-5 py-3 rounded-lg hover:bg-slate-50 transition-all"
                 >
                   <EcosystemIcon className="w-4 h-4" />
                   Apa itu Omnifit?
                 </button>
-                <Link href="/mitra" className="inline-flex items-center gap-2 font-bold text-slate-500 hover:text-indigo-600 bg-white shadow-sm ring-1 ring-slate-200 px-4 py-3 rounded-xl hover:bg-slate-50 transition-all">
+                <Link href="/mitra" className="inline-flex items-center gap-2 font-bold text-slate-600 hover:text-indigo-600 bg-white shadow-sm ring-1 ring-slate-200 px-5 py-3 rounded-lg hover:bg-slate-50 transition-all">
                   <GlobalTargetIcon className="w-4 h-4" />
                   Ekosistem Mitra
                 </Link>
                 <button
                   onClick={handleShareOmnifit}
-                  className="inline-flex items-center gap-2 font-bold text-slate-500 hover:text-indigo-600 bg-white shadow-sm ring-1 ring-slate-200 px-4 py-3 rounded-xl hover:bg-slate-50 transition-all"
+                  className="inline-flex items-center gap-2 font-bold text-slate-600 hover:text-indigo-600 bg-white shadow-sm ring-1 ring-slate-200 px-5 py-3 rounded-lg hover:bg-slate-50 transition-all"
                 >
                   <Share2 className="w-4 h-4" />
                   Bagikan Aplikasi
                 </button>
-                <Link href="/b2b/login" className="inline-flex items-center gap-2 font-bold text-slate-500 hover:text-indigo-600 bg-white shadow-sm ring-1 ring-slate-200 px-4 py-3 rounded-xl hover:bg-slate-50 transition-all">
+                <Link href="/b2b/login" className="inline-flex items-center gap-2 font-bold text-slate-600 hover:text-indigo-600 bg-white shadow-sm ring-1 ring-slate-200 px-5 py-3 rounded-lg hover:bg-slate-50 transition-all">
                   <BriefcaseBusiness className="w-4 h-4" />
                   Login B2B
                 </Link>
 
                 {/* TOMBOL ROADMAP BARU */}
-                <Link href="/roadmap" className="inline-flex items-center gap-2 font-bold text-indigo-600 hover:text-white bg-indigo-50 hover:bg-indigo-600 shadow-sm ring-1 ring-indigo-200 px-4 py-3 rounded-xl transition-all group">
+                <Link href="/roadmap" className="inline-flex items-center gap-2 font-bold text-indigo-600 hover:text-white bg-indigo-50 hover:bg-indigo-600 shadow-sm ring-1 ring-indigo-200 px-5 py-3 rounded-lg transition-all group">
                   <MapPinned className="w-4 h-4 group-hover:animate-bounce" />
                   Roadmap AI 2026
                 </Link>
               </div>
 
-              <div className="rounded-2xl bg-gradient-to-r from-indigo-600 to-blue-600 p-4 sm:p-5 text-white shadow-lg shadow-indigo-500/20 max-w-3xl mx-auto lg:mx-0">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div className="rounded-xl bg-indigo-600 p-5 sm:p-6 text-white shadow-sm max-w-3xl mx-auto lg:mx-0 border border-indigo-700">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div>
-                    <p className="text-[10px] uppercase tracking-widest font-black text-indigo-100 mb-1">Rekomendasi Adaptif</p>
-                    <h3 className="text-base sm:text-lg font-black">Mulai Onboarding 2 Menit untuk Pilih Modul Paling Relevan</h3>
-                    <p className="text-xs sm:text-sm text-indigo-100 mt-1">AI akan menyusun 5 langkah prioritas dan merekomendasikan modul katalog yang sesuai profil Anda.</p>
+                    <p className="text-[10px] uppercase tracking-widest font-bold text-indigo-200 mb-1">Rekomendasi Adaptif</p>
+                    <h3 className="text-base sm:text-lg font-black tracking-tight">Mulai Onboarding 2 Menit untuk Pilih Modul Paling Relevan</h3>
+                    <p className="text-xs sm:text-sm text-indigo-100 mt-1 leading-relaxed">AI akan menyusun 5 langkah prioritas dan merekomendasikan modul katalog yang sesuai profil Anda.</p>
                   </div>
                   <Link
                     href={user ? '/onboarding' : '/login?next=/onboarding'}
-                    className="inline-flex items-center justify-center gap-2 h-11 px-4 rounded-xl bg-white text-indigo-700 hover:bg-indigo-50 font-black text-sm whitespace-nowrap"
+                    className="inline-flex items-center justify-center gap-2 h-11 px-5 rounded-lg bg-white text-indigo-700 hover:bg-indigo-50 font-bold text-sm whitespace-nowrap shadow-sm"
                   >
                     <Sparkles className="w-4 h-4" />
                     Mulai Onboarding
@@ -302,10 +292,10 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
 
             {/* AREA AUTENTIKASI ATAU DASHBOARD CEPAT */}
             {!user ? (
-              <m.div variants={fadeUpVariants} className="w-full max-w-md mx-auto lg:mx-0 space-y-4 pt-4 border-t border-slate-200">
+              <m.div variants={fadeUpVariants} className="w-full max-w-md mx-auto lg:mx-0 space-y-4 pt-6 border-t border-slate-200">
                 {authMode === 'options' ? (
                   <>
-                    <Button size="lg" onClick={onLogin} className="w-full shadow-md bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:text-indigo-600 h-14 rounded-2xl text-base font-bold transition-all flex items-center justify-center gap-3">
+                    <Button size="lg" onClick={onLogin} className="w-full shadow-sm bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:text-indigo-600 h-12 rounded-lg text-sm font-bold transition-all flex items-center justify-center gap-3">
                       <svg className="w-5 h-5" viewBox="0 0 24 24">
                         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
                         <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
@@ -316,99 +306,99 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                     </Button>
                     <div className="relative flex items-center py-2">
                       <div className="flex-grow border-t border-slate-200"></div>
-                      <span className="flex-shrink-0 mx-4 text-slate-400 text-xs font-medium">ATAU</span>
+                      <span className="flex-shrink-0 mx-4 text-slate-400 text-[10px] font-bold uppercase tracking-wider">ATAU</span>
                       <div className="flex-grow border-t border-slate-200"></div>
                     </div>
-                    <Button size="lg" onClick={() => setAuthMode('register')} className="w-full shadow-md bg-indigo-600 text-white hover:bg-indigo-700 h-14 rounded-2xl text-base font-bold transition-all flex items-center justify-center gap-3">
+                    <Button size="lg" onClick={() => setAuthMode('register')} className="w-full shadow-sm bg-slate-900 text-white hover:bg-indigo-600 h-12 rounded-lg text-sm font-bold transition-all flex items-center justify-center gap-3">
                       Daftar dengan Email
                     </Button>
-                    <p className="text-center text-sm text-slate-500 font-medium mt-2">
+                    <p className="text-center text-sm text-slate-500 font-medium mt-3">
                       Sudah punya akun? <button onClick={() => setAuthMode('login')} className="text-indigo-600 font-bold hover:underline">Masuk di sini</button>
                     </p>
                   </>
                 ) : authMode === 'reset' ? (
-                  <form onSubmit={handleResetPassword} className="bg-white p-6 rounded-2xl ring-1 ring-slate-200 shadow-sm space-y-4 text-left">
-                    <h3 className="text-lg font-black text-slate-900 mb-2">Atur Ulang Kata Sandi</h3>
-                    <p className="text-xs font-medium text-slate-500 mb-4 leading-relaxed">
+                  <form onSubmit={handleResetPassword} className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4 text-left">
+                    <h3 className="text-lg font-bold text-slate-900 tracking-tight mb-2">Atur Ulang Kata Sandi</h3>
+                    <p className="text-sm font-medium text-slate-500 mb-4 leading-relaxed">
                       Masukkan alamat email yang terhubung dengan akun Anda. Kami akan mengirimkan tautan untuk membuat kata sandi baru.
                     </p>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
                       <Input
                         required
                         type="email"
                         placeholder="Alamat Email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="pl-10 h-12 rounded-xl bg-slate-50 border-slate-200"
+                        className="pl-9 h-11 rounded-lg bg-white border-slate-200 text-sm focus-visible:ring-indigo-500"
                       />
                     </div>
                     
-                    <Button type="submit" disabled={authLoading} className="w-full h-12 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold transition-all mt-2">
-                      {authLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Kirim Tautan'}
+                    <Button type="submit" disabled={authLoading} className="w-full h-11 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold transition-all mt-2 text-sm shadow-sm">
+                      {authLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Kirim Tautan'}
                     </Button>
                     
-                    <button type="button" onClick={() => setAuthMode('login')} className="w-full text-sm font-bold text-slate-500 hover:text-slate-800 mt-2">
+                    <button type="button" onClick={() => setAuthMode('login')} className="w-full text-sm font-bold text-slate-500 hover:text-slate-900 mt-2">
                       Kembali ke Login
                     </button>
                   </form>
                 ) : (
-                  <form onSubmit={handleEmailAuth} className="bg-white p-6 rounded-2xl ring-1 ring-slate-200 shadow-sm space-y-4 text-left">
-                    <h3 className="text-lg font-black text-slate-900 mb-2">
+                  <form onSubmit={handleEmailAuth} className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4 text-left">
+                    <h3 className="text-lg font-bold text-slate-900 tracking-tight mb-2">
                       {authMode === 'register' ? 'Buat Akun Baru' : 'Masuk ke Akun'}
                     </h3>
                     
                     {authMode === 'register' && (
                       <div className="relative">
-                        <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+                        <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
                         <Input
                           required
                           placeholder="Nama Lengkap Anda"
                           value={name}
                           onChange={(e) => setName(e.target.value)}
-                          className="pl-10 h-12 rounded-xl bg-slate-50 border-slate-200"
+                          className="pl-9 h-11 rounded-lg bg-white border-slate-200 text-sm focus-visible:ring-indigo-500"
                         />
                       </div>
                     )}
                     
                     <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
                       <Input
                         required
                         type="email"
                         placeholder="Alamat Email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="pl-10 h-12 rounded-xl bg-slate-50 border-slate-200"
+                        className="pl-9 h-11 rounded-lg bg-white border-slate-200 text-sm focus-visible:ring-indigo-500"
                       />
                     </div>
                     
                     <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
                       <Input
                         required
                         type="password"
                         placeholder="Kata Sandi (Min. 6 karakter)"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="pl-10 h-12 rounded-xl bg-slate-50 border-slate-200"
+                        className="pl-9 h-11 rounded-lg bg-white border-slate-200 text-sm focus-visible:ring-indigo-500"
                         minLength={6}
                       />
                     </div>
 
                     {authMode === 'login' && (
                       <div className="flex justify-end mt-1">
-                        <button type="button" onClick={() => setAuthMode('reset')} className="text-xs font-bold text-indigo-600 hover:underline">
+                        <button type="button" onClick={() => setAuthMode('reset')} className="text-xs font-medium text-indigo-600 hover:underline">
                           Lupa / Belum Punya Kata Sandi?
                         </button>
                       </div>
                     )}
 
-                    <Button type="submit" disabled={authLoading} className="w-full h-12 rounded-xl bg-slate-900 hover:bg-indigo-600 text-white font-bold transition-all mt-2">
-                      {authLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : (authMode === 'register' ? 'Daftar & Lanjutkan' : 'Masuk')}
+                    <Button type="submit" disabled={authLoading} className="w-full h-11 rounded-lg bg-slate-900 hover:bg-indigo-600 text-white font-bold transition-all mt-2 text-sm shadow-sm">
+                      {authLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : (authMode === 'register' ? 'Daftar & Lanjutkan' : 'Masuk')}
                     </Button>
                     
-                    <button type="button" onClick={() => setAuthMode('options')} className="w-full text-sm font-bold text-slate-500 hover:text-slate-800 mt-2">
+                    <button type="button" onClick={() => setAuthMode('options')} className="w-full text-sm font-bold text-slate-500 hover:text-slate-900 mt-2">
                       Batal
                     </button>
                   </form>
@@ -418,30 +408,30 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
               </m.div>
             ) : (
               // JIKA USER SUDAH LOGIN, TAMPILKAN PANEL AKSES CEPAT
-              <m.div variants={fadeUpVariants} className="w-full max-w-md mx-auto lg:mx-0 space-y-4 pt-4 border-t border-slate-200">
-                <div className="flex items-center justify-between bg-white px-5 py-4 rounded-2xl ring-1 ring-slate-200 shadow-sm">
+              <m.div variants={fadeUpVariants} className="w-full max-w-md mx-auto lg:mx-0 space-y-4 pt-6 border-t border-slate-200">
+                <div className="flex items-center justify-between bg-white px-5 py-4 rounded-xl border border-slate-200 shadow-sm">
                   <div className="flex items-center gap-3 overflow-hidden">
-                    <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold shrink-0 text-lg">
+                    <div className="w-10 h-10 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-bold shrink-0 text-lg border border-slate-200">
                       {user.displayName?.charAt(0).toUpperCase() || 'U'}
                     </div>
                     <div className="truncate text-left">
-                      <p className="text-sm font-black text-slate-900 truncate">{user.displayName}</p>
-                      <p className="text-xs font-bold text-slate-500 truncate">{user.email}</p>
+                      <p className="text-sm font-bold text-slate-900 tracking-tight truncate">{user.displayName}</p>
+                      <p className="text-xs font-medium text-slate-500 truncate">{user.email}</p>
                     </div>
                   </div>
-                  <button onClick={onLogout} className="p-2.5 text-rose-500 hover:bg-rose-50 rounded-xl transition-colors" title="Keluar">
-                    <LogOut size={18} />
+                  <button onClick={onLogout} className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors" title="Keluar">
+                    <LogOut size={16} />
                   </button>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <Link href="/katalog" className="block w-full">
-                    <Button variant="outline" className="w-full h-12 rounded-xl border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-indigo-600 font-bold gap-2 shadow-sm">
+                    <Button variant="outline" className="w-full h-11 rounded-lg border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-indigo-600 text-sm font-bold gap-2 shadow-sm">
                       <LibraryBig size={16} /> Buka Katalog
                     </Button>
                   </Link>
                   <Link href="/dashboard" className="block w-full">
-                    <Button variant="outline" className="w-full h-12 rounded-xl border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-indigo-600 font-bold gap-2 shadow-sm">
+                    <Button variant="outline" className="w-full h-11 rounded-lg border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-indigo-600 text-sm font-bold gap-2 shadow-sm">
                       <AdminShieldIcon size={16} /> Brankas Modul
                     </Button>
                   </Link>
@@ -449,16 +439,16 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
 
                 {(role === 'admin_csrs' || role === 'admin_omnifit') && (
                   <Link href="/admin" className="block w-full">
-                    <Button variant="outline" className="w-full h-12 rounded-xl border-indigo-200 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold gap-2">
-                      <LayoutDashboard size={18} /> Dasbor Admin
+                    <Button variant="outline" className="w-full h-11 rounded-lg border-slate-200 bg-slate-50 text-slate-900 hover:bg-slate-100 text-sm font-bold gap-2 shadow-sm">
+                      <LayoutDashboard size={16} /> Dasbor Admin
                     </Button>
                   </Link>
                 )}
                 
                 {(role === 'assessor') && (
                   <Link href="/assessor" className="block w-full">
-                    <Button variant="outline" className="w-full h-12 rounded-xl border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold gap-2">
-                      <ClipboardCheck size={18} /> Ruang Kerja Asesor
+                    <Button variant="outline" className="w-full h-11 rounded-lg border-slate-200 bg-slate-50 text-slate-900 hover:bg-slate-100 text-sm font-bold gap-2 shadow-sm">
+                      <ClipboardCheck size={16} /> Ruang Kerja Asesor
                     </Button>
                   </Link>
                 )}
@@ -467,13 +457,13 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                   <Link href="/token" className="block w-full">
                     <Button 
                       size="lg"
-                      className="w-full shadow-lg shadow-indigo-600/20 bg-slate-900 hover:bg-indigo-600 text-white rounded-2xl h-14 px-6 text-base font-bold transition-all duration-300 flex items-center justify-between group"
+                      className="w-full shadow-sm bg-slate-900 hover:bg-indigo-600 text-white rounded-lg h-12 px-5 text-sm font-bold transition-all duration-300 flex items-center justify-between group"
                     >
                       <div className="flex items-center gap-3">
-                        <KeyRound className="w-5 h-5 text-indigo-400 group-hover:text-white transition-colors" />
+                        <KeyRound className="w-4 h-4 text-slate-400 group-hover:text-white transition-colors" />
                         Gunakan Token Akses
                       </div>
-                      <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                      <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                     </Button>
                   </Link>
                 </div>
@@ -481,15 +471,15 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
             )}
 
             <m.div variants={fadeUpVariants} className="w-full max-w-xl mx-auto lg:mx-0 pt-3">
-              <div className="rounded-2xl bg-white/75 border border-slate-200 px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <div className="rounded-lg bg-white border border-slate-200 px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 shadow-sm">
                 <div className="flex items-center gap-2 text-slate-600">
                   <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                  <p className="text-xs font-semibold">Kami menjaga privasi dan keamanan data asesmen Anda.</p>
+                  <p className="text-[11px] font-medium uppercase tracking-wider">Privasi Data Terjamin</p>
                 </div>
                 <div className="flex items-center gap-3 text-xs font-bold">
-                  <Link href="/privasi" className="text-slate-500 hover:text-indigo-600">Kebijakan Privasi</Link>
+                  <Link href="/privasi" className="text-slate-500 hover:text-indigo-600 transition-colors">Kebijakan Privasi</Link>
                   <span className="text-slate-300">|</span>
-                  <Link href="/kebijakan" className="text-slate-500 hover:text-indigo-600">Syarat & Kebijakan</Link>
+                  <Link href="/kebijakan" className="text-slate-500 hover:text-indigo-600 transition-colors">Syarat & Ketentuan</Link>
                 </div>
               </div>
             </m.div>
@@ -502,11 +492,11 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
               
               {isFetchingData ? (
                 <>
-                  <div className="w-full bg-white/40 border border-white/20 p-6 sm:p-8 rounded-[2rem] shadow-sm animate-pulse">
-                     <div className="h-6 bg-slate-200 rounded-md w-1/2 mb-6"></div>
+                  <div className="w-full bg-white border border-slate-200 p-6 sm:p-8 rounded-2xl shadow-sm animate-pulse">
+                     <div className="h-5 bg-slate-100 rounded w-1/2 mb-6"></div>
                      <div className="space-y-3">
-                        <div className="h-20 bg-slate-100 rounded-2xl w-full"></div>
-                        <div className="h-20 bg-slate-100 rounded-2xl w-full"></div>
+                        <div className="h-20 bg-slate-50 rounded-xl w-full border border-slate-100"></div>
+                        <div className="h-20 bg-slate-50 rounded-xl w-full border border-slate-100"></div>
                      </div>
                   </div>
                 </>
@@ -518,34 +508,32 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-                      className="w-full bg-white/60 backdrop-blur-3xl border border-white/40 p-6 sm:p-8 rounded-[2rem] shadow-xl shadow-amber-500/5 relative"
+                      className="w-full bg-white border border-slate-200 p-6 rounded-2xl shadow-sm relative"
                     >
-                      <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-white/60 pointer-events-none"></div>
-                      <div className="flex items-center justify-between mb-6 relative z-10">
-                        <h3 className="text-sm font-black text-slate-800 flex items-center gap-2">
-                          <DocExportIcon className="h-5 w-5 text-amber-500" /> Draf Belum Selesai
+                      <div className="flex items-center justify-between mb-5 relative z-10">
+                        <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2 tracking-tight">
+                          <DocExportIcon className="h-4 w-4 text-amber-500" /> Draf Belum Selesai
                         </h3>
                       </div>
                       <m.div variants={staggerContainer} initial="hidden" animate="visible" className="max-h-[300px] overflow-y-auto pr-2 custom-scrollbar flex flex-col gap-3 relative z-10">
                         {drafts.map((draft, idx) => (
                           <m.div 
                             variants={historyItemVariants}
-                            whileHover={{ y: -4, scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
+                            whileHover={{ y: -2 }}
                             key={draft.templateId || idx}
                             onClick={() => handleResumeDraft(draft)} 
-                            className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 cursor-pointer group transition-shadow hover:shadow-md hover:shadow-amber-500/10 hover:ring-1 hover:ring-amber-200"
+                            className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 cursor-pointer group transition-all hover:border-amber-200 hover:shadow-md"
                           >
-                            <div className="flex justify-between items-start mb-3">
-                              <span className="text-[10px] font-black uppercase tracking-widest text-amber-700 bg-amber-50 px-2.5 py-1 rounded-md ring-1 ring-amber-100/50">
+                            <div className="flex justify-between items-start mb-2">
+                              <span className="text-[9px] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-100">
                                 Tersimpan Lokal
                               </span>
                             </div>
-                            <h4 className="font-bold text-slate-900 text-base group-hover:text-amber-600 truncate mb-1 transition-colors">
+                            <h4 className="font-bold text-slate-900 text-sm group-hover:text-amber-600 truncate mb-1 transition-colors tracking-tight">
                               {draft.trackName}
                             </h4>
-                            <p className="text-xs font-bold text-slate-400 group-hover:text-amber-500 flex items-center gap-1.5 transition-colors">
-                              Lanjutkan Asesmen <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
+                            <p className="text-xs font-medium text-slate-500 group-hover:text-amber-500 flex items-center gap-1.5 transition-colors">
+                              Lanjutkan Asesmen <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
                             </p>
                           </m.div>
                         ))}
@@ -559,16 +547,15 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
-                      className="w-full bg-white/60 backdrop-blur-3xl border border-white/40 p-6 sm:p-8 rounded-[2rem] shadow-2xl shadow-slate-200/40 relative"
+                      className="w-full bg-white border border-slate-200 p-6 rounded-2xl shadow-sm relative"
                     >
-                      <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-white/60 pointer-events-none"></div>
-                      <div className="flex items-center justify-between mb-6 relative z-10">
-                        <h3 className="text-sm font-black text-slate-800 flex items-center gap-2">
-                          <History className="h-5 w-5 text-indigo-600" /> Riwayat Kurasi Anda
+                      <div className="flex items-center justify-between mb-5 relative z-10">
+                        <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2 tracking-tight">
+                          <History className="h-4 w-4 text-slate-500" /> Riwayat Kurasi Anda
                         </h3>
-                        <div className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 rounded-full border border-emerald-100" title="Terhubung secara real-time ke sistem AI">
-                          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></div>
-                          <span className="text-[9px] font-black text-emerald-600 uppercase tracking-wider">Live Sync</span>
+                        <div className="flex items-center gap-1.5 px-2 py-0.5 bg-slate-50 rounded border border-slate-200" title="Terhubung secara real-time ke sistem AI">
+                          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                          <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Live Sync</span>
                         </div>
                       </div>
                       
@@ -576,35 +563,34 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                         {history.map((item, idx) => (
                           <m.div 
                             variants={historyItemVariants}
-                            whileHover={{ y: -4, scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
+                            whileHover={{ y: -2 }}
                             key={item.id || idx}
                             onClick={() => onLoadHistory(item)} 
-                            className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 cursor-pointer group transition-shadow hover:shadow-md hover:shadow-indigo-500/5"
+                            className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 cursor-pointer group transition-all hover:border-indigo-200 hover:shadow-md"
                           >
-                            <div className="flex justify-between items-start mb-3">
-                              <span className="text-[10px] font-black uppercase tracking-widest text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-md ring-1 ring-indigo-100/50">
+                            <div className="flex justify-between items-start mb-2">
+                              <span className="text-[9px] font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">
                                 {item.trackType}
                               </span>
-                              <span className="text-[10px] font-bold text-slate-400 flex items-center gap-1.5">
+                              <span className="text-[10px] font-medium text-slate-400 flex items-center gap-1">
                                 <Clock className="h-3 w-3"/> 
                                 {new Date(item.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                               </span>
                             </div>
                             
-                            <h4 className="font-bold text-slate-900 text-base group-hover:text-indigo-600 truncate mb-3 transition-colors">
+                            <h4 className="font-bold text-slate-900 text-sm group-hover:text-indigo-600 truncate mb-3 transition-colors tracking-tight">
                               {item.namaUsaha}
                             </h4>
 
-                            <div className="flex items-center justify-between pt-3 border-t border-slate-50">
+                            <div className="flex items-center justify-between pt-3 border-t border-slate-100">
                               <div className="flex items-center gap-1.5">
-                                <div className="p-1 bg-emerald-50 rounded-full">
-                                  <BrainIcon size={16} className="text-emerald-500"/>
+                                <div className="p-1 bg-slate-50 rounded text-slate-400 border border-slate-200 group-hover:border-indigo-200 group-hover:bg-indigo-50 group-hover:text-indigo-500 transition-colors">
+                                  <BrainIcon size={14} className="currentColor"/>
                                 </div>
-                                <p className="text-xs font-bold text-slate-600">Skor AI: {item.score}</p>
+                                <p className="text-xs font-bold text-slate-700">Skor AI: {item.score}</p>
                               </div>
-                              <div className="bg-slate-50 p-1.5 rounded-full group-hover:bg-indigo-50 transition-colors">
-                                <ChevronRight className="h-4 w-4 text-slate-400 group-hover:text-indigo-500 transition-colors" />
+                              <div className="text-slate-300 group-hover:text-indigo-500 transition-colors">
+                                <ChevronRight className="h-4 w-4" />
                               </div>
                             </div>
                           </m.div>
