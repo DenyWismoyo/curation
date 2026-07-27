@@ -1,10 +1,10 @@
-'use client';
+'use client'
 
 // src/app/(public)/error.tsx
-import React from 'react';
-import { useRouter } from 'next/navigation';
-import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import React from 'react'
+import { useRouter } from 'next/navigation'
+import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 /**
  * Error boundary global untuk semua public routes.
@@ -14,10 +14,10 @@ export default function PublicError({
   error,
   reset,
 }: {
-  error: Error & { digest?: string };
-  reset: () => void;
+  error: Error & { digest?: string }
+  reset: () => void
 }) {
-  const router = useRouter();
+  const router = useRouter()
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-white px-6">
@@ -26,9 +26,12 @@ export default function PublicError({
           <AlertTriangle size={28} className="text-red-500" />
         </div>
         <div>
-          <h2 className="text-base font-bold text-slate-800 mb-1">Terjadi Kesalahan</h2>
+          <h2 className="text-base font-bold text-slate-800 mb-1">
+            Terjadi Kesalahan
+          </h2>
           <p className="text-sm text-slate-500 leading-relaxed">
-            {error.message || 'Sesuatu tidak berjalan sebagaimana mestinya. Silakan coba lagi.'}
+            {error.message ||
+              'Sesuatu tidak berjalan sebagaimana mestinya. Silakan coba lagi.'}
           </p>
         </div>
         <div className="flex gap-2 w-full">
@@ -52,5 +55,5 @@ export default function PublicError({
         </div>
       </div>
     </div>
-  );
+  )
 }

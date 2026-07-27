@@ -1,69 +1,107 @@
-'use client';
+'use client'
 
 // src/components/shared/PublicNavbar.tsx
 
-import React, { useState, useRef, useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { usePathname, useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useRef, useEffect } from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
+import { usePathname, useRouter } from 'next/navigation'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
-  LibraryBig, FolderKanban, TrendingUp, Users, User,
-  KeyRound, LogOut, Compass, ChevronDown, Receipt, MapPinned, LogIn
-} from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+  LibraryBig,
+  FolderKanban,
+  TrendingUp,
+  Users,
+  User,
+  KeyRound,
+  LogOut,
+  Compass,
+  ChevronDown,
+  Receipt,
+  MapPinned,
+  LogIn,
+} from 'lucide-react'
+import { useAuth } from '@/contexts/AuthContext'
 
 interface NavItem {
-  href: string;
-  label: string;
-  icon: React.ReactNode;
-  requiresAuth?: boolean;
+  href: string
+  label: string
+  icon: React.ReactNode
+  requiresAuth?: boolean
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { href: '/explore',   label: 'Explore',  icon: <Compass size={16} strokeWidth={2} /> },
-  { href: '/katalog',   label: 'Katalog',  icon: <LibraryBig size={16} strokeWidth={2} /> },
-  { href: '/roadmap',   label: 'Roadmap',  icon: <MapPinned size={16} strokeWidth={2} /> },
-  { href: '/dashboard', label: 'Brankas',  icon: <FolderKanban size={16} strokeWidth={2} />, requiresAuth: true },
-  { href: '/progress',  label: 'Progres',  icon: <TrendingUp size={16} strokeWidth={2} />, requiresAuth: true },
-  { href: '/komunitas', label: 'Komunitas',icon: <Users size={16} strokeWidth={2} /> },
-];
+  {
+    href: '/explore',
+    label: 'Explore',
+    icon: <Compass size={16} strokeWidth={2} />,
+  },
+  {
+    href: '/katalog',
+    label: 'Katalog',
+    icon: <LibraryBig size={16} strokeWidth={2} />,
+  },
+  {
+    href: '/roadmap',
+    label: 'Roadmap',
+    icon: <MapPinned size={16} strokeWidth={2} />,
+  },
+  {
+    href: '/dashboard',
+    label: 'Brankas',
+    icon: <FolderKanban size={16} strokeWidth={2} />,
+    requiresAuth: true,
+  },
+  {
+    href: '/progress',
+    label: 'Progres',
+    icon: <TrendingUp size={16} strokeWidth={2} />,
+    requiresAuth: true,
+  },
+  {
+    href: '/komunitas',
+    label: 'Komunitas',
+    icon: <Users size={16} strokeWidth={2} />,
+  },
+]
 
 export function PublicNavbar() {
-  const pathname = usePathname();
-  const router = useRouter();
-  const { user, logout } = useAuth();
-  
+  const pathname = usePathname()
+  const router = useRouter()
+  const { user, logout } = useAuth()
+
   // State untuk Dropdown Profil
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
   const isActive = (href: string) =>
-    href === '/' ? pathname === '/' : pathname?.startsWith(href);
+    href === '/' ? pathname === '/' : pathname?.startsWith(href)
 
   const handleLogout = async () => {
     try {
-      await logout();
-      router.push('/');
+      await logout()
+      router.push('/')
     } catch {
       // silent
     }
-  };
+  }
 
   // Menutup dropdown jika klik di luar elemen
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false)
       }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   return (
     <header className="hidden md:flex fixed top-0 left-0 right-0 h-20 bg-white/80 backdrop-blur-md border-b border-slate-100 z-40 shadow-sm items-center justify-between px-6 lg:px-12 transition-all">
-      
       {/* Brand & Kiri */}
       <div className="flex items-center gap-8">
         <Link href="/" className="flex items-center gap-3 group">
@@ -79,25 +117,28 @@ export function PublicNavbar() {
             />
           </div>
           <div>
-            <span className="text-base font-black text-slate-900 tracking-tight">Omnifit</span>
+            <span className="text-base font-black text-slate-900 tracking-tight">
+              Omnifit
+            </span>
           </div>
         </Link>
 
         {/* Navigasi Utama */}
         <nav className="flex items-center gap-1">
           {NAV_ITEMS.map((item) => {
-            if (item.requiresAuth && !user) return null;
-            const active = isActive(item.href);
-            
+            if (item.requiresAuth && !user) return null
+            const active = isActive(item.href)
+
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 className={`
                   relative px-4 py-2 rounded-xl text-sm font-bold transition-all
-                  ${active
-                    ? 'text-indigo-700'
-                    : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+                  ${
+                    active
+                      ? 'text-indigo-700'
+                      : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
                   }
                 `}
               >
@@ -112,7 +153,7 @@ export function PublicNavbar() {
                   {item.icon} {item.label}
                 </span>
               </Link>
-            );
+            )
           })}
         </nav>
       </div>
@@ -126,7 +167,7 @@ export function PublicNavbar() {
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className={`flex items-center gap-2.5 p-1.5 pr-3 rounded-xl transition-all group border ${isDropdownOpen ? 'bg-indigo-50 border-indigo-100 ring-2 ring-indigo-500/20' : 'bg-transparent border-transparent hover:bg-slate-50'}`}
+                  className={`flex items-center gap-2.5 p-1.5 pr-3 rounded-xl transition-all group border ${isDropdownOpen ? 'bg-slate-50 border-slate-100 ring-1 ring-slate-200' : 'bg-transparent border-transparent hover:bg-slate-50'}`}
                 >
                   {user.photoURL ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -147,7 +188,10 @@ export function PublicNavbar() {
                     <span className="text-xs font-bold text-slate-700 leading-tight truncate max-w-[100px]">
                       {user.displayName?.split(' ')[0] || 'Pengguna'}
                     </span>
-                    <ChevronDown size={14} className={`text-slate-400 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180 text-indigo-500' : ''}`} />
+                    <ChevronDown
+                      size={14}
+                      className={`text-slate-400 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180 text-indigo-500' : ''}`}
+                    />
                   </div>
                 </button>
 
@@ -161,10 +205,14 @@ export function PublicNavbar() {
                       className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl ring-1 ring-slate-100 p-2 flex flex-col gap-1 z-50 origin-top-right"
                     >
                       <div className="px-3 py-2 mb-1 border-b border-slate-100">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">Akun Saya</p>
-                        <p className="text-sm font-bold text-slate-900 truncate">{user.email}</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">
+                          Akun Saya
+                        </p>
+                        <p className="text-sm font-bold text-slate-900 truncate">
+                          {user.email}
+                        </p>
                       </div>
-                      
+
                       <Link
                         href="/profil"
                         onClick={() => setIsDropdownOpen(false)}
@@ -172,7 +220,7 @@ export function PublicNavbar() {
                       >
                         <User size={16} /> Profil Lengkap
                       </Link>
-                      
+
                       {/* Tautan Riwayat/Tagihan mengarah ke /riwayat */}
                       <Link
                         href="/riwayat"
@@ -183,9 +231,12 @@ export function PublicNavbar() {
                       </Link>
 
                       <div className="h-px bg-slate-100 my-1 mx-2"></div>
-                      
+
                       <button
-                        onClick={() => { setIsDropdownOpen(false); handleLogout(); }}
+                        onClick={() => {
+                          setIsDropdownOpen(false)
+                          handleLogout()
+                        }}
                         className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-rose-600 hover:bg-rose-50 rounded-xl transition-colors"
                       >
                         <LogOut size={16} /> Keluar
@@ -195,10 +246,10 @@ export function PublicNavbar() {
                 </AnimatePresence>
               </div>
             </div>
-            
+
             <Link
               href="/token"
-              className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-indigo-600 text-white text-sm font-bold shadow-lg shadow-slate-900/10 hover:shadow-indigo-600/20 transition-all duration-300"
+              className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-indigo-600 text-white text-sm font-bold shadow-sm hover:shadow-md transition-all duration-300"
             >
               <KeyRound size={16} />
               Gunakan Token
@@ -215,7 +266,7 @@ export function PublicNavbar() {
             </Link>
             <Link
               href="/katalog"
-              className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold shadow-lg shadow-indigo-600/20 transition-all duration-300"
+              className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold shadow-sm hover:shadow-md transition-all duration-300"
             >
               Mulai Eksplorasi
             </Link>
@@ -223,5 +274,5 @@ export function PublicNavbar() {
         )}
       </div>
     </header>
-  );
+  )
 }

@@ -1,75 +1,107 @@
 // src/app/(public)/komunitas/page.tsx
-'use client';
+'use client'
 
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import {
-  collection, query, where, getDocs, orderBy, limit
-} from 'firebase/firestore';
-import { db } from '@/lib/firebase';
-import { useAuth } from '@/contexts/AuthContext';
-import { motion } from 'framer-motion';
+  collection,
+  query,
+  where,
+  getDocs,
+  orderBy,
+  limit,
+} from 'firebase/firestore'
+import { db } from '@/lib/firebase'
+import { useAuth } from '@/contexts/AuthContext'
+import { motion } from 'framer-motion'
 import {
-  Share2, Trophy, Users, TrendingUp, Star, Crown, Medal
-} from 'lucide-react';
-import { BrainIcon, AiSparkIcon, InfinityWorkflowIcon } from '@/types';
-import { toast } from 'sonner';
-import { PageHero } from '@/components/domain/public';
+  Share2,
+  Trophy,
+  Users,
+  TrendingUp,
+  Star,
+  Crown,
+  Medal,
+} from 'lucide-react'
+import { BrainIcon, AiSparkIcon, InfinityWorkflowIcon } from '@/types'
+import { toast } from 'sonner'
+import { PageHero } from '@/components/domain/public'
 
 // ============================================================
 // TYPES
 // ============================================================
 interface LeaderboardEntry {
-  rank: number;
-  displayName: string;
-  score: number;
-  trackType?: string;
-  badge?: string;
+  rank: number
+  displayName: string
+  score: number
+  trackType?: string
+  badge?: string
 }
 
 const RANK_ICONS = [
   <Crown key={1} size={16} className="text-yellow-500" />,
   <Medal key={2} size={16} className="text-slate-400" />,
   <Medal key={3} size={16} className="text-amber-600" />,
-];
+]
 
 const TRACK_COLORS: Record<string, string> = {
   B2B: 'bg-indigo-50 text-indigo-600',
   Startup: 'bg-purple-50 text-purple-600',
   Personal: 'bg-teal-50 text-teal-600',
   Komunitas: 'bg-emerald-50 text-emerald-600',
-};
+}
 
 const MILESTONES = [
-  { icon: <BrainIcon size={24} className="text-indigo-600" />, label: '10,000+', sublabel: 'Asesmen Selesai', bg: 'bg-indigo-50' },
-  { icon: <Users size={24} className="text-emerald-600" />, label: '5,000+', sublabel: 'Pengguna Aktif', bg: 'bg-emerald-50' },
-  { icon: <TrendingUp size={24} className="text-amber-500" />, label: '76', sublabel: 'Rata-rata Skor', bg: 'bg-amber-50' },
-  { icon: <Star size={24} className="text-purple-500" />, label: '92%', sublabel: 'Kepuasan Pengguna', bg: 'bg-purple-50' },
-];
+  {
+    icon: <BrainIcon size={24} className="text-indigo-600" />,
+    label: '10,000+',
+    sublabel: 'Asesmen Selesai',
+    bg: 'bg-indigo-50',
+  },
+  {
+    icon: <Users size={24} className="text-emerald-600" />,
+    label: '5,000+',
+    sublabel: 'Pengguna Aktif',
+    bg: 'bg-emerald-50',
+  },
+  {
+    icon: <TrendingUp size={24} className="text-amber-500" />,
+    label: '76',
+    sublabel: 'Rata-rata Skor',
+    bg: 'bg-amber-50',
+  },
+  {
+    icon: <Star size={24} className="text-purple-500" />,
+    label: '92%',
+    sublabel: 'Kepuasan Pengguna',
+    bg: 'bg-purple-50',
+  },
+]
 
-const SOCIAL_SHARE_TEXT = 'Saya baru saja menyelesaikan asesmen di @OmnifitAI — sistem AI assessment terbaik untuk bisnis dan pertumbuhan personal! 🚀 Coba sekarang di';
-const SHARE_URL = 'https://omnifit.ai';
+const SOCIAL_SHARE_TEXT =
+  'Saya baru saja menyelesaikan asesmen di @OmnifitAI — sistem AI assessment terbaik untuk bisnis dan pertumbuhan personal! 🚀 Coba sekarang di'
+const SHARE_URL = 'https://omnifit.ai'
 
 // Mask business name: show first 2 chars + *** for each word
 function maskName(name: string): string {
   return name
     .trim()
     .split(' ')
-    .map(word => word.slice(0, 2) + '*'.repeat(Math.max(2, word.length - 2)))
-    .join(' ');
+    .map((word) => word.slice(0, 2) + '*'.repeat(Math.max(2, word.length - 2)))
+    .join(' ')
 }
 
 export default function KomunitasPage() {
-  const { user } = useAuth();
-  const router = useRouter();
+  const { user } = useAuth()
+  const router = useRouter()
 
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [sharing, setSharing] = useState(false);
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
+  const [loading, setLoading] = useState(true)
+  const [sharing, setSharing] = useState(false)
 
   useEffect(() => {
-    fetchLeaderboard();
-  }, []);
+    fetchLeaderboard()
+  }, [])
 
   const fetchLeaderboard = async () => {
     try {
@@ -79,58 +111,59 @@ export default function KomunitasPage() {
         where('score', '>', 0),
         orderBy('score', 'desc'),
         limit(20)
-      );
-      const snap = await getDocs(q);
+      )
+      const snap = await getDocs(q)
       const entries: LeaderboardEntry[] = snap.docs.map((d, i) => {
-        const data = d.data();
-        const rawName = data.namaUsaha || data.businessName || 'Pengguna Anonim';
+        const data = d.data()
+        const rawName = data.namaUsaha || data.businessName || 'Pengguna Anonim'
         return {
           rank: i + 1,
           displayName: maskName(rawName),
           score: data.score || 0,
           trackType: data.trackType,
-        };
-      });
-      setLeaderboard(entries);
+        }
+      })
+      setLeaderboard(entries)
     } catch (e) {
-      console.error('Gagal load leaderboard:', e);
+      console.error('Gagal load leaderboard:', e)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const handleShare = async () => {
-    const text = `${SOCIAL_SHARE_TEXT} ${SHARE_URL}`;
+    const text = `${SOCIAL_SHARE_TEXT} ${SHARE_URL}`
     if (navigator.share) {
       try {
-        setSharing(true);
-        await navigator.share({ title: 'Omnifit AI', text, url: SHARE_URL });
-      } catch { /* ignore cancel */ } finally { setSharing(false); }
+        setSharing(true)
+        await navigator.share({ title: 'Omnifit AI', text, url: SHARE_URL })
+      } catch {
+        /* ignore cancel */
+      } finally {
+        setSharing(false)
+      }
     } else {
       try {
-        await navigator.clipboard.writeText(text);
-        toast.success('Link berhasil disalin!');
+        await navigator.clipboard.writeText(text)
+        toast.success('Link berhasil disalin!')
       } catch {
-        toast.error('Gagal menyalin link');
+        toast.error('Gagal menyalin link')
       }
     }
-  };
+  }
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] font-sans selection:bg-indigo-100">
-
-      <PageHero
-        centered
-        title="Komunitas Omnifit"
-        subtitle="Bergabunglah dengan ribuan pemimpin bisnis dan profesional yang menggunakan AI untuk tumbuh bersama."
-        className="from-purple-600 via-indigo-700 to-indigo-600"
-      >
-        <div className="inline-flex w-16 h-16 bg-white/10 backdrop-blur-sm rounded-3xl items-center justify-center ring-1 ring-white/20 mx-auto">
-          <Users size={32} className="text-white" />
+      <div className="max-w-3xl mx-auto px-5 lg:px-10 pt-8 space-y-8">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+            Komunitas Omnifit
+          </h1>
+          <p className="mt-4 text-lg leading-8 text-slate-600">
+            Bergabunglah dengan ribuan pemimpin bisnis dan profesional yang
+            menggunakan AI untuk tumbuh bersama.
+          </p>
         </div>
-      </PageHero>
-
-      <div className="max-w-3xl mx-auto px-5 lg:px-10 mt-6 space-y-8">
 
         {/* PLATFORM MILESTONES */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -142,11 +175,15 @@ export default function KomunitasPage() {
               transition={{ delay: i * 0.07 }}
               className="bg-white p-5 rounded-3xl ring-1 ring-slate-200 shadow-sm text-center"
             >
-              <div className={`w-12 h-12 ${m.bg} rounded-2xl flex items-center justify-center mx-auto mb-3`}>
+              <div
+                className={`w-12 h-12 ${m.bg} rounded-2xl flex items-center justify-center mx-auto mb-3`}
+              >
                 {m.icon}
               </div>
               <p className="text-2xl font-black text-slate-900">{m.label}</p>
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1 leading-tight">{m.sublabel}</p>
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1 leading-tight">
+                {m.sublabel}
+              </p>
             </motion.div>
           ))}
         </div>
@@ -156,21 +193,30 @@ export default function KomunitasPage() {
           <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-slate-50">
             <div className="flex items-center gap-2">
               <Trophy size={18} className="text-yellow-500" />
-              <h2 className="text-sm font-black text-slate-900">Papan Skor Teratas</h2>
+              <h2 className="text-sm font-black text-slate-900">
+                Papan Skor Teratas
+              </h2>
             </div>
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Nama disamarkan</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+              Nama disamarkan
+            </span>
           </div>
 
           {loading ? (
             <div className="p-6 space-y-3">
               {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="h-14 bg-slate-50 rounded-2xl animate-pulse" />
+                <div
+                  key={i}
+                  className="h-14 bg-slate-50 rounded-2xl animate-pulse"
+                />
               ))}
             </div>
           ) : leaderboard.length === 0 ? (
             <div className="p-12 text-center">
               <Trophy size={40} className="text-slate-200 mx-auto mb-3" />
-              <p className="text-sm text-slate-500 font-medium">Belum ada data leaderboard</p>
+              <p className="text-sm text-slate-500 font-medium">
+                Belum ada data leaderboard
+              </p>
             </div>
           ) : (
             <div className="divide-y divide-slate-50">
@@ -184,37 +230,54 @@ export default function KomunitasPage() {
                 >
                   {/* RANK */}
                   <div className="w-8 flex-shrink-0 flex items-center justify-center">
-                    {i < 3 ? RANK_ICONS[i] : (
-                      <span className="text-sm font-black text-slate-400 w-6 text-center">{entry.rank}</span>
+                    {i < 3 ? (
+                      RANK_ICONS[i]
+                    ) : (
+                      <span className="text-sm font-black text-slate-400 w-6 text-center">
+                        {entry.rank}
+                      </span>
                     )}
                   </div>
 
                   {/* AVATAR */}
-                  <div className={`w-10 h-10 rounded-2xl flex items-center justify-center text-sm font-black flex-shrink-0 ${
-                    i === 0 ? 'bg-yellow-100 text-yellow-700' :
-                    i === 1 ? 'bg-slate-100 text-slate-600' :
-                    i === 2 ? 'bg-amber-100 text-amber-700' :
-                    'bg-indigo-50 text-indigo-600'
-                  }`}>
+                  <div
+                    className={`w-10 h-10 rounded-2xl flex items-center justify-center text-sm font-black flex-shrink-0 ${
+                      i === 0
+                        ? 'bg-yellow-100 text-yellow-700'
+                        : i === 1
+                          ? 'bg-slate-100 text-slate-600'
+                          : i === 2
+                            ? 'bg-amber-100 text-amber-700'
+                            : 'bg-indigo-50 text-indigo-600'
+                    }`}
+                  >
                     {entry.displayName.charAt(0).toUpperCase()}
                   </div>
 
                   {/* NAME + TRACK */}
                   <div className="flex-1 min-w-0">
-                    <p className="font-black text-slate-800 text-sm truncate">{entry.displayName}</p>
+                    <p className="font-black text-slate-800 text-sm truncate">
+                      {entry.displayName}
+                    </p>
                     {entry.trackType && (
-                      <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md ${TRACK_COLORS[entry.trackType] || 'bg-slate-50 text-slate-500'}`}>
+                      <span
+                        className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md ${TRACK_COLORS[entry.trackType] || 'bg-slate-50 text-slate-500'}`}
+                      >
                         {entry.trackType}
                       </span>
                     )}
                   </div>
 
                   {/* SCORE */}
-                  <div className={`px-3 py-1.5 rounded-xl font-black text-sm flex-shrink-0 ${
-                    entry.score >= 80 ? 'bg-emerald-50 text-emerald-700' :
-                    entry.score >= 60 ? 'bg-amber-50 text-amber-700' :
-                    'bg-slate-50 text-slate-600'
-                  }`}>
+                  <div
+                    className={`px-3 py-1.5 rounded-xl font-black text-sm flex-shrink-0 ${
+                      entry.score >= 80
+                        ? 'bg-emerald-50 text-emerald-700'
+                        : entry.score >= 60
+                          ? 'bg-amber-50 text-amber-700'
+                          : 'bg-slate-50 text-slate-600'
+                    }`}
+                  >
                     {entry.score}
                   </div>
                 </motion.div>
@@ -231,7 +294,9 @@ export default function KomunitasPage() {
             </div>
             <div>
               <h3 className="font-black text-lg">Ajak Teman Bergabung</h3>
-              <p className="text-indigo-100 text-sm">Bantu ekosistem berkembang bersama</p>
+              <p className="text-indigo-100 text-sm">
+                Bantu ekosistem berkembang bersama
+              </p>
             </div>
           </div>
 
@@ -253,8 +318,12 @@ export default function KomunitasPage() {
         {!user && (
           <div className="bg-white rounded-3xl ring-1 ring-slate-200 shadow-sm p-8 text-center">
             <AiSparkIcon size={40} className="text-indigo-600 mx-auto mb-3" />
-            <h3 className="font-black text-lg text-slate-900 mb-2">Daftar & Masuk Leaderboard</h3>
-            <p className="text-sm text-slate-500 mb-5">Mulai asesmen dan tampilkan nama Anda di papan skor</p>
+            <h3 className="font-black text-lg text-slate-900 mb-2">
+              Daftar & Masuk Leaderboard
+            </h3>
+            <p className="text-sm text-slate-500 mb-5">
+              Mulai asesmen dan tampilkan nama Anda di papan skor
+            </p>
             <button
               onClick={() => router.push('/assessment')}
               className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-sm rounded-2xl transition-colors"
@@ -263,8 +332,7 @@ export default function KomunitasPage() {
             </button>
           </div>
         )}
-
       </div>
     </div>
-  );
+  )
 }

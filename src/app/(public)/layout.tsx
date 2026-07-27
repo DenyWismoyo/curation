@@ -1,9 +1,9 @@
 // src/app/(public)/layout.tsx
-import React from 'react';
-import { Suspense } from 'react';
-import { PublicNavbar } from '@/components/shared/PublicNavbar';
-import { GlobalFloatingWidget } from '@/components/shared';
-import { ReferralAttributionTracker } from '@/components/shared';
+import React from 'react'
+import { Suspense } from 'react'
+import { PublicNavbar } from '@/components/shared/PublicNavbar'
+import { GlobalFloatingWidget } from '@/components/shared'
+import { ReferralAttributionTracker } from '@/components/shared'
 
 /**
  * Layout untuk semua public routes (/, /katalog, /progress, /komunitas, /profil, dll.)
@@ -15,7 +15,7 @@ import { ReferralAttributionTracker } from '@/components/shared';
 export default function PublicLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
@@ -36,5 +36,5 @@ export default function PublicLayout({
         <GlobalFloatingWidget />
       </div>
     </div>
-  );
+  )
 }
