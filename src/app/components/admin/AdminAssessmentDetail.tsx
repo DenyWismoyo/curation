@@ -29,26 +29,21 @@ export function AdminAssessmentDetail({ data, onClose }: AdminAssessmentDetailPr
   // EFEK UNTUK MENARIK DATA RAHASIA SAAT PANEL INI DIBUKA
   useEffect(() => {
     const fetchInternalDetails = async () => {
-      // Jika ID tidak ada, batalkan penarikan data dan tampilkan pesan error di console
+      // Jika ID tidak ada, batalkan penarikan data
       if (!documentId) {
-        console.error("🚨 ALERT: ID Dokumen tidak ditemukan di props 'data'. Tabel Admin Anda tidak mengirimkan ID dokumen.");
         return;
       }
       
       try {
-        console.log(`Mengambil data internal untuk ID: ${documentId}...`);
         const internalDocRef = doc(db, 'assessments', documentId, 'internal', 'details');
         const internalSnap = await getDoc(internalDocRef);
         
         if (internalSnap.exists()) {
-          console.log("✅ Data internal berhasil ditemukan dan digabungkan!");
           // Gabungkan data publik dari tabel dengan data rahasia dari sub-collection
           setMergedAiResult((prev: any) => ({ ...prev, ...internalSnap.data() }));
-        } else {
-          console.warn("⚠️ Dokumen internal/details tidak ditemukan di database untuk ID ini.");
         }
       } catch (error) {
-        console.error("❌ Gagal menarik data internal:", error);
+        // Fail silently or handle accordingly
       }
     };
 
