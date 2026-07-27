@@ -72,10 +72,21 @@ export function TokenBatchPDFDocument({ batch, availableTemplates }: { batch: an
   const availTokens = tokensArr.length - usedTokens;
 
   // Mencocokkan ID Template dengan Nama Template
+  // Optimize by creating a map of id -> trackName to avoid O(N*M) lookups
+  const templateMap = React.useMemo(() => {
+    const map = new Map<string, string>();
+    if (availableTemplates && availableTemplates.length > 0) {
+      for (const tpl of availableTemplates) {
+        map.set(tpl.id, tpl.trackName);
+      }
+    }
+    return map;
+  }, [availableTemplates]);
+
   const allowedNames = batch.allowedTemplates && batch.allowedTemplates.length > 0
     ? batch.allowedTemplates.map((id: string) => {
-        const tpl = availableTemplates.find(t => t.id === id);
-        return tpl ? tpl.trackName : 'Modul Form Tidak Diketahui / Dihapus';
+        const trackName = templateMap.get(id);
+        return trackName ?? 'Modul Form Tidak Diketahui / Dihapus';
       })
     : ['Semua Modul Asesmen (Akses Penuh)'];
 
