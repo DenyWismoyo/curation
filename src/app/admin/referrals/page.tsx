@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
+import { collection, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import { db, functions } from '@/lib/firebase';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -57,6 +57,7 @@ type CommissionDoc = {
   commissionAmount?: number;
   status?: string;
   createdAt?: any;
+  updatedAt?: any;
 };
 
 const formatDate = (ms?: number | null): string => {
@@ -78,8 +79,10 @@ export default function AdminReferralsPage() {
   const [search, setSearch] = useState('');
   const [rows, setRows] = useState<ReferralAttributionDoc[]>([]);
   const [selected, setSelected] = useState<ReferralAttributionDoc | null>(null);
-  const [commissions, setCommissions] = useState<CommissionDoc[]>([]);
+  const [approvedCommissions, setApprovedCommissions] = useState<CommissionDoc[]>([]);
+  const [pendingCommissions, setPendingCommissions] = useState<CommissionDoc[]>([]);
   const [payingId, setPayingId] = useState('');
+  const [reviewingId, setReviewingId] = useState<string | null>(null);
 
   useEffect(() => {
     const q = query(collection(db, 'referral_attributions'), orderBy('updatedAt', 'desc'));
@@ -101,19 +104,36 @@ export default function AdminReferralsPage() {
   }, []);
 
   useEffect(() => {
-    const q = query(collection(db, 'affiliate_commissions'), orderBy('updatedAt', 'desc'));
-    const unsub = onSnapshot(
-      q,
-      (snap) => {
-        const docs = snap.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) } as CommissionDoc));
-        setCommissions(docs);
-      },
-      (error) => {
-        console.error('Gagal memuat affiliate_commissions:', error);
-      },
-    );
+    const qApproved = query(collection(db, 'affiliate_commissions'), where('status', '==', 'APPROVED'));
+    const unsubApproved = onSnapshot(qApproved, (snap) => {
+      const docs = snap.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) } as CommissionDoc));
+      docs.sort((a, b) => {
+        const dateA = a.updatedAt?.toDate?.()?.getTime() || a.createdAt?.toDate?.()?.getTime() || 0;
+        const dateB = b.updatedAt?.toDate?.()?.getTime() || b.createdAt?.toDate?.()?.getTime() || 0;
+        return dateB - dateA;
+      });
+      setApprovedCommissions(docs.slice(0, 30));
+    }, (error) => {
+      console.error('Gagal memuat approved commissions:', error);
+    });
 
-    return () => unsub();
+    const qPending = query(collection(db, 'affiliate_commissions'), where('status', '==', 'PENDING_APPROVAL'));
+    const unsubPending = onSnapshot(qPending, (snap) => {
+      const docs = snap.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) } as CommissionDoc));
+      docs.sort((a, b) => {
+        const dateA = a.updatedAt?.toDate?.()?.getTime() || a.createdAt?.toDate?.()?.getTime() || 0;
+        const dateB = b.updatedAt?.toDate?.()?.getTime() || b.createdAt?.toDate?.()?.getTime() || 0;
+        return dateB - dateA;
+      });
+      setPendingCommissions(docs.slice(0, 30));
+    }, (error) => {
+      console.error('Gagal memuat pending commissions:', error);
+    });
+
+    return () => {
+      unsubApproved();
+      unsubPending();
+    };
   }, []);
 
   const filtered = useMemo(() => {
@@ -139,10 +159,6 @@ export default function AdminReferralsPage() {
   }, [rows, search]);
 
   const activeCount = useMemo(() => filtered.filter((row) => row.status === 'ACTIVE').length, [filtered]);
-  const approvedCommissions = useMemo(
-    () => commissions.filter((row) => String(row.status || '').toUpperCase() === 'APPROVED').slice(0, 30),
-    [commissions],
-  );
 
   const exportCsv = () => {
     const headers = [
@@ -203,6 +219,24 @@ export default function AdminReferralsPage() {
       toast.error(error?.message || 'Gagal menandai komisi sebagai PAID.');
     } finally {
       setPayingId('');
+    }
+  };
+
+  const handleReview = async (commissionId: string, action: 'APPROVE' | 'REJECT') => {
+    if (!confirm(`Anda yakin ingin ${action === 'APPROVE' ? 'menyetujui' : 'menolak'} komisi ini?`)) {
+      return;
+    }
+
+    setReviewingId(commissionId);
+    try {
+      const callable = httpsCallable(functions, 'adminReviewAffiliatePayout');
+      await callable({ commissionId, action, note: `Direview oleh admin pada ${new Date().toLocaleString('id-ID')}` });
+      toast.success(`Komisi berhasil di-${action === 'APPROVE' ? 'setujui' : 'tolak'}.`);
+    } catch (error: any) {
+      console.error('Gagal review komisi:', error);
+      toast.error(`Gagal melakukan review komisi: ${error?.message || 'Error'}`);
+    } finally {
+      setReviewingId(null);
     }
   };
 
@@ -407,6 +441,62 @@ export default function AdminReferralsPage() {
           Selected: {selected.id}
         </div>
       )}
+
+      <Card className="bg-white rounded-3xl border-none ring-1 ring-slate-200 shadow-sm p-6 mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-sm font-black uppercase tracking-widest text-amber-600">Antrian Review Komisi (PENDING)</h3>
+          <p className="text-xs font-bold text-slate-500">{pendingCommissions.length} item</p>
+        </div>
+
+        {pendingCommissions.length === 0 ? (
+          <p className="text-sm text-slate-500 py-4">Tidak ada komisi berstatus PENDING_APPROVAL saat ini.</p>
+        ) : (
+          <div className="overflow-x-auto w-full custom-scrollbar">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-[10px] uppercase tracking-widest text-slate-400 border-b border-slate-100">
+                  <th className="py-3 pr-4">Komisi ID</th>
+                  <th className="py-3 pr-4">Affiliate</th>
+                  <th className="py-3 pr-4">Modul</th>
+                  <th className="py-3 pr-4">Nilai Komisi</th>
+                  <th className="py-3 pr-4">Nilai Tx</th>
+                  <th className="py-3">Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {pendingCommissions.map((row) => (
+                  <tr key={row.id} className="border-b border-slate-50">
+                    <td className="py-3 pr-4 font-semibold text-slate-800">{trimText(row.id, 20)}</td>
+                    <td className="py-3 pr-4 text-indigo-700 font-black">{row.affiliateCode || '-'}</td>
+                    <td className="py-3 pr-4 text-slate-700">{row.packageName || '-'}</td>
+                    <td className="py-3 pr-4 font-black text-amber-600">Rp {Number(row.commissionAmount || 0).toLocaleString('id-ID')}</td>
+                    <td className="py-3 pr-4 text-slate-700">Rp {Number(row.transactionAmount || 0).toLocaleString('id-ID')}</td>
+                    <td className="py-3">
+                      <div className="flex gap-2">
+                        <Button
+                          onClick={() => handleReview(row.id, 'APPROVE')}
+                          disabled={reviewingId === row.id}
+                          className="h-8 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white px-3"
+                        >
+                          {reviewingId === row.id ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" /> : <CheckCircle2 className="w-3.5 h-3.5 mr-1" />} Approve
+                        </Button>
+                        <Button
+                          onClick={() => handleReview(row.id, 'REJECT')}
+                          disabled={reviewingId === row.id}
+                          variant="outline"
+                          className="h-8 rounded-lg border-rose-200 text-rose-700 hover:bg-rose-50 px-3"
+                        >
+                          Reject
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Card>
 
       <Card className="bg-white rounded-3xl border-none ring-1 ring-slate-200 shadow-sm p-6">
         <div className="flex items-center justify-between mb-4">
