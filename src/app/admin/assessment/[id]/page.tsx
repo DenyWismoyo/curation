@@ -36,7 +36,6 @@ export default function AdminAssessmentDetailPage() {
             const internalSnap = await getDoc(internalDocRef);
             
             if (internalSnap.exists()) {
-              console.log("✅ Data rahasia (Matriks, SWOT, Custom Block) berhasil ditarik!");
               // Gabungkan objek aiResult publik dengan data internal
               combinedData.aiResult = { 
                 ...(combinedData.aiResult || {}), 
