@@ -249,20 +249,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                 Platform asesmen AI yang membantu Anda membaca situasi secara jernih, menyusun prioritas tindakan, dan mengeksekusi rencana tumbuh dengan lebih cepat.
               </p>
 
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 max-w-3xl mx-auto lg:mx-0">
-                {[
-                  { label: 'Framework', value: 'Context-Aware AI' },
-                  { label: 'Kecepatan', value: 'Insight Instan' },
-                  { label: 'Output', value: 'Action Plan Nyata' },
-                  { label: 'Skala', value: 'Personal - Enterprise' },
-                ].map((item) => (
-                  <div key={item.label} className="rounded-2xl bg-white/75 backdrop-blur-sm border border-white px-4 py-3 shadow-sm text-left">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{item.label}</p>
-                    <p className="text-sm font-black text-slate-800">{item.value}</p>
-                  </div>
-                ))}
-              </div>
-
               {/* AREA TOMBOL CTA */}
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 pt-2">
                 <button
