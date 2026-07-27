@@ -18,8 +18,6 @@ export async function processAIAssessment(
     timeout: 540000 
   });
 
-  console.log("Mengirim payload data ke Cloud Function...");
-
   try {
     const result = await processCuration({
       formData,
@@ -30,7 +28,6 @@ export async function processAIAssessment(
     });
 
     const data = result.data as { assessmentId: string, aiResult: AIResult };
-    console.log("Berhasil menerima respons AI! ID:", data.assessmentId);
 
     return { assessmentId: data.assessmentId, aiResult: data.aiResult };
 
