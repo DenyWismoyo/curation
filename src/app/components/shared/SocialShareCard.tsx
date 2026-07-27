@@ -43,7 +43,7 @@ export function SocialShareCard({ namaUsaha, score, readinessLevel, trackType }:
         handleCopyCaption(); // Fallback jika browser tidak mendukung Web Share API
       }
     } catch (err) {
-      console.log('Error sharing:', err);
+      console.error('Error sharing:', err);
     }
   };
 
