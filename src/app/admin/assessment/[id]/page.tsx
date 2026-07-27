@@ -28,7 +28,7 @@ export default function AdminAssessmentDetailPage() {
         
         if (docSnap.exists()) {
           // FIX: Tambahkan tipe ": any" agar TypeScript tidak mengeluh (garis merah hilang)
-          let combinedData: any = { id: docSnap.id, ...docSnap.data() };
+          let combinedData: any = { id: docSnap.id, ...docSnap.data() }; // Added explicit any type to resolve TypeScript compilation complaints
 
           // 2. TARIK DATA RAHASIA (DARI SUB-COLLECTION INTERNAL/DETAILS)
           try {
