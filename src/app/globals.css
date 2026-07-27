@@ -85,8 +85,8 @@
     /* Fokus Ring menggunakan warna primary */
     --ring: 243 75% 59%;
 
-    /* BORDER RADIUS DITINGKATKAN (0.75rem = xl) untuk kesan melengkung premium */
-    --radius: 0.75rem;
+    /* BORDER RADIUS DITURUNKAN (0.5rem = lg) untuk kesan enterprise yang lebih tegas dan formal */
+    --radius: 0.5rem;
   }
 
   .dark {

@@ -115,15 +115,15 @@ export default function ExplorePage() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 -mt-8 relative z-20">
         
         {/* TABS CATEGORY */}
-        <div className="flex gap-2 overflow-x-auto custom-scrollbar bg-white p-2 rounded-2xl shadow-sm border border-slate-100 mb-10 w-fit max-w-full">
+        <div className="flex gap-2 overflow-x-auto custom-scrollbar bg-white p-2 rounded-xl shadow-sm border border-slate-200 mb-10 w-fit max-w-full">
           {CATEGORIES.map(category => (
             <button
               key={category}
               onClick={() => setActiveCategory(category)}
-              className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${
+              className={`px-5 py-2.5 rounded-lg text-sm font-bold transition-all whitespace-nowrap ${
                 activeCategory === category
-                  ? 'bg-indigo-600 text-white shadow-md'
-                  : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+                  ? 'bg-slate-900 text-white shadow-sm'
+                  : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
               }`}
             >
               {category}
@@ -133,13 +133,13 @@ export default function ExplorePage() {
 
         {loading ? (
           <div className="py-24 flex flex-col justify-center items-center text-slate-400">
-            <Loader2 className="w-10 h-10 animate-spin mb-4 text-indigo-500" />
-            <p className="font-bold text-xs uppercase tracking-widest">Memuat Wawasan...</p>
+            <Loader2 className="w-8 h-8 animate-spin mb-4 text-indigo-600" />
+            <p className="font-bold text-xs uppercase tracking-widest text-slate-500">Memuat Wawasan...</p>
           </div>
         ) : filteredArticles.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-200 shadow-sm">
-            <Search size={48} className="mx-auto text-slate-200 mb-4" />
-            <h3 className="text-lg font-black text-slate-800">Artikel tidak ditemukan</h3>
+          <div className="text-center py-20 bg-white rounded-xl border border-slate-200 shadow-sm">
+            <Search size={40} className="mx-auto text-slate-300 mb-4" />
+            <h3 className="text-lg font-bold text-slate-900 tracking-tight">Artikel tidak ditemukan</h3>
             <p className="text-slate-500 font-medium mt-1">Coba gunakan kata kunci pencarian yang lain.</p>
           </div>
         ) : (
@@ -150,51 +150,50 @@ export default function ExplorePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 onClick={() => router.push(`/explore/${featuredArticle.id}`)}
-                className="bg-white rounded-[2rem] border border-slate-200 p-3 sm:p-5 shadow-sm hover:shadow-xl transition-all duration-500 group mb-12 cursor-pointer relative flex flex-col"
+                className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 group mb-12 cursor-pointer relative flex flex-col"
               >
                 <button 
                   onClick={(e) => handleCopyLink(e, featuredArticle.id, featuredArticle.title)}
-                  className={`absolute top-6 sm:top-8 right-6 sm:right-8 z-20 p-3 rounded-xl shadow-sm transition-all ${copiedId === featuredArticle.id ? 'bg-emerald-500 text-white' : 'bg-white/80 backdrop-blur text-slate-600 hover:bg-indigo-600 hover:text-white'}`}
+                  className={`absolute top-6 sm:top-8 right-6 sm:right-8 z-20 p-2.5 rounded-lg shadow-sm border transition-all ${copiedId === featuredArticle.id ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}
                   title="Bagikan Tautan"
                 >
-                  {copiedId === featuredArticle.id ? <Check size={18} /> : <Share2 size={18} />}
+                  {copiedId === featuredArticle.id ? <Check size={16} /> : <Share2 size={16} />}
                 </button>
 
-                <div className="w-full aspect-[2/1] bg-slate-50 rounded-[1.5rem] relative overflow-hidden ring-1 ring-slate-100 mb-6 sm:mb-8">
-                  <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 group-hover:scale-105 transition-transform duration-700 z-10"></div>
+                <div className="w-full aspect-[2/1] bg-slate-50 rounded-lg relative overflow-hidden border border-slate-100 mb-6 sm:mb-8">
                   {featuredArticle.imageUrl ? (
-                    <img src={featuredArticle.imageUrl} alt={featuredArticle.title} className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" />
+                    <img src={featuredArticle.imageUrl} alt={featuredArticle.title} className="w-full h-full object-cover transform group-hover:scale-[1.02] transition-transform duration-500" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center transform group-hover:scale-110 transition-transform duration-500">
-                      {getIconComponent(featuredArticle.iconName, "text-indigo-400/50")}
+                    <div className="w-full h-full flex items-center justify-center transform group-hover:scale-[1.02] transition-transform duration-500">
+                      {getIconComponent(featuredArticle.iconName, "text-slate-300")}
                     </div>
                   )}
                 </div>
 
                 <div className="px-2 sm:px-6 pb-4 max-w-4xl mx-auto w-full text-center">
-                  <div className="flex items-center justify-center gap-3 mb-5">
-                    <span className="px-3 py-1 bg-indigo-50 text-indigo-600 text-[10px] font-black uppercase tracking-widest rounded-lg">
+                  <div className="flex items-center justify-center gap-3 mb-4">
+                    <span className="px-3 py-1 bg-slate-100 text-slate-700 text-[10px] font-bold uppercase tracking-widest rounded border border-slate-200">
                       {featuredArticle.category}
                     </span>
-                    <span className="flex items-center gap-1.5 text-xs font-bold text-slate-400">
+                    <span className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
                       <Calendar size={14} /> {new Date(featuredArticle.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
                     </span>
                   </div>
                   
-                  <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 leading-[1.15] mb-5 group-hover:text-indigo-600 transition-colors text-balance mx-auto">
+                  <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-[1.15] mb-4 group-hover:text-indigo-600 transition-colors text-balance mx-auto">
                     {featuredArticle.title}
                   </h2>
                   
-                  <p className="text-base sm:text-lg text-slate-500 font-medium leading-relaxed mb-8 max-w-3xl mx-auto line-clamp-3">
+                  <p className="text-base sm:text-lg text-slate-600 font-medium leading-relaxed mb-8 max-w-3xl mx-auto line-clamp-3">
                     {featuredArticle.excerpt}
                   </p>
                   
-                  <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 pt-6 border-t border-slate-100 w-full max-w-xl mx-auto">
-                    <span className="flex items-center gap-1.5 text-sm font-bold text-slate-400">
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 pt-6 border-t border-slate-100 w-full max-w-xl mx-auto">
+                    <span className="flex items-center gap-1.5 text-sm font-medium text-slate-500">
                       <Clock size={16} /> Estimasi baca {featuredArticle.readTime}
                     </span>
-                    <span className="flex items-center gap-2 text-sm font-bold text-indigo-600 group-hover:translate-x-2 transition-transform bg-indigo-50 px-5 py-2.5 rounded-xl">
-                      Mulai Membaca <ArrowRight size={16} />
+                    <span className="flex items-center gap-2 text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors px-4 py-2 rounded-lg hover:bg-slate-50">
+                      Mulai Membaca <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                     </span>
                   </div>
                 </div>
@@ -207,54 +206,53 @@ export default function ExplorePage() {
                 {regularArticles.map((article, idx) => (
                   <motion.div
                     layout
-                    initial={{ opacity: 0, scale: 0.95 }}
+                    initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.3, delay: idx * 0.05 }}
+                    exit={{ opacity: 0, scale: 0.98 }}
+                    transition={{ duration: 0.2, delay: idx * 0.05 }}
                     key={article.id}
                     onClick={() => router.push(`/explore/${article.id}`)}
-                    className="bg-white rounded-[1.5rem] border border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300 group cursor-pointer flex flex-col relative overflow-hidden"
+                    className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 group cursor-pointer flex flex-col relative overflow-hidden"
                   >
                     <button 
                       onClick={(e) => handleCopyLink(e, article.id, article.title)}
-                      className={`absolute top-4 right-4 z-20 p-2.5 rounded-xl shadow-sm transition-all ${copiedId === article.id ? 'bg-emerald-500 text-white' : 'bg-white/80 backdrop-blur text-slate-500 hover:bg-indigo-600 hover:text-white'}`}
+                      className={`absolute top-3 right-3 z-20 p-2 rounded-lg shadow-sm border transition-all ${copiedId === article.id ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-white/90 backdrop-blur-sm border-slate-200 text-slate-500 hover:bg-white hover:text-slate-900'}`}
                       title="Bagikan Tautan"
                     >
                       {copiedId === article.id ? <Check size={14} /> : <Share2 size={14} />}
                     </button>
 
                     <div className="w-full aspect-[2/1] bg-slate-50 relative overflow-hidden border-b border-slate-100 shrink-0">
-                      <div className="absolute inset-0 bg-gradient-to-br from-slate-100/50 to-transparent group-hover:scale-110 transition-transform duration-700 z-10"></div>
                       {article.imageUrl ? (
-                        <img src={article.imageUrl} alt={article.title} className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" />
+                        <img src={article.imageUrl} alt={article.title} className="w-full h-full object-cover transform group-hover:scale-[1.03] transition-transform duration-300" />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center transform group-hover:scale-110 transition-transform duration-500">
-                          {getIconComponent(article.iconName, "text-slate-300 group-hover:text-indigo-400 transition-colors")}
+                        <div className="w-full h-full flex items-center justify-center transform group-hover:scale-[1.03] transition-transform duration-300">
+                          {getIconComponent(article.iconName, "text-slate-300")}
                         </div>
                       )}
                     </div>
                     
-                    <div className="p-5 sm:p-6 flex-1 flex flex-col">
+                    <div className="p-4 sm:p-5 flex-1 flex flex-col">
                       <div className="flex items-center gap-3 mb-3">
-                        <span className="px-2.5 py-1 bg-slate-100 text-slate-600 text-[9px] font-black uppercase tracking-widest rounded-md">
+                        <span className="px-2 py-0.5 bg-slate-50 text-slate-600 text-[10px] font-bold uppercase tracking-wider rounded border border-slate-200">
                           {article.category}
                         </span>
                       </div>
                       
-                      <h3 className="text-lg font-black text-slate-900 leading-snug mb-2 group-hover:text-indigo-600 transition-colors line-clamp-2 text-balance">
+                      <h3 className="text-base font-bold text-slate-900 tracking-tight leading-snug mb-2 group-hover:text-indigo-600 transition-colors line-clamp-2 text-balance">
                         {article.title}
                       </h3>
                       
-                      <p className="text-sm text-slate-500 font-medium leading-relaxed mb-6 line-clamp-3">
+                      <p className="text-sm text-slate-600 font-medium leading-relaxed mb-6 line-clamp-3">
                         {article.excerpt}
                       </p>
                       
                       <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-4">
-                        <span className="text-[11px] font-bold text-slate-400">
-                          {new Date(article.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
+                        <span className="text-[11px] font-medium text-slate-500">
+                          {new Date(article.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                         </span>
-                        <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-indigo-50 transition-colors">
-                          <ArrowRight size={14} className="text-slate-400 group-hover:text-indigo-600" />
+                        <div className="flex items-center text-slate-400 group-hover:text-indigo-600 transition-colors">
+                          <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                         </div>
                       </div>
                     </div>
