@@ -39,6 +39,7 @@ interface PricingPackagesProps {
 
 const getCategoryTheme = (title: string, category: string) => {
   const text = `${title} ${category}`.toLowerCase();
+  
   if (text.includes('koperasi') || text.includes('kelurahan') || text.includes('komunitas') || text.includes('hijau') || text.includes('sampah') || text.includes('properti')) {
     return { bg: 'bg-emerald-50', text: 'text-emerald-600', ring: 'ring-emerald-200', btn: 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/20 text-white', pill: 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100', gradient: 'from-emerald-50/50 to-white' };
   }
@@ -68,7 +69,7 @@ const calculatePrice = (pkg: FormTemplate) => {
     }
   }
 
-  const final = isDiscountActive
+  const final = isDiscountActive 
     ? pkg.price - (pkg.price * (pkg.discountPercentage! / 100))
     : pkg.price;
     
@@ -93,9 +94,11 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
   const [packages, setPackages] = useState<FormTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState<string>('Semua');
+  
   const [checkoutPackage, setCheckoutPackage] = useState<FormTemplate | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+
   const [storedAffiliateCode, setStoredAffiliateCode] = useState<string>('');
   const [attributionVisitorId, setAttributionVisitorId] = useState<string>('');
   const [attributionModel, setAttributionModel] = useState(DEFAULT_ATTRIBUTION_MODEL);
@@ -103,7 +106,6 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
   useEffect(() => {
     const stored = getStoredReferralAttribution();
     const visitorId = ensureReferralVisitorId();
-
     setStoredAffiliateCode(stored?.affiliateCode || '');
     setAttributionVisitorId(visitorId || '');
     setAttributionModel(stored?.attributionModel || DEFAULT_ATTRIBUTION_MODEL);
@@ -196,7 +198,9 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
   const handleCopyLink = async (e: React.MouseEvent, id: string, trackName: string) => {
     e.stopPropagation();
     if (typeof window === 'undefined') return;
-    const shareUrl = `${window.location.origin}/katalog?buy=${id}`;
+    
+    const refQuery = storedAffiliateCode ? `&ref=${storedAffiliateCode}` : '';
+    const shareUrl = `${window.location.origin}/katalog?buy=${id}${refQuery}`;
     
     try {
       const result = await shareOrCopy({
@@ -219,11 +223,13 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
   const filteredPackages = packages.filter(pkg => activeCategory === 'Semua' || pkg.category === activeCategory);
   
   const drawerTheme = checkoutPackage ? getCategoryTheme(checkoutPackage.trackName, checkoutPackage.category || '') : getCategoryTheme('', '');
+  
   const DrawerIcon = checkoutPackage?.trackIcon && (LucideIcons as any)[checkoutPackage.trackIcon] 
-                      ? (LucideIcons as any)[checkoutPackage.trackIcon] 
-                      : AppModuleTealIcon;
-                      
+                       ? (LucideIcons as any)[checkoutPackage.trackIcon] 
+                       : AppModuleTealIcon;
+                       
   const OutputIcons = [AILensIcon, InfinityWorkflowIcon, BrainIcon, GlobalTargetIcon];
+
   const checkoutPriceInfo = checkoutPackage ? calculatePrice(checkoutPackage) : null;
 
   return (
@@ -237,8 +243,8 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
             exit={{ opacity: 0, y: asPage ? 0 : '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             className={`${asPage 
-              ? 'bg-[#FAFAFA] w-full min-h-screen flex flex-col' 
-              : 'fixed inset-0 z-[100] bg-slate-50 flex flex-col overflow-hidden w-full h-[100dvh]'
+               ? 'bg-[#FAFAFA] w-full min-h-screen flex flex-col' 
+               : 'fixed inset-0 z-[100] bg-slate-50 flex flex-col overflow-hidden w-full h-[100dvh]'
             }`}
           >
             {/* Tampilkan tombol close KHUSUS JIKA bentuknya modal/laci (!asPage) */}
@@ -253,8 +259,8 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
             <div className={`${asPage ? 'relative z-10 w-full' : 'flex-1 overflow-y-auto custom-scrollbar relative z-10'}`}>
               
               {/* STICKY CATEGORY PILLS BAR 
-                  md:top-[80px] digunakan karena navbar desktop Anda tingginya h-20 (80px). 
-                  top-0 digunakan untuk mobile (atau layout non-page). 
+                  md:top-[80px] digunakan karena navbar desktop Anda tingginya h-20 (80px).
+                  top-0 digunakan untuk mobile (atau layout non-page).
               */}
               <div className={`sticky ${asPage ? 'top-0 md:top-[80px]' : 'top-0'} z-30 bg-[#FAFAFA]/95 backdrop-blur-md border-b border-slate-200/60 shadow-sm transition-all w-full`}>
                 <div className={`px-5 sm:px-8 py-3.5 sm:py-4 ${asPage ? 'max-w-6xl mx-auto' : 'max-w-4xl mx-auto'}`}>
@@ -298,10 +304,10 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                         <AnimatePresence mode="popLayout">
                           {filteredPackages.map((pkg) => {
                             const theme = getCategoryTheme(pkg.trackName, pkg.category || '');
-                            const IconComponent = pkg.trackIcon && (LucideIcons as any)[pkg.trackIcon] 
-                               ? (LucideIcons as any)[pkg.trackIcon] 
-                               : AppModuleTealIcon;
-                              
+                            const IconComponent = pkg.trackIcon && (LucideIcons as any)[pkg.trackIcon]
+                                ? (LucideIcons as any)[pkg.trackIcon]
+                                : AppModuleTealIcon;
+                            
                             const isCopied = copiedId === pkg.id;
                             const priceInfo = calculatePrice(pkg);
 
@@ -337,7 +343,6 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                                         {pkg.category || 'Asesmen Mandiri'}
                                       </span>
                                     </div>
-
                                     <h3 className="text-base sm:text-lg font-black text-slate-900 leading-tight group-hover:text-indigo-600 transition-colors mb-2">
                                       {pkg.trackName}
                                     </h3>
@@ -391,8 +396,8 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                                     <Button
                                       size="sm"
                                       className={`h-10 px-5 sm:px-6 rounded-xl text-xs sm:text-sm font-bold shadow-sm transition-all group-hover:shadow-md ${
-                                        priceInfo.isFree
-                                          ? 'bg-slate-900 text-white hover:bg-slate-800'
+                                        priceInfo.isFree 
+                                          ? 'bg-slate-900 text-white hover:bg-slate-800' 
                                           : theme.btn
                                       }`}
                                     >
@@ -553,7 +558,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                     </h5>
                     <div className="flex items-center gap-2 bg-white p-1.5 rounded-xl border border-slate-200 shadow-sm">
                       <div className="flex-1 truncate px-2 text-xs font-mono font-medium text-slate-400 select-all">
-                        {`${window.location.origin}/katalog?buy=${checkoutPackage.id}`}
+                        {`${window.location.origin}/katalog?buy=${checkoutPackage.id}${storedAffiliateCode ? `&ref=${storedAffiliateCode}` : ''}`}
                       </div>
                       <Button
                         onClick={(e) => handleCopyLink(e, checkoutPackage.id, checkoutPackage.trackName)}
