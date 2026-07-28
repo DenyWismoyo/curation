@@ -1,12 +1,12 @@
-'use client'
+'use client';
 
 // src/components/shared/PublicNavbar.tsx
 
-import React from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
-import { usePathname, useRouter } from 'next/navigation'
-import { motion } from 'framer-motion'
+import React from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { usePathname, useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 import {
   LibraryBig,
   FolderKanban,
@@ -20,8 +20,8 @@ import {
   Receipt,
   MapPinned,
   LogIn,
-} from 'lucide-react'
-import { useAuth } from '@/contexts/AuthContext'
+} from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,14 +30,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   DropdownMenuGroup,
-} from '@/components/ui/dropdown-menu'
-import { Button } from '@/components/ui/button'
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
 
 interface NavItem {
-  href: string
-  label: string
-  icon: React.ReactNode
-  requiresAuth?: boolean
+  href: string;
+  label: string;
+  icon: React.ReactNode;
+  requiresAuth?: boolean;
 }
 
 const NAV_ITEMS: NavItem[] = [
@@ -73,52 +73,52 @@ const NAV_ITEMS: NavItem[] = [
     label: 'Komunitas',
     icon: <Users size={16} strokeWidth={2} />,
   },
-]
+];
 
 export function PublicNavbar() {
-  const pathname = usePathname()
-  const router = useRouter()
-  const { user, logout } = useAuth()
+  const pathname = usePathname();
+  const router = useRouter();
+  const { user, logout } = useAuth();
 
   const isActive = (href: string) =>
-    href === '/' ? pathname === '/' : pathname?.startsWith(href)
+    href === '/' ? pathname === '/' : pathname?.startsWith(href);
 
   const handleLogout = async () => {
     try {
-      await logout()
-      router.push('/')
+      await logout();
+      router.push('/');
     } catch {
       // silent
     }
-  }
+  };
 
   return (
-    <header className="hidden md:flex fixed top-0 left-0 right-0 h-20 bg-background/80 backdrop-blur-md border-b z-40 items-center justify-between px-6 lg:px-12">
+    <header className="hidden md:flex fixed top-0 left-0 right-0 h-20 bg-white/80 backdrop-blur-xl border-b border-slate-200/60 z-40 items-center justify-between px-6 lg:px-12">
       {/* Brand & Kiri */}
       <div className="flex items-center gap-8">
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center shadow-md shadow-primary/20 group-hover:scale-105 transition-transform">
+          <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-sm ring-1 ring-slate-200 group-hover:ring-indigo-200 transition-all">
             <Image
               src="/logo.png"
               alt="Omnifit"
-              width={22}
-              height={22}
-              className="object-contain brightness-0 invert"
+              width={24}
+              height={24}
+              className="object-contain"
               unoptimized
             />
           </div>
           <div>
-            <span className="text-base font-black text-foreground tracking-tight">
+            <span className="text-lg font-black text-slate-900 tracking-tight group-hover:text-indigo-600 transition-colors">
               Omnifit
             </span>
           </div>
         </Link>
 
-        {/* Navigasi Utama */}
-        <nav className="flex items-center gap-1">
+        {/* Navigasi Utama (Gaya Pill Minimalis) */}
+        <nav className="flex items-center gap-1.5 bg-slate-50/50 p-1 rounded-2xl ring-1 ring-slate-100">
           {NAV_ITEMS.map((item) => {
-            if (item.requiresAuth && !user) return null
-            const active = isActive(item.href)
+            if (item.requiresAuth && !user) return null;
+            const active = isActive(item.href);
 
             return (
               <Link
@@ -128,23 +128,23 @@ export function PublicNavbar() {
                   relative px-4 py-2 rounded-xl text-sm font-bold transition-all
                   ${
                     active
-                      ? 'text-primary-foreground'
-                      : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                      ? 'text-slate-900'
+                      : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100/50'
                   }
                 `}
               >
                 {active && (
                   <motion.div
                     layoutId="navbar-active"
-                    className="absolute inset-0 bg-primary/10 rounded-xl -z-10"
+                    className="absolute inset-0 bg-white shadow-sm ring-1 ring-slate-200/60 rounded-xl -z-10"
                     transition={{ type: 'spring', stiffness: 500, damping: 40 }}
                   />
                 )}
-                <span className="flex items-center gap-2">
+                <span className="flex items-center gap-2 relative z-10">
                   {item.icon} {item.label}
                 </span>
               </Link>
-            )
+            );
           })}
         </nav>
       </div>
@@ -153,10 +153,10 @@ export function PublicNavbar() {
       <div className="flex items-center gap-4">
         {user ? (
           <>
-            <div className="flex items-center gap-3 pl-4 border-l">
+            <div className="flex items-center gap-3 pl-4 border-l border-slate-200/60">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="flex items-center gap-2.5 p-1.5 pr-3 h-auto">
+                  <Button variant="ghost" className="flex items-center gap-2.5 p-1.5 pr-3 h-auto rounded-[1rem] hover:bg-slate-50 hover:ring-1 hover:ring-slate-200 transition-all">
                     {user.photoURL ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
@@ -164,69 +164,70 @@ export function PublicNavbar() {
                         alt={user.displayName || 'User'}
                         width={32}
                         height={32}
-                        className="rounded-[10px] w-8 h-8 object-cover"
+                        className="rounded-xl w-8 h-8 object-cover shadow-sm ring-1 ring-slate-200"
                         referrerPolicy="no-referrer"
                       />
                     ) : (
-                      <div className="w-8 h-8 rounded-[10px] bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
+                      <div className="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold text-sm ring-1 ring-indigo-100 shadow-sm">
                         {user.displayName?.charAt(0).toUpperCase() || 'U'}
                       </div>
                     )}
                     <div className="flex items-center gap-1.5">
-                       <span className="text-xs font-bold text-foreground leading-tight truncate max-w-[100px]">
+                       <span className="text-xs font-bold text-slate-800 leading-tight truncate max-w-[100px]">
                         {user.displayName?.split(' ')[0] || 'Pengguna'}
                       </span>
-                      <ChevronDown size={14} className="text-muted-foreground" />
+                      <ChevronDown size={14} className="text-slate-400" />
                     </div>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-64" align="end">
-                  <DropdownMenuLabel className="font-normal">
-                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                
+                {/* Dropdown Bergaya CurationDashboard */}
+                <DropdownMenuContent className="w-64 rounded-[1.5rem] p-3 shadow-xl ring-1 ring-slate-200 border-none bg-white" align="end">
+                  <DropdownMenuLabel className="font-normal px-3 py-2">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                       Akun Saya
                     </p>
-                    <p className="text-sm font-bold text-foreground truncate mt-1">
+                    <p className="text-sm font-bold text-slate-900 truncate mt-1">
                       {user.email}
                     </p>
                   </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
+                  <DropdownMenuSeparator className="bg-slate-100 my-2" />
                   <DropdownMenuGroup>
-                    <DropdownMenuItem asChild>
-                      <Link href="/profil" className="flex items-center gap-3 cursor-pointer">
-                        <User size={16} /> Profil Lengkap
+                    <DropdownMenuItem asChild className="rounded-xl cursor-pointer hover:bg-slate-50 font-bold text-slate-700 py-2.5">
+                      <Link href="/profil" className="flex items-center gap-3">
+                        <User size={16} className="text-slate-400" /> Profil Lengkap
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                       <Link href="/riwayat" className="flex items-center gap-3 cursor-pointer">
-                        <Receipt size={16} /> Riwayat & Tagihan
+                    <DropdownMenuItem asChild className="rounded-xl cursor-pointer hover:bg-slate-50 font-bold text-slate-700 py-2.5">
+                       <Link href="/riwayat" className="flex items-center gap-3">
+                        <Receipt size={16} className="text-slate-400" /> Riwayat & Tagihan
                       </Link>
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:bg-destructive/10 focus:text-destructive">
+                  <DropdownMenuSeparator className="bg-slate-100 my-2" />
+                  <DropdownMenuItem onClick={handleLogout} className="rounded-xl text-rose-600 font-bold focus:bg-rose-50 focus:text-rose-700 py-2.5 cursor-pointer">
                     <LogOut size={16} className="mr-3" />
-                    Keluar
+                    Keluar Sistem
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-
-            <Button asChild>
+            <Button asChild className="rounded-xl h-10 px-5 bg-slate-900 hover:bg-indigo-600 text-white font-bold shadow-sm transition-all text-xs">
               <Link href="/token">
-                <KeyRound size={16} className="mr-2" />
+                <KeyRound size={14} className="mr-2" />
                 Gunakan Token
               </Link>
             </Button>
           </>
         ) : (
           <div className="flex items-center gap-3">
-            <Button variant="ghost" asChild>
+            <Button variant="ghost" asChild className="rounded-xl h-10 px-5 font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all text-xs">
               <Link href="/login">
-                <LogIn size={16} className="mr-2" />
+                <LogIn size={14} className="mr-2" />
                 Masuk
               </Link>
             </Button>
-            <Button asChild>
+            <Button asChild className="rounded-xl h-10 px-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-md shadow-indigo-600/20 transition-all text-xs">
               <Link href="/katalog">
                 Mulai Eksplorasi
               </Link>
@@ -235,5 +236,5 @@ export function PublicNavbar() {
         )}
       </div>
     </header>
-  )
+  );
 }

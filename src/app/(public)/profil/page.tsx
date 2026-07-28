@@ -1,5 +1,6 @@
-// src/app/(public)/profil/page.tsx
 'use client';
+
+// src/app/(public)/profil/page.tsx
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
@@ -17,9 +18,6 @@ import { toast } from 'sonner';
 import { BrainIcon, InfinityWorkflowIcon, DocExportIcon, AiSparkIcon } from '@/types';
 import { NotificationBell } from '@/components/shared';
 
-// ============================================================
-// BADGE DEFINITIONS
-// ============================================================
 interface Badge {
   id: string;
   label: string;
@@ -42,84 +40,19 @@ interface UserStats {
 }
 
 const BADGES: Badge[] = [
-  {
-    id: 'first_step',
-    label: 'Langkah Pertama',
-    description: 'Menyelesaikan asesmen pertama',
-    icon: <Zap size={18} />,
-    color: 'text-indigo-600',
-    bgColor: 'bg-indigo-50',
-    condition: (s) => s.completedAssessments >= 1,
-  },
-  {
-    id: 'score_80',
-    label: 'Skor Gemilang',
-    description: 'Meraih skor di atas 80',
-    icon: <Star size={18} />,
-    color: 'text-amber-500',
-    bgColor: 'bg-amber-50',
-    condition: (s) => s.maxScore >= 80,
-  },
-  {
-    id: 'consistent',
-    label: 'Konsistensi Strategis',
-    description: 'Menyelesaikan 3 asesmen atau lebih',
-    icon: <TrendingUp size={18} />,
-    color: 'text-emerald-600',
-    bgColor: 'bg-emerald-50',
-    condition: (s) => s.completedAssessments >= 3,
-  },
-  {
-    id: 'multi_track',
-    label: 'Explorer',
-    description: 'Mencoba 3 program berbeda',
-    icon: <Target size={18} />,
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-50',
-    condition: (s) => s.distinctTracks >= 3,
-  },
-  {
-    id: 'executor',
-    label: 'Eksekutor',
-    description: 'Menyelesaikan 5+ action items',
-    icon: <CheckCircle2 size={18} />,
-    color: 'text-purple-600',
-    bgColor: 'bg-purple-50',
-    condition: (s) => s.completedActionItems >= 5,
-  },
-  {
-    id: 'premium',
-    label: 'Member Premium',
-    description: 'Memiliki akses modul premium',
-    icon: <Award size={18} />,
-    color: 'text-rose-500',
-    bgColor: 'bg-rose-50',
-    condition: (s) => s.hasPremium,
-  },
-  {
-    id: 'score_90',
-    label: 'Elite Analyst',
-    description: 'Meraih skor di atas 90',
-    icon: <Trophy size={18} />,
-    color: 'text-yellow-500',
-    bgColor: 'bg-yellow-50',
-    condition: (s) => s.maxScore >= 90,
-  },
-  {
-    id: 'high_confidence',
-    label: 'Strategis',
-    description: 'Menyelesaikan 5 asesmen atau lebih',
-    icon: <BarChart3 size={18} />,
-    color: 'text-teal-600',
-    bgColor: 'bg-teal-50',
-    condition: (s) => s.completedAssessments >= 5,
-  },
+  { id: 'first_step', label: 'Langkah Pertama', description: 'Menyelesaikan asesmen pertama', icon: <Zap size={18} />, color: 'text-indigo-600', bgColor: 'bg-indigo-50', condition: (s) => s.completedAssessments >= 1 },
+  { id: 'score_80', label: 'Skor Gemilang', description: 'Meraih skor di atas 80', icon: <Star size={18} />, color: 'text-amber-500', bgColor: 'bg-amber-50', condition: (s) => s.maxScore >= 80 },
+  { id: 'consistent', label: 'Konsistensi Strategis', description: 'Menyelesaikan 3 asesmen atau lebih', icon: <TrendingUp size={18} />, color: 'text-emerald-600', bgColor: 'bg-emerald-50', condition: (s) => s.completedAssessments >= 3 },
+  { id: 'multi_track', label: 'Explorer', description: 'Mencoba 3 program berbeda', icon: <Target size={18} />, color: 'text-blue-600', bgColor: 'bg-blue-50', condition: (s) => s.distinctTracks >= 3 },
+  { id: 'executor', label: 'Eksekutor', description: 'Menyelesaikan 5+ action items', icon: <CheckCircle2 size={18} />, color: 'text-purple-600', bgColor: 'bg-purple-50', condition: (s) => s.completedActionItems >= 5 },
+  { id: 'premium', label: 'Member Premium', description: 'Memiliki akses modul premium', icon: <Award size={18} />, color: 'text-rose-500', bgColor: 'bg-rose-50', condition: (s) => s.hasPremium },
+  { id: 'score_90', label: 'Elite Analyst', description: 'Meraih skor di atas 90', icon: <Trophy size={18} />, color: 'text-yellow-500', bgColor: 'bg-yellow-50', condition: (s) => s.maxScore >= 90 },
+  { id: 'high_confidence', label: 'Strategis', description: 'Menyelesaikan 5 asesmen atau lebih', icon: <BarChart3 size={18} />, color: 'text-teal-600', bgColor: 'bg-teal-50', condition: (s) => s.completedAssessments >= 5 },
 ];
 
 export default function ProfilPage() {
   const { user, loading, logout } = useAuth();
   const router = useRouter();
-
   const [stats, setStats] = useState<UserStats | null>(null);
   const [isFetching, setIsFetching] = useState(true);
   const [activeTab, setActiveTab] = useState<'overview' | 'badges' | 'settings'>('overview');
@@ -139,24 +72,19 @@ export default function ProfilPage() {
       const q = query(collection(db, 'assessments'), where('userId', '==', user.uid));
       const snap = await getDocs(q);
       const docs = snap.docs.map(d => d.data());
-
       const completed = docs.filter(d => d.status === 'COMPLETED');
       const scores = completed.map(d => d.score || 0);
       const allTracks = [...new Set(completed.map(d => d.trackType).filter(Boolean))];
-
       let completedAP = 0;
       let totalAP = 0;
+      
       completed.forEach(d => {
         const plan = d.aiResult?.customActionPlan || [];
         totalAP += plan.length;
         completedAP += plan.filter((i: any) => i.isCompleted).length;
       });
 
-      const txQ = query(
-        collection(db, 'transactions'),
-        where('userId', '==', user.uid),
-        where('status', '==', 'PAID')
-      );
+      const txQ = query(collection(db, 'transactions'), where('userId', '==', user.uid), where('status', '==', 'PAID'));
       const txSnap = await getDocs(txQ);
 
       setStats({
@@ -179,8 +107,7 @@ export default function ProfilPage() {
   const earnedBadges = stats ? BADGES.filter(b => b.condition(stats)) : [];
   const lockedBadges = stats ? BADGES.filter(b => !b.condition(stats)) : BADGES;
   const actionPlanProgress = stats && stats.totalActionItems > 0
-    ? Math.round((stats.completedActionItems / stats.totalActionItems) * 100)
-    : 0;
+    ? Math.round((stats.completedActionItems / stats.totalActionItems) * 100) : 0;
 
   if (loading || isFetching) {
     return (
@@ -193,15 +120,15 @@ export default function ProfilPage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] pb-28 font-sans selection:bg-indigo-100 selection:text-indigo-900">
-
-      {/* HEADER */}
-      <div className="bg-white border-b border-slate-100 pt-8 pb-0 px-6 lg:px-12">
-        <div className="max-w-[800px] mx-auto">
-          <div className="flex items-center justify-between mb-6">
+    <div className="min-h-screen bg-[#FAFAFA] pb-28 pt-20 font-sans selection:bg-indigo-100 selection:text-indigo-900">
+      
+      {/* HEADER MINIMALIS */}
+      <div className="bg-white border-b border-slate-100/60 px-6 lg:px-12 py-8 relative">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center justify-between mb-8">
             <button
               onClick={() => router.back()}
-              className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors group"
+              className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors group bg-slate-50 px-3 py-1.5 rounded-xl"
             >
               <ChevronLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" />
               Kembali
@@ -209,127 +136,119 @@ export default function ProfilPage() {
             <NotificationBell />
           </div>
 
-          {/* PROFILE CARD */}
-          <div className="flex items-center gap-5 pb-8">
+          {/* PROFILE INFO CARD */}
+          <div className="flex items-center gap-5">
             <div className="relative">
-              <div className="w-20 h-20 bg-gradient-to-br from-indigo-400 to-indigo-600 text-white rounded-2xl flex items-center justify-center text-2xl font-black shadow-lg shadow-indigo-500/20">
+              <div className="w-20 h-20 bg-indigo-50 text-indigo-600 rounded-[1.5rem] flex items-center justify-center text-2xl font-black ring-1 ring-indigo-100 shadow-sm">
                 {user.displayName?.charAt(0).toUpperCase() || 'U'}
               </div>
               {stats?.hasPremium && (
-                <div className="absolute -top-1 -right-1 w-6 h-6 bg-amber-400 rounded-full flex items-center justify-center shadow-sm">
-                  <Award size={12} className="text-white" />
+                <div className="absolute -top-2 -right-2 w-8 h-8 bg-amber-400 rounded-xl flex items-center justify-center shadow-sm ring-2 ring-white">
+                  <Award size={14} className="text-white" />
                 </div>
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <h1 className="text-xl font-black text-slate-900 truncate mb-1">{user.displayName || 'Pengguna Omnifit'}</h1>
+              <h1 className="text-2xl font-black text-slate-900 truncate mb-1">{user.displayName || 'Pengguna Omnifit'}</h1>
               <p className="text-sm text-slate-500 font-medium truncate">{user.email}</p>
               <div className="flex items-center gap-2 mt-2">
                 {stats?.hasPremium && (
-                  <span className="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-amber-600 bg-amber-50 px-2 py-1 rounded-md ring-1 ring-amber-200/50">
-                    <Award size={10} /> Premium
+                  <span className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-amber-700 bg-amber-50 px-2 py-1 rounded-md ring-1 ring-amber-200/60">
+                    <Award size={12} /> Member Premium
                   </span>
                 )}
-                <span className="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md ring-1 ring-emerald-200/50">
+                <span className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-emerald-700 bg-emerald-50 px-2 py-1 rounded-md ring-1 ring-emerald-200/60">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  Aktif
+                  Status Aktif
                 </span>
               </div>
             </div>
           </div>
 
-          {/* TAB NAV */}
-          <div className="flex border-b border-slate-100 -mx-6 lg:-mx-12 px-6 lg:px-12 gap-1">
+          {/* TAB NAV (Pill Style) */}
+          <div className="flex gap-2 mt-8 overflow-x-auto custom-scrollbar pb-2">
             {(['overview', 'badges', 'settings'] as const).map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`pb-3 px-4 text-sm font-bold transition-all border-b-2 ${
+                className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${
                   activeTab === tab
-                    ? 'border-indigo-600 text-indigo-600'
-                    : 'border-transparent text-slate-500 hover:text-slate-700'
+                    ? 'bg-slate-900 text-white shadow-md'
+                    : 'bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-800'
                 }`}
               >
-                {tab === 'overview' ? 'Ringkasan' : tab === 'badges' ? 'Lencana' : 'Pengaturan'}
+                {tab === 'overview' ? 'Ringkasan' : tab === 'badges' ? 'Koleksi Lencana' : 'Pengaturan Akun'}
               </button>
             ))}
           </div>
         </div>
       </div>
 
-      <div className="max-w-[800px] mx-auto px-6 lg:px-12 mt-8">
+      <div className="max-w-4xl mx-auto px-6 lg:px-12 mt-8">
         <AnimatePresence mode="wait">
-
+          
           {/* TAB: OVERVIEW */}
           {activeTab === 'overview' && (
-            <motion.div
-              key="overview"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="space-y-6"
-            >
+            <motion.div key="overview" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -15 }} className="space-y-6">
+              
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
-                  { label: 'Total Asesmen', value: stats?.totalAssessments ?? 0, sub: 'program', icon: <DocExportIcon size={18} className="text-indigo-600" /> },
-                  { label: 'Skor Tertinggi', value: `${stats?.maxScore ?? 0}`, sub: '/100', icon: <Star size={18} className="text-amber-500" /> },
-                  { label: 'Rata-rata Skor', value: `${stats?.avgScore ?? 0}`, sub: '/100', icon: <BarChart3 size={18} className="text-emerald-600" /> },
-                  { label: 'Lencana Didapat', value: earnedBadges.length, sub: `/ ${BADGES.length}`, icon: <Trophy size={18} className="text-purple-500" /> },
+                  { label: 'Total Asesmen', value: stats?.totalAssessments ?? 0, sub: 'program', icon: <DocExportIcon size={20} className="text-indigo-600" /> },
+                  { label: 'Skor Tertinggi', value: `${stats?.maxScore ?? 0}`, sub: '/100', icon: <Star size={20} className="text-amber-500" /> },
+                  { label: 'Rata-rata Skor', value: `${stats?.avgScore ?? 0}`, sub: '/100', icon: <BarChart3 size={20} className="text-emerald-600" /> },
+                  { label: 'Lencana', value: earnedBadges.length, sub: `dari ${BADGES.length}`, icon: <Trophy size={20} className="text-purple-500" /> },
                 ].map((s, i) => (
                   <motion.div
                     key={i}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                    className="bg-white p-5 rounded-2xl ring-1 ring-slate-200 shadow-sm"
+                    initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
+                    className="bg-white p-6 rounded-[1.5rem] ring-1 ring-slate-200/60 shadow-sm"
                   >
-                    <div className="w-8 h-8 bg-slate-50 rounded-xl flex items-center justify-center mb-3">{s.icon}</div>
-                    <p className="text-2xl font-black text-slate-900">
-                      {s.value}<span className="text-sm text-slate-400 font-bold ml-0.5">{s.sub}</span>
+                    <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center mb-4 ring-1 ring-slate-100">{s.icon}</div>
+                    <p className="text-3xl font-black text-slate-900 tracking-tight">
+                      {s.value}<span className="text-sm text-slate-400 font-bold ml-1">{s.sub}</span>
                     </p>
-                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">{s.label}</p>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">{s.label}</p>
                   </motion.div>
                 ))}
               </div>
 
               {stats && stats.totalActionItems > 0 && (
-                <div className="bg-white p-6 rounded-2xl ring-1 ring-slate-200 shadow-sm">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                      <InfinityWorkflowIcon size={18} className="text-indigo-600" />
-                      <h3 className="text-sm font-black text-slate-900">Progres Action Plan</h3>
+                <div className="bg-white p-8 rounded-[2rem] ring-1 ring-slate-200/60 shadow-sm flex flex-col md:flex-row items-center gap-6">
+                  <div className="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center shrink-0">
+                    <InfinityWorkflowIcon size={28} className="text-indigo-600" />
+                  </div>
+                  <div className="flex-1 w-full">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-sm font-black text-slate-900">Progres Action Plan OS</h3>
+                      <span className="text-sm font-black text-indigo-600">{actionPlanProgress}%</span>
                     </div>
-                    <span className="text-sm font-black text-indigo-600">{actionPlanProgress}%</span>
+                    <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden mb-2">
+                      <motion.div
+                        initial={{ width: 0 }} animate={{ width: `${actionPlanProgress}%` }} transition={{ duration: 1, ease: 'easeOut' }}
+                        className="h-full bg-indigo-500 rounded-full"
+                      />
+                    </div>
+                    <p className="text-xs text-slate-500 font-medium">
+                      Anda telah mengeksekusi <strong className="text-slate-800">{stats.completedActionItems}</strong> dari total {stats.totalActionItems} tugas strategis.
+                    </p>
                   </div>
-                  <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden mb-3">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${actionPlanProgress}%` }}
-                      transition={{ duration: 1, ease: 'easeOut' }}
-                      className="h-full bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-full"
-                    />
-                  </div>
-                  <p className="text-xs text-slate-500 font-medium">
-                    {stats.completedActionItems} dari {stats.totalActionItems} tugas diselesaikan
-                  </p>
                 </div>
               )}
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
-                  { label: 'Lihat Progress', desc: 'Timeline & perbandingan skor', href: '/progress', icon: <TrendingUp size={20} className="text-emerald-600" />, hover: 'hover:border-emerald-200 hover:bg-emerald-50/30' },
-                  { label: 'Buka Workspace', desc: 'Action plan & jurnal eksekusi', href: '/workspace', icon: <InfinityWorkflowIcon size={20} className="text-indigo-600" />, hover: 'hover:border-indigo-200 hover:bg-indigo-50/30' },
-                  { label: 'Jelajahi Program', desc: 'Temukan modul baru', href: '/explore', icon: <AiSparkIcon size={20} className="text-purple-500" />, hover: 'hover:border-purple-200 hover:bg-purple-50/30' },
-                  { label: 'Portal Affiliate', desc: 'Link referral & data payout', href: '/affiliate', icon: <HandCoins size={20} className="text-amber-600" />, hover: 'hover:border-amber-200 hover:bg-amber-50/30' },
+                  { label: 'Lihat Progress', desc: 'Timeline & grafik performa', href: '/progress', icon: <TrendingUp size={20} className="text-emerald-600" />, ring: 'hover:ring-emerald-200' },
+                  { label: 'Buka Workspace', desc: 'Selesaikan Action Plan', href: '/workspace', icon: <InfinityWorkflowIcon size={20} className="text-indigo-600" />, ring: 'hover:ring-indigo-200' },
+                  { label: 'Katalog Modul', desc: 'Cari asesmen baru', href: '/katalog', icon: <AiSparkIcon size={20} className="text-purple-500" />, ring: 'hover:ring-purple-200' },
+                  { label: 'Portal Affiliate', desc: 'Komisi & Referral', href: '/affiliate', icon: <HandCoins size={20} className="text-amber-600" />, ring: 'hover:ring-amber-200' },
                 ].map((a, i) => (
                   <button
-                    key={i}
-                    onClick={() => router.push(a.href)}
-                    className={`bg-white p-5 rounded-2xl ring-1 ring-slate-200 shadow-sm text-left transition-all border border-transparent ${a.hover} group`}
+                    key={i} onClick={() => router.push(a.href)}
+                    className={`bg-white p-6 rounded-[1.5rem] ring-1 ring-slate-200/60 shadow-sm text-left transition-all ${a.ring} group flex flex-col`}
                   >
-                    <div className="w-9 h-9 bg-slate-50 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">{a.icon}</div>
-                    <p className="text-sm font-black text-slate-900">{a.label}</p>
-                    <p className="text-xs text-slate-500 mt-0.5">{a.desc}</p>
+                    <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">{a.icon}</div>
+                    <p className="text-sm font-black text-slate-900 mb-1">{a.label}</p>
+                    <p className="text-xs text-slate-500 leading-relaxed">{a.desc}</p>
                   </button>
                 ))}
               </div>
@@ -338,32 +257,23 @@ export default function ProfilPage() {
 
           {/* TAB: BADGES */}
           {activeTab === 'badges' && (
-            <motion.div
-              key="badges"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="space-y-6"
-            >
+            <motion.div key="badges" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -15 }} className="space-y-8">
               {earnedBadges.length > 0 && (
                 <div>
-                  <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">
-                    ✅ Lencana Diraih ({earnedBadges.length})
+                  <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <Award size={16} /> Lencana Diraih ({earnedBadges.length})
                   </h3>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {earnedBadges.map((badge, i) => (
                       <motion.div
-                        key={badge.id}
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: i * 0.05 }}
-                        className="bg-white p-5 rounded-2xl ring-1 ring-slate-200 shadow-sm text-center"
+                        key={badge.id} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.05 }}
+                        className="bg-white p-6 rounded-[1.5rem] ring-1 ring-slate-200/60 shadow-sm text-center"
                       >
-                        <div className={`w-12 h-12 ${badge.bgColor} rounded-2xl flex items-center justify-center mx-auto mb-3`}>
+                        <div className={`w-14 h-14 ${badge.bgColor} rounded-2xl flex items-center justify-center mx-auto mb-4 ring-1 ring-white shadow-inner`}>
                           <span className={badge.color}>{badge.icon}</span>
                         </div>
-                        <p className="text-xs font-black text-slate-900 leading-tight">{badge.label}</p>
-                        <p className="text-[10px] text-slate-500 mt-1 leading-snug">{badge.description}</p>
+                        <p className="text-sm font-black text-slate-900 leading-tight mb-1">{badge.label}</p>
+                        <p className="text-[10px] text-slate-500 leading-relaxed">{badge.description}</p>
                       </motion.div>
                     ))}
                   </div>
@@ -372,17 +282,17 @@ export default function ProfilPage() {
 
               {lockedBadges.length > 0 && (
                 <div>
-                  <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">
-                    🔒 Belum Terbuka ({lockedBadges.length})
+                  <h3 className="text-xs font-black text-slate-300 uppercase tracking-widest mb-4">
+                      Belum Terbuka ({lockedBadges.length})
                   </h3>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {lockedBadges.map((badge) => (
-                      <div key={badge.id} className="bg-white p-5 rounded-2xl ring-1 ring-slate-100 text-center opacity-40">
-                        <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                          <span className="text-slate-300">{badge.icon}</span>
+                      <div key={badge.id} className="bg-white p-6 rounded-[1.5rem] ring-1 ring-slate-100 text-center opacity-50 grayscale">
+                        <div className="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                          <span className="text-slate-400">{badge.icon}</span>
                         </div>
-                        <p className="text-xs font-black text-slate-500 leading-tight">{badge.label}</p>
-                        <p className="text-[10px] text-slate-400 mt-1 leading-snug">{badge.description}</p>
+                        <p className="text-sm font-bold text-slate-500 leading-tight mb-1">{badge.label}</p>
+                        <p className="text-[10px] text-slate-400 leading-relaxed">{badge.description}</p>
                       </div>
                     ))}
                   </div>
@@ -390,13 +300,13 @@ export default function ProfilPage() {
               )}
 
               {earnedBadges.length === 0 && (
-                <div className="bg-white p-12 rounded-2xl ring-1 ring-slate-200 text-center">
-                  <Trophy size={48} className="text-slate-200 mx-auto mb-4" />
-                  <h3 className="text-lg font-black text-slate-800 mb-2">Belum Ada Lencana</h3>
-                  <p className="text-sm text-slate-500 max-w-sm mx-auto">
+                <div className="bg-white p-12 rounded-[2rem] ring-1 ring-slate-200/60 text-center shadow-sm">
+                  <Trophy size={48} className="text-slate-200 mx-auto mb-4 grayscale opacity-60" />
+                  <h3 className="text-xl font-black text-slate-900 mb-2">Belum Ada Lencana</h3>
+                  <p className="text-sm text-slate-500 max-w-sm mx-auto mb-6">
                     Selesaikan asesmen pertama Anda untuk mulai mengumpulkan lencana pencapaian.
                   </p>
-                  <Button onClick={() => router.push('/assessment')} className="mt-6 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl">
+                  <Button onClick={() => router.push('/assessment')} className="bg-slate-900 hover:bg-indigo-600 text-white rounded-xl h-12 px-8 font-bold">
                     Mulai Asesmen
                   </Button>
                 </div>
@@ -406,84 +316,56 @@ export default function ProfilPage() {
 
           {/* TAB: SETTINGS */}
           {activeTab === 'settings' && (
-            <motion.div
-              key="settings"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="space-y-4"
-            >
-              <div className="bg-white p-6 rounded-2xl ring-1 ring-slate-200 shadow-sm">
-                <h3 className="text-sm font-black text-slate-900 mb-4 flex items-center gap-2">
-                  <Bell size={16} className="text-indigo-600" /> Notifikasi
+            <motion.div key="settings" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -15 }} className="space-y-6">
+              
+              <div className="bg-white p-6 sm:p-8 rounded-[2rem] ring-1 ring-slate-200/60 shadow-sm">
+                <h3 className="text-sm font-black text-slate-900 mb-6 flex items-center gap-2">
+                  <Bell size={18} className="text-indigo-600" /> Preferensi Notifikasi
                 </h3>
-                <div className="flex items-center justify-between py-3">
+                <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
                   <div>
-                    <p className="text-sm font-bold text-slate-800">Weekly Action Plan Nudge</p>
-                    <p className="text-xs text-slate-500 mt-0.5">Email motivasi setiap Senin pagi</p>
+                    <p className="text-sm font-bold text-slate-900">Weekly Action Plan Nudge</p>
+                    <p className="text-xs text-slate-500 mt-1">Email motivasi setiap Senin pagi untuk menjaga ritme Anda.</p>
                   </div>
                   <button
                     onClick={() => {
                       setNudgeEnabled(!nudgeEnabled);
                       toast.success(nudgeEnabled ? 'Notifikasi dinonaktifkan' : 'Notifikasi diaktifkan');
                     }}
-                    className={`w-12 h-6 rounded-full transition-colors relative ${nudgeEnabled ? 'bg-indigo-600' : 'bg-slate-200'}`}
+                    className={`w-14 h-8 rounded-full transition-colors relative shadow-inner ${nudgeEnabled ? 'bg-indigo-600' : 'bg-slate-200'}`}
                   >
-                    <div className={`w-5 h-5 bg-white rounded-full shadow absolute top-0.5 transition-transform ${nudgeEnabled ? 'translate-x-6' : 'translate-x-0.5'}`} />
+                    <div className={`w-6 h-6 bg-white rounded-full shadow-md absolute top-1 transition-transform ${nudgeEnabled ? 'translate-x-7' : 'translate-x-1'}`} />
                   </button>
                 </div>
               </div>
 
-              <div className="bg-white p-6 rounded-2xl ring-1 ring-slate-200 shadow-sm">
-                <h3 className="text-sm font-black text-slate-900 mb-4 flex items-center gap-2">
-                  <Settings size={16} className="text-slate-500" /> Informasi Akun
+              <div className="bg-white p-6 sm:p-8 rounded-[2rem] ring-1 ring-slate-200/60 shadow-sm">
+                <h3 className="text-sm font-black text-slate-900 mb-6 flex items-center gap-2">
+                  <Settings size={18} className="text-slate-500" /> Informasi Akun Sistem
                 </h3>
-                <div className="space-y-2">
+                <div className="space-y-1">
                   {[
-                    { label: 'Nama', value: user.displayName },
-                    { label: 'Email', value: user.email },
-                    { label: 'Member Sejak', value: user.metadata.creationTime ? new Intl.DateTimeFormat('id-ID', { dateStyle: 'long' }).format(new Date(user.metadata.creationTime)) : '-' },
-                  ].map((row) => (
-                    <div key={row.label} className="flex justify-between items-center py-2 border-b border-slate-50 last:border-0">
-                      <span className="text-xs font-bold text-slate-500 uppercase tracking-wide">{row.label}</span>
-                      <span className="text-sm font-bold text-slate-800 truncate max-w-[200px]">{row.value}</span>
+                    { label: 'Nama Lengkap', value: user.displayName },
+                    { label: 'Alamat Email', value: user.email },
+                    { label: 'Terdaftar Sejak', value: user.metadata.creationTime ? new Intl.DateTimeFormat('id-ID', { dateStyle: 'long' }).format(new Date(user.metadata.creationTime)) : '-' },
+                  ].map((row, idx) => (
+                    <div key={row.label} className={`flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl ${idx % 2 === 0 ? 'bg-transparent' : 'bg-slate-50'}`}>
+                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{row.label}</span>
+                      <span className="text-sm font-bold text-slate-900 truncate max-w-xs">{row.value}</span>
                     </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="bg-white p-6 rounded-2xl ring-1 ring-slate-200 shadow-sm">
-                <h3 className="text-sm font-black text-slate-900 mb-4 flex items-center gap-2">
-                  <ExternalLink size={16} className="text-slate-500" /> Navigasi Cepat
-                </h3>
-                <div className="grid grid-cols-2 gap-3">
-                  {[
-                    { label: 'Dashboard', href: '/dashboard' },
-                    { label: 'Workspace OS', href: '/workspace' },
-                    { label: 'Katalog Modul', href: '/katalog' },
-                    { label: 'Portal Affiliate', href: '/affiliate' },
-                    { label: 'Ekosistem Mitra', href: '/mitra' },
-                  ].map(link => (
-                    <button
-                      key={link.href}
-                      onClick={() => router.push(link.href)}
-                      className="flex items-center justify-between px-4 py-3 bg-slate-50 hover:bg-indigo-50 hover:text-indigo-600 rounded-xl text-sm font-bold text-slate-700 transition-colors ring-1 ring-slate-100 hover:ring-indigo-200"
-                    >
-                      {link.label}
-                      <ChevronLeft size={14} className="rotate-180" />
-                    </button>
                   ))}
                 </div>
               </div>
 
               <button
                 onClick={async () => { await logout(); router.push('/'); }}
-                className="w-full flex items-center justify-center gap-2 h-12 rounded-2xl bg-red-50 hover:bg-red-100 text-red-600 font-bold text-sm transition-colors ring-1 ring-red-100"
+                className="w-full flex items-center justify-center gap-2 h-14 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-600 font-black text-sm transition-colors ring-1 ring-rose-200"
               >
-                <LogOut size={16} /> Keluar dari Akun
+                <LogOut size={18} /> Keluar dari Sistem (Logout)
               </button>
             </motion.div>
           )}
+
         </AnimatePresence>
       </div>
     </div>
