@@ -142,7 +142,20 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
             id: autoOpenPackageId,
             trackName: autoOpenPackageId === 'BUNDLE_3' ? 'Bundle 3 Modul' : 'Bundle 5 Modul',
             price: autoOpenPackageId === 'BUNDLE_3' ? 149000 : 199000,
-            description: autoOpenPackageId === 'BUNDLE_3' ? 'Pilih 3 asesmen apapun dari katalog.' : 'Dapatkan evaluasi 360 derajat untuk individu atau startup.',
+            trackDescription: autoOpenPackageId === 'BUNDLE_3' 
+              ? 'Amankan 3 kuota asesmen sekaligus dengan harga yang jauh lebih hemat. Bebas digunakan kapan saja.' 
+              : 'Paket korporat/eksekutif. Dapatkan 5 kuota asesmen dengan harga terbaik untuk mengukur berbagai metrik bisnis Anda.',
+            expectedOutputs: [
+              `Akses Penuh Katalog: Bebas menukar kuota untuk membuka ${autoOpenPackageId === 'BUNDLE_3' ? '3' : '5'} modul asesmen berbayar apa pun di katalog.`,
+              'Kuota Tanpa Kadaluarsa: Kuota asesmen yang Anda beli tidak akan hangus dan dapat digunakan kapan saja.',
+              'Penukaran 1-Click (1-Click Redeem): Lewati kerumitan checkout berulang. Tukarkan kuota langsung dari halaman katalog dengan sekali klik.',
+              'Investasi Paling Hemat: Harga per modul menjadi jauh lebih murah dibandingkan membeli secara terpisah.'
+            ],
+            customUSPs: [
+              'Bebas akses AI Konsultasi Premium pada setiap modul',
+              'Laporan Taktis & Cetak Biru Lengkap',
+              'Prioritas Dukungan Teknis'
+            ],
             isPaid: true,
             isActive: true,
             isDisplayedOnLanding: false,
