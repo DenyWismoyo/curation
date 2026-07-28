@@ -87,6 +87,9 @@
 
     /* BORDER RADIUS DITURUNKAN (0.5rem = lg) untuk kesan enterprise yang lebih tegas dan formal */
     --radius: 0.5rem;
+
+    /* Page background — setara #FAFAFA, gunakan via bg-background */
+    --page-background: 0 0% 98%;
   }
 
   .dark {

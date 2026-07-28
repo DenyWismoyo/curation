@@ -18,7 +18,7 @@ export default function PublicLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen bg-[#FAFAFA]">
+    <div className="min-h-screen bg-background">
       <Suspense fallback={null}>
         <ReferralAttributionTracker />
       </Suspense>
