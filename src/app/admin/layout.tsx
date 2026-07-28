@@ -26,9 +26,11 @@ import {
   Activity,
   BriefcaseBusiness,
   UserCog,
+  BarChart3,
   ChevronDown,
   ChevronRight,
 } from 'lucide-react'
+
 import { Badge } from '@/components/ui/badge'
 import {
   Tooltip,
@@ -79,13 +81,15 @@ const adminMenuGroups: AdminMenuGroup[] = [
   },
   {
     key: 'b2b',
-    label: 'B2B Pilot',
+    label: 'B2B Pilot & Analytics',
     items: [
       { name: 'B2B Pilot Dashboard', path: '/admin/b2b-pilot', icon: BriefcaseBusiness, badge: 'B2B', badgeVariant: 'sky' },
       { name: 'Akses Role B2B', path: '/admin/b2b-access', icon: UserCog },
+      { name: 'B2B BI Analytics', path: '/admin/b2b-analytics', icon: BarChart3, badge: 'BI', badgeVariant: 'emerald' },
     ],
   },
 ]
+
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { user, role, loading, logout } = useAuth()

@@ -199,6 +199,9 @@ export function UniversalAssessmentView({
         level_kesiapan: aiResult.readinessLevel,
         swot: aiResult.swotAnalysis,
         risiko: aiResult.riskAssessment?.criticalRisks,
+        mitigasi: aiResult.riskAssessment?.mitigationStrategies,
+        rekomendasi: aiResult.recommendations?.map((r: any) => ({ judul: r.title, isi: r.content })),
+        actionSteps: aiResult.nextActionSteps?.map((a: any) => `${a.timeframe}: ${a.task}`)
       };
       sessionStorage.setItem('openclaw_active_data', JSON.stringify(activeDataPayload));
     }
@@ -322,14 +325,33 @@ export function UniversalAssessmentView({
           </div>
           
           <div className="bg-white ring-1 ring-slate-200 p-6 sm:p-8 rounded-3xl shadow-sm h-full flex flex-col">
-            <h3 className="text-slate-900 font-black uppercase tracking-widest text-xs mb-3 flex items-center gap-2">
-              <AiSparkIcon size={16} className="text-indigo-500"/> Ringkasan Eksekutif Utama (AI)
-            </h3>
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <h3 className="text-slate-900 font-black uppercase tracking-widest text-xs flex items-center gap-2">
+                <AiSparkIcon size={16} className="text-indigo-500"/> Ringkasan Eksekutif Utama (AI)
+              </h3>
+              <div className="flex gap-2">
+                <button 
+                  onClick={() => window.dispatchEvent(new CustomEvent('open_omniai_chat'))}
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-full transition-colors border border-indigo-100/60"
+                >
+                  <AiSparkIcon size={14} className="text-indigo-500" /> Tanya AI
+                </button>
+                {assessmentId && (
+                  <button 
+                    onClick={() => window.location.href = `/result/${assessmentId}/consultation`}
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-1.5 rounded-full transition-colors shadow-sm"
+                  >
+                    <AiSparkIcon size={14} className="text-white" /> Konsultasi Premium
+                  </button>
+                )}
+              </div>
+            </div>
             <div className="text-slate-600 text-sm font-medium flex-1">
               <TextToBullets text={aiResult?.executiveSummary || "Ringkasan analisis tidak tersedia."} colorClass="text-indigo-500" />
             </div>
           </div>
         </div>
+
 
         <div className={`w-full lg:w-[360px] shrink-0 p-8 rounded-3xl text-white relative overflow-hidden flex flex-col justify-center items-center shadow-lg ${isHighTier ? 'bg-gradient-to-br from-[#0f3d32] to-emerald-800' : 'bg-gradient-to-br from-slate-900 to-indigo-900'}`}>
           <div className="absolute inset-0 bg-gradient-to-tr from-black/20 to-transparent opacity-30 mix-blend-overlay"></div>

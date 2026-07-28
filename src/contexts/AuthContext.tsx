@@ -12,7 +12,7 @@ import {
   updateProfile,
   sendPasswordResetEmail
 } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 import { auth, googleProvider, db, functions } from '@/lib/firebase';
 import { ensureReferralVisitorId, getStoredReferralAttribution } from '@/lib/referralAttribution';
@@ -20,6 +20,7 @@ import { ensureReferralVisitorId, getStoredReferralAttribution } from '@/lib/ref
 interface AuthContextType {
   user: User | null;
   role: 'user' | 'admin_omnifit' | 'admin_csrs' | 'assessor' | 'curator' | null;
+  assessmentQuota: number;
   loading: boolean;
   loginWithGoogle: () => Promise<void>;
   registerWithEmail: (email: string, password: string, name: string) => Promise<void>;
@@ -33,10 +34,16 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [role, setRole] = useState<'user' | 'admin_omnifit' | 'admin_csrs' | 'assessor' | 'curator' | null>(null);
+  const [assessmentQuota, setAssessmentQuota] = useState<number>(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let unsubscribeSnapshot: (() => void) | null = null;
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (unsubscribeSnapshot) {
+        unsubscribeSnapshot();
+        unsubscribeSnapshot = null;
+      }
       setUser(currentUser);
       
       if (currentUser) {
@@ -99,17 +106,33 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           }
           
           setRole(currentRole);
+
+          // Subscribe to real-time changes in users doc for quota
+          const userRef = doc(db, 'users', currentUser.uid);
+          unsubscribeSnapshot = onSnapshot(userRef, (snap) => {
+             if (snap.exists()) {
+                setAssessmentQuota(snap.data().assessmentQuota || 0);
+             } else {
+                setAssessmentQuota(0);
+             }
+          });
+
         } catch (error) {
           console.error("Gagal memeriksa role user:", error);
           setRole('user');
+          setAssessmentQuota(0);
         }
       } else {
         setRole(null);
+        setAssessmentQuota(0);
       }
       setLoading(false);
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      if (unsubscribeSnapshot) unsubscribeSnapshot();
+    };
   }, []);
 
   const loginWithGoogle = async () => {
@@ -174,7 +197,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, role, loading, loginWithGoogle, registerWithEmail, loginWithEmail, resetPassword, logout }}>
+    <AuthContext.Provider value={{ user, role, assessmentQuota, loading, loginWithGoogle, registerWithEmail, loginWithEmail, resetPassword, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -21,6 +21,7 @@ import {
   getStoredReferralAttribution,
 } from '@/lib/referralAttribution';
 import { shareOrCopy } from '@/lib/share';
+import { useAuth } from '@/contexts/AuthContext';
 
 // IMPORT CUSTOM ICONS
 import { 
@@ -91,6 +92,7 @@ const parseExpectedOutput = (blockStr: string) => {
 
 export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpenPackageId, asPage = false }: PricingPackagesProps) {
   const router = useRouter();
+  const { assessmentQuota } = useAuth();
   const [packages, setPackages] = useState<FormTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState<string>('Semua');
@@ -135,12 +137,27 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
       setPackages(data);
 
       if (autoOpenPackageId) {
-        const targetPkg = data.find(p => p.id === autoOpenPackageId);
-        if (targetPkg) {
-          setCheckoutPackage(targetPkg);
-          setActiveCategory(targetPkg.category || 'Semua');
+        if (autoOpenPackageId === 'BUNDLE_3' || autoOpenPackageId === 'BUNDLE_5') {
+          const bundlePkg: any = {
+            id: autoOpenPackageId,
+            trackName: autoOpenPackageId === 'BUNDLE_3' ? 'Bundle 3 Modul' : 'Bundle 5 Modul',
+            price: autoOpenPackageId === 'BUNDLE_3' ? 149000 : 199000,
+            description: autoOpenPackageId === 'BUNDLE_3' ? 'Pilih 3 asesmen apapun dari katalog.' : 'Dapatkan evaluasi 360 derajat untuk individu atau startup.',
+            isPaid: true,
+            isActive: true,
+            isDisplayedOnLanding: false,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          };
+          setCheckoutPackage(bundlePkg as FormTemplate);
         } else {
-           toast.error("Modul yang Anda cari tidak tersedia atau belum tayang.");
+          const targetPkg = data.find(p => p.id === autoOpenPackageId);
+          if (targetPkg) {
+            setCheckoutPackage(targetPkg);
+            setActiveCategory(targetPkg.category || 'Semua');
+          } else {
+             toast.error("Modul yang Anda cari tidak tersedia atau belum tayang.");
+          }
         }
       }
     } catch (error) {
@@ -157,6 +174,28 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
       return;
     }
 
+    if (pkg.id !== 'BUNDLE_3' && pkg.id !== 'BUNDLE_5' && assessmentQuota > 0 && pkg.isPaid) {
+       setIsProcessingPayment(true);
+       toast.loading("Menukarkan kuota asesmen Anda...", { id: 'redeem_process' });
+       try {
+         const redeemFn = httpsCallable(functions, 'redeemAssessmentQuota');
+         const response = await redeemFn({ packageId: pkg.id });
+         const data = response.data as { tokenCode: string };
+         toast.dismiss('redeem_process');
+         toast.success("Kuota berhasil ditukar!");
+         
+         sessionStorage.setItem('active_token', data.tokenCode);
+         sessionStorage.setItem('active_allowed_templates', JSON.stringify([pkg.id]));
+         window.location.href = '/assessment';
+         return;
+       } catch (error: any) {
+         toast.dismiss('redeem_process');
+         toast.error(error.message || "Gagal menukar kuota.");
+         setIsProcessingPayment(false);
+         return;
+       }
+    }
+
     const priceInfo = calculatePrice(pkg);
     
     if (priceInfo.isFree) {
@@ -166,7 +205,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
       window.location.href = '/assessment';
     } else {
       setIsProcessingPayment(true);
-      toast.loading("Mempersiapkan kode QRIS Anda...", { id: 'qris_process' });
+      toast.loading("Mempersiapkan transaksi Anda...", { id: 'qris_process' });
       
       try {
         const latestAttribution = getStoredReferralAttribution();
@@ -622,7 +661,13 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                   {isProcessingPayment ? (
                     <><Loader2 className="w-4 h-4 animate-spin" /> Memproses...</>
                   ) : (
-                    <>Mulai Sesi <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" /></>
+                    <>
+                      {checkoutPackage.id !== 'BUNDLE_3' && checkoutPackage.id !== 'BUNDLE_5' && assessmentQuota > 0 && checkoutPriceInfo.original > 0
+                        ? "Gunakan 1 Kuota"
+                        : "Lanjut Bayar"
+                      }
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </>
                   )}
                 </Button>
               </div>

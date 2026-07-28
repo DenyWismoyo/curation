@@ -72,6 +72,21 @@ export const assessmentPostProcessingAgent = onDocumentUpdated({
        try { await fileManager.deleteFile(f.name); } catch(e){}
     }
 
+    // Simpan ke Cache jika terdapat cacheKey
+    if (afterData.cacheKey) {
+      try {
+        const { setCachedAssessmentResult } = await import("../../general/cacheService");
+        await setCachedAssessmentResult(afterData.cacheKey, {
+          trackType: afterData.trackType || 'Evaluasi Umum',
+          score: Number(updatedDocDataForBg.score || 0),
+          readinessLevel: String(updatedDocDataForBg.readinessLevel),
+          aiResult: afterData.aiResult
+        });
+      } catch (cacheErr) {
+        console.warn("Gagal menyimpan hasil asesmen ke cache:", cacheErr);
+      }
+    }
+
     await docRef.update({
       status: "COMPLETED",
       geminiFiles: admin.firestore.FieldValue.delete(),
@@ -83,4 +98,4 @@ export const assessmentPostProcessingAgent = onDocumentUpdated({
   }
 
   return null;
-});
+});

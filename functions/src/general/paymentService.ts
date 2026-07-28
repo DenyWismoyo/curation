@@ -80,6 +80,7 @@ export const createPaymentInvoice = onCall({
       affiliateCode,
       attributionVisitorId,
       attributionModel,
+      assessmentId,
     } = request.data;
     
     const db = getFirestore(admin.app(), "curation");
@@ -181,6 +182,7 @@ export const createPaymentInvoice = onCall({
         attributionModel: normalizedAttributionModel,
         attributionSource,
         attributionVisitorId: normalizedVisitorId || null,
+        assessmentId: assessmentId || null,
         createdAt: FieldValue.serverTimestamp(),
         ...affiliatePayload,
       });
@@ -371,23 +373,38 @@ export const mayarWebhook = onRequest({
           await sendMetaConversionEvent(metaPixelId.value(), metaAccessToken.value(), "Purchase", txData.userEmail, txData.amount, txData.transactionId);
           
           if (txData.packageId) {
-            const b2cRef = db.collection("corporate_tokens").doc("B2C");
-            await b2cRef.set({
-              corporateName: "Penjualan B2C (Mandiri)",
-              modelType: "flash", 
-              totalTokens: FieldValue.increment(1),
-              createdAt: new Date().toISOString(), 
-              tokens: {
-                [finalTokenCode]: {
-                  isUsed: false,
-                  usedAt: null,
-                  usedByNamaUsaha: null,
-                  allowedTemplates: [txData.packageId],
-                  buyerEmail: txData.userEmail,
-                  transactionId: txData.transactionId
-                }
+            if (txData.packageId === 'BUNDLE_3' || txData.packageId === 'BUNDLE_5') {
+              const addedQuota = txData.packageId === 'BUNDLE_3' ? 3 : 5;
+              if (txData.userId) {
+                const userRef = db.collection("users").doc(txData.userId);
+                await userRef.set({
+                  assessmentQuota: FieldValue.increment(addedQuota)
+                }, { merge: true });
               }
-            }, { merge: true });
+            } else if (txData.packageId === 'PREMIUM_CONSULTATION' && txData.assessmentId) {
+              const assessmentRef = db.collection("assessments").doc(txData.assessmentId);
+              await assessmentRef.update({
+                hasPaidForPremiumConsultation: true
+              });
+            } else {
+              const b2cRef = db.collection("corporate_tokens").doc("B2C");
+              await b2cRef.set({
+                corporateName: "Penjualan B2C (Mandiri)",
+                modelType: "flash", 
+                totalTokens: FieldValue.increment(1),
+                createdAt: new Date().toISOString(), 
+                tokens: {
+                  [finalTokenCode]: {
+                    isUsed: false,
+                    usedAt: null,
+                    usedByNamaUsaha: null,
+                    allowedTemplates: [txData.packageId],
+                    buyerEmail: txData.userEmail,
+                    transactionId: txData.transactionId
+                  }
+                }
+              }, { merge: true });
+            }
           }
         }
       }
@@ -395,6 +412,68 @@ export const mayarWebhook = onRequest({
     } catch (error) {
       console.error("❌ [WEBHOOK EXECUTION ERROR]:", error);
       res.status(500).send("Internal Server Error");
+    }
+  }
+);
+
+// ============================================================================
+// FUNGSI 4: REDEEM BUNDLE QUOTA (1-CLICK REDEEM)
+// ============================================================================
+export const redeemAssessmentQuota = onCall({
+    memory: "256MiB",
+    region: "asia-southeast2",
+    cors: true,
+  },
+  async (request) => {
+    if (!request.auth) throw new HttpsError("unauthenticated", "Akses ditolak.");
+    const uid = request.auth.uid;
+    const { packageId } = request.data;
+
+    if (!packageId) {
+      throw new HttpsError("invalid-argument", "packageId wajib diisi.");
+    }
+
+    const db = getFirestore(admin.app(), "curation");
+    const userRef = db.collection("users").doc(uid);
+    const b2cRef = db.collection("corporate_tokens").doc("B2C");
+
+    try {
+      return await db.runTransaction(async (transaction) => {
+        const userDoc = await transaction.get(userRef);
+        
+        const quota = userDoc.data()?.assessmentQuota || 0;
+        if (quota < 1) {
+          throw new HttpsError("failed-precondition", "Kuota asesmen tidak mencukupi.");
+        }
+
+        const rawToken = Math.random().toString(36).substring(2, 8).toUpperCase();
+        const finalTokenCode = `B2C-Q${rawToken}`; 
+
+        transaction.set(userRef, {
+          assessmentQuota: FieldValue.increment(-1)
+        }, { merge: true });
+
+        transaction.set(b2cRef, {
+          corporateName: "Penjualan B2C (Mandiri)",
+          modelType: "flash", 
+          totalTokens: FieldValue.increment(1),
+          tokens: {
+            [finalTokenCode]: {
+              isUsed: false,
+              usedAt: null,
+              usedByNamaUsaha: null,
+              allowedTemplates: [packageId],
+              buyerEmail: request.auth?.token?.email || "",
+              transactionId: `QUOTA-REDEEM-${Date.now()}`
+            }
+          }
+        }, { merge: true });
+
+        return { tokenCode: finalTokenCode };
+      });
+    } catch (error: any) {
+      console.error("Redeem Error:", error);
+      throw new HttpsError("internal", error.message || "Gagal melakukan redeem kuota.");
     }
   }
 );

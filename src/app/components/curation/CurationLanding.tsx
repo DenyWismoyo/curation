@@ -30,6 +30,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { LazyMotion, domAnimation, m, AnimatePresence, Variants } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import { shareOrCopy } from '@/lib/share';
+import { BundleUpsellBanner } from '../payment/BundleUpsellBanner';
 
 const SystemCapabilitiesModal = dynamic(
   () => import('./SystemCapabilitiesModal').then((mod) => mod.SystemCapabilitiesModal),
@@ -78,6 +79,18 @@ const GUEST_VALUE_PROPS = [
     bg: 'bg-purple-50',
     title: 'Formulir Adaptif',
     desc: 'Pertanyaan menyesuaikan jawaban Anda — seperti diwawancarai langsung oleh ahli.',
+  },
+  {
+    icon: <Sparkles size={22} className="text-blue-600" />,
+    bg: 'bg-blue-50',
+    title: 'Konsultasi AI Premium',
+    desc: 'Bedah hasil asesmen dan dapatkan insight mendalam bersama asisten pakar virtual.',
+  },
+  {
+    icon: <BriefcaseBusiness size={22} className="text-rose-600" />,
+    bg: 'bg-rose-50',
+    title: 'Akses B2B & Bundling',
+    desc: 'Tingkatkan standar operasional tim Anda melalui bundling modul dengan harga terbaik.',
   },
 ];
 
@@ -587,39 +600,27 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                     </m.div>
                   ))}
 
-                  {/* CTA card — spans full width */}
-                  <m.div
-                    variants={cardVariant}
-                    className="sm:col-span-2 bg-slate-900 p-6 sm:p-8 rounded-[1.5rem] shadow-xl flex flex-col sm:flex-row items-center justify-between gap-6 relative overflow-hidden"
-                  >
-                    <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl -mr-12 -mt-12 pointer-events-none" />
-                    <div className="relative z-10 text-center sm:text-left">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-indigo-400 mb-2">Mulai Sekarang</p>
-                      <h3 className="text-lg font-black text-white mb-1">Coba Gratis, Tanpa Kartu Kredit</h3>
-                      <p className="text-sm text-slate-400 font-medium leading-relaxed max-w-sm">
-                        Daftar dalam 30 detik dan akses modul asesmen gratis pertama Anda hari ini.
-                      </p>
-                    </div>
-                    <button
-                      onClick={onLogin}
-                      className="relative z-10 shrink-0 inline-flex items-center gap-2 h-12 px-7 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm shadow-lg shadow-indigo-600/30 transition-all whitespace-nowrap"
-                    >
-                      <GoogleIcon />
-                      Daftar dengan Google
-                    </button>
-                  </m.div>
                 </m.div>
               )}
 
               {/* ── LOGGED IN: Skeleton ───────────────────────────────────────── */}
               {user && isFetchingData && (
-                <div className="animate-pulse space-y-4">
+                <div className="animate-pulse space-y-4 mb-8">
                   <div className="h-5 bg-slate-100 rounded-lg w-1/3" />
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {[1, 2, 3, 4].map(i => (
                       <div key={i} className="h-32 bg-slate-100 rounded-[1.5rem]" />
                     ))}
                   </div>
+                </div>
+              )}
+
+              {/* ── LOGGED IN: BUNDLE PROMO ───────────────────────────────────── */}
+              {user && !isFetchingData && (
+                <div className="mb-8">
+                  <BundleUpsellBanner 
+                    onSelectBundle={(bundleId) => router.push(`/katalog?buy=${bundleId}`)} 
+                  />
                 </div>
               )}
 

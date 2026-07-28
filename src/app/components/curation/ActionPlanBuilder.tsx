@@ -177,26 +177,35 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
     return 'bg-slate-50 text-slate-600 ring-slate-200';
   };
 
+  const baseScore = Math.min(100, Math.max(0, Number(aiResult?.totalScore || 50)));
+  const scoreGain = Math.round((100 - baseScore) * (progressPercentage / 100));
+  const projectedScore = Math.min(100, baseScore + scoreGain);
+  const getProjectedLevel = (score: number) => {
+    if (score >= 80) return "Tinggi (Siap Akselerasi)";
+    if (score >= 60) return "Sedang (Penyesuaian Taktis)";
+    return "Perlu Pendampingan Tambahan";
+  };
+
   if (checklist.length === 0) {
     return (
-      <div className="bg-slate-900 p-8 sm:p-16 rounded-[3rem] text-center shadow-2xl flex flex-col items-center justify-center relative overflow-hidden ring-1 ring-slate-800">
+      <div className="bg-slate-900 p-6 sm:p-14 rounded-3xl sm:rounded-[3rem] text-center shadow-2xl flex flex-col items-center justify-center relative overflow-hidden ring-1 ring-slate-800">
         <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-600/20 rounded-full blur-[80px] pointer-events-none"></div>
-        <div className="w-20 h-20 bg-white/5 text-indigo-400 rounded-3xl flex items-center justify-center mb-8 ring-1 ring-white/10 backdrop-blur-md z-10">
-          <Target className="w-10 h-10" />
+        <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/5 text-indigo-400 rounded-2xl sm:rounded-3xl flex items-center justify-center mb-6 ring-1 ring-white/10 backdrop-blur-md z-10">
+          <Target className="w-8 h-8 sm:w-10 sm:h-10" />
         </div>
-        <h3 className="text-3xl font-black text-white mb-4 tracking-tight z-10">Cetak Biru Eksekusi</h3>
-        <p className="text-slate-400 font-medium mb-10 max-w-lg mx-auto leading-relaxed z-10">
+        <h3 className="text-2xl sm:text-3xl font-black text-white mb-3 tracking-tight z-10">Cetak Biru Eksekusi</h3>
+        <p className="text-slate-400 text-xs sm:text-sm font-medium mb-8 max-w-lg mx-auto leading-relaxed z-10">
           Sistem akan merangkum seluruh temuan dan merekonstruksinya menjadi <strong className="text-indigo-400">10 Langkah Strategis</strong> harian yang dapat dilacak progresnya serta disinkronkan ke kalender Anda.
         </p>
         <Button 
           onClick={handleGenerate} 
           disabled={isGenerating}
-          className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl h-14 px-10 text-base shadow-[0_0_30px_rgb(79,70,229,0.3)] transition-all group z-10"
+          className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl h-12 sm:h-14 px-8 sm:px-10 text-sm sm:text-base shadow-[0_0_30px_rgb(79,70,229,0.3)] transition-all group z-10"
         >
           {isGenerating ? (
-            <><Loader2 className="animate-spin w-5 h-5 mr-2" /> Menyiapkan Misi...</>
+            <><Loader2 className="animate-spin w-4 h-4 sm:w-5 sm:h-5 mr-2" /> Menyiapkan Misi...</>
           ) : (
-            <><Sparkles className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" /> Hasilkan 10 Misi Sekarang</>
+            <><Sparkles className="w-4 h-4 sm:w-5 sm:h-5 mr-2 group-hover:scale-110 transition-transform" /> Hasilkan 10 Misi Sekarang</>
           )}
         </Button>
       </div>
@@ -204,32 +213,59 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
   }
 
   return (
-    <div className="bg-white rounded-[3rem] ring-1 ring-slate-200 relative overflow-hidden flex flex-col h-full shadow-sm">
-      <div className="bg-slate-900 p-8 sm:p-10 relative overflow-hidden shrink-0">
+    <div className="bg-white rounded-3xl sm:rounded-[3rem] ring-1 ring-slate-200 relative overflow-hidden flex flex-col h-full shadow-sm">
+      <div className="bg-slate-900 p-6 sm:p-10 relative overflow-hidden shrink-0">
         <div className="absolute -right-10 -top-10 w-60 h-60 bg-indigo-500/20 rounded-full blur-[80px]"></div>
         
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 relative z-10">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 relative z-10">
           <div>
-            <h3 className="font-black text-white text-2xl sm:text-3xl tracking-tight mb-2 flex items-center gap-3">
-              Timeline Eksekusi <span className="px-3 py-1 bg-emerald-500/20 text-emerald-400 text-[10px] uppercase rounded-lg tracking-widest ring-1 ring-emerald-500/30 backdrop-blur-sm">Aktif</span>
+            <h3 className="font-black text-white text-xl sm:text-3xl tracking-tight mb-1 flex items-center gap-2 sm:gap-3">
+              Timeline Eksekusi <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 bg-emerald-500/20 text-emerald-400 text-[9px] sm:text-[10px] uppercase rounded-lg tracking-widest ring-1 ring-emerald-500/30 backdrop-blur-sm">Aktif</span>
             </h3>
-            <p className="text-sm text-slate-400 font-medium">Selesaikan misi untuk meningkatkan metrik operasional harian Anda.</p>
+            <p className="text-xs sm:text-sm text-slate-400 font-medium">Selesaikan misi untuk meningkatkan metrik operasional harian Anda.</p>
           </div>
-          <div className="shrink-0 flex items-center gap-2 bg-white/5 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10">
+          <div className="shrink-0 flex items-center gap-2 bg-white/5 backdrop-blur-md px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl border border-white/10 self-start sm:self-auto">
             {isSaving ? (
-              <><Loader2 className="w-4 h-4 text-indigo-400 animate-spin" /> <span className="text-xs font-bold text-slate-300">Menyimpan...</span></>
+              <><Loader2 className="w-3.5 h-3.5 text-indigo-400 animate-spin" /> <span className="text-[11px] sm:text-xs font-bold text-slate-300">Menyimpan...</span></>
             ) : (
-              <><CheckCircle2 className="w-4 h-4 text-emerald-400" /> <span className="text-xs font-bold text-slate-300">Tersinkronisasi</span></>
+              <><CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> <span className="text-[11px] sm:text-xs font-bold text-slate-300">Tersinkronisasi</span></>
             )}
           </div>
         </div>
 
-        <div className="relative z-10 bg-white/5 p-5 rounded-2xl ring-1 ring-white/10">
-            <div className="flex justify-between items-end mb-3">
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Progres Keseluruhan</span>
-                <span className="text-2xl font-black text-white">{progressPercentage}%</span>
+        {/* WHAT-IF SCORE SIMULATOR CARD */}
+        <div className="relative z-10 bg-gradient-to-r from-indigo-950/90 to-slate-900/90 p-4 sm:p-6 rounded-2xl ring-1 ring-indigo-500/30 backdrop-blur-md mb-5 space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-indigo-300">
+              <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" /> What-If Score Simulator
             </div>
-            <div className="h-3 w-full bg-slate-800/50 rounded-full overflow-hidden inset-shadow-sm">
+            <span className="text-[10px] font-bold bg-emerald-500/20 text-emerald-300 px-2.5 py-0.5 rounded-full border border-emerald-400/30">
+              +{scoreGain} Poin Proyeksi
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div className="bg-white/5 p-3 rounded-xl border border-white/10">
+              <span className="text-[10px] font-medium text-slate-400 block">Skor Asli</span>
+              <span className="text-xl sm:text-2xl font-black text-slate-300">{baseScore}</span>
+            </div>
+            <div className="bg-emerald-500/10 p-3 rounded-xl border border-emerald-500/30">
+              <span className="text-[10px] font-medium text-emerald-300 block">Proyeksi Skor Baru</span>
+              <span className="text-xl sm:text-2xl font-black text-emerald-400">{projectedScore}</span>
+            </div>
+            <div className="col-span-2 sm:col-span-1 bg-white/5 p-3 rounded-xl border border-white/10 flex flex-col justify-center">
+              <span className="text-[10px] font-medium text-slate-400 block">Proyeksi Kesiapan</span>
+              <span className="text-xs font-bold text-indigo-300 truncate">{getProjectedLevel(projectedScore)}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="relative z-10 bg-white/5 p-4 sm:p-5 rounded-2xl ring-1 ring-white/10">
+            <div className="flex justify-between items-end mb-2.5">
+                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Progres Keseluruhan</span>
+                <span className="text-xl sm:text-2xl font-black text-white">{progressPercentage}%</span>
+            </div>
+            <div className="h-2.5 sm:h-3 w-full bg-slate-800/50 rounded-full overflow-hidden inset-shadow-sm">
                 <motion.div 
                     initial={{ width: 0 }}
                     animate={{ width: `${progressPercentage}%` }}
@@ -239,6 +275,7 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
             </div>
         </div>
       </div>
+
 
       <div className="p-6 sm:p-10 space-y-5 flex-1 bg-[#FAFAFA]">
         {isAllCompleted && (

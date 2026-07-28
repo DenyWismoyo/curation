@@ -107,6 +107,12 @@ export function OmniAiWidget({ isOpen, onClose }: OmniAiWidgetProps) {
       else if (pathname?.includes('/assessor')) contextualInfo += `Lokasi: Ruang Kerja Asesor. `;
       else if (pathname?.includes('/curator')) contextualInfo += `Lokasi: Portal Kurator. `;
 
+      // Tambahkan data hasil asesmen aktif jika ada di sessionStorage
+      const activeAssessmentData = sessionStorage.getItem('openclaw_active_data');
+      if (activeAssessmentData) {
+        contextualInfo += `\n\n[HASIL ASESMEN AKTIF USER]:\n${activeAssessmentData}`;
+      }
+
       try {
         const coreRes = await fetch(`/docs/apa_itu_omnifit.md`);
         if (coreRes.ok) {
@@ -151,12 +157,23 @@ export function OmniAiWidget({ isOpen, onClose }: OmniAiWidgetProps) {
     }
   };
 
+  const hasActiveAssessment = typeof window !== 'undefined' && !!sessionStorage.getItem('openclaw_active_data');
+
   const quickActions = useMemo(() => {
+    if (hasActiveAssessment || pathname?.includes('/result')) {
+      return [
+        "🔍 Analisis Risiko Utama Saya", 
+        "💡 Eksekusi Rekomendasi #1", 
+        "📝 Draf SOP Rencana Aksi", 
+        "📊 Ringkasan Poin Asesmen"
+      ];
+    }
     if (pathname === '/') return ["Apa itu Omnifit?", "Lihat Katalog Modul"];
     if (pathname?.includes('/dashboard')) return ["Cara salin Token?", "Mulai Asesmen"];
     if (pathname?.includes('/katalog')) return ["Rekomendasi Modul", "Cara Pembelian"];
     return ["Kembali ke Beranda", "Bantuan Navigasi"];
-  }, [pathname]);
+  }, [pathname, hasActiveAssessment]);
+
 
   const renderChatMarkdown = (text: string, isUser: boolean) => {
     if (!text) return null;

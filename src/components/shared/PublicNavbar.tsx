@@ -25,6 +25,7 @@ import {
   Handshake,
   HandCoins,
   Sparkles,
+  Layers
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import {
@@ -57,7 +58,7 @@ import { PublicSearchDialog } from '@/components/shared/PublicSearchDialog'
 export function PublicNavbar() {
   const pathname = usePathname()
   const router = useRouter()
-  const { user, logout } = useAuth()
+  const { user, logout, assessmentQuota } = useAuth()
   const [searchOpen, setSearchOpen] = useState(false)
 
   const isActive = (href: string) =>
@@ -98,6 +99,18 @@ export function PublicNavbar() {
           <nav className="flex items-center gap-1 bg-slate-50/60 p-1 rounded-2xl ring-1 ring-slate-100/80">
             <NavigationMenu>
               <NavigationMenuList>
+                {/* 0. Link Langsung: Fitur Aplikasi */}
+                <NavigationMenuItem>
+                  <NavigationMenuLink asChild>
+                    <Link
+                      href="/fitur"
+                      className={`group inline-flex h-10 w-max items-center justify-center rounded-xl bg-transparent px-4 py-2 text-xs font-bold transition-colors hover:bg-slate-100 hover:text-slate-900 focus:bg-slate-100 focus:text-slate-900 focus:outline-none disabled:pointer-events-none disabled:opacity-50 ${isActive('/fitur') ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600'}`}
+                    >
+                      <Layers size={14} className="mr-1.5 text-indigo-500" /> Fitur Aplikasi
+                    </Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+
                 {/* 1. Mega Menu: Produk & Asesmen */}
                 <NavigationMenuItem>
                   <NavigationMenuTrigger className="rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900">
@@ -361,6 +374,14 @@ export function PublicNavbar() {
                       <p className="text-sm font-bold text-slate-900 truncate mt-1">
                         {user.email}
                       </p>
+                      {(assessmentQuota > 0) && (
+                        <div className="mt-3 flex items-center justify-between bg-indigo-50 px-3 py-2 rounded-xl ring-1 ring-indigo-200">
+                          <span className="text-xs font-bold text-indigo-700">Sisa Kuota:</span>
+                          <span className="text-xs font-black bg-indigo-600 text-white px-2 py-0.5 rounded-md shadow-sm">
+                            {assessmentQuota} Modul
+                          </span>
+                        </div>
+                      )}
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator className="bg-slate-100 my-2" />
                     <DropdownMenuGroup>

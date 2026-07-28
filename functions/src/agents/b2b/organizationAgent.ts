@@ -14,12 +14,22 @@ const upsertOrganizationSchema = z.object({
   status: z.enum(["active", "pilot", "inactive"]).default("pilot"),
   industry: z.string().trim().max(80).nullish(),
   contactName: z.string().trim().max(120).nullish(),
-  // Modifikasi email untuk bisa memvalidasi string kosong ("") dengan aman
   contactEmail: z.union([z.literal(""), z.string().trim().email().max(160)]).nullish(),
   contactPhone: z.string().trim().max(40).nullish(),
   tags: z.array(z.string().trim().min(1).max(40)).max(20).nullish(),
   notes: z.string().trim().max(800).nullish(),
+  branding: z.object({
+    logoUrl: z.string().trim().nullish(),
+    primaryColor: z.string().trim().nullish(),
+    customTitle: z.string().trim().nullish(),
+  }).nullish(),
+  webhook: z.object({
+    url: z.string().trim().nullish(),
+    secret: z.string().trim().nullish(),
+    enabled: z.boolean().default(false).nullish(),
+  }).nullish(),
 });
+
 
 const setUserAccessSchema = z.object({
   targetEmail: z.string().trim().email().max(160),

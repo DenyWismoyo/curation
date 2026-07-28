@@ -50,10 +50,39 @@ export default function ExecutionWorkspacePage() {
       <header className="bg-white border-b border-slate-100 sticky top-0 md:top-20 z-40 shadow-sm">
         <div className="max-w-[1000px] mx-auto px-5 lg:px-8 py-4">
 
-          {/* Top row: back + brand */}
-          <div className="flex items-center justify-between mb-4">
-            <BackLink href="/dashboard" label="Kembali ke Dasbor" />
-            <div className="flex items-center gap-2">
+          {/* Single-row header with compact dropdown selector */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <BackLink href="/dashboard" label="Kembali ke Dasbor" />
+              
+              {assessments.length > 0 && (
+                <>
+                  <span className="text-slate-200 hidden sm:inline">|</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Modul:</span>
+                    <select
+                      value={selectedDoc?.id || ''}
+                      onChange={(e) => {
+                        const target = assessments.find(a => a.id === e.target.value);
+                        if (target) setSelectedDoc(target);
+                      }}
+                      className="bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-800 font-bold text-xs rounded-xl px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm max-w-[220px] sm:max-w-[320px] truncate cursor-pointer transition-all"
+                    >
+                      {assessments.map(a => (
+                        <option key={a.id} value={a.id}>
+                          {a.namaUsaha || 'Project Tanpa Nama'} — [{a.trackType || 'Asesmen'}]
+                        </option>
+                      ))}
+                    </select>
+                    <span className="bg-indigo-50 text-indigo-700 text-[10px] font-black px-2 py-0.5 rounded-full ring-1 ring-indigo-100 shrink-0">
+                      {assessments.length} Asesmen
+                    </span>
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
               <InfinityWorkflowIcon size={18} className="text-indigo-600" />
               <span className="text-sm font-black text-slate-900 tracking-tight">
                 Omnifit <span className="text-indigo-600">OS</span>
@@ -61,37 +90,6 @@ export default function ExecutionWorkspacePage() {
             </div>
           </div>
 
-          {/* Project tabs — horizontal scroll */}
-          {assessments.length > 0 && (
-            <div className="overflow-x-auto -mx-5 px-5 lg:mx-0 lg:px-0 pb-1">
-              <div className="flex gap-2.5 min-w-max">
-                {assessments.map(a => {
-                  const active = selectedDoc?.id === a.id;
-                  return (
-                    <button
-                      key={a.id}
-                      onClick={() => setSelectedDoc(a)}
-                      className={`relative px-4 py-2.5 rounded-xl flex flex-col items-start text-left transition-all min-w-[180px] max-w-[260px] ${
-                        active
-                          ? 'bg-slate-900 text-white shadow-md'
-                          : 'bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-800 ring-1 ring-slate-200'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between w-full mb-1">
-                        <span className={`text-[9px] font-black uppercase tracking-widest truncate ${active ? 'text-indigo-300' : 'text-slate-400'}`}>
-                          {a.trackType || 'Asesmen'}
-                        </span>
-                        {active && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />}
-                      </div>
-                      <span className="text-sm font-bold truncate w-full leading-tight">
-                        {a.namaUsaha || 'Project Tanpa Nama'}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
         </div>
       </header>
 

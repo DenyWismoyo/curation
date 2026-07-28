@@ -34,7 +34,7 @@ export function GlobalFloatingWidget() {
   const [isAiOpen, setIsAiOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
-  // Tutup menu bubble otomatis jika user klik area di luarnya
+  // Tutup menu bubble otomatis jika user klik area di luarnya & dengarkan event open_omniai_chat
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -42,14 +42,22 @@ export function GlobalFloatingWidget() {
       }
     }
 
+    const handleOpenAiEvent = () => {
+      setIsMenuOpen(false)
+      setIsAiOpen(true)
+    }
+
     document.addEventListener('mousedown', handleClickOutside)
     document.addEventListener('touchstart', handleClickOutside)
+    window.addEventListener('open_omniai_chat', handleOpenAiEvent)
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
       document.removeEventListener('touchstart', handleClickOutside)
+      window.removeEventListener('open_omniai_chat', handleOpenAiEvent)
     }
   }, [])
+
 
   return (
     <>

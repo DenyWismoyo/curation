@@ -1,6 +1,7 @@
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
 import { getFirestore } from "firebase-admin/firestore";
+import { generateAssessmentCacheKey, getCachedAssessmentResult } from "../../general/cacheService";
 
 export const processCurationAssessment = onCall({
   memory: "512MiB",
@@ -45,6 +46,16 @@ export const processCurationAssessment = onCall({
     allowedDocTemplates = corpData?.allowedDocumentTemplates || [];
   }
 
+  // Hitung Cache Key jika tidak melampirkan berkas khusus
+  const cacheKey = storageFilePaths.length === 0 
+    ? generateAssessmentCacheKey(trackType, formData, aiPromptConfig)
+    : null;
+
+  let cachedResult = null;
+  if (cacheKey) {
+    cachedResult = await getCachedAssessmentResult(cacheKey);
+  }
+
   let assessmentId = "";
 
   try {
@@ -66,7 +77,9 @@ export const processCurationAssessment = onCall({
       const newAssessmentRef = db.collection("assessments").doc();
       assessmentId = newAssessmentRef.id;
 
-      const newDocData = {
+      const isCacheHit = !!cachedResult;
+
+      const newDocData: Record<string, any> = {
         userId: userId,
         userEmail: formData.email || userEmail,
         trackType: trackType,
@@ -80,15 +93,28 @@ export const processCurationAssessment = onCall({
         allowedDocumentTemplates: allowedDocTemplates,
         documentGenerationQuota: tokenUsed ? 1 : 0,
         hasPaidForDocument: false,
-        status: "ANALYZING_MASTER", 
+        cacheKey: cacheKey || null,
+        isCacheHit: isCacheHit,
+        status: isCacheHit ? "COMPLETED" : "ANALYZING_MASTER",
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
       };
+
+      if (isCacheHit && cachedResult) {
+        newDocData.aiResult = cachedResult.aiResult;
+        newDocData.score = cachedResult.score;
+        newDocData.readinessLevel = cachedResult.readinessLevel;
+        newDocData.completedAt = admin.firestore.FieldValue.serverTimestamp();
+      }
 
       transaction.set(newAssessmentRef, newDocData);
     });
 
-    return { assessmentId, status: "ANALYZING_MASTER" };
+    return { 
+      assessmentId, 
+      status: cachedResult ? "COMPLETED" : "ANALYZING_MASTER",
+      isCacheHit: !!cachedResult
+    };
   } catch (error: any) {
     throw new HttpsError("internal", error.message || "Gagal menginisiasi asesmen.");
   }
-});
+});

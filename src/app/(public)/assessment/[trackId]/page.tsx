@@ -16,35 +16,68 @@ import { AiSparkIcon, BrainIcon } from '@/types';
 import { useMobileBack } from '@/hooks/useMobileBack';
 
 // ========================================================
-// KOMPONEN: SKELETON DASHBOARD LOADING DINAMIS (REAL-TIME)
+// KOMPONEN: SKELETON DASHBOARD LOADING DINAMIS (REAL-TIME MULTI-AGENT STEPPER)
 // ========================================================
 function InteractiveDashboardLoading({ formData, trackName, assessmentId }: { formData: Record<string, any>, trackName: string, assessmentId?: string | null }) {
   const [loadingText, setLoadingText] = useState('Menginisialisasi Sistem Multi-Agent...');
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [isCacheHit, setIsCacheHit] = useState(false);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
-  // EFEK BARU: Mendengarkan status agen langsung dari Database secara Real-Time
+  const agentSteps = [
+    { key: 'ANALYZING_MASTER', name: 'Master Gateway Agent', desc: 'Menganalisis profil & sintesis Executive Summary' },
+    { key: 'ANALYZING_METRICS', name: 'Triangulator Agent', desc: 'Memvalidasi integritas data & pemetaan metrik' },
+    { key: 'PLANNING_ACTION', name: 'Domain Experts Agent', desc: 'Evaluasi pilar spesifik & forensik dokumen' },
+    { key: 'GENERATING_ASSETS', name: 'Tactical Planner Agent', desc: 'Merumuskan Rencana Aksi (Action Plan) taktis' },
+    { key: 'COMPLETED', name: 'Post-Processing Agent', desc: 'Finalisasi laporan PDF & pengindeksan data' }
+  ];
+
+  // Timer elapsed
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setElapsedSeconds(prev => prev + 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Mendengarkan status agen langsung dari Database secara Real-Time
   useEffect(() => {
     if (!assessmentId) return;
 
     const unsub = onSnapshot(doc(db, 'assessments', assessmentId), (docSnap) => {
       if (docSnap.exists()) {
-        const status = docSnap.data().status;
+        const data = docSnap.data();
+        const status = data.status;
+        const cacheHit = !!data.isCacheHit;
         
-        // Sesuaikan teks dengan tahapan Agent di backend
+        setIsCacheHit(cacheHit);
+
+        if (cacheHit) {
+          setLoadingText('⚡ Instant Cache Hit! Membuka hasil asesmen terakselerasi...');
+          setCurrentStepIndex(4);
+          return;
+        }
+
         switch (status) {
           case 'ANALYZING_MASTER':
+            setCurrentStepIndex(0);
             setLoadingText('Gateway Agent: Menganalisis profil dan menyintesis Executive Summary...');
             break;
           case 'ANALYZING_METRICS':
+            setCurrentStepIndex(1);
             setLoadingText('Triangulator Agent: Memvalidasi integritas data & memecah metrik kinerja...');
             break;
           case 'PLANNING_ACTION':
+            setCurrentStepIndex(2);
             setLoadingText('Domain Expert Agent: Merumuskan Rencana Aksi (Action Plan) Taktis...');
             break;
           case 'GENERATING_ASSETS':
+            setCurrentStepIndex(3);
             setLoadingText('Post-Processing Agent: Membangun visualisasi Radar & Finalisasi Aset...');
             break;
           case 'COMPLETED':
-            setLoadingText('Semua komputasi selesai. Membuka dasbor...');
+            setCurrentStepIndex(4);
+            setLoadingText('Semua komputasi agen selesai. Membuka dasbor...');
             break;
           case 'FAILED':
             setLoadingText('Terjadi kesalahan pada sirkuit AI. Membatalkan proses...');
@@ -55,31 +88,128 @@ function InteractiveDashboardLoading({ formData, trackName, assessmentId }: { fo
       }
     });
 
-    return () => unsub(); // Cleanup memori
+    return () => unsub();
   }, [assessmentId]);
 
   return (
-    <div className="min-h-screen bg-slate-50 py-8 px-4 sm:py-12 sm:px-6 lg:px-12 relative">
+    <div className="min-h-screen bg-slate-950 text-white py-8 px-4 sm:py-12 sm:px-6 lg:px-12 relative overflow-hidden flex flex-col justify-between">
       
-      {/* FLOATING AI STATUS BAR */}
-      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-md">
+      {/* BACKGROUND DECORATIVE GLOW */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-10 right-10 w-[400px] h-[400px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
+
+      {/* HEADER SECTION */}
+      <div className="max-w-4xl mx-auto w-full z-10 space-y-4 text-center mt-4 sm:mt-8">
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/10 ring-1 ring-indigo-500/30 text-indigo-400 text-xs font-semibold uppercase tracking-wider">
+          <BrainIcon size={14} className="animate-pulse" />
+          <span>Omnifit Multi-Agent Engine v2</span>
+        </div>
+        
+        <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+          Memproses Evaluasi untuk <span className="text-indigo-400">{formData?.namaUsaha || 'Entitas Usaha'}</span>
+        </h1>
+        
+        <p className="text-slate-400 text-sm sm:text-base max-w-xl mx-auto">
+          Sistem sedang membagi tugas analisis ke dalam sirkuit multi-agent AI independen secara berkala.
+        </p>
+
+        {isCacheHit && (
+          <motion.div 
+            initial={{ scale: 0.9, opacity: 0 }} 
+            animate={{ scale: 1, opacity: 1 }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/20 ring-1 ring-emerald-400/40 text-emerald-300 text-xs sm:text-sm font-bold shadow-lg shadow-emerald-950/50"
+          >
+            <span>⚡ Instant Cache Hit - Respon Terakselerasi & Performa Maksimal</span>
+          </motion.div>
+        )}
+      </div>
+
+      {/* STEPPER MULTI-AGENT UI */}
+      <div className="max-w-3xl mx-auto w-full my-8 z-10 bg-slate-900/80 backdrop-blur-2xl ring-1 ring-slate-800 p-6 sm:p-8 rounded-3xl shadow-2xl">
+        <div className="flex justify-between items-center mb-6">
+          <span className="text-xs font-black uppercase tracking-widest text-slate-400">
+            KEMAJUAN KOMPUTASI AGEN AI
+          </span>
+          <span className="text-xs font-mono font-medium text-indigo-400 bg-indigo-950/80 ring-1 ring-indigo-800 px-3 py-1 rounded-full">
+            Waktu Berjalan: {elapsedSeconds}s
+          </span>
+        </div>
+
+        {/* PROGRESS BAR */}
+        <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden mb-8">
+          <motion.div 
+            className="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-400 rounded-full"
+            initial={{ width: '0%' }}
+            animate={{ width: `${Math.min(100, ((currentStepIndex + 1) / agentSteps.length) * 100)}%` }}
+            transition={{ duration: 0.5 }}
+          />
+        </div>
+
+        {/* AGENT STEPS PIPELINE LIST */}
+        <div className="space-y-4">
+          {agentSteps.map((step, idx) => {
+            const isDone = idx < currentStepIndex;
+            const isCurrent = idx === currentStepIndex;
+
+            return (
+              <div 
+                key={step.key}
+                className={`p-4 rounded-2xl transition-all duration-300 flex items-center gap-4 ring-1 ${
+                  isCurrent 
+                    ? 'bg-indigo-950/40 ring-indigo-500/50 shadow-lg shadow-indigo-950/50 scale-[1.01]' 
+                    : isDone 
+                      ? 'bg-slate-900/40 ring-slate-800/80 opacity-80' 
+                      : 'bg-slate-950/30 ring-slate-800/40 opacity-40'
+                }`}
+              >
+                {/* STEP STATUS ICON */}
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 font-bold text-xs ${
+                  isDone 
+                    ? 'bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/40' 
+                    : isCurrent 
+                      ? 'bg-indigo-600 text-white ring-2 ring-indigo-400 shadow-md shadow-indigo-500/50 animate-pulse' 
+                      : 'bg-slate-800 text-slate-500'
+                }`}>
+                  {isDone ? '✓' : idx + 1}
+                </div>
+
+                {/* STEP DETAILS */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-2">
+                    <h4 className={`text-sm font-semibold truncate ${isCurrent ? 'text-white font-bold' : isDone ? 'text-slate-300' : 'text-slate-500'}`}>
+                      {step.name}
+                    </h4>
+                    {isCurrent && (
+                      <span className="inline-block w-2 h-2 rounded-full bg-indigo-400 animate-ping shrink-0" />
+                    )}
+                  </div>
+                  <p className="text-xs text-slate-400 truncate mt-0.5">{step.desc}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* FLOATING STATUS BAR */}
+      <div className="z-10 w-full max-w-md mx-auto mb-4">
         <motion.div 
-          initial={{ y: 50, opacity: 0 }}
+          initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="bg-slate-900/90 backdrop-blur-xl p-4 rounded-2xl shadow-2xl ring-1 ring-white/20 flex items-center gap-4"
+          className="bg-slate-900/90 backdrop-blur-xl p-4 rounded-2xl shadow-2xl ring-1 ring-white/10 flex items-center gap-3"
         >
-          <div className="w-10 h-10 bg-indigo-500/20 rounded-full flex items-center justify-center shrink-0">
-            <BrainIcon size={20} className="text-indigo-400 animate-pulse" />
+          <div className="w-8 h-8 bg-indigo-500/20 rounded-full flex items-center justify-center shrink-0">
+            <BrainIcon size={18} className="text-indigo-400 animate-spin" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-[10px] font-black uppercase tracking-widest text-indigo-400 mb-0.5">STATUS KOMPUTASI AI</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-indigo-400 mb-0.5">STATUS MULTI-AGENT</p>
             <AnimatePresence mode="wait">
               <motion.p 
                 key={loadingText}
-                initial={{ opacity: 0, y: 5 }}
+                initial={{ opacity: 0, y: 3 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -5 }}
-                className="text-sm font-medium text-white truncate"
+                exit={{ opacity: 0, y: -3 }}
+                className="text-xs font-medium text-slate-200 truncate"
               >
                 {loadingText}
               </motion.p>
@@ -88,129 +218,10 @@ function InteractiveDashboardLoading({ formData, trackName, assessmentId }: { fo
         </motion.div>
       </div>
 
-      <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8 pointer-events-none">
-         {/* TOP ACTION BAR (Skeleton) */}
-         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div className="h-10 w-32 bg-slate-200 animate-pulse rounded-xl" />
-          <div className="flex gap-3">
-            <div className="h-10 w-32 bg-slate-200 animate-pulse rounded-xl" />
-            <div className="h-10 w-40 bg-slate-200 animate-pulse rounded-xl" />
-          </div>
-        </div>
-
-        {/* CONTAINER UTAMA */}
-        <div className="bg-white p-2 sm:p-6 lg:p-8 rounded-3xl shadow-sm ring-1 ring-slate-200 overflow-hidden relative">
-          
-          {/* DISCLAIMER BANNER SKELETON */}
-          <div className="bg-slate-100 p-5 sm:p-6 rounded-[2rem] mb-8 flex flex-col gap-4 animate-pulse mx-2 sm:mx-0 mt-2 sm:mt-0">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-slate-200 rounded-2xl shrink-0" />
-              <div className="flex-1 space-y-3">
-                <div className="h-5 w-48 bg-slate-200 rounded-md" />
-                <div className="h-4 w-full bg-slate-200 rounded-md" />
-                <div className="h-4 w-3/4 bg-slate-200 rounded-md" />
-              </div>
-            </div>
-          </div>
-
-          {/* 1. HEADER & EXECUTIVE SUMMARY */}
-          <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 mb-12 px-2 sm:px-0">
-            <div className="flex-1 flex flex-col justify-between">
-              <div>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight mb-3">
-                  System Assessment Report
-                </h1>
-                <div className="flex flex-wrap items-center gap-2 mb-8">
-                  <span className="text-indigo-600 font-bold text-base sm:text-lg bg-indigo-50 px-3 py-1.5 rounded-lg ring-1 ring-indigo-100">
-                    {formData?.namaUsaha || 'Menganalisis Entitas...'}
-                  </span>
-                  <span className="bg-slate-100 text-slate-500 font-bold text-xs sm:text-sm px-3 py-1.5 rounded-lg uppercase tracking-widest ring-1 ring-slate-200">
-                    {trackName}
-                  </span>
-                </div>
-              </div>
-              
-              {/* Executive Summary Skeleton */}
-              <div className="bg-slate-50 ring-1 ring-slate-100 p-6 rounded-2xl h-40 flex flex-col gap-3">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-4 h-4 bg-indigo-200 rounded animate-pulse" />
-                  <div className="w-32 h-4 bg-slate-200 rounded animate-pulse" />
-                </div>
-                <div className="w-full h-3 bg-slate-200 rounded animate-pulse delay-75" />
-                <div className="w-full h-3 bg-slate-200 rounded animate-pulse delay-100" />
-                <div className="w-5/6 h-3 bg-slate-200 rounded animate-pulse delay-150" />
-                <div className="w-4/6 h-3 bg-slate-200 rounded animate-pulse delay-200" />
-              </div>
-            </div>
-
-            {/* Skor Panel Skeleton */}
-            <div className="w-full lg:w-[340px] shrink-0 p-8 rounded-3xl bg-slate-900 relative overflow-hidden flex flex-col justify-center items-center shadow-lg">
-              <p className="text-slate-500 text-xs font-black uppercase tracking-widest mb-4 flex items-center gap-2">
-                <AiSparkIcon size={16}/> AI Readiness Score
-              </p>
-              <div className="w-24 h-24 mb-6 border-4 border-slate-700 border-t-indigo-500 rounded-full animate-spin" />
-              <div className="h-8 w-40 bg-slate-800 rounded-full animate-pulse" />
-            </div>
-          </div>
-
-          {/* 2. DYNAMIC ANALYSIS BLOCKS SKELETON */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12 px-2 sm:px-0">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white ring-1 ring-slate-200 p-6 rounded-2xl h-48 flex flex-col gap-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-5 h-5 bg-slate-200 rounded-full animate-pulse" />
-                  <div className="w-24 h-4 bg-slate-200 rounded animate-pulse" />
-                </div>
-                <div className="space-y-2">
-                  <div className="h-3 w-16 bg-slate-200 rounded animate-pulse" />
-                  <div className="h-3 w-full bg-slate-100 rounded animate-pulse" />
-                </div>
-                <div className="space-y-2 mt-2">
-                  <div className="h-3 w-20 bg-slate-200 rounded animate-pulse" />
-                  <div className="h-3 w-5/6 bg-slate-100 rounded animate-pulse" />
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* 3. DIMENSI KINERJA (RADAR CHART AREA) SKELETON */}
-          <div className="bg-slate-50 p-6 sm:p-8 lg:p-10 rounded-[2rem] ring-1 ring-slate-200 shadow-sm mb-12 mx-2 sm:mx-0">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="w-10 h-10 bg-slate-200 rounded-xl animate-pulse" />
-              <div className="space-y-2">
-                <div className="h-6 w-48 bg-slate-200 rounded animate-pulse" />
-                <div className="h-4 w-64 bg-slate-200 rounded animate-pulse" />
-              </div>
-            </div>
-            
-            <div className="flex flex-col lg:flex-row gap-10 xl:gap-16 items-center">
-              <div className="w-full lg:w-2/5 flex flex-col items-center shrink-0">
-                <div className="w-64 h-64 sm:w-80 sm:h-80 rounded-full border-[10px] border-slate-200/50 flex items-center justify-center animate-pulse">
-                  <div className="w-48 h-48 sm:w-60 sm:h-60 rounded-full border-[10px] border-slate-200/50 flex items-center justify-center">
-                    <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full border-[10px] border-slate-200/50 bg-slate-200/20" />
-                  </div>
-                </div>
-              </div>
-              
-              <div className="w-full lg:w-3/5 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="bg-white p-5 rounded-2xl ring-1 ring-slate-100 h-24 flex flex-col gap-3">
-                    <div className="flex justify-between items-center">
-                      <div className="h-4 w-24 bg-slate-200 rounded animate-pulse" />
-                      <div className="h-6 w-8 bg-slate-200 rounded animate-pulse" />
-                    </div>
-                    <div className="h-3 w-full bg-slate-100 rounded animate-pulse" />
-                    <div className="h-3 w-3/4 bg-slate-100 rounded animate-pulse" />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
+
 
 // ========================================================
 // MAIN PAGE COMPONENT

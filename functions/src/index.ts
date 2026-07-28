@@ -16,7 +16,7 @@ import { buildAssessmentPrompt, getSystemPrompt } from "./promt/promptTemplate";
 export { generatePDFReport } from "./general/documentGenerator";
 export { matchBusinessWithIndustry } from "./general/vectorService";
 // export { generateFormTemplateFromAI } from "./formBuilderService";
-export { createPaymentInvoice, mayarWebhook } from "./general/paymentService";
+export { createPaymentInvoice, mayarWebhook, redeemAssessmentQuota } from "./general/paymentService";
 export { chatWithOmniAi } from "./general/omniAiService";
 export { generateActionPlanChecklist, generateSubTaskChecklist } from "./actionPlanService";
 export { generateTemplateSellingPoints, generatePromptAnchors } from "./outputService";
@@ -24,7 +24,9 @@ export { weeklyActionPlanNudge } from "./email/nudgeService";
 export { generateAdaptiveQuestions, evaluateMacroBranching, manualTriggerRAGSeed } from "./general/adaptiveValidationService";
 export { enhanceFieldLogic, enhanceStepLogic } from "./fieldEnhancerService";
 // TAMBAHKAN EXPORT FUNGSI BARU DI SINI:
+export { generateAssessmentCacheKey, getCachedAssessmentResult, setCachedAssessmentResult } from "./general/cacheService";
 export { generateAdvancedPrompts } from "./promptEnhancerService";
+
 export { formBuilderArchitectAgent } from "./agents/formBuilder/architectAgent";
 export { formBuilderFabricatorAgent } from "./agents/formBuilder/fabricatorAgent";
 export { formBuilderValidatorAgent } from "./agents/formBuilder/validatorAgent";
@@ -34,6 +36,7 @@ export { assessmentTriangulatorAgent } from "./agents/assessment/triangulatorAge
 export { assessmentDomainExpertsAgent } from "./agents/assessment/domainExpertsAgent";
 export { assessmentTacticalPlannerAgent } from "./agents/assessment/tacticalPlannerAgent";
 export { assessmentPostProcessingAgent } from "./agents/assessment/postProcessingAgent";
+export { premiumConsultationChat } from "./agents/assessment/premiumConsultationAgent";
 export { assessmentAnalyticsAgent } from "./agents/analytics/analyticsAgent";
 export { generateCopywriting, reviseSlidePrompt, reviseCopywriting } from "./agents/promo/copywriterAgent";
 export { renderSingleSlide } from "./agents/promo/imageRendererAgent";
@@ -46,6 +49,8 @@ export { affiliateCommissionAgent } from "./agents/affiliate/commissionAgent";
 export { upsertReferralAttribution, bindReferralAttributionToUser } from "./agents/affiliate/attributionAgent";
 export { generateAdaptiveOnboardingPlan } from "./agents/onboarding/adaptiveOnboardingAgent";
 export { adminUpsertB2BOrganization, adminListB2BOrganizations, adminSetB2BUserAccess, adminRevokeB2BUserAccess } from "./agents/b2b/organizationAgent";
+export { getB2BOrganizationAnalytics } from "./agents/b2b/b2bAnalyticsService";
+
 
 // ============================================================================
 // INISIALISASI FIREBASE
