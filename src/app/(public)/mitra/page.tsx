@@ -23,6 +23,9 @@ import {
 
 // IMPORT KEBUTUHAN AUTH
 import { useAuth } from '@/contexts/AuthContext';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
 
 export default function EkosistemMitraPage() {
   const router = useRouter();
@@ -115,10 +118,20 @@ export default function EkosistemMitraPage() {
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             {partner.targetUrl ? (
               <a href={partner.targetUrl} target="_blank" rel="noreferrer" className="w-full h-full flex items-center justify-center relative z-10">
-                <img src={partner.logoUrl} alt={partner.name} className="max-w-full max-h-full object-contain filter grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500 ease-out" />
+                <img 
+                  src={partner.logoUrl} 
+                  alt={partner.name} 
+                  onError={(e) => { (e.target as any).src = '/logo.png'; }}
+                  className="max-w-full max-h-full object-contain filter grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500 ease-out" 
+                />
               </a>
             ) : (
-              <img src={partner.logoUrl} alt={partner.name} className="max-w-full max-h-full object-contain filter grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500 ease-out relative z-10" />
+              <img 
+                src={partner.logoUrl} 
+                alt={partner.name} 
+                onError={(e) => { (e.target as any).src = '/logo.png'; }}
+                className="max-w-full max-h-full object-contain filter grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500 ease-out relative z-10" 
+              />
             )}
           </div>
         </motion.div>
@@ -162,33 +175,29 @@ export default function EkosistemMitraPage() {
   return (
     <div className="min-h-screen bg-[#FAFAFA] selection:bg-indigo-100 selection:text-indigo-900 font-sans overflow-x-hidden relative">
       
-      {/* TOMBOL KEMBALI FLOATING (KIRI ATAS) */}
-      <button 
-        onClick={() => router.push('/')}
-        className="fixed top-6 left-4 sm:left-6 z-50 flex items-center justify-center w-12 h-12 bg-white/70 backdrop-blur-xl border border-white/50 rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:bg-white hover:scale-105 transition-all group"
-        title="Kembali ke Beranda"
-      >
-        <ChevronLeft size={20} className="text-slate-500 group-hover:text-indigo-600 group-hover:-translate-x-0.5 transition-transform" />
-      </button>
-
       {/* FLOATING BUTTON MODUL (KANAN BAWAH) -> KE ROUTE KATALOG */}
       <motion.button 
         onClick={() => router.push('/katalog')}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-50 flex items-center justify-center w-14 h-14 bg-indigo-600/90 backdrop-blur-xl border border-indigo-500/50 rounded-full shadow-[0_8px_30px_rgb(79,70,229,0.3)] hover:bg-indigo-500 transition-all group"
+        whileHover={{ scale: 1.08 }}
+        whileTap={{ scale: 0.95 }}
+        className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-50 flex items-center justify-center w-14 h-14 bg-indigo-600/90 backdrop-blur-xl border border-indigo-500/50 rounded-full shadow-[0_8px_30px_rgb(79,70,229,0.3)] hover:bg-indigo-600 transition-all group"
         title="Jelajahi Modul"
       >
         <AppModuleTealIcon className="w-6 h-6 text-white group-hover:rotate-12 transition-transform" />
       </motion.button>
 
-      <main className="pt-24 pb-24 relative z-10">
+      <main className="pt-20 pb-24 relative z-10">
         
         {/* HERO SECTION */}
         <motion.section 
           initial="hidden" animate="visible" variants={fadeUp}
-          className="text-center max-w-4xl mx-auto mb-24 lg:mb-32 px-6"
+          className="text-center max-w-4xl mx-auto mb-20 lg:mb-28 px-6"
         >
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-indigo-50 text-indigo-700 rounded-full text-[11px] font-black uppercase tracking-widest ring-1 ring-indigo-200/60 mb-6">
+            <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
+            Ekosistem & Mitra Strategis
+          </div>
+
           <div className="inline-flex items-center justify-center mb-8 relative">
             <div className="absolute inset-0 bg-indigo-500 blur-3xl opacity-20 rounded-full scale-150 animate-pulse"></div>
             <GlobalTargetIcon size={56} className="relative z-10 text-indigo-600 animate-float" />
@@ -202,9 +211,24 @@ export default function EkosistemMitraPage() {
         </motion.section>
 
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-32 text-slate-400">
-            <Loader2 className="w-10 h-10 animate-spin mb-4 text-indigo-500" />
-            <p className="font-bold tracking-widest text-xs uppercase">Menyiapkan Data...</p>
+          <div className="max-w-[1200px] mx-auto px-6 space-y-12">
+            <div className="space-y-4">
+              <Skeleton className="h-8 w-48 rounded-xl" />
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                <Skeleton className="h-36 rounded-3xl" />
+                <Skeleton className="h-36 rounded-3xl" />
+                <Skeleton className="h-36 rounded-3xl" />
+              </div>
+            </div>
+            <div className="space-y-4">
+              <Skeleton className="h-8 w-48 rounded-xl" />
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+                <Skeleton className="h-28 rounded-3xl" />
+                <Skeleton className="h-28 rounded-3xl" />
+                <Skeleton className="h-28 rounded-3xl" />
+                <Skeleton className="h-28 rounded-3xl" />
+              </div>
+            </div>
           </div>
         ) : (
           <div className="space-y-24 lg:space-y-32">

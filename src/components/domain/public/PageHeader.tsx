@@ -51,6 +51,8 @@ export function PageHeader({
     );
   }
 
+  const hasBack = Boolean(backHref || onBack !== undefined);
+
   return (
     <div
       className={cn(
@@ -60,13 +62,9 @@ export function PageHeader({
       )}
     >
       <div className="max-w-5xl mx-auto">
-        {(backHref || onBack !== undefined || actions) && (
+        {hasBack && (
           <div className="flex items-center justify-between mb-6">
-            {(backHref || onBack !== undefined) ? (
-              <BackLink href={backHref} label={backLabel} onClick={onBack} />
-            ) : (
-              <div />
-            )}
+            <BackLink href={backHref} label={backLabel} onClick={onBack} />
             {actions && <div className="flex items-center gap-2">{actions}</div>}
           </div>
         )}
@@ -83,12 +81,12 @@ export function PageHeader({
                 {eyebrow}
               </p>
             )}
-            <h1 className="text-3xl font-black text-slate-900 tracking-tight">{title}</h1>
+            {title && <h1 className="text-3xl font-black text-slate-900 tracking-tight">{title}</h1>}
             {subtitle && (
               <p className="text-sm text-slate-500 font-medium mt-1">{subtitle}</p>
             )}
           </div>
-          {!icon && actions && !backHref && (
+          {!hasBack && actions && (
             <div className="flex items-center gap-2 shrink-0">{actions}</div>
           )}
         </div>

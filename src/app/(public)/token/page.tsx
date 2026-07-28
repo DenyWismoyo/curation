@@ -3,7 +3,7 @@
 // src/app/token/page.tsx
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Loader2, ArrowRight, ShieldCheck, KeyRound } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
+import { SafeLogo } from '@/components/shared/SafeLogo';
 
 export default function TokenPage() {
   const router = useRouter();
@@ -108,7 +109,7 @@ export default function TokenPage() {
       >
         <div className="flex justify-center mb-8">
           <div className="w-16 h-16 bg-white rounded-[1.5rem] shadow-xl shadow-slate-200/50 ring-1 ring-slate-100 flex items-center justify-center overflow-hidden">
-             <Image src="/logo.png" alt="Omnifit Logo" width={60} height={60} className="object-contain p-2" priority unoptimized />
+             <SafeLogo src="/logo.png" alt="Omnifit Logo" width={60} height={60} className="w-full h-full object-contain p-2" priority />
           </div>
         </div>
 

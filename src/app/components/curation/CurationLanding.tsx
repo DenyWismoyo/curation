@@ -4,6 +4,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { SafeLogo } from '@/components/shared/SafeLogo';
 import { useRouter } from 'next/navigation';
 import {
   ArrowRight, History, ChevronRight, Loader2, LogOut,
@@ -235,7 +236,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
             >
               {/* Logo */}
               <m.div variants={fadeUp} className="w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-2xl shadow-md ring-1 ring-slate-200/60 overflow-hidden flex items-center justify-center">
-                <Image src="/logo.png" alt="Omnifit" width={80} height={80} className="w-full h-full object-contain p-2" priority unoptimized />
+                <SafeLogo src="/logo.png" alt="Omnifit" width={80} height={80} className="w-full h-full object-contain p-2" priority />
               </m.div>
 
               {/* Eyebrow */}

@@ -4,6 +4,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
+import { SafeLogo } from '@/components/shared/SafeLogo';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
@@ -231,7 +232,7 @@ export default function LoginPage() {
       {/* Logo */}
       <div className="flex justify-center mb-6">
         <div className="w-14 h-14 bg-white rounded-2xl shadow-lg ring-1 ring-slate-100 flex items-center justify-center overflow-hidden">
-          <Image src="/logo.png" alt="Omnifit" width={56} height={56} className="object-contain p-1.5" priority unoptimized />
+          <SafeLogo src="/logo.png" alt="Omnifit" width={56} height={56} className="w-full h-full object-contain p-1.5" priority />
         </div>
       </div>
 

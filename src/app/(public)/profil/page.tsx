@@ -127,7 +127,9 @@ export default function ProfilPage() {
       {/* HEADER */}
       <PageHeader
         onBack={() => router.back()}
-        actions={<NotificationBell />} title={undefined}      >
+        actions={<NotificationBell />}
+        title={undefined}
+      >
         {/* PROFILE INFO */}
         <div className="flex items-center gap-5 mt-2">
           <div className="relative shrink-0">

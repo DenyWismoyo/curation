@@ -87,29 +87,29 @@ export default function AdminAssessmentDetailPage() {
     <div className="space-y-6 animate-in fade-in duration-500 pb-20">
       
       {/* HEADER NAVIGASI & IDENTITAS KUNCI */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 sm:p-6 rounded-3xl ring-1 ring-slate-200 shadow-sm">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-5 sm:p-6 rounded-3xl ring-1 ring-slate-200/80 shadow-xs">
         <div className="flex items-start gap-4">
-          <Button variant="ghost" onClick={() => router.push('/admin')} className="w-10 h-10 mt-1 p-0 rounded-full bg-slate-50 hover:bg-slate-200 text-slate-600 shrink-0">
+          <Button variant="ghost" onClick={() => router.push('/admin')} className="w-10 h-10 mt-1 p-0 rounded-2xl bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 text-slate-600 shrink-0 cursor-pointer transition-colors" title="Kembali ke Dasbor">
             <ChevronLeft size={20} />
           </Button>
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Admin Preview Mode</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Admin Preview Mode</p>
             <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight mb-2">{data.namaUsaha || 'Tanpa Nama'}</h1>
             
             {/* INJEKSI KONTAK PESERTA DARI FORMDATA */}
             <div className="flex flex-wrap items-center gap-3">
               {formData?.namaPengisi && (
-                <span className="text-[11px] font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-md ring-1 ring-slate-200/50 flex items-center gap-1.5">
+                <span className="text-[11px] font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg ring-1 ring-slate-200/50 flex items-center gap-1.5">
                     {formData.namaPengisi}
                 </span>
               )}
               {formData?.email && (
-                <a href={`mailto:${formData.email}`} className="text-[11px] font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1 rounded-md ring-1 ring-indigo-200/50 flex items-center gap-1.5 transition-colors">
+                <a href={`mailto:${formData.email}`} className="text-[11px] font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1 rounded-lg ring-1 ring-indigo-200/50 flex items-center gap-1.5 transition-colors">
                   <Mail size={12} /> {formData.email}
                 </a>
               )}
               {formData?.telepon && (
-                <a href={`https://wa.me/${waNumber.startsWith('0') ? '62' + waNumber.slice(1) : waNumber}`} target="_blank" rel="noreferrer" className="text-[11px] font-bold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1 rounded-md ring-1 ring-emerald-200/50 flex items-center gap-1.5 transition-colors">
+                <a href={`https://wa.me/${waNumber.startsWith('0') ? '62' + waNumber.slice(1) : waNumber}`} target="_blank" rel="noreferrer" className="text-[11px] font-bold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1 rounded-lg ring-1 ring-emerald-200/50 flex items-center gap-1.5 transition-colors">
                   <Phone size={12} /> {formData.telepon}
                 </a>
               )}
@@ -123,14 +123,14 @@ export default function AdminAssessmentDetailPage() {
       </div>
 
       {/* TABS */}
-      <div className="flex gap-2">
-        <button onClick={() => setActiveTab('evaluasi')} className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${activeTab === 'evaluasi' ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-slate-500 hover:bg-slate-50 ring-1 ring-slate-200'}`}>
+      <div className="flex flex-wrap gap-2">
+        <button onClick={() => setActiveTab('evaluasi')} className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${activeTab === 'evaluasi' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20' : 'bg-white text-slate-600 hover:bg-slate-50 ring-1 ring-slate-200/80'}`}>
           <ShieldCheck className="w-4 h-4"/> Lembar Hasil Evaluasi
         </button>
-        <button onClick={() => setActiveTab('input')} className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${activeTab === 'input' ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-slate-500 hover:bg-slate-50 ring-1 ring-slate-200'}`}>
+        <button onClick={() => setActiveTab('input')} className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${activeTab === 'input' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20' : 'bg-white text-slate-600 hover:bg-slate-50 ring-1 ring-slate-200/80'}`}>
           <Briefcase className="w-4 h-4"/> Data Input Peserta
         </button>
-        <button onClick={() => setActiveTab('analytics')} className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${activeTab === 'analytics' ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-slate-500 hover:bg-slate-50 ring-1 ring-slate-200'}`}>
+        <button onClick={() => setActiveTab('analytics')} className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${activeTab === 'analytics' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20' : 'bg-white text-slate-600 hover:bg-slate-50 ring-1 ring-slate-200/80'}`}>
           <BarChart3 className="w-4 h-4"/> Ringkasan Analytics
         </button>
       </div>

@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button';
 import { FormTemplate } from '@/types/curation';
 import { AIPromptPresets } from '@/data/aiPromptTemplates';
 import { DomainPresets } from '@/data/domainPresets';
-import { Sparkles, Plus, Trash2, ChevronDown, Bot, Loader2, Search, Settings, AlertTriangle, Fingerprint } from 'lucide-react';
+import { Sparkles, Plus, Trash2, ChevronDown, Bot, Loader2, Search, Settings, AlertTriangle, Fingerprint, HelpCircle } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { doc, onSnapshot, updateDoc } from 'firebase/firestore'; 
 import { db } from '@/lib/firebase'; 
@@ -631,7 +632,17 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2 p-6 bg-amber-50/40 rounded-3xl border border-amber-100 shadow-sm md:col-span-2">
-            <label className="text-[12px] font-black text-amber-900 uppercase tracking-widest block mb-1">Custom Scoring Rubric (Panduan Kuantifikasi Angka)</label>
+            <div className="flex items-center gap-1.5 mb-1">
+              <label className="text-[12px] font-black text-amber-900 uppercase tracking-widest">Custom Scoring Rubric (Panduan Kuantifikasi Angka)</label>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <HelpCircle className="w-3.5 h-3.5 text-amber-600 cursor-pointer" />
+                  </TooltipTrigger>
+                  <TooltipContent><p className="max-w-xs text-xs">Menentukan skala & rubrik angka otomatis yang digunakan AI saat mengkalkulasi skor readiness.</p></TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
             <Textarea 
               value={template.aiPromptConfig?.customScoringRubric || ''}
               onChange={e => updateConfig('customScoringRubric', e.target.value)}
@@ -641,7 +652,17 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
           </div>
 
           <div className="space-y-2 p-6 bg-indigo-50/40 rounded-3xl border border-indigo-100 shadow-sm md:col-span-2">
-            <label className="text-[12px] font-black text-indigo-900 uppercase tracking-widest block mb-1">Custom System Rules & Aturan If-Then</label>
+            <div className="flex items-center gap-1.5 mb-1">
+              <label className="text-[12px] font-black text-indigo-900 uppercase tracking-widest">Custom System Rules & Aturan If-Then</label>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <HelpCircle className="w-3.5 h-3.5 text-indigo-600 cursor-pointer" />
+                  </TooltipTrigger>
+                  <TooltipContent><p className="max-w-xs text-xs">Gunakan aturan logika JIKA-MAKA untuk mengarahkan penalaran AI secara bertahap.</p></TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
             <Textarea 
               value={template.aiPromptConfig?.customSystemPrompt || ''}
               onChange={e => updateConfig('customSystemPrompt', e.target.value)}
@@ -651,7 +672,17 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
           </div>
 
           <div className="space-y-2 p-6 bg-rose-50/40 rounded-3xl border border-rose-100 shadow-sm">
-            <label className="text-[12px] font-black text-rose-900 uppercase tracking-widest block mb-1">Negative Prompts (Pantangan Mutlak AI)</label>
+            <div className="flex items-center gap-1.5 mb-1">
+              <label className="text-[12px] font-black text-rose-900 uppercase tracking-widest">Negative Prompts (Pantangan Mutlak AI)</label>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <HelpCircle className="w-3.5 h-3.5 text-rose-600 cursor-pointer" />
+                  </TooltipTrigger>
+                  <TooltipContent><p className="max-w-xs text-xs">Instruksi pantangan agar AI tidak mengeluarkan asumsi liar, jargon membingungkan, atau klaim tidak berdasar.</p></TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
             <Textarea 
               value={template.aiPromptConfig?.negativePrompts || ''}
               onChange={e => updateConfig('negativePrompts', e.target.value)}
@@ -661,7 +692,17 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
           </div>
 
           <div className="space-y-2 p-6 bg-emerald-50/40 rounded-3xl border border-emerald-100 shadow-sm">
-            <label className="text-[12px] font-black text-emerald-900 uppercase tracking-widest block mb-1">Format Teks & Markdown Output Instructions</label>
+            <div className="flex items-center gap-1.5 mb-1">
+              <label className="text-[12px] font-black text-emerald-900 uppercase tracking-widest">Format Teks & Markdown Output</label>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <HelpCircle className="w-3.5 h-3.5 text-emerald-600 cursor-pointer" />
+                  </TooltipTrigger>
+                  <TooltipContent><p className="max-w-xs text-xs">Aturan struktur layout penulisan laporan seperti bullet points, bolding, dan headings.</p></TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
             <Textarea 
               value={template.aiPromptConfig?.formatInstructions || ''}
               onChange={e => updateConfig('formatInstructions', e.target.value)}
@@ -671,7 +712,17 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
           </div>
           
           <div className="space-y-2 p-6 bg-cyan-50/40 rounded-3xl border border-cyan-100 shadow-sm md:col-span-2">
-            <label className="text-[12px] font-black text-cyan-900 uppercase tracking-widest block mb-1">Instruksi Khusus Action Plan & Rekomendasi</label>
+            <div className="flex items-center gap-1.5 mb-1">
+              <label className="text-[12px] font-black text-cyan-900 uppercase tracking-widest">Instruksi Khusus Action Plan & Rekomendasi</label>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <HelpCircle className="w-3.5 h-3.5 text-cyan-600 cursor-pointer" />
+                  </TooltipTrigger>
+                  <TooltipContent><p className="max-w-xs text-xs">Format langkah aksi konkret yang diproduksi AI (tahapan mingguan, bulanan, atau triwulan).</p></TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
             <Textarea 
               value={template.aiPromptConfig?.actionPlanBehavior || ''}
               onChange={e => updateConfig('actionPlanBehavior', e.target.value)}
