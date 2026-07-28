@@ -9,13 +9,20 @@ import { db } from '@/lib/firebase'
 import { useAuth } from '@/contexts/AuthContext'
 import { motion } from 'framer-motion'
 import {
-  ChevronLeft, TrendingUp, TrendingDown, Minus,
-  Calendar, ExternalLink, Activity, History, // <--- HISTORY DITAMBAHKAN DI SINI
+  TrendingUp, TrendingDown, Minus,
+  Calendar, ExternalLink, Activity, History,
   ArrowRight
 } from 'lucide-react'
-import { BrainIcon, DocExportIcon, AiSparkIcon } from '@/types'
+import { DocExportIcon, AiSparkIcon } from '@/types'
 import { Button } from '@/components/ui/button'
-import { ScoreLineChart } from '@/components/domain/public'
+import {
+  PageShell,
+  PageHeader,
+  StatCard,
+  EmptyState,
+  PageLoading,
+  ScoreLineChart,
+} from '@/components/domain/public'
 
 interface AssessmentRecord {
   id: string
@@ -108,66 +115,40 @@ export default function ProgressPage() {
   }
 
   if (loading || isFetching) {
-    return (
-      <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center">
-        <BrainIcon size={48} className="text-indigo-600 animate-pulse" />
-      </div>
-    )
+    return <PageLoading message="Memuat Data Progres..." />
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] pb-28 pt-20 font-sans selection:bg-indigo-100">
+    <PageShell size="lg" fullBleed>
       {/* HEADER */}
-      <div className="bg-white border-b border-slate-100/60 px-6 lg:px-12 py-8">
-        <div className="max-w-5xl mx-auto">
-          <button
-            onClick={() => router.back()}
-            className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors group mb-6 bg-slate-50 px-3 py-1.5 rounded-xl w-fit"
-          >
-            <ChevronLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" />
-            Kembali
-          </button>
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-indigo-50 rounded-[1.2rem] ring-1 ring-indigo-100 flex items-center justify-center">
-              <Activity size={24} className="text-indigo-600" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-black text-slate-900 tracking-tight">Progres Saya</h1>
-              <p className="text-sm text-slate-500 font-medium mt-1">Timeline & analisis perjalanan asesmen</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        title="Progres Saya"
+        subtitle="Timeline & analisis perjalanan asesmen"
+        icon={<Activity size={24} className="text-indigo-600" />}
+        onBack={() => router.back()}
+      />
 
-      <div className="max-w-5xl mx-auto px-6 lg:px-12 mt-8 space-y-8">
+      <div className="max-w-5xl mx-auto px-6 lg:px-12 py-8 space-y-8">
         {records.length === 0 ? (
-          <div className="bg-white rounded-[2rem] p-16 text-center ring-1 ring-slate-200/60 shadow-sm">
-            <DocExportIcon size={56} className="text-slate-200 mx-auto mb-4 grayscale opacity-60" />
-            <h3 className="text-xl font-black text-slate-900 mb-2">Belum Ada Riwayat</h3>
-            <p className="text-sm text-slate-500 max-w-sm mx-auto mb-8 leading-relaxed">
-              Mulai asesmen pertama untuk melihat grafik progres dan analisis perjalanan Anda.
-            </p>
-            <Button onClick={() => router.push('/assessment')} className="bg-slate-900 hover:bg-indigo-600 text-white rounded-xl h-12 px-8 font-black transition-all">
-              Mulai Asesmen
-            </Button>
-          </div>
+          <EmptyState
+            icon={<DocExportIcon size={56} className="text-slate-200" />}
+            title="Belum Ada Riwayat"
+            description="Mulai asesmen pertama untuk melihat grafik progres dan analisis perjalanan Anda."
+            actionLabel="Mulai Asesmen"
+            onAction={() => router.push('/assessment')}
+          />
         ) : (
           <>
             {/* STATS GRID */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
-                { label: 'Total Program', value: records.length, color: 'text-slate-900' },
-                { label: 'Skor Tertinggi', value: bestScore, color: 'text-emerald-600' },
-                { label: 'Skor Terakhir', value: latestScore, color: 'text-indigo-600' },
-                { label: 'Rata-rata', value: avgScore, color: 'text-amber-600' },
+                { label: 'Total Program', value: records.length, valueClassName: 'text-slate-900' },
+                { label: 'Skor Tertinggi', value: bestScore, valueClassName: 'text-emerald-600' },
+                { label: 'Skor Terakhir', value: latestScore, valueClassName: 'text-indigo-600' },
+                { label: 'Rata-rata', value: avgScore, valueClassName: 'text-amber-600' },
               ].map((s, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-                  className="bg-white p-6 rounded-[1.5rem] ring-1 ring-slate-200/60 shadow-sm flex flex-col justify-center"
-                >
-                  <p className={`text-3xl font-black mb-1 ${s.color}`}>{s.value}</p>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{s.label}</p>
+                <motion.div key={i} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
+                  <StatCard label={s.label} value={s.value} valueClassName={s.valueClassName} />
                 </motion.div>
               ))}
             </div>
@@ -175,19 +156,22 @@ export default function ProgressPage() {
             {/* TREND SUMMARY */}
             {scores.length >= 2 && (
               <div className={`flex items-center gap-4 p-5 rounded-[1.5rem] ring-1 shadow-sm ${
-                  improvement > 0 ? 'bg-emerald-50/50 ring-emerald-100'
-                    : improvement < 0 ? 'bg-rose-50/50 ring-rose-100'
-                    : 'bg-slate-50 ring-slate-200/60'
-                }`}
-              >
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${improvement > 0 ? 'bg-emerald-100' : improvement < 0 ? 'bg-rose-100' : 'bg-slate-200'}`}>
+                improvement > 0 ? 'bg-emerald-50/50 ring-emerald-100'
+                  : improvement < 0 ? 'bg-rose-50/50 ring-rose-100'
+                  : 'bg-slate-50 ring-slate-200/60'
+              }`}>
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                  improvement > 0 ? 'bg-emerald-100' : improvement < 0 ? 'bg-rose-100' : 'bg-slate-200'
+                }`}>
                   {TrendIcon}
                 </div>
                 <div>
                   <p className="text-sm font-bold text-slate-900">Analisis Tren</p>
                   <p className="text-xs font-medium text-slate-600 mt-0.5">
-                    {improvement > 0 ? `Luar biasa! Skor Anda meningkat ${improvement} poin sejak asesmen pertama.`
-                      : improvement < 0 ? `Skor menurun ${Math.abs(improvement)} poin — tantangan mendatang!`
+                    {improvement > 0
+                      ? `Luar biasa! Skor Anda meningkat ${improvement} poin sejak asesmen pertama.`
+                      : improvement < 0
+                      ? `Skor menurun ${Math.abs(improvement)} poin — tantangan mendatang!`
                       : 'Skor stabil konsisten — pertahankan momentum!'}
                   </p>
                 </div>
@@ -211,12 +195,11 @@ export default function ProgressPage() {
               </div>
             )}
 
-            {/* GRID RIWAYAT (Menggantikan Timeline) */}
+            {/* GRID RIWAYAT */}
             <div>
               <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
                 <History size={14} /> Riwayat Perjalanan Asesmen
               </h3>
-              
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[...records].reverse().map((rec, i) => (
                   <motion.div
@@ -234,14 +217,12 @@ export default function ProgressPage() {
                         <Calendar size={12} /> {formatDate(rec.createdAt)}
                       </span>
                     </div>
-                    
                     <h4 className="font-black text-slate-900 text-sm mb-4 line-clamp-2 leading-snug group-hover:text-indigo-600 transition-colors flex-1">
                       {rec.namaUsaha || rec.businessName || 'Asesmen Tanpa Nama'}
                     </h4>
-                    
                     <div className="flex items-center justify-between pt-3 border-t border-slate-100 mt-auto">
                       <div className="flex items-center gap-2">
-                        {rec.status === 'COMPLETED' ? <AiSparkIcon size={16} className="text-emerald-500" /> : <BrainIcon size={16} className="text-slate-400" />}
+                        <AiSparkIcon size={16} className={rec.status === 'COMPLETED' ? 'text-emerald-500' : 'text-slate-400'} />
                         <ScoreBadge score={rec.score} />
                       </div>
                       {rec.status === 'COMPLETED' && (
@@ -259,7 +240,7 @@ export default function ProgressPage() {
             </div>
 
             {/* CTA */}
-            <div className="bg-indigo-50/50 p-8 sm:p-10 rounded-[2rem] ring-1 ring-indigo-100 text-center flex flex-col items-center justify-center mt-6">
+            <div className="bg-indigo-50/50 p-8 sm:p-10 rounded-[2rem] ring-1 ring-indigo-100 text-center flex flex-col items-center">
               <div className="w-14 h-14 bg-white text-indigo-600 rounded-[1.2rem] flex items-center justify-center shadow-sm ring-1 ring-indigo-100 mb-4">
                 <TrendingUp size={24} />
               </div>
@@ -267,16 +248,17 @@ export default function ProgressPage() {
               <p className="text-indigo-700/80 text-sm mb-6 max-w-sm leading-relaxed">
                 Lakukan asesmen berikutnya untuk memantau perkembangan dan mendapatkan rekomendasi terbaru dari AI.
               </p>
-              <button
+              <Button
+                variant="brand"
                 onClick={() => router.push('/assessment')}
-                className="inline-flex items-center gap-2 px-8 py-3.5 bg-indigo-600 text-white font-bold text-sm rounded-xl hover:bg-indigo-700 shadow-md transition-all"
+                className="px-8 h-12"
               >
-                Mulai Evaluasi Baru <ArrowRight size={16} />
-              </button>
+                Mulai Evaluasi Baru <ArrowRight size={16} className="ml-2" />
+              </Button>
             </div>
           </>
         )}
       </div>
-    </div>
+    </PageShell>
   )
 }

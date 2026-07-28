@@ -4,13 +4,13 @@ import React, { useEffect, useState } from 'react'
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import {
-  MapPinned,
   CheckCircle2,
   Loader2,
   CircleDashed,
   Rocket,
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { PageShell, ContentCard } from '@/components/domain/public'
 
 interface RoadmapItem {
   id: string
@@ -40,19 +40,19 @@ export default function PublicRoadmapPage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] font-sans pb-24 selection:bg-indigo-100 selection:text-indigo-900">
-      <div className="max-w-4xl mx-auto px-5 sm:px-6 pt-8 relative z-10">
+    <PageShell size="md" fullBleed>
+      <div className="max-w-4xl mx-auto px-5 sm:px-6 pt-8 pb-24 relative z-10">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+          <h1 className="text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
             Roadmap Omnifit AI
           </h1>
-          <p className="mt-4 text-lg leading-8 text-slate-600">
+          <p className="mt-4 text-base leading-8 text-slate-500 font-medium max-w-2xl mx-auto">
             Kami terus berevolusi. Ikuti perjalanan kami dalam membangun
             infrastruktur analitik dan asesmen kecerdasan buatan yang adaptif
             dan paling presisi.
           </p>
         </div>
-        <div className="bg-white rounded-2xl p-6 sm:p-12 ring-1 ring-slate-200 shadow-sm min-h-[400px]">
+        <ContentCard padding="lg" className="min-h-[400px]">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20 text-slate-400">
               <Loader2 className="w-10 h-10 animate-spin mb-4 text-indigo-500" />
@@ -153,8 +153,8 @@ export default function PublicRoadmapPage() {
               </AnimatePresence>
             </div>
           )}
-        </div>
+        </ContentCard>
       </div>
-    </div>
+    </PageShell>
   )
 }

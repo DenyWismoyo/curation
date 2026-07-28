@@ -1,5 +1,7 @@
 'use client'
 
+// src/app/(public)/affiliate/page.tsx
+
 import React, { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -9,20 +11,16 @@ import { collection, getDocs, query, where } from 'firebase/firestore'
 import { db, functions } from '@/lib/firebase'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Card } from '@/components/ui/card'
 import {
-  ChevronLeft,
-  Copy,
-  Link2,
-  Wallet,
-  Users,
-  BadgeDollarSign,
-  Clock3,
-  Save,
-  Loader2,
-  BookOpen,
+  Copy, Check, Link2, Wallet, Users, BadgeDollarSign,
+  Clock3, Save, Loader2, BookOpen, TrendingUp,
+  HandCoins, ShieldCheck, ChevronRight,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import {
+  PageShell, PageHeader, StatCard, ContentCard,
+  EmptyState, PageLoading,
+} from '@/components/domain/public'
 
 type AffiliateProfile = {
   ownerUid?: string
@@ -237,315 +235,276 @@ export default function AffiliatePortalPage() {
     return String(Math.round(rate * 10000) / 100)
   }, [programConfig?.defaultCommissionRate, profile?.commissionRate])
 
-  if (loading || booting) {
-    return (
-      <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3 text-slate-400">
-          <Loader2 className="w-8 h-8 animate-spin" />
-          <p className="font-bold tracking-widest text-xs uppercase">
-            Memuat Portal Affiliate...
-          </p>
-        </div>
-      </div>
-    )
-  }
+  // ── Loading ──────────────────────────────────────────────────────────────────
+  if (loading || booting) return <PageLoading message="Memuat Portal Affiliate..." />
 
+  // ── Guest gate ────────────────────────────────────────────────────────────────
   if (!user) {
     return (
-      <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center px-6">
-        <Card className="max-w-md w-full p-8 rounded-3xl ring-1 ring-slate-200 border-none shadow-sm text-center space-y-4">
-          <h1 className="text-xl font-black text-slate-900">
-            Portal Affiliate
-          </h1>
-          <p className="text-sm text-slate-500">
-            Masuk dulu ke akun Anda untuk mengakses tautan referral dan data
-            komisi.
-          </p>
+      <PageShell size="sm" className="flex items-center justify-center min-h-screen">
+        <ContentCard className="text-center space-y-5 max-w-sm mx-auto">
+          <div className="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center mx-auto ring-1 ring-indigo-100">
+            <HandCoins size={24} className="text-indigo-600" />
+          </div>
+          <div>
+            <h1 className="text-xl font-black text-slate-900">Portal Affiliate</h1>
+            <p className="text-sm text-slate-500 font-medium mt-1">
+              Masuk ke akun Anda untuk mengakses tautan referral dan data komisi.
+            </p>
+          </div>
           <Button
             onClick={() => loginWithGoogle()}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl"
+            variant="brand"
+            className="w-full h-12 rounded-xl"
           >
-            Login dengan Google
+            Masuk dengan Google
           </Button>
-        </Card>
-      </div>
+        </ContentCard>
+      </PageShell>
     )
   }
 
+  // ── Helpers ───────────────────────────────────────────────────────────────────
+  const statusColor = (s?: string) => {
+    const v = (s || '').toUpperCase()
+    if (v === 'APPROVED') return 'bg-emerald-50 text-emerald-700 ring-emerald-200'
+    if (v === 'PENDING') return 'bg-amber-50 text-amber-700 ring-amber-200'
+    if (v === 'PAID') return 'bg-indigo-50 text-indigo-700 ring-indigo-200'
+    return 'bg-slate-100 text-slate-600 ring-slate-200'
+  }
+
+  // ── Render ────────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-[#FAFAFA] pb-28 px-6 lg:px-12 pt-8">
-      <div className="max-w-5xl mx-auto space-y-6">
-        <button
-          onClick={() => router.back()}
-          className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors group"
-        >
-          <ChevronLeft
-            size={16}
-            className="group-hover:-translate-x-0.5 transition-transform"
+    <PageShell size="lg" fullBleed>
+      {/* HEADER */}
+      <PageHeader
+        title="Portal Affiliate"
+        subtitle="Kelola tautan referral, lengkapi data payout, dan pantau komisi terbaru."
+        icon={<HandCoins size={24} className="text-indigo-600" />}
+        onBack={() => router.back()}
+        actions={
+          <Link
+            href="/affiliate/program"
+            className="inline-flex items-center gap-2 h-10 px-4 rounded-xl bg-white ring-1 ring-slate-200 hover:ring-indigo-300 hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 text-xs font-bold transition-all"
+          >
+            <BookOpen className="w-4 h-4" />
+            Panduan Program
+            <ChevronRight className="w-3.5 h-3.5 opacity-50" />
+          </Link>
+        }
+      />
+
+      <div className="max-w-5xl mx-auto px-6 lg:px-12 py-8 space-y-6">
+
+        {/* ── COMMISSION RATE BANNER ─────────────────────────────────────── */}
+        <div className="bg-slate-900 rounded-[1.5rem] p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 relative overflow-hidden shadow-xl">
+          <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl -mr-12 -mt-12 pointer-events-none" />
+          <div className="relative z-10">
+            <p className="text-[10px] font-black uppercase tracking-widest text-indigo-400 mb-1">Komisi Program Anda</p>
+            <p className="text-4xl font-black text-white">{programCommissionPercent}<span className="text-xl text-slate-400">%</span></p>
+            <p className="text-sm text-slate-400 font-medium mt-1.5 max-w-sm leading-relaxed">
+              {programConfig?.commissionInfoText || 'Komisi dihitung dari transaksi yang berhasil dibayar sesuai ketentuan Omnifit.'}
+            </p>
+          </div>
+          <div className="relative z-10 flex items-center gap-2 shrink-0">
+            <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg ring-1 ${
+              (profile?.status || 'ACTIVE') === 'ACTIVE'
+                ? 'bg-emerald-500/20 text-emerald-400 ring-emerald-500/30'
+                : 'bg-slate-700 text-slate-400 ring-slate-600'
+            }`}>
+              {profile?.status || 'ACTIVE'}
+            </span>
+          </div>
+        </div>
+
+        {/* ── STATS GRID ────────────────────────────────────────────────── */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <StatCard
+            label="Total Referral"
+            value={totals.totalReferrals}
+            icon={<div className="w-9 h-9 bg-emerald-50 rounded-xl flex items-center justify-center ring-1 ring-emerald-100 mb-2"><Users size={16} className="text-emerald-600" /></div>}
           />
-          Kembali
-        </button>
-
-        <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">
-            Portal Affiliate
-          </h1>
-          <p className="text-slate-500 mt-2 font-medium max-w-3xl">
-            Kelola tautan referral Anda, lengkapi data payout, dan pantau komisi
-            terbaru.
-          </p>
+          <StatCard
+            label="Omzet Referral"
+            value={<span className="text-xl">{formatRupiah(totals.referredRevenue)}</span>}
+            icon={<div className="w-9 h-9 bg-blue-50 rounded-xl flex items-center justify-center ring-1 ring-blue-100 mb-2"><TrendingUp size={16} className="text-blue-600" /></div>}
+          />
+          <StatCard
+            label="Komisi Pending"
+            value={<span className="text-xl">{formatRupiah(totals.pendingCommission)}</span>}
+            icon={<div className="w-9 h-9 bg-amber-50 rounded-xl flex items-center justify-center ring-1 ring-amber-100 mb-2"><BadgeDollarSign size={16} className="text-amber-600" /></div>}
+          />
+          <StatCard
+            label="Komisi Dibayar"
+            value={<span className="text-xl">{formatRupiah(totals.paidCommission)}</span>}
+            icon={<div className="w-9 h-9 bg-indigo-50 rounded-xl flex items-center justify-center ring-1 ring-indigo-100 mb-2"><Wallet size={16} className="text-indigo-600" /></div>}
+          />
         </div>
 
-        <Card className="p-5 rounded-2xl ring-1 ring-slate-200 border-none shadow-sm bg-white">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-            <div>
-              <p className="text-xs font-black uppercase tracking-widest text-indigo-600">
-                Info Komisi Program Affiliate
-              </p>
-              <p className="text-2xl font-black text-slate-900 mt-1">
-                {programCommissionPercent}%
-              </p>
-              <p className="text-sm text-slate-600 mt-2">
-                {programConfig?.commissionInfoText ||
-                  'Komisi affiliate dihitung dari transaksi yang berhasil dibayar sesuai ketentuan Omnifit.'}
-              </p>
+        {/* ── REFERRAL LINK CARD ────────────────────────────────────────── */}
+        <ContentCard>
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-8 h-8 bg-indigo-50 rounded-xl flex items-center justify-center ring-1 ring-indigo-100">
+              <Link2 size={15} className="text-indigo-600" />
             </div>
-            <Link
-              href="/affiliate/program"
-              className="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold transition-colors"
-            >
-              <BookOpen className="w-4 h-4" />
-              Baca Panduan Program Affiliate
-            </Link>
-          </div>
-        </Card>
-
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          <Card className="md:col-span-2 p-5 rounded-2xl ring-1 ring-slate-200 border-none shadow-sm bg-white">
-            <div className="flex items-center gap-2 mb-3 text-indigo-700">
-              <Link2 className="w-4 h-4" />
-              <p className="text-xs font-black uppercase tracking-widest">
-                Kode & Link
-              </p>
-            </div>
-            <p className="text-sm text-slate-500 mb-1">Kode Affiliate</p>
-            <p className="text-lg font-black text-slate-900">
-              {affiliateCode || '-'}
-            </p>
-            <p className="text-sm text-slate-500 mt-3 mb-1">Referral Link</p>
-            <div className="flex gap-2">
-              <Input value={referralLink} readOnly className="bg-slate-50" />
-              <Button
-                variant="outline"
-                className="px-3"
-                onClick={() => {
-                  navigator.clipboard.writeText(referralLink || '')
-                  toast.success('Referral link disalin.')
-                }}
-              >
-                <Copy className="w-4 h-4" />
-              </Button>
-            </div>
-          </Card>
-
-          <Card className="p-5 rounded-2xl ring-1 ring-slate-200 border-none shadow-sm bg-white">
-            <div className="flex items-center gap-2 text-emerald-700 mb-2">
-              <Users className="w-4 h-4" />
-              <p className="text-xs font-black uppercase tracking-widest">
-                Referrals
-              </p>
-            </div>
-            <p className="text-2xl font-black text-slate-900">
-              {totals.totalReferrals}
-            </p>
-          </Card>
-
-          <Card className="p-5 rounded-2xl ring-1 ring-slate-200 border-none shadow-sm bg-white">
-            <div className="flex items-center gap-2 text-amber-600 mb-2">
-              <BadgeDollarSign className="w-4 h-4" />
-              <p className="text-xs font-black uppercase tracking-widest">
-                Pending
-              </p>
-            </div>
-            <p className="text-base font-black text-slate-900">
-              {formatRupiah(totals.pendingCommission)}
-            </p>
-          </Card>
-
-          <Card className="p-5 rounded-2xl ring-1 ring-slate-200 border-none shadow-sm bg-white">
-            <div className="flex items-center gap-2 text-indigo-700 mb-2">
-              <Wallet className="w-4 h-4" />
-              <p className="text-xs font-black uppercase tracking-widest">
-                Paid
-              </p>
-            </div>
-            <p className="text-base font-black text-slate-900">
-              {formatRupiah(totals.paidCommission)}
-            </p>
-          </Card>
-        </div>
-
-        <Card className="p-6 rounded-2xl ring-1 ring-slate-200 border-none shadow-sm bg-white space-y-4">
-          <h2 className="text-sm font-black uppercase tracking-widest text-slate-500">
-            Data Payout Komisi
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">
-                Nama Tampilan Affiliate
-              </p>
-              <Input
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-              />
-            </div>
-            <div>
-              <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">
-                Metode Payout
-              </p>
-              <select
-                value={payoutMethod}
-                onChange={(e) => setPayoutMethod(e.target.value)}
-                className="h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm"
-              >
-                <option value="manual">Manual</option>
-                <option value="bank_transfer">Bank Transfer</option>
-                <option value="ewallet">E-Wallet</option>
-              </select>
-            </div>
+            <h2 className="text-sm font-black text-slate-900">Kode & Tautan Referral</h2>
           </div>
 
-          <div>
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">
-              Detail Rekening / Akun Payout
-            </p>
-            <Input
-              value={payoutAccount}
-              onChange={(e) => setPayoutAccount(e.target.value)}
-              placeholder="Contoh: BCA 123456789 a.n. Nama Anda"
-            />
-          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Kode */}
+            <div className="bg-slate-50 rounded-2xl p-4 ring-1 ring-slate-100">
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Kode Affiliate</p>
+              <p className="text-2xl font-black text-slate-900 font-mono tracking-wider">{affiliateCode || '-'}</p>
+            </div>
 
-          {payoutMethod === 'ewallet' && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">
-                  Nomor Telepon E-Wallet
-                </p>
-                <Input
-                  value={payoutPhone}
-                  onChange={(e) => setPayoutPhone(e.target.value)}
-                  placeholder="Contoh: 0812xxxxxx"
-                />
+            {/* Link */}
+            <div className="bg-slate-50 rounded-2xl p-4 ring-1 ring-slate-100">
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Referral Link</p>
+              <div className="flex items-center gap-2">
+                <p className="text-xs font-mono text-slate-600 truncate flex-1">{referralLink || '-'}</p>
+                <CopyButton text={referralLink} />
               </div>
-              <div>
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">
-                  Provider E-Wallet
-                </p>
+            </div>
+          </div>
+        </ContentCard>
+
+        {/* ── PAYOUT FORM ───────────────────────────────────────────────── */}
+        <ContentCard>
+          <div className="flex items-center gap-2 mb-5">
+            <div className="w-8 h-8 bg-amber-50 rounded-xl flex items-center justify-center ring-1 ring-amber-100">
+              <Wallet size={15} className="text-amber-600" />
+            </div>
+            <h2 className="text-sm font-black text-slate-900">Data Payout Komisi</h2>
+          </div>
+
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Nama Tampilan</label>
+                <Input value={displayName} onChange={e => setDisplayName(e.target.value)} className="h-11 rounded-xl" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Metode Payout</label>
                 <select
-                  value={payoutEwalletProvider}
-                  onChange={(e) => setPayoutEwalletProvider(e.target.value)}
-                  className="h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm"
+                  value={payoutMethod}
+                  onChange={e => setPayoutMethod(e.target.value)}
+                  className="h-11 w-full rounded-xl border border-input bg-background px-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring/50"
                 >
-                  <option value="">Pilih provider</option>
-                  <option value="DANA">DANA</option>
-                  <option value="GoPay">GoPay</option>
-                  <option value="OVO">OVO</option>
-                  <option value="ShopeePay">ShopeePay</option>
-                  <option value="LinkAja">LinkAja</option>
+                  <option value="manual">Manual (Koordinasi Admin)</option>
+                  <option value="bank_transfer">Transfer Bank</option>
+                  <option value="ewallet">E-Wallet</option>
                 </select>
               </div>
-              <div>
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">
-                  Nama Akun E-Wallet
-                </p>
-                <Input
-                  value={payoutEwalletAccountName}
-                  onChange={(e) => setPayoutEwalletAccountName(e.target.value)}
-                  placeholder="Nama pada akun e-wallet"
-                />
-              </div>
             </div>
-          )}
 
-          <label className="flex items-start gap-3 p-3 rounded-xl bg-amber-50 ring-1 ring-amber-200">
-            <input
-              type="checkbox"
-              checked={payoutDataConfirmed}
-              onChange={(e) => setPayoutDataConfirmed(e.target.checked)}
-              className="mt-0.5"
-            />
-            <span className="text-sm text-amber-900 font-medium">
-              Saya mengonfirmasi bahwa data payout (rekening / e-wallet / nomor
-              telepon / nama akun) yang saya masukkan adalah benar dan siap
-              digunakan untuk proses pembagian komisi.
-            </span>
-          </label>
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Detail Rekening / Akun Payout</label>
+              <Input
+                value={payoutAccount}
+                onChange={e => setPayoutAccount(e.target.value)}
+                placeholder="Contoh: BCA 123456789 a.n. Nama Anda"
+                className="h-11 rounded-xl"
+              />
+            </div>
 
-          <div className="flex items-center justify-between pt-2">
-            <p className="text-xs text-slate-500">
-              Status affiliate:{' '}
-              <span className="font-bold text-slate-700">
-                {profile?.status || 'ACTIVE'}
+            {payoutMethod === 'ewallet' && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-slate-50 rounded-2xl ring-1 ring-slate-100">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">No. Telepon E-Wallet</label>
+                  <Input value={payoutPhone} onChange={e => setPayoutPhone(e.target.value)} placeholder="0812xxxxxx" className="h-11 rounded-xl" />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Provider</label>
+                  <select
+                    value={payoutEwalletProvider}
+                    onChange={e => setPayoutEwalletProvider(e.target.value)}
+                    className="h-11 w-full rounded-xl border border-input bg-background px-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring/50"
+                  >
+                    <option value="">Pilih provider</option>
+                    {['DANA', 'GoPay', 'OVO', 'ShopeePay', 'LinkAja'].map(p => (
+                      <option key={p} value={p}>{p}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Nama Akun</label>
+                  <Input value={payoutEwalletAccountName} onChange={e => setPayoutEwalletAccountName(e.target.value)} placeholder="Nama pada akun e-wallet" className="h-11 rounded-xl" />
+                </div>
+              </div>
+            )}
+
+            {/* Confirmation checkbox */}
+            <label className="flex items-start gap-3 p-4 rounded-2xl bg-amber-50 ring-1 ring-amber-200 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={payoutDataConfirmed}
+                onChange={e => setPayoutDataConfirmed(e.target.checked)}
+                className="mt-0.5 accent-amber-600"
+              />
+              <span className="text-sm text-amber-900 font-medium leading-relaxed">
+                Saya mengonfirmasi bahwa data payout yang saya masukkan adalah benar dan siap digunakan untuk proses pembagian komisi.
               </span>
-            </p>
-            <Button
-              onClick={handleSave}
-              disabled={saving || !payoutDataConfirmed}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl"
-            >
-              {saving ? (
-                <Loader2 className="w-4 h-4 animate-spin mr-2" />
-              ) : (
-                <Save className="w-4 h-4 mr-2" />
-              )}
-              Simpan Data Payout
-            </Button>
-          </div>
-        </Card>
+            </label>
 
-        <Card className="p-6 rounded-2xl ring-1 ring-slate-200 border-none shadow-sm bg-white">
-          <h2 className="text-sm font-black uppercase tracking-widest text-slate-500 mb-4">
-            Riwayat Komisi Terbaru
-          </h2>
+            {/* Save button */}
+            <div className="flex justify-end pt-2">
+              <Button
+                onClick={handleSave}
+                disabled={saving || !payoutDataConfirmed}
+                variant="brand"
+                className="h-11 px-6 rounded-xl"
+              >
+                {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
+                Simpan Data Payout
+              </Button>
+            </div>
+          </div>
+        </ContentCard>
+
+        {/* ── COMMISSION HISTORY ────────────────────────────────────────── */}
+        <ContentCard>
+          <div className="flex items-center gap-2 mb-5">
+            <div className="w-8 h-8 bg-slate-50 rounded-xl flex items-center justify-center ring-1 ring-slate-100">
+              <Clock3 size={15} className="text-slate-500" />
+            </div>
+            <h2 className="text-sm font-black text-slate-900">Riwayat Komisi Terbaru</h2>
+          </div>
 
           {commissions.length === 0 ? (
-            <div className="text-sm text-slate-500 py-6 text-center">
-              Belum ada komisi masuk.
+            <div className="py-10 text-center">
+              <BadgeDollarSign size={40} className="text-slate-200 mx-auto mb-3" />
+              <p className="text-sm font-bold text-slate-400">Belum ada komisi masuk.</p>
+              <p className="text-xs text-slate-400 mt-1">Bagikan link referral Anda untuk mulai mendapatkan komisi.</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+            <div className="overflow-x-auto -mx-6 px-6">
+              <table className="w-full text-sm min-w-[560px]">
                 <thead>
                   <tr className="text-left text-[10px] uppercase tracking-widest text-slate-400 border-b border-slate-100">
-                    <th className="py-3 pr-4">Tanggal</th>
-                    <th className="py-3 pr-4">Modul</th>
-                    <th className="py-3 pr-4">Nilai Tx</th>
-                    <th className="py-3 pr-4">Komisi</th>
-                    <th className="py-3">Status</th>
+                    <th className="py-3 pr-4 font-black">Tanggal</th>
+                    <th className="py-3 pr-4 font-black">Modul</th>
+                    <th className="py-3 pr-4 font-black">Nilai Tx</th>
+                    <th className="py-3 pr-4 font-black">Komisi</th>
+                    <th className="py-3 font-black">Status</th>
                   </tr>
                 </thead>
-                <tbody>
-                  {commissions.map((row) => (
-                    <tr key={row.id} className="border-b border-slate-50">
-                      <td className="py-3 pr-4 text-slate-600">
-                        <div className="flex items-center gap-1.5">
-                          <Clock3 className="w-3.5 h-3.5 text-slate-400" />
-                          {formatDate(row.createdAt)}
-                        </div>
+                <tbody className="divide-y divide-slate-50">
+                  {commissions.map(row => (
+                    <tr key={row.id} className="hover:bg-slate-50/50 transition-colors">
+                      <td className="py-3.5 pr-4 text-slate-500 text-xs font-medium whitespace-nowrap">
+                        {formatDate(row.createdAt)}
                       </td>
-                      <td className="py-3 pr-4 font-semibold text-slate-800">
+                      <td className="py-3.5 pr-4 font-bold text-slate-800 max-w-[180px] truncate">
                         {row.packageName || '-'}
                       </td>
-                      <td className="py-3 pr-4 text-slate-700">
+                      <td className="py-3.5 pr-4 text-slate-600 font-medium">
                         {formatRupiah(Number(row.transactionAmount || 0))}
                       </td>
-                      <td className="py-3 pr-4 font-black text-indigo-700">
+                      <td className="py-3.5 pr-4 font-black text-indigo-700">
                         {formatRupiah(Number(row.commissionAmount || 0))}
                       </td>
-                      <td className="py-3">
-                        <span className="inline-flex items-center rounded-lg bg-slate-100 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-slate-700">
+                      <td className="py-3.5">
+                        <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ring-1 ${statusColor(row.status)}`}>
                           {row.status || '-'}
                         </span>
                       </td>
@@ -555,8 +514,37 @@ export default function AffiliatePortalPage() {
               </table>
             </div>
           )}
-        </Card>
+        </ContentCard>
+
+        {/* ── PRIVACY NOTE ──────────────────────────────────────────────── */}
+        <div className="flex items-center justify-center gap-2 text-slate-400 pb-4">
+          <ShieldCheck size={14} className="text-emerald-500" />
+          <p className="text-xs font-bold">Data payout Anda dienkripsi dan hanya diakses oleh tim keuangan Omnifit.</p>
+        </div>
       </div>
-    </div>
+    </PageShell>
+  )
+}
+
+// ─── Copy Button helper ───────────────────────────────────────────────────────
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false)
+  const handleCopy = () => {
+    if (!text) return
+    navigator.clipboard.writeText(text)
+    setCopied(true)
+    toast.success('Referral link disalin.')
+    setTimeout(() => setCopied(false), 2000)
+  }
+  return (
+    <button
+      onClick={handleCopy}
+      className={`h-8 w-8 flex items-center justify-center rounded-lg ring-1 transition-all shrink-0 ${
+        copied ? 'bg-emerald-100 text-emerald-600 ring-emerald-200' : 'bg-white text-slate-400 hover:text-indigo-600 ring-slate-200'
+      }`}
+      title="Salin link"
+    >
+      {copied ? <Check size={14} /> : <Copy size={14} />}
+    </button>
   )
 }

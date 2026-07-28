@@ -23,6 +23,8 @@ import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { AiSparkIcon, AILensIcon, GlobalTargetIcon, BrainIcon } from '@/types'
 import { shareOrCopy } from '@/lib/share'
+import { Input } from '@/components/ui/input'
+import { PageShell } from '@/components/domain/public'
 
 interface Article {
   id: string
@@ -126,17 +128,17 @@ export default function ExplorePage() {
   )
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] font-sans pb-24 selection:bg-indigo-100">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 relative z-10">
+    <PageShell size="xl" fullBleed>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 pb-24 relative z-10">
         <div className="flex flex-col sm:flex-row gap-4 justify-between sm:items-center mb-6">
           <div className="relative w-full sm:max-w-xs">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
-            <input
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5 z-10" />
+            <Input
               type="text"
               placeholder="Cari artikel..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-12 pl-11 pr-4 rounded-xl bg-white border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
+              className="pl-11 h-12 rounded-xl font-medium"
             />
           </div>
           <div className="flex gap-2 overflow-x-auto custom-scrollbar bg-white p-1.5 rounded-xl border border-slate-200 w-fit max-w-full">
@@ -332,6 +334,6 @@ export default function ExplorePage() {
           </>
         )}
       </div>
-    </div>
+    </PageShell>
   )
 }

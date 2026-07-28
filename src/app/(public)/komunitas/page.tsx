@@ -25,7 +25,7 @@ import {
 } from 'lucide-react'
 import { BrainIcon, AiSparkIcon, InfinityWorkflowIcon } from '@/types'
 import { toast } from 'sonner'
-import { PageHero } from '@/components/domain/public'
+import { PageShell, StatCard } from '@/components/domain/public'
 
 // ============================================================
 // TYPES
@@ -153,13 +153,14 @@ export default function KomunitasPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] font-sans selection:bg-indigo-100">
+    <PageShell size="md" fullBleed>
       <div className="max-w-3xl mx-auto px-5 lg:px-10 pt-8 space-y-8">
+        {/* HERO */}
         <div className="text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+          <h1 className="text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
             Komunitas Omnifit
           </h1>
-          <p className="mt-4 text-lg leading-8 text-slate-600">
+          <p className="mt-4 text-base leading-8 text-slate-500 font-medium">
             Bergabunglah dengan ribuan pemimpin bisnis dan profesional yang
             menggunakan AI untuk tumbuh bersama.
           </p>
@@ -173,17 +174,17 @@ export default function KomunitasPage() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.07 }}
-              className="bg-white p-5 rounded-3xl ring-1 ring-slate-200 shadow-sm text-center"
             >
-              <div
-                className={`w-12 h-12 ${m.bg} rounded-2xl flex items-center justify-center mx-auto mb-3`}
-              >
-                {m.icon}
-              </div>
-              <p className="text-2xl font-black text-slate-900">{m.label}</p>
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1 leading-tight">
-                {m.sublabel}
-              </p>
+              <StatCard
+                label={m.sublabel}
+                value={m.label}
+                icon={
+                  <div className={`w-12 h-12 ${m.bg} rounded-2xl flex items-center justify-center mb-1`}>
+                    {m.icon}
+                  </div>
+                }
+                className="text-center rounded-3xl"
+              />
             </motion.div>
           ))}
         </div>
@@ -332,7 +333,10 @@ export default function KomunitasPage() {
             </button>
           </div>
         )}
+
+        {/* BOTTOM PADDING */}
+        <div className="pb-8" />
       </div>
-    </div>
+    </PageShell>
   )
 }
