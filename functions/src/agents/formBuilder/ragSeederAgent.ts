@@ -16,25 +16,11 @@ const logToTerminal = async (docRef: admin.firestore.DocumentReference, message:
   });
 };
 
-export const formBuilderRagSeederAgent = onDocumentUpdated({
-  database: "curation", // PERBAIKAN: Menunjuk database curation
-  document: "form_templates/{templateId}",
-  region: "asia-southeast2",
-  memory: "512MiB",
-  timeoutSeconds: 300,
-  secrets: [geminiApiKeySecret],
-}, async (event) => {
-  const beforeData = event.data?.before.data();
-  const afterData = event.data?.after.data();
-
-  if (afterData?.aiGenerationStatus?.phase !== "PRE_WARMING" || beforeData?.aiGenerationStatus?.phase === "PRE_WARMING") {
-    return null;
-  }
-
-  const templateRef = event.data?.after.ref;
-  const templateId = event.params.templateId;
-  if (!templateRef) return null;
-
+export const executeRagSeeder = async (
+  templateId: string,
+  afterData: any,
+  templateRef: admin.firestore.DocumentReference
+): Promise<any> => {
   try {
     await logToTerminal(templateRef, "FASE 4: RAG Seeder Agent menyuntikkan referensi kuesioner ke Bank Soal AI...", "info");
     
@@ -81,7 +67,7 @@ export const formBuilderRagSeederAgent = onDocumentUpdated({
     });
     
     await logToTerminal(templateRef, "PIPELINE SELESAI: Mode Adaptive berhasil diintegrasikan!", "success");
-    return null;
+    return { success: true, nextPhase: "COMPLETED" };
 
   } catch (error: any) {
     console.error("RAG Seeder Agent Error:", error);
@@ -89,6 +75,6 @@ export const formBuilderRagSeederAgent = onDocumentUpdated({
       aiGenerationStatus: { phase: "FAILED", message: `RAG Seeder Gagal: ${error.message}`, updatedAt: admin.firestore.FieldValue.serverTimestamp() }
     });
     await logToTerminal(templateRef, `FATAL ERROR: ${error.message}`, "error");
-    return null;
+    throw error;
   }
-});
+};

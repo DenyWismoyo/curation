@@ -123,20 +123,20 @@ export default function AdminAssessmentDetailPage() {
       </div>
 
       {/* TABS */}
-      <div className="flex flex-wrap gap-2">
-        <button onClick={() => setActiveTab('evaluasi')} className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${activeTab === 'evaluasi' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20' : 'bg-white text-slate-600 hover:bg-slate-50 ring-1 ring-slate-200/80'}`}>
+      <div className="sticky top-[60px] md:top-20 z-40 bg-[#FAFAFA]/95 backdrop-blur-md py-4 -mx-4 px-4 sm:mx-0 sm:px-0 flex gap-2 overflow-x-auto custom-scrollbar flex-nowrap border-b border-slate-200/50 mb-6 w-[100vw] sm:w-full">
+        <button onClick={() => setActiveTab('evaluasi')} className={`shrink-0 px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${activeTab === 'evaluasi' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 ring-1 ring-slate-200/80'}`}>
           <ShieldCheck className="w-4 h-4"/> Lembar Hasil Evaluasi
         </button>
-        <button onClick={() => setActiveTab('input')} className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${activeTab === 'input' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20' : 'bg-white text-slate-600 hover:bg-slate-50 ring-1 ring-slate-200/80'}`}>
+        <button onClick={() => setActiveTab('input')} className={`shrink-0 px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${activeTab === 'input' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 ring-1 ring-slate-200/80'}`}>
           <Briefcase className="w-4 h-4"/> Data Input Peserta
         </button>
-        <button onClick={() => setActiveTab('analytics')} className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${activeTab === 'analytics' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20' : 'bg-white text-slate-600 hover:bg-slate-50 ring-1 ring-slate-200/80'}`}>
+        <button onClick={() => setActiveTab('analytics')} className={`shrink-0 px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${activeTab === 'analytics' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 ring-1 ring-slate-200/80'}`}>
           <BarChart3 className="w-4 h-4"/> Ringkasan Analytics
         </button>
-        <button onClick={() => setActiveTab('argumen')} className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${activeTab === 'argumen' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20' : 'bg-white text-slate-600 hover:bg-slate-50 ring-1 ring-slate-200/80'}`}>
+        <button onClick={() => setActiveTab('argumen')} className={`shrink-0 px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${activeTab === 'argumen' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 ring-1 ring-slate-200/80'}`}>
           <Brain className="w-4 h-4"/> Argumen Jawaban AI
         </button>
-        <button onClick={() => setActiveTab('log_ai')} className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${activeTab === 'log_ai' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20' : 'bg-white text-slate-600 hover:bg-slate-50 ring-1 ring-slate-200/80'}`}>
+        <button onClick={() => setActiveTab('log_ai')} className={`shrink-0 px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${activeTab === 'log_ai' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 ring-1 ring-slate-200/80'}`}>
           <Cpu className="w-4 h-4"/> Log Master AI
         </button>
       </div>

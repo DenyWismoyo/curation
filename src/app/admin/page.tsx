@@ -2,7 +2,7 @@
 'use client'
 
 import React, { useState, useEffect, useMemo, Suspense } from 'react'
-import { collection, query, onSnapshot, orderBy } from 'firebase/firestore'
+import { collection, query, onSnapshot, orderBy, limit } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -35,7 +35,6 @@ import {
   BarChart3,
   Filter,
 } from 'lucide-react'
-import { AdminAssessmentDetail } from '@/app/components/admin/AdminAssessmentDetail'
 
 export interface AssessmentDoc {
   id: string
@@ -64,11 +63,10 @@ function AdminDashboardContent() {
   const [loading, setLoading] = useState(true)
 
   const [searchTerm, setSearchTerm] = useState('')
-  const [selectedItem, setSelectedItem] = useState<AssessmentDoc | null>(null)
   const [activeTab, setActiveTab] = useState('all')
 
   useEffect(() => {
-    const q = query(collection(db, 'assessments'), orderBy('createdAt', 'desc'))
+    const q = query(collection(db, 'assessments'), orderBy('createdAt', 'desc'), limit(50))
 
     const unsubscribe = onSnapshot(
       q,
@@ -481,13 +479,6 @@ function AdminDashboardContent() {
         </Tabs>
       </div>
 
-      {/* RENDER KOMPONEN MODAL DETAIL */}
-      {selectedItem && (
-        <AdminAssessmentDetail
-          data={selectedItem}
-          onClose={() => setSelectedItem(null)}
-        />
-      )}
     </div>
   )
 }

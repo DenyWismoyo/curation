@@ -11,7 +11,7 @@ import { useCuration } from '@/hooks/useCuration';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // IMPORT CUSTOM ICONS
-import { AiSparkIcon, BrainIcon } from '@/types';
+import { AiSparkIcon, BrainIcon } from '@/components/icon';
 // IMPORT CUSTOM HOOK MOBILE BACK
 import { useMobileBack } from '@/hooks/useMobileBack';
 

@@ -7,7 +7,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { CurationDashboard } from '@/app/components/curation/CurationDashboard';
 import { useAuth } from '@/contexts/AuthContext';
-import { BrainIcon, DocExportIcon, EcosystemIcon } from '@/types';
+import { BrainIcon, DocExportIcon, EcosystemIcon } from '@/components/icon';
 
 export default function SharedResultPage() {
   const params = useParams();

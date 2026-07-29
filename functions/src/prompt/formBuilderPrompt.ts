@@ -4,10 +4,12 @@ export interface FormBuilderPromptParams {
   trackName: string;
   config: any; 
   archetypeInstruction: string;
+  specificTargetContext?: string;
+  methodologyContext?: string;
 }
 
 export const buildMegaAgentPrompt = (params: FormBuilderPromptParams): string => {
-  const { trackName, config, archetypeInstruction } = params;
+  const { trackName, config, archetypeInstruction, specificTargetContext, methodologyContext } = params;
   
   const metrics = config.expectedMetrics?.join(', ') || 'Metrik standar kelayakan bisnis';
   const analysisBlocks = config.expectedAnalysisBlocks?.join(' | ') || '';
@@ -60,11 +62,31 @@ export const buildMegaAgentPrompt = (params: FormBuilderPromptParams): string =>
  ${purposeContext}
  ${targetAudience}
 
+ PROFIL SUBJEK ASESMEN (WAJIB MENJADI ACUAN PERTANYAAN):
+ ${specificTargetContext || 'Sesuai dengan target audiens.'}
+ 
+ METODOLOGI YANG DIADOPSI:
+ ${methodologyContext || 'Standar industri terbaik yang relevan.'}
+
  Tujuan Asesmen Utama: "${config.assessmentGoal || 'Evaluasi mendalam pemetaan kualitas.'}"
  Target Metrik Radar yang Harus Diukur: [${metrics}]
  Fokus Blok Analisis: [${analysisBlocks}]
  Fokus Deteksi Risiko (Red Flags): [${risks}]
  Standar Referensi Kredibel yang Wajib Diadopsi: [${sources}]
+ Tingkatan Kematangan (Tiers): [${config.customReadinessTiers?.join(' | ') || 'Default Tiers'}]
+ Target Rekomendasi: [${config.expectedRecommendations?.join(', ') || 'Rekomendasi Umum'}]
+
+ KEKETATAN PENILAIAN (Grading Strictness): ${config.gradingStrictness || 'standard'}
+ ${config.gradingStrictness === 'strict' ? '→ Rancang pertanyaan yang menggali secara forensik, tagih bukti, dan ungkap red flag.' : ''}
+ ${config.gradingStrictness === 'supportive' ? '→ Rancang pertanyaan yang memberdayakan, suportif, dan menggali potensi.' : ''}
+
+ GAYA BAHASA (Report Tone): ${config.reportTone || 'consultative'}
+
+ ATURAN KHUSUS (Custom System Rules):
+ ${config.customSystemPrompt || 'Tidak ada aturan khusus tambahan.'}
+
+ PANTANGAN MUTLAK (Negative Prompts):
+ ${config.negativePrompts || 'Tidak ada pantangan khusus.'}
 
  ==================================================
  TAHAP 1: THE SCRATCHPAD (RISET & PEMETAAN WAJIB)

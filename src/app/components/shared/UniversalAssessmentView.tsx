@@ -1,12 +1,14 @@
 // src/app/components/shared/UniversalAssessmentView.tsx
 'use client';
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, AlertTriangle, Mic, MicOff } from 'lucide-react';
+import { ChevronDown, AlertTriangle, Mic, MicOff, Menu } from 'lucide-react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip } from 'recharts';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 import { CurationFormData, AIResult } from '@/types/curation';
-import { AiSparkIcon, AILensIcon, AdminShieldIcon, InfinityWorkflowIcon, GlobalTargetIcon, DocExportIcon, TechCardIcon, BrainIcon, EcosystemIcon } from '@/types';
+import { AiSparkIcon, AILensIcon, AdminShieldIcon, InfinityWorkflowIcon, GlobalTargetIcon, DocExportIcon, TechCardIcon, BrainIcon, EcosystemIcon } from '@/components/icon';
 import { ActionPlanBuilder } from '../curation/ActionPlanBuilder';
 
 // ========================================================
@@ -146,6 +148,7 @@ export function UniversalAssessmentView({
   const isInternal = mode === 'curator' || mode === 'admin';
   const isEditing = curatorData?.isEditing || false;
   
+  const [activeTab, setActiveTab] = useState('overview');
   const [activeCorporateName, setActiveCorporateName] = useState<string | null>(null);
   useEffect(() => {
     const corpName = sessionStorage.getItem('active_corporate_name');
@@ -218,9 +221,8 @@ export function UniversalAssessmentView({
     };
   }, [formData, aiResult]);
 
-  return (
-    <div ref={pdfRef} className="w-full space-y-6 sm:space-y-8 animate-in fade-in duration-500">
-       
+  const renderOverview = () => (
+    <div className="space-y-6 sm:space-y-8">
       {headerActions && (
         <div className="flex flex-col sm:flex-row justify-end items-start sm:items-center gap-4">
           <div className="flex w-full sm:w-auto gap-3 flex-col sm:flex-row ml-auto">
@@ -229,6 +231,7 @@ export function UniversalAssessmentView({
         </div>
       )}
 
+      
       {isPublic && (
         <div className="bg-gradient-to-br from-amber-50 to-orange-50/40 border border-amber-200/80 p-5 sm:p-6 rounded-3xl shadow-sm relative overflow-hidden">
           <div className="absolute right-0 top-0 opacity-[0.03] pointer-events-none transform translate-x-6 -translate-y-6">
@@ -249,6 +252,7 @@ export function UniversalAssessmentView({
         </div>
       )}
 
+      
       {isInternal && curatorData && (
         <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm ring-1 ring-slate-200 w-full">
           <h3 className="text-xs font-black uppercase text-slate-500 tracking-widest mb-4 flex items-center gap-2">
@@ -279,6 +283,7 @@ export function UniversalAssessmentView({
         </div>
       )}
 
+      
       {isInternal && curatorData && (
         <div className={`p-6 sm:p-8 rounded-3xl shadow-sm ring-1 transition-all w-full ${isEditing ? 'bg-white ring-indigo-500 shadow-indigo-100 ring-2' : 'bg-white ring-slate-200'}`}>
           <h3 className="font-black text-slate-900 text-lg mb-2 flex items-center gap-2">
@@ -312,6 +317,7 @@ export function UniversalAssessmentView({
         </div>
       )}
 
+      
       <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 w-full">
         <div className="flex-1 flex flex-col gap-6">
           <div>
@@ -382,71 +388,84 @@ export function UniversalAssessmentView({
         </div>
       </div>
 
-      {isInternal && (
-        <div className="w-full bg-slate-900 p-6 sm:p-8 rounded-3xl shadow-xl ring-1 ring-slate-800 relative overflow-hidden">
-          <div className="absolute right-0 top-0 opacity-5 pointer-events-none transform translate-x-10 -translate-y-10">
-            <AdminShieldIcon size={200} />
+      
+      {/* DISEMBUNYIKAN DARI PUBLIK: METRIK KOMPARATIF RADAR CHART */}
+      {isInternal && aiResult?.metrics && aiResult.metrics.length > 0 && (
+        <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-3xl ring-1 ring-slate-200 shadow-sm w-full">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0">
+              <AILensIcon size={20} />
+            </div>
+            <div>
+              <h3 className="font-black text-slate-900 text-xl tracking-tight">Pilar Pemetaan Komparatif</h3>
+              <p className="text-sm text-slate-500 font-medium">Visualisasi perbandingan parameter kuantitatif</p>
+            </div>
           </div>
           
-          <h3 className="text-sm font-black text-white uppercase tracking-widest mb-6 flex items-center gap-2 relative z-10">
-            <AILensIcon size={20} className="text-indigo-400"/> Validasi Silang Logika & Integritas Pengisian Data (AI)
-          </h3>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
-             <div className="lg:col-span-1 flex flex-col gap-4">
-              <div className="bg-slate-800/80 rounded-2xl p-5 border border-slate-700/50 flex items-center justify-between">
-                <div>
-                  <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400 mb-1">Tingkat Konsistensi Jawaban</p>
-                  <p className="text-xs font-medium text-slate-500">Data Confidence Score</p>
-                </div>
-                <div className="text-right">
-                  {aiResult?.dataConfidenceScore !== undefined ? (
-                    <span className={`text-4xl font-black ${aiResult.dataConfidenceScore >= 80 ? 'text-emerald-400' : aiResult.dataConfidenceScore >= 50 ? 'text-amber-400' : 'text-rose-500'}`}>
-                      {aiResult.dataConfidenceScore}
-                    </span>
-                  ) : (
-                    <span className="text-2xl font-black text-slate-500">N/A</span>
-                  )}
-                </div>
-              </div>
-              
-              <div className={`flex-1 rounded-2xl p-5 border ${aiResult?.contradictionsFound?.length > 0 ? 'bg-rose-950/30 border-rose-900/50' : 'bg-slate-800/50 border-slate-700/50'}`}>
-                <h4 className={`text-[10px] uppercase font-black tracking-widest mb-3 flex items-center gap-1.5 ${aiResult?.contradictionsFound?.length > 0 ? 'text-rose-400' : 'text-slate-400'}`}>
-                  <AILensIcon size={14}/> Deteksi Kontradiksi Pernyataan
-                </h4>
-                {aiResult?.contradictionsFound && aiResult.contradictionsFound.length > 0 ? (
-                  <ul className="space-y-3">
-                    {aiResult.contradictionsFound.map((anomaly: string, i: number) => (
-                      <li key={i} className="text-xs font-medium text-rose-200/90 leading-relaxed flex items-start gap-2">
-                        <span className="text-rose-500 mt-0.5">●</span> <span>{renderRichText(anomaly)}</span>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-xs text-slate-500 italic">Tidak terdeteksi anomali informasi antar seksi pengisian berkas.</p>
-                )}
+          <div className="flex flex-col lg:flex-row gap-10 xl:gap-16 items-center">
+            <div className="w-full lg:w-2/5 flex flex-col items-center shrink-0">
+              <div className={`w-full relative ${
+                radarData.length > 12 ? 'h-[550px] sm:h-[650px]' : 
+                radarData.length > 7  ? 'h-[420px] sm:h-[500px]' : 
+                'h-[320px] sm:h-[400px]'
+              }`}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadarChart cx="50%" cy="50%" outerRadius="65%" data={radarData}>
+                    <PolarGrid stroke="#e2e8f0" strokeDasharray="3 3" />
+                    <PolarAngleAxis dataKey="shortLabel" tick={{ fill: '#4f46e5', fontSize: 14, fontWeight: 900 }} />
+                    <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
+                    <Radar name="Skor" dataKey="A" stroke={isHighTier ? '#10b981' : '#4f46e5'} strokeWidth={3} fill={isHighTier ? '#10b981' : '#4f46e5'} fillOpacity={0.15} />
+                    <Tooltip labelFormatter={(label) => radarData.find((d: any) => d.shortLabel === label)?.subject || label} wrapperClassName="!z-[9999] rounded-xl font-bold text-sm shadow-xl" />
+                  </RadarChart>
+                </ResponsiveContainer>
               </div>
             </div>
-
-            <div className="lg:col-span-2 bg-slate-800/50 rounded-2xl p-5 sm:p-6 border border-slate-700/50 flex flex-col">
-              <h4 className="text-[10px] uppercase font-black tracking-widest text-indigo-300 mb-3 flex items-center gap-2">
-                <BrainIcon size={14}/> Logika Pertimbangan Otak AI (Internal Reasoning)
-              </h4>
-              <div className="flex-1 overflow-y-auto max-h-[250px] custom-scrollbar pr-2 text-sm text-slate-300 font-medium leading-relaxed">
-                {aiResult?._internalReasoning ? (
-                  <TextToBullets text={aiResult._internalReasoning} colorClass="text-indigo-400" />
-                ) : (
-                  <div className="h-full flex flex-col items-center justify-center text-slate-500 space-y-2 opacity-50 py-8">
-                    <AdminShieldIcon size={32} className="mb-1" />
-                    <span className="text-xs font-bold uppercase tracking-widest">Informasi Disembunyikan</span>
+            
+            <div className="w-full lg:w-3/5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {aiResult.metrics.map((item: any, idx: number) => (
+                <div key={idx} className="bg-slate-50 p-5 rounded-2xl ring-1 ring-slate-100 flex flex-col">
+                  <div className="flex justify-between items-start mb-3 gap-3">
+                    <h4 className="text-sm font-black text-slate-900 leading-tight"><span className="text-indigo-600 mr-1.5">D{idx + 1}.</span>{item?.label}</h4>
+                    <div className="bg-white ring-1 ring-slate-200 px-2 py-1 rounded-md shrink-0">
+                      <span className={`text-base font-black ${item?.score >= 80 ? 'text-emerald-600' : item?.score >= 60 ? 'text-amber-500' : 'text-rose-500'}`}>{item?.score}</span>
+                    </div>
                   </div>
-                )}
-              </div>
+                  <div className="text-xs text-slate-600 font-medium flex-1">
+                    <TextToBullets text={item?.description} colorClass="text-slate-400" />
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
+
+          {isInternal && curatorData && (
+            <div className="mt-8 pt-6 border-t border-slate-100">
+              <h4 className="text-xs font-black uppercase tracking-widest text-slate-900 mb-2 flex items-center gap-2">
+                <AdminShieldIcon size={16} className="text-emerald-600"/> Catatan Kalibrasi Angka Lapangan
+              </h4>
+              {isEditing ? (
+                <Textarea 
+                  value={curatorData.metricsNotes}
+                  onChange={(e) => curatorData.setMetricsNotes && curatorData.setMetricsNotes(e.target.value)}
+                  placeholder="Justifikasi penyesuaian pilar matriks..."
+                  className="bg-indigo-50/40 border-indigo-100 text-sm min-h-[90px] rounded-xl"
+                />
+              ) : (
+                <div className="bg-slate-50 p-4 rounded-xl text-sm font-medium text-slate-700 min-h-[60px]">
+                  {curatorData.metricsNotes || <span className="italic text-slate-400">Belum ada penyesuaian nilai pilar.</span>}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 
+      
+    </div>
+  );
+
+  const renderDeepDive = () => (
+    <div className="space-y-6 sm:space-y-8">
       {/* DISEMBUNYIKAN DARI PUBLIK: CUSTOM BLOCKS & FILE ANALYSIS */}
       {isInternal && aiResult?.customAnalysisBlocks && aiResult.customAnalysisBlocks.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
@@ -557,108 +576,12 @@ export function UniversalAssessmentView({
         </div>
       )}
 
-      {/* DISEMBUNYIKAN DARI PUBLIK: METRIK KOMPARATIF RADAR CHART */}
-      {isInternal && aiResult?.metrics && aiResult.metrics.length > 0 && (
-        <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-3xl ring-1 ring-slate-200 shadow-sm w-full">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0">
-              <AILensIcon size={20} />
-            </div>
-            <div>
-              <h3 className="font-black text-slate-900 text-xl tracking-tight">Pilar Pemetaan Komparatif</h3>
-              <p className="text-sm text-slate-500 font-medium">Visualisasi perbandingan parameter kuantitatif</p>
-            </div>
-          </div>
-          
-          <div className="flex flex-col lg:flex-row gap-10 xl:gap-16 items-center">
-            <div className="w-full lg:w-2/5 flex flex-col items-center shrink-0">
-              <div className={`w-full relative ${
-                radarData.length > 12 ? 'h-[550px] sm:h-[650px]' : 
-                radarData.length > 7  ? 'h-[420px] sm:h-[500px]' : 
-                'h-[320px] sm:h-[400px]'
-              }`}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <RadarChart cx="50%" cy="50%" outerRadius="65%" data={radarData}>
-                    <PolarGrid stroke="#e2e8f0" strokeDasharray="3 3" />
-                    <PolarAngleAxis dataKey="shortLabel" tick={{ fill: '#4f46e5', fontSize: 14, fontWeight: 900 }} />
-                    <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
-                    <Radar name="Skor" dataKey="A" stroke={isHighTier ? '#10b981' : '#4f46e5'} strokeWidth={3} fill={isHighTier ? '#10b981' : '#4f46e5'} fillOpacity={0.15} />
-                    <Tooltip labelFormatter={(label) => radarData.find((d: any) => d.shortLabel === label)?.subject || label} wrapperClassName="!z-[9999] rounded-xl font-bold text-sm shadow-xl" />
-                  </RadarChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-            
-            <div className="w-full lg:w-3/5 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {aiResult.metrics.map((item: any, idx: number) => (
-                <div key={idx} className="bg-slate-50 p-5 rounded-2xl ring-1 ring-slate-100 flex flex-col">
-                  <div className="flex justify-between items-start mb-3 gap-3">
-                    <h4 className="text-sm font-black text-slate-900 leading-tight"><span className="text-indigo-600 mr-1.5">D{idx + 1}.</span>{item?.label}</h4>
-                    <div className="bg-white ring-1 ring-slate-200 px-2 py-1 rounded-md shrink-0">
-                      <span className={`text-base font-black ${item?.score >= 80 ? 'text-emerald-600' : item?.score >= 60 ? 'text-amber-500' : 'text-rose-500'}`}>{item?.score}</span>
-                    </div>
-                  </div>
-                  <div className="text-xs text-slate-600 font-medium flex-1">
-                    <TextToBullets text={item?.description} colorClass="text-slate-400" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+      
+    </div>
+  );
 
-          {isInternal && curatorData && (
-            <div className="mt-8 pt-6 border-t border-slate-100">
-              <h4 className="text-xs font-black uppercase tracking-widest text-slate-900 mb-2 flex items-center gap-2">
-                <AdminShieldIcon size={16} className="text-emerald-600"/> Catatan Kalibrasi Angka Lapangan
-              </h4>
-              {isEditing ? (
-                <Textarea 
-                  value={curatorData.metricsNotes}
-                  onChange={(e) => curatorData.setMetricsNotes && curatorData.setMetricsNotes(e.target.value)}
-                  placeholder="Justifikasi penyesuaian pilar matriks..."
-                  className="bg-indigo-50/40 border-indigo-100 text-sm min-h-[90px] rounded-xl"
-                />
-              ) : (
-                <div className="bg-slate-50 p-4 rounded-xl text-sm font-medium text-slate-700 min-h-[60px]">
-                  {curatorData.metricsNotes || <span className="italic text-slate-400">Belum ada penyesuaian nilai pilar.</span>}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* DISEMBUNYIKAN DARI PUBLIK: ARGUMEN JAWABAN AI (FIELD ARGUMENTS) */}
-      {isInternal && aiResult?.fieldArguments && aiResult.fieldArguments.length > 0 && (
-        <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-3xl ring-1 ring-slate-200 shadow-sm w-full">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0">
-              <BrainIcon size={20} />
-            </div>
-            <div>
-              <h3 className="font-black text-slate-900 text-xl tracking-tight">Argumen Jawaban AI (Bedah Formulir)</h3>
-              <p className="text-sm text-slate-500 font-medium">Analisis mendetail untuk setiap poin data yang diisikan</p>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {aiResult.fieldArguments.map((item: any, idx: number) => (
-              <div key={idx} className="bg-slate-50 p-4 rounded-2xl ring-1 ring-slate-100 flex flex-col hover:shadow-md transition-shadow">
-                <div className="flex justify-between items-start mb-2 gap-3">
-                  <h4 className="text-xs font-black text-slate-900 leading-tight flex-1">{item?.label}</h4>
-                  <div className="bg-white ring-1 ring-slate-200 px-2 py-1 rounded-md shrink-0">
-                    <span className={`text-sm font-black ${item?.score >= 80 ? 'text-emerald-600' : item?.score >= 60 ? 'text-amber-500' : 'text-rose-500'}`}>{item?.score}</span>
-                  </div>
-                </div>
-                <div className="text-[11px] text-slate-600 font-medium flex-1 leading-relaxed border-t border-slate-200/60 pt-2 mt-1">
-                  <TextToBullets text={item?.description} colorClass="text-indigo-400" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
+  const renderStrategy = () => (
+    <div className="space-y-6 sm:space-y-8">
       {/* DISEMBUNYIKAN DARI PUBLIK: SWOT ANALYSIS */}
       {isInternal && aiResult?.swotAnalysis && (
         <div className="w-full">
@@ -719,6 +642,7 @@ export function UniversalAssessmentView({
         </div>
       )}
 
+      
       {/* TETAP DITAMPILKAN: CRITICAL RISKS MAP */}
       {aiResult?.riskAssessment?.criticalRisks && aiResult.riskAssessment.criticalRisks.length > 0 && (
         <div className="p-6 sm:p-8 rounded-3xl ring-1 ring-rose-200 bg-rose-50/30 w-full">
@@ -751,6 +675,7 @@ export function UniversalAssessmentView({
         </div>
       )}
 
+      
       {/* TETAP DITAMPILKAN: ACTION PLAN & RECOMMENDATIONS */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
         {aiResult?.recommendations && aiResult.recommendations.length > 0 && (
@@ -789,43 +714,323 @@ export function UniversalAssessmentView({
               </h4>
             )}
           </div>
-          
-          {aiResult?.nextActionSteps && aiResult.nextActionSteps.length > 0 && (
-            <div className="flex-1 bg-white ring-1 ring-slate-200 p-6 sm:p-8 shadow-sm flex flex-col rounded-3xl">
-              <h3 className="font-black text-slate-900 text-lg tracking-tight mb-6 flex items-center gap-2">
-                <InfinityWorkflowIcon size={20} className="text-indigo-600"/> {getLabel('execution')}
-              </h3>
-              <div className="relative border-l-2 border-slate-100 ml-3 space-y-5 pb-2">
-                {aiResult.nextActionSteps.map((step: any, idx: number) => {
-                  const isUrgent = step?.timeframe?.includes('30') || step?.timeframe?.includes('1') || false;
-                  const markerColor = isUrgent ? 'bg-rose-500 ring-rose-100' : 'bg-indigo-500 ring-indigo-100';
-                  return (
-                    <div key={idx} className="relative pl-6">
-                      <div className={`absolute -left-[9px] top-1 w-4 h-4 rounded-full ring-4 ${markerColor}`} />
-                      <div className="bg-slate-50 p-4 rounded-xl ring-1 ring-slate-100 hover:bg-white hover:shadow-md transition-all">
-                        <span className="inline-block text-[10px] font-black uppercase tracking-widest px-2 py-1 bg-slate-200 text-slate-700 rounded-md mb-2">{step?.timeframe || "Timeframe"}</span>
-                        <div className="text-sm text-slate-700 font-bold">
-                          <TextToBullets text={step?.task} colorClass="text-indigo-400" />
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
         </div>
       </div>
+    </div>
+  );
 
-      {assessmentId && isPublic && (
-        <div className="w-full mt-8">
-        <ActionPlanBuilder 
+  const renderValidation = () => (
+    <div className="space-y-6 sm:space-y-8">
+      {isInternal && (
+        <div className="w-full bg-slate-900 p-6 sm:p-8 rounded-3xl shadow-xl ring-1 ring-slate-800 relative overflow-hidden">
+          <div className="absolute right-0 top-0 opacity-5 pointer-events-none transform translate-x-10 -translate-y-10">
+            <AdminShieldIcon size={200} />
+          </div>
+          
+          <h3 className="text-sm font-black text-white uppercase tracking-widest mb-6 flex items-center gap-2 relative z-10">
+            <AILensIcon size={20} className="text-indigo-400"/> Validasi Silang Logika & Integritas Pengisian Data (AI)
+          </h3>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
+             <div className="lg:col-span-1 flex flex-col gap-4">
+              <div className="bg-slate-800/80 rounded-2xl p-5 border border-slate-700/50 flex items-center justify-between">
+                <div>
+                  <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400 mb-1">Tingkat Konsistensi Jawaban</p>
+                  <p className="text-xs font-medium text-slate-500">Data Confidence Score</p>
+                </div>
+                <div className="text-right">
+                  {aiResult?.dataConfidenceScore !== undefined ? (
+                    <span className={`text-4xl font-black ${aiResult.dataConfidenceScore >= 80 ? 'text-emerald-400' : aiResult.dataConfidenceScore >= 50 ? 'text-amber-400' : 'text-rose-500'}`}>
+                      {aiResult.dataConfidenceScore}
+                    </span>
+                  ) : (
+                    <span className="text-2xl font-black text-slate-500">N/A</span>
+                  )}
+                </div>
+              </div>
+              
+              <div className={`flex-1 rounded-2xl p-5 border ${aiResult?.contradictionsFound?.length > 0 ? 'bg-rose-950/30 border-rose-900/50' : 'bg-slate-800/50 border-slate-700/50'}`}>
+                <h4 className={`text-[10px] uppercase font-black tracking-widest mb-3 flex items-center gap-1.5 ${aiResult?.contradictionsFound?.length > 0 ? 'text-rose-400' : 'text-slate-400'}`}>
+                  <AILensIcon size={14}/> Deteksi Kontradiksi Pernyataan
+                </h4>
+                {aiResult?.contradictionsFound && aiResult.contradictionsFound.length > 0 ? (
+                  <ul className="space-y-3">
+                    {aiResult.contradictionsFound.map((anomaly: string, i: number) => (
+                      <li key={i} className="text-xs font-medium text-rose-200/90 leading-relaxed flex items-start gap-2">
+                        <span className="text-rose-500 mt-0.5">●</span> <span>{renderRichText(anomaly)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-xs text-slate-500 italic">Tidak terdeteksi anomali informasi antar seksi pengisian berkas.</p>
+                )}
+              </div>
+            </div>
+
+            <div className="lg:col-span-2 bg-slate-800/50 rounded-2xl p-5 sm:p-6 border border-slate-700/50 flex flex-col">
+              <h4 className="text-[10px] uppercase font-black tracking-widest text-indigo-300 mb-3 flex items-center gap-2">
+                <BrainIcon size={14}/> Logika Pertimbangan Otak AI (Internal Reasoning)
+              </h4>
+              <div className="flex-1 overflow-y-auto max-h-[250px] custom-scrollbar pr-2 text-sm text-slate-300 font-medium leading-relaxed">
+                {aiResult?._internalReasoning ? (
+                  <TextToBullets text={aiResult._internalReasoning} colorClass="text-indigo-400" />
+                ) : (
+                  <div className="h-full flex flex-col items-center justify-center text-slate-500 space-y-2 opacity-50 py-8">
+                    <AdminShieldIcon size={32} className="mb-1" />
+                    <span className="text-xs font-bold uppercase tracking-widest">Informasi Disembunyikan</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      
+      {/* DISEMBUNYIKAN DARI PUBLIK: ARGUMEN JAWABAN AI (FIELD ARGUMENTS) */}
+      {isInternal && aiResult?.fieldArguments && aiResult.fieldArguments.length > 0 && (
+        <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-3xl ring-1 ring-slate-200 shadow-sm w-full">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0">
+              <BrainIcon size={20} />
+            </div>
+            <div>
+              <h3 className="font-black text-slate-900 text-xl tracking-tight">Argumen Jawaban AI (Bedah Formulir)</h3>
+              <p className="text-sm text-slate-500 font-medium">Analisis mendetail untuk setiap poin data yang diisikan</p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {aiResult.fieldArguments.map((item: any, idx: number) => (
+              <div key={idx} className="bg-slate-50 p-4 rounded-2xl ring-1 ring-slate-100 flex flex-col hover:shadow-md transition-shadow">
+                <div className="flex justify-between items-start mb-2 gap-3">
+                  <h4 className="text-xs font-black text-slate-900 leading-tight flex-1">{item?.label}</h4>
+                  <div className="bg-white ring-1 ring-slate-200 px-2 py-1 rounded-md shrink-0">
+                    <span className={`text-sm font-black ${item?.score >= 80 ? 'text-emerald-600' : item?.score >= 60 ? 'text-amber-500' : 'text-rose-500'}`}>{item?.score}</span>
+                  </div>
+                </div>
+                <div className="text-[11px] text-slate-600 font-medium flex-1 leading-relaxed border-t border-slate-200/60 pt-2 mt-1">
+                  <TextToBullets text={item?.description} colorClass="text-indigo-400" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      
+      {/* DISEMBUNYIKAN DARI PUBLIK: DOKUMEN FORENSIK AI */}
+          {isInternal && aiResult?.fileAnalysisInsights && (
+            <div className="bg-slate-900 text-white p-6 sm:p-8 rounded-3xl shadow-md md:col-span-2 lg:col-span-2 relative flex flex-col justify-between overflow-hidden">
+              <div className="absolute right-0 top-0 opacity-10 pointer-events-none">
+                <DocExportIcon size={160} className="transform translate-x-8 -translate-y-8"/>
+              </div>
+              
+              <div>
+                <h3 className="text-xs font-black uppercase tracking-widest mb-4 flex items-center gap-2 text-indigo-300">
+                  <AILensIcon size={16}/> Hasil Validasi Dokumen Unggahan
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10 mb-6">
+                  <div>
+                    <p className="text-[10px] uppercase text-slate-400 font-bold mb-1">Status Keaslian & Kualitas</p>
+                    <div className="text-sm text-slate-200"><TextToBullets text={aiResult.fileAnalysisInsights.documentQuality} colorClass="text-emerald-400" /></div>
+                    
+                    {aiResult.fileAnalysisInsights.discrepancies && (
+                      <>
+                        <p className="text-[10px] uppercase text-slate-400 font-bold mt-4 mb-1 text-rose-300">Kesenjangan Bukti Fisik</p>
+                        <div className="text-sm text-rose-200 italic"><TextToBullets text={aiResult.fileAnalysisInsights.discrepancies} colorClass="text-rose-400" /></div>
+                      </>
+                    )}
+                  </div>
+                  {aiResult.fileAnalysisInsights.keyFindingsFromFiles && (
+                    <div>
+                      <p className="text-[10px] uppercase text-slate-400 font-bold mb-2">Temuan Pokok Berkas</p>
+                      <ul className="space-y-2">
+                        {aiResult.fileAnalysisInsights.keyFindingsFromFiles.map((find: string, i: number) => (
+                          <li key={i} className="text-sm text-slate-300 flex items-start gap-2">
+                            <span className="text-indigo-400 mt-0.5">●</span> <span className="leading-snug">{renderRichText(find)}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {isInternal && curatorData && (
+                <div className="pt-4 border-t border-slate-800 relative z-10 mt-auto">
+                  <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 flex items-center gap-1.5">
+                    <AdminShieldIcon size={14} className="text-emerald-400" /> Hasil Konfirmasi Otentisitas Berkas
+                  </h4>
+                  {isEditing ? (
+                    <Textarea 
+                      value={curatorData.documentNotes}
+                      onChange={(e) => curatorData.setDocumentNotes && curatorData.setDocumentNotes(e.target.value)}
+                      placeholder="Catatan keabsahan dokumen..."
+                      className="bg-slate-800 border-slate-700 text-white text-xs h-20 rounded-xl" 
+                    />
+                  ) : (
+                    <div className="bg-slate-800/60 p-3 rounded-xl text-xs font-medium text-slate-300 min-h-[50px]">
+                      {curatorData.documentNotes || <span className="italic text-slate-500">Belum ada catatan validasi fisik berkas.</span>}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+    </div>
+  );
+
+  const renderActionTimeline = () => (
+    <div className="space-y-6 sm:space-y-8 max-w-5xl mx-auto w-full">
+      <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-3xl ring-1 ring-slate-200 shadow-sm w-full">
+        <div className="flex items-center gap-3 mb-8">
+          <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center shrink-0">
+            <InfinityWorkflowIcon size={24} />
+          </div>
+          <div>
+            <h3 className="font-black text-slate-900 text-2xl tracking-tight">{getLabel('execution')}</h3>
+            <p className="text-sm text-slate-500 font-medium">Linimasa langkah strategis dan rancangan eksekusi lanjutan</p>
+          </div>
+        </div>
+
+        {aiResult?.nextActionSteps && aiResult.nextActionSteps.length > 0 ? (
+          <div className="relative border-l-2 border-indigo-100 ml-4 sm:ml-6 space-y-6 pb-4">
+            {aiResult.nextActionSteps.map((step: any, idx: number) => {
+              const isUrgent = step?.timeframe?.includes('30') || step?.timeframe?.includes('1') || false;
+              const markerColor = isUrgent ? 'bg-rose-500 ring-rose-100' : 'bg-indigo-500 ring-indigo-100';
+              return (
+                <div key={idx} className="relative pl-8 sm:pl-10">
+                  <div className={`absolute -left-[11px] top-1.5 w-5 h-5 rounded-full ring-4 ${markerColor}`} />
+                  <div className="bg-slate-50 p-5 rounded-2xl ring-1 ring-slate-100 hover:bg-white hover:shadow-lg hover:shadow-indigo-500/5 transition-all">
+                    <span className="inline-block text-[11px] font-black uppercase tracking-widest px-3 py-1.5 bg-indigo-100 text-indigo-700 rounded-lg mb-3">{step?.timeframe || "Timeframe"}</span>
+                    <div className="text-sm text-slate-700 font-bold leading-relaxed">
+                      <TextToBullets text={step?.task} colorClass="text-indigo-400" />
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="text-center py-10 text-slate-500 bg-slate-50 rounded-2xl ring-1 ring-slate-100">
+            <p className="font-medium text-sm">Tidak ada linimasa langkah aksi yang tersedia saat ini.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  const renderActionBuilder = () => (
+    <div className="space-y-6 sm:space-y-8 max-w-5xl mx-auto w-full">
+      {assessmentId && isPublic ? (
+        <div className="w-full">
+          <ActionPlanBuilder 
             assessmentId={assessmentId} 
             initialData={aiResult?.customActionPlan} 
             aiResult={aiResult}
           />
         </div>
+      ) : (
+        <div className="text-center py-10 text-slate-500 bg-white rounded-3xl ring-1 ring-slate-200 shadow-sm">
+          <p className="font-medium text-sm">Fitur Cetak Biru Eksekusi (10 Langkah Strategis) tidak tersedia pada mode ini.</p>
+        </div>
       )}
+    </div>
+  );
+
+  return (
+    <div ref={pdfRef} className="w-full animate-in fade-in duration-500 relative pb-20 md:pb-0">
+      
+      {/* Navigasi Utama Asesmen (Sticky Tabs) */}
+      <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md pt-4 pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 border-b border-slate-200/50 mb-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          {/* Desktop Tabs */}
+          <TabsList className="hidden md:flex bg-slate-100/50 p-1.5 rounded-2xl h-auto gap-2 border border-slate-200/50 w-full justify-center">
+            <TabsTrigger value="overview" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:bg-white data-[state=active]:text-indigo-700 data-[state=active]:shadow-sm transition-all">1. Ikhtisar Eksekutif</TabsTrigger>
+            <TabsTrigger value="actiontimeline" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:bg-white data-[state=active]:text-indigo-700 data-[state=active]:shadow-sm transition-all">Linimasa Eksekusi</TabsTrigger>
+            {assessmentId && isPublic && (
+              <TabsTrigger value="actionplan" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:bg-white data-[state=active]:text-indigo-700 data-[state=active]:shadow-sm transition-all data-[state=inactive]:text-indigo-600 data-[state=inactive]:bg-indigo-50/50 border border-indigo-100/50">10 Langkah Strategis</TabsTrigger>
+            )}
+            {isInternal && aiResult?.customAnalysisBlocks?.length > 0 && (
+               <TabsTrigger value="deepdive" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:bg-white data-[state=active]:text-indigo-700 data-[state=active]:shadow-sm transition-all">Analisis Tematik</TabsTrigger>
+            )}
+            <TabsTrigger value="strategy" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:bg-white data-[state=active]:text-indigo-700 data-[state=active]:shadow-sm transition-all">Risiko & Strategi</TabsTrigger>
+            {isInternal && (
+              <TabsTrigger value="validation" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:bg-white data-[state=active]:text-indigo-700 data-[state=active]:shadow-sm transition-all">Bedah & Validasi</TabsTrigger>
+            )}
+          </TabsList>
+
+          {/* Mobile Hamburger Menu */}
+          <div className="md:hidden flex items-center bg-white border border-slate-200/80 shadow-sm rounded-2xl p-1.5 pr-4">
+            <Sheet>
+              <SheetTrigger asChild>
+                <button className="flex items-center justify-center w-11 h-11 bg-slate-100/80 text-slate-700 rounded-xl hover:bg-slate-200 transition-colors shrink-0">
+                  <Menu size={20} />
+                </button>
+              </SheetTrigger>
+              <SheetContent side="top" className="rounded-b-3xl pt-14 px-4 pb-6">
+                <SheetHeader className="mb-4 text-left">
+                  <SheetTitle className="text-lg font-black text-slate-900">Menu Asesmen</SheetTitle>
+                </SheetHeader>
+                <div className="flex flex-col gap-2.5">
+                  <SheetClose asChild>
+                    <button onClick={() => setActiveTab('overview')} className={`flex items-center px-4 py-3.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'overview' ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-slate-50'}`}>1. Ikhtisar Eksekutif</button>
+                  </SheetClose>
+                  <SheetClose asChild>
+                    <button onClick={() => setActiveTab('actiontimeline')} className={`flex items-center px-4 py-3.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'actiontimeline' ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-slate-50'}`}>Linimasa Eksekusi</button>
+                  </SheetClose>
+                  {assessmentId && isPublic && (
+                    <SheetClose asChild>
+                      <button onClick={() => setActiveTab('actionplan')} className={`flex items-center justify-between px-4 py-3.5 rounded-xl text-sm font-bold transition-all ring-1 ring-indigo-500/30 ${activeTab === 'actionplan' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100'}`}>
+                        <span>10 Langkah Strategis</span>
+                        <AiSparkIcon size={16} className={activeTab === 'actionplan' ? 'text-white/80' : 'text-indigo-500'} />
+                      </button>
+                    </SheetClose>
+                  )}
+                  {isInternal && aiResult?.customAnalysisBlocks?.length > 0 && (
+                    <SheetClose asChild>
+                      <button onClick={() => setActiveTab('deepdive')} className={`flex items-center px-4 py-3.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'deepdive' ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-slate-50'}`}>Analisis Tematik</button>
+                    </SheetClose>
+                  )}
+                  <SheetClose asChild>
+                    <button onClick={() => setActiveTab('strategy')} className={`flex items-center px-4 py-3.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'strategy' ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-slate-50'}`}>Risiko & Strategi</button>
+                  </SheetClose>
+                  {isInternal && (
+                    <SheetClose asChild>
+                      <button onClick={() => setActiveTab('validation')} className={`flex items-center px-4 py-3.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'validation' ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-slate-50'}`}>Bedah & Validasi</button>
+                    </SheetClose>
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
+            
+            <div className="ml-3.5 flex-1 overflow-hidden">
+              <span className="text-[9px] uppercase font-black text-slate-400 tracking-widest block mb-0.5">Sedang Diakses</span>
+              <div className="text-sm font-black text-slate-800 truncate leading-none">
+                {activeTab === 'overview' && '1. Ikhtisar Eksekutif'}
+                {activeTab === 'actiontimeline' && 'Linimasa Eksekusi'}
+                {activeTab === 'actionplan' && <span className="text-indigo-600">10 Langkah Strategis</span>}
+                {activeTab === 'deepdive' && 'Analisis Tematik'}
+                {activeTab === 'strategy' && 'Risiko & Strategi'}
+                {activeTab === 'validation' && 'Bedah & Validasi'}
+              </div>
+            </div>
+          </div>
+        </Tabs>
+      </div>
+
+      {/* Konten Tab */}
+      <div className="w-full">
+        {activeTab === 'overview' && renderOverview()}
+        {activeTab === 'actiontimeline' && renderActionTimeline()}
+        {activeTab === 'actionplan' && renderActionBuilder()}
+        {activeTab === 'deepdive' && renderDeepDive()}
+        {activeTab === 'strategy' && renderStrategy()}
+        {activeTab === 'validation' && renderValidation()}
+      </div>
+
     </div>
   );
 }

@@ -21,7 +21,7 @@ import {
 import { db } from '@/lib/firebase'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
-import { AiSparkIcon, AILensIcon, GlobalTargetIcon, BrainIcon } from '@/types'
+import { AiSparkIcon, AILensIcon, GlobalTargetIcon, BrainIcon } from '@/components/icon'
 import { shareOrCopy } from '@/lib/share'
 import { Input } from '@/components/ui/input'
 import { PageShell } from '@/components/domain/public'

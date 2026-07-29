@@ -13,7 +13,7 @@ import {
   Calendar, ExternalLink, Activity, History,
   ArrowRight
 } from 'lucide-react'
-import { DocExportIcon, AiSparkIcon } from '@/types'
+import { DocExportIcon, AiSparkIcon } from '@/components/icon'
 import { Button } from '@/components/ui/button'
 import {
   PageShell,

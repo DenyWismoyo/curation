@@ -9,7 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Send, ArrowLeft, Sparkles, Brain, CheckCircle, Clock, Lock, Zap, Target } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { AiSparkIcon, AdminShieldIcon } from '@/types';
+import { AiSparkIcon, AdminShieldIcon } from '@/components/icon';
 
 interface Message {
   id: string;

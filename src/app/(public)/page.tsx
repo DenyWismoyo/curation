@@ -13,7 +13,7 @@ import { CurationHistory } from '@/types/curation';
 import { X } from 'lucide-react';
 
 // IMPORT CUSTOM ICON
-import { BrainIcon } from '@/types';
+import { BrainIcon } from '@/components/icon';
 
 // IMPORT CUSTOM HOOK MOBILE BACK
 import { useMobileBack } from '@/hooks/useMobileBack';

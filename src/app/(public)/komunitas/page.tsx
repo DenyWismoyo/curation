@@ -23,7 +23,7 @@ import {
   Crown,
   Medal,
 } from 'lucide-react'
-import { BrainIcon, AiSparkIcon, InfinityWorkflowIcon } from '@/types'
+import { BrainIcon, AiSparkIcon, InfinityWorkflowIcon } from '@/components/icon'
 import { toast } from 'sonner'
 import { PageShell, StatCard } from '@/components/domain/public'
 

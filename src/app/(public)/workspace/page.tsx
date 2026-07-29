@@ -8,7 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { ActionPlanBuilder } from '@/app/components/curation/ActionPlanBuilder';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BrainIcon, InfinityWorkflowIcon } from '@/types';
+import { BrainIcon, InfinityWorkflowIcon } from '@/components/icon';
 import { BackLink, EmptyState, PageLoading } from '@/components/domain/public';
 import { Button } from '@/components/ui/button';
 

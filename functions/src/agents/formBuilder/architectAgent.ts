@@ -16,24 +16,11 @@ const logToTerminal = async (docRef: admin.firestore.DocumentReference, message:
   });
 };
 
-export const formBuilderArchitectAgent = onDocumentUpdated({
-  database: "curation", 
-  document: "form_templates/{templateId}",
-  region: "asia-southeast2",
-  memory: "1GiB",
-  timeoutSeconds: 300,
-  secrets: [geminiApiKeySecret],
-}, async (event) => {
-  const beforeData = event.data?.before.data();
-  const afterData = event.data?.after.data();
-
-  if (afterData?.aiGenerationStatus?.phase !== "INITIATING" || beforeData?.aiGenerationStatus?.phase === "INITIATING") {
-    return null;
-  }
-
-  const templateRef = event.data?.after.ref;
-  if (!templateRef) return null;
-
+export const executeArchitect = async (
+  templateId: string,
+  afterData: any,
+  templateRef: admin.firestore.DocumentReference
+): Promise<any> => {
   try {
     await logToTerminal(templateRef, "FASE 1: Architect Agent (Gemini 3.1 Pro) diaktifkan. Melakukan penetrasi jaringan & riset blueprint...", "info");
 
@@ -44,7 +31,7 @@ export const formBuilderArchitectAgent = onDocumentUpdated({
       model: "gemini-3.1-pro-preview",
       tools: [{ googleSearch: {} } as any],
       generationConfig: {
-        temperature: 0.5,
+        temperature: 0.2, // Diturunkan agar kerangka struktur JSON lebih deterministik
         responseMimeType: "application/json",
         responseSchema: {
           type: SchemaType.OBJECT,
@@ -89,12 +76,32 @@ export const formBuilderArchitectAgent = onDocumentUpdated({
               type: SchemaType.ARRAY,
               items: {
                 type: SchemaType.OBJECT,
-                required: ["title", "description", "focusArea", "expertPersona"],
+                required: ["title", "description", "focusArea", "expertPersona", "targetMetrics", "draftedQuestions"],
                 properties: {
                   title: { type: SchemaType.STRING },
                   description: { type: SchemaType.STRING },
                   focusArea: { type: SchemaType.STRING },
-                  expertPersona: { type: SchemaType.STRING }
+                  expertPersona: { type: SchemaType.STRING },
+                  targetMetrics: { 
+                    type: SchemaType.ARRAY, 
+                    items: { type: SchemaType.STRING },
+                    description: "Metrik dari expectedMetrics yang diukur di seksi ini"
+                  },
+                  draftedQuestions: {
+                    type: SchemaType.ARRAY,
+                    description: "Daftar 8-12 pertanyaan spesifik yang dirancang secara tajam dan berkesinambungan",
+                    items: {
+                      type: SchemaType.OBJECT,
+                      required: ["interrogationGoal", "questionText", "suggestedType", "suggestedPlaceholder"],
+                      properties: {
+                        interrogationGoal: { type: SchemaType.STRING, description: "Alasan psikologis mengapa pertanyaan ini diajukan dan hubungannya dengan metrik" },
+                        questionText: { type: SchemaType.STRING, description: "Teks pertanyaan aktual yang akan dibaca oleh user" },
+                        suggestedType: { type: SchemaType.STRING, description: "Tipe input yang disarankan (contoh: text, textarea, select, radio_weight, file)" },
+                        suggestedPlaceholder: { type: SchemaType.STRING, description: "Contoh jawaban dunia nyata yang sangat spesifik (Smart Placeholder)" },
+                        followUpLogic: { type: SchemaType.STRING, description: "Instruksi jebakan logika/showIf multi-layer (contoh: 'Jika jawab Ya, tagih dokumen. Jika dokumen tidak ada, tagih justifikasi')" }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -141,8 +148,17 @@ export const formBuilderArchitectAgent = onDocumentUpdated({
       - customReadinessTiers: TEPAT ${targetTierCount} tingkatan (tiers).
       - expectedRecommendations: TEPAT ${targetRecCount} rekomendasi.${customUiInstruction}
       
-      LANGKAH 2: PEMBUATAN KERANGKA FORMULIR (stepOutlines)
+      LANGKAH 2: PEMBUATAN KERANGKA FORMULIR (stepOutlines) & DRAFT PERTANYAAN (draftedQuestions)
       Berdasarkan "aiPromptConfig" yang BARU SAJA Anda sempurnakan, susun 5 hingga 8 Seksi kuesioner yang 100% sejajar dengan metrik tersebut.
+      KRITIS: Setiap seksi WAJIB memiliki array "targetMetrics" yang berisi list metrik dari "expectedMetrics" yang akan DIUKUR melalui pertanyaan-pertanyaan di seksi tersebut. Pastikan SELURUH metrik di expectedMetrics terwakili minimal 1x di seluruh seksi.
+      
+      TUGAS UTAMA (DRAFTING PERTANYAAN): 
+      Di dalam setiap seksi, Anda WAJIB mengisi array "draftedQuestions" dengan 8-12 pertanyaan. 
+      Terapkan "Interrogation Logic" yang tajam dan profesional (sesuaikan dengan targetAudience dan gradingStrictness). 
+      
+      FITUR "WOW" YANG WAJIB ANDA IMPLEMENTASIKAN:
+      1. THE AUDITOR'S TRAP: Rancang alur logika berantai pada properti 'followUpLogic'. Jika ini adalah asesmen yang ketat (strict), jangan hanya berhenti di 1 pertanyaan. Buat skenario berlapis (Contoh: "Jika Ya, minta dokumen. Jika dokumen di-upload, minta penjelasan teks mengapa dokumen tersebut valid").
+      2. SMART PLACEHOLDERS: Isi properti 'suggestedPlaceholder' dengan contoh jawaban dunia nyata yang SANGAT SPESIFIK dan sesuai dengan industri target, bukan contoh murahan (Contoh Benar: "Misal: Kami menggunakan enkripsi AES-256 dan rotasi kunci AWS KMS tiap 90 hari").
     `;
 
     const masterResult = await masterModel.generateContent(masterPrompt);
@@ -174,7 +190,7 @@ export const formBuilderArchitectAgent = onDocumentUpdated({
     }
 
     // Simpan konfigurasi yang telah digabungkan ke database
-    await templateRef.update({
+    const updateData = {
       aiPromptConfig: finalAiPromptConfig,
       stepOutlinesCache: blueprint.stepOutlines,
       researchNotesCache: blueprint.researchNotes,
@@ -183,9 +199,10 @@ export const formBuilderArchitectAgent = onDocumentUpdated({
         message: "Konfigurasi Otak AI selesai. Mengalihkan komando ke Fabricator Agent...",
         updatedAt: admin.firestore.FieldValue.serverTimestamp()
       }
-    });
+    };
+    await templateRef.update(updateData);
 
-    return null;
+    return { success: true, nextPhase: "RESEARCHING" };
 
   } catch (error: any) {
     console.error("Architect Agent Error:", error);
@@ -193,6 +210,6 @@ export const formBuilderArchitectAgent = onDocumentUpdated({
       aiGenerationStatus: { phase: "FAILED", message: `Architect Gagal: ${error.message}`, updatedAt: admin.firestore.FieldValue.serverTimestamp() }
     });
     await logToTerminal(templateRef, `FATAL ERROR: ${error.message}`, "error");
-    return null;
+    throw error;
   }
-});
+};

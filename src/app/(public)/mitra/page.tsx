@@ -19,7 +19,7 @@ import {
   BrainIcon,
   AILensIcon,
   AppModuleTealIcon
-} from '@/types';
+} from '@/components/icon';
 
 // IMPORT KEBUTUHAN AUTH
 import { useAuth } from '@/contexts/AuthContext';

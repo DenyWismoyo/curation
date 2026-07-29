@@ -10,7 +10,7 @@ import { motion } from 'framer-motion';
 import { Copy, Check, Clock, FolderKanban, ArrowUpRight, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { TechCardIcon, DocExportIcon, InfinityWorkflowIcon, AiSparkIcon } from '@/types';
+import { TechCardIcon, DocExportIcon, InfinityWorkflowIcon, AiSparkIcon } from '@/components/icon';
 import {
   PageShell,
   PageHeader,

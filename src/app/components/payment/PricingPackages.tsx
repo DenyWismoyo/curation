@@ -27,7 +27,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import {
   AppModuleTealIcon, TechCardIcon, AILensIcon, InfinityWorkflowIcon,
   BrainIcon, GlobalTargetIcon, AdminShieldIcon, AiSparkIcon
-} from '@/types';
+} from '@/components/icon';
 
 interface PricingPackagesProps {
   isOpen: boolean;

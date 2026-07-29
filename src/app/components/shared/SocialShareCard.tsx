@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
 // IMPORT CUSTOM ICON BRAND
-import { AiSparkIcon } from '@/types';
+import { AiSparkIcon } from '@/components/icon';
 
 export interface SocialShareCardProps {
   namaUsaha: string;

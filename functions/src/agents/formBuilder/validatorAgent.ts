@@ -28,39 +28,19 @@ const cleanUndefinedAndNull = (obj: any): any => {
   return obj;
 };
 
-const withRetry = async <T>(fn: () => Promise<T>, retries = 3, delayMs = 2000): Promise<T> => {
-  try { return await fn(); }
-  catch (error: any) {
-    if (error.status === 400 || (error.message && error.message.includes('SAFETY'))) throw error;
-    if (retries <= 1) throw error;
-    await new Promise(res => setTimeout(res, delayMs));
-    return withRetry(fn, retries - 1, delayMs * 2);
-  }
-};
+import { withRetry } from "../../utils/retry";
 
-export const formBuilderValidatorAgent = onDocumentUpdated({
-  database: "curation", 
-  document: "form_templates/{templateId}",
-  region: "asia-southeast2",
-  memory: "512MiB",
-  timeoutSeconds: 540,
-  secrets: [geminiApiKeySecret],
-}, async (event) => {
-  const beforeData = event.data?.before.data();
-  const afterData = event.data?.after.data();
-
-  if (afterData?.aiGenerationStatus?.phase !== "FABRICATING" || beforeData?.aiGenerationStatus?.phase === "FABRICATING") {
-    return null;
-  }
-
-  const templateRef = event.data?.after.ref;
-  if (!templateRef) return null;
-
+export const executeValidator = async (
+  templateId: string,
+  afterData: any,
+  templateRef: admin.firestore.DocumentReference
+): Promise<any> => {
   try {
     await logToTerminal(templateRef, "FASE 3: Polisher Agent (Gemini 3.1 Flash-Lite) diaktifkan. Melakukan QA Logika sekaligus memoles UI/UX form...", "info");
     
     const rawSteps = afterData.rawStepsCache || [];
     const targetAudience = afterData.aiPromptConfig?.targetAudience === 'individual' ? 'Personal/Individu' : 'Perusahaan/B2B';
+    const preferredTypes = afterData.preferredQuestionTypes || [];
 
     // 1. HARDCODE DEDUPLICATION (Mencegah ID ganda)
     const seenIds = new Set<string>();
@@ -151,6 +131,19 @@ export const formBuilderValidatorAgent = onDocumentUpdated({
         3. Properti "equals" WAJIB berisi SAMA PERSIS (Copy-Paste case-sensitive) dari salah satu teks yang ada di array "options" field pemicu tersebut! Jika ada typo, PERBAIKI!
         4. Jika "fieldId" tidak ditemukan di Kamus Logika, ATAU field pemicunya tidak memiliki "options", Anda WAJIB MENGHAPUS properti "showIf" sepenuhnya dari output.
 
+        ATURAN 3: VALIDASI KONTEN METRIK (SUBSTANSIAL)
+        Metrik yang WAJIB dievaluasi di seksi ini: ${JSON.stringify(step.targetMetrics || [])}
+        Pastikan daftar pertanyaan ini sudah cukup untuk mengumpulkan data guna mengukur metrik di atas secara akurat.
+        Jika ada metrik yang sama sekali belum terwakili oleh pertanyaan yang ada, TAMBAHKAN pertanyaan baru yang spesifik mengukur metrik tersebut.
+
+        ATURAN 4: KEKETATAN (GRADING STRICTNESS)
+        Tingkat keketatan: ${afterData.aiPromptConfig?.gradingStrictness || 'standard'}
+        Jika 'strict', pastikan ada minimal 1 pertanyaan bertipe 'file' atau 'textarea' untuk meminta BUKTI/JUSTIFIKASI atas klaim besar (gunakan showIf).
+
+        ATURAN 5: PREFERENSI INPUT (PREFERRED TYPES)
+        Preferensi tipe input yang diinginkan: ${JSON.stringify(preferredTypes)}
+        Sesuaikan perubahan tipe input mentah dengan preferensi di atas (misalnya ubah text ke radio jika preferredTypes berisi 'radio_weight').
+
         OUTPUT HANYA ARRAY JSON YANG TELAH DISEMPURNAKAN DAN DISEMBUHKAN. JANGAN PERNAH MERUBAH PROPERTI "id" PADA PERTANYAAN.
       `;
 
@@ -176,16 +169,18 @@ export const formBuilderValidatorAgent = onDocumentUpdated({
     const isAdaptive = afterData.aiPromptConfig?.isAdaptive || formMode === 'adaptive' || formMode === 'hybrid';
 
     if (isAdaptive) {
-      await templateRef.update({
+      const updateData = {
         steps: cleanedSteps,
         aiGenerationStatus: {
           phase: "PRE_WARMING", 
           message: "Validasi selesai. Mengalihkan ke RAG Seeder Agent untuk injeksi pengetahuan...",
           updatedAt: admin.firestore.FieldValue.serverTimestamp()
         }
-      });
+      };
+      await templateRef.update(updateData);
+      return { success: true, nextPhase: "PRE_WARMING" };
     } else {
-      await templateRef.update({
+      const updateData = {
         steps: cleanedSteps,
         stepOutlinesCache: admin.firestore.FieldValue.delete(),
         researchNotesCache: admin.firestore.FieldValue.delete(),
@@ -197,11 +192,11 @@ export const formBuilderValidatorAgent = onDocumentUpdated({
           message: `Sukses! Formulir skala Enterprise (${cleanedSteps.length} seksi) telah dipercantik dan siap digunakan.`,
           updatedAt: admin.firestore.FieldValue.serverTimestamp()
         }
-      });
+      };
+      await templateRef.update(updateData);
       await logToTerminal(templateRef, "PIPELINE SELESAI: Kuesioner skala Enterprise telah berhasil diintegrasikan!", "success");
+      return { success: true, nextPhase: "COMPLETED" };
     }
-
-    return null;
 
   } catch (error: any) {
     console.error("Validator Agent Error:", error);
@@ -209,6 +204,6 @@ export const formBuilderValidatorAgent = onDocumentUpdated({
       aiGenerationStatus: { phase: "FAILED", message: `Validator (Polisher) Gagal: ${error.message}`, updatedAt: admin.firestore.FieldValue.serverTimestamp() }
     });
     await logToTerminal(templateRef, `FATAL ERROR: ${error.message}`, "error");
-    return null;
+    throw error;
   }
-});
+};

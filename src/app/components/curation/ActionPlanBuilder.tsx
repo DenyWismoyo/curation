@@ -214,7 +214,7 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
 
   return (
     <div className="bg-white rounded-3xl sm:rounded-[3rem] ring-1 ring-slate-200 relative overflow-hidden flex flex-col h-full shadow-sm">
-      <div className="bg-slate-900 p-6 sm:p-10 relative overflow-hidden shrink-0">
+      <div className="bg-slate-900 p-5 sm:p-10 relative overflow-hidden shrink-0">
         <div className="absolute -right-10 -top-10 w-60 h-60 bg-indigo-500/20 rounded-full blur-[80px]"></div>
         
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 relative z-10">
@@ -277,16 +277,16 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
       </div>
 
 
-      <div className="p-6 sm:p-10 space-y-5 flex-1 bg-[#FAFAFA]">
+      <div className="p-4 sm:p-10 space-y-3 sm:space-y-5 flex-1 bg-[#FAFAFA]">
         {isAllCompleted && (
             <motion.div 
                 initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-                className="bg-emerald-50 border border-emerald-200 p-8 rounded-[2rem] text-center mb-8 shadow-sm"
+                className="bg-emerald-50 border border-emerald-200 p-6 sm:p-8 rounded-2xl sm:rounded-[2rem] text-center mb-6 sm:mb-8 shadow-sm"
             >
-                <Trophy className="w-12 h-12 text-emerald-500 mx-auto mb-4" />
-                <h4 className="text-emerald-900 font-black text-xl mb-2">Siklus Eksekusi Selesai!</h4>
-                <p className="text-emerald-700 text-sm font-medium mb-6">Anda telah menyelesaikan 10 langkah krusial awal. Pertahankan ritme Anda.</p>
-                <Button className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl h-12 shadow-md">
+                <Trophy className="w-10 h-10 sm:w-12 sm:h-12 text-emerald-500 mx-auto mb-3 sm:mb-4" />
+                <h4 className="text-emerald-900 font-black text-lg sm:text-xl mb-2">Siklus Eksekusi Selesai!</h4>
+                <p className="text-emerald-700 text-xs sm:text-sm font-medium mb-5 sm:mb-6">Anda telah menyelesaikan 10 langkah krusial awal. Pertahankan ritme Anda.</p>
+                <Button className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl h-10 sm:h-12 shadow-md px-4 sm:px-6 text-sm">
                     <Sparkles className="w-4 h-4 mr-2" /> Inisiasi Fase Berikutnya
                 </Button>
             </motion.div>
@@ -304,7 +304,7 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ delay: index * 0.05 }}
                 onClick={() => setExpandedId(isExpanded ? null : item.id)}
-                className={`flex flex-col p-6 sm:p-8 rounded-[2rem] ring-1 transition-all duration-300 cursor-pointer overflow-hidden ${
+                className={`flex flex-col p-4 sm:p-8 rounded-2xl sm:rounded-[2rem] ring-1 transition-all duration-300 cursor-pointer overflow-hidden ${
                   item.isCompleted 
                     ? 'bg-white ring-slate-100 opacity-60 grayscale-[0.5]' 
                     : isExpanded 
@@ -312,39 +312,39 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
                       : 'bg-white ring-slate-200 hover:shadow-md hover:ring-indigo-200'
                 }`}
               >
-                <div className="flex items-start gap-5">
+                <div className="flex items-start gap-3 sm:gap-5">
                   <button 
                     onClick={(e) => toggleComplete(item.id, e)}
-                    className="mt-1 focus:outline-none shrink-0 transition-transform hover:scale-110 active:scale-90"
+                    className="mt-0.5 sm:mt-1 focus:outline-none shrink-0 transition-transform hover:scale-110 active:scale-90"
                   >
                     {item.isCompleted ? (
-                      <CheckCircle2 className="w-8 h-8 text-emerald-500 drop-shadow-sm" />
+                      <CheckCircle2 className="w-6 h-6 sm:w-8 sm:h-8 text-emerald-500 drop-shadow-sm" />
                     ) : (
-                      <div className="w-8 h-8 rounded-full border-[3px] border-slate-300 hover:border-indigo-400 transition-colors" />
+                      <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 sm:border-[3px] border-slate-300 hover:border-indigo-400 transition-colors" />
                     )}
                   </button>
                   
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md ring-1 transition-colors shadow-sm ${getTimeframeStyle(item.timeframe, item.isCompleted)}`}>
+                    <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                      <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md ring-1 transition-colors shadow-sm ${getTimeframeStyle(item.timeframe, item.isCompleted)}`}>
                         {item.timeframe}
                       </span>
                     </div>
                     
-                    <h4 className={`text-lg sm:text-xl font-black leading-tight transition-all duration-300 mb-2 pr-6 ${
+                    <h4 className={`text-base sm:text-xl font-black leading-tight transition-all duration-300 mb-1.5 sm:mb-2 pr-4 sm:pr-6 ${
                       item.isCompleted ? 'text-slate-400 line-through decoration-slate-300' : 'text-slate-800'
                     }`}>
                       {item.task}
                     </h4>
                     
-                    <p className={`text-sm font-medium leading-relaxed transition-all duration-300 ${
+                    <p className={`text-xs sm:text-sm font-medium leading-relaxed transition-all duration-300 ${
                       item.isCompleted ? 'text-slate-400' : 'text-slate-500'
                     }`}>
                       {item.description}
                     </p>
                   </div>
-                  <div className="shrink-0 text-slate-400 mt-1">
-                    {isExpanded ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
+                  <div className="shrink-0 text-slate-400 mt-0.5 sm:mt-1">
+                    {isExpanded ? <ChevronUp className="w-5 h-5 sm:w-6 sm:h-6" /> : <ChevronDown className="w-5 h-5 sm:w-6 sm:h-6" />}
                   </div>
                 </div>
 

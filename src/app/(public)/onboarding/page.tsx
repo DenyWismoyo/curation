@@ -9,7 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, ArrowLeft, Building2, User, Rocket, Users, Landmark, Loader2, Sparkles, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { AiSparkIcon } from '@/types';
+import { AiSparkIcon } from '@/components/icon';
 import { httpsCallable } from 'firebase/functions';
 import { toast } from 'sonner';
 

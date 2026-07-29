@@ -474,6 +474,16 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
                placeholder="Contoh: 'Wajibkan isian angka berformat Rupiah. Jika peserta memilih PT, gunakan fitur showIf untuk menagih Upload Akta Notaris...'"
                className="min-h-[80px] bg-slate-900 border-slate-700 text-sm font-medium text-white placeholder-slate-500 rounded-xl"
              />
+             
+             {!isGenerating && (
+               <div className="p-4 bg-slate-800/50 rounded-xl border border-slate-700 text-xs font-mono text-slate-300 mt-4">
+                 <p className="text-[10px] font-black text-indigo-300 uppercase mb-2">Preview Konteks & Aturan AI (Checklist):</p>
+                 <p>🎯 <strong className="text-white">Target:</strong> {template.aiPromptConfig?.targetAudience} | {template.aiPromptConfig?.formPurpose}</p>
+                 <p>📊 <strong className="text-white">Metrik:</strong> {template.aiPromptConfig?.expectedMetrics?.length || 0} metrik (Radar)</p>
+                 <p>🔥 <strong className="text-white">Keketatan:</strong> {template.aiPromptConfig?.gradingStrictness || 'standard'}</p>
+                 <p>📝 <strong className="text-white">Komposisi:</strong> {(template.preferredQuestionTypes || []).length > 0 ? (template.preferredQuestionTypes || []).length + ' aturan khusus diaktifkan' : 'Default (Otomatis)'}</p>
+               </div>
+             )}
           </div>
 
               <Button 

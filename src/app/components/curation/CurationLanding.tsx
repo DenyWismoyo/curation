@@ -16,7 +16,7 @@ import {
 import {
   EcosystemIcon, AdminShieldIcon, DocExportIcon,
   BrainIcon, GlobalTargetIcon, AiSparkIcon,
-} from '@/types';
+} from '@/components/icon';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { CurationHistory } from '@/types/curation';
@@ -33,6 +33,7 @@ import dynamic from 'next/dynamic';
 import { shareOrCopy } from '@/lib/share';
 import { BundleUpsellBanner } from '../payment/BundleUpsellBanner';
 import { DraftValidationModal } from './DraftValidationModal';
+import { MicroSimulator } from './MicroSimulator';
 
 const SystemCapabilitiesModal = dynamic(
   () => import('./SystemCapabilitiesModal').then((mod) => mod.SystemCapabilitiesModal),
@@ -381,6 +382,17 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
             </m.div>
           </div>
         </section>
+
+        {/* ══════════════════════════════════════════════════════════════════════
+            MICRO-SIMULATOR (LEAD MAGNET)
+        ══════════════════════════════════════════════════════════════════════ */}
+        {!user && (
+          <section className="max-w-7xl mx-auto px-5 lg:px-10 mb-8">
+            <m.div variants={fadeUp} initial="hidden" animate="visible">
+              <MicroSimulator />
+            </m.div>
+          </section>
+        )}
 
         {/* ══════════════════════════════════════════════════════════════════════
             CONTENT AREA — 2-column on xl

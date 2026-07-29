@@ -16,7 +16,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { AdminAutoFill } from './AdminAutoFill';
 
 // IMPORT CUSTOM ICONS
-import { AiSparkIcon, DocExportIcon, BrainIcon } from '@/types';
+import { AiSparkIcon, DocExportIcon, BrainIcon } from '@/components/icon';
 
 const renderMarkdownText = (str: string) => {
   if (typeof str !== 'string') return str;

@@ -24,7 +24,7 @@ export const generateArticleFromTemplate = onCall({
     const model = genAI.getGenerativeModel({
       model: "gemini-2.5-flash",
       generationConfig: {
-        temperature: 0.85, 
+        temperature: 0.7, // Diturunkan agar mengurangi risiko halusinasi fitur B2B
         responseMimeType: "application/json",
         responseSchema: {
           type: SchemaType.OBJECT,

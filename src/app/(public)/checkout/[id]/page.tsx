@@ -7,7 +7,7 @@ import { db, functions } from '@/lib/firebase';
 import { httpsCallable } from 'firebase/functions';
 import { motion } from 'framer-motion';
 import { ShieldCheck, ChevronLeft, Loader2, CheckCircle2, QrCode, ExternalLink } from 'lucide-react';
-import { BrainIcon } from '@/types';
+import { BrainIcon } from '@/components/icon';
 import { toast } from 'sonner';
 
 export default function CheckoutQrisPage() {

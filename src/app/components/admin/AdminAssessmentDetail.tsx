@@ -95,14 +95,14 @@ export function AdminAssessmentDetail({ data, onClose }: AdminAssessmentDetailPr
         </div>
 
         {/* TABS */}
-        <div className="flex gap-4 px-6 sm:px-8 pt-4 bg-white border-b border-slate-200 shrink-0 overflow-x-auto custom-scrollbar">
-          <button onClick={() => setActiveTab('evaluasi')} className={`px-4 py-3 text-sm font-bold border-b-2 transition-colors whitespace-nowrap ${activeTab === 'evaluasi' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-800'}`}>
-            <span className="flex items-center gap-2"><ShieldCheck className="w-4 h-4"/> Lembar Hasil Evaluasi (Unified)</span>
+        <div className="flex gap-2 px-6 sm:px-8 pt-4 pb-4 bg-white border-b border-slate-200 shrink-0 overflow-x-auto custom-scrollbar flex-nowrap w-full">
+          <button onClick={() => setActiveTab('evaluasi')} className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-colors whitespace-nowrap shrink-0 ${activeTab === 'evaluasi' ? 'bg-slate-900 text-white shadow-sm' : 'bg-slate-100 text-slate-500 hover:text-slate-800 hover:bg-slate-200'}`}>
+            <span className="flex items-center gap-2"><ShieldCheck className="w-4 h-4"/> Lembar Hasil Evaluasi</span>
           </button>
-          <button onClick={() => setActiveTab('input')} className={`px-4 py-3 text-sm font-bold border-b-2 transition-colors whitespace-nowrap ${activeTab === 'input' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-800'}`}>
+          <button onClick={() => setActiveTab('input')} className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-colors whitespace-nowrap shrink-0 ${activeTab === 'input' ? 'bg-slate-900 text-white shadow-sm' : 'bg-slate-100 text-slate-500 hover:text-slate-800 hover:bg-slate-200'}`}>
             <span className="flex items-center gap-2"><Briefcase className="w-4 h-4"/> Data Input Peserta</span>
           </button>
-          <button onClick={() => setActiveTab('analytics')} className={`px-4 py-3 text-sm font-bold border-b-2 transition-colors whitespace-nowrap ${activeTab === 'analytics' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-800'}`}>
+          <button onClick={() => setActiveTab('analytics')} className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-colors whitespace-nowrap shrink-0 ${activeTab === 'analytics' ? 'bg-slate-900 text-white shadow-sm' : 'bg-slate-100 text-slate-500 hover:text-slate-800 hover:bg-slate-200'}`}>
             <span className="flex items-center gap-2"><BarChart3 className="w-4 h-4"/> Ringkasan Analytics</span>
           </button>
         </div>

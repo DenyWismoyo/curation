@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { ArrowLeft, Calendar, Clock, Loader2, Share2, Check, BookOpen, Rocket } from 'lucide-react';
-import { AiSparkIcon, AILensIcon, GlobalTargetIcon, BrainIcon } from '@/types';
+import { AiSparkIcon, AILensIcon, GlobalTargetIcon, BrainIcon } from '@/components/icon';
 import { toast } from 'sonner';
 import { shareOrCopy } from '@/lib/share';
 

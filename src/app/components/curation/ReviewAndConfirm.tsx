@@ -9,7 +9,7 @@ import { AlertCircle, CheckCircle2, ArrowLeft, AlertTriangle, KeyRound, Check } 
 import { motion, AnimatePresence } from 'framer-motion';
 
 // IMPORT CUSTOM ICONS
-import { DocExportIcon, AdminShieldIcon, AiSparkIcon } from '@/types';
+import { DocExportIcon, AdminShieldIcon, AiSparkIcon } from '@/components/icon';
 
 export interface ReviewAndConfirmProps {
   answers: Record<string, any>;

@@ -4,6 +4,7 @@ import { defineSecret } from "firebase-functions/params";
 import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 import * as admin from "firebase-admin";
 import { getFirestore } from "firebase-admin/firestore";
+import { withRetry } from "./utils/retry";
 
 const geminiApiKeySecret = defineSecret("GEMINI_API_KEY");
 
@@ -31,12 +32,10 @@ export const generateActionPlanChecklist = onCall({
       let personaInstruction = "";
       if (customBehavior) {
           // Jika Admin mendefinisikan custom behavior, paksa AI mengikuti aturan tersebut
-          personaInstruction = `Anda adalah Pakar Eksekutor. Tugas Anda menyintesis laporan analitik menjadi TEPAT 10 langkah eksekusi. \nATURAN MUTLAK GAYA BAHASA & KONTEKS TUGAS: ${customBehavior}`;
+          personaInstruction = `Anda adalah Pakar Eksekutor. Tugas Anda menyintesis laporan analitik menjadi TEPAT 10 langkah eksekusi. \nPERINGATAN SUDUT PANDANG MUTLAK: Langkah-langkah ini WAJIB ditujukan LANGSUNG KEPADA SUBJEK YANG DINILAI (baik itu Perusahaan, Institusi Publik, NGO, Individu, atau Pelajar) agar mereka bisa mengeksekusinya sendiri. DILARANG KERAS membuat langkah yang ditujukan untuk Auditor atau Tim Penilai. \nATURAN MUTLAK GAYA BAHASA & KONTEKS TUGAS: ${customBehavior}`;
       } else {
-          // Fallback ke logika default
-          personaInstruction = targetAudience === 'individual'
-            ? "Anda adalah Senior Life Coach & Pakar Pengembangan Karir. Tugas Anda menyintesis laporan analitik menjadi TEPAT 10 langkah eksekusi PERSONAL. Gunakan bahasa yang memberdayakan individu, BUKAN bahasa korporat."
-            : "Anda adalah Chief Operating Officer (COO) tingkat Enterprise. Tugas Anda menyintesis laporan analitik menjadi TEPAT 10 langkah eksekusi BISNIS yang berurutan, logis, dan taktis untuk organisasi.";
+          // Fallback ke logika universal adaptif
+          personaInstruction = `Anda adalah Pakar Konsultan. Tugas Anda merumuskan 10 langkah eksekusi yang DITUJUKAN LANGSUNG KEPADA SUBJEK ASESMEN YANG DINILAI (bisa berupa Organisasi, Bisnis, Instansi Pemerintah, Komunitas, atau Individu - sesuaikan dengan konteks ringkasan laporan). Gunakan sudut pandang direktif ke subjek ("Organisasi harus...", "Anda perlu..."), DILARANG KERAS membuat instruksi untuk auditor/penilai melakukan audit/verifikasi. Langkah ini adalah panduan bagi subjek untuk berkembang.`;
       }
 
       const model = genAI.getGenerativeModel({
@@ -81,9 +80,9 @@ export const generateActionPlanChecklist = onCall({
         ATURAN MUTLAK: Bahasa Indonesia asertif, profesional, dilarang mengulang.
       `;
 
-      const result = await model.generateContent(prompt);
+      const result = await withRetry(() => model.generateContent(prompt));
       let rawText = result.response.text().trim();
-      if (rawText.startsWith('```')) rawText = rawText.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
+      rawText = rawText.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
 
       const generatedChecklist = JSON.parse(rawText);
 
@@ -120,7 +119,7 @@ export const generateSubTaskChecklist = onCall({
       
       const model = genAI.getGenerativeModel({
         model: "gemini-3.1-flash-lite", // Pakai versi yang ringan dan cepat
-        systemInstruction: "Anda adalah Life Coach/Project Manager yang asertif. Tugas Anda adalah memecah sebuah tugas makro menjadi 3 hingga 5 sub-tugas (micro-steps) yang sangat praktis, bisa langsung dikerjakan (actionable), dan logis.",
+        systemInstruction: "Anda adalah Life Coach/Project Manager yang asertif. Tugas Anda adalah memecah sebuah tugas makro menjadi 3 hingga 5 sub-tugas (micro-steps) yang sangat praktis, bisa langsung dikerjakan (actionable) oleh Subjek Asesmen (Organisasi, Instansi, atau Individu) untuk menyelesaikan tantangan mereka sendiri. DILARANG instruksi bagi auditor.",
         generationConfig: {
           temperature: 0.2, 
           responseMimeType: "application/json",
@@ -146,9 +145,9 @@ export const generateSubTaskChecklist = onCall({
         Pecah tugas utama di atas menjadi 3 hingga 5 langkah kecil berurutan agar pengguna lebih mudah mengeksekusinya tanpa merasa kewalahan. Gunakan Bahasa Indonesia yang ringkas dan memotivasi.
       `;
 
-      const result = await model.generateContent(prompt);
+      const result = await withRetry(() => model.generateContent(prompt));
       let rawText = result.response.text().trim();
-      if (rawText.startsWith('```')) rawText = rawText.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
+      rawText = rawText.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
       const subTasks = JSON.parse(rawText);
 
       return { success: true, subTasks };

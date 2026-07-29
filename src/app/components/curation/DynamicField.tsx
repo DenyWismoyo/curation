@@ -12,7 +12,7 @@ import { app } from '@/lib/firebase';
 import { toast } from 'sonner';
 
 // IMPORT CUSTOM ICON
-import { DocExportIcon } from '@/types';
+import { DocExportIcon } from '@/components/icon';
 
 const renderMarkdownText = (str: string) => {
   if (typeof str !== 'string') return str;

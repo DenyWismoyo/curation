@@ -14,7 +14,7 @@ import {
   CheckCircle2, BarChart3, Award, HandCoins,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { InfinityWorkflowIcon, DocExportIcon, AiSparkIcon } from '@/types';
+import { InfinityWorkflowIcon, DocExportIcon, AiSparkIcon } from '@/components/icon';
 import { NotificationBell } from '@/components/shared';
 import {
   PageShell,
