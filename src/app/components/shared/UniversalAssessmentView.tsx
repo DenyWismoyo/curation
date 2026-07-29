@@ -10,6 +10,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose 
 import { CurationFormData, AIResult } from '@/types/curation';
 import { AiSparkIcon, AILensIcon, AdminShieldIcon, InfinityWorkflowIcon, GlobalTargetIcon, DocExportIcon, TechCardIcon, BrainIcon, EcosystemIcon } from '@/components/icon';
 import { ActionPlanBuilder } from '../curation/ActionPlanBuilder';
+import { ActionPlanCopilot } from '../curation/ActionPlanCopilot';
 
 // ========================================================
 // 1. HELPER COMPONENTS
@@ -1031,6 +1032,8 @@ export function UniversalAssessmentView({
         {activeTab === 'validation' && renderValidation()}
       </div>
 
+      {/* Action Plan Copilot Floating Button (Hanya jika assessmentId valid) */}
+      {assessmentId && <ActionPlanCopilot assessmentId={assessmentId} />}
     </div>
   );
 }

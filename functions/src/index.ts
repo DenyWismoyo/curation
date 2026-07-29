@@ -35,6 +35,7 @@ export { formBuilderOrchestrator } from "./pipelines/formBuilder/orchestrator";
 // ============================================================================
 export { processCurationAssessment } from "./agents/assessment/gatewayAgent";
 export { assessmentOrchestrator } from "./pipelines/assessment/orchestrator";
+export { actionPlanCopilotChat } from "./agents/assessment/copilotAgent";
 export { adminGenerateMockData } from "./agents/assessment/mockDataAgent";
 export { premiumConsultationChat } from "./agents/assessment/premiumConsultationAgent";
 export { assessmentAnalyticsAgent } from "./agents/analytics/analyticsAgent";
