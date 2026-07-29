@@ -325,25 +325,6 @@ export const mayarWebhook = onRequest({
       }
     }
 
-    // STRATEGI 3: Pencarian via Email
-    if (!txDocRef) {
-      const emailPelanggan = mayarTx.customerEmail || mayarTx.email || payload.customerEmail;
-      if (emailPelanggan) {
-        try {
-          const fallbackQ = await db.collection("transactions")
-            .where("status", "==", "PENDING")
-            .where("userEmail", "==", emailPelanggan)
-            .get();
-          if (!fallbackQ.empty) {
-            const docs = fallbackQ.docs.sort((a, b) => (b.data().createdAt?.toMillis() || 0) - (a.data().createdAt?.toMillis() || 0));
-            txDocRef = docs[0].ref;
-            txData = docs[0].data();
-          }
-        } catch (fallbackErr: any) {
-          console.error("❌ [WEBHOOK] Fallback query error:", fallbackErr.message);
-        }
-      }
-    }
     
     if (!txDocRef || !txData) {
       res.status(400).send('Transaction Not Found');
@@ -474,6 +455,63 @@ export const redeemAssessmentQuota = onCall({
     } catch (error: any) {
       console.error("Redeem Error:", error);
       throw new HttpsError("internal", error.message || "Gagal melakukan redeem kuota.");
+    }
+  }
+);
+
+// ============================================================================
+// FUNGSI 5: CHECK TOKEN VALIDITY
+// ============================================================================
+export const checkTokenValidity = onCall({
+    memory: "256MiB",
+    region: "asia-southeast2",
+    cors: true,
+  },
+  async (request) => {
+    if (!request.auth) throw new HttpsError("unauthenticated", "Akses ditolak.");
+    
+    const { tokenCode } = request.data;
+    if (!tokenCode || typeof tokenCode !== 'string') {
+      return { isValid: false, reason: "Token kosong atau tidak valid." };
+    }
+
+    // Bypass check for internal free testing token (if any)
+    if (tokenCode.startsWith("FREE-") || tokenCode.startsWith("TRIAL-")) {
+      return { isValid: true };
+    }
+
+    if (!tokenCode.includes('-')) {
+      return { isValid: false, reason: "Format token tidak valid." };
+    }
+
+    const db = getFirestore(admin.app(), "curation");
+    const lastDashIndex = tokenCode.lastIndexOf('-');
+    const corpId = tokenCode.substring(0, lastDashIndex).replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+    const specificTokenCode = tokenCode.substring(lastDashIndex + 1).replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+
+    try {
+      const corpRef = db.collection('corporate_tokens').doc(corpId);
+      const corpDoc = await corpRef.get();
+
+      if (!corpDoc.exists) {
+        return { isValid: false, reason: "Entitas korporat tidak ditemukan." };
+      }
+
+      const corpData = corpDoc.data();
+      const tData = (corpData?.tokens || {})[specificTokenCode];
+
+      if (!tData) {
+        return { isValid: false, reason: "Token tidak ditemukan." };
+      }
+
+      if (tData.isUsed) {
+        return { isValid: false, reason: "Token telah digunakan." };
+      }
+
+      return { isValid: true };
+    } catch (error: any) {
+      console.error("checkTokenValidity Error:", error);
+      throw new HttpsError("internal", "Gagal memvalidasi token.");
     }
   }
 );

@@ -5,7 +5,11 @@ import React, { useRef, useState } from 'react';
 import { FormField } from '@/types/curation';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { X, Check } from 'lucide-react';
+import { X, Check, Loader2, Sparkles } from 'lucide-react';
+import { VoiceInputRecorder } from './VoiceInputRecorder';
+import { getFunctions, httpsCallable } from 'firebase/functions';
+import { app } from '@/lib/firebase';
+import { toast } from 'sonner';
 
 // IMPORT CUSTOM ICON
 import { DocExportIcon } from '@/types';
@@ -32,6 +36,9 @@ interface DynamicFieldProps {
 export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragActive, setDragActive] = useState(false);
+  
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState<string | null>(null);
 
   const getOptionLabel = (opt: any): string => {
     return typeof opt === 'object' && opt !== null ? opt.label : String(opt);
@@ -51,7 +58,10 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
     switch (field.type) {
       case 'text':
         return (
-          <Input type="text" placeholder={field.placeholder || 'Ketik di sini...'} value={value || ''} onChange={(e) => onChange(e.target.value)} className="h-12 bg-slate-50 border-slate-200 focus-visible:ring-indigo-500 rounded-xl transition-all font-medium text-slate-700" />
+          <div className="flex flex-col">
+            <Input type="text" placeholder={field.placeholder || 'Ketik di sini...'} value={value || ''} onChange={(e) => onChange(e.target.value)} className="h-12 bg-slate-50 border-slate-200 focus-visible:ring-indigo-500 rounded-xl transition-all font-medium text-slate-700" />
+            <VoiceInputRecorder onTranscription={(text) => onChange(text)} contextPrompt={`Pertanyaan: ${field.label}. Deskripsi: ${field.description || ''}`} />
+          </div>
         );
       case 'number':
         return (
@@ -59,7 +69,10 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
         );
       case 'textarea':
         return (
-          <Textarea placeholder={field.placeholder || 'Ketik penjelasan detail di sini...'} value={value || ''} onChange={(e) => onChange(e.target.value)} className="bg-slate-50 border-slate-200 focus-visible:ring-indigo-500 rounded-xl min-h-[100px] resize-y transition-all font-medium text-slate-700" />
+          <div className="flex flex-col">
+            <Textarea placeholder={field.placeholder || 'Ketik penjelasan detail di sini...'} value={value || ''} onChange={(e) => onChange(e.target.value)} className="bg-slate-50 border-slate-200 focus-visible:ring-indigo-500 rounded-xl min-h-[100px] resize-y transition-all font-medium text-slate-700" />
+            <VoiceInputRecorder onTranscription={(text) => onChange(text)} contextPrompt={`Pertanyaan: ${field.label}. Deskripsi: ${field.description || ''}`} />
+          </div>
         );
       case 'date':
         return (
@@ -127,21 +140,76 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
           setDragActive(false);
           if (e.dataTransfer.files && e.dataTransfer.files[0]) onChange(e.dataTransfer.files[0]);
         };
+        
+        const analyzeFile = async () => {
+          if (!value || !(value instanceof File)) return;
+          setIsAnalyzing(true);
+          try {
+            const reader = new FileReader();
+            reader.readAsDataURL(value);
+            reader.onloadend = async () => {
+              const base64 = reader.result?.toString().split(',')[1];
+              if (!base64) throw new Error("Gagal konversi ke Base64");
+              
+              const functions = getFunctions(app, 'asia-southeast2');
+              const analyze = httpsCallable(functions, 'analyzeEvidence');
+              const res = await analyze({ 
+                fileBase64: base64, 
+                mimeType: value.type,
+                context: `Pertanyaan form: ${field.label}`
+              });
+              const data = res.data as any;
+              setAnalysisResult(data.analysisResult);
+            };
+          } catch (error) {
+            console.error(error);
+            toast.error("Gagal menganalisis dokumen.");
+          } finally {
+            setIsAnalyzing(false);
+          }
+        };
+
         return (
           <div className="mt-1">
             {value ? (
-              <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex items-center justify-between shadow-sm">
-                <div className="flex items-center gap-3 overflow-hidden">
-                  <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center shrink-0">
-                    {/* CUSTOM ICON UNTUK FILE YANG SUDAH DIUNGGAH */}
-                    <DocExportIcon size={20} />
+              <div className="space-y-3">
+                <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex items-center justify-between shadow-sm">
+                  <div className="flex items-center gap-3 overflow-hidden">
+                    <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center shrink-0">
+                      {/* CUSTOM ICON UNTUK FILE YANG SUDAH DIUNGGAH */}
+                      <DocExportIcon size={20} />
+                    </div>
+                    <div className="truncate">
+                      <p className="text-sm font-bold text-emerald-900 truncate">{value.name || (typeof value === 'string' ? value.split('/').pop() : 'Dokumen Terlampir')}</p>
+                      <p className="text-xs text-emerald-600 font-medium">Siap diunggah</p>
+                    </div>
                   </div>
-                  <div className="truncate">
-                    <p className="text-sm font-bold text-emerald-900 truncate">{value.name || (typeof value === 'string' ? value.split('/').pop() : 'Dokumen Terlampir')}</p>
-                    <p className="text-xs text-emerald-600 font-medium">Siap diunggah</p>
+                  <div className="flex items-center gap-2">
+                    {value instanceof File && (
+                      <button 
+                        type="button" 
+                        onClick={analyzeFile} 
+                        disabled={isAnalyzing}
+                        className="px-3 py-1.5 bg-white border border-emerald-200 text-emerald-700 hover:bg-emerald-100 rounded-lg text-xs font-bold transition-colors flex items-center gap-1 shadow-sm disabled:opacity-50"
+                      >
+                        {isAnalyzing ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} className="text-amber-500" />}
+                        {isAnalyzing ? 'Menganalisis...' : 'Analisis AI'}
+                      </button>
+                    )}
+                    <button type="button" onClick={() => { onChange(null); setAnalysisResult(null); }} className="p-2 hover:bg-rose-100 text-slate-400 hover:text-rose-600 rounded-full transition-colors shrink-0"><X size={18} /></button>
                   </div>
                 </div>
-                <button type="button" onClick={() => onChange(null)} className="p-2 hover:bg-rose-100 text-slate-400 hover:text-rose-600 rounded-full transition-colors shrink-0"><X size={18} /></button>
+
+                {analysisResult && (
+                  <div className="bg-amber-50 border border-amber-200 p-4 rounded-xl text-amber-900 text-sm shadow-inner relative">
+                    <div className="flex items-center gap-2 mb-2 font-black text-amber-700">
+                      <Sparkles size={16} /> Hasil Analisis Bukti
+                    </div>
+                    <div className="prose prose-sm prose-amber max-w-none leading-relaxed">
+                      {renderMarkdownText(analysisResult)}
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <div

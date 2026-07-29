@@ -16,7 +16,7 @@ import { buildAssessmentPrompt, getSystemPrompt } from "./promt/promptTemplate";
 export { generatePDFReport } from "./general/documentGenerator";
 export { matchBusinessWithIndustry } from "./general/vectorService";
 // export { generateFormTemplateFromAI } from "./formBuilderService";
-export { createPaymentInvoice, mayarWebhook, redeemAssessmentQuota } from "./general/paymentService";
+export { createPaymentInvoice, mayarWebhook, redeemAssessmentQuota, checkTokenValidity } from "./general/paymentService";
 export { chatWithOmniAi } from "./general/omniAiService";
 export { generateActionPlanChecklist, generateSubTaskChecklist } from "./actionPlanService";
 export { generateTemplateSellingPoints, generatePromptAnchors } from "./outputService";
@@ -26,6 +26,8 @@ export { enhanceFieldLogic, enhanceStepLogic } from "./fieldEnhancerService";
 // TAMBAHKAN EXPORT FUNGSI BARU DI SINI:
 export { generateAssessmentCacheKey, getCachedAssessmentResult, setCachedAssessmentResult } from "./general/cacheService";
 export { generateAdvancedPrompts } from "./promptEnhancerService";
+export { processVoiceInput } from "./general/voiceService";
+export { analyzeEvidence } from "./general/evidenceService";
 
 export { formBuilderArchitectAgent } from "./agents/formBuilder/architectAgent";
 export { formBuilderFabricatorAgent } from "./agents/formBuilder/fabricatorAgent";

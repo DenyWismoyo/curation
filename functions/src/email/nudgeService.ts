@@ -53,13 +53,32 @@ export const weeklyActionPlanNudge = onSchedule({
         },
       });
 
-      const batchPromises = snapshot.docs.map(async (doc) => {
-        // [PERBAIKAN 1]: Tambahkan "as any" agar TypeScript berhenti memunculkan garis merah 
-        // pada data.userEmail dan data.namaUsaha
-        const data = doc.data() as any; 
+      const batchPromises = snapshot.docs.map(async (assDoc) => {
+        const data = assDoc.data() as any; 
+        const userId = data.userId;
         const actionPlan = data.aiResult?.customActionPlan;
         
         if (!actionPlan || !Array.isArray(actionPlan)) return;
+
+        // Ambil preferensi pengguna dari koleksi users
+        let sendEmail = true;
+        let sendWhatsapp = false;
+        let userPhone = '';
+        
+        if (userId) {
+          const userDoc = await db.collection("users").doc(userId).get();
+          if (userDoc.exists) {
+            const uData = userDoc.data() as any;
+            if (uData.nudgePreferences) {
+              sendEmail = uData.nudgePreferences.email !== false; // Default true
+              sendWhatsapp = uData.nudgePreferences.whatsapp === true;
+            }
+            userPhone = uData.phone || '';
+          }
+        }
+
+        // Lewati jika pengguna menonaktifkan kedua preferensi
+        if (!sendEmail && !sendWhatsapp) return;
         
         const totalTasks = actionPlan.length;
         const completedTasks = actionPlan.filter((t: any) => t.isCompleted).length;
@@ -111,7 +130,7 @@ export const weeklyActionPlanNudge = onSchedule({
             htmlBody = htmlBody.replace(/^\`\`\`(html)?/gi, '').replace(/\`\`\`$/g, '').trim();
         }
         
-        if (data.userEmail) {
+        if (sendEmail && data.userEmail) {
             await transporter.sendMail({
                 // [PERBAIKAN 3]: Gunakan string concatenation standar 
                 // agar terhindar dari conflict template literal di pengirim email
@@ -121,6 +140,25 @@ export const weeklyActionPlanNudge = onSchedule({
                 html: htmlBody,
             });
             console.log(`[NUDGE SENT] Email Senin Pagi + Kalender dikirim ke: ${data.userEmail}`);
+        }
+
+        if (sendWhatsapp && userPhone) {
+            // [STUB WHATSAPP INTEGRATION]
+            // Prompt khusus untuk format teks WhatsApp (Tanpa HTML, pakai asteris *bold* dll)
+            const waPrompt = `
+              Ringkas tugas ini untuk WhatsApp dalam bahasa yang hangat dan motivatif.
+              - Tugas 1: ${task1?.task || '-'}
+              - Tugas 2: ${task2?.task || '-'}
+              Maksimal 50 kata.
+            `;
+            const waAiResult = await model.generateContent(waPrompt);
+            const waText = waAiResult.response.text().trim();
+            
+            console.log(`\n==============================================`);
+            console.log(`[WHATSAPP NUDGE MOCK] MENGIRIM KE: ${userPhone}`);
+            console.log(`Pesan: ${waText}`);
+            console.log(`Status: PENDING_API_KEY (Simulasi)`);
+            console.log(`==============================================\n`);
         }
       });
       

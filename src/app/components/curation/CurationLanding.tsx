@@ -20,8 +20,9 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { CurationHistory } from '@/types/curation';
-import { collection, getDocs, query, where } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { collection, getDocs, query, where, getDoc, doc } from 'firebase/firestore';
+import { getFunctions, httpsCallable } from 'firebase/functions';
+import { db, app } from '@/lib/firebase';
 import Link from 'next/link';
 import { User } from 'firebase/auth';
 import { toast } from 'sonner';
@@ -31,6 +32,7 @@ import { LazyMotion, domAnimation, m, AnimatePresence, Variants } from 'framer-m
 import dynamic from 'next/dynamic';
 import { shareOrCopy } from '@/lib/share';
 import { BundleUpsellBanner } from '../payment/BundleUpsellBanner';
+import { DraftValidationModal } from './DraftValidationModal';
 
 const SystemCapabilitiesModal = dynamic(
   () => import('./SystemCapabilitiesModal').then((mod) => mod.SystemCapabilitiesModal),
@@ -144,6 +146,12 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
   const [name, setName] = useState('');
   const [authLoading, setAuthLoading] = useState(false);
 
+  // Draft Validation State
+  const [isCheckingToken, setIsCheckingToken] = useState(false);
+  const [isValidationModalOpen, setIsValidationModalOpen] = useState(false);
+  const [selectedDraftTemplate, setSelectedDraftTemplate] = useState<string>('');
+  const [currentValidationQuota, setCurrentValidationQuota] = useState(0);
+
   // ── Side effects ────────────────────────────────────────────────────────────
   useMobileBack(isCapabilitiesModalOpen, () => setIsCapabilitiesModalOpen(false));
 
@@ -189,12 +197,46 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
     } catch { toast.error('Gagal membagikan link aplikasi.'); }
   };
 
-  const handleResumeDraft = (draft: DraftItem) => {
+  const handleResumeDraft = async (draft: DraftItem) => {
     if (!user) { toast.error('Silakan masuk terlebih dahulu.'); onLogin(); return; }
+    
     let token = sessionStorage.getItem('active_token') || localStorage.getItem('omnifit_last_token');
+    
+    if (token && token.includes('-') && !token.startsWith('FREE-') && !token.startsWith('TRIAL-')) {
+      setSelectedDraftTemplate(draft.templateId);
+      setIsCheckingToken(true);
+      try {
+        const functions = getFunctions(app, 'asia-southeast2');
+        const checkFn = httpsCallable(functions, 'checkTokenValidity');
+        const result = await checkFn({ tokenCode: token });
+        const data = result.data as { isValid?: boolean };
+        
+        if (!data.isValid) {
+          const docSnap = await getDoc(doc(db, 'users', user.uid));
+          const quota = docSnap.exists() ? (docSnap.data().assessmentQuota || 0) : 0;
+          
+          setCurrentValidationQuota(quota);
+          setIsValidationModalOpen(true);
+          return;
+        }
+      } catch (e) {
+        console.error("Token validation error:", e);
+      } finally {
+        setIsCheckingToken(false);
+      }
+    }
+
     if (!token) token = (!draft.isPaid || draft.price === 0) ? `FREE-${Math.random().toString(36).substring(2, 8).toUpperCase()}` : `TRIAL-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
     sessionStorage.setItem('active_token', token);
     sessionStorage.setItem('active_allowed_templates', JSON.stringify([draft.templateId]));
+    onStart();
+  };
+
+  const handleQuotaRedeemed = (newToken: string) => {
+    setIsValidationModalOpen(false);
+    sessionStorage.setItem('active_token', newToken);
+    sessionStorage.setItem('active_allowed_templates', JSON.stringify([selectedDraftTemplate]));
+    toast.success("Membuka draf...");
     onStart();
   };
 
@@ -652,7 +694,11 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                           {draft.trackName}
                         </h4>
                         <p className="text-[11px] font-bold text-slate-400 group-hover:text-amber-500 flex items-center gap-1.5 transition-colors mt-auto">
-                          Lanjutkan <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
+                          {isCheckingToken && selectedDraftTemplate === draft.templateId ? (
+                            <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Memvalidasi...</>
+                          ) : (
+                            <>Lanjutkan <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" /></>
+                          )}
                         </p>
                       </m.div>
                     ))}
@@ -737,6 +783,15 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
         isOpen={isCapabilitiesModalOpen}
         onClose={() => setIsCapabilitiesModalOpen(false)}
         isLoggedIn={!!user}
+      />
+
+      {/* ── Draft Validation Modal ────────────────────────────────────────────── */}
+      <DraftValidationModal 
+        isOpen={isValidationModalOpen}
+        onClose={() => setIsValidationModalOpen(false)}
+        userQuota={currentValidationQuota}
+        templateId={selectedDraftTemplate}
+        onQuotaRedeemed={handleQuotaRedeemed}
       />
     </LazyMotion>
   );

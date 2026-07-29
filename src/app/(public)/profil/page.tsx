@@ -63,15 +63,60 @@ export default function ProfilPage() {
   const [stats, setStats] = useState<UserStats | null>(null);
   const [isFetching, setIsFetching] = useState(true);
   const [activeTab, setActiveTab] = useState<'overview' | 'badges' | 'settings'>('overview');
-  const [nudgeEnabled, setNudgeEnabled] = useState(true);
+  const [profileData, setProfileData] = useState({ phone: '', nudgeEmail: true, nudgeWhatsapp: false });
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
       router.push('/login?next=/profil');
       return;
     }
-    if (user) fetchStats();
+    if (user) {
+      fetchStats();
+      fetchProfileData();
+    }
   }, [user, loading]);
+
+  const fetchProfileData = async () => {
+    if (!user?.uid) return;
+    try {
+      const { doc, getDoc } = await import('firebase/firestore');
+      const userRef = doc(db, 'users', user.uid);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        const data = userSnap.data();
+        setProfileData({
+          phone: data.phone || '',
+          nudgeEmail: data.nudgePreferences?.email ?? true,
+          nudgeWhatsapp: data.nudgePreferences?.whatsapp ?? false,
+        });
+      }
+    } catch (e) {
+      console.error('Gagal memuat profil user:', e);
+    }
+  };
+
+  const handleSaveProfile = async () => {
+    if (!user?.uid) return;
+    setIsSavingProfile(true);
+    try {
+      const { doc, setDoc } = await import('firebase/firestore');
+      const userRef = doc(db, 'users', user.uid);
+      await setDoc(userRef, {
+        phone: profileData.phone,
+        nudgePreferences: {
+          email: profileData.nudgeEmail,
+          whatsapp: profileData.nudgeWhatsapp,
+        }
+      }, { merge: true });
+      toast.success('Pengaturan profil berhasil disimpan');
+    } catch (e) {
+      console.error('Gagal menyimpan profil user:', e);
+      toast.error('Gagal menyimpan pengaturan');
+    } finally {
+      setIsSavingProfile(false);
+    }
+  };
 
   const fetchStats = useCallback(async () => {
     if (!user?.uid) return;
@@ -346,27 +391,69 @@ export default function ProfilPage() {
               initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -15 }}
               className="space-y-6"
             >
-              {/* NOTIFIKASI */}
+              {/* PENGATURAN KONTAK & NOTIFIKASI */}
               <ContentCard>
                 <h3 className="text-sm font-black text-slate-900 mb-6 flex items-center gap-2">
-                  <Bell size={18} className="text-indigo-600" /> Preferensi Notifikasi
+                  <Bell size={18} className="text-indigo-600" /> Preferensi Kontak & Nudge (Follow-Up)
                 </h3>
-                <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
-                  <div>
-                    <p className="text-sm font-bold text-slate-900">Weekly Action Plan Nudge</p>
-                    <p className="text-xs text-slate-500 mt-1">
-                      Email motivasi setiap Senin pagi untuk menjaga ritme Anda.
+                
+                <div className="space-y-4">
+                  {/* Nomor WhatsApp */}
+                  <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                    <label className="block text-sm font-bold text-slate-900 mb-1">Nomor WhatsApp</label>
+                    <p className="text-xs text-slate-500 mb-3">
+                      Digunakan untuk mengirimkan pesan follow-up otomatis berbasis AI mengenai progress *Action Plan* Anda.
                     </p>
+                    <input 
+                      type="tel" 
+                      placeholder="Contoh: 081234567890" 
+                      value={profileData.phone}
+                      onChange={(e) => setProfileData(prev => ({ ...prev, phone: e.target.value }))}
+                      className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium text-slate-700 text-sm"
+                    />
                   </div>
-                  <button
-                    onClick={() => {
-                      setNudgeEnabled(!nudgeEnabled);
-                      toast.success(nudgeEnabled ? 'Notifikasi dinonaktifkan' : 'Notifikasi diaktifkan');
-                    }}
-                    className={`w-14 h-8 rounded-full transition-colors relative shadow-inner ${nudgeEnabled ? 'bg-indigo-600' : 'bg-slate-200'}`}
-                  >
-                    <div className={`w-6 h-6 bg-white rounded-full shadow-md absolute top-1 transition-transform ${nudgeEnabled ? 'translate-x-7' : 'translate-x-1'}`} />
-                  </button>
+
+                  {/* Nudge Email */}
+                  <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div>
+                      <p className="text-sm font-bold text-slate-900">Weekly Action Plan (Email)</p>
+                      <p className="text-xs text-slate-500 mt-1">
+                        Kirim ringkasan mingguan ke email terdaftar Anda.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setProfileData(prev => ({ ...prev, nudgeEmail: !prev.nudgeEmail }))}
+                      className={`w-14 h-8 rounded-full transition-colors relative shadow-inner ${profileData.nudgeEmail ? 'bg-indigo-600' : 'bg-slate-200'}`}
+                    >
+                      <div className={`w-6 h-6 bg-white rounded-full shadow-md absolute top-1 transition-transform ${profileData.nudgeEmail ? 'translate-x-7' : 'translate-x-1'}`} />
+                    </button>
+                  </div>
+
+                  {/* Nudge WhatsApp */}
+                  <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div>
+                      <p className="text-sm font-bold text-slate-900">Weekly Action Plan (WhatsApp)</p>
+                      <p className="text-xs text-slate-500 mt-1">
+                        Terima pesan WhatsApp dari AI Coach kami setiap awal pekan.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setProfileData(prev => ({ ...prev, nudgeWhatsapp: !prev.nudgeWhatsapp }))}
+                      className={`w-14 h-8 rounded-full transition-colors relative shadow-inner ${profileData.nudgeWhatsapp ? 'bg-indigo-600' : 'bg-slate-200'}`}
+                    >
+                      <div className={`w-6 h-6 bg-white rounded-full shadow-md absolute top-1 transition-transform ${profileData.nudgeWhatsapp ? 'translate-x-7' : 'translate-x-1'}`} />
+                    </button>
+                  </div>
+
+                  <div className="pt-2">
+                    <button 
+                      onClick={handleSaveProfile}
+                      disabled={isSavingProfile}
+                      className="px-6 h-11 bg-slate-900 hover:bg-indigo-600 text-white font-bold text-sm rounded-xl transition-all shadow-md shadow-slate-900/10 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[140px]"
+                    >
+                      {isSavingProfile ? 'Menyimpan...' : 'Simpan Pengaturan'}
+                    </button>
+                  </div>
                 </div>
               </ContentCard>
 
