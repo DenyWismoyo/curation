@@ -75,6 +75,14 @@ const parseExpectedOutput = (blockStr: string) => {
 export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelectorProps) {
   const router = useRouter();
   const [selectedTrack, setSelectedTrack] = useState<FormTemplate | null>(null);
+  const [activeCorporateName, setActiveCorporateName] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    const corpName = sessionStorage.getItem('active_corporate_name');
+    if (corpName) {
+      setActiveCorporateName(corpName);
+    }
+  }, []);
 
   const activeTemplates = templates.filter(t => t.isActive);
 
@@ -113,14 +121,21 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
     <div className="min-h-screen bg-slate-50/50 py-8 px-6 lg:py-12 flex flex-col items-center">
       <div className="max-w-[1200px] w-full space-y-8">
         
-        {/* ================= HEADER KEMBALI ================= */}
-        <div className="animate-in fade-in slide-in-from-top-4 duration-500 ease-out relative z-20">
+        {/* ================= HEADER KEMBALI & WHITE-LABELING ================= */}
+        <div className="animate-in fade-in slide-in-from-top-4 duration-500 ease-out relative z-20 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <button 
             onClick={handleBack} 
             className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-indigo-600 transition-all w-fit px-4 py-2.5 -ml-4 rounded-xl hover:bg-white hover:shadow-sm ring-1 ring-transparent hover:ring-slate-200 active:scale-95"
           >
             <ChevronLeft className="h-4 w-4" /> Kembali
           </button>
+          
+          {activeCorporateName && activeCorporateName !== 'Omnifit' && (
+            <div className="flex items-center gap-2 bg-indigo-50 px-4 py-2 rounded-full ring-1 ring-indigo-200">
+              <GlobalTargetIcon size={16} className="text-indigo-600" />
+              <span className="text-sm font-black text-indigo-900 tracking-tight">Program: {activeCorporateName}</span>
+            </div>
+          )}
         </div>
 
         {/* ================= GRID SECTION ================= */}

@@ -25,11 +25,11 @@ function InteractiveDashboardLoading({ formData, trackName, assessmentId }: { fo
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
   const agentSteps = [
-    { key: 'ANALYZING_MASTER', name: 'Master Gateway Agent', desc: 'Menganalisis profil & sintesis Executive Summary' },
-    { key: 'ANALYZING_METRICS', name: 'Triangulator Agent', desc: 'Memvalidasi integritas data & pemetaan metrik' },
-    { key: 'PLANNING_ACTION', name: 'Domain Experts Agent', desc: 'Evaluasi pilar spesifik & forensik dokumen' },
-    { key: 'GENERATING_ASSETS', name: 'Tactical Planner Agent', desc: 'Merumuskan Rencana Aksi (Action Plan) taktis' },
-    { key: 'COMPLETED', name: 'Post-Processing Agent', desc: 'Finalisasi laporan PDF & pengindeksan data' }
+    { key: 'ANALYZING_METRICS', name: 'Domain Experts Agent', desc: 'Evaluasi pilar spesifik & bedah formulir' },
+    { key: 'ANALYZING_MASTER', name: 'Triangulator Agent', desc: 'Menganalisis profil & sintesis skor Master' },
+    { key: 'PLANNING_ACTION', name: 'Tactical Planner Agent', desc: 'Merumuskan Rencana Aksi (Action Plan) taktis' },
+    { key: 'GENERATING_ASSETS', name: 'Synthesis Agent', desc: 'Menyusun laporan khusus & visualisasi' },
+    { key: 'COMPLETED', name: 'Post-Processing Agent', desc: 'Finalisasi PDF & pengindeksan data' }
   ];
 
   // Timer elapsed
@@ -59,21 +59,21 @@ function InteractiveDashboardLoading({ formData, trackName, assessmentId }: { fo
         }
 
         switch (status) {
-          case 'ANALYZING_MASTER':
-            setCurrentStepIndex(0);
-            setLoadingText('Gateway Agent: Menganalisis profil dan menyintesis Executive Summary...');
-            break;
           case 'ANALYZING_METRICS':
+            setCurrentStepIndex(0);
+            setLoadingText('Domain Experts Agent: Membedah argumen & mengekstrak metrik kinerja...');
+            break;
+          case 'ANALYZING_MASTER':
             setCurrentStepIndex(1);
-            setLoadingText('Triangulator Agent: Memvalidasi integritas data & memecah metrik kinerja...');
+            setLoadingText('Triangulator Agent: Memvalidasi integritas data & menyintesis Executive Summary...');
             break;
           case 'PLANNING_ACTION':
             setCurrentStepIndex(2);
-            setLoadingText('Domain Expert Agent: Merumuskan Rencana Aksi (Action Plan) Taktis...');
+            setLoadingText('Tactical Planner Agent: Merumuskan Rencana Aksi (Action Plan) Taktis...');
             break;
           case 'GENERATING_ASSETS':
             setCurrentStepIndex(3);
-            setLoadingText('Post-Processing Agent: Membangun visualisasi Radar & Finalisasi Aset...');
+            setLoadingText('Synthesis Agent: Menyusun Custom Blocks & memproses visualisasi...');
             break;
           case 'COMPLETED':
             setCurrentStepIndex(4);

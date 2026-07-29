@@ -146,6 +146,14 @@ export function UniversalAssessmentView({
   const isInternal = mode === 'curator' || mode === 'admin';
   const isEditing = curatorData?.isEditing || false;
   
+  const [activeCorporateName, setActiveCorporateName] = useState<string | null>(null);
+  useEffect(() => {
+    const corpName = sessionStorage.getItem('active_corporate_name');
+    if (corpName) {
+      setActiveCorporateName(corpName);
+    }
+  }, []);
+
   const aiScore = aiResult?.totalScore || 0;
   const finalScore = isInternal ? (curatorData?.curatorScore || 0) : aiScore;
   const isHighTier = finalScore >= 75;
@@ -308,7 +316,7 @@ export function UniversalAssessmentView({
         <div className="flex-1 flex flex-col gap-6">
           <div>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight text-balance mb-3">
-              {isPublic ? 'Laporan Narasi Analitik AI' : 'Workspace Penilai Internal'}
+              {isPublic ? (activeCorporateName && activeCorporateName !== 'Omnifit' ? `Hasil Asesmen Program ${activeCorporateName}` : 'Laporan Narasi Analitik AI') : 'Workspace Penilai Internal'}
             </h1>
             <div className="flex flex-wrap items-center gap-2">
               <p className="text-indigo-600 font-bold text-base sm:text-lg bg-indigo-50 px-3 py-1.5 rounded-lg ring-1 ring-indigo-100">
@@ -617,6 +625,37 @@ export function UniversalAssessmentView({
               )}
             </div>
           )}
+        </div>
+      )}
+
+      {/* DISEMBUNYIKAN DARI PUBLIK: ARGUMEN JAWABAN AI (FIELD ARGUMENTS) */}
+      {isInternal && aiResult?.fieldArguments && aiResult.fieldArguments.length > 0 && (
+        <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-3xl ring-1 ring-slate-200 shadow-sm w-full">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0">
+              <BrainIcon size={20} />
+            </div>
+            <div>
+              <h3 className="font-black text-slate-900 text-xl tracking-tight">Argumen Jawaban AI (Bedah Formulir)</h3>
+              <p className="text-sm text-slate-500 font-medium">Analisis mendetail untuk setiap poin data yang diisikan</p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {aiResult.fieldArguments.map((item: any, idx: number) => (
+              <div key={idx} className="bg-slate-50 p-4 rounded-2xl ring-1 ring-slate-100 flex flex-col hover:shadow-md transition-shadow">
+                <div className="flex justify-between items-start mb-2 gap-3">
+                  <h4 className="text-xs font-black text-slate-900 leading-tight flex-1">{item?.label}</h4>
+                  <div className="bg-white ring-1 ring-slate-200 px-2 py-1 rounded-md shrink-0">
+                    <span className={`text-sm font-black ${item?.score >= 80 ? 'text-emerald-600' : item?.score >= 60 ? 'text-amber-500' : 'text-rose-500'}`}>{item?.score}</span>
+                  </div>
+                </div>
+                <div className="text-[11px] text-slate-600 font-medium flex-1 leading-relaxed border-t border-slate-200/60 pt-2 mt-1">
+                  <TextToBullets text={item?.description} colorClass="text-indigo-400" />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 

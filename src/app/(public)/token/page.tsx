@@ -70,6 +70,8 @@ export default function TokenPage() {
       sessionStorage.setItem('active_token', cleanToken);
       localStorage.setItem('omnifit_last_token', cleanToken);
       sessionStorage.setItem('active_model', batchData.modelType);
+      sessionStorage.setItem('active_corporate_name', batchData.corporateName || 'Omnifit');
+      sessionStorage.setItem('active_corporate_id', docSnap.id);
       
       const allowedTpls = tokenData.allowedTemplates || batchData.allowedTemplates;
       if (allowedTpls && Array.isArray(allowedTpls) && allowedTpls.length > 0) {

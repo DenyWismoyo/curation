@@ -61,6 +61,8 @@ interface CorporateBatch {
   totalTokens: number
   usedCount: number
   createdAt: string
+  organizationId?: string
+  programName?: string
   allowedTemplates?: string[]
   allowedDocumentTemplates?: string[]
   tokens: Record<string, { isUsed: boolean; usedAt: string | null; usedByNamaUsaha: string | null }>
@@ -79,6 +81,11 @@ interface FormTemplateLight {
   isActive: boolean
 }
 
+interface B2BOrganizationLight {
+  id: string
+  displayName: string
+}
+
 export default function TokenManagerPage() {
   const [activeTab, setActiveTab] = useState<'peserta' | 'kurator'>('peserta')
   const [loading, setLoading] = useState(true)
@@ -95,8 +102,10 @@ export default function TokenManagerPage() {
 
   const [batches, setBatches] = useState<CorporateBatch[]>([])
   const [qty, setQty] = useState(50)
-  const [corporateName, setCorporateName] = useState('')
-  const [corpId, setCorpId] = useState('')
+  
+  const [organizations, setOrganizations] = useState<B2BOrganizationLight[]>([])
+  const [selectedOrganizationId, setSelectedOrganizationId] = useState('')
+  const [programName, setProgramName] = useState('')
   const [modelType, setModelType] = useState<'flash' | 'pro'>('flash')
 
   const [curatorTokens, setCuratorTokens] = useState<CuratorToken[]>([])
@@ -129,6 +138,16 @@ export default function TokenManagerPage() {
         .filter((t) => t.isActive)
       setAvailableTemplates(dataTemplates)
 
+      const qOrgs = query(collection(db, 'b2b_organizations'))
+      const snapOrgs = await getDocs(qOrgs)
+      const dataOrgs = snapOrgs.docs.map((d) => ({ 
+        id: d.id, 
+        displayName: d.data().displayName || d.data().name || d.id 
+      } as B2BOrganizationLight))
+      // Sort alphabetically by displayName
+      dataOrgs.sort((a, b) => a.displayName.localeCompare(b.displayName))
+      setOrganizations(dataOrgs)
+
       const qBatch = query(collection(db, 'corporate_tokens'), orderBy('createdAt', 'desc'))
       const snapBatch = await getDocs(qBatch)
       const dataBatch = snapBatch.docs.map((d) => ({ id: d.id, ...d.data() } as CorporateBatch))
@@ -153,11 +172,16 @@ export default function TokenManagerPage() {
   const uniquePrograms = Array.from(new Set(batches.map((b) => b.corporateName)))
 
   const generateCorporateBatch = async () => {
-    const cleanCorpId = corpId.trim().toUpperCase().replace(/[^A-Z0-9]/g, '')
-    if (!cleanCorpId || cleanCorpId.length < 3)
-      return toast.warning('ID Korporat (Prefix) minimal 3 karakter huruf/angka.')
+    if (!selectedOrganizationId) return toast.warning('Pilih Organisasi B2B terlebih dahulu.')
+    if (!programName) return toast.warning('Nama Program wajib diisi.')
     if (qty < 1 || qty > 5000) return toast.warning('Jumlah token maksimal 5000 per batch.')
-    if (!corporateName) return toast.warning('Nama korporat wajib diisi.')
+
+    const org = organizations.find((o) => o.id === selectedOrganizationId)
+    const orgPrefix = org ? org.displayName.replace(/[^a-zA-Z0-9]/g, '').substring(0, 3).toUpperCase() : 'B2B'
+    const randomSuffix = Math.random().toString(36).substring(2, 6).toUpperCase()
+    const generatedCorpId = `${orgPrefix}${randomSuffix}`
+    
+    const combinedCorporateName = org ? `${org.displayName} - ${programName}` : programName
 
     setIsGenerating(true)
     try {
@@ -168,7 +192,9 @@ export default function TokenManagerPage() {
       }
 
       const batchData = {
-        corporateName,
+        organizationId: selectedOrganizationId,
+        programName,
+        corporateName: combinedCorporateName,
         modelType,
         totalTokens: qty,
         usedCount: 0,
@@ -178,12 +204,12 @@ export default function TokenManagerPage() {
         tokens: newTokens,
       }
 
-      await setDoc(doc(db, 'corporate_tokens', cleanCorpId), batchData)
-      setBatches([{ id: cleanCorpId, ...batchData } as CorporateBatch, ...batches])
-      toast.success(`Berhasil! Batch untuk ${corporateName} dibuat.`)
+      await setDoc(doc(db, 'corporate_tokens', generatedCorpId), batchData)
+      setBatches([{ id: generatedCorpId, ...batchData } as CorporateBatch, ...batches])
+      toast.success(`Berhasil! Batch untuk ${combinedCorporateName} dibuat.`)
 
-      setCorporateName('')
-      setCorpId('')
+      setProgramName('')
+      setSelectedOrganizationId('')
       setSelectedTemplates([])
       setSelectedDocTemplates([])
     } catch (e) {
@@ -406,25 +432,30 @@ export default function TokenManagerPage() {
             <div className="flex flex-col md:flex-row items-end gap-5">
               <div className="space-y-2 flex-1 w-full">
                 <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest">
-                  Nama Entitas/Program
+                  Pilih Tenant / Organisasi B2B
                 </label>
-                <Input
-                  value={corporateName}
-                  onChange={(e) => setCorporateName(e.target.value)}
-                  placeholder="Contoh: KemenkopUKM Batch 1"
-                  className="h-12 rounded-xl bg-slate-50/80 font-bold"
-                />
+                <select
+                  value={selectedOrganizationId}
+                  onChange={(e) => setSelectedOrganizationId(e.target.value)}
+                  className="w-full h-12 rounded-xl bg-slate-50/80 font-bold px-3 border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none"
+                >
+                  <option value="" disabled>-- Pilih Organisasi --</option>
+                  {organizations.map((org) => (
+                    <option key={org.id} value={org.id}>
+                      {org.displayName}
+                    </option>
+                  ))}
+                </select>
               </div>
-              <div className="space-y-2 w-full md:w-40">
+              <div className="space-y-2 w-full md:w-64">
                 <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest">
-                  ID Prefix (Unik)
+                  Nama Program / Batch
                 </label>
                 <Input
-                  value={corpId}
-                  onChange={(e) => setCorpId(e.target.value)}
-                  maxLength={10}
-                  placeholder="KUKM1"
-                  className="h-12 rounded-xl bg-slate-50/80 uppercase font-mono font-bold"
+                  value={programName}
+                  onChange={(e) => setProgramName(e.target.value)}
+                  placeholder="Contoh: Batch 1"
+                  className="h-12 rounded-xl bg-slate-50/80 font-bold"
                 />
               </div>
               <div className="space-y-2 w-full md:w-32">

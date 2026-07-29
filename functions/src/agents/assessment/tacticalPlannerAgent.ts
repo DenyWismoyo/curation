@@ -76,7 +76,7 @@ export const assessmentTacticalPlannerAgent = onDocumentUpdated({
     await docRef.update({
       "aiResult.recommendations": finalRecommendations.recommendations || [],
       "aiResult.nextActionSteps": finalRecommendations.nextActionSteps || [],
-      status: "GENERATING_ASSETS"
+      status: "ASSEMBLING_REPORT"
     });
 
   } catch (error: any) {

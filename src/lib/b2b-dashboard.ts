@@ -1,4 +1,5 @@
 export interface DashboardAnalyticsSummary {
+  executiveSummary?: string;
   performanceScore?: number;
   performanceBand?: string;
   version?: string;
@@ -27,7 +28,7 @@ export interface DashboardAssessmentRecord {
   readinessLevel?: string;
   formData?: Record<string, unknown>;
   analyticsSummary?: DashboardAnalyticsSummary;
-  aiResult?: { risks?: string[] };
+  aiResult?: any;
   curatorAssessment?: DashboardCuratorAssessment;
 }
 

@@ -1,4 +1,4 @@
-import { onDocumentUpdated } from "firebase-functions/v2/firestore";
+import { onDocumentWritten } from "firebase-functions/v2/firestore";
 import { defineSecret } from "firebase-functions/params";
 import * as admin from "firebase-admin";
 import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
@@ -15,7 +15,7 @@ const withRetry = async <T>(fn: () => Promise<T>, retries = 4, delayMs = 3000): 
   }
 };
 
-export const assessmentDomainExpertsAgent = onDocumentUpdated({
+export const assessmentDomainExpertsAgent = onDocumentWritten({
   database: "curation", // PERBAIKAN: Menunjuk database curation
   document: "assessments/{assessmentId}", // PERBAIKAN: Hapus "curation/" di depan
   region: "asia-southeast2",
@@ -46,14 +46,26 @@ export const assessmentDomainExpertsAgent = onDocumentUpdated({
   const dataString = JSON.stringify(afterData.formData || {});
 
   try {
-    // 1. Worker A (Analysis Blocks)
-    const schemaA = { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, required: ["title", "iconType", "metrics"], properties: { title: { type: SchemaType.STRING }, iconType: { type: SchemaType.STRING }, metrics: { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, required: ["label", "value"], properties: { label: { type: SchemaType.STRING }, value: { type: SchemaType.STRING } } } } } } };
-    const promptA = `JABARKAN narasi analitis untuk kerangka blok ini: ${JSON.stringify(aiPromptConfig.expectedAnalysisBlocks)}. Data: ${dataString}. Selaraskan dengan temuan SWOT: ${JSON.stringify(aiResult.swotAnalysis)}. Konteks: ${audienceContext}`;
+    // 1. Worker A (Analysis Blocks) - Dipindahkan ke Synthesis Agent
     
-    // 2. Worker B (Metrics)
+    // 2. Worker B (Radar Metrics)
     const schemaB = { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, required: ["label", "score", "description"], properties: { label: { type: SchemaType.STRING }, score: { type: SchemaType.INTEGER }, description: { type: SchemaType.STRING } } } };
-    const promptB = `Berikan justifikasi evaluasi naratif dan skor (0-100) untuk daftar metrik ini: ${JSON.stringify(aiPromptConfig.expectedMetrics)}. Data: ${dataString}. Skor Akhir Master adalah ${aiResult.totalScore}/100. Pastikan proporsional.`;
+    const promptB = `TUGAS ANDA:
+1. Anda HANYA BOLEH menghasilkan persis ${aiPromptConfig.expectedMetrics?.length || 6} metrik.
+2. Daftar metrik yang WAJIB Anda hasilkan adalah: ${JSON.stringify(aiPromptConfig.expectedMetrics)}. DILARANG KERAS menambah atau mengurangi metrik dari daftar ini!
+3. Berikan justifikasi evaluasi naratif dan skor (0-100) HANYA untuk metrik-metrik tersebut berdasarkan Data berikut.
 
+Data Subjek: ${dataString}.`;
+
+    // 3. Worker C (Field Arguments / Analisis Detil)
+    const schemaC = { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, required: ["label", "score", "description"], properties: { label: { type: SchemaType.STRING }, score: { type: SchemaType.INTEGER }, description: { type: SchemaType.STRING } } } };
+    const promptC = `TUGAS ANDA:
+Lakukan evaluasi mendalam pada SETIAP poin data/jawaban yang ada di form berikut. Untuk setiap poin data, buatkan satu entri yang berisi:
+- label: (Nama atau pertanyaan dari poin data tersebut, misal 'D39. Manajemen Pengetahuan')
+- score: (Nilai 0-100 untuk poin ini)
+- description: (Analisis/argumen tajam AI tentang poin ini)
+
+Data Subjek: ${dataString}.`;
     // 3. Worker D (File Forensics)
     let finalFiles = null;
     if (geminiFiles.length > 0) {
@@ -68,22 +80,22 @@ export const assessmentDomainExpertsAgent = onDocumentUpdated({
       });
     }
 
-    const [blocksResult, metricsResult] = await Promise.all([
+    const [metricsResult, fieldArgsResult] = await Promise.all([
       withRetry(async () => {
-        const res = await getWorkerModel(schemaA).generateContent(promptA);
+        const res = await getWorkerModel(schemaB).generateContent(promptB);
         return JSON.parse(res.response.text().replace(/^```(json)?/gi, '').replace(/```$/g, '').trim());
       }),
       withRetry(async () => {
-        const res = await getWorkerModel(schemaB).generateContent(promptB);
+        const res = await getWorkerModel(schemaC).generateContent(promptC);
         return JSON.parse(res.response.text().replace(/^```(json)?/gi, '').replace(/```$/g, '').trim());
       })
     ]);
 
     await docRef.update({
-      "aiResult.customAnalysisBlocks": blocksResult,
       "aiResult.metrics": metricsResult,
+      "aiResult.fieldArguments": fieldArgsResult,
       "aiResult.fileAnalysisInsights": finalFiles,
-      status: "PLANNING_ACTION"
+      status: "ANALYZING_MASTER"
     });
 
   } catch (error: any) {

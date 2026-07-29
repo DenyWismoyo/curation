@@ -110,7 +110,12 @@ export const assessmentTriangulatorAgent = onDocumentWritten({
       }
     }
     
-    const dataString = Object.entries(textData).map(([k, v]) => `- [Data ${k}]: ${Array.isArray(v) ? v.join(", ") : v}`).join("\n");
+    const aiResult = afterData.aiResult || {};
+    const expertMetrics = aiResult.metrics ? `\n\n[LAPORAN DOMAIN EXPERTS - SKOR PILAR (0-100)]:\n${JSON.stringify(aiResult.metrics)}` : "";
+    const expertArgs = aiResult.fieldArguments ? `\n\n[LAPORAN DOMAIN EXPERTS - BEDAH ARGUMEN Tiap Field]:\n${JSON.stringify(aiResult.fieldArguments)}` : "";
+    const expertFiles = aiResult.fileAnalysisInsights ? `\n\n[LAPORAN DOMAIN EXPERTS - ANALISIS DOKUMEN]:\n${JSON.stringify(aiResult.fileAnalysisInsights)}` : "";
+
+    const dataString = Object.entries(textData).map(([k, v]) => `- [Data ${k}]: ${Array.isArray(v) ? v.join(", ") : v}`).join("\n") + expertMetrics + expertArgs + expertFiles;
     const targetAudience = aiPromptConfig.targetAudience || 'company';
     
     const mainPromptText = buildAssessmentPrompt({
@@ -200,11 +205,11 @@ export const assessmentTriangulatorAgent = onDocumentWritten({
     };
 
     await docRef.update({
-      aiResult: { ...publicAiResult, ...internalAiResult },
+      aiResult: { ...aiResult, ...publicAiResult, ...internalAiResult },
       score: publicAiResult.totalScore,
       readinessLevel: publicAiResult.readinessLevel,
       geminiFiles: uploadedGeminiFiles,
-      status: "ANALYZING_METRICS",
+      status: "PLANNING_ACTION",
       updatedAt: admin.firestore.FieldValue.serverTimestamp()
     });
 

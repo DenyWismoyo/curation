@@ -95,7 +95,7 @@ export const processCurationAssessment = onCall({
         hasPaidForDocument: false,
         cacheKey: cacheKey || null,
         isCacheHit: isCacheHit,
-        status: isCacheHit ? "COMPLETED" : "ANALYZING_MASTER",
+        status: isCacheHit ? "COMPLETED" : "ANALYZING_METRICS",
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
       };
 
@@ -111,7 +111,7 @@ export const processCurationAssessment = onCall({
 
     return { 
       assessmentId, 
-      status: cachedResult ? "COMPLETED" : "ANALYZING_MASTER",
+      status: cachedResult ? "COMPLETED" : "ANALYZING_METRICS",
       isCacheHit: !!cachedResult
     };
   } catch (error: any) {

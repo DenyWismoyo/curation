@@ -12,7 +12,7 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import { AlertTriangle, CheckCircle2, Clock3, Plus, ShieldCheck, Target, Users2 } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, Clock3, Plus, ShieldCheck, Target, Users2, Search, BarChart3 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { db } from '@/lib/firebase';
 import {
@@ -23,6 +23,10 @@ import {
   normalizeFirestoreDate,
   SegmentDimension,
 } from '@/lib/b2b-dashboard';
+import { B2BInteractionModule } from './B2BInteractionModule';
+import { B2BBrandingEditor } from './B2BBrandingEditor';
+import { B2BParticipantProfile } from './B2BParticipantProfile';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, CartesianGrid, Cell } from 'recharts';
 
 type PersonaView = 'executive' | 'hr' | 'leader';
 type ActionStatus = 'open' | 'in_progress' | 'closed';
@@ -78,6 +82,9 @@ function parseRecord(id: string, data: Record<string, unknown>): DashboardAssess
     curatorAssessment: (typeof data.curatorAssessment === 'object' && data.curatorAssessment && !Array.isArray(data.curatorAssessment))
       ? (data.curatorAssessment as DashboardAssessmentRecord['curatorAssessment'])
       : undefined,
+    aiResult: (typeof data.aiResult === 'object' && data.aiResult && !Array.isArray(data.aiResult))
+      ? (data.aiResult as any)
+      : undefined,
   } satisfies DashboardAssessmentRecord;
 }
 
@@ -95,6 +102,9 @@ export function TenantSelfServiceDashboard({ persona }: { persona: PersonaView }
   const [savingEvidenceById, setSavingEvidenceById] = useState<Record<string, boolean>>({});
   const [allowedPersonas, setAllowedPersonas] = useState<PersonaView[]>([]);
   const auditLogKeyRef = useRef<string>('');
+  
+  const [activeTab, setActiveTab] = useState<'overview' | 'intake' | 'actions' | 'branding'>('overview');
+  const [selectedParticipant, setSelectedParticipant] = useState<DashboardAssessmentRecord | null>(null);
 
   useEffect(() => {
     if (authLoading) {
@@ -125,8 +135,16 @@ export function TenantSelfServiceDashboard({ persona }: { persona: PersonaView }
       try {
         const userDocByUid = await getDoc(doc(db, 'users', user.uid)).catch(() => null);
         const userDocByEmail = user.email ? await getDoc(doc(db, 'users', user.email)).catch(() => null) : null;
-        const profile = userDocByUid?.data() || userDocByEmail?.data() || {};
-        const scopedPersonas = toStringArray(profile.b2bPersonas)
+        const uidData = userDocByUid?.data() || {};
+        const emailData = userDocByEmail?.data() || {};
+        
+        const mergedB2bPersonas = uidData.b2bPersonas || emailData.b2bPersonas;
+        const mergedAllowedOrgs = uidData.allowedOrganizations || emailData.allowedOrganizations;
+        const mergedOrgScopes = uidData.organizationScopes || emailData.organizationScopes;
+        const mergedAccessibleOrgs = uidData.accessibleOrganizations || emailData.accessibleOrganizations;
+
+        const scopedPersonas = toStringArray(mergedB2bPersonas)
+          .map(entry => entry.toLowerCase())
           .filter((entry): entry is PersonaView => entry === 'executive' || entry === 'hr' || entry === 'leader');
         const effectivePersonas: PersonaView[] = scopedPersonas.length > 0 ? scopedPersonas : ['leader'];
         setAllowedPersonas(effectivePersonas);
@@ -138,9 +156,9 @@ export function TenantSelfServiceDashboard({ persona }: { persona: PersonaView }
         }
 
         const scopedOrganizations = [
-          ...normalizeScopeArray(profile.allowedOrganizations),
-          ...normalizeScopeArray(profile.organizationScopes),
-          ...normalizeScopeArray(profile.accessibleOrganizations),
+          ...normalizeScopeArray(mergedAllowedOrgs),
+          ...normalizeScopeArray(mergedOrgScopes),
+          ...normalizeScopeArray(mergedAccessibleOrgs),
         ];
 
         if (role === 'assessor') {
@@ -406,7 +424,7 @@ export function TenantSelfServiceDashboard({ persona }: { persona: PersonaView }
         <p className="text-xs text-blue-100/90 mt-2">Persona diizinkan: {allowedPersonas.length > 0 ? allowedPersonas.join(', ') : 'leader'}</p>
 
         <div className="mt-4 max-w-sm">
-          <label className="block text-xs uppercase tracking-[0.2em] text-blue-100 font-black">Organization</label>
+          <label className="block text-xs uppercase tracking-[0.2em] text-blue-100 font-black">Organization / Campaign</label>
           <select
             value={selectedOrganization}
             onChange={(event) => setSelectedOrganization(event.target.value)}
@@ -424,142 +442,307 @@ export function TenantSelfServiceDashboard({ persona }: { persona: PersonaView }
         <div className="rounded-xl bg-amber-50 ring-1 ring-amber-200 p-3 text-sm text-amber-900">{error}</div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        <div className="rounded-2xl bg-white p-4 ring-1 ring-slate-200">
-          <p className="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-black">Participants</p>
-          <p className="text-3xl font-black text-slate-900 mt-2">{snapshot.totalParticipants}</p>
-        </div>
-        <div className="rounded-2xl bg-white p-4 ring-1 ring-slate-200">
-          <p className="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-black">Validated Coverage</p>
-          <p className="text-3xl font-black text-slate-900 mt-2">{formatPercent(snapshot.totalParticipants > 0 ? (snapshot.validatedCount / snapshot.totalParticipants) * 100 : 0)}</p>
-        </div>
-        <div className="rounded-2xl bg-white p-4 ring-1 ring-slate-200">
-          <p className="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-black">Low Readiness Signals</p>
-          <p className="text-3xl font-black text-slate-900 mt-2">{snapshot.segmentSummaries.filter((item) => item.priority === 'High').length}</p>
-        </div>
-        {showScore && (
-          <div className="rounded-2xl bg-white p-4 ring-1 ring-slate-200">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-black">Average Score</p>
-            <p className="text-3xl font-black text-slate-900 mt-2">{formatScore(snapshot.avgScore)}</p>
-          </div>
+      {/* Tabs */}
+      <div className="flex gap-2 border-b border-slate-200">
+        <button
+          onClick={() => { setActiveTab('overview'); setSelectedParticipant(null); }}
+          className={`px-4 py-2 text-sm font-bold border-b-2 transition-colors ${activeTab === 'overview' ? 'border-slate-900 text-slate-900' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+        >
+          Overview & Analytics
+        </button>
+        <button
+          onClick={() => setActiveTab('intake')}
+          className={`px-4 py-2 text-sm font-bold border-b-2 transition-colors ${activeTab === 'intake' ? 'border-slate-900 text-slate-900' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+        >
+          Pipeline / Intake
+        </button>
+        <button
+          onClick={() => { setActiveTab('actions'); setSelectedParticipant(null); }}
+          className={`px-4 py-2 text-sm font-bold border-b-2 transition-colors ${activeTab === 'actions' ? 'border-slate-900 text-slate-900' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+        >
+          Action Tracker
+        </button>
+        {(persona === 'executive' || persona === 'hr') && (
+          <button
+            onClick={() => { setActiveTab('branding'); setSelectedParticipant(null); }}
+            className={`px-4 py-2 text-sm font-bold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'branding' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+          >
+            Branding & Landing Page
+          </button>
         )}
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
-        <div className="rounded-2xl bg-white ring-1 ring-slate-200 p-5">
-          <h2 className="text-sm font-black uppercase tracking-[0.2em] text-slate-500">Top Tactical Recommendations</h2>
-          <div className="mt-4 space-y-3">
-            {snapshot.tacticalRecommendations.slice(0, 4).map((recommendation) => (
-              <div key={recommendation.segment} className="rounded-xl bg-slate-50 p-4 ring-1 ring-slate-100">
-                <div className="flex items-center justify-between gap-2">
-                  <p className="font-black text-slate-900">{recommendation.segment}</p>
-                  <span className="text-[10px] font-black uppercase tracking-[0.18em] text-indigo-700 bg-indigo-50 px-2 py-1 rounded-full ring-1 ring-indigo-200">{recommendation.priority}</span>
-                </div>
-                <p className="text-sm text-slate-600 mt-2">{recommendation.rationale}</p>
+      {activeTab === 'overview' && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+            <div className="rounded-2xl bg-white p-5 ring-1 ring-slate-200 shadow-sm flex flex-col">
+              <div className="flex justify-between items-start mb-2">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-black">Participants</p>
+                <Users2 className="w-4 h-4 text-indigo-500" />
               </div>
-            ))}
-            {snapshot.tacticalRecommendations.length === 0 && (
-              <div className="text-sm text-slate-500">Belum ada rekomendasi taktis.</div>
+              <p className="text-4xl font-black text-slate-900 mt-auto">{snapshot.totalParticipants}</p>
+            </div>
+            <div className="rounded-2xl bg-white p-5 ring-1 ring-slate-200 shadow-sm flex flex-col">
+              <div className="flex justify-between items-start mb-2">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-black">Validated Coverage</p>
+                <ShieldCheck className="w-4 h-4 text-emerald-500" />
+              </div>
+              <p className="text-4xl font-black text-slate-900 mt-auto">{formatPercent(snapshot.totalParticipants > 0 ? (snapshot.validatedCount / snapshot.totalParticipants) * 100 : 0)}</p>
+            </div>
+            <div className="rounded-2xl bg-white p-5 ring-1 ring-slate-200 shadow-sm flex flex-col">
+              <div className="flex justify-between items-start mb-2">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-black">Risk Signals</p>
+                <AlertTriangle className="w-4 h-4 text-rose-500" />
+              </div>
+              <p className="text-4xl font-black text-slate-900 mt-auto">{snapshot.segmentSummaries.filter((item) => item.priority === 'High').length}</p>
+            </div>
+            {showScore && (
+              <div className="rounded-2xl bg-white p-5 ring-1 ring-slate-200 shadow-sm flex flex-col">
+                <div className="flex justify-between items-start mb-2">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-black">Avg Score</p>
+                  <Target className="w-4 h-4 text-blue-500" />
+                </div>
+                <p className="text-4xl font-black text-slate-900 mt-auto">{formatScore(snapshot.avgScore)}</p>
+              </div>
             )}
           </div>
-        </div>
 
-        <div className="rounded-2xl bg-white ring-1 ring-slate-200 p-5">
-          <h2 className="text-sm font-black uppercase tracking-[0.2em] text-slate-500">Pilot Health</h2>
-          <div className="mt-4 space-y-3 text-sm">
-            <div className="flex items-center gap-3"><Users2 className="w-4 h-4 text-slate-500" /> Tenants in scope: {organizationOptions.length}</div>
-            <div className="flex items-center gap-3"><ShieldCheck className="w-4 h-4 text-slate-500" /> Analytics coverage: {formatPercent(snapshot.totalParticipants > 0 ? (snapshot.analyticsCoverageCount / snapshot.totalParticipants) * 100 : 0)}</div>
-            <div className="flex items-center gap-3"><Target className="w-4 h-4 text-slate-500" /> B2B2C ready count: {snapshot.b2b2cReadyCount}</div>
-            <div className="flex items-center gap-3"><AlertTriangle className="w-4 h-4 text-slate-500" /> Risk hotspots: {snapshot.riskHotspots.length}</div>
-          </div>
-        </div>
-      </div>
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            
+            <div className="xl:col-span-2 rounded-3xl bg-white ring-1 ring-slate-200 p-6 shadow-sm">
+              <h2 className="text-sm font-black uppercase tracking-[0.2em] text-slate-900 flex items-center gap-2 mb-6">
+                <BarChart3 className="w-5 h-5 text-indigo-600" />
+                Readiness Distribution
+              </h2>
+              <div className="h-[300px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={
+                    Object.entries(
+                      filteredRecords.reduce((acc, r) => {
+                        const level = r.readinessLevel || 'Pending';
+                        acc[level] = (acc[level] || 0) + 1;
+                        return acc;
+                      }, {} as Record<string, number>)
+                    ).map(([name, count]) => ({ name, count }))
+                  }>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} dy={10} />
+                    <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} dx={-10} />
+                    <RechartsTooltip cursor={{fill: '#f8fafc'}} contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}} />
+                    <Bar dataKey="count" radius={[6, 6, 0, 0]}>
+                      {Object.entries(
+                        filteredRecords.reduce((acc, r) => {
+                          const level = r.readinessLevel || 'Pending';
+                          acc[level] = (acc[level] || 0) + 1;
+                          return acc;
+                        }, {} as Record<string, number>)
+                      ).map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={['#6366f1', '#10b981', '#f59e0b', '#f43f5e'][index % 4]} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
 
-      <div className="rounded-2xl bg-white ring-1 ring-slate-200 p-5">
-        <div className="flex items-center justify-between gap-3 flex-wrap">
-          <h2 className="text-sm font-black uppercase tracking-[0.2em] text-slate-500">Action Tracker (Closure Evidence)</h2>
-          <div className="text-xs text-slate-500">owner, due date, status, closure evidence</div>
-        </div>
-
-        {showActionBuilder && (
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mt-4">
-            <input
-              value={newActionTitle}
-              onChange={(event) => setNewActionTitle(event.target.value)}
-              placeholder="Judul action"
-              className="h-10 rounded-xl border border-slate-200 px-3 text-sm"
-            />
-            <input
-              value={newActionSegment}
-              onChange={(event) => setNewActionSegment(event.target.value)}
-              placeholder="Segment"
-              className="h-10 rounded-xl border border-slate-200 px-3 text-sm"
-            />
-            <input
-              type="date"
-              value={newActionDueDate}
-              onChange={(event) => setNewActionDueDate(event.target.value)}
-              className="h-10 rounded-xl border border-slate-200 px-3 text-sm"
-            />
-            <button
-              type="button"
-              onClick={handleCreateAction}
-              className="h-10 rounded-xl bg-slate-900 text-white font-bold text-sm flex items-center justify-center gap-2"
-            >
-              <Plus className="w-4 h-4" /> Add Action
-            </button>
-          </div>
-        )}
-
-        <div className="mt-4 space-y-3">
-          {actions.map((item) => (
-            <div key={item.id} className="rounded-xl bg-slate-50 ring-1 ring-slate-100 p-4">
-              <div className="flex flex-wrap justify-between gap-2">
-                <div>
-                  <p className="font-black text-slate-900">{item.title}</p>
-                  <p className="text-xs text-slate-500 mt-1">{item.segment} | Owner: {item.ownerName} | Due: {item.dueDate || '-'}</p>
-                </div>
-                <div className="flex gap-2">
-                  <button type="button" onClick={() => handleUpdateActionStatus(item, 'open')} className={`text-xs px-2 py-1 rounded-lg ring-1 ${item.status === 'open' ? 'bg-rose-50 ring-rose-200 text-rose-700' : 'bg-white ring-slate-200 text-slate-500'}`}>Open</button>
-                  <button type="button" onClick={() => handleUpdateActionStatus(item, 'in_progress')} className={`text-xs px-2 py-1 rounded-lg ring-1 ${item.status === 'in_progress' ? 'bg-amber-50 ring-amber-200 text-amber-700' : 'bg-white ring-slate-200 text-slate-500'}`}>In Progress</button>
-                  <button type="button" onClick={() => handleUpdateActionStatus(item, 'closed')} className={`text-xs px-2 py-1 rounded-lg ring-1 ${item.status === 'closed' ? 'bg-emerald-50 ring-emerald-200 text-emerald-700' : 'bg-white ring-slate-200 text-slate-500'}`}>Closed</button>
+            <div className="xl:col-span-1 space-y-6">
+              <div className="rounded-3xl bg-white ring-1 ring-slate-200 p-6 shadow-sm">
+                <h2 className="text-sm font-black uppercase tracking-[0.2em] text-slate-900 mb-4">Tactical Recommendations</h2>
+                <div className="space-y-4 text-sm">
+                  {snapshot.tacticalRecommendations.slice(0, 3).map((recommendation) => (
+                    <div key={recommendation.segment} className="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-100">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="font-black text-slate-900">{recommendation.segment}</p>
+                        <span className="text-[10px] font-black uppercase tracking-[0.18em] text-indigo-700 bg-indigo-50 px-2 py-1 rounded-full ring-1 ring-indigo-200">{recommendation.priority}</span>
+                      </div>
+                      <p className="text-slate-600 mt-2 leading-relaxed">{recommendation.rationale}</p>
+                    </div>
+                  ))}
+                  {snapshot.tacticalRecommendations.length === 0 && (
+                    <div className="text-slate-500 italic text-center py-4">No tactical recommendations available.</div>
+                  )}
                 </div>
               </div>
-              <div className="mt-3">
-                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400 mb-2">Closure Evidence</p>
-                <textarea
-                  value={closureEvidenceDrafts[item.id] || ''}
-                  onChange={(event) => setClosureEvidenceDrafts((current) => ({
-                    ...current,
-                    [item.id]: event.target.value,
-                  }))}
-                  disabled={!canEditActionEvidence || savingEvidenceById[item.id]}
-                  placeholder="Tuliskan bukti penutupan aksi, hasil implementasi, atau tautan evidence..."
-                  className="w-full min-h-[84px] rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 disabled:bg-slate-100 disabled:text-slate-500"
+              
+              <div className="rounded-3xl bg-white ring-1 ring-slate-200 p-6 shadow-sm">
+                <h2 className="text-sm font-black uppercase tracking-[0.2em] text-slate-900 mb-4">Pilot Health</h2>
+                <div className="space-y-3 text-sm font-medium">
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50"><span className="text-slate-600 flex items-center gap-2"><Users2 className="w-4 h-4" /> Tenants in scope</span> <span className="font-black text-slate-900">{organizationOptions.length}</span></div>
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50"><span className="text-slate-600 flex items-center gap-2"><ShieldCheck className="w-4 h-4" /> Analytics coverage</span> <span className="font-black text-slate-900">{formatPercent(snapshot.totalParticipants > 0 ? (snapshot.analyticsCoverageCount / snapshot.totalParticipants) * 100 : 0)}</span></div>
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50"><span className="text-slate-600 flex items-center gap-2"><Target className="w-4 h-4" /> B2B2C ready</span> <span className="font-black text-slate-900">{snapshot.b2b2cReadyCount}</span></div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'intake' && (
+        selectedParticipant ? (
+          <div className="h-[800px]">
+            <B2BParticipantProfile
+              participant={selectedParticipant}
+              corporateEntity={selectedOrganization !== ALL_ORGANIZATIONS ? selectedOrganization : (selectedParticipant.corporateEntity || '')}
+              persona={persona}
+              onBack={() => setSelectedParticipant(null)}
+            />
+          </div>
+        ) : (
+          <div className="bg-white rounded-3xl ring-1 ring-slate-200 p-6 shadow-sm">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+              <h2 className="text-lg font-black text-slate-900 uppercase tracking-widest">Intake Pipeline</h2>
+              <div className="flex items-center gap-2 bg-slate-50 rounded-xl px-3 py-2 border border-slate-200 w-full md:w-72">
+                <Search className="w-4 h-4 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Cari peserta..."
+                  className="bg-transparent border-none outline-none text-sm w-full"
                 />
-                {canEditActionEvidence && (
-                  <div className="mt-2 flex justify-end">
-                    <button
-                      type="button"
-                      onClick={() => handleSaveClosureEvidence(item)}
-                      disabled={savingEvidenceById[item.id]}
-                      className="h-8 px-3 rounded-lg text-xs font-black uppercase tracking-[0.12em] bg-slate-900 text-white disabled:opacity-60"
+              </div>
+            </div>
+            
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b-2 border-slate-100 text-[10px] uppercase tracking-[0.2em] text-slate-400">
+                    <th className="pb-4 pl-4 font-black">Peserta</th>
+                    <th className="pb-4 font-black">Track</th>
+                    <th className="pb-4 font-black">Readiness</th>
+                    <th className="pb-4 font-black">Score</th>
+                    <th className="pb-4 pr-4 font-black text-right">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody className="text-sm">
+                  {filteredRecords.map(record => (
+                    <tr 
+                      key={record.id} 
+                      className="border-b border-slate-50 hover:bg-slate-50 transition-colors cursor-pointer group"
+                      onClick={() => setSelectedParticipant(record)}
                     >
-                      {savingEvidenceById[item.id] ? 'Saving...' : 'Save Evidence'}
-                    </button>
+                      <td className="py-4 pl-4">
+                        <p className="font-bold text-slate-900">{record.namaUsaha || 'Tanpa Nama'}</p>
+                        <p className="text-xs text-slate-500 mt-1">{record.id.slice(0,8)}...</p>
+                      </td>
+                      <td className="py-4 text-slate-600 font-medium">{record.trackType || '-'}</td>
+                      <td className="py-4">
+                        <span className="px-3 py-1.5 bg-slate-100 text-slate-700 rounded-lg text-xs font-bold ring-1 ring-slate-200/50">
+                          {record.readinessLevel || 'Pending'}
+                        </span>
+                      </td>
+                      <td className="py-4 font-black text-indigo-600 text-base">{record.score ? record.score.toFixed(1) : '-'}</td>
+                      <td className="py-4 pr-4 text-right">
+                        <button className="text-indigo-600 font-bold text-xs bg-white border border-indigo-100 px-4 py-2 rounded-xl group-hover:bg-indigo-50 transition-colors shadow-sm">
+                          Review Profile
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {filteredRecords.length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="py-16 text-center text-slate-400 font-medium text-sm">
+                        Belum ada peserta di pipeline ini.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )
+      )}
+
+      {activeTab === 'actions' && (
+        <div className="rounded-2xl bg-white ring-1 ring-slate-200 p-5">
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <h2 className="text-sm font-black uppercase tracking-[0.2em] text-slate-500">Action Tracker (Closure Evidence)</h2>
+            <div className="text-xs text-slate-500">owner, due date, status, closure evidence</div>
+          </div>
+
+          {showActionBuilder && (
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mt-4">
+              <input
+                value={newActionTitle}
+                onChange={(event) => setNewActionTitle(event.target.value)}
+                placeholder="Judul action"
+                className="h-10 rounded-xl border border-slate-200 px-3 text-sm"
+              />
+              <input
+                value={newActionSegment}
+                onChange={(event) => setNewActionSegment(event.target.value)}
+                placeholder="Segment"
+                className="h-10 rounded-xl border border-slate-200 px-3 text-sm"
+              />
+              <input
+                type="date"
+                value={newActionDueDate}
+                onChange={(event) => setNewActionDueDate(event.target.value)}
+                className="h-10 rounded-xl border border-slate-200 px-3 text-sm"
+              />
+              <button
+                type="button"
+                onClick={handleCreateAction}
+                className="h-10 rounded-xl bg-slate-900 text-white font-bold text-sm flex items-center justify-center gap-2"
+              >
+                <Plus className="w-4 h-4" /> Add Action
+              </button>
+            </div>
+          )}
+
+          <div className="mt-4 space-y-3">
+            {actions.map((item) => (
+              <div key={item.id} className="rounded-xl bg-slate-50 ring-1 ring-slate-100 p-4">
+                <div className="flex flex-wrap justify-between gap-2">
+                  <div>
+                    <p className="font-black text-slate-900">{item.title}</p>
+                    <p className="text-xs text-slate-500 mt-1">{item.segment} | Owner: {item.ownerName} | Due: {item.dueDate || '-'}</p>
                   </div>
+                  <div className="flex gap-2">
+                    <button type="button" onClick={() => handleUpdateActionStatus(item, 'open')} className={`text-xs px-2 py-1 rounded-lg ring-1 ${item.status === 'open' ? 'bg-rose-50 ring-rose-200 text-rose-700' : 'bg-white ring-slate-200 text-slate-500'}`}>Open</button>
+                    <button type="button" onClick={() => handleUpdateActionStatus(item, 'in_progress')} className={`text-xs px-2 py-1 rounded-lg ring-1 ${item.status === 'in_progress' ? 'bg-amber-50 ring-amber-200 text-amber-700' : 'bg-white ring-slate-200 text-slate-500'}`}>In Progress</button>
+                    <button type="button" onClick={() => handleUpdateActionStatus(item, 'closed')} className={`text-xs px-2 py-1 rounded-lg ring-1 ${item.status === 'closed' ? 'bg-emerald-50 ring-emerald-200 text-emerald-700' : 'bg-white ring-slate-200 text-slate-500'}`}>Closed</button>
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400 mb-2">Closure Evidence</p>
+                  <textarea
+                    value={closureEvidenceDrafts[item.id] || ''}
+                    onChange={(event) => setClosureEvidenceDrafts((current) => ({
+                      ...current,
+                      [item.id]: event.target.value,
+                    }))}
+                    disabled={!canEditActionEvidence || savingEvidenceById[item.id]}
+                    placeholder="Tuliskan bukti penutupan aksi, hasil implementasi, atau tautan evidence..."
+                    className="w-full min-h-[84px] rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 disabled:bg-slate-100 disabled:text-slate-500"
+                  />
+                  {canEditActionEvidence && (
+                    <div className="mt-2 flex justify-end">
+                      <button
+                        type="button"
+                        onClick={() => handleSaveClosureEvidence(item)}
+                        disabled={savingEvidenceById[item.id]}
+                        className="h-8 px-3 rounded-lg text-xs font-black uppercase tracking-[0.12em] bg-slate-900 text-white disabled:opacity-60"
+                      >
+                        {savingEvidenceById[item.id] ? 'Saving...' : 'Save Evidence'}
+                      </button>
+                    </div>
+                  )}
+                </div>
+                {item.status === 'closed' ? (
+                  <p className="text-xs text-emerald-700 mt-2 flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5" /> Closed</p>
+                ) : (
+                  <p className="text-xs text-amber-700 mt-2 flex items-center gap-1"><Clock3 className="w-3.5 h-3.5" /> Pending closure evidence</p>
                 )}
               </div>
-              {item.status === 'closed' ? (
-                <p className="text-xs text-emerald-700 mt-2 flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5" /> Closed</p>
-              ) : (
-                <p className="text-xs text-amber-700 mt-2 flex items-center gap-1"><Clock3 className="w-3.5 h-3.5" /> Pending closure evidence</p>
-              )}
-            </div>
-          ))}
-          {actions.length === 0 && <div className="text-sm text-slate-500">Belum ada action tracker untuk organization ini.</div>}
+            ))}
+            {actions.length === 0 && <div className="text-sm text-slate-500">Belum ada action tracker untuk organization ini.</div>}
+          </div>
         </div>
-      </div>
+      )}
+
+      {activeTab === 'branding' && (
+        <B2BBrandingEditor organizationId={selectedOrganization} />
+      )}
     </div>
   );
 }

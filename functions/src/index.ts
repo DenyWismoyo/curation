@@ -37,7 +37,9 @@ export { processCurationAssessment } from "./agents/assessment/gatewayAgent";
 export { assessmentTriangulatorAgent } from "./agents/assessment/triangulatorAgent";
 export { assessmentDomainExpertsAgent } from "./agents/assessment/domainExpertsAgent";
 export { assessmentTacticalPlannerAgent } from "./agents/assessment/tacticalPlannerAgent";
+export { assessmentSynthesisAgent } from "./agents/assessment/synthesisAgent";
 export { assessmentPostProcessingAgent } from "./agents/assessment/postProcessingAgent";
+export { adminGenerateMockData } from "./agents/assessment/mockDataAgent";
 export { premiumConsultationChat } from "./agents/assessment/premiumConsultationAgent";
 export { assessmentAnalyticsAgent } from "./agents/analytics/analyticsAgent";
 export { generateCopywriting, reviseSlidePrompt, reviseCopywriting } from "./agents/promo/copywriterAgent";
@@ -52,6 +54,7 @@ export { upsertReferralAttribution, bindReferralAttributionToUser } from "./agen
 export { generateAdaptiveOnboardingPlan } from "./agents/onboarding/adaptiveOnboardingAgent";
 export { adminUpsertB2BOrganization, adminListB2BOrganizations, adminSetB2BUserAccess, adminRevokeB2BUserAccess } from "./agents/b2b/organizationAgent";
 export { getB2BOrganizationAnalytics } from "./agents/b2b/b2bAnalyticsService";
+export { b2bAddInteractionLog, b2bGenerateInteractionSummary } from "./agents/b2b/interactionAgent";
 
 
 // ============================================================================

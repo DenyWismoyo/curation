@@ -12,6 +12,8 @@ import { Button } from '@/components/ui/button';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { app } from '@/lib/firebase';
 import { toast } from 'sonner';
+import { useAuth } from '@/contexts/AuthContext';
+import { AdminAutoFill } from './AdminAutoFill';
 
 // IMPORT CUSTOM ICONS
 import { AiSparkIcon, DocExportIcon, BrainIcon } from '@/types';
@@ -37,6 +39,7 @@ export interface DynamicWizardProps {
 
 export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardProps) {
   const CACHE_KEY = `curation_draft_dynamic_${template.id}`;
+  const { role } = useAuth();
   
   // STATE MENGGUNAKAN LOCAL STEPS (Agar bisa diinjeksi pertanyaan baru oleh AI)
   const [localSteps, setLocalSteps] = useState<FormStep[]>(template.steps);
@@ -286,7 +289,13 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
           </div>
 
           {/* Kanan: Kosongkan & Status Auto-Save */}
-          <div className="flex items-center justify-end gap-3 w-20 sm:w-28">
+          <div className="flex items-center justify-end gap-2 sm:gap-3">
+            {role === 'admin_csrs' && currentStepData && (
+              <AdminAutoFill 
+                fields={currentStepData.fields || []}
+                onFill={(data) => setFormData((prev: any) => ({ ...prev, ...data }))}
+              />
+            )}
             <AnimatePresence mode="wait">
               {saveStatus && (
                 <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="hidden sm:flex text-[10px] text-emerald-600 font-bold items-center gap-1">

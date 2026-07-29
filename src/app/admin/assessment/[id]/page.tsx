@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { ChevronLeft, Briefcase, ShieldCheck, Loader2, Mail, Phone, BarChart3 } from 'lucide-react';
+import { ChevronLeft, Briefcase, ShieldCheck, Loader2, Mail, Phone, BarChart3, Brain, Cpu, FileSearch } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { UniversalAssessmentView } from '@/components/shared';
 import { AdminExportPDF } from '@/app/components/admin/AdminExportPDF';
@@ -15,7 +15,7 @@ export default function AdminAssessmentDetailPage() {
   const router = useRouter();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'evaluasi' | 'input' | 'analytics'>('evaluasi');
+  const [activeTab, setActiveTab] = useState<'evaluasi' | 'input' | 'analytics' | 'argumen' | 'log_ai'>('evaluasi');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -133,6 +133,12 @@ export default function AdminAssessmentDetailPage() {
         <button onClick={() => setActiveTab('analytics')} className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${activeTab === 'analytics' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20' : 'bg-white text-slate-600 hover:bg-slate-50 ring-1 ring-slate-200/80'}`}>
           <BarChart3 className="w-4 h-4"/> Ringkasan Analytics
         </button>
+        <button onClick={() => setActiveTab('argumen')} className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${activeTab === 'argumen' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20' : 'bg-white text-slate-600 hover:bg-slate-50 ring-1 ring-slate-200/80'}`}>
+          <Brain className="w-4 h-4"/> Argumen Jawaban AI
+        </button>
+        <button onClick={() => setActiveTab('log_ai')} className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${activeTab === 'log_ai' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20' : 'bg-white text-slate-600 hover:bg-slate-50 ring-1 ring-slate-200/80'}`}>
+          <Cpu className="w-4 h-4"/> Log Master AI
+        </button>
       </div>
 
       {/* VIEW KONTEN */}
@@ -177,6 +183,122 @@ export default function AdminAssessmentDetailPage() {
                 </div>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'argumen' && (
+        <div className="max-w-5xl bg-white rounded-3xl ring-1 ring-slate-200 p-6 sm:p-8 shadow-sm">
+          <h3 className="text-lg font-black text-slate-900 mb-6 flex items-center gap-2">
+            <Brain className="w-5 h-5 text-indigo-600"/> Argumen Jawaban AI (Bedah Formulir)
+          </h3>
+          
+          {aiResult?.fieldArguments && aiResult.fieldArguments.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {aiResult.fieldArguments.map((item: any, idx: number) => (
+                <div key={idx} className="bg-slate-50 p-4 rounded-2xl ring-1 ring-slate-100 flex flex-col hover:shadow-md transition-shadow">
+                  <div className="flex justify-between items-start mb-2 gap-3">
+                    <h4 className="text-xs font-black text-slate-900 leading-tight flex-1">{item?.label}</h4>
+                    <div className="bg-white ring-1 ring-slate-200 px-2 py-1 rounded-md shrink-0">
+                      <span className={`text-sm font-black ${item?.score >= 80 ? 'text-emerald-600' : item?.score >= 60 ? 'text-amber-500' : 'text-rose-500'}`}>{item?.score}</span>
+                    </div>
+                  </div>
+                  <div className="text-[11px] text-slate-600 font-medium flex-1 leading-relaxed border-t border-slate-200/60 pt-2 mt-1 whitespace-pre-wrap">
+                    {item?.description}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+             <div className="rounded-2xl bg-slate-50 ring-1 ring-slate-200 p-4 text-sm font-semibold text-slate-600">
+               Argumen bedah jawaban belum tersedia.
+             </div>
+          )}
+        </div>
+      )}
+
+      {activeTab === 'log_ai' && (
+        <div className="max-w-5xl bg-white rounded-3xl ring-1 ring-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
+          <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
+            <Cpu className="w-5 h-5 text-indigo-600"/> Log Komputasi Internal Master AI
+          </h3>
+          <p className="text-sm text-slate-500 mb-6">Data ini adalah log rahasia dari "pemikiran" di balik layar agen AI saat memproses form.</p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* TINGKAT KEPERCAYAAN & KONTRADIKSI */}
+            <div className="bg-slate-50 p-5 rounded-2xl ring-1 ring-slate-200 space-y-4">
+               <div>
+                 <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1">Data Confidence Score</p>
+                 <div className="flex items-center gap-3">
+                   <span className={`text-2xl font-black ${aiResult?.dataConfidenceScore >= 80 ? 'text-emerald-600' : aiResult?.dataConfidenceScore >= 60 ? 'text-amber-500' : 'text-rose-500'}`}>
+                     {aiResult?.dataConfidenceScore || 0}%
+                   </span>
+                   <span className="text-xs font-semibold text-slate-500 bg-slate-200 px-2 py-1 rounded-md">
+                     Kepercayaan AI thd Validitas Form
+                   </span>
+                 </div>
+               </div>
+
+               <div>
+                 <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2">Kontradiksi Data Ditemukan</p>
+                 {aiResult?.contradictionsFound && aiResult.contradictionsFound.length > 0 ? (
+                   <ul className="space-y-2">
+                     {aiResult.contradictionsFound.map((item: string, idx: number) => (
+                       <li key={idx} className="text-xs font-medium text-rose-700 bg-rose-50 px-3 py-2 rounded-xl ring-1 ring-rose-200/50 flex items-start gap-2">
+                         <span className="shrink-0 mt-0.5">•</span> <span>{item}</span>
+                       </li>
+                     ))}
+                   </ul>
+                 ) : (
+                   <div className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-3 py-2 rounded-xl ring-1 ring-emerald-200/50">
+                     Sempurna. Tidak ada klaim kontradiktif yang ditemukan.
+                   </div>
+                 )}
+               </div>
+            </div>
+
+            {/* FORENSIK DOKUMEN */}
+            <div className="bg-slate-50 p-5 rounded-2xl ring-1 ring-slate-200 space-y-4">
+              <div className="flex items-center gap-2 mb-2">
+                <FileSearch className="w-4 h-4 text-slate-600" />
+                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Forensik Dokumen Lampiran</p>
+              </div>
+              
+              {!aiResult?.fileAnalysisInsights ? (
+                <p className="text-xs text-slate-500 italic">Tidak ada dokumen lampiran yang diproses.</p>
+              ) : (
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase">Kualitas Dokumen</p>
+                    <p className="text-sm font-semibold text-slate-800">{aiResult.fileAnalysisInsights.documentQuality}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase">Temuan Kunci Dokumen</p>
+                    <ul className="text-xs text-slate-700 space-y-1 list-disc pl-4 mt-1">
+                      {(aiResult.fileAnalysisInsights.keyFindingsFromFiles || []).map((f: string, i: number) => (
+                        <li key={i}>{f}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  {aiResult.fileAnalysisInsights.discrepancies && (
+                    <div>
+                      <p className="text-[10px] font-bold text-rose-400 uppercase">Diskrepansi Dokumen vs Klaim</p>
+                      <p className="text-xs font-medium text-rose-700 bg-rose-50 p-2 rounded-lg mt-1">{aiResult.fileAnalysisInsights.discrepancies}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* REASONING INTERNAL */}
+          <div className="bg-slate-900 p-5 sm:p-6 rounded-2xl ring-1 ring-slate-800 shadow-inner">
+             <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+               <Cpu className="w-3.5 h-3.5 text-indigo-400"/> Monolog Pemikiran Internal Master (Raw Reasoning)
+             </p>
+             <p className="text-sm font-mono text-emerald-400 leading-relaxed whitespace-pre-wrap">
+               {aiResult?._internalReasoning || 'Log pemikiran tidak tersedia.'}
+             </p>
           </div>
         </div>
       )}

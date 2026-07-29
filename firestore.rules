@@ -84,12 +84,12 @@ service cloud.firestore {
 
     function isSafeSelfUserSecurityFieldsUnchanged() {
       return isSafeSelfRoleTransition()
-        && request.resource.data.b2bPersonas == resource.data.b2bPersonas
-        && request.resource.data.b2bOrganizationIds == resource.data.b2bOrganizationIds
-        && request.resource.data.allowedOrganizations == resource.data.allowedOrganizations
-        && request.resource.data.organizationScopes == resource.data.organizationScopes
-        && request.resource.data.accessibleOrganizations == resource.data.accessibleOrganizations
-        && request.resource.data.b2bAccess == resource.data.b2bAccess;
+        && request.resource.data.get('b2bPersonas', null) == resource.data.get('b2bPersonas', null)
+        && request.resource.data.get('b2bOrganizationIds', null) == resource.data.get('b2bOrganizationIds', null)
+        && request.resource.data.get('allowedOrganizations', null) == resource.data.get('allowedOrganizations', null)
+        && request.resource.data.get('organizationScopes', null) == resource.data.get('organizationScopes', null)
+        && request.resource.data.get('accessibleOrganizations', null) == resource.data.get('accessibleOrganizations', null)
+        && request.resource.data.get('b2bAccess', null) == resource.data.get('b2bAccess', null);
     }
 
     function isAssessmentOwner() {
@@ -225,8 +225,8 @@ service cloud.firestore {
       allow write: if isSuperAdmin() || isB2BAdmin();
     }
     match /b2b_organizations/{orgId} {
-      allow read: if isB2BAdmin();
-      allow write: if isB2BAdmin();
+      allow read: if true; // Publik dapat membaca untuk kustomisasi Landing Page mitra
+      allow write: if isB2BAdmin() || (isAuthenticated() && canAccessOrganization(orgId));
     }
     match /corporate_tags/{orgId} {
       allow read: if isAuthenticated() && canAccessOrganization(orgId);
@@ -247,6 +247,16 @@ service cloud.firestore {
         && canAccessOrganization(resource.data.corporateEntity)
         && (isOpsAdmin() || request.auth.uid == resource.data.ownerUid || request.auth.uid == resource.data.createdByUid);
       allow delete: if isSuperAdmin() || isAdminCSRS() || isAdminOmnifit();
+    }
+
+    match /b2b_interaction_logs/{logId} {
+      allow read: if isAuthenticated() && canAccessOrganization(resource.data.corporateEntity);
+      allow write: if false; // Harus melalui Cloud Function (b2bAddInteractionLog)
+    }
+
+    match /b2b_interaction_summaries/{summaryId} {
+      allow read: if isAuthenticated() && (resource == null || canAccessOrganization(resource.data.corporateEntity));
+      allow write: if false; // Harus melalui Cloud Function (b2bGenerateInteractionSummary)
     }
 
     match /b2b_dashboard_access_logs/{logId} {
