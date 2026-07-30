@@ -159,7 +159,7 @@ export function UniversalAssessmentView({
   }, []);
 
   const aiScore = aiResult?.totalScore || 0;
-  const finalScore = isInternal ? (curatorData?.curatorScore || 0) : aiScore;
+  const finalScore = isInternal && curatorData?.curatorScore ? curatorData.curatorScore : aiScore;
   const isHighTier = finalScore >= 75;
 
   const formPurpose = aiResult?.formPurpose || 'assessment';
@@ -423,7 +423,7 @@ export function UniversalAssessmentView({
             </div>
             
             <div className="w-full lg:w-3/5 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {aiResult.metrics.map((item: any, idx: number) => (
+              {aiResult.metrics?.map((item: any, idx: number) => (
                 <div key={idx} className="bg-slate-50 p-5 rounded-2xl ring-1 ring-slate-100 flex flex-col">
                   <div className="flex justify-between items-start mb-3 gap-3">
                     <h4 className="text-sm font-black text-slate-900 leading-tight"><span className="text-indigo-600 mr-1.5">D{idx + 1}.</span>{item?.label}</h4>
@@ -470,7 +470,7 @@ export function UniversalAssessmentView({
       {/* DISEMBUNYIKAN DARI PUBLIK: CUSTOM BLOCKS & FILE ANALYSIS */}
       {isInternal && aiResult?.customAnalysisBlocks && aiResult.customAnalysisBlocks.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
-          {aiResult.customAnalysisBlocks.map((block: any, idx: number) => { 
+          {aiResult.customAnalysisBlocks?.map((block: any, idx: number) => { 
             const ringColor = borderColors[idx % borderColors.length];
             const textColor = textColors[idx % textColors.length];
             
@@ -515,65 +515,7 @@ export function UniversalAssessmentView({
              )
           })}
 
-          {/* DISEMBUNYIKAN DARI PUBLIK: DOKUMEN FORENSIK AI */}
-          {isInternal && aiResult?.fileAnalysisInsights && (
-            <div className="bg-slate-900 text-white p-6 sm:p-8 rounded-3xl shadow-md md:col-span-2 lg:col-span-2 relative flex flex-col justify-between overflow-hidden">
-              <div className="absolute right-0 top-0 opacity-10 pointer-events-none">
-                <DocExportIcon size={160} className="transform translate-x-8 -translate-y-8"/>
-              </div>
-              
-              <div>
-                <h3 className="text-xs font-black uppercase tracking-widest mb-4 flex items-center gap-2 text-indigo-300">
-                  <AILensIcon size={16}/> Hasil Validasi Dokumen Unggahan
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10 mb-6">
-                  <div>
-                    <p className="text-[10px] uppercase text-slate-400 font-bold mb-1">Status Keaslian & Kualitas</p>
-                    <div className="text-sm text-slate-200"><TextToBullets text={aiResult.fileAnalysisInsights.documentQuality} colorClass="text-emerald-400" /></div>
-                    
-                    {aiResult.fileAnalysisInsights.discrepancies && (
-                      <>
-                        <p className="text-[10px] uppercase text-slate-400 font-bold mt-4 mb-1 text-rose-300">Kesenjangan Bukti Fisik</p>
-                        <div className="text-sm text-rose-200 italic"><TextToBullets text={aiResult.fileAnalysisInsights.discrepancies} colorClass="text-rose-400" /></div>
-                      </>
-                    )}
-                  </div>
-                  {aiResult.fileAnalysisInsights.keyFindingsFromFiles && (
-                    <div>
-                      <p className="text-[10px] uppercase text-slate-400 font-bold mb-2">Temuan Pokok Berkas</p>
-                      <ul className="space-y-2">
-                        {aiResult.fileAnalysisInsights.keyFindingsFromFiles.map((find: string, i: number) => (
-                          <li key={i} className="text-sm text-slate-300 flex items-start gap-2">
-                            <span className="text-indigo-400 mt-0.5">●</span> <span className="leading-snug">{renderRichText(find)}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              </div>
 
-              {isInternal && curatorData && (
-                <div className="pt-4 border-t border-slate-800 relative z-10 mt-auto">
-                  <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 flex items-center gap-1.5">
-                    <AdminShieldIcon size={14} className="text-emerald-400" /> Hasil Konfirmasi Otentisitas Berkas
-                  </h4>
-                  {isEditing ? (
-                    <Textarea 
-                      value={curatorData.documentNotes}
-                      onChange={(e) => curatorData.setDocumentNotes && curatorData.setDocumentNotes(e.target.value)}
-                      placeholder="Catatan keabsahan dokumen..."
-                      className="bg-slate-800 border-slate-700 text-white text-xs h-20 rounded-xl" 
-                    />
-                  ) : (
-                    <div className="bg-slate-800/60 p-3 rounded-xl text-xs font-medium text-slate-300 min-h-[50px]">
-                      {curatorData.documentNotes || <span className="italic text-slate-500">Belum ada catatan validasi fisik berkas.</span>}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
         </div>
       )}
 
@@ -654,7 +596,7 @@ export function UniversalAssessmentView({
             <h3 className="font-black text-slate-900 text-xl tracking-tight">{getLabel('risk')}</h3>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {aiResult.riskAssessment.criticalRisks.map((risk: string, idx: number) => (
+            {aiResult.riskAssessment?.criticalRisks?.map((risk: string, idx: number) => (
               <div key={idx} className="flex flex-col ring-1 ring-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-md transition-all">
                 <div className="bg-rose-50/50 p-4 border-b border-rose-100/50">
                   <h4 className="text-[10px] font-black uppercase tracking-widest text-rose-600 mb-1">Identifikasi Hambatan Kritis</h4>
@@ -689,7 +631,7 @@ export function UniversalAssessmentView({
             </div>
             
             <div className="flex flex-col gap-3">
-              {aiResult.recommendations.map((rec: any, idx: number) => (
+              {aiResult.recommendations?.map((rec: any, idx: number) => (
                  <InsightAccordion key={idx} id={`rec-${idx}`} title={rec?.title} icon={TechCardIcon} content={rec?.content} />
               ))}
             </div>
@@ -756,7 +698,7 @@ export function UniversalAssessmentView({
                 </h4>
                 {aiResult?.contradictionsFound && aiResult.contradictionsFound.length > 0 ? (
                   <ul className="space-y-3">
-                    {aiResult.contradictionsFound.map((anomaly: string, i: number) => (
+                    {aiResult.contradictionsFound?.map((anomaly: string, i: number) => (
                       <li key={i} className="text-xs font-medium text-rose-200/90 leading-relaxed flex items-start gap-2">
                         <span className="text-rose-500 mt-0.5">●</span> <span>{renderRichText(anomaly)}</span>
                       </li>
@@ -802,7 +744,7 @@ export function UniversalAssessmentView({
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {aiResult.fieldArguments.map((item: any, idx: number) => (
+            {aiResult.fieldArguments?.map((item: any, idx: number) => (
               <div key={idx} className="bg-slate-50 p-4 rounded-2xl ring-1 ring-slate-100 flex flex-col hover:shadow-md transition-shadow">
                 <div className="flex justify-between items-start mb-2 gap-3">
                   <h4 className="text-xs font-black text-slate-900 leading-tight flex-1">{item?.label}</h4>
@@ -847,7 +789,7 @@ export function UniversalAssessmentView({
                     <div>
                       <p className="text-[10px] uppercase text-slate-400 font-bold mb-2">Temuan Pokok Berkas</p>
                       <ul className="space-y-2">
-                        {aiResult.fileAnalysisInsights.keyFindingsFromFiles.map((find: string, i: number) => (
+                        {aiResult.fileAnalysisInsights?.keyFindingsFromFiles?.map((find: string, i: number) => (
                           <li key={i} className="text-sm text-slate-300 flex items-start gap-2">
                             <span className="text-indigo-400 mt-0.5">●</span> <span className="leading-snug">{renderRichText(find)}</span>
                           </li>
@@ -898,7 +840,7 @@ export function UniversalAssessmentView({
 
         {aiResult?.nextActionSteps && aiResult.nextActionSteps.length > 0 ? (
           <div className="relative border-l-2 border-indigo-100 ml-4 sm:ml-6 space-y-6 pb-4">
-            {aiResult.nextActionSteps.map((step: any, idx: number) => {
+            {aiResult.nextActionSteps?.map((step: any, idx: number) => {
               const isUrgent = step?.timeframe?.includes('30') || step?.timeframe?.includes('1') || false;
               const markerColor = isUrgent ? 'bg-rose-500 ring-rose-100' : 'bg-indigo-500 ring-indigo-100';
               return (

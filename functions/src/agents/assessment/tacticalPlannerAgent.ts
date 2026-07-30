@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
+import { withRetry } from "../../utils/retry";
 
 export const executeTacticalPlanner = async (
   assessmentId: string, 
@@ -20,7 +21,10 @@ export const executeTacticalPlanner = async (
           type: SchemaType.OBJECT, 
           required: ["title", "content"], 
           properties: { 
-            title: { type: SchemaType.STRING }, 
+            title: { 
+              type: SchemaType.STRING,
+              ...(aiPromptConfig.expectedRecommendations?.length > 0 && { enum: aiPromptConfig.expectedRecommendations })
+            },
             content: { type: SchemaType.STRING } 
           } 
         } 
@@ -56,7 +60,11 @@ export const executeTacticalPlanner = async (
     }
   });
 
-  const res = await model.generateContent(promptC);
+  const res = await withRetry(async () => {
+    return await model.generateContent({
+      contents: [{ role: "user", parts: [{ text: promptC }] }]
+    });
+  });
   let text = res.response.text().trim();
   if (text.startsWith('```')) text = text.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
   

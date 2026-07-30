@@ -81,7 +81,7 @@ export const useCuration = () => {
   };
 
   // 2. FUNGSI UTAMA: MENGIRIM ASESMEN DAN MEMANTAU AGEN AI SECARA DINAMIS
-  const submitAssessment = async (data: any) => {
+  const submitAssessment = async (data: any, onSuccess?: (assessmentId: string) => void) => {
     setState(prev => ({ 
       ...prev, 
       formData: data, 
@@ -140,6 +140,10 @@ export const useCuration = () => {
             });
 
             unsub(); 
+
+            if (onSuccess) {
+              onSuccess(assessmentId);
+            }
             
           } 
           else if (currentStatus === 'FAILED') {

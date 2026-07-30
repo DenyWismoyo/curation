@@ -21,7 +21,10 @@ export const executeSynthesis = async (
       type: SchemaType.OBJECT, 
       required: ["title", "iconType", "metrics"], 
       properties: { 
-        title: { type: SchemaType.STRING }, 
+        title: { 
+          type: SchemaType.STRING,
+          ...(aiPromptConfig.expectedAnalysisBlocks?.length > 0 && { enum: aiPromptConfig.expectedAnalysisBlocks.map((b: string) => b.split(':')[0].trim()) })
+        }, 
         iconType: { type: SchemaType.STRING }, 
         metrics: { 
           type: SchemaType.ARRAY, 
@@ -53,7 +56,7 @@ Aturan Khusus:
 3. Gunakan '\\n' untuk baris baru.`;
 
   const model = genAI.getGenerativeModel({
-    model: "gemini-3.1-pro-preview",
+    model: "gemini-2.5-flash",
     systemInstruction: "Anda adalah AI Synthesis & Reporting Expert tingkat lanjut. Hasilkan narasi laporan yang mendalam, kritis, dan koheren berdasarkan kompilasi data dari berbagai agen evaluasi. Format dalam JSON murni.",
     generationConfig: { 
       temperature: 0.4,

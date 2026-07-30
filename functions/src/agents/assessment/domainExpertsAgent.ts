@@ -21,7 +21,7 @@ export const executeDomainExperts = async (
   const dataString = JSON.stringify(data.formData || {});
 
   // 1. Worker B (Radar Metrics)
-  const schemaB = { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, required: ["label", "score", "description"], properties: { label: { type: SchemaType.STRING }, score: { type: SchemaType.INTEGER }, description: { type: SchemaType.STRING } } } };
+  const schemaB = { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, required: ["label", "score", "description"], properties: { label: { type: SchemaType.STRING, ...(aiPromptConfig.expectedMetrics?.length > 0 && { enum: aiPromptConfig.expectedMetrics }) }, score: { type: SchemaType.INTEGER }, description: { type: SchemaType.STRING } } } };
   const promptB = `TUGAS ANDA:
 1. Anda HANYA BOLEH menghasilkan persis ${aiPromptConfig.expectedMetrics?.length || 6} metrik.
 2. Daftar metrik yang WAJIB Anda hasilkan adalah: ${JSON.stringify(aiPromptConfig.expectedMetrics)}. DILARANG KERAS menambah atau mengurangi metrik dari daftar ini!

@@ -388,7 +388,7 @@ function AdminDashboardContent() {
                     </TableRow>
                   ) : (
                     filteredTableData.map((item) => {
-                      const finalScore = item.curatorAssessment?.verifiedScore || item.score || 0
+                      const finalScore = item.curatorAssessment?.verifiedScore || item.score || item.aiResult?.totalScore || 0
                       const isCuratorValidated = item.status === 'Curator_Validated'
                       const isCuratorDraft = item.status === 'Curator_Draft'
                       const analyticsScore = item.analyticsSummary?.performanceScore

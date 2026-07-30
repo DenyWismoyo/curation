@@ -337,7 +337,9 @@ export default function AssessmentPage({ params }: { params: Promise<{ trackId: 
         }}
         onComplete={async (data) => {
           actions.setSelectedTemplate(template);
-          await actions.submitAssessment(data);
+          await actions.submitAssessment(data, (assessmentId) => {
+            router.push(`/result/${assessmentId}`);
+          });
         }}
       />
     </main>

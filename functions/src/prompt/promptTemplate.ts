@@ -7,7 +7,7 @@ export interface PromptParams {
   strictnessInstruction: string;
   toneInstruction: string;
   dataString: string;
-  storageFilePaths: string[];
+  hasFiles?: boolean;
   mediaFocus: string;
   targetAnalysisBlocks: string;
   targetMetrics: string[];
@@ -72,7 +72,7 @@ export const buildAssessmentPrompt = (params: PromptParams) => {
   DATA TEKS FORMULIR:
   ${params.dataString}
 
-  ${params.storageFilePaths && params.storageFilePaths.length > 0 ? "DOKUMEN TERLAMPIR TELAH DISERTAKAN. ANDA WAJIB MEMBACA SECARA FORENSIK DAN MENYILANGKAN DATANYA DENGAN TEKS KLAIM FORMULIR." : "TIDAK ADA DOKUMEN YANG DILAMPIRKAN. PENILAIAN INI HANYA BERBASIS KLAIM TEKS. INI ADALAH RED FLAG JIKA KLAIM MEREKA TERLALU BESAR TANPA BUKTI."}
+  ${params.hasFiles ? "DOKUMEN TERLAMPIR TELAH DISERTAKAN. ANDA WAJIB MEMBACA SECARA FORENSIK DAN MENYILANGKAN DATANYA DENGAN TEKS KLAIM FORMULIR." : "TIDAK ADA DOKUMEN YANG DILAMPIRKAN. PENILAIAN INI HANYA BERBASIS KLAIM TEKS. INI ADALAH RED FLAG JIKA KLAIM MEREKA TERLALU BESAR TANPA BUKTI."}
 
   ==================================================
   INSTRUKSI FORMAT ANALISIS KELUARAN & PEMBAGIAN PROPERTI JSON

@@ -235,7 +235,7 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
             {aiResult.fileAnalysisInsights.keyFindingsFromFiles && (
               <View style={{ marginTop: 16 }}> {/* PERBAIKAN: Tambah Margin Top agar tidak sesak */}
                 <Text style={styles.label}>Key Findings</Text>
-                {aiResult.fileAnalysisInsights.keyFindingsFromFiles.map((find: string, idx: number) => (
+                {aiResult.fileAnalysisInsights?.keyFindingsFromFiles?.map((find: string, idx: number) => (
                   <View key={idx} style={styles.bulletRow}><Text style={styles.bulletDot}>■</Text><Text style={styles.bulletText}>{renderTextWithBoldPdf(find)}</Text></View>
                 ))}
               </View>
@@ -253,10 +253,10 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Specific Parameters</Text>
             <View style={styles.grid2Col}>
-              {aiResult.customAnalysisBlocks.map((block: any, bIdx: number) => (
+              {aiResult.customAnalysisBlocks?.map((block: any, bIdx: number) => (
                 <View key={bIdx} style={isCuratorWorksheet ? styles.colFull : styles.colHalf} wrap={false}>
                   <Text style={[styles.label, { color: '#000000', fontSize: 9 }]}>{block.title}</Text>
-                  {block.metrics?.map((m: any, mIdx: number) => (
+                  {block?.metrics?.map((m: any, mIdx: number) => (
                     <View key={mIdx} style={{ marginBottom: 12, marginTop: 4 }}>
                       <Text style={styles.label}>{m.label}</Text>
                       {renderBullets(m.value)}
@@ -329,7 +329,7 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
         {aiResult?.riskAssessment?.criticalRisks && aiResult.riskAssessment.criticalRisks.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Risk & Mitigation Map</Text>
-            {aiResult.riskAssessment.criticalRisks.map((risk: string, idx: number) => (
+            {aiResult.riskAssessment?.criticalRisks?.map((risk: string, idx: number) => (
               <View key={idx} style={{ marginBottom: 16, paddingBottom: 16, borderBottom: '1pt solid #F5F5F5' }} wrap={false}>
                 <Text style={styles.label}>Identified Risks</Text>
                 {renderBullets(risk)}
@@ -363,7 +363,7 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
           {aiResult?.nextActionSteps && aiResult.nextActionSteps.length > 0 && (
              <View style={{ marginTop: 24 }}>
                <Text style={[styles.label, { marginBottom: 16, borderBottom: '1pt solid #E5E5E5', paddingBottom: 8 }]}>Execution Timeline (Action Plan)</Text>
-               {aiResult.nextActionSteps.map((step: any, idx: number) => (
+               {aiResult.nextActionSteps?.map((step: any, idx: number) => (
                  <View key={idx} style={{ flexDirection: 'row', marginBottom: 12 }} wrap={false}>
                    <View style={{ width: 80, borderRight: '1pt solid #000000', paddingRight: 12, marginRight: 12 }}>
                      <Text style={{ fontSize: 8, fontWeight: 900, color: '#000000', textTransform: 'uppercase' }}>{step.timeframe}</Text>

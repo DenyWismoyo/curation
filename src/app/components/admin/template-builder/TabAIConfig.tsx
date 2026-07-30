@@ -533,10 +533,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
         <div className="space-y-6">
           <h4 className="font-black text-slate-900 border-l-4 border-blue-500 pl-3">Skala Kepadatan Output</h4>
           <div className="space-y-3 p-4 bg-blue-50/50 rounded-2xl ring-1 ring-blue-100">
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-bold text-blue-900 uppercase tracking-widest">Target Metrik Radar</label>
-              <Input type="number" min={3} max={20} value={template.aiPromptConfig?.targetMetricCount || 8} onChange={e => updateConfig('targetMetricCount', parseInt(e.target.value))} className="bg-white border-blue-200 font-bold" />
-            </div>
+
             <div className="space-y-1.5">
               <label className="text-[10px] font-bold text-blue-900 uppercase tracking-widest">Target Blok Analisis</label>
               <Input type="number" min={2} max={15} value={template.aiPromptConfig?.targetBlockCount || 6} onChange={e => updateConfig('targetBlockCount', parseInt(e.target.value))} className="bg-white border-blue-200 font-bold" />

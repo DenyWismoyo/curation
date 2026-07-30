@@ -1,10 +1,6 @@
 import * as admin from "firebase-admin";
 import { getFirestore } from "firebase-admin/firestore";
 import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
-import { GoogleAIFileManager } from "@google/generative-ai/server";
-import * as os from "os";
-import * as path from "path";
-import * as fs from "fs";
 import { buildAssessmentPrompt, getSystemPrompt } from "../../prompt/promptTemplate";
 import { withRetry } from "../../utils/retry";
 
@@ -16,9 +12,38 @@ export const executeTriangulator = async (
 ): Promise<any> => {
   const aiResult = data.aiResult || {};
   const aiPromptConfig = data.aiPromptConfig || {};
-  const geminiFiles = data.geminiFiles || [];
-  const storageFilePaths = data.storageFilePaths || [];
-  
+  const triangulatorSchema: any = {
+    type: SchemaType.OBJECT,
+    required: ["totalScore", "dataConfidenceScore", "readinessLevel", "incubationRoute", "executiveSummary", "_internalReasoning", "contradictionsFound", "swotAnalysis", "riskAssessment"],
+    properties: {
+      totalScore: { type: SchemaType.INTEGER },
+      dataConfidenceScore: { type: SchemaType.INTEGER },
+      readinessLevel: { type: SchemaType.STRING },
+      incubationRoute: { type: SchemaType.STRING },
+      executiveSummary: { type: SchemaType.STRING },
+      _internalReasoning: { type: SchemaType.STRING },
+      contradictionsFound: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
+      swotAnalysis: {
+        type: SchemaType.OBJECT,
+        required: ["strengths", "weaknesses", "opportunities", "threats"],
+        properties: {
+          strengths: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
+          weaknesses: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
+          opportunities: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
+          threats: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } }
+        }
+      },
+      riskAssessment: {
+        type: SchemaType.OBJECT,
+        required: ["criticalRisks", "mitigationStrategies"],
+        properties: {
+          criticalRisks: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
+          mitigationStrategies: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } }
+        }
+      }
+    }
+  };
+
   const genAI = new GoogleGenerativeAI(API_KEY);
   const model = genAI.getGenerativeModel({
     model: "gemini-3.1-pro-preview",
@@ -26,65 +51,9 @@ export const executeTriangulator = async (
     generationConfig: {
       temperature: 0.1,
       responseMimeType: "application/json",
+      responseSchema: triangulatorSchema
     }
   });
-
-  // 1. Dapatkan referensi files jika ada
-  let uploadedFileRefs: any[] = [];
-  if (geminiFiles.length > 0) {
-    uploadedFileRefs = geminiFiles.map((f: any) => ({
-      fileData: { mimeType: f.mimeType, fileUri: f.uri }
-    }));
-  } else if (storageFilePaths.length > 0) {
-    const fileManager = new GoogleAIFileManager(API_KEY);
-    
-    const bucket = admin.storage().bucket();
-    const tempFiles: string[] = [];
-    const newGeminiFiles = [];
-
-    for (const storagePath of storageFilePaths) {
-      const file = bucket.file(storagePath);
-      const [metadata] = await file.getMetadata();
-      let mimeType = metadata.contentType || 'application/octet-stream';
-      
-      if (mimeType.includes('pdf') || mimeType.includes('text') || mimeType.includes('image')) {
-        const fileName = path.basename(storagePath);
-        const tempFilePath = path.join(os.tmpdir(), fileName);
-        await file.download({ destination: tempFilePath });
-        tempFiles.push(tempFilePath);
-        
-        const displayName = fileName.length > 40 ? fileName.substring(0, 40) : fileName;
-        try {
-          const uploadResult = await fileManager.uploadFile(tempFilePath, {
-            mimeType,
-            displayName
-          });
-          newGeminiFiles.push({
-            name: uploadResult.file.name,
-            uri: uploadResult.file.uri,
-            mimeType: uploadResult.file.mimeType
-          });
-          uploadedFileRefs.push({
-            fileData: { mimeType: uploadResult.file.mimeType, fileUri: uploadResult.file.uri }
-          });
-        } catch(e) {
-          console.error("Failed to upload to Gemini:", e);
-        }
-      }
-    }
-    
-    tempFiles.forEach(f => {
-      try { fs.unlinkSync(f); } catch(e) {}
-    });
-
-    if (newGeminiFiles.length > 0) {
-      if (docRef) {
-        await docRef.update({ geminiFiles: admin.firestore.FieldValue.arrayUnion(...newGeminiFiles) });
-      }
-      if (!data.geminiFiles) data.geminiFiles = [];
-      data.geminiFiles.push(...newGeminiFiles);
-    }
-  }
 
   const formData = data.formData || {};
   const trackType = data.trackType || "Evaluasi Umum";
@@ -110,7 +79,8 @@ export const executeTriangulator = async (
     assessmentGoal: aiPromptConfig.assessmentGoal || "Evaluasi kelayakan",
     strictnessInstruction: aiPromptConfig.gradingStrictness === 'strict' ? "Penilaian SANGAT KETAT" : "Penilaian objektif",
     toneInstruction: aiPromptConfig.reportTone || "Gaya bahasa: Konsultatif",
-    dataString, storageFilePaths,
+    dataString,
+    hasFiles: (data.storageFilePaths && data.storageFilePaths.length > 0) || (data.geminiFiles && data.geminiFiles.length > 0),
     mediaFocus: aiPromptConfig.mediaAnalysisFocus ? `Fokus Media: ${aiPromptConfig.mediaAnalysisFocus}.` : '',
     targetAnalysisBlocks: aiPromptConfig.expectedAnalysisBlocks?.map((b: string) => `- ${b}`).join("\n") || "- Posisi Pasar",
     targetMetrics: aiPromptConfig.expectedMetrics || ["Validasi", "Keuangan"],
@@ -124,14 +94,9 @@ export const executeTriangulator = async (
     targetAudience: targetAudience
   });
 
-  const parts: any[] = [{ text: finalPrompt }];
-  if (uploadedFileRefs.length > 0) {
-    parts.push(...uploadedFileRefs);
-  }
-
   const result = await withRetry(async () => {
     const res = await model.generateContent({
-      contents: [{ role: "user", parts }]
+      contents: [{ role: "user", parts: [{ text: finalPrompt }] }]
     });
     let text = res.response.text().trim();
     if (text.startsWith('```')) {

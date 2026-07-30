@@ -105,7 +105,9 @@ export default function Home() {
   const combinedHistory = [...dbHistory];
   state.history.forEach((localItem) => {
     const exists = combinedHistory.find(
-      (dbItem) => dbItem.namaUsaha === localItem.namaUsaha && dbItem.score === localItem.score
+      (dbItem) => 
+        (dbItem.id && localItem.id && dbItem.id === localItem.id) || 
+        (dbItem.namaUsaha === localItem.namaUsaha && dbItem.score === localItem.score)
     );
     if (!exists) combinedHistory.push(localItem);
   });

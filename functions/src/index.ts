@@ -16,8 +16,9 @@ import { buildAssessmentPrompt, getSystemPrompt } from "./prompt/promptTemplate"
 export { generatePDFReport } from "./general/documentGenerator";
 export { matchBusinessWithIndustry } from "./general/vectorService";
 
-export { createPaymentInvoice, mayarWebhook, redeemAssessmentQuota, checkTokenValidity } from "./general/paymentService";
+export { createPaymentInvoice, createDynamicQris, mayarWebhook, redeemAssessmentQuota, checkTokenValidity } from "./general/paymentService";
 export { chatWithOmniAi } from "./general/omniAiService";
+export { analyzeEvidence } from "./general/evidenceService";
 export { generateActionPlanChecklist, generateSubTaskChecklist } from "./actionPlanService";
 export { generateTemplateSellingPoints, generatePromptAnchors } from "./outputService";
 export { weeklyActionPlanNudge } from "./email/nudgeService";

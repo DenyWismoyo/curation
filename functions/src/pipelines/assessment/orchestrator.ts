@@ -6,6 +6,10 @@ import { executeTriangulator } from "../../agents/assessment/triangulatorAgent";
 import { executeTacticalPlanner } from "../../agents/assessment/tacticalPlannerAgent";
 import { executeSynthesis } from "../../agents/assessment/synthesisAgent";
 import { executePostProcessing } from "../../agents/assessment/postProcessingAgent";
+import { GoogleAIFileManager } from "@google/generative-ai/server";
+import * as os from "os";
+import * as path from "path";
+import * as fs from "fs";
 
 const geminiApiKeySecret = defineSecret("GEMINI_API_KEY");
 const smtpEmailSecret = defineSecret("SMTP_EMAIL");
@@ -33,6 +37,54 @@ export const assessmentOrchestrator = onDocumentCreated({
   if (!data.aiResult) data.aiResult = {};
 
   try {
+    // 0. Prepare Files (Upload to Gemini if needed)
+    const geminiFiles = data.geminiFiles || [];
+    const storageFilePaths = data.storageFilePaths || [];
+    
+    if (geminiFiles.length === 0 && storageFilePaths.length > 0) {
+      const fileManager = new GoogleAIFileManager(API_KEY);
+      const bucket = admin.storage().bucket();
+      const tempFiles: string[] = [];
+      const newGeminiFiles = [];
+
+      for (const storagePath of storageFilePaths) {
+        const file = bucket.file(storagePath);
+        const [metadata] = await file.getMetadata();
+        let mimeType = metadata.contentType || 'application/octet-stream';
+        
+        if (mimeType.includes('pdf') || mimeType.includes('text') || mimeType.includes('image')) {
+          const fileName = path.basename(storagePath);
+          const tempFilePath = path.join(os.tmpdir(), fileName);
+          await file.download({ destination: tempFilePath });
+          tempFiles.push(tempFilePath);
+          
+          const displayName = fileName.length > 40 ? fileName.substring(0, 40) : fileName;
+          try {
+            const uploadResult = await fileManager.uploadFile(tempFilePath, {
+              mimeType,
+              displayName
+            });
+            newGeminiFiles.push({
+              name: uploadResult.file.name,
+              uri: uploadResult.file.uri,
+              mimeType: uploadResult.file.mimeType
+            });
+          } catch(e) {
+            console.error("Failed to upload to Gemini:", e);
+          }
+        }
+      }
+      
+      tempFiles.forEach(f => {
+        try { fs.unlinkSync(f); } catch(e) {}
+      });
+
+      if (newGeminiFiles.length > 0) {
+        await docRef.update({ geminiFiles: admin.firestore.FieldValue.arrayUnion(...newGeminiFiles) });
+        data.geminiFiles = newGeminiFiles;
+      }
+    }
+
     // 1. Domain Experts
     const { metricsResult, fieldArgsResult, finalFiles } = await executeDomainExperts(assessmentId, data, API_KEY);
     
@@ -50,27 +102,16 @@ export const assessmentOrchestrator = onDocumentCreated({
     // 2. Triangulator
     const triangulatorResult = await executeTriangulator(assessmentId, data, API_KEY, docRef);
     
-    // Hitung total skor dari fieldArguments
-    let calculatedTotalScore = 0;
-    if (data.aiResult.fieldArguments && Array.isArray(data.aiResult.fieldArguments) && data.aiResult.fieldArguments.length > 0) {
-       const sum = data.aiResult.fieldArguments.reduce((acc: number, curr: any) => acc + (curr.score || 0), 0);
-       calculatedTotalScore = Math.round(sum / data.aiResult.fieldArguments.length);
-    } else {
-       calculatedTotalScore = triangulatorResult.totalScore || 0;
-    }
-    
-    const aiPromptConfig = data.aiPromptConfig || {};
-    const tiers = aiPromptConfig.customReadinessTiers || ["Pemula", "Menengah", "Lanjutan", "Ahli", "Master"];
-    let readiness = tiers[0];
-    if (calculatedTotalScore >= 85) readiness = tiers[4] || tiers[tiers.length-1];
-    else if (calculatedTotalScore >= 70) readiness = tiers[3] || tiers[Math.floor(tiers.length*0.75)];
-    else if (calculatedTotalScore >= 55) readiness = tiers[2] || tiers[Math.floor(tiers.length*0.5)];
-    else if (calculatedTotalScore >= 40) readiness = tiers[1] || tiers[Math.floor(tiers.length*0.25)];
+    // 3. Gunakan skor dan readiness langsung dari Triangulator (Master Evaluator)
+    const calculatedTotalScore = triangulatorResult.totalScore || 0;
+    const contradictionsFound = triangulatorResult.contradictionsFound || [];
+    const dataConfidenceScore = triangulatorResult.dataConfidenceScore || 80;
 
-    data.aiResult.readinessLevel = triangulatorResult.readinessLevel || readiness;
+    data.aiResult.readinessLevel = triangulatorResult.readinessLevel || "Belum Ditentukan";
     data.aiResult.totalScore = calculatedTotalScore;
-    data.aiResult.dataConfidenceScore = triangulatorResult.dataConfidenceScore || 80;
-    data.aiResult.contradictionsFound = triangulatorResult.contradictionsFound || [];
+    data.aiResult.dataConfidenceScore = dataConfidenceScore;
+    data.aiResult.contradictionsFound = contradictionsFound;
+    data.aiResult._internalReasoning = triangulatorResult._internalReasoning || "";
     data.aiResult.incubationRoute = triangulatorResult.incubationRoute || "Pendampingan Standar";
     data.aiResult.executiveSummary = triangulatorResult.executiveSummary || "";
     data.aiResult.swotAnalysis = triangulatorResult.swotAnalysis || { strengths: [], weaknesses: [], opportunities: [], threats: [] };
@@ -81,6 +122,7 @@ export const assessmentOrchestrator = onDocumentCreated({
       "aiResult.totalScore": data.aiResult.totalScore,
       "aiResult.dataConfidenceScore": data.aiResult.dataConfidenceScore,
       "aiResult.contradictionsFound": data.aiResult.contradictionsFound,
+      "aiResult._internalReasoning": data.aiResult._internalReasoning,
       "aiResult.incubationRoute": data.aiResult.incubationRoute,
       "aiResult.executiveSummary": data.aiResult.executiveSummary,
       "aiResult.swotAnalysis": data.aiResult.swotAnalysis,
@@ -117,6 +159,8 @@ export const assessmentOrchestrator = onDocumentCreated({
 
     await docRef.update({
       status: "COMPLETED",
+      score: data.aiResult?.totalScore || 0,
+      readinessLevel: data.aiResult?.readinessLevel || "Belum Ditentukan",
       geminiFiles: admin.firestore.FieldValue.delete(),
       completedAt: admin.firestore.FieldValue.serverTimestamp()
     });
