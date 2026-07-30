@@ -1,7 +1,7 @@
 // src/components/curation/DynamicField.tsx
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { FormField } from '@/types/curation';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -43,6 +43,47 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
   const getOptionLabel = (opt: any): string => {
     return typeof opt === 'object' && opt !== null ? opt.label : String(opt);
   };
+
+  const analyzeFile = useCallback(async (fileToAnalyze: File) => {
+    if (isAnalyzing || analysisResult) return;
+    setIsAnalyzing(true);
+    try {
+      const reader = new FileReader();
+      reader.readAsDataURL(fileToAnalyze);
+      reader.onloadend = async () => {
+        try {
+          const base64 = reader.result?.toString().split(',')[1];
+          if (!base64) throw new Error("Gagal konversi ke Base64");
+          
+          const functions = getFunctions(app, 'asia-southeast2');
+          const analyze = httpsCallable(functions, 'analyzeEvidence');
+          const res = await analyze({ 
+            fileBase64: base64, 
+            mimeType: fileToAnalyze.type,
+            context: `Tolong analisis validitas dokumen ini berdasarkan konteks pertanyaan form berikut: "${field.label}". ${field.description ? `(Info tambahan: ${field.description})` : ''}`
+          });
+          const data = res.data as any;
+          setAnalysisResult(data.analysisResult);
+        } catch (error) {
+          console.error("Error dalam callback FileReader:", error);
+          toast.error("Gagal menganalisis dokumen.");
+        } finally {
+          setIsAnalyzing(false);
+        }
+      };
+    } catch (error) {
+      console.error(error);
+      toast.error("Gagal memproses dokumen.");
+      setIsAnalyzing(false);
+    }
+  }, [field.label, field.description, isAnalyzing, analysisResult]);
+
+  useEffect(() => {
+    // Jalankan auto-analyze jika field ini bertipe file, valuenya adalah objek File, dan belum dianalisis
+    if (field.type === 'file' && value instanceof File && !analysisResult && !isAnalyzing) {
+      analyzeFile(value);
+    }
+  }, [value, field.type, analysisResult, isAnalyzing, analyzeFile]);
 
   const handleCheckboxChange = (optionLabel: string, isChecked: boolean) => {
     let currentValues = Array.isArray(value) ? [...value] : [];
@@ -140,34 +181,6 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
           setDragActive(false);
           if (e.dataTransfer.files && e.dataTransfer.files[0]) onChange(e.dataTransfer.files[0]);
         };
-        
-        const analyzeFile = async () => {
-          if (!value || !(value instanceof File)) return;
-          setIsAnalyzing(true);
-          try {
-            const reader = new FileReader();
-            reader.readAsDataURL(value);
-            reader.onloadend = async () => {
-              const base64 = reader.result?.toString().split(',')[1];
-              if (!base64) throw new Error("Gagal konversi ke Base64");
-              
-              const functions = getFunctions(app, 'asia-southeast2');
-              const analyze = httpsCallable(functions, 'analyzeEvidence');
-              const res = await analyze({ 
-                fileBase64: base64, 
-                mimeType: value.type,
-                context: `Pertanyaan form: ${field.label}`
-              });
-              const data = res.data as any;
-              setAnalysisResult(data.analysisResult);
-            };
-          } catch (error) {
-            console.error(error);
-            toast.error("Gagal menganalisis dokumen.");
-          } finally {
-            setIsAnalyzing(false);
-          }
-        };
 
         return (
           <div className="mt-1">
@@ -188,12 +201,12 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
                     {value instanceof File && (
                       <button 
                         type="button" 
-                        onClick={analyzeFile} 
+                        onClick={() => analyzeFile(value)} 
                         disabled={isAnalyzing}
                         className="px-3 py-1.5 bg-white border border-emerald-200 text-emerald-700 hover:bg-emerald-100 rounded-lg text-xs font-bold transition-colors flex items-center gap-1 shadow-sm disabled:opacity-50"
                       >
                         {isAnalyzing ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} className="text-amber-500" />}
-                        {isAnalyzing ? 'Menganalisis...' : 'Analisis AI'}
+                        {isAnalyzing ? 'Menganalisis...' : 'Analisis Ulang AI'}
                       </button>
                     )}
                     <button type="button" onClick={() => { onChange(null); setAnalysisResult(null); }} className="p-2 hover:bg-rose-100 text-slate-400 hover:text-rose-600 rounded-full transition-colors shrink-0"><X size={18} /></button>

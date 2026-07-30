@@ -19,6 +19,9 @@ export const executeDomainExperts = async (
   });
 
   const dataString = JSON.stringify(data.formData || {});
+  
+  const rawFileParts: any[] = geminiFiles.map((f: any) => ({ fileData: { mimeType: f.mimeType, fileUri: f.uri } }));
+  const fileInstruction = rawFileParts.length > 0 ? `\n\nDokumen lampiran telah disertakan sebagai bukti dukung. Anda WAJIB memvalidasi klaim teks dengan dokumen ini sebelum memberikan skor. JANGAN HANYA PERCAYA PADA KLAIM TEKS.` : ``;
 
   // 1. Worker B (Radar Metrics)
   const schemaB = { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, required: ["label", "score", "description"], properties: { label: { type: SchemaType.STRING, ...(aiPromptConfig.expectedMetrics?.length > 0 && { enum: aiPromptConfig.expectedMetrics }) }, score: { type: SchemaType.INTEGER }, description: { type: SchemaType.STRING } } } };
@@ -27,7 +30,7 @@ export const executeDomainExperts = async (
 2. Daftar metrik yang WAJIB Anda hasilkan adalah: ${JSON.stringify(aiPromptConfig.expectedMetrics)}. DILARANG KERAS menambah atau mengurangi metrik dari daftar ini!
 3. Berikan justifikasi evaluasi naratif dan skor (0-100) HANYA untuk metrik-metrik tersebut berdasarkan Data berikut.
 
-Data Subjek: ${dataString}.`;
+Data Subjek: ${dataString}.${fileInstruction}`;
 
   // 2. Worker C (Field Arguments / Analisis Detil)
   const schemaC = { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, required: ["label", "score", "description"], properties: { label: { type: SchemaType.STRING }, score: { type: SchemaType.INTEGER }, description: { type: SchemaType.STRING } } } };
@@ -37,7 +40,7 @@ Lakukan evaluasi mendalam pada SETIAP poin data/jawaban yang ada di form berikut
 - score: (Nilai 0-100 untuk poin ini)
 - description: (Analisis/argumen tajam AI tentang poin ini)
 
-Data Subjek: ${dataString}.`;
+Data Subjek: ${dataString}.${fileInstruction}`;
 
   // 3. Worker D (File Forensics)
   const fileParts: any[] = [];
@@ -45,7 +48,7 @@ Data Subjek: ${dataString}.`;
   if (geminiFiles.length > 0) {
     schemaD = { type: SchemaType.OBJECT, required: ["documentQuality", "keyFindingsFromFiles", "discrepancies"], properties: { documentQuality: { type: SchemaType.STRING }, keyFindingsFromFiles: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } }, discrepancies: { type: SchemaType.STRING } } };
     fileParts.push({ text: `Lakukan analisis FORENSIK dokumen lampiran. Bandingkan isinya dengan klaim teks berikut: ${dataString}.` });
-    geminiFiles.forEach((f: any) => fileParts.push({ fileData: { mimeType: f.mimeType, fileUri: f.uri } } as any));
+    fileParts.push(...rawFileParts);
   }
 
   const safeParseJSON = (text: string, isArray: boolean = true) => {
@@ -69,11 +72,13 @@ Data Subjek: ${dataString}.`;
 
   const [metricsResult, fieldArgsResult, finalFiles] = await Promise.all([
     withRetry(async () => {
-      const res = await getWorkerModel(schemaB).generateContent(promptB);
+      const contents = [{ role: "user", parts: [{ text: promptB }, ...rawFileParts] }];
+      const res = await getWorkerModel(schemaB).generateContent({ contents } as any);
       return safeParseJSON(res.response.text().trim(), true);
     }),
     withRetry(async () => {
-      const res = await getWorkerModel(schemaC).generateContent(promptC);
+      const contents = [{ role: "user", parts: [{ text: promptC }, ...rawFileParts] }];
+      const res = await getWorkerModel(schemaC).generateContent({ contents } as any);
       return safeParseJSON(res.response.text().trim(), true);
     }),
     (async () => {

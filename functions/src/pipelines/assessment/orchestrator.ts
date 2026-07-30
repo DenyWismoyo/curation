@@ -167,6 +167,7 @@ export const assessmentOrchestrator = onDocumentCreated({
       "aiResult.recommendations": data.aiResult.recommendations,
       "aiResult.nextActionSteps": data.aiResult.nextActionSteps,
       "aiResult.customAnalysisBlocks": data.aiResult.customAnalysisBlocks,
+      "aiResult._internalReasoning": data.aiResult._internalReasoning,
       geminiFiles: admin.firestore.FieldValue.delete(),
       completedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
