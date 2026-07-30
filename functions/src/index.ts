@@ -46,6 +46,7 @@ export {
   getCachedAssessmentResult,
   setCachedAssessmentResult,
 } from './general/cacheService'
+export { scheduledCacheCleanup } from './general/cacheCleanupService'
 export { generateAdvancedPrompts } from './promptEnhancerService'
 export { analyzeMicroIdea } from './general/microSimulatorService'
 export { processVoiceInput } from './general/voiceService'

@@ -26,8 +26,12 @@ export const affiliateCommissionAgent = onDocumentUpdated({
   const beforeStatus = String(beforeData.status || "").toUpperCase();
   const afterStatus = String(afterData.status || "").toUpperCase();
 
+  // Hanya proses jika transaksi BARU SAJA berubah menjadi PAID
   if (afterStatus !== "PAID") return null;
   if (beforeStatus === "PAID") return null;
+
+  // GUARD ANTI-LOOP EXTRA: Pastikan belum pernah diproses
+  if (beforeData.affiliateCommissionStatus !== undefined) return null;
 
   const affiliateCode = String(afterData.affiliateCode || "").trim().toUpperCase();
   if (!affiliateCode) return null;

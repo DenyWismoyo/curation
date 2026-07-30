@@ -48,11 +48,12 @@ export const assessmentOrchestrator = onDocumentCreated({
       const newGeminiFiles = [];
 
       for (const storagePath of storageFilePaths) {
-        const file = bucket.file(storagePath);
-        const [metadata] = await file.getMetadata();
-        let mimeType = metadata.contentType || 'application/octet-stream';
-        
-        if (mimeType.includes('pdf') || mimeType.includes('text') || mimeType.includes('image')) {
+        try {
+          const file = bucket.file(storagePath);
+          const [metadata] = await file.getMetadata();
+          let mimeType = metadata.contentType || 'application/octet-stream';
+          
+          // SEMUA JENIS FILE DIIZINKAN - Gemini API yang akan me-reject jika tidak didukung
           const fileName = path.basename(storagePath);
           const tempFilePath = path.join(os.tmpdir(), fileName);
           await file.download({ destination: tempFilePath });
@@ -70,8 +71,10 @@ export const assessmentOrchestrator = onDocumentCreated({
               mimeType: uploadResult.file.mimeType
             });
           } catch(e) {
-            console.error("Failed to upload to Gemini:", e);
+            console.error(`Gagal mengunggah file ${fileName} ke Gemini API:`, e);
           }
+        } catch(e) {
+          console.error(`Gagal memproses file dari Storage: ${storagePath}`, e);
         }
       }
       

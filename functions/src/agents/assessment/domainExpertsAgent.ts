@@ -48,21 +48,49 @@ Data Subjek: ${dataString}.`;
     geminiFiles.forEach((f: any) => fileParts.push({ fileData: { mimeType: f.mimeType, fileUri: f.uri } } as any));
   }
 
+  const safeParseJSON = (text: string, isArray: boolean = true) => {
+    try {
+      return JSON.parse(text.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim());
+    } catch (e) {
+      console.warn("JSON Parse failed, attempting fallback extraction", e);
+      try {
+        const startChar = isArray ? '[' : '{';
+        const endChar = isArray ? ']' : '}';
+        const cleanText = text.substring(text.indexOf(startChar), text.lastIndexOf(endChar) + 1);
+        return JSON.parse(cleanText);
+      } catch (fallbackError) {
+        console.error("Fallback JSON Parse also failed", fallbackError);
+        return isArray ? [] : {};
+      }
+    }
+  };
+
+  const storageFilePaths = data.storageFilePaths || [];
+
   const [metricsResult, fieldArgsResult, finalFiles] = await Promise.all([
     withRetry(async () => {
       const res = await getWorkerModel(schemaB).generateContent(promptB);
-      return JSON.parse(res.response.text().replace(/^```(json)?/gi, '').replace(/```$/g, '').trim());
+      return safeParseJSON(res.response.text().trim(), true);
     }),
     withRetry(async () => {
       const res = await getWorkerModel(schemaC).generateContent(promptC);
-      return JSON.parse(res.response.text().replace(/^```(json)?/gi, '').replace(/```$/g, '').trim());
+      return safeParseJSON(res.response.text().trim(), true);
     }),
     (async () => {
-      if (geminiFiles.length === 0) return null;
+      if (geminiFiles.length === 0) {
+        if (storageFilePaths.length > 0) {
+          // File ada di storage, tapi gagal di-upload ke Gemini
+          return {
+            documentQuality: "Dokumen terlampir tersedia tetapi tidak dapat diproses oleh AI karena format file tidak didukung atau terjadi kegagalan sistem saat mengimpor data.",
+            keyFindingsFromFiles: ["File dapat diakses secara manual melalui tab 'Data Input Peserta' untuk validasi oleh kurator."],
+            discrepancies: ""
+          };
+        }
+        return null;
+      }
       return withRetry(async () => {
         const res = await getWorkerModel(schemaD).generateContent({ contents: [{ role: "user", parts: fileParts }] });
-        let text = res.response.text().trim();
-        return JSON.parse(text.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim());
+        return safeParseJSON(res.response.text().trim(), false);
       });
     })()
   ]);

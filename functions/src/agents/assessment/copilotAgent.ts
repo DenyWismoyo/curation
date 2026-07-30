@@ -55,9 +55,9 @@ export const actionPlanCopilotChat = onCall({
       namaUsaha: assessmentData?.namaUsaha || "Bisnis Pengguna",
       skor: assessmentData?.score || 0,
       readinessLevel: assessmentData?.readinessLevel || "N/A",
-      kekuatanUtama: assessmentData?.aiResult?.mainStrengths || [],
-      kelemahanUtama: assessmentData?.aiResult?.criticalWeaknesses || [],
-      actionPlan: assessmentData?.aiResult?.customActionPlan || [],
+      kekuatanUtama: assessmentData?.aiResult?.swotAnalysis?.strengths || [],
+      kelemahanUtama: assessmentData?.aiResult?.swotAnalysis?.weaknesses || [],
+      actionPlan: assessmentData?.aiResult?.nextActionSteps || [],
     };
 
     const systemPrompt = `

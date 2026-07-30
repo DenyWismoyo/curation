@@ -93,9 +93,16 @@ export const useCuration = () => {
     try {
       const tokenUsed = sessionStorage.getItem('active_token');
       const processAssessment = httpsCallable(functions, 'processCurationAssessment');
+      
+      // BERSIIHKAN FORM DATA DARI METADATA SISTEM
+      const cleanFormData = { ...data };
+      delete cleanFormData.storageFilePaths;
+      delete cleanFormData.selfScore;
+      delete cleanFormData.isConfirmedEarnest;
+      delete cleanFormData.tokenUsed;
 
       const response = await processAssessment({
-        formData: data,
+        formData: cleanFormData,
         trackType: state.selectedTemplate?.trackName || 'Evaluasi Umum',
         tokenUsed: tokenUsed,
         aiPromptConfig: state.selectedTemplate?.aiPromptConfig || {},
