@@ -334,66 +334,119 @@ export const mayarWebhook = onRequest({
     const currentStatus = String(mayarTx.status || payload.status || "").toUpperCase();
     const transactionStatus = String(mayarTx.transactionStatus || "").toUpperCase();
 
+    const isPaymentSuccess =
+      ['SUCCESS', 'SETTLED', 'PAID', 'COMPLETED'].includes(currentStatus) ||
+      ['PAID', 'SETTLED', 'SUCCESS'].includes(transactionStatus);
+
+    if (!isPaymentSuccess) {
+      // Bukan event sukses, log dan abaikan tanpa error
+      console.log(`[WEBHOOK] Event diabaikan. Status: ${currentStatus} / ${transactionStatus}`);
+      res.status(200).send({ status: "ignored", message: "Non-payment event received" });
+      return;
+    }
+
     try {
-      if (
-        ['SUCCESS', 'SETTLED', 'PAID', 'COMPLETED'].includes(currentStatus) || 
-        ['PAID', 'SETTLED', 'SUCCESS'].includes(transactionStatus)
-      ) {
-        if (txData.status !== 'PAID') {
-          const rawToken = Math.random().toString(36).substring(2, 8).toUpperCase();
-          const finalTokenCode = `B2C-${rawToken}`; 
-          
-          await txDocRef.update({
+      // =========================================================
+      // ATOMIC TRANSACTION: Seluruh proses grant kuota harus atomic
+      // =========================================================
+      await db.runTransaction(async (trx) => {
+        // Baca ulang dokumen transaksi di dalam transaction (bukan pakai txData lama)
+        const freshTxSnap = await trx.get(txDocRef!);
+        if (!freshTxSnap.exists) {
+          throw new Error("Transaction document disappeared during processing");
+        }
+
+        const freshTxData = freshTxSnap.data()!;
+
+        // ✅ IDEMPOTENCY GUARD #1: Cek apakah sudah PAID sebelumnya
+        if (freshTxData.status === 'PAID') {
+          console.log(`[WEBHOOK] Transaksi ${txDocRef!.id} sudah PAID sebelumnya. Webhook duplikat diabaikan.`);
+          return; // Hentikan transaksi - tidak perlu grant kuota lagi
+        }
+
+        // ✅ IDEMPOTENCY GUARD #2: Cek flag quotaGranted
+        if (freshTxData.quotaGranted === true) {
+          console.log(`[WEBHOOK] quotaGranted=true sudah terset. Webhook duplikat diabaikan.`);
+          return; // Hentikan transaksi - kuota sudah pernah diberikan
+        }
+
+        // ✅ SECURITY GUARD: Pastikan transaksi punya userId yang valid
+        if (!freshTxData.userId) {
+          console.error(`[WEBHOOK] Transaksi ${txDocRef!.id} tidak memiliki userId. Tidak dapat grant kuota.`);
+          // Tetap update status PAID agar tidak diproses ulang, tapi tidak grant kuota
+          trx.update(txDocRef!, {
             status: "PAID",
             paidAt: FieldValue.serverTimestamp(),
             paymentMethod: mayarTx.paymentMethod || mayarTx.payment_method || "GATEWAY",
             paymentChannel: "MAYAR",
-            tokenCode: finalTokenCode
+            quotaGranted: false,
+            quotaGrantError: "MISSING_USER_ID",
           });
-          
-          await sendMetaConversionEvent(metaPixelId.value(), metaAccessToken.value(), "Purchase", txData.userEmail, txData.amount, txData.transactionId);
-          
-          if (txData.packageId) {
-            if (txData.packageId === 'BUNDLE_3' || txData.packageId === 'BUNDLE_5') {
-              const addedQuota = txData.packageId === 'BUNDLE_3' ? 3 : 5;
-              if (txData.userId) {
-                const userRef = db.collection("users").doc(txData.userId);
-                await userRef.set({
-                  assessmentQuota: FieldValue.increment(addedQuota)
-                }, { merge: true });
-              }
-            } else if (txData.packageId === 'PREMIUM_CONSULTATION' && txData.assessmentId) {
-              const assessmentRef = db.collection("assessments").doc(txData.assessmentId);
-              await assessmentRef.update({
-                hasPaidForPremiumConsultation: true
-              });
-            } else {
-              const b2cRef = db.collection("corporate_tokens").doc("B2C");
-              await b2cRef.set({
-                corporateName: "Penjualan B2C (Mandiri)",
-                modelType: "flash", 
-                totalTokens: FieldValue.increment(1),
-                createdAt: new Date().toISOString(), 
-                tokens: {
-                  [finalTokenCode]: {
-                    isUsed: false,
-                    usedAt: null,
-                    usedByNamaUsaha: null,
-                    allowedTemplates: [txData.packageId],
-                    buyerEmail: txData.userEmail,
-                    transactionId: txData.transactionId
-                  }
-                }
-              }, { merge: true });
-            }
-          }
+          return;
         }
-      }
+
+        const rawToken = Math.random().toString(36).substring(2, 8).toUpperCase();
+        const finalTokenCode = `B2C-${rawToken}`;
+
+        // Update status PAID + set quotaGranted = true secara ATOMIC
+        trx.update(txDocRef!, {
+          status: "PAID",
+          paidAt: FieldValue.serverTimestamp(),
+          paymentMethod: mayarTx.paymentMethod || mayarTx.payment_method || "GATEWAY",
+          paymentChannel: "MAYAR",
+          tokenCode: finalTokenCode,
+          quotaGranted: true,          // ✅ Flag idempotency - mencegah double-grant
+          quotaGrantedAt: FieldValue.serverTimestamp(),
+        });
+
+        // Grant kuota atau token berdasarkan packageId
+        if (freshTxData.packageId === 'BUNDLE_3' || freshTxData.packageId === 'BUNDLE_5') {
+          const addedQuota = freshTxData.packageId === 'BUNDLE_3' ? 3 : 5;
+          const userRef = db.collection("users").doc(freshTxData.userId);
+          // Increment kuota DALAM transaksi yang sama
+          trx.set(userRef, {
+            assessmentQuota: FieldValue.increment(addedQuota)
+          }, { merge: true });
+
+          console.log(`[WEBHOOK] ✅ Bundle quota ${addedQuota} diberikan ke user ${freshTxData.userId} untuk TX ${txDocRef!.id}`);
+
+        } else if (freshTxData.packageId === 'PREMIUM_CONSULTATION' && freshTxData.assessmentId) {
+          const assessmentRef = db.collection("assessments").doc(freshTxData.assessmentId);
+          trx.update(assessmentRef, {
+            hasPaidForPremiumConsultation: true
+          });
+
+        } else if (freshTxData.packageId) {
+          // Paket modul individual — grant token B2C
+          const b2cRef = db.collection("corporate_tokens").doc("B2C");
+          trx.set(b2cRef, {
+            corporateName: "Penjualan B2C (Mandiri)",
+            modelType: "flash",
+            totalTokens: FieldValue.increment(1),
+            createdAt: new Date().toISOString(),
+            tokens: {
+              [finalTokenCode]: {
+                isUsed: false,
+                usedAt: null,
+                usedByNamaUsaha: null,
+                allowedTemplates: [freshTxData.packageId],
+                buyerEmail: freshTxData.userEmail,
+                transactionId: freshTxData.transactionId
+              }
+            }
+          }, { merge: true });
+        }
+      });
+
+      // Kirim event Meta CAPI setelah transaksi selesai (di luar Firestore Transaction)
+      await sendMetaConversionEvent(metaPixelId.value(), metaAccessToken.value(), "Purchase", txData.userEmail, txData.amount, txData.transactionId);
+
       res.status(200).send({ status: "success", message: "Webhook processed" });
     } catch (error) {
       console.error("❌ [WEBHOOK EXECUTION ERROR]:", error);
       res.status(500).send("Internal Server Error");
     }
+
   }
 );
 

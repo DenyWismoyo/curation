@@ -89,7 +89,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               currentAllowedOrganizations = Array.isArray(data.allowedOrganizations) ? data.allowedOrganizations : [];
               currentB2bOrganizationIds = Array.isArray(data.b2bOrganizationIds) ? data.b2bOrganizationIds : [];
               
-              // Migrate email doc to UID doc (simulating what the cloud function does)
+              // Migrate email doc to UID doc
               await setDoc(doc(db, 'users', currentUser.uid), { 
                 email: currentUser.email,
                 displayName: currentUser.displayName,
@@ -113,6 +113,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 });
               }
             }
+            
+            // Periksa apakah claims perlu direfresh (User punya akses di Firestore tapi belum masuk ke Claims)
+            const hasOrgsInFirestore = currentAllowedOrganizations.length > 0 || currentB2bOrganizationIds.length > 0;
+            const hasOrgsInClaims = Array.isArray(claims.orgScopes) && claims.orgScopes.length > 0;
+            
+            if (hasOrgsInFirestore && !hasOrgsInClaims) {
+              console.log('Force refreshing token to sync B2B claims...');
+              await currentUser.getIdToken(true);
+              // Refresh halaman agar claims baru terbaca dari awal
+              if (typeof window !== 'undefined' && !(window as any).__hasRefreshedToken) {
+                (window as any).__hasRefreshedToken = true;
+                setTimeout(() => window.location.reload(), 500);
+              }
+            }
           }
 
           try {
@@ -131,14 +145,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setAllowedOrganizations(currentAllowedOrganizations);
           setB2bOrganizationIds(currentB2bOrganizationIds);
 
-          // Get assessment quota one-time instead of onSnapshot
+          // ✅ PERBAIKAN: Gunakan onSnapshot (real-time) agar kuota otomatis
+          // terupdate di UI segera setelah webhook berhasil menambahkan kuota,
+          // tanpa perlu user melakukan refresh halaman.
           const userRef = doc(db, 'users', currentUser.uid);
-          const userSnap = await getDoc(userRef).catch(() => null);
-          if (userSnap && userSnap.exists()) {
-            setAssessmentQuota(userSnap.data().assessmentQuota || 0);
-          } else {
+          unsubscribeSnapshot = onSnapshot(userRef, (userSnap) => {
+            if (userSnap.exists()) {
+              setAssessmentQuota(userSnap.data().assessmentQuota || 0);
+            } else {
+              setAssessmentQuota(0);
+            }
+          }, (error) => {
+            console.warn('onSnapshot quota error:', error);
             setAssessmentQuota(0);
-          }
+          });
 
         } catch (error) {
           console.error("Gagal memeriksa role user:", error);

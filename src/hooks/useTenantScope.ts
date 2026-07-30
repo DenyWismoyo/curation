@@ -1,11 +1,15 @@
+import { useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { query, where, QueryConstraint } from 'firebase/firestore';
 
 export function useTenantScope() {
   const { role, allowedOrganizations, b2bOrganizationIds } = useAuth();
 
-  // Gabungkan semua scope organisasi yang diizinkan untuk user ini
-  const accessibleOrgs = Array.from(new Set([...allowedOrganizations, ...b2bOrganizationIds]));
+  // PENTING: useMemo agar referensi array stabil, mencegah infinite useEffect loop
+  const accessibleOrgs = useMemo(
+    () => Array.from(new Set([...allowedOrganizations, ...b2bOrganizationIds])),
+    [allowedOrganizations, b2bOrganizationIds]
+  );
 
   // Cek apakah user adalah super admin yang bisa melihat semua data
   const isSuperAdmin = role === 'admin_omnifit' || role === 'admin_csrs';

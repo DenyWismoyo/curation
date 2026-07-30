@@ -162,9 +162,9 @@ service cloud.firestore {
 
     function hasOrganizationScopeAccess() {
       return isAuthenticated() && (
-        (request.auth.token.orgScopes != null && (
-          resource.data.corporateEntity in request.auth.token.orgScopes ||
-          resource.data.b2bOrganizationId in request.auth.token.orgScopes
+        (request.auth.token.get('orgScopes', null) != null && (
+          resource.data.get('corporateEntity', '__none__') in request.auth.token.orgScopes ||
+          resource.data.get('b2bOrganizationId', '__none__') in request.auth.token.orgScopes
         ))
         || hasOrgScopeFromUserDoc(request.auth.uid)
         || hasOrgScopeFromUserDoc(request.auth.token.email)
@@ -192,7 +192,7 @@ service cloud.firestore {
       return isSuperAdmin()
         || isAdminCSRS()
         || isAdminOmnifit()
-        || (request.auth.token.orgScopes != null && orgName in request.auth.token.orgScopes)
+        || (request.auth.token.get('orgScopes', null) != null && orgName in request.auth.token.orgScopes)
         || (
           isAssessor()
           && exists(/databases/$(database)/documents/assessors/$(request.auth.token.email))

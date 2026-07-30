@@ -12,7 +12,7 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import { AlertTriangle, CheckCircle2, Clock3, Plus, ShieldCheck, Target, Users2, Search, BarChart3 } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, Clock3, Plus, ShieldCheck, Target, Users2, Search, BarChart3, Sparkles } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTenantScope } from '@/hooks/useTenantScope';
 import { db } from '@/lib/firebase';
@@ -203,7 +203,7 @@ export function TenantSelfServiceDashboard({ persona }: { persona: PersonaView }
         unsubscribeAssessments();
       }
     };
-  }, [authLoading, role, user, b2bPersonas, accessibleOrgs, isSuperAdmin]);
+  }, [authLoading, role, user?.uid, b2bPersonas, accessibleOrgs, isSuperAdmin]);
 
   const organizationOptions = useMemo(() => getOrganizationOptions(records), [records]);
 
@@ -374,93 +374,159 @@ export function TenantSelfServiceDashboard({ persona }: { persona: PersonaView }
   const canEditActionEvidence = persona !== 'executive';
 
   return (
-    <div className="space-y-6">
-      <div className="rounded-3xl bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-6 text-white">
-        <p className="text-[11px] uppercase tracking-[0.2em] text-blue-200 font-black">B2B Self-Service Dashboard</p>
-        <h1 className="text-3xl font-black mt-2">Persona: {persona.toUpperCase()}</h1>
-        <p className="text-sm text-blue-100 mt-2">Dashboard tenant ini terpisah dari admin internal dan hanya menampilkan data sesuai scope organisasi akun Anda.</p>
-        <p className="text-xs text-blue-100/90 mt-2">Persona diizinkan: {allowedPersonas.length > 0 ? allowedPersonas.join(', ') : 'leader'}</p>
-
-        <div className="mt-4 max-w-sm">
-          <label className="block text-xs uppercase tracking-[0.2em] text-blue-100 font-black">Organization / Campaign</label>
-          <select
-            value={selectedOrganization}
-            onChange={(event) => setSelectedOrganization(event.target.value)}
-            className="w-full mt-2 h-11 rounded-xl bg-white/10 border border-white/20 px-3 text-sm"
-          >
-            <option value={ALL_ORGANIZATIONS}>Semua organization pada scope</option>
-            {organizationOptions.map((org) => (
-              <option key={org} value={org}>{org}</option>
-            ))}
-          </select>
+    <div className="space-y-8 pb-12">
+      {/* Hero Section */}
+      <div className="relative overflow-hidden rounded-3xl bg-white p-8 md:p-10 ring-1 ring-slate-200 shadow-sm">
+        {/* Decorative background */}
+        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-indigo-50 blur-3xl opacity-50 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-64 h-64 rounded-full bg-blue-50 blur-3xl opacity-50 pointer-events-none" />
+        
+        <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-black uppercase tracking-widest mb-4 ring-1 ring-indigo-200/50">
+              <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+              B2B Portal
+            </div>
+            <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">
+              {persona.charAt(0).toUpperCase() + persona.slice(1)} Workspace
+            </h1>
+            <p className="text-sm md:text-base text-slate-500 mt-2 leading-relaxed">
+              Pantau dan kelola seluruh pipeline, hasil asesmen, dan tindak lanjut dari program B2B Anda dalam satu dashboard terpusat.
+            </p>
+            {allowedPersonas.length > 0 && (
+              <p className="text-[10px] uppercase tracking-widest font-bold text-slate-400 mt-4">
+                Access: {allowedPersonas.join(' • ')}
+              </p>
+            )}
+          </div>
+          
+          <div className="w-full md:w-80 shrink-0">
+            <label className="block text-[10px] uppercase tracking-widest text-slate-500 font-black mb-2">
+              Select Tenant / Campaign
+            </label>
+            <div className="relative">
+              <select
+                value={selectedOrganization}
+                onChange={(event) => setSelectedOrganization(event.target.value)}
+                className="w-full h-12 rounded-xl bg-white border border-slate-200 px-4 text-sm font-bold text-slate-700 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none appearance-none cursor-pointer transition-all"
+              >
+                <option value={ALL_ORGANIZATIONS}>All Organizations in Scope</option>
+                {organizationOptions.map((org) => (
+                  <option key={org} value={org}>{org}</option>
+                ))}
+              </select>
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
       {error && (
-        <div className="rounded-xl bg-amber-50 ring-1 ring-amber-200 p-3 text-sm text-amber-900">{error}</div>
+        <div className="rounded-2xl bg-rose-50 ring-1 ring-rose-200 p-4 text-sm text-rose-900 flex items-start gap-3 shadow-sm">
+          <AlertTriangle className="w-5 h-5 shrink-0 text-rose-600" />
+          <div>
+            <p className="font-bold">Perhatian</p>
+            <p className="mt-1 opacity-90">{error}</p>
+          </div>
+        </div>
       )}
 
-      {/* Tabs */}
-      <div className="flex gap-2 border-b border-slate-200">
+      {/* Modern Tabs */}
+      <div className="flex items-center gap-2 p-1.5 bg-white ring-1 ring-slate-200 rounded-2xl overflow-x-auto hide-scrollbar w-fit">
         <button
           onClick={() => { setActiveTab('overview'); setSelectedParticipant(null); }}
-          className={`px-4 py-2 text-sm font-bold border-b-2 transition-colors ${activeTab === 'overview' ? 'border-slate-900 text-slate-900' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${
+            activeTab === 'overview' 
+              ? 'bg-slate-900 text-white shadow-md' 
+              : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+          }`}
         >
-          Overview & Analytics
+          <BarChart3 className="w-4 h-4" /> Overview & Analytics
         </button>
         <button
           onClick={() => setActiveTab('intake')}
-          className={`px-4 py-2 text-sm font-bold border-b-2 transition-colors ${activeTab === 'intake' ? 'border-slate-900 text-slate-900' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${
+            activeTab === 'intake' 
+              ? 'bg-slate-900 text-white shadow-md' 
+              : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+          }`}
         >
-          Pipeline / Intake
+          <Users2 className="w-4 h-4" /> Pipeline / Intake
         </button>
         <button
           onClick={() => { setActiveTab('actions'); setSelectedParticipant(null); }}
-          className={`px-4 py-2 text-sm font-bold border-b-2 transition-colors ${activeTab === 'actions' ? 'border-slate-900 text-slate-900' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${
+            activeTab === 'actions' 
+              ? 'bg-slate-900 text-white shadow-md' 
+              : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+          }`}
         >
-          Action Tracker
+          <Target className="w-4 h-4" /> Action Tracker
         </button>
         {(persona === 'executive' || persona === 'hr') && (
           <button
             onClick={() => { setActiveTab('branding'); setSelectedParticipant(null); }}
-            className={`px-4 py-2 text-sm font-bold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'branding' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${
+              activeTab === 'branding' 
+                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20' 
+                : 'text-indigo-600 hover:bg-indigo-50'
+            }`}
           >
-            Branding & Landing Page
+            <Sparkles className="w-4 h-4" /> Branding & Landing Page
           </button>
         )}
       </div>
 
       {activeTab === 'overview' && (
-        <div className="space-y-6">
+        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-            <div className="rounded-2xl bg-white p-5 ring-1 ring-slate-200 shadow-sm flex flex-col">
-              <div className="flex justify-between items-start mb-2">
+            <div className="rounded-2xl bg-white p-6 ring-1 ring-slate-200 shadow-sm flex flex-col relative overflow-hidden group hover:shadow-md transition-shadow">
+              <div className="absolute -right-4 -top-4 w-24 h-24 bg-indigo-50 rounded-full group-hover:scale-110 transition-transform" />
+              <div className="flex justify-between items-start mb-4 relative z-10">
                 <p className="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-black">Participants</p>
-                <Users2 className="w-4 h-4 text-indigo-500" />
-              </div>
-              <p className="text-4xl font-black text-slate-900 mt-auto">{snapshot.totalParticipants}</p>
-            </div>
-            <div className="rounded-2xl bg-white p-5 ring-1 ring-slate-200 shadow-sm flex flex-col">
-              <div className="flex justify-between items-start mb-2">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-black">Validated Coverage</p>
-                <ShieldCheck className="w-4 h-4 text-emerald-500" />
-              </div>
-              <p className="text-4xl font-black text-slate-900 mt-auto">{formatPercent(snapshot.totalParticipants > 0 ? (snapshot.validatedCount / snapshot.totalParticipants) * 100 : 0)}</p>
-            </div>
-            <div className="rounded-2xl bg-white p-5 ring-1 ring-slate-200 shadow-sm flex flex-col">
-              <div className="flex justify-between items-start mb-2">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-black">Risk Signals</p>
-                <AlertTriangle className="w-4 h-4 text-rose-500" />
-              </div>
-              <p className="text-4xl font-black text-slate-900 mt-auto">{snapshot.segmentSummaries.filter((item) => item.priority === 'High').length}</p>
-            </div>
-            {showScore && (
-              <div className="rounded-2xl bg-white p-5 ring-1 ring-slate-200 shadow-sm flex flex-col">
-                <div className="flex justify-between items-start mb-2">
-                  <p className="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-black">Avg Score</p>
-                  <Target className="w-4 h-4 text-blue-500" />
+                <div className="p-2 bg-indigo-50 rounded-xl">
+                  <Users2 className="w-4 h-4 text-indigo-600" />
                 </div>
-                <p className="text-4xl font-black text-slate-900 mt-auto">{formatScore(snapshot.avgScore)}</p>
+              </div>
+              <p className="text-4xl font-black text-slate-900 mt-auto relative z-10">{snapshot.totalParticipants}</p>
+            </div>
+            
+            <div className="rounded-2xl bg-white p-6 ring-1 ring-slate-200 shadow-sm flex flex-col relative overflow-hidden group hover:shadow-md transition-shadow">
+              <div className="absolute -right-4 -top-4 w-24 h-24 bg-emerald-50 rounded-full group-hover:scale-110 transition-transform" />
+              <div className="flex justify-between items-start mb-4 relative z-10">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-black">Validated Coverage</p>
+                <div className="p-2 bg-emerald-50 rounded-xl">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                </div>
+              </div>
+              <p className="text-4xl font-black text-slate-900 mt-auto relative z-10">{formatPercent(snapshot.totalParticipants > 0 ? (snapshot.validatedCount / snapshot.totalParticipants) * 100 : 0)}</p>
+            </div>
+            
+            <div className="rounded-2xl bg-white p-6 ring-1 ring-slate-200 shadow-sm flex flex-col relative overflow-hidden group hover:shadow-md transition-shadow">
+              <div className="absolute -right-4 -top-4 w-24 h-24 bg-rose-50 rounded-full group-hover:scale-110 transition-transform" />
+              <div className="flex justify-between items-start mb-4 relative z-10">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-black">Risk Signals</p>
+                <div className="p-2 bg-rose-50 rounded-xl">
+                  <AlertTriangle className="w-4 h-4 text-rose-600" />
+                </div>
+              </div>
+              <p className="text-4xl font-black text-slate-900 mt-auto relative z-10">{snapshot.segmentSummaries.filter((item) => item.priority === 'High').length}</p>
+            </div>
+            
+            {showScore && (
+              <div className="rounded-2xl bg-white p-6 ring-1 ring-slate-200 shadow-sm flex flex-col relative overflow-hidden group hover:shadow-md transition-shadow">
+                <div className="absolute -right-4 -top-4 w-24 h-24 bg-blue-50 rounded-full group-hover:scale-110 transition-transform" />
+                <div className="flex justify-between items-start mb-4 relative z-10">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-black">Avg Score</p>
+                  <div className="p-2 bg-blue-50 rounded-xl">
+                    <Target className="w-4 h-4 text-blue-600" />
+                  </div>
+                </div>
+                <p className="text-4xl font-black text-slate-900 mt-auto relative z-10">{formatScore(snapshot.avgScore)}</p>
               </div>
             )}
           </div>
@@ -538,7 +604,7 @@ export function TenantSelfServiceDashboard({ persona }: { persona: PersonaView }
 
       {activeTab === 'intake' && (
         selectedParticipant ? (
-          <div className="h-[800px]">
+          <div className="h-[800px] animate-in slide-in-from-right-8 duration-300">
             <B2BParticipantProfile
               participant={selectedParticipant}
               corporateEntity={selectedOrganization !== ALL_ORGANIZATIONS ? selectedOrganization : (selectedParticipant.corporateEntity || '')}
@@ -547,154 +613,252 @@ export function TenantSelfServiceDashboard({ persona }: { persona: PersonaView }
             />
           </div>
         ) : (
-          <div className="bg-white rounded-3xl ring-1 ring-slate-200 p-6 shadow-sm">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-              <h2 className="text-lg font-black text-slate-900 uppercase tracking-widest">Intake Pipeline</h2>
-              <div className="flex items-center gap-2 bg-slate-50 rounded-xl px-3 py-2 border border-slate-200 w-full md:w-72">
-                <Search className="w-4 h-4 text-slate-400" />
+          <div className="bg-white rounded-3xl ring-1 ring-slate-200 p-8 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+              <div>
+                <h2 className="text-xl font-black text-slate-900 tracking-tight">Intake Pipeline</h2>
+                <p className="text-sm text-slate-500 mt-1">Kelola dan pantau seluruh peserta asesmen dalam campaign Anda.</p>
+              </div>
+              <div className="flex items-center gap-3 bg-slate-50 rounded-2xl px-4 py-3 border border-slate-200 w-full md:w-80 focus-within:ring-2 focus-within:ring-indigo-500/50 focus-within:border-indigo-500 transition-all">
+                <Search className="w-5 h-5 text-slate-400" />
                 <input
                   type="text"
-                  placeholder="Cari peserta..."
-                  className="bg-transparent border-none outline-none text-sm w-full"
+                  placeholder="Cari nama usaha atau ID..."
+                  className="bg-transparent border-none outline-none text-sm w-full text-slate-700 placeholder:text-slate-400 font-medium"
                 />
               </div>
             </div>
             
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="border-b-2 border-slate-100 text-[10px] uppercase tracking-[0.2em] text-slate-400">
-                    <th className="pb-4 pl-4 font-black">Peserta</th>
-                    <th className="pb-4 font-black">Track</th>
-                    <th className="pb-4 font-black">Readiness</th>
-                    <th className="pb-4 font-black">Score</th>
-                    <th className="pb-4 pr-4 font-black text-right">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody className="text-sm">
-                  {filteredRecords.map(record => (
-                    <tr 
-                      key={record.id} 
-                      className="border-b border-slate-50 hover:bg-slate-50 transition-colors cursor-pointer group"
-                      onClick={() => setSelectedParticipant(record)}
-                    >
-                      <td className="py-4 pl-4">
-                        <p className="font-bold text-slate-900">{record.namaUsaha || 'Tanpa Nama'}</p>
-                        <p className="text-xs text-slate-500 mt-1">{record.id.slice(0,8)}...</p>
-                      </td>
-                      <td className="py-4 text-slate-600 font-medium">{record.trackType || '-'}</td>
-                      <td className="py-4">
-                        <span className="px-3 py-1.5 bg-slate-100 text-slate-700 rounded-lg text-xs font-bold ring-1 ring-slate-200/50">
-                          {record.readinessLevel || 'Pending'}
-                        </span>
-                      </td>
-                      <td className="py-4 font-black text-indigo-600 text-base">{record.score ? record.score.toFixed(1) : '-'}</td>
-                      <td className="py-4 pr-4 text-right">
-                        <button className="text-indigo-600 font-bold text-xs bg-white border border-indigo-100 px-4 py-2 rounded-xl group-hover:bg-indigo-50 transition-colors shadow-sm">
-                          Review Profile
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                  {filteredRecords.length === 0 && (
-                    <tr>
-                      <td colSpan={5} className="py-16 text-center text-slate-400 font-medium text-sm">
-                        Belum ada peserta di pipeline ini.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredRecords.map(record => (
+                <div 
+                  key={record.id} 
+                  onClick={() => setSelectedParticipant(record)}
+                  className="group relative bg-white rounded-2xl p-5 ring-1 ring-slate-200 hover:ring-indigo-300 hover:shadow-lg transition-all cursor-pointer flex flex-col h-full"
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex gap-3 items-center">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-100 to-blue-100 flex items-center justify-center text-indigo-700 font-black shrink-0 ring-1 ring-indigo-200/50 group-hover:scale-105 transition-transform">
+                        {(record.namaUsaha || 'U').charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="font-bold text-slate-900 line-clamp-1">{record.namaUsaha || 'Tanpa Nama'}</p>
+                        <p className="text-[10px] uppercase tracking-widest text-slate-400 mt-0.5">{record.id.slice(0,8)}</p>
+                      </div>
+                    </div>
+                    {record.score ? (
+                      <div className="flex flex-col items-end">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Score</span>
+                        <span className="text-lg font-black text-indigo-600 leading-none">{record.score.toFixed(1)}</span>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-end">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Score</span>
+                        <span className="text-lg font-black text-slate-300 leading-none">-</span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="flex items-center gap-2 mt-auto pt-4 border-t border-slate-50">
+                    <span className="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold ring-1 ring-slate-200">
+                      {record.trackType || 'No Track'}
+                    </span>
+                    <span className={`px-2.5 py-1 rounded-lg text-xs font-bold ring-1 ${
+                      record.readinessLevel === 'Sangat Siap' ? 'bg-emerald-50 text-emerald-700 ring-emerald-200' :
+                      record.readinessLevel === 'Siap' ? 'bg-blue-50 text-blue-700 ring-blue-200' :
+                      record.readinessLevel === 'Cukup Siap' ? 'bg-amber-50 text-amber-700 ring-amber-200' :
+                      'bg-slate-50 text-slate-600 ring-slate-200'
+                    }`}>
+                      {record.readinessLevel || 'Pending'}
+                    </span>
+                  </div>
+                  
+                  {/* Overlay button on hover */}
+                  <div className="absolute inset-0 bg-indigo-900/5 backdrop-blur-[1px] opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl flex items-center justify-center">
+                    <div className="bg-white px-4 py-2 rounded-xl text-sm font-bold text-indigo-600 shadow-sm ring-1 ring-slate-200 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                      Review Profile
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
+
+            {filteredRecords.length === 0 && (
+              <div className="py-20 flex flex-col items-center justify-center text-center">
+                <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mb-4">
+                  <Search className="w-8 h-8 text-slate-300" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-900">Belum ada peserta</h3>
+                <p className="text-sm text-slate-500 mt-2 max-w-sm">Pipeline untuk tenant ini masih kosong. Peserta yang menyelesaikan asesmen akan muncul di sini.</p>
+              </div>
+            )}
           </div>
         )
       )}
 
       {activeTab === 'actions' && (
-        <div className="rounded-2xl bg-white ring-1 ring-slate-200 p-5">
-          <div className="flex items-center justify-between gap-3 flex-wrap">
-            <h2 className="text-sm font-black uppercase tracking-[0.2em] text-slate-500">Action Tracker (Closure Evidence)</h2>
-            <div className="text-xs text-slate-500">owner, due date, status, closure evidence</div>
-          </div>
-
-          {showActionBuilder && (
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mt-4">
-              <input
-                value={newActionTitle}
-                onChange={(event) => setNewActionTitle(event.target.value)}
-                placeholder="Judul action"
-                className="h-10 rounded-xl border border-slate-200 px-3 text-sm"
-              />
-              <input
-                value={newActionSegment}
-                onChange={(event) => setNewActionSegment(event.target.value)}
-                placeholder="Segment"
-                className="h-10 rounded-xl border border-slate-200 px-3 text-sm"
-              />
-              <input
-                type="date"
-                value={newActionDueDate}
-                onChange={(event) => setNewActionDueDate(event.target.value)}
-                className="h-10 rounded-xl border border-slate-200 px-3 text-sm"
-              />
+        <div className="rounded-3xl bg-white ring-1 ring-slate-200 p-8 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 border-b border-slate-100 pb-6">
+            <div>
+              <h2 className="text-xl font-black text-slate-900 tracking-tight">Action Tracker</h2>
+              <p className="text-sm text-slate-500 mt-1">Pantau tindak lanjut dan bukti implementasi (closure evidence).</p>
+            </div>
+            
+            {showActionBuilder && (
               <button
                 type="button"
-                onClick={handleCreateAction}
-                className="h-10 rounded-xl bg-slate-900 text-white font-bold text-sm flex items-center justify-center gap-2"
+                onClick={() => {
+                  const el = document.getElementById('new-action-form');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="h-10 px-5 rounded-xl bg-slate-900 text-white font-bold text-sm flex items-center justify-center gap-2 hover:bg-slate-800 transition-colors shadow-sm"
               >
                 <Plus className="w-4 h-4" /> Add Action
               </button>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Kanban Columns */}
+            {(['open', 'in_progress', 'closed'] as const).map(status => {
+              const columnActions = actions.filter(a => a.status === status);
+              const isClosed = status === 'closed';
+              
+              return (
+                <div key={status} className="flex flex-col bg-slate-50/50 rounded-2xl p-4 ring-1 ring-slate-200/60">
+                  <div className="flex items-center justify-between mb-4 px-2">
+                    <h3 className="text-sm font-black uppercase tracking-widest text-slate-700 flex items-center gap-2">
+                      {status === 'open' && <span className="w-2 h-2 rounded-full bg-rose-500" />}
+                      {status === 'in_progress' && <span className="w-2 h-2 rounded-full bg-amber-500" />}
+                      {status === 'closed' && <span className="w-2 h-2 rounded-full bg-emerald-500" />}
+                      {status.replace('_', ' ')}
+                    </h3>
+                    <span className="text-xs font-bold text-slate-400 bg-white px-2 py-1 rounded-lg ring-1 ring-slate-200">
+                      {columnActions.length}
+                    </span>
+                  </div>
+
+                  <div className="flex flex-col gap-4">
+                    {columnActions.map((item) => (
+                      <div key={item.id} className="rounded-2xl bg-white ring-1 ring-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="mb-3">
+                          <div className="flex justify-between items-start gap-2">
+                            <p className="font-bold text-slate-900 leading-tight">{item.title}</p>
+                          </div>
+                          <p className="text-[11px] font-black uppercase tracking-widest text-indigo-600 mt-2 bg-indigo-50 w-fit px-2 py-0.5 rounded-md">
+                            {item.segment}
+                          </p>
+                        </div>
+                        
+                        <div className="flex flex-col gap-1.5 text-xs text-slate-500 mb-4 border-l-2 border-slate-100 pl-3">
+                          <p><span className="font-medium text-slate-700">Owner:</span> {item.ownerName}</p>
+                          <p><span className="font-medium text-slate-700">Due:</span> {item.dueDate || '-'}</p>
+                        </div>
+                        
+                        <div className="mt-3">
+                          <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400 mb-2 flex items-center gap-1.5">
+                            <Sparkles className="w-3 h-3" /> Closure Evidence
+                          </p>
+                          <textarea
+                            value={closureEvidenceDrafts[item.id] || ''}
+                            onChange={(event) => setClosureEvidenceDrafts((current) => ({
+                              ...current,
+                              [item.id]: event.target.value,
+                            }))}
+                            disabled={!canEditActionEvidence || savingEvidenceById[item.id]}
+                            placeholder="Tuliskan bukti penutupan aksi atau tautan dokumen..."
+                            className="w-full min-h-[80px] rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 disabled:bg-slate-100/50 disabled:text-slate-500 focus:bg-white focus:ring-2 focus:ring-indigo-500/50 outline-none transition-all"
+                          />
+                          {canEditActionEvidence && (
+                            <div className="mt-3 flex justify-between items-center">
+                              {/* Status Shifters */}
+                              <div className="flex gap-1 bg-slate-100 p-1 rounded-lg">
+                                {status !== 'open' && (
+                                  <button onClick={() => handleUpdateActionStatus(item, 'open')} className="text-[10px] font-bold px-2 py-1 rounded text-slate-600 hover:bg-white hover:shadow-sm">Open</button>
+                                )}
+                                {status !== 'in_progress' && (
+                                  <button onClick={() => handleUpdateActionStatus(item, 'in_progress')} className="text-[10px] font-bold px-2 py-1 rounded text-amber-700 hover:bg-white hover:shadow-sm">In Progress</button>
+                                )}
+                                {status !== 'closed' && (
+                                  <button onClick={() => handleUpdateActionStatus(item, 'closed')} className="text-[10px] font-bold px-2 py-1 rounded text-emerald-700 hover:bg-white hover:shadow-sm">Close</button>
+                                )}
+                              </div>
+
+                              <button
+                                type="button"
+                                onClick={() => handleSaveClosureEvidence(item)}
+                                disabled={savingEvidenceById[item.id]}
+                                className="h-7 px-3 rounded-md text-[10px] font-black uppercase tracking-widest bg-indigo-50 text-indigo-700 hover:bg-indigo-100 disabled:opacity-60 transition-colors"
+                              >
+                                {savingEvidenceById[item.id] ? 'Saving...' : 'Save'}
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                        
+                        {isClosed && (
+                          <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-center gap-1.5 text-emerald-600 text-xs font-bold">
+                            <CheckCircle2 className="w-4 h-4" /> Action Closed
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                    {columnActions.length === 0 && (
+                      <div className="text-center py-8 px-4 rounded-2xl border border-dashed border-slate-200 text-slate-400 text-sm font-medium">
+                        Kosong
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {showActionBuilder && (
+            <div id="new-action-form" className="mt-12 bg-slate-50 rounded-2xl p-6 ring-1 ring-slate-200">
+              <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 mb-4 flex items-center gap-2">
+                <Plus className="w-4 h-4 text-indigo-600" /> Create New Action
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-bold text-slate-500 mb-1.5">Action Title</label>
+                  <input
+                    value={newActionTitle}
+                    onChange={(event) => setNewActionTitle(event.target.value)}
+                    placeholder="Contoh: Implementasi kebijakan HSE baru"
+                    className="w-full h-11 rounded-xl border border-slate-200 px-4 text-sm focus:ring-2 focus:ring-indigo-500/50 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 mb-1.5">Segment / Kategori</label>
+                  <input
+                    value={newActionSegment}
+                    onChange={(event) => setNewActionSegment(event.target.value)}
+                    placeholder="HSE / Operations"
+                    className="w-full h-11 rounded-xl border border-slate-200 px-4 text-sm focus:ring-2 focus:ring-indigo-500/50 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 mb-1.5">Due Date</label>
+                  <input
+                    type="date"
+                    value={newActionDueDate}
+                    onChange={(event) => setNewActionDueDate(event.target.value)}
+                    className="w-full h-11 rounded-xl border border-slate-200 px-4 text-sm focus:ring-2 focus:ring-indigo-500/50 outline-none"
+                  />
+                </div>
+              </div>
+              <div className="mt-4 flex justify-end">
+                <button
+                  type="button"
+                  onClick={handleCreateAction}
+                  className="h-11 px-6 rounded-xl bg-slate-900 text-white font-bold text-sm hover:bg-slate-800 transition-colors"
+                >
+                  Create Action Item
+                </button>
+              </div>
             </div>
           )}
-
-          <div className="mt-4 space-y-3">
-            {actions.map((item) => (
-              <div key={item.id} className="rounded-xl bg-slate-50 ring-1 ring-slate-100 p-4">
-                <div className="flex flex-wrap justify-between gap-2">
-                  <div>
-                    <p className="font-black text-slate-900">{item.title}</p>
-                    <p className="text-xs text-slate-500 mt-1">{item.segment} | Owner: {item.ownerName} | Due: {item.dueDate || '-'}</p>
-                  </div>
-                  <div className="flex gap-2">
-                    <button type="button" onClick={() => handleUpdateActionStatus(item, 'open')} className={`text-xs px-2 py-1 rounded-lg ring-1 ${item.status === 'open' ? 'bg-rose-50 ring-rose-200 text-rose-700' : 'bg-white ring-slate-200 text-slate-500'}`}>Open</button>
-                    <button type="button" onClick={() => handleUpdateActionStatus(item, 'in_progress')} className={`text-xs px-2 py-1 rounded-lg ring-1 ${item.status === 'in_progress' ? 'bg-amber-50 ring-amber-200 text-amber-700' : 'bg-white ring-slate-200 text-slate-500'}`}>In Progress</button>
-                    <button type="button" onClick={() => handleUpdateActionStatus(item, 'closed')} className={`text-xs px-2 py-1 rounded-lg ring-1 ${item.status === 'closed' ? 'bg-emerald-50 ring-emerald-200 text-emerald-700' : 'bg-white ring-slate-200 text-slate-500'}`}>Closed</button>
-                  </div>
-                </div>
-                <div className="mt-3">
-                  <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400 mb-2">Closure Evidence</p>
-                  <textarea
-                    value={closureEvidenceDrafts[item.id] || ''}
-                    onChange={(event) => setClosureEvidenceDrafts((current) => ({
-                      ...current,
-                      [item.id]: event.target.value,
-                    }))}
-                    disabled={!canEditActionEvidence || savingEvidenceById[item.id]}
-                    placeholder="Tuliskan bukti penutupan aksi, hasil implementasi, atau tautan evidence..."
-                    className="w-full min-h-[84px] rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 disabled:bg-slate-100 disabled:text-slate-500"
-                  />
-                  {canEditActionEvidence && (
-                    <div className="mt-2 flex justify-end">
-                      <button
-                        type="button"
-                        onClick={() => handleSaveClosureEvidence(item)}
-                        disabled={savingEvidenceById[item.id]}
-                        className="h-8 px-3 rounded-lg text-xs font-black uppercase tracking-[0.12em] bg-slate-900 text-white disabled:opacity-60"
-                      >
-                        {savingEvidenceById[item.id] ? 'Saving...' : 'Save Evidence'}
-                      </button>
-                    </div>
-                  )}
-                </div>
-                {item.status === 'closed' ? (
-                  <p className="text-xs text-emerald-700 mt-2 flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5" /> Closed</p>
-                ) : (
-                  <p className="text-xs text-amber-700 mt-2 flex items-center gap-1"><Clock3 className="w-3.5 h-3.5" /> Pending closure evidence</p>
-                )}
-              </div>
-            ))}
-            {actions.length === 0 && <div className="text-sm text-slate-500">Belum ada action tracker untuk organization ini.</div>}
-          </div>
         </div>
       )}
 

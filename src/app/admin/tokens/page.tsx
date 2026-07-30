@@ -2,8 +2,9 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { collection, getDocs, doc, setDoc, deleteDoc, updateDoc, query, orderBy } from 'firebase/firestore'
-import { db } from '@/lib/firebase'
+import { collection, getDocs, doc, setDoc, deleteDoc, updateDoc, query, orderBy, deleteField } from 'firebase/firestore'
+import { httpsCallable } from 'firebase/functions'
+import { db, functions } from '@/lib/firebase'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
@@ -120,6 +121,7 @@ export default function TokenManagerPage() {
   const [newQuotaAmount, setNewQuotaAmount] = useState<number>(0)
   const [isUpdatingQuota, setIsUpdatingQuota] = useState(false)
   const [deletingCuratorTokenId, setDeletingCuratorTokenId] = useState<string | null>(null)
+  const [migratingBatchId, setMigratingBatchId] = useState<string | null>(null)
 
   const fetchData = async () => {
     setLoading(true)
@@ -339,6 +341,46 @@ export default function TokenManagerPage() {
       toast.error('Gagal mencabut akses.')
     } finally {
       setDeletingCuratorTokenId(null)
+    }
+  }
+
+  const handleMigrateToTenant = async (batch: CorporateBatch) => {
+    setMigratingBatchId(batch.id)
+    try {
+      const upsertB2B = httpsCallable(functions, 'adminUpsertB2BOrganization')
+      const res = await upsertB2B({ 
+        name: batch.corporateName, 
+        status: 'active',
+        tags: ['migrated-from-tokens']
+      }) as any
+      
+      const newOrgId = res.data.organization.id
+      
+      await updateDoc(doc(db, 'corporate_tokens', batch.id), {
+        organizationId: newOrgId
+      })
+      
+      setBatches(batches.map(b => b.id === batch.id ? { ...b, organizationId: newOrgId } : b))
+      toast.success(`Berhasil! Data telah dimigrasi ke Tenant B2B.`)
+    } catch (e: any) {
+      console.error(e)
+      toast.error(e.message || 'Gagal memigrasi ke Tenant B2B.')
+    } finally {
+      setMigratingBatchId(null)
+    }
+  }
+
+  const handleUnlinkTenant = async (batchId: string) => {
+    if (!confirm('Lepas tautan dari Tenant B2B?')) return
+    try {
+      await updateDoc(doc(db, 'corporate_tokens', batchId), {
+        organizationId: deleteField()
+      })
+      setBatches(batches.map(b => b.id === batchId ? { ...b, organizationId: undefined } : b))
+      toast.success('Berhasil! Tautan ke Tenant telah dilepas.')
+    } catch (e: any) {
+      console.error(e)
+      toast.error('Gagal melepas tautan.')
     }
   }
 
@@ -627,6 +669,20 @@ export default function TokenManagerPage() {
                           <p className="text-[11px] text-slate-400 font-medium mt-0.5">
                             {new Date(batch.createdAt).toLocaleDateString('id-ID')}
                           </p>
+                          {batch.organizationId && (
+                            <div className="flex items-center gap-2 mt-1">
+                              <Badge variant="indigo" className="text-[9px] px-1.5 bg-indigo-50 text-indigo-600">
+                                Linked to Tenant
+                              </Badge>
+                              <button 
+                                onClick={() => handleUnlinkTenant(batch.id)}
+                                className="text-[9px] text-slate-400 hover:text-red-500 font-medium underline"
+                                title="Lepas tautan dari Tenant"
+                              >
+                                Unlink
+                              </button>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </TableCell>
@@ -832,6 +888,21 @@ export default function TokenManagerPage() {
                         </Button>
 
                         <TokenExportPDFButton batch={batch} availableTemplates={availableTemplates} />
+                        
+                        {!batch.organizationId && (
+                          <Button
+                            onClick={() => handleMigrateToTenant(batch)}
+                            disabled={migratingBatchId === batch.id}
+                            variant="outline"
+                            className="border-emerald-200 bg-emerald-50 shadow-2xs h-9 px-2.5 hover:bg-emerald-100 rounded-xl flex items-center gap-1.5"
+                            title="Migrasi ke Tenant B2B"
+                          >
+                            <Building2 className="w-3.5 h-3.5 text-emerald-600" />
+                            <span className="text-xs font-bold text-emerald-700">
+                              {migratingBatchId === batch.id ? 'Loading...' : 'Ke Tenant'}
+                            </span>
+                          </Button>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>
