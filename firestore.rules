@@ -204,6 +204,11 @@ service cloud.firestore {
          allow write: if false; 
       }
       
+      match /copilot/{document=**} {
+        allow read: if isAuthenticated() && (get(/databases/$(database)/documents/assessments/$(assessmentId)).data.userId == request.auth.uid || isOpsAdmin());
+        allow write: if false;
+      }
+      
       match /journal/{entryId} {
         allow read: if isAuthenticated() && (get(/databases/$(database)/documents/assessments/$(assessmentId)).data.userId == request.auth.uid || isSuperAdmin());
         allow create, update, delete: if isAuthenticated() && get(/databases/$(database)/documents/assessments/$(assessmentId)).data.userId == request.auth.uid;

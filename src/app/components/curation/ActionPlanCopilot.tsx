@@ -29,6 +29,8 @@ export const ActionPlanCopilot = ({ assessmentId }: ActionPlanCopilotProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [hasFetchedHistory, setHasFetchedHistory] = useState(false);
+  const [historyMessages, setHistoryMessages] = useState<Message[]>([]);
+  const [isHistoryLoaded, setIsHistoryLoaded] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -40,10 +42,7 @@ export const ActionPlanCopilot = ({ assessmentId }: ActionPlanCopilotProps) => {
         if (docSnap.exists() && docSnap.data().messages) {
           const dbMsgs = docSnap.data().messages;
           if (dbMsgs.length > 0) {
-            setMessages([
-              { role: 'model', text: 'Halo! Saya Omnifit Copilot. Saya sudah membaca profil bisnis dan hasil asesmen Anda. Ada yang ingin didiskusikan terkait strategi atau Action Plan Anda?' },
-              ...dbMsgs.map((m: any) => ({ role: m.role, text: m.text }))
-            ]);
+            setHistoryMessages(dbMsgs.map((m: any) => ({ role: m.role, text: m.text })));
           }
         }
       } catch (error) {
@@ -61,7 +60,7 @@ export const ActionPlanCopilot = ({ assessmentId }: ActionPlanCopilotProps) => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages, isOpen]);
+  }, [messages, isOpen, isHistoryLoaded]);
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -135,6 +134,24 @@ export const ActionPlanCopilot = ({ assessmentId }: ActionPlanCopilotProps) => {
 
         {/* Chat Area */}
         <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
+          {!isHistoryLoaded && historyMessages.length > 0 && (
+            <div className="flex justify-center mb-4">
+              <button 
+                onClick={() => {
+                  setMessages(prev => {
+                    // Prevent duplicate if they clicked multiple times quickly
+                    if (isHistoryLoaded) return prev;
+                    return [...historyMessages, ...prev];
+                  });
+                  setIsHistoryLoaded(true);
+                }}
+                className="text-xs font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-4 py-2 rounded-full transition-colors flex items-center gap-2 border border-indigo-100 shadow-sm"
+              >
+                <MessageSquare size={14} />
+                Muat Riwayat Chat Sebelumnya
+              </button>
+            </div>
+          )}
           {messages.map((msg, idx) => (
             <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
