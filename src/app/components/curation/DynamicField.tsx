@@ -193,6 +193,28 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
         const handleFileUpload = async (file: File) => {
           setIsUploading(true);
           setAnalysisResult(null);
+          
+          // Daftar MIME type yang TIDAK didukung Gemini AI untuk analisis otomatis
+          const UNSUPPORTED_FOR_AI: Record<string, string> = {
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'Excel (.xlsx)',
+            'application/vnd.ms-excel': 'Excel (.xls)',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'Word (.docx)',
+            'application/msword': 'Word (.doc)',
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'PowerPoint (.pptx)',
+            'application/vnd.ms-powerpoint': 'PowerPoint (.ppt)',
+            'application/zip': 'ZIP',
+            'application/x-rar-compressed': 'RAR',
+          };
+          const unsupportedLabel = UNSUPPORTED_FOR_AI[file.type];
+          if (unsupportedLabel) {
+            toast.warning(
+              `⚠️ Format ${unsupportedLabel} tidak dapat dianalisis oleh AI. ` +
+              `File tetap diunggah untuk referensi kurator, namun ` +
+              `konversi ke PDF agar mendapat analisis AI yang optimal.`,
+              { duration: 8000 }
+            );
+          }
+
           try {
             const auth = getAuth(app);
             const userId = auth.currentUser?.uid || 'guest';
@@ -203,7 +225,11 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
             const downloadURL = await getDownloadURL(storageRef);
             // Simpan sebagai objek { downloadURL, storagePath, fileName }
             onChange({ downloadURL, storagePath, fileName: file.name });
-            toast.success(`File "${file.name}" berhasil diunggah.`);
+            if (!unsupportedLabel) {
+              toast.success(`File "${file.name}" berhasil diunggah & siap dianalisis AI.`);
+            } else {
+              toast.success(`File "${file.name}" berhasil diunggah (tersimpan untuk kurator).`);
+            }
           } catch (err) {
             console.error('Upload file gagal:', err);
             toast.error('Gagal mengunggah file. Pastikan koneksi internet Anda stabil.');

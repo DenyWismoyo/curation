@@ -78,9 +78,39 @@ export const assessmentOrchestrator = onDocumentCreated({
         try {
           const file = bucket.file(storagePath);
           const [metadata] = await file.getMetadata();
-          let mimeType = metadata.contentType || 'application/octet-stream';
+          const mimeType = metadata.contentType || 'application/octet-stream';
           
-          // SEMUA JENIS FILE DIIZINKAN - Gemini API yang akan me-reject jika tidak didukung
+          // ===================================================================
+          // GEMINI SUPPORTED MIME TYPES ALLOWLIST
+          // Ref: https://ai.google.dev/gemini-api/docs/vision#supported-formats
+          // File yang tidak didukung akan di-SKIP agar pipeline tidak crash.
+          // ===================================================================
+          const GEMINI_SUPPORTED_MIME_TYPES = new Set([
+            // Dokumen
+            'application/pdf',
+            // Gambar
+            'image/jpeg', 'image/jpg', 'image/png', 'image/gif',
+            'image/webp', 'image/heic', 'image/heif',
+            // Audio
+            'audio/wav', 'audio/mp3', 'audio/mpeg', 'audio/aiff',
+            'audio/aac', 'audio/ogg', 'audio/flac',
+            // Video
+            'video/mp4', 'video/mpeg', 'video/mov', 'video/quicktime',
+            'video/avi', 'video/wmv', 'video/webm', 'video/3gpp',
+            // Teks
+            'text/plain', 'text/html', 'text/css', 'text/javascript',
+            'text/csv', 'text/xml', 'text/rtf', 'text/markdown',
+          ]);
+
+          if (!GEMINI_SUPPORTED_MIME_TYPES.has(mimeType.toLowerCase())) {
+            console.warn(
+              `[Orchestrator] Skipping file "${path.basename(storagePath)}" — ` +
+              `MIME type "${mimeType}" is not supported by Gemini API. ` +
+              `(Hint: Convert Excel/Word files to PDF before uploading.)`
+            );
+            continue; // Lewati file ini, jangan crash pipeline
+          }
+
           const fileName = path.basename(storagePath);
           const tempFilePath = path.join(os.tmpdir(), fileName);
           await file.download({ destination: tempFilePath });
