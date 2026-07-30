@@ -2,12 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { db, storage } from '@/lib/firebase';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { Loader2, Palette, Image as ImageIcon, Link as LinkIcon, Type } from 'lucide-react';
+import { Loader2, Palette, Image as ImageIcon, Link as LinkIcon, Type, ExternalLink, FileText, Globe, UploadCloud } from 'lucide-react';
+import { Instagram, Linkedin } from '@/components/ui/icons';
 
 interface B2BOrganizationBranding {
   slug?: string;
@@ -15,6 +17,10 @@ interface B2BOrganizationBranding {
   coverUrl?: string;
   primaryColor?: string;
   welcomeMessage?: string;
+  description?: string;
+  websiteUrl?: string;
+  instagramUrl?: string;
+  linkedinUrl?: string;
 }
 
 interface B2BBrandingEditorProps {
@@ -30,8 +36,14 @@ export function B2BBrandingEditor({ organizationId }: B2BBrandingEditorProps) {
     coverUrl: '',
     primaryColor: '#4f46e5', // indigo-600 default
     welcomeMessage: '',
+    description: '',
+    websiteUrl: '',
+    instagramUrl: '',
+    linkedinUrl: '',
   });
   const [orgName, setOrgName] = useState('');
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [uploadingCover, setUploadingCover] = useState(false);
 
   useEffect(() => {
     async function fetchOrg() {
@@ -47,6 +59,10 @@ export function B2BBrandingEditor({ organizationId }: B2BBrandingEditorProps) {
             coverUrl: data.coverUrl || '',
             primaryColor: data.primaryColor || '#4f46e5',
             welcomeMessage: data.welcomeMessage || '',
+            description: data.description || '',
+            websiteUrl: data.websiteUrl || '',
+            instagramUrl: data.instagramUrl || '',
+            linkedinUrl: data.linkedinUrl || '',
           });
         }
       } catch (err) {
@@ -73,6 +89,10 @@ export function B2BBrandingEditor({ organizationId }: B2BBrandingEditorProps) {
         coverUrl: branding.coverUrl,
         primaryColor: branding.primaryColor,
         welcomeMessage: branding.welcomeMessage,
+        description: branding.description,
+        websiteUrl: branding.websiteUrl,
+        instagramUrl: branding.instagramUrl,
+        linkedinUrl: branding.linkedinUrl,
       });
       setBranding({ ...branding, slug: cleanSlug });
       toast.success('Pengaturan Branding berhasil disimpan!');
@@ -81,6 +101,32 @@ export function B2BBrandingEditor({ organizationId }: B2BBrandingEditorProps) {
       toast.error('Gagal menyimpan branding. Pastikan Anda memiliki akses.');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: 'logoUrl' | 'coverUrl') => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      return toast.error('Hanya file gambar yang diperbolehkan.');
+    }
+
+    const setUploading = field === 'logoUrl' ? setUploadingLogo : setUploadingCover;
+    setUploading(true);
+    
+    try {
+      const storageRef = ref(storage, `b2b_branding/${organizationId}/${field}_${Date.now()}_${file.name}`);
+      const snapshot = await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(snapshot.ref);
+      
+      setBranding(prev => ({ ...prev, [field]: url }));
+      toast.success('Gambar berhasil diunggah!');
+    } catch (err) {
+      console.error("Upload error", err);
+      toast.error('Gagal mengunggah gambar.');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -104,28 +150,44 @@ export function B2BBrandingEditor({ organizationId }: B2BBrandingEditorProps) {
 
   return (
     <Card className="p-8 bg-white rounded-3xl shadow-sm ring-1 ring-slate-200 border-none space-y-8 animate-in fade-in duration-500">
-      <div>
-        <h2 className="text-xl font-black text-slate-900">Kustomisasi Branding & Landing Page</h2>
-        <p className="text-sm text-slate-500 mt-1">
-          Atur identitas visual untuk organisasi <strong>{orgName}</strong>. Halaman publik dapat diakses peserta melalui URL Slug.
-        </p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-black text-slate-900">Kustomisasi Branding & Landing Page</h2>
+          <p className="text-sm text-slate-500 mt-1">
+            Atur identitas visual untuk organisasi <strong>{orgName}</strong>. Halaman publik dapat diakses peserta melalui URL Slug.
+          </p>
+        </div>
+        <Button asChild className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-md">
+          <a href="/admin/partners">Daftar Mitra Terdaftar</a>
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="space-y-4">
           <div className="space-y-2">
-            <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
-              <LinkIcon className="w-3.5 h-3.5" /> URL Slug (Publik)
+            <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <LinkIcon className="w-3.5 h-3.5" /> URL Slug (Publik)
+              </span>
+              {branding.slug && (
+                <a 
+                  href={`/mitra/${branding.slug}`} 
+                  target="_blank" 
+                  rel="noreferrer"
+                  className="flex items-center gap-1 text-[10px] text-indigo-600 hover:text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-full lowercase"
+                >
+                  Kunjungi Landing Page <ExternalLink className="w-3 h-3" />
+                </a>
+              )}
             </label>
             <div className="flex">
-              <span className="inline-flex items-center px-4 rounded-l-xl border border-r-0 border-slate-200 bg-slate-50 text-slate-500 text-sm font-medium">
+              <span className="inline-flex items-center px-4 rounded-l-xl border border-r-0 border-slate-200 bg-slate-50 text-slate-500 text-sm font-medium cursor-not-allowed">
                 omnifit.ai/mitra/
               </span>
               <Input
                 value={branding.slug}
-                onChange={(e) => setBranding({ ...branding, slug: e.target.value })}
-                placeholder="telkomsel"
-                className="rounded-l-none rounded-r-xl h-11 bg-white font-bold"
+                readOnly
+                className="rounded-l-none rounded-r-xl h-11 bg-slate-50 text-slate-500 font-bold cursor-not-allowed focus-visible:ring-0"
               />
             </div>
           </div>
@@ -159,44 +221,131 @@ export function B2BBrandingEditor({ organizationId }: B2BBrandingEditorProps) {
               value={branding.welcomeMessage}
               onChange={(e) => setBranding({ ...branding, welcomeMessage: e.target.value })}
               placeholder="Selamat datang di Portal Asesmen Telkomsel..."
-              className="w-full min-h-[100px] p-3 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+              className="w-full h-24 p-3 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-500 outline-none resize-none"
             />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+              <FileText className="w-3.5 h-3.5" /> Deskripsi Perusahaan
+            </label>
+            <textarea
+              value={branding.description}
+              onChange={(e) => setBranding({ ...branding, description: e.target.value })}
+              placeholder="Jelaskan secara singkat mengenai organisasi/mitra (opsional)..."
+              className="w-full h-24 p-3 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-500 outline-none resize-none"
+            />
+          </div>
+          
+          <div className="space-y-3 pt-2">
+            <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+              <Globe className="w-3.5 h-3.5" /> Tautan Media Sosial
+            </label>
+            <div className="space-y-2">
+              <div className="relative">
+                <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Input
+                  value={branding.websiteUrl}
+                  onChange={(e) => setBranding({ ...branding, websiteUrl: e.target.value })}
+                  placeholder="https://www.website.com"
+                  className="pl-9 h-10 text-sm"
+                />
+              </div>
+              <div className="relative">
+                <Instagram className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Input
+                  value={branding.instagramUrl}
+                  onChange={(e) => setBranding({ ...branding, instagramUrl: e.target.value })}
+                  placeholder="https://instagram.com/username"
+                  className="pl-9 h-10 text-sm"
+                />
+              </div>
+              <div className="relative">
+                <Linkedin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Input
+                  value={branding.linkedinUrl}
+                  onChange={(e) => setBranding({ ...branding, linkedinUrl: e.target.value })}
+                  placeholder="https://linkedin.com/company/name"
+                  className="pl-9 h-10 text-sm"
+                />
+              </div>
+            </div>
           </div>
         </div>
 
         <div className="space-y-4">
           <div className="space-y-2">
-            <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
-              <ImageIcon className="w-3.5 h-3.5" /> URL Logo Perusahaan
+            <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center justify-between">
+              <span className="flex items-center gap-2"><ImageIcon className="w-3.5 h-3.5" /> Logo Perusahaan</span>
+              {branding.logoUrl && (
+                <button onClick={() => setBranding({ ...branding, logoUrl: '' })} className="text-[10px] text-red-500 hover:underline">Hapus</button>
+              )}
             </label>
-            <Input
-              value={branding.logoUrl}
-              onChange={(e) => setBranding({ ...branding, logoUrl: e.target.value })}
-              placeholder="https://example.com/logo.png"
-              className="h-11"
-            />
-            {branding.logoUrl && (
-              <div className="mt-3 p-4 bg-slate-50 rounded-xl border border-dashed border-slate-200 flex items-center justify-center">
-                <img src={branding.logoUrl} alt="Logo Preview" className="max-h-16 object-contain" />
+            
+            <div className="relative">
+              <input 
+                type="file" 
+                accept="image/*" 
+                onChange={(e) => handleFileUpload(e, 'logoUrl')} 
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                disabled={uploadingLogo}
+              />
+              <div className="bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 hover:border-indigo-300 transition-colors flex flex-col items-center justify-center p-6 text-center h-40">
+                {uploadingLogo ? (
+                  <div className="flex flex-col items-center">
+                    <Loader2 className="w-6 h-6 animate-spin text-indigo-500 mb-2" />
+                    <p className="text-xs text-slate-500 font-medium">Mengunggah Logo...</p>
+                  </div>
+                ) : branding.logoUrl ? (
+                  <img src={branding.logoUrl} alt="Logo Preview" className="max-h-full max-w-full object-contain p-2" />
+                ) : (
+                  <>
+                    <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center mb-2">
+                      <UploadCloud className="w-5 h-5 text-slate-400" />
+                    </div>
+                    <p className="text-xs font-bold text-slate-700">Klik atau Tarik Logo ke sini</p>
+                    <p className="text-[10px] text-slate-400 mt-1">PNG, JPG up to 2MB (Rasio 1:1 disarankan)</p>
+                  </>
+                )}
               </div>
-            )}
+            </div>
           </div>
 
-          <div className="space-y-2 pt-2">
-            <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
-              <ImageIcon className="w-3.5 h-3.5" /> URL Banner / Cover
+          <div className="space-y-2 pt-4">
+            <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center justify-between">
+              <span className="flex items-center gap-2"><ImageIcon className="w-3.5 h-3.5" /> Banner / Cover Page</span>
+              {branding.coverUrl && (
+                <button onClick={() => setBranding({ ...branding, coverUrl: '' })} className="text-[10px] text-red-500 hover:underline">Hapus</button>
+              )}
             </label>
-            <Input
-              value={branding.coverUrl}
-              onChange={(e) => setBranding({ ...branding, coverUrl: e.target.value })}
-              placeholder="https://example.com/banner.jpg"
-              className="h-11"
-            />
-            {branding.coverUrl && (
-              <div className="mt-3 bg-slate-50 rounded-xl border border-dashed border-slate-200 overflow-hidden h-24 relative">
-                <img src={branding.coverUrl} alt="Cover Preview" className="w-full h-full object-cover opacity-80" />
+            
+            <div className="relative">
+              <input 
+                type="file" 
+                accept="image/*" 
+                onChange={(e) => handleFileUpload(e, 'coverUrl')} 
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                disabled={uploadingCover}
+              />
+              <div className="bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 hover:border-indigo-300 transition-colors flex flex-col items-center justify-center p-6 text-center h-48 overflow-hidden">
+                {uploadingCover ? (
+                  <div className="flex flex-col items-center">
+                    <Loader2 className="w-6 h-6 animate-spin text-indigo-500 mb-2" />
+                    <p className="text-xs text-slate-500 font-medium">Mengunggah Banner...</p>
+                  </div>
+                ) : branding.coverUrl ? (
+                  <img src={branding.coverUrl} alt="Cover Preview" className="w-full h-full object-cover opacity-90 rounded-xl" />
+                ) : (
+                  <>
+                    <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center mb-2">
+                      <UploadCloud className="w-5 h-5 text-slate-400" />
+                    </div>
+                    <p className="text-xs font-bold text-slate-700">Klik atau Tarik Banner ke sini</p>
+                    <p className="text-[10px] text-slate-400 mt-1">Gambar landscape 16:9 disarankan</p>
+                  </>
+                )}
               </div>
-            )}
+            </div>
           </div>
         </div>
       </div>

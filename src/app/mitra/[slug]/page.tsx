@@ -7,7 +7,8 @@ import { db } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Loader2, ShieldCheck, KeyRound, ArrowRight } from 'lucide-react';
+import { Loader2, ShieldCheck, KeyRound, ArrowRight, Globe } from 'lucide-react';
+import { Instagram, Linkedin } from '@/components/ui/icons';
 import { motion } from 'framer-motion';
 
 export default function MitraLandingPage({ params }: { params: { slug: string } }) {
@@ -148,9 +149,27 @@ export default function MitraLandingPage({ params }: { params: { slug: string } 
   
   return (
     <div className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden" style={{ backgroundColor: primaryColor + '0A' }}>
+      
+      {/* Cover Banner */}
+      {(orgData.branding?.coverUrl || orgData.coverUrl) && (
+        <div 
+          className="absolute top-0 inset-x-0 w-full h-[50vh] z-0"
+          style={{ 
+            backgroundImage: `url(${orgData.branding?.coverUrl || orgData.coverUrl})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
+        >
+           <div 
+             className="absolute inset-0" 
+             style={{ backgroundImage: `linear-gradient(to bottom, transparent, ${primaryColor}1A 70%, #f8fafc)` }} 
+           />
+        </div>
+      )}
+
       {/* Dynamic Background Ornaments based on primary color */}
-      <div className="absolute top-[-10%] left-[-5%] w-[40vw] h-[40vw] rounded-full blur-[120px] pointer-events-none opacity-20" style={{ backgroundColor: primaryColor }} />
-      <div className="absolute bottom-[-10%] right-[-5%] w-[30vw] h-[30vw] rounded-full blur-[120px] pointer-events-none opacity-20" style={{ backgroundColor: primaryColor }} />
+      <div className="absolute top-[-10%] left-[-5%] w-[40vw] h-[40vw] rounded-full blur-[120px] pointer-events-none opacity-20 z-0" style={{ backgroundColor: primaryColor }} />
+      <div className="absolute bottom-[-10%] right-[-5%] w-[30vw] h-[30vw] rounded-full blur-[120px] pointer-events-none opacity-20 z-0" style={{ backgroundColor: primaryColor }} />
 
       <motion.div 
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -178,8 +197,14 @@ export default function MitraLandingPage({ params }: { params: { slug: string } 
             {orgData.displayName || 'Mitra Portal'}
           </h1>
           <p className="text-sm font-medium text-slate-600 leading-relaxed">
-            {orgData.welcomeMessage || 'Masukkan kode token yang Anda miliki untuk memulai proses asesmen.'}
+            {orgData.branding?.welcomeMessage || orgData.welcomeMessage || 'Masukkan kode token yang Anda miliki untuk memulai proses asesmen.'}
           </p>
+          
+          {orgData.branding?.description && (
+            <div className="mt-4 bg-slate-50 p-4 rounded-xl text-xs text-slate-600 text-left border border-slate-100 leading-relaxed shadow-inner">
+               {orgData.branding.description}
+            </div>
+          )}
         </div>
 
         {!user ? (
@@ -263,6 +288,32 @@ export default function MitraLandingPage({ params }: { params: { slug: string } 
             </div>
           </div>
         )}
+
+        {(orgData.branding?.websiteUrl || orgData.branding?.instagramUrl || orgData.branding?.linkedinUrl) && (
+          <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-center gap-4">
+            {orgData.branding.websiteUrl && (
+              <a href={orgData.branding.websiteUrl} target="_blank" rel="noreferrer" title="Kunjungi Website" className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors shadow-sm ring-1 ring-slate-200">
+                 <Globe className="w-4 h-4" />
+              </a>
+            )}
+            {orgData.branding.instagramUrl && (
+              <a href={orgData.branding.instagramUrl} target="_blank" rel="noreferrer" title="Instagram" className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:text-pink-600 hover:bg-pink-50 transition-colors shadow-sm ring-1 ring-slate-200">
+                 <Instagram className="w-4 h-4" />
+              </a>
+            )}
+            {orgData.branding.linkedinUrl && (
+              <a href={orgData.branding.linkedinUrl} target="_blank" rel="noreferrer" title="LinkedIn" className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors shadow-sm ring-1 ring-slate-200">
+                 <Linkedin className="w-4 h-4" />
+              </a>
+            )}
+          </div>
+        )}
+
+        <div className="mt-6 flex justify-center">
+          <Button asChild variant="outline" size="sm" className="text-xs text-indigo-600 border-indigo-200 hover:bg-indigo-50 rounded-xl px-6 shadow-sm">
+            <a href="/admin/partners">Lihat Daftar Mitra Terdaftar</a>
+          </Button>
+        </div>
       </motion.div>
     </div>
   );
