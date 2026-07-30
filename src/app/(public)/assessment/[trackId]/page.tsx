@@ -49,7 +49,7 @@ function InteractiveDashboardLoading({ formData, trackName, assessmentId }: { fo
         const data = docSnap.data();
         const status = data.status;
         const cacheHit = !!data.isCacheHit;
-        
+
         setIsCacheHit(cacheHit);
 
         if (cacheHit) {
@@ -93,7 +93,7 @@ function InteractiveDashboardLoading({ formData, trackName, assessmentId }: { fo
 
   return (
     <div className="min-h-screen bg-slate-950 text-white py-8 px-4 sm:py-12 sm:px-6 lg:px-12 relative overflow-hidden flex flex-col justify-between">
-      
+
       {/* BACKGROUND DECORATIVE GLOW */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-10 right-10 w-[400px] h-[400px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
@@ -104,18 +104,18 @@ function InteractiveDashboardLoading({ formData, trackName, assessmentId }: { fo
           <BrainIcon size={14} className="animate-pulse" />
           <span>Omnifit Multi-Agent Engine v2</span>
         </div>
-        
+
         <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
           Memproses Evaluasi untuk <span className="text-indigo-400">{formData?.namaUsaha || 'Entitas Usaha'}</span>
         </h1>
-        
+
         <p className="text-slate-400 text-sm sm:text-base max-w-xl mx-auto">
           Sistem sedang membagi tugas analisis ke dalam sirkuit multi-agent AI independen secara berkala.
         </p>
 
         {isCacheHit && (
-          <motion.div 
-            initial={{ scale: 0.9, opacity: 0 }} 
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/20 ring-1 ring-emerald-400/40 text-emerald-300 text-xs sm:text-sm font-bold shadow-lg shadow-emerald-950/50"
           >
@@ -137,7 +137,7 @@ function InteractiveDashboardLoading({ formData, trackName, assessmentId }: { fo
 
         {/* PROGRESS BAR */}
         <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden mb-8">
-          <motion.div 
+          <motion.div
             className="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-400 rounded-full"
             initial={{ width: '0%' }}
             animate={{ width: `${Math.min(100, ((currentStepIndex + 1) / agentSteps.length) * 100)}%` }}
@@ -152,24 +152,22 @@ function InteractiveDashboardLoading({ formData, trackName, assessmentId }: { fo
             const isCurrent = idx === currentStepIndex;
 
             return (
-              <div 
+              <div
                 key={step.key}
-                className={`p-4 rounded-2xl transition-all duration-300 flex items-center gap-4 ring-1 ${
-                  isCurrent 
-                    ? 'bg-indigo-950/40 ring-indigo-500/50 shadow-lg shadow-indigo-950/50 scale-[1.01]' 
-                    : isDone 
-                      ? 'bg-slate-900/40 ring-slate-800/80 opacity-80' 
+                className={`p-4 rounded-2xl transition-all duration-300 flex items-center gap-4 ring-1 ${isCurrent
+                    ? 'bg-indigo-950/40 ring-indigo-500/50 shadow-lg shadow-indigo-950/50 scale-[1.01]'
+                    : isDone
+                      ? 'bg-slate-900/40 ring-slate-800/80 opacity-80'
                       : 'bg-slate-950/30 ring-slate-800/40 opacity-40'
-                }`}
+                  }`}
               >
                 {/* STEP STATUS ICON */}
-                <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 font-bold text-xs ${
-                  isDone 
-                    ? 'bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/40' 
-                    : isCurrent 
-                      ? 'bg-indigo-600 text-white ring-2 ring-indigo-400 shadow-md shadow-indigo-500/50 animate-pulse' 
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 font-bold text-xs ${isDone
+                    ? 'bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/40'
+                    : isCurrent
+                      ? 'bg-indigo-600 text-white ring-2 ring-indigo-400 shadow-md shadow-indigo-500/50 animate-pulse'
                       : 'bg-slate-800 text-slate-500'
-                }`}>
+                  }`}>
                   {isDone ? '✓' : idx + 1}
                 </div>
 
@@ -193,7 +191,7 @@ function InteractiveDashboardLoading({ formData, trackName, assessmentId }: { fo
 
       {/* FLOATING STATUS BAR */}
       <div className="z-10 w-full max-w-md mx-auto mb-4">
-        <motion.div 
+        <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           className="bg-slate-900/90 backdrop-blur-xl p-4 rounded-2xl shadow-2xl ring-1 ring-white/10 flex items-center gap-3"
@@ -204,7 +202,7 @@ function InteractiveDashboardLoading({ formData, trackName, assessmentId }: { fo
           <div className="flex-1 min-w-0">
             <p className="text-[10px] font-black uppercase tracking-widest text-indigo-400 mb-0.5">STATUS MULTI-AGENT</p>
             <AnimatePresence mode="wait">
-              <motion.p 
+              <motion.p
                 key={loadingText}
                 initial={{ opacity: 0, y: 3 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -229,7 +227,7 @@ function InteractiveDashboardLoading({ formData, trackName, assessmentId }: { fo
 export default function AssessmentPage({ params }: { params: Promise<{ trackId: string }> }) {
   const router = useRouter();
   const { trackId } = use(params);
-  
+
   // Panggil state global
   const { state, actions } = useCuration();
 
@@ -248,7 +246,7 @@ export default function AssessmentPage({ params }: { params: Promise<{ trackId: 
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)+/g, '');
-      
+
     return slug === trackId;
   });
 
@@ -299,20 +297,20 @@ export default function AssessmentPage({ params }: { params: Promise<{ trackId: 
   // ========================================================
   if (state.viewState === 'processing') {
     return (
-      <InteractiveDashboardLoading 
-        formData={state.formData} 
-        trackName={template.trackName} 
+      <InteractiveDashboardLoading
+        formData={state.formData}
+        trackName={template.trackName}
         assessmentId={state.currentAssessmentId} // PASSING ID KE SKELETON
       />
     );
   }
 
-// ========================================================
+  // ========================================================
   // LAYAR 2: DASHBOARD HASIL AI (Selesai)
   // ========================================================
   if (isDashboardActive) {
     return (
-      <CurationDashboard 
+      <CurationDashboard
         assessmentId={state.currentAssessmentId || undefined} // <--- TAMBAHKAN "|| undefined" DI SINI
         trackType={template.trackName}
         formData={state.formData}
@@ -330,16 +328,14 @@ export default function AssessmentPage({ params }: { params: Promise<{ trackId: 
   // ========================================================
   return (
     <main className="min-h-screen bg-slate-50">
-      <DynamicWizard 
-        template={template} 
+      <DynamicWizard
+        template={template}
         onBack={() => {
           router.push('/assessment');
         }}
         onComplete={async (data) => {
           actions.setSelectedTemplate(template);
-          await actions.submitAssessment(data, (assessmentId) => {
-            router.push(`/result/${assessmentId}`);
-          });
+          await actions.submitAssessment(data);
         }}
       />
     </main>

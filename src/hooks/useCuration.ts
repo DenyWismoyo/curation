@@ -37,17 +37,17 @@ export const useCuration = () => {
           collection(db, 'form_templates'),
           where('isActive', '==', true)
         );
-        
+
         const snap = await getDocs(q);
         const loadedTemplates = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        
+
         // Urutkan menggunakan JavaScript (Memory) agar lebih aman
         loadedTemplates.sort((a: any, b: any) => {
-           const dateA = a.lastUpdated ? new Date(a.lastUpdated).getTime() : 0;
-           const dateB = b.lastUpdated ? new Date(b.lastUpdated).getTime() : 0;
-           return dateB - dateA; // Urutkan dari yang paling baru di-update
+          const dateA = a.lastUpdated ? new Date(a.lastUpdated).getTime() : 0;
+          const dateB = b.lastUpdated ? new Date(b.lastUpdated).getTime() : 0;
+          return dateB - dateA; // Urutkan dari yang paling baru di-update
         });
-        
+
         setState(prev => ({
           ...prev,
           templates: loadedTemplates,
@@ -60,7 +60,7 @@ export const useCuration = () => {
     };
 
     fetchTemplates();
-    
+
     // Muat riwayat lokal (Local Storage) untuk user tamu/anonim
     const savedHistory = localStorage.getItem('curationHistory');
     if (savedHistory) {
@@ -81,19 +81,19 @@ export const useCuration = () => {
   };
 
   // 2. FUNGSI UTAMA: MENGIRIM ASESMEN DAN MEMANTAU AGEN AI SECARA DINAMIS
-  const submitAssessment = async (data: any, onSuccess?: (assessmentId: string) => void) => {
-    setState(prev => ({ 
-      ...prev, 
-      formData: data, 
+  const submitAssessment = async (data: any) => {
+    setState(prev => ({
+      ...prev,
+      formData: data,
       viewState: 'processing',
-      currentAssessmentId: null, 
-      aiResult: null 
+      currentAssessmentId: null,
+      aiResult: null
     }));
 
     try {
       const tokenUsed = sessionStorage.getItem('active_token');
       const processAssessment = httpsCallable(functions, 'processCurationAssessment');
-      
+
       const response = await processAssessment({
         formData: data,
         trackType: state.selectedTemplate?.trackName || 'Evaluasi Umum',
@@ -103,7 +103,7 @@ export const useCuration = () => {
       }) as any;
 
       const assessmentId = response.data.assessmentId;
-      
+
       if (!assessmentId) {
         throw new Error("Sistem gagal menginisialisasi ruang kerja. ID Asesmen tidak ditemukan.");
       }
@@ -122,11 +122,11 @@ export const useCuration = () => {
 
           if (currentStatus === 'COMPLETED') {
             const finalResult = docData.aiResult;
-            
-            setState(prev => ({ 
-              ...prev, 
+
+            setState(prev => ({
+              ...prev,
               aiResult: finalResult,
-              viewState: 'dashboard' 
+              viewState: 'dashboard'
             }));
 
             saveToHistory({
@@ -139,16 +139,12 @@ export const useCuration = () => {
               result: finalResult
             });
 
-            unsub(); 
+            unsub();
 
-            if (onSuccess) {
-              onSuccess(assessmentId);
-            }
-            
-          } 
+          }
           else if (currentStatus === 'FAILED') {
             alert(`Sirkuit AI terputus: ${docData.errorMessage || 'Terjadi kesalahan sistem internal.'}`);
-            setState(prev => ({ ...prev, viewState: 'form' })); 
+            setState(prev => ({ ...prev, viewState: 'form' }));
             unsub();
           }
         }
