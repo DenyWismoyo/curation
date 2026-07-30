@@ -92,12 +92,8 @@ export const assessmentOrchestrator = onDocumentCreated({
     data.aiResult.fieldArguments = fieldArgsResult;
     data.aiResult.fileAnalysisInsights = finalFiles;
     
-    await docRef.update({
-      "aiResult.metrics": metricsResult,
-      "aiResult.fieldArguments": fieldArgsResult,
-      "aiResult.fileAnalysisInsights": finalFiles,
-      status: "ANALYZING_MASTER"
-    });
+    // Progress update: hanya tulis status (data lengkap dikirim di final update)
+    await docRef.update({ status: "ANALYZING_MASTER" });
 
     // 2. Triangulator
     const triangulatorResult = await executeTriangulator(assessmentId, data, API_KEY, docRef);
@@ -117,18 +113,8 @@ export const assessmentOrchestrator = onDocumentCreated({
     data.aiResult.swotAnalysis = triangulatorResult.swotAnalysis || { strengths: [], weaknesses: [], opportunities: [], threats: [] };
     data.aiResult.riskAssessment = triangulatorResult.riskAssessment || { criticalRisks: [], mitigationStrategies: [] };
 
-    await docRef.update({
-      "aiResult.readinessLevel": data.aiResult.readinessLevel,
-      "aiResult.totalScore": data.aiResult.totalScore,
-      "aiResult.dataConfidenceScore": data.aiResult.dataConfidenceScore,
-      "aiResult.contradictionsFound": data.aiResult.contradictionsFound,
-      "aiResult._internalReasoning": data.aiResult._internalReasoning,
-      "aiResult.incubationRoute": data.aiResult.incubationRoute,
-      "aiResult.executiveSummary": data.aiResult.executiveSummary,
-      "aiResult.swotAnalysis": data.aiResult.swotAnalysis,
-      "aiResult.riskAssessment": data.aiResult.riskAssessment,
-      status: "PLANNING_ACTION"
-    });
+    // Progress update: hanya tulis status (data lengkap dikirim di final update)
+    await docRef.update({ status: "PLANNING_ACTION" });
 
     // 3. Tactical Planner
     const plannerResult = await executeTacticalPlanner(assessmentId, data, API_KEY);
@@ -136,33 +122,50 @@ export const assessmentOrchestrator = onDocumentCreated({
     data.aiResult.recommendations = plannerResult.recommendations || [];
     data.aiResult.nextActionSteps = plannerResult.nextActionSteps || [];
     
-    await docRef.update({
-      "aiResult.recommendations": data.aiResult.recommendations,
-      "aiResult.nextActionSteps": data.aiResult.nextActionSteps,
-      status: "ASSEMBLING_REPORT"
-    });
+    // Progress update: hanya tulis status (data lengkap dikirim di final update)
+    await docRef.update({ status: "ASSEMBLING_REPORT" });
 
     // 4. Synthesis
     const synthesisResult = await executeSynthesis(assessmentId, data, API_KEY);
     
     data.aiResult.customAnalysisBlocks = synthesisResult;
     
-    await docRef.update({
-      "aiResult.customAnalysisBlocks": data.aiResult.customAnalysisBlocks,
-      status: "GENERATING_ASSETS"
-    });
+    // Progress update: hanya tulis status (data lengkap dikirim di final update)
+    await docRef.update({ status: "GENERATING_ASSETS" });
 
     // 5. Post Processing
     const smtpEmail = smtpEmailSecret.value();
     const smtpPassword = smtpPasswordSecret.value();
     await executePostProcessing(assessmentId, data, API_KEY, smtpEmail, smtpPassword);
 
+    // ═══════════════════════════════════════════════════════════════════
+    // UPDATE FINAL — satu kali penulisan atomik ke status "COMPLETED".
+    // Menulis semua field sekaligus meminimalkan jumlah Pub/Sub events
+    // dan memastikan assessmentAnalyticsAgent hanya terpanggil SEKALI
+    // pada transisi status GENERATING_ASSETS → COMPLETED.
+    // ═══════════════════════════════════════════════════════════════════
     await docRef.update({
       status: "COMPLETED",
       score: data.aiResult?.totalScore || 0,
       readinessLevel: data.aiResult?.readinessLevel || "Belum Ditentukan",
+      // Tulis ulang seluruh aiResult sekaligus agar analytics agent
+      // mendapat data lengkap saat ia dipicu oleh update ini.
+      "aiResult.metrics": data.aiResult.metrics,
+      "aiResult.fieldArguments": data.aiResult.fieldArguments,
+      "aiResult.fileAnalysisInsights": data.aiResult.fileAnalysisInsights,
+      "aiResult.readinessLevel": data.aiResult.readinessLevel,
+      "aiResult.totalScore": data.aiResult.totalScore,
+      "aiResult.dataConfidenceScore": data.aiResult.dataConfidenceScore,
+      "aiResult.contradictionsFound": data.aiResult.contradictionsFound,
+      "aiResult.incubationRoute": data.aiResult.incubationRoute,
+      "aiResult.executiveSummary": data.aiResult.executiveSummary,
+      "aiResult.swotAnalysis": data.aiResult.swotAnalysis,
+      "aiResult.riskAssessment": data.aiResult.riskAssessment,
+      "aiResult.recommendations": data.aiResult.recommendations,
+      "aiResult.nextActionSteps": data.aiResult.nextActionSteps,
+      "aiResult.customAnalysisBlocks": data.aiResult.customAnalysisBlocks,
       geminiFiles: admin.firestore.FieldValue.delete(),
-      completedAt: admin.firestore.FieldValue.serverTimestamp()
+      completedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
 
   } catch (error: any) {
@@ -170,3 +173,4 @@ export const assessmentOrchestrator = onDocumentCreated({
     await docRef.update({ status: "FAILED", errorMessage: error.message });
   }
 });
+

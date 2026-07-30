@@ -107,7 +107,13 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
               <div key={key} className={`p-3 sm:p-4 rounded-xl transition-colors hover:bg-white ${idx % 2 === 0 ? 'bg-transparent' : 'bg-slate-50/80'}`}>
                 <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">{key}</span>
                 <span className="block text-sm font-semibold text-slate-800 leading-relaxed">
-                  {value !== undefined && value !== null && value !== '' ? String(value) : <span className="italic text-slate-400 font-medium">Kosong</span>}
+                  {value instanceof File ? (
+                    <span className="flex items-center gap-1.5 text-indigo-600"><DocExportIcon size={16} className="shrink-0" /> {value.name}</span>
+                  ) : value !== undefined && value !== null && value !== '' ? (
+                    String(value)
+                  ) : (
+                    <span className="italic text-slate-400 font-medium">Kosong</span>
+                  )}
                 </span>
               </div>
             ))}

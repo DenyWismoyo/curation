@@ -213,9 +213,22 @@ export const assessmentAnalyticsAgent = onDocumentUpdated({
   const beforeData = event.data?.before.data();
   const afterData = event.data?.after.data();
 
+  // ═══════════════════════════════════════════════════════════════
+  // GUARD ANTI-LOOP: Hanya jalankan saat STATUS BARU SAJA berubah
+  // menjadi "COMPLETED". Ini memastikan fungsi ini tidak terpanggil
+  // kembali ketika ia sendiri menulis analyticsSummary ke dokumen.
+  // ═══════════════════════════════════════════════════════════════
+
+  // 1. After harus berstatus COMPLETED
   if (!afterData || afterData.status !== "COMPLETED") return null;
+
+  // 2. KUNCI UTAMA: Before TIDAK BOLEH sudah berstatus COMPLETED.
+  //    Ini memastikan kita hanya bereaksi pada TRANSISI status,
+  //    bukan pada update field lain setelah status sudah COMPLETED.
+  if (beforeData?.status === "COMPLETED") return null;
+
+  // 3. Guard tambahan: jika analyticsSummary v2 sudah ada, skip.
   if (afterData.analyticsSummary?.version === "v2") return null;
-  if (beforeData?.analyticsSummary?.version === "v2") return null;
 
   const docRef = event.data?.after.ref;
   if (!docRef) return null;
@@ -228,12 +241,18 @@ export const assessmentAnalyticsAgent = onDocumentUpdated({
 
     const analyticsSummary = buildAnalyticsSummary(input);
 
+    // Tulis analyticsSummary. Update ini TIDAK akan memicu loop
+    // karena guard #2 di atas (beforeData.status sudah "COMPLETED"
+    // pada iterasi selanjutnya jika ada).
     await docRef.update({
       analyticsSummary,
       analyticsUpdatedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
+
+    console.log(`assessmentAnalyticsAgent: berhasil generate summary untuk ${event.params.assessmentId}`);
   } catch (error: any) {
     console.error("assessmentAnalyticsAgent error", error);
+    // Catat error tanpa mengubah status agar tidak memicu loop error
     await docRef.update({
       analyticsError: error?.message || "Failed to generate analytics summary",
       analyticsUpdatedAt: admin.firestore.FieldValue.serverTimestamp(),

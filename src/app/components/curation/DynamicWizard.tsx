@@ -10,7 +10,8 @@ import * as LucideIcons from 'lucide-react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { getFunctions, httpsCallable } from 'firebase/functions';
-import { app } from '@/lib/firebase';
+import { app, storage } from '@/lib/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import { AdminAutoFill } from './AdminAutoFill';
@@ -39,7 +40,7 @@ export interface DynamicWizardProps {
 
 export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardProps) {
   const CACHE_KEY = `curation_draft_dynamic_${template.id}`;
-  const { role } = useAuth();
+  const { role, user } = useAuth();
   
   // STATE MENGGUNAKAN LOCAL STEPS (Agar bisa diinjeksi pertanyaan baru oleh AI)
   const [localSteps, setLocalSteps] = useState<FormStep[]>(template.steps);
@@ -48,6 +49,7 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
   const [step, setStep] = useState(1);
   const [saveStatus, setSaveStatus] = useState('');
   const [isReviewMode, setIsReviewMode] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   // State khusus saat AI sedang men-generate pertanyaan untuk step berikutnya
   const [isGeneratingStep, setIsGeneratingStep] = useState(false);
@@ -76,7 +78,9 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
       const dataToSave: any = {};
       for (const key in formData) {
         if (formData[key] !== null && formData[key] !== undefined) {
-          if (typeof formData[key] !== 'object' || Array.isArray(formData[key])) {
+          if (formData[key] instanceof File) {
+            dataToSave[key] = `[FILE:${formData[key].name}]`;
+          } else if (typeof formData[key] !== 'object' || Array.isArray(formData[key])) {
             dataToSave[key] = formData[key];
           }
         }
@@ -241,9 +245,38 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
           <ReviewAndConfirm 
             answers={formData}
             onBack={() => setIsReviewMode(false)}
-            onSubmit={(assessmentData) => {
-              const finalPayload = { ...formData, ...assessmentData };
-              onComplete(finalPayload);
+            isSubmitting={isSubmitting}
+            onSubmit={async (assessmentData) => {
+              setIsSubmitting(true);
+              try {
+                const storageFilePaths: string[] = [];
+                const cleanedFormData = { ...formData };
+                const userId = user?.uid || 'guest';
+                
+                for (const [key, value] of Object.entries(formData)) {
+                  if (value instanceof File) {
+                    const safeName = value.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+                    const path = `assessments/${userId}/${Date.now()}_${safeName}`;
+                    const storageRef = ref(storage, path);
+                    await uploadBytes(storageRef, value);
+                    const downloadURL = await getDownloadURL(storageRef);
+                    cleanedFormData[key] = downloadURL;
+                    storageFilePaths.push(path);
+                  }
+                }
+                
+                const finalPayload = { 
+                  ...cleanedFormData, 
+                  ...assessmentData,
+                  storageFilePaths
+                };
+                
+                onComplete(finalPayload);
+              } catch (error) {
+                console.error("Upload error:", error);
+                toast.error("Gagal mengunggah file. Silakan coba lagi.");
+                setIsSubmitting(false);
+              }
             }}
           />
         </motion.div>
