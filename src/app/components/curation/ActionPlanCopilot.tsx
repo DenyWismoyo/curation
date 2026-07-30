@@ -2,7 +2,10 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { getFunctions, httpsCallable } from 'firebase/functions';
-import { app } from '@/lib/firebase';
+import { doc, getDoc } from 'firebase/firestore';
+import { app, db } from '@/lib/firebase';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
@@ -25,7 +28,34 @@ export const ActionPlanCopilot = ({ assessmentId }: ActionPlanCopilotProps) => {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [hasFetchedHistory, setHasFetchedHistory] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const fetchHistory = async () => {
+      if (!assessmentId) return;
+      try {
+        const docRef = doc(db, 'assessments', assessmentId, 'copilot', 'chat');
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists() && docSnap.data().messages) {
+          const dbMsgs = docSnap.data().messages;
+          if (dbMsgs.length > 0) {
+            setMessages([
+              { role: 'model', text: 'Halo! Saya Omnifit Copilot. Saya sudah membaca profil bisnis dan hasil asesmen Anda. Ada yang ingin didiskusikan terkait strategi atau Action Plan Anda?' },
+              ...dbMsgs.map((m: any) => ({ role: m.role, text: m.text }))
+            ]);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch history", error);
+      }
+    };
+
+    if (isOpen && !hasFetchedHistory) {
+      fetchHistory();
+      setHasFetchedHistory(true);
+    }
+  }, [isOpen, assessmentId, hasFetchedHistory]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -49,7 +79,6 @@ export const ActionPlanCopilot = ({ assessmentId }: ActionPlanCopilotProps) => {
       const payload = {
         assessmentId,
         message: userMsg,
-        history: messages.filter(m => m.text !== 'Halo! Saya Omnifit Copilot. Saya sudah membaca profil bisnis dan hasil asesmen Anda. Ada yang ingin didiskusikan terkait strategi atau Action Plan Anda?')
       };
 
       const response: any = await chatFn(payload);
@@ -113,7 +142,22 @@ export const ActionPlanCopilot = ({ assessmentId }: ActionPlanCopilotProps) => {
                   ? 'bg-indigo-600 text-white rounded-tr-sm shadow-md' 
                   : 'bg-white text-slate-700 rounded-tl-sm ring-1 ring-slate-200 shadow-sm'
               }`}>
-                {msg.text}
+                {msg.role === 'model' ? (
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      p: ({ node, ...props }) => <p className="mb-2 last:mb-0" {...props} />,
+                      ul: ({ node, ...props }) => <ul className="list-disc pl-5 mb-2" {...props} />,
+                      ol: ({ node, ...props }) => <ol className="list-decimal pl-5 mb-2" {...props} />,
+                      li: ({ node, ...props }) => <li className="mb-1" {...props} />,
+                      strong: ({ node, ...props }) => <strong className="font-bold" {...props} />,
+                    }}
+                  >
+                    {msg.text}
+                  </ReactMarkdown>
+                ) : (
+                  msg.text
+                )}
               </div>
             </div>
           ))}

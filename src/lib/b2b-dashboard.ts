@@ -1,3 +1,5 @@
+import type { AIResult } from '@/types/curation';
+
 export interface DashboardAnalyticsSummary {
   executiveSummary?: string;
   performanceScore?: number;
@@ -28,7 +30,7 @@ export interface DashboardAssessmentRecord {
   readinessLevel?: string;
   formData?: Record<string, unknown>;
   analyticsSummary?: DashboardAnalyticsSummary;
-  aiResult?: any;
+  aiResult?: AIResult;
   curatorAssessment?: DashboardCuratorAssessment;
 }
 
@@ -585,9 +587,9 @@ export function getUniqueRiskLabels(records: DashboardAssessmentRecord[]): strin
 
   for (const record of records) {
 
-    if (record.aiResult?.risks) {
+    if (record.analyticsSummary?.risks) {
 
-      record.aiResult.risks.forEach(r => risks.add(r));
+      record.analyticsSummary.risks.forEach((r: string) => risks.add(r));
 
     }
 
@@ -596,6 +598,7 @@ export function getUniqueRiskLabels(records: DashboardAssessmentRecord[]): strin
   return Array.from(risks);
 
 }
+
 
 export function getUniqueFocusLabels(records: DashboardAssessmentRecord[]): string[] {
   return summarizeFocusList(records);

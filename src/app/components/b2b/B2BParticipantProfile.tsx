@@ -1,6 +1,7 @@
 'use client';
 
 import { DashboardAssessmentRecord } from '@/lib/b2b-dashboard';
+import type { AIResult } from '@/types/curation';
 import { B2BInteractionModule } from './B2BInteractionModule';
 import { ChevronLeft, ExternalLink, Activity, Sparkles, Flag, ArrowRight } from 'lucide-react';
 import { ActionPlanBuilder } from '../curation/ActionPlanBuilder';
@@ -19,7 +20,7 @@ export function B2BParticipantProfile({
   onBack
 }: B2BParticipantProfileProps) {
   const score = participant.curatorAssessment?.verifiedScore ?? participant.score ?? 0;
-  const aiResultPayload = participant.aiResult || participant.analyticsSummary || {};
+  const aiResultPayload = (participant.aiResult ?? {}) as Partial<AIResult>;
   
   const readiness = aiResultPayload.readinessLevel || participant.readinessLevel || "Belum Dievaluasi";
   const customActionPlan = aiResultPayload.customActionPlan || [];
@@ -62,7 +63,7 @@ export function B2BParticipantProfile({
                   {readiness.split('|')[0]?.trim()}
                 </div>
                 <p className="text-indigo-100 text-sm leading-relaxed">
-                  {aiResultPayload.executiveSummary || "Ringkasan eksekutif belum tersedia untuk peserta ini."}
+                  {String(aiResultPayload.executiveSummary || "Ringkasan eksekutif belum tersedia untuk peserta ini.")}
                 </p>
               </div>
             </div>

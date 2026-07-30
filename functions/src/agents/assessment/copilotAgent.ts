@@ -12,7 +12,7 @@ export const actionPlanCopilotChat = onCall({
   memory: "512MiB",
   secrets: [geminiApiKeySecret],
 }, async (request) => {
-  const { assessmentId, message, history } = request.data;
+  const { assessmentId, message } = request.data;
 
   if (!assessmentId || !message) {
     throw new HttpsError("invalid-argument", "assessmentId dan message wajib diisi.");
@@ -44,6 +44,11 @@ export const actionPlanCopilotChat = onCall({
 
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: "gemini-3.1-flash-lite" });
+
+    // Ambil riwayat chat dari Firestore
+    const chatRef = db.collection("assessments").doc(assessmentId).collection("copilot").doc("chat");
+    const chatSnap = await chatRef.get();
+    let dbHistory = chatSnap.exists ? chatSnap.data()?.messages || [] : [];
 
     // Merangkum konteks (RAG)
     const contextData = {
@@ -78,8 +83,8 @@ export const actionPlanCopilotChat = onCall({
       history: [
         { role: "user", parts: [{ text: systemPrompt }] },
         { role: "model", parts: [{ text: "Mengerti. Saya siap membantu sebagai Omnifit Copilot dengan konteks spesifik bisnis tersebut." }] },
-        ...(history || []).map((h: any) => ({
-          role: h.role,
+        ...dbHistory.map((h: any) => ({
+          role: h.role === "model" ? "model" : "user",
           parts: [{ text: h.text }]
         }))
       ],
@@ -87,6 +92,14 @@ export const actionPlanCopilotChat = onCall({
 
     const result = await withRetry(() => chat.sendMessage(message));
     const responseText = result.response.text();
+
+    // Simpan history terbaru ke Firestore
+    const newMessages = [
+      ...dbHistory,
+      { role: "user", text: message, timestamp: new Date().toISOString() },
+      { role: "model", text: responseText, timestamp: new Date().toISOString() }
+    ];
+    await chatRef.set({ messages: newMessages }, { merge: true });
 
     return { success: true, reply: responseText };
 
