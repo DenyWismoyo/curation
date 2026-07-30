@@ -3,10 +3,11 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import {
   collection,
-  onSnapshot,
+  getDocs,
   orderBy,
   query,
   where,
+  limit,
 } from 'firebase/firestore'
 import { db, functions } from '@/lib/firebase'
 import { Card } from '@/components/ui/card'
@@ -96,91 +97,69 @@ export default function AdminReferralsPage() {
   const [reviewingId, setReviewingId] = useState<string | null>(null)
 
   useEffect(() => {
-    const q = query(
-      collection(db, 'referral_attributions'),
-      orderBy('updatedAt', 'desc')
-    )
-    const unsub = onSnapshot(
-      q,
-      (snap) => {
+    const fetchData = async () => {
+      try {
+        const q = query(
+          collection(db, 'referral_attributions'),
+          orderBy('updatedAt', 'desc'),
+          limit(100)
+        )
+        const snap = await getDocs(q)
         const docs = snap.docs.map(
-          (doc) =>
-            ({ id: doc.id, ...(doc.data() as any) }) as ReferralAttributionDoc
+          (doc) => ({ id: doc.id, ...(doc.data() as any) }) as ReferralAttributionDoc
         )
         setRows(docs)
-        setLoading(false)
-      },
-      (error) => {
+      } catch (error) {
         console.error('Gagal memuat referral_attributions:', error)
         toast.error('Gagal memuat data referral attribution.')
+      } finally {
         setLoading(false)
       }
-    )
+    }
 
-    return () => unsub()
+    fetchData()
   }, [])
 
   useEffect(() => {
-    const qApproved = query(
-      collection(db, 'affiliate_commissions'),
-      where('status', '==', 'APPROVED')
-    )
-    const unsubApproved = onSnapshot(
-      qApproved,
-      (snap) => {
-        const docs = snap.docs.map(
+    const fetchCommissions = async () => {
+      try {
+        const qApproved = query(
+          collection(db, 'affiliate_commissions'),
+          where('status', '==', 'APPROVED'),
+          limit(30)
+        )
+        const snapApproved = await getDocs(qApproved)
+        let docsApproved = snapApproved.docs.map(
           (doc) => ({ id: doc.id, ...(doc.data() as any) }) as CommissionDoc
         )
-        docs.sort((a, b) => {
-          const dateA =
-            a.updatedAt?.toDate?.()?.getTime() ||
-            a.createdAt?.toDate?.()?.getTime() ||
-            0
-          const dateB =
-            b.updatedAt?.toDate?.()?.getTime() ||
-            b.createdAt?.toDate?.()?.getTime() ||
-            0
+        docsApproved.sort((a, b) => {
+          const dateA = a.updatedAt?.toDate?.()?.getTime() || a.createdAt?.toDate?.()?.getTime() || 0
+          const dateB = b.updatedAt?.toDate?.()?.getTime() || b.createdAt?.toDate?.()?.getTime() || 0
           return dateB - dateA
         })
-        setApprovedCommissions(docs.slice(0, 30))
-      },
-      (error) => {
-        console.error('Gagal memuat approved commissions:', error)
-      }
-    )
+        setApprovedCommissions(docsApproved)
 
-    const qPending = query(
-      collection(db, 'affiliate_commissions'),
-      where('status', '==', 'PENDING_APPROVAL')
-    )
-    const unsubPending = onSnapshot(
-      qPending,
-      (snap) => {
-        const docs = snap.docs.map(
+        const qPending = query(
+          collection(db, 'affiliate_commissions'),
+          where('status', '==', 'PENDING_APPROVAL'),
+          limit(30)
+        )
+        const snapPending = await getDocs(qPending)
+        let docsPending = snapPending.docs.map(
           (doc) => ({ id: doc.id, ...(doc.data() as any) }) as CommissionDoc
         )
-        docs.sort((a, b) => {
-          const dateA =
-            a.updatedAt?.toDate?.()?.getTime() ||
-            a.createdAt?.toDate?.()?.getTime() ||
-            0
-          const dateB =
-            b.updatedAt?.toDate?.()?.getTime() ||
-            b.createdAt?.toDate?.()?.getTime() ||
-            0
+        docsPending.sort((a, b) => {
+          const dateA = a.updatedAt?.toDate?.()?.getTime() || a.createdAt?.toDate?.()?.getTime() || 0
+          const dateB = b.updatedAt?.toDate?.()?.getTime() || b.createdAt?.toDate?.()?.getTime() || 0
           return dateB - dateA
         })
-        setPendingCommissions(docs.slice(0, 30))
-      },
-      (error) => {
-        console.error('Gagal memuat pending commissions:', error)
+        setPendingCommissions(docsPending)
+      } catch (error) {
+        console.error('Gagal memuat commissions:', error)
       }
-    )
-
-    return () => {
-      unsubApproved()
-      unsubPending()
     }
+
+    fetchCommissions()
   }, [])
 
   const filtered = useMemo(() => {

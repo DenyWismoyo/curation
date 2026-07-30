@@ -23,6 +23,7 @@ export interface DashboardAssessmentRecord {
   id: string;
   createdAt: string;
   corporateEntity?: string;
+  b2bOrganizationId?: string;
   trackType?: string;
   namaUsaha?: string;
   status?: string;

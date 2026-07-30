@@ -69,6 +69,7 @@ function parseRecord(id: string, data: Record<string, unknown>): DashboardAssess
     id,
     createdAt: normalizeFirestoreDate(data.createdAt),
     corporateEntity: typeof data.corporateEntity === 'string' ? data.corporateEntity : undefined,
+    b2bOrganizationId: typeof data.b2bOrganizationId === 'string' ? data.b2bOrganizationId : undefined,
     trackType: typeof data.trackType === 'string' ? data.trackType : undefined,
     namaUsaha: typeof data.namaUsaha === 'string' ? data.namaUsaha : undefined,
     status: typeof data.status === 'string' ? data.status : undefined,

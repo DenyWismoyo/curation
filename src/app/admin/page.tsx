@@ -2,7 +2,7 @@
 'use client'
 
 import React, { useState, useEffect, useMemo, Suspense } from 'react'
-import { collection, query, onSnapshot, orderBy, limit } from 'firebase/firestore'
+import { collection, query, getDocs, orderBy, limit } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -66,11 +66,10 @@ function AdminDashboardContent() {
   const [activeTab, setActiveTab] = useState('all')
 
   useEffect(() => {
-    const q = query(collection(db, 'assessments'), orderBy('createdAt', 'desc'), limit(50))
-
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
+    const fetchAssessments = async () => {
+      const q = query(collection(db, 'assessments'), orderBy('createdAt', 'desc'), limit(50))
+      try {
+        const snapshot = await getDocs(q)
         const data: AssessmentDoc[] = []
         snapshot.forEach((doc) => {
           const item = doc.data()
@@ -83,15 +82,14 @@ function AdminDashboardContent() {
           data.push({ id: doc.id, ...item, createdAt: dateStr } as AssessmentDoc)
         })
         setAssessments(data)
-        setLoading(false)
-      },
-      (error) => {
+      } catch (error) {
         console.error('Gagal menarik data admin:', error)
+      } finally {
         setLoading(false)
       }
-    )
-
-    return () => unsubscribe()
+    }
+    
+    fetchAssessments()
   }, [])
 
   const groupedPrograms = useMemo(() => {

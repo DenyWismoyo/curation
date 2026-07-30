@@ -160,10 +160,10 @@ export default function Home() {
       <CurationLanding
         onStart={() => {
           if (state.selectedTemplate) {
-            actions.startAssessment(state.selectedTemplate);
+            actions.setSelectedTemplate(state.selectedTemplate);
           } else {
             const defaultTemplate = state.templates.find(t => t.trackName === 'Evaluasi Umum') || state.templates[0];
-            if (defaultTemplate) actions.startAssessment(defaultTemplate);
+            if (defaultTemplate) actions.setSelectedTemplate(defaultTemplate);
           }
         }}
         history={combinedHistory}
