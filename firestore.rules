@@ -105,30 +105,53 @@ service cloud.firestore {
     function isAssessorProgramMatch() {
       return isAssessor()
         && exists(/databases/$(database)/documents/assessors/$(request.auth.token.email))
-        && get(/databases/$(database)/documents/assessors/$(request.auth.token.email)).data.programName == resource.data.corporateEntity;
+        && (
+          get(/databases/$(database)/documents/assessors/$(request.auth.token.email)).data.programName == resource.data.corporateEntity
+          || get(/databases/$(database)/documents/assessors/$(request.auth.token.email)).data.programName == resource.data.b2bOrganizationId
+        );
     }
 
     function isCuratorProgramMatch() {
       return isCurator()
         && exists(/databases/$(database)/documents/assessors/$(request.auth.token.email))
-        && get(/databases/$(database)/documents/assessors/$(request.auth.token.email)).data.programName == resource.data.corporateEntity;
+        && (
+          get(/databases/$(database)/documents/assessors/$(request.auth.token.email)).data.programName == resource.data.corporateEntity
+          || get(/databases/$(database)/documents/assessors/$(request.auth.token.email)).data.programName == resource.data.b2bOrganizationId
+        );
     }
 
     function hasOrgScopeFromUserDoc(userDocId) {
       return exists(/databases/$(database)/documents/users/$(userDocId)) && (
         (
           ('allowedOrganizations' in get(/databases/$(database)/documents/users/$(userDocId)).data)
-          && resource.data.corporateEntity in get(/databases/$(database)/documents/users/$(userDocId)).data.allowedOrganizations
+          && (
+            resource.data.corporateEntity in get(/databases/$(database)/documents/users/$(userDocId)).data.allowedOrganizations
+            || resource.data.b2bOrganizationId in get(/databases/$(database)/documents/users/$(userDocId)).data.allowedOrganizations
+          )
         )
         ||
         (
           ('organizationScopes' in get(/databases/$(database)/documents/users/$(userDocId)).data)
-          && resource.data.corporateEntity in get(/databases/$(database)/documents/users/$(userDocId)).data.organizationScopes
+          && (
+            resource.data.corporateEntity in get(/databases/$(database)/documents/users/$(userDocId)).data.organizationScopes
+            || resource.data.b2bOrganizationId in get(/databases/$(database)/documents/users/$(userDocId)).data.organizationScopes
+          )
         )
         ||
         (
           ('accessibleOrganizations' in get(/databases/$(database)/documents/users/$(userDocId)).data)
-          && resource.data.corporateEntity in get(/databases/$(database)/documents/users/$(userDocId)).data.accessibleOrganizations
+          && (
+            resource.data.corporateEntity in get(/databases/$(database)/documents/users/$(userDocId)).data.accessibleOrganizations
+            || resource.data.b2bOrganizationId in get(/databases/$(database)/documents/users/$(userDocId)).data.accessibleOrganizations
+          )
+        )
+        ||
+        (
+          ('b2bOrganizationIds' in get(/databases/$(database)/documents/users/$(userDocId)).data)
+          && (
+            resource.data.b2bOrganizationId in get(/databases/$(database)/documents/users/$(userDocId)).data.b2bOrganizationIds
+            || resource.data.corporateEntity in get(/databases/$(database)/documents/users/$(userDocId)).data.b2bOrganizationIds
+          )
         )
       );
     }
@@ -174,9 +197,11 @@ service cloud.firestore {
         || hasOrgInField(request.auth.uid, 'allowedOrganizations', orgName)
         || hasOrgInField(request.auth.uid, 'organizationScopes', orgName)
         || hasOrgInField(request.auth.uid, 'accessibleOrganizations', orgName)
+        || hasOrgInField(request.auth.uid, 'b2bOrganizationIds', orgName)
         || hasOrgInField(request.auth.token.email, 'allowedOrganizations', orgName)
         || hasOrgInField(request.auth.token.email, 'organizationScopes', orgName)
-        || hasOrgInField(request.auth.token.email, 'accessibleOrganizations', orgName);
+        || hasOrgInField(request.auth.token.email, 'accessibleOrganizations', orgName)
+        || hasOrgInField(request.auth.token.email, 'b2bOrganizationIds', orgName);
     }
 
     match /users/{userId} {

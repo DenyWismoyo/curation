@@ -85,6 +85,7 @@ const adminMenuGroups: AdminMenuGroup[] = [
     items: [
       { name: 'B2B Pilot Dashboard', path: '/admin/b2b-pilot', icon: BriefcaseBusiness, badge: 'B2B', badgeVariant: 'sky' },
       { name: 'Akses Role B2B', path: '/admin/b2b-access', icon: UserCog },
+      { name: 'B2B Tokens', path: '/admin/b2b-tokens', icon: KeyRound },
       { name: 'B2B BI Analytics', path: '/admin/b2b-analytics', icon: BarChart3, badge: 'BI', badgeVariant: 'emerald' },
     ],
   },

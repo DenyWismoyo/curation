@@ -15,8 +15,10 @@ const NAV_ITEMS = [
 export default function B2BLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, loading, logout } = useAuth();
+  const { user, loading, logout, allowedOrganizations, b2bOrganizationIds } = useAuth();
   const isLoginRoute = pathname === '/b2b/login';
+
+  const accessibleTenantsCount = Array.from(new Set([...(allowedOrganizations || []), ...(b2bOrganizationIds || [])])).length;
 
   useEffect(() => {
     if (!loading && !user && !isLoginRoute) {
@@ -47,7 +49,14 @@ export default function B2BLayout({ children }: { children: React.ReactNode }) {
               </div>
               <div>
                 <p className="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-black">Omnifit</p>
-                <p className="text-sm font-black text-slate-900">B2B Self-Service</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-black text-slate-900">B2B Self-Service</p>
+                  {!isLoginRoute && accessibleTenantsCount > 0 && (
+                    <span className="text-[9px] font-bold bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded-full border border-indigo-100">
+                      {accessibleTenantsCount} Tenant{accessibleTenantsCount > 1 ? 's' : ''}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
 

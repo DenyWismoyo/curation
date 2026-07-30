@@ -20,6 +20,9 @@ import { ensureReferralVisitorId, getStoredReferralAttribution } from '@/lib/ref
 interface AuthContextType {
   user: User | null;
   role: 'user' | 'admin_omnifit' | 'admin_csrs' | 'assessor' | 'curator' | null;
+  b2bPersonas: string[];
+  allowedOrganizations: string[];
+  b2bOrganizationIds: string[];
   assessmentQuota: number;
   loading: boolean;
   loginWithGoogle: () => Promise<void>;
@@ -34,6 +37,9 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [role, setRole] = useState<'user' | 'admin_omnifit' | 'admin_csrs' | 'assessor' | 'curator' | null>(null);
+  const [b2bPersonas, setB2bPersonas] = useState<string[]>([]);
+  const [allowedOrganizations, setAllowedOrganizations] = useState<string[]>([]);
+  const [b2bOrganizationIds, setB2bOrganizationIds] = useState<string[]>([]);
   const [assessmentQuota, setAssessmentQuota] = useState<number>(0);
   const [loading, setLoading] = useState(true);
 
@@ -63,16 +69,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           const emailSnap = await getDoc(emailRef).catch(() => null);
           const roleFromEmailDoc = emailSnap?.exists() ? pickRole(emailSnap.data().role) : null;
 
+          let currentB2bPersonas: string[] = [];
+          let currentAllowedOrganizations: string[] = [];
+          let currentB2bOrganizationIds: string[] = [];
+
           if (roleFromEmailDoc) {
             currentRole = roleFromEmailDoc;
           }
+          
+          if (emailSnap?.exists()) {
+            const data = emailSnap.data();
+            currentB2bPersonas = Array.isArray(data.b2bPersonas) ? data.b2bPersonas : [];
+            currentAllowedOrganizations = Array.isArray(data.allowedOrganizations) ? data.allowedOrganizations : [];
+            currentB2bOrganizationIds = Array.isArray(data.b2bOrganizationIds) ? data.b2bOrganizationIds : [];
+          }
 
           if (emailSnap && emailSnap.exists()) {
-            // Sinkronisasi data ke ID UID agar ke depannya sesuai standar Firestore
+            // Sinkronisasi data dasar ke ID UID agar ke depannya sesuai standar Firestore
+            // (Hindari update field sensitif seperti role/b2bPersonas dari client-side)
             await setDoc(doc(db, 'users', currentUser.uid), { 
               email: currentUser.email,
               displayName: currentUser.displayName,
-              role: currentRole,
               updatedAt: new Date().toISOString() 
             }, { merge: true });
           } else {
@@ -81,7 +98,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             const userSnap = await getDoc(userRef);
             
             if (userSnap.exists()) {
-              currentRole = pickRole(userSnap.data().role);
+              const data = userSnap.data();
+              currentRole = pickRole(data.role);
+              
+              if (!emailSnap?.exists()) {
+                currentB2bPersonas = Array.isArray(data.b2bPersonas) ? data.b2bPersonas : [];
+                currentAllowedOrganizations = Array.isArray(data.allowedOrganizations) ? data.allowedOrganizations : [];
+                currentB2bOrganizationIds = Array.isArray(data.b2bOrganizationIds) ? data.b2bOrganizationIds : [];
+              }
             } else {
               // Registrasi user baru di Firestore
               await setDoc(userRef, {
@@ -106,6 +130,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           }
           
           setRole(currentRole);
+          setB2bPersonas(currentB2bPersonas);
+          setAllowedOrganizations(currentAllowedOrganizations);
+          setB2bOrganizationIds(currentB2bOrganizationIds);
 
           // Subscribe to real-time changes in users doc for quota
           const userRef = doc(db, 'users', currentUser.uid);
@@ -120,10 +147,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         } catch (error) {
           console.error("Gagal memeriksa role user:", error);
           setRole('user');
+          setB2bPersonas([]);
+          setAllowedOrganizations([]);
+          setB2bOrganizationIds([]);
           setAssessmentQuota(0);
         }
       } else {
         setRole(null);
+        setB2bPersonas([]);
+        setAllowedOrganizations([]);
+        setB2bOrganizationIds([]);
         setAssessmentQuota(0);
       }
       setLoading(false);
@@ -197,7 +230,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, role, assessmentQuota, loading, loginWithGoogle, registerWithEmail, loginWithEmail, resetPassword, logout }}>
+    <AuthContext.Provider value={{ user, role, b2bPersonas, allowedOrganizations, b2bOrganizationIds, assessmentQuota, loading, loginWithGoogle, registerWithEmail, loginWithEmail, resetPassword, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -142,6 +142,7 @@ export function TenantSelfServiceDashboard({ persona }: { persona: PersonaView }
         const mergedAllowedOrgs = uidData.allowedOrganizations || emailData.allowedOrganizations;
         const mergedOrgScopes = uidData.organizationScopes || emailData.organizationScopes;
         const mergedAccessibleOrgs = uidData.accessibleOrganizations || emailData.accessibleOrganizations;
+        const mergedB2bOrganizationIds = uidData.b2bOrganizationIds || emailData.b2bOrganizationIds;
 
         const scopedPersonas = toStringArray(mergedB2bPersonas)
           .map(entry => entry.toLowerCase())
@@ -159,6 +160,7 @@ export function TenantSelfServiceDashboard({ persona }: { persona: PersonaView }
           ...normalizeScopeArray(mergedAllowedOrgs),
           ...normalizeScopeArray(mergedOrgScopes),
           ...normalizeScopeArray(mergedAccessibleOrgs),
+          ...normalizeScopeArray(mergedB2bOrganizationIds),
         ];
 
         if (role === 'assessor') {
@@ -173,7 +175,7 @@ export function TenantSelfServiceDashboard({ persona }: { persona: PersonaView }
             return;
           }
 
-          const scopedQuery = query(collection(db, 'assessments'), where('corporateEntity', '==', assessorProgram));
+          const scopedQuery = query(collection(db, 'assessments'), where('b2bOrganizationId', '==', assessorProgram));
           unsubscribeAssessments = onSnapshot(scopedQuery, (snapshot) => {
             const next = snapshot.docs
               .map((item) => parseRecord(item.id, item.data() as Record<string, unknown>))
@@ -192,7 +194,7 @@ export function TenantSelfServiceDashboard({ persona }: { persona: PersonaView }
         }
 
         if (scopedOrganizations.length === 1) {
-          const scopedQuery = query(collection(db, 'assessments'), where('corporateEntity', '==', scopedOrganizations[0]));
+          const scopedQuery = query(collection(db, 'assessments'), where('b2bOrganizationId', '==', scopedOrganizations[0]));
           unsubscribeAssessments = onSnapshot(scopedQuery, (snapshot) => {
             const next = snapshot.docs
               .map((item) => parseRecord(item.id, item.data() as Record<string, unknown>))
@@ -210,7 +212,7 @@ export function TenantSelfServiceDashboard({ persona }: { persona: PersonaView }
 
         const cacheByChunk = new Map<number, DashboardAssessmentRecord[]>();
         const unsubs = chunks.map((orgChunk, chunkIndex) => {
-          const scopedQuery = query(collection(db, 'assessments'), where('corporateEntity', 'in', orgChunk));
+          const scopedQuery = query(collection(db, 'assessments'), where('b2bOrganizationId', 'in', orgChunk));
           return onSnapshot(scopedQuery, (snapshot) => {
             const parsed = snapshot.docs.map((item) => parseRecord(item.id, item.data() as Record<string, unknown>));
             cacheByChunk.set(chunkIndex, parsed);
@@ -741,7 +743,13 @@ export function TenantSelfServiceDashboard({ persona }: { persona: PersonaView }
       )}
 
       {activeTab === 'branding' && (
-        <B2BBrandingEditor organizationId={selectedOrganization} />
+        <B2BBrandingEditor 
+          organizationId={
+            selectedOrganization === ALL_ORGANIZATIONS 
+              ? selectedOrganization 
+              : records.find(r => getOrganizationName(r) === selectedOrganization)?.b2bOrganizationId || selectedOrganization
+          } 
+        />
       )}
     </div>
   );

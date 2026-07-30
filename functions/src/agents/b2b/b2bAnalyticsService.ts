@@ -34,22 +34,17 @@ export const getB2BOrganizationAnalytics = onCall({
 
     const orgName = orgData?.name || orgData?.displayName || organizationId;
 
-    // 2. Query asesmen peserta berdasarkan corporateEntity atau token corporate
+    // 2. Query asesmen peserta berdasarkan b2bOrganizationId (Performance Optimized)
     const snap = await db.collection("assessments")
+      .where("b2bOrganizationId", "==", organizationId)
       .where("status", "==", "COMPLETED")
       .orderBy("completedAt", "desc")
       .limit(limit)
       .get();
 
-    // Filter dokumen yang terhubung dengan organisasi ini
-    const filteredDocs = snap.docs.filter(doc => {
-      const data = doc.data();
-      const corp = (data.corporateEntity || '').toUpperCase();
-      const token = (data.tokenUsed || '').toUpperCase();
-      const targetOrg = organizationId.toUpperCase();
-      return corp === targetOrg || corp.includes(targetOrg) || token.startsWith(targetOrg);
-    });
-
+    // Tidak perlu lagi filter in-memory karena sudah di-filter di level database
+    const filteredDocs = snap.docs;
+    
     const totalAssessments = filteredDocs.length;
 
     if (totalAssessments === 0) {

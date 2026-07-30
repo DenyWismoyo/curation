@@ -58,6 +58,7 @@ export const processCurationAssessment = onCall({
   try {
     await db.runTransaction(async (transaction) => {
       let corporateEntityName = null;
+      let b2bOrganizationId = null;
       let allowedDocTemplates: string[] = [];
 
       if (tokenCorpId && tokenCode) {
@@ -73,6 +74,7 @@ export const processCurationAssessment = onCall({
         if (tData.isUsed) throw new HttpsError("permission-denied", "Token telah digunakan.");
 
         corporateEntityName = corpData?.corporateName || tokenCorpId;
+        b2bOrganizationId = corpData?.organizationId || null;
         allowedDocTemplates = corpData?.allowedDocumentTemplates || [];
 
         transaction.update(corpRef, {
@@ -106,7 +108,12 @@ export const processCurationAssessment = onCall({
         isCacheHit: isCacheHit,
         status: isCacheHit ? "COMPLETED" : "ANALYZING_METRICS",
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        completedAt: null,
       };
+
+      if (b2bOrganizationId) {
+        newDocData.b2bOrganizationId = b2bOrganizationId;
+      }
 
       if (isCacheHit && cachedResult) {
         newDocData.aiResult = cachedResult.aiResult;

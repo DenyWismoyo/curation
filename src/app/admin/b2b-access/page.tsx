@@ -43,6 +43,7 @@ interface B2BOrganizationRow {
   id: string
   name?: string
   displayName?: string
+  slug?: string
   status?: OrganizationStatus
   industry?: string
   tags?: string[]
@@ -144,6 +145,7 @@ export default function AdminB2BAccessPage() {
           name: typeof data.name === 'string' ? data.name : entry.id,
           displayName:
             typeof data.displayName === 'string' ? data.displayName : '',
+          slug: typeof data.slug === 'string' ? data.slug : '',
           status: toOrganizationStatus(data.status),
           industry: typeof data.industry === 'string' ? data.industry : '',
           tags: toStringArray(data.tags),
@@ -564,8 +566,11 @@ export default function AdminB2BAccessPage() {
                           <p className={`font-bold text-sm ${checked ? 'text-indigo-900' : 'text-slate-700'}`}>
                             {org.name || org.id}
                           </p>
-                          <div className="flex items-center gap-1.5 mt-1">
+                          <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                             <span className="text-[10px] font-mono text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">ID: {org.id}</span>
+                            {org.slug && (
+                              <span className="text-[10px] font-mono text-indigo-500 bg-indigo-50 px-1.5 py-0.5 rounded">slug: {org.slug}</span>
+                            )}
                             <span className={`text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded ${org.status === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>{org.status || 'pilot'}</span>
                           </div>
                         </div>

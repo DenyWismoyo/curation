@@ -144,7 +144,7 @@ export default function MitraLandingPage({ params }: { params: { slug: string } 
     );
   }
 
-  const primaryColor = orgData.primaryColor || '#4f46e5';
+  const primaryColor = orgData.branding?.primaryColor || orgData.primaryColor || '#4f46e5';
   
   return (
     <div className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden" style={{ backgroundColor: primaryColor + '0A' }}>
@@ -161,8 +161,8 @@ export default function MitraLandingPage({ params }: { params: { slug: string } 
       >
         <div className="flex justify-center mb-8 relative">
           <div className="w-24 h-24 bg-white rounded-3xl shadow-xl ring-1 ring-slate-100 flex items-center justify-center overflow-hidden z-10">
-             {orgData.logoUrl ? (
-               <img src={orgData.logoUrl} alt={orgData.displayName || 'Mitra Logo'} className="w-full h-full object-contain p-2" />
+             {orgData.branding?.logoUrl || orgData.logoUrl ? (
+               <img src={orgData.branding?.logoUrl || orgData.logoUrl} alt={orgData.displayName || 'Mitra Logo'} className="w-full h-full object-contain p-2" />
              ) : (
                <div className="text-4xl font-black" style={{ color: primaryColor }}>
                  {(orgData.displayName || 'M')[0].toUpperCase()}

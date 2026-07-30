@@ -157,6 +157,8 @@ export const adminUpsertB2BOrganization = onCall({
     throw new HttpsError("invalid-argument", "organizationId tidak valid.");
   }
 
+  const slug = payload.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
   const now = admin.firestore.FieldValue.serverTimestamp();
   const tags = normalizeStringArray(payload.tags || []);
   const status: OrgStatus = payload.status;
@@ -170,6 +172,7 @@ export const adminUpsertB2BOrganization = onCall({
       organizationId,
       name: payload.name,
       displayName: payload.displayName || payload.name,
+      slug: existing.slug || slug,
       status,
       industry: payload.industry || "",
       tags,
@@ -179,6 +182,8 @@ export const adminUpsertB2BOrganization = onCall({
         phone: payload.contactPhone || "",
       },
       notes: payload.notes || "",
+      branding: payload.branding || null,
+      webhook: payload.webhook || null,
       updatedAt: now,
       updatedByUid: actorUid,
       updatedByEmail: actorEmail,
