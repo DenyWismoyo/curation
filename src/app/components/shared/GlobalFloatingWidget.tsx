@@ -6,7 +6,7 @@ import { MessageSquarePlus, Sparkles, X, MessageCircle } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import dynamic from 'next/dynamic'
 import { motion, AnimatePresence } from 'framer-motion'
-// Hapus impor useMobileBack dan usePathname
+import { usePathname } from 'next/navigation'
 
 // Lazy Load Modal dengan SSR false
 const FeedbackModal = dynamic(
@@ -27,6 +27,13 @@ const OmniAiWidget = dynamic(
 
 export function GlobalFloatingWidget() {
   const { user } = useAuth()
+  const pathname = usePathname()
+
+  // Sembunyikan widget jika berada di halaman UniversalAssessmentView (seperti /result)
+  // agar tidak menimpa ActionPlanCopilot
+  if (pathname?.includes('/result') || pathname?.includes('/dashboard/result')) {
+    return null;
+  }
 
   // State Management
   const [isMenuOpen, setIsMenuOpen] = useState(false)

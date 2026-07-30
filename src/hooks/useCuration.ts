@@ -108,6 +108,11 @@ export const useCuration = () => {
         throw new Error("Sistem gagal menginisialisasi ruang kerja. ID Asesmen tidak ditemukan.");
       }
 
+      // FIX: Bersihkan draf lokal karena data berhasil terkirim ke server
+      if (state.selectedTemplate?.id) {
+        localStorage.removeItem(`curation_draft_dynamic_${state.selectedTemplate.id}`);
+      }
+
       setState(prev => ({ ...prev, currentAssessmentId: assessmentId }));
 
       const unsub = onSnapshot(doc(db, 'assessments', assessmentId), (docSnap) => {

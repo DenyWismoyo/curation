@@ -13,7 +13,7 @@ export const actionPlanCopilotChat = onCall({
   secrets: [geminiApiKeySecret],
 }, async (request) => {
   const { assessmentId, message, history } = request.data;
-  
+
   if (!assessmentId || !message) {
     throw new HttpsError("invalid-argument", "assessmentId dan message wajib diisi.");
   }
@@ -43,7 +43,7 @@ export const actionPlanCopilotChat = onCall({
     if (!apiKey) throw new HttpsError("internal", "API Key tidak dikonfigurasi.");
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-3.1-pro" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3.1-flash-lite" });
 
     // Merangkum konteks (RAG)
     const contextData = {
