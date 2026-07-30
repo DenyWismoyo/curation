@@ -5,11 +5,13 @@ import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { FormField } from '@/types/curation';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { X, Check, Loader2, Sparkles } from 'lucide-react';
+import { X, Check, Loader2, Sparkles, UploadCloud } from 'lucide-react';
 import { VoiceInputRecorder } from './VoiceInputRecorder';
 import { getFunctions, httpsCallable } from 'firebase/functions';
-import { app } from '@/lib/firebase';
+import { app, storage } from '@/lib/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { toast } from 'sonner';
+import { getAuth } from 'firebase/auth';
 
 // IMPORT CUSTOM ICON
 import { DocExportIcon } from '@/components/icon';
@@ -37,6 +39,7 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragActive, setDragActive] = useState(false);
   
+  const [isUploading, setIsUploading] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
 
@@ -79,9 +82,9 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
   }, [field.label, field.description, isAnalyzing, analysisResult]);
 
   useEffect(() => {
-    // Jalankan auto-analyze jika field ini bertipe file, valuenya adalah objek File, dan belum dianalisis
-    if (field.type === 'file' && value instanceof File && !analysisResult && !isAnalyzing) {
-      analyzeFile(value);
+    // Auto-analyze hanya jika value adalah URL string (sudah terupload)
+    if (field.type === 'file' && value && typeof value === 'object' && value.downloadURL && !analysisResult && !isAnalyzing) {
+      // Tidak auto-analyze karena file sudah ada di storage, analisis dilakukan di orchestrator
     }
   }, [value, field.type, analysisResult, isAnalyzing, analyzeFile]);
 
@@ -171,6 +174,11 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
           </div>
         );
       case 'file':
+        // Nilai file sekarang adalah objek: { downloadURL, storagePath, fileName }
+        // atau null/undefined jika belum ada file.
+        const fileValue = value && typeof value === 'object' && value.downloadURL ? value : null;
+        const legacyFileValue = value instanceof File ? value : null; // fallback jika masih ada File object
+
         const handleDrag = (e: React.DragEvent) => {
           e.preventDefault(); e.stopPropagation();
           if (e.type === 'dragenter' || e.type === 'dragover') setDragActive(true);
@@ -179,31 +187,63 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
         const handleDrop = (e: React.DragEvent) => {
           e.preventDefault(); e.stopPropagation();
           setDragActive(false);
-          if (e.dataTransfer.files && e.dataTransfer.files[0]) onChange(e.dataTransfer.files[0]);
+          if (e.dataTransfer.files && e.dataTransfer.files[0]) handleFileUpload(e.dataTransfer.files[0]);
         };
+
+        const handleFileUpload = async (file: File) => {
+          setIsUploading(true);
+          setAnalysisResult(null);
+          try {
+            const auth = getAuth(app);
+            const userId = auth.currentUser?.uid || 'guest';
+            const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+            const storagePath = `assessments/${userId}/${Date.now()}_${safeName}`;
+            const storageRef = ref(storage, storagePath);
+            await uploadBytes(storageRef, file);
+            const downloadURL = await getDownloadURL(storageRef);
+            // Simpan sebagai objek { downloadURL, storagePath, fileName }
+            onChange({ downloadURL, storagePath, fileName: file.name });
+            toast.success(`File "${file.name}" berhasil diunggah.`);
+          } catch (err) {
+            console.error('Upload file gagal:', err);
+            toast.error('Gagal mengunggah file. Pastikan koneksi internet Anda stabil.');
+          } finally {
+            setIsUploading(false);
+          }
+        };
+
+        const displayFileName = fileValue?.fileName || legacyFileValue?.name || (typeof value === 'string' ? value.split('/').pop() : null);
+        const displayURL = fileValue?.downloadURL || null;
+        const hasFile = !!(fileValue || legacyFileValue);
 
         return (
           <div className="mt-1">
-            {value ? (
+            {hasFile ? (
               <div className="space-y-3">
                 <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex items-center justify-between shadow-sm">
                   <div className="flex items-center gap-3 overflow-hidden">
                     <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center shrink-0">
-                      {/* CUSTOM ICON UNTUK FILE YANG SUDAH DIUNGGAH */}
                       <DocExportIcon size={20} />
                     </div>
                     <div className="truncate">
-                      <p className="text-sm font-bold text-emerald-900 truncate">{value.name || (typeof value === 'string' ? value.split('/').pop() : 'Dokumen Terlampir')}</p>
-                      <p className="text-xs text-emerald-600 font-medium">Siap diunggah</p>
+                      <p className="text-sm font-bold text-emerald-900 truncate">{displayFileName || 'Dokumen Terlampir'}</p>
+                      {displayURL ? (
+                        <a href={displayURL} target="_blank" rel="noreferrer" className="text-xs text-emerald-600 font-medium hover:underline">✅ Tersimpan di cloud — Klik untuk lihat</a>
+                      ) : (
+                        <p className="text-xs text-amber-600 font-medium">⏳ Mengunggah...</p>
+                      )}
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    {value instanceof File && (
+                    {displayURL && (
                       <button 
                         type="button" 
-                        onClick={() => analyzeFile(value)} 
-                        disabled={isAnalyzing}
-                        className="px-3 py-1.5 bg-white border border-emerald-200 text-emerald-700 hover:bg-emerald-100 rounded-lg text-xs font-bold transition-colors flex items-center gap-1 shadow-sm disabled:opacity-50"
+                        onClick={() => {
+                          // Analisis ulang via Cloud Function jika perlu
+                          if (legacyFileValue) analyzeFile(legacyFileValue);
+                        }} 
+                        disabled={isAnalyzing || !legacyFileValue}
+                        className="px-3 py-1.5 bg-white border border-emerald-200 text-emerald-700 hover:bg-emerald-100 rounded-lg text-xs font-bold transition-colors flex items-center gap-1 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {isAnalyzing ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} className="text-amber-500" />}
                         {isAnalyzing ? 'Menganalisis...' : 'Analisis Ulang AI'}
@@ -226,20 +266,27 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
               </div>
             ) : (
               <div
-                className={`relative border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-2 ${dragActive ? 'border-indigo-500 bg-indigo-50' : 'border-slate-300 bg-slate-50 hover:bg-slate-100'}`}
-                onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop} onClick={() => fileInputRef.current?.click()}
+                className={`relative border-2 border-dashed rounded-2xl p-8 text-center transition-all flex flex-col items-center justify-center gap-2 ${
+                  isUploading ? 'border-indigo-400 bg-indigo-50 cursor-wait' :
+                  dragActive ? 'border-indigo-500 bg-indigo-50 cursor-copy' : 
+                  'border-slate-300 bg-slate-50 hover:bg-slate-100 cursor-pointer'
+                }`}
+                onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={!isUploading ? handleDrop : undefined}
+                onClick={!isUploading ? () => fileInputRef.current?.click() : undefined}
               >
                 <div className="w-12 h-12 bg-white rounded-full shadow-sm ring-1 ring-slate-200 flex items-center justify-center text-indigo-500 mb-2">
-                  {/* CUSTOM ICON UNTUK AREA DRAG & DROP */}
-                  <DocExportIcon size={24} />
+                  {isUploading ? <Loader2 size={24} className="animate-spin text-indigo-500" /> : <DocExportIcon size={24} />}
                 </div>
-                <p className="text-sm font-bold text-slate-700"><span className="text-indigo-600">Klik untuk unggah</span> atau seret file ke sini</p>
+                <p className="text-sm font-bold text-slate-700">
+                  {isUploading ? 'Mengunggah ke cloud...' : <><span className="text-indigo-600">Klik untuk unggah</span> atau seret file ke sini</>}
+                </p>
                 <p className="text-xs font-medium text-slate-400 mt-1 uppercase tracking-wider">Mendukung format: {field.fileAccept ? field.fileAccept.replace(/,/g, ', ') : 'Semua Format'}</p>
-                <input ref={fileInputRef} type="file" accept={field.fileAccept} className="hidden" onChange={(e) => { if (e.target.files && e.target.files[0]) onChange(e.target.files[0]); }} />
+                <input ref={fileInputRef} type="file" accept={field.fileAccept} className="hidden" disabled={isUploading} onChange={(e) => { if (e.target.files && e.target.files[0]) handleFileUpload(e.target.files[0]); }} />
               </div>
             )}
           </div>
         );
+
       default:
         return null;
     }

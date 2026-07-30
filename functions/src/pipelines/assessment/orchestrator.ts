@@ -39,8 +39,26 @@ export const assessmentOrchestrator = onDocumentCreated({
   try {
     // 0. Prepare Files (Upload to Gemini if needed)
     const geminiFiles = data.geminiFiles || [];
-    const storageFilePaths = data.storageFilePaths || [];
+    let storageFilePaths: string[] = data.storageFilePaths || [];
     
+    // FALLBACK: Jika storageFilePaths kosong, coba ekstrak dari formData
+    // (untuk backward compatibility dan edge case)
+    if (storageFilePaths.length === 0 && data.formData) {
+      const firebaseStoragePattern = /firebasestorage\.googleapis\.com/;
+      for (const val of Object.values(data.formData)) {
+        if (typeof val === 'string' && firebaseStoragePattern.test(val)) {
+          // Ambil storage path dari URL download Firebase Storage
+          try {
+            const url = new URL(val);
+            const pathEncoded = url.pathname.split('/o/')[1]?.split('?')[0];
+            if (pathEncoded) storageFilePaths.push(decodeURIComponent(pathEncoded));
+          } catch (e) { /* abaikan URL tidak valid */ }
+        }
+      }
+      if (storageFilePaths.length > 0) {
+        console.log(`[Orchestrator] Extracted ${storageFilePaths.length} file path(s) from formData as fallback.`);
+      }
+    }
     if (geminiFiles.length === 0 && storageFilePaths.length > 0) {
       const fileManager = new GoogleAIFileManager(API_KEY);
       

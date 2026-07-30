@@ -77,11 +77,17 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
     if (typeof window !== 'undefined') {
       const dataToSave: any = {};
       for (const key in formData) {
-        if (formData[key] !== null && formData[key] !== undefined) {
-          if (formData[key] instanceof File) {
-            dataToSave[key] = `[FILE:${formData[key].name}]`;
-          } else if (typeof formData[key] !== 'object' || Array.isArray(formData[key])) {
-            dataToSave[key] = formData[key];
+        const val = formData[key];
+        if (val !== null && val !== undefined) {
+          // Format file baru: { downloadURL, storagePath, fileName } — aman diserialisasi ke JSON
+          if (val && typeof val === 'object' && 'downloadURL' in val && 'storagePath' in val) {
+            dataToSave[key] = val; // objek ini sudah serializable
+          } else if (val instanceof File) {
+            // Jangan simpan File object (binary tidak bisa JSON), buang saja
+            // File akan perlu diunggah ulang jika user refresh halaman
+            dataToSave[key] = `[FILE:${val.name}]`;
+          } else if (typeof val !== 'object' || Array.isArray(val)) {
+            dataToSave[key] = val;
           }
         }
       }
@@ -251,10 +257,18 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
               try {
                 const storageFilePaths: string[] = [];
                 const cleanedFormData = { ...formData };
-                const userId = user?.uid || 'guest';
-                
+
+                // Format baru: value file adalah objek { downloadURL, storagePath, fileName }
+                // File sudah terupload ke Storage saat dipilih oleh pengguna di DynamicField.
+                // Di sini kita hanya perlu mengekstrak URL dan path-nya.
                 for (const [key, value] of Object.entries(formData)) {
-                  if (value instanceof File) {
+                  if (value && typeof value === 'object' && 'downloadURL' in value && 'storagePath' in value) {
+                    // File sudah ada di storage, simpan URL download ke formData
+                    cleanedFormData[key] = String(value.downloadURL);
+                    storageFilePaths.push(String(value.storagePath));
+                  } else if (value instanceof File) {
+                    // Legacy fallback: jika ada File object (seharusnya tidak terjadi lagi)
+                    const userId = user?.uid || 'guest';
                     const safeName = value.name.replace(/[^a-zA-Z0-9.-]/g, '_');
                     const path = `assessments/${userId}/${Date.now()}_${safeName}`;
                     const storageRef = ref(storage, path);
@@ -262,19 +276,22 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
                     const downloadURL = await getDownloadURL(storageRef);
                     cleanedFormData[key] = downloadURL;
                     storageFilePaths.push(path);
+                  } else if (typeof value === 'string' && value.startsWith('[FILE:')) {
+                    // Artefak cache dari sesi sebelumnya — hapus, jangan kirim ke server
+                    delete cleanedFormData[key];
                   }
                 }
-                
+
                 const finalPayload = { 
                   ...cleanedFormData, 
                   ...assessmentData,
                   storageFilePaths
                 };
-                
+
                 onComplete(finalPayload);
               } catch (error) {
                 console.error("Upload error:", error);
-                toast.error("Gagal mengunggah file. Silakan coba lagi.");
+                toast.error("Gagal memproses file. Silakan coba lagi.");
                 setIsSubmitting(false);
               }
             }}

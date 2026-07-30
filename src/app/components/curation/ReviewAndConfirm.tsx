@@ -37,7 +37,8 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
     }
   }, []);
 
-  const isFormValid = selfScore !== '' && selfScore >= 1 && selfScore <= 10 && isConfirmed && token.trim().length >= 3;
+  const hasLostFiles = Object.values(answers).some(val => typeof val === 'string' && val.startsWith('[FILE:'));
+  const isFormValid = selfScore !== '' && selfScore >= 1 && selfScore <= 10 && isConfirmed && token.trim().length >= 3 && !hasLostFiles;
 
   // Fungsi saat tombol "Analisis" ditekan pertama kali
   const handlePreSubmit = () => {
@@ -107,8 +108,20 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
               <div key={key} className={`p-3 sm:p-4 rounded-xl transition-colors hover:bg-white ${idx % 2 === 0 ? 'bg-transparent' : 'bg-slate-50/80'}`}>
                 <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">{key}</span>
                 <span className="block text-sm font-semibold text-slate-800 leading-relaxed">
-                  {value instanceof File ? (
+                  {/* Format baru: objek dengan downloadURL */}
+                  {(value && typeof value === 'object' && 'downloadURL' in value && 'fileName' in value) ? (
+                    <a href={value.downloadURL} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-indigo-600 hover:underline">
+                      <DocExportIcon size={16} className="shrink-0" /> {value.fileName}
+                    </a>
+                  /* Format lama: File object (tidak seharusnya ada lagi) */
+                  ) : (value instanceof File || (value && typeof value === 'object' && 'name' in value && 'size' in value && 'type' in value)) ? (
                     <span className="flex items-center gap-1.5 text-indigo-600"><DocExportIcon size={16} className="shrink-0" /> {value.name}</span>
+                  /* String artefak dari cache */
+                  ) : typeof value === 'string' && value.startsWith('[FILE:') ? (
+                    <span className="flex items-center gap-1.5 text-rose-500 font-bold"><AlertCircle size={14} className="shrink-0" /> {value.replace('[FILE:', '').replace(']', '')} (File perlu diunggah ulang)</span>
+                  /* URL string biasa */
+                  ) : typeof value === 'string' && value.startsWith('https://') ? (
+                    <a href={value} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-indigo-600 hover:underline"><DocExportIcon size={16} className="shrink-0" /> Lihat Lampiran</a>
                   ) : value !== undefined && value !== null && value !== '' ? (
                     String(value)
                   ) : (
@@ -212,7 +225,7 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
               <div className="flex items-center gap-2 mt-4 text-[11px] font-bold text-amber-700 bg-amber-50 p-3 rounded-xl border border-amber-200/60 uppercase tracking-wide">
                 <AlertTriangle className="w-4 h-4 shrink-0 text-amber-500" />
-                Harap lengkapi Token, Skor, dan Integritas untuk melanjutkan.
+                {hasLostFiles ? 'Ada file lampiran yang hilang dari sesi sebelumnya. Harap kembali dan unggah ulang.' : 'Harap lengkapi Token, Skor, dan Integritas untuk melanjutkan.'}
               </div>
             </motion.div>
           )}
