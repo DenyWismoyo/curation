@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from 'next';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { UserActivityProvider } from '@/contexts/UserActivityContext';
 import { Toaster } from 'sonner';
 
 // IMPORT KOMPONEN PWA PROMPT
@@ -87,14 +88,15 @@ export default function RootLayout({
         `}
       >
         <AuthProvider>
-          {children}
-          
-          <Toaster position="top-right" richColors />
-          <PWAInstallPrompt />
+          <UserActivityProvider>
+            {children}
+            
+            <Toaster position="top-right" richColors />
+            <PWAInstallPrompt />
 
-          {/* BOTTOM NAVIGATION MOBILE (PWA) */}
-          <BottomNav />
-          
+            {/* BOTTOM NAVIGATION MOBILE (PWA) */}
+            <BottomNav />
+          </UserActivityProvider>
         </AuthProvider>
       </body>
     </html>

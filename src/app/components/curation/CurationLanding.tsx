@@ -106,6 +106,7 @@ interface Props {
   role: 'user' | 'admin_omnifit' | 'admin_csrs' | 'assessor' | 'curator' | null;
   onLogin: () => void;
   onLogout: () => void;
+  templates?: any[];
 }
 
 interface DraftItem {
@@ -132,13 +133,13 @@ const cardVariant: Variants = {
 };
 
 // ─── Component ────────────────────────────────────────────────────────────────
-export function CurationLanding({ onStart, history, onLoadHistory, user, role, onLogin, onLogout }: Props) {
+export function CurationLanding({ onStart, history, onLoadHistory, user, role, onLogin, onLogout, templates }: Props) {
   const router = useRouter();
   const { registerWithEmail, loginWithEmail, resetPassword } = useAuth();
 
   const [isCapabilitiesModalOpen, setIsCapabilitiesModalOpen] = useState(false);
   const [drafts, setDrafts] = useState<DraftItem[]>([]);
-  const [isFetchingData, setIsFetchingData] = useState(true);
+  const [isFetchingData, setIsFetchingData] = useState(false);
 
   // Auth form state
   const [authMode, setAuthMode] = useState<'options' | 'login' | 'register' | 'reset'>('options');
@@ -163,14 +164,14 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
     if (buyId) router.push(`/katalog?buy=${buyId}`);
   }, [router]);
 
-  // Fetch local drafts
+  // Fetch local drafts using templates prop
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const fetchDrafts = async () => {
+    if (!templates || templates.length === 0) return;
+
+    const fetchDrafts = () => {
       setIsFetchingData(true);
       try {
-        const snap = await getDocs(query(collection(db, 'form_templates'), where('isActive', '==', true)));
-        const templates = snap.docs.map(d => ({ id: d.id, ...d.data() as any }));
         const found: DraftItem[] = [];
         for (let i = 0; i < localStorage.length; i++) {
           const key = localStorage.key(i);
@@ -188,7 +189,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
       }
     };
     fetchDrafts();
-  }, []);
+  }, [templates]);
 
   // ── Handlers ────────────────────────────────────────────────────────────────
   const handleShareOmnifit = async () => {

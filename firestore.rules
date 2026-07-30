@@ -8,6 +8,7 @@ service cloud.firestore {
     
     function isAssessor() {
       return isAuthenticated() && (
+        request.auth.token.role == 'assessor' ||
         (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'assessor') ||
         (exists(/databases/$(database)/documents/users/$(request.auth.token.email)) && get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role == 'assessor')
       );
@@ -15,6 +16,7 @@ service cloud.firestore {
 
     function isCurator() {
       return isAuthenticated() && (
+        request.auth.token.role == 'curator' ||
         (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'curator') ||
         (exists(/databases/$(database)/documents/users/$(request.auth.token.email)) && get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role == 'curator')
       );
@@ -22,6 +24,7 @@ service cloud.firestore {
 
     function isAdminOmnifit() {
       return isAuthenticated() && (
+        request.auth.token.role == 'admin_omnifit' ||
         (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin_omnifit') ||
         (exists(/databases/$(database)/documents/users/$(request.auth.token.email)) && get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role == 'admin_omnifit')
       );
@@ -29,6 +32,7 @@ service cloud.firestore {
 
     function isAdminCSRS() {
       return isAuthenticated() && (
+        request.auth.token.role == 'admin_csrs' ||
         (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin_csrs') ||
         (exists(/databases/$(database)/documents/users/$(request.auth.token.email)) && get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role == 'admin_csrs')
       );
@@ -158,7 +162,11 @@ service cloud.firestore {
 
     function hasOrganizationScopeAccess() {
       return isAuthenticated() && (
-        hasOrgScopeFromUserDoc(request.auth.uid)
+        (request.auth.token.orgScopes != null && (
+          resource.data.corporateEntity in request.auth.token.orgScopes ||
+          resource.data.b2bOrganizationId in request.auth.token.orgScopes
+        ))
+        || hasOrgScopeFromUserDoc(request.auth.uid)
         || hasOrgScopeFromUserDoc(request.auth.token.email)
       );
     }
@@ -184,6 +192,7 @@ service cloud.firestore {
       return isSuperAdmin()
         || isAdminCSRS()
         || isAdminOmnifit()
+        || (request.auth.token.orgScopes != null && orgName in request.auth.token.orgScopes)
         || (
           isAssessor()
           && exists(/databases/$(database)/documents/assessors/$(request.auth.token.email))

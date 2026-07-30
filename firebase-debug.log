@@ -1,22 +1,22 @@
-[debug] [2026-07-30T08:04:27.766Z] ----------------------------------------------------------------------
-[debug] [2026-07-30T08:04:27.771Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\akuno\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only functions
-[debug] [2026-07-30T08:04:27.772Z] CLI Version:   15.19.1
-[debug] [2026-07-30T08:04:27.772Z] Platform:      win32
-[debug] [2026-07-30T08:04:27.772Z] Node Version:  v24.16.0
-[debug] [2026-07-30T08:04:27.772Z] Time:          Thu Jul 30 2026 15:04:27 GMT+0700 (Western Indonesia Time)
-[debug] [2026-07-30T08:04:27.773Z] ----------------------------------------------------------------------
+[debug] [2026-07-30T10:41:50.071Z] ----------------------------------------------------------------------
+[debug] [2026-07-30T10:41:50.074Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\akuno\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only functions
+[debug] [2026-07-30T10:41:50.074Z] CLI Version:   15.19.1
+[debug] [2026-07-30T10:41:50.074Z] Platform:      win32
+[debug] [2026-07-30T10:41:50.074Z] Node Version:  v24.16.0
+[debug] [2026-07-30T10:41:50.074Z] Time:          Thu Jul 30 2026 17:41:50 GMT+0700 (Western Indonesia Time)
+[debug] [2026-07-30T10:41:50.074Z] ----------------------------------------------------------------------
 [debug] 
-[debug] [2026-07-30T08:04:30.806Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2026-07-30T08:04:30.806Z] > authorizing via signed-in user (deny.wismoyo@gmail.com)
-[debug] [2026-07-30T08:04:30.806Z] [iam] checking project teknopark-surakarta for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
-[debug] [2026-07-30T08:04:30.807Z] Checked if tokens are valid: true, expires at: 1785401582611
-[debug] [2026-07-30T08:04:30.808Z] Checked if tokens are valid: true, expires at: 1785401582611
-[debug] [2026-07-30T08:04:30.809Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions [none]
-[debug] [2026-07-30T08:04:30.809Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions  x-goog-user-project=teknopark-surakarta
-[debug] [2026-07-30T08:04:30.809Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
-[debug] [2026-07-30T08:04:31.156Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions 200
-[debug] [2026-07-30T08:04:31.156Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
-[debug] [2026-07-30T08:04:31.157Z] Checked if tokens are valid: true, expires at: 1785401582611
-[debug] [2026-07-30T08:04:31.157Z] Checked if tokens are valid: true, expires at: 1785401582611
-[debug] [2026-07-30T08:04:31.157Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/teknopark-surakarta/serviceAccounts/teknopark-surakarta@appspot.gserviceaccount.com:testIamPermissions [none]
-[debug] [2026-07-30T08:04:31.157Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/teknopark-surakarta/serviceAccounts/teknopark-surakarta@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2026-07-30T10:41:52.058Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-07-30T10:41:52.058Z] > authorizing via signed-in user (deny.wismoyo@gmail.com)
+[debug] [2026-07-30T10:41:52.058Z] [iam] checking project teknopark-surakarta for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2026-07-30T10:41:52.059Z] Checked if tokens are valid: true, expires at: 1785411005938
+[debug] [2026-07-30T10:41:52.059Z] Checked if tokens are valid: true, expires at: 1785411005938
+[debug] [2026-07-30T10:41:52.060Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions [none]
+[debug] [2026-07-30T10:41:52.060Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions  x-goog-user-project=teknopark-surakarta
+[debug] [2026-07-30T10:41:52.060Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2026-07-30T10:41:52.489Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions 200
+[debug] [2026-07-30T10:41:52.489Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2026-07-30T10:41:52.489Z] Checked if tokens are valid: true, expires at: 1785411005938
+[debug] [2026-07-30T10:41:52.489Z] Checked if tokens are valid: true, expires at: 1785411005938
+[debug] [2026-07-30T10:41:52.489Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/teknopark-surakarta/serviceAccounts/teknopark-surakarta@appspot.gserviceaccount.com:testIamPermissions [none]
+[debug] [2026-07-30T10:41:52.489Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/teknopark-surakarta/serviceAccounts/teknopark-surakarta@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}

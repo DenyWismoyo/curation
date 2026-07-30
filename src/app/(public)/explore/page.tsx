@@ -16,7 +16,7 @@ import {
   query,
   where,
   orderBy,
-  onSnapshot,
+  getDocs,
 } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { toast } from 'sonner'
@@ -77,15 +77,21 @@ export default function ExplorePage() {
       where('isPublished', '==', true),
       orderBy('createdAt', 'desc')
     )
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data: Article[] = []
-      snapshot.forEach((doc) =>
-        data.push({ id: doc.id, ...doc.data() } as Article)
-      )
-      setArticles(data)
-      setLoading(false)
-    })
-    return () => unsubscribe()
+    const fetchArticles = async () => {
+      try {
+        const snapshot = await getDocs(q)
+        const data: Article[] = []
+        snapshot.forEach((doc) =>
+          data.push({ id: doc.id, ...doc.data() } as Article)
+        )
+        setArticles(data)
+      } catch (error) {
+        console.error('Error fetching articles:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchArticles()
   }, [])
 
   const handleCopyLink = async (

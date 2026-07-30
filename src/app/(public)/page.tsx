@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { collection, query, where, onSnapshot, doc, getDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useCuration } from '@/hooks/useCuration';
 import { CurationLanding } from '@/app/components/curation/CurationLanding';
@@ -40,30 +40,31 @@ export default function Home() {
       where('userId', '==', user.uid)
     );
 
-    const unsubscribe = onSnapshot(q, (snap) => {
-      const historyData: CurationHistory[] = [];
+    const fetchHistory = async () => {
+      try {
+        const snap = await getDocs(q);
+        const historyData: CurationHistory[] = [];
 
-      snap.forEach((doc) => {
-        const data = doc.data();
-        historyData.push({
-          id: doc.id,
-          // Handle format tanggal secara aman untuk data baru (timestamp) maupun data lama
-          date: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : (data.createdAt || new Date().toISOString()),
-          trackType: data.trackType || 'Evaluasi',
-          namaUsaha: data.namaUsaha || 'Tanpa Nama',
-          score: data.score || 0,
-          data: data.formData,
-          result: data.aiResult || data.originalAiResult,
+        snap.forEach((doc) => {
+          const data = doc.data();
+          historyData.push({
+            id: doc.id,
+            date: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : (data.createdAt || new Date().toISOString()),
+            trackType: data.trackType || 'Evaluasi',
+            namaUsaha: data.namaUsaha || 'Tanpa Nama',
+            score: data.score || 0,
+            data: data.formData,
+            result: data.aiResult || data.originalAiResult,
+          });
         });
-      });
 
-      setDbHistory(historyData);
-    }, (error) => {
-      console.error("Gagal mengambil riwayat real-time dari database:", error);
-    });
+        setDbHistory(historyData);
+      } catch (error) {
+        console.error("Gagal mengambil riwayat dari database:", error);
+      }
+    };
 
-    // Cleanup memori listener saat berpindah halaman
-    return () => unsubscribe();
+    fetchHistory();
   }, [user]);
 
   // CHECK ONBOARDING STATUS
@@ -157,13 +158,21 @@ export default function Home() {
         </div>
       )}
       <CurationLanding
-        onStart={() => router.push('/assessment')}
+        onStart={() => {
+          if (state.selectedTemplate) {
+            actions.startAssessment(state.selectedTemplate);
+          } else {
+            const defaultTemplate = state.templates.find(t => t.trackName === 'Evaluasi Umum') || state.templates[0];
+            if (defaultTemplate) actions.startAssessment(defaultTemplate);
+          }
+        }}
         history={combinedHistory}
         onLoadHistory={handleLoadHistory}
         user={user}
         role={role as any}
         onLogin={loginWithGoogle}
         onLogout={logout}
+        templates={state.templates}
       />
     </main>
   );

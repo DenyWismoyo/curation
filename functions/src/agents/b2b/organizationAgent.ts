@@ -295,9 +295,21 @@ export const adminSetB2BUserAccess = onCall({
     b2bAccessUpdatedAt: now,
   };
 
-  await db.collection("users").doc(targetEmail).set(basePayload, { merge: true });
-  if (targetUid) {
-    await db.collection("users").doc(targetUid).set(basePayload, { merge: true });
+  let finalUid = targetUid;
+  if (!finalUid) {
+    try {
+      const userRecord = await admin.auth().getUserByEmail(targetEmail);
+      finalUid = userRecord.uid;
+    } catch (e: any) {
+      // User belum terdaftar di Firebase Auth
+    }
+  }
+
+  if (finalUid) {
+    await db.collection("users").doc(finalUid).set(basePayload, { merge: true });
+  } else {
+    // Fallback: tulis ke email doc agar bisa diklaim saat user register nanti
+    await db.collection("users").doc(targetEmail).set(basePayload, { merge: true });
   }
 
   let curatorCode = "";
@@ -393,9 +405,20 @@ export const adminRevokeB2BUserAccess = onCall({
     b2bAccessUpdatedAt: now,
   };
 
-  await db.collection("users").doc(targetEmail).set(revokePayload, { merge: true });
-  if (targetUid) {
-    await db.collection("users").doc(targetUid).set(revokePayload, { merge: true });
+  let finalUidRevoke = targetUid;
+  if (!finalUidRevoke) {
+    try {
+      const userRecord = await admin.auth().getUserByEmail(targetEmail);
+      finalUidRevoke = userRecord.uid;
+    } catch (e: any) {
+      // User belum terdaftar di Firebase Auth
+    }
+  }
+
+  if (finalUidRevoke) {
+    await db.collection("users").doc(finalUidRevoke).set(revokePayload, { merge: true });
+  } else {
+    await db.collection("users").doc(targetEmail).set(revokePayload, { merge: true });
   }
 
   await db.collection("b2b_access_admin_logs").add({

@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { collection, query, orderBy, onSnapshot } from 'firebase/firestore'
+import { collection, query, orderBy, getDocs } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import {
   CheckCircle2,
@@ -27,16 +27,22 @@ export default function PublicRoadmapPage() {
 
   useEffect(() => {
     const q = query(collection(db, 'roadmaps'), orderBy('order', 'asc'))
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data: RoadmapItem[] = []
-      snapshot.forEach((doc) =>
-        data.push({ id: doc.id, ...doc.data() } as RoadmapItem)
-      )
-      setRoadmaps(data)
-      setLoading(false)
-    })
-
-    return () => unsubscribe()
+    
+    const fetchRoadmaps = async () => {
+      try {
+        const snapshot = await getDocs(q)
+        const data: RoadmapItem[] = []
+        snapshot.forEach((doc) =>
+          data.push({ id: doc.id, ...doc.data() } as RoadmapItem)
+        )
+        setRoadmaps(data)
+      } catch (error) {
+        console.error('Error fetching roadmaps:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchRoadmaps()
   }, [])
 
   return (

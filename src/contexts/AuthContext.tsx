@@ -54,9 +54,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       
       if (currentUser) {
         try {
+          // Baca Custom Claims
+          const tokenResult = await currentUser.getIdTokenResult();
+          const claims = tokenResult.claims as any;
+          
           let currentRole: 'user' | 'admin_omnifit' | 'admin_csrs' | 'assessor' | 'curator' = 'user';
+          let currentB2bPersonas: string[] = [];
+          let currentAllowedOrganizations: string[] = [];
+          let currentB2bOrganizationIds: string[] = [];
+          
           const validRoles = new Set(['user', 'admin_omnifit', 'admin_csrs', 'assessor', 'curator']);
-
           const pickRole = (raw: unknown): typeof currentRole => {
             if (typeof raw === 'string' && validRoles.has(raw)) {
               return raw as typeof currentRole;
@@ -64,63 +71,53 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             return 'user';
           };
 
-          // 1. Cek apakah Admin mendaftarkan role menggunakan ID berupa Email
-          const emailRef = doc(db, 'users', currentUser.email || '');
-          const emailSnap = await getDoc(emailRef).catch(() => null);
-          const roleFromEmailDoc = emailSnap?.exists() ? pickRole(emailSnap.data().role) : null;
-
-          let currentB2bPersonas: string[] = [];
-          let currentAllowedOrganizations: string[] = [];
-          let currentB2bOrganizationIds: string[] = [];
-
-          if (roleFromEmailDoc) {
-            currentRole = roleFromEmailDoc;
-          }
-          
-          if (emailSnap?.exists()) {
-            const data = emailSnap.data();
-            currentB2bPersonas = Array.isArray(data.b2bPersonas) ? data.b2bPersonas : [];
-            currentAllowedOrganizations = Array.isArray(data.allowedOrganizations) ? data.allowedOrganizations : [];
-            currentB2bOrganizationIds = Array.isArray(data.b2bOrganizationIds) ? data.b2bOrganizationIds : [];
-          }
-
-          if (emailSnap && emailSnap.exists()) {
-            // Sinkronisasi data dasar ke ID UID agar ke depannya sesuai standar Firestore
-            // (Hindari update field sensitif seperti role/b2bPersonas dari client-side)
-            await setDoc(doc(db, 'users', currentUser.uid), { 
-              email: currentUser.email,
-              displayName: currentUser.displayName,
-              updatedAt: new Date().toISOString() 
-            }, { merge: true });
+          if (claims.role && claims.role !== 'user') {
+            currentRole = pickRole(claims.role);
+            currentB2bPersonas = Array.isArray(claims.b2bPersonas) ? claims.b2bPersonas : [];
+            currentAllowedOrganizations = Array.isArray(claims.orgScopes) ? claims.orgScopes : [];
+            currentB2bOrganizationIds = Array.isArray(claims.orgScopes) ? claims.orgScopes : [];
           } else {
-            // 2. Jika tidak ada di Email, cek menggunakan ID berupa UID normal
-            const userRef = doc(db, 'users', currentUser.uid);
-            const userSnap = await getDoc(userRef);
+            // Fallback (Migration compatibility):
+            const emailRef = doc(db, 'users', currentUser.email || '');
+            const emailSnap = await getDoc(emailRef).catch(() => null);
+            const roleFromEmailDoc = emailSnap?.exists() ? pickRole(emailSnap.data().role) : null;
             
-            if (userSnap.exists()) {
-              const data = userSnap.data();
-              currentRole = pickRole(data.role);
+            if (roleFromEmailDoc) currentRole = roleFromEmailDoc;
+            if (emailSnap?.exists()) {
+              const data = emailSnap.data();
+              currentB2bPersonas = Array.isArray(data.b2bPersonas) ? data.b2bPersonas : [];
+              currentAllowedOrganizations = Array.isArray(data.allowedOrganizations) ? data.allowedOrganizations : [];
+              currentB2bOrganizationIds = Array.isArray(data.b2bOrganizationIds) ? data.b2bOrganizationIds : [];
               
-              if (!emailSnap?.exists()) {
+              // Migrate email doc to UID doc (simulating what the cloud function does)
+              await setDoc(doc(db, 'users', currentUser.uid), { 
+                email: currentUser.email,
+                displayName: currentUser.displayName,
+                updatedAt: new Date().toISOString() 
+              }, { merge: true });
+            } else {
+              const userRef = doc(db, 'users', currentUser.uid);
+              const userSnap = await getDoc(userRef);
+              if (userSnap.exists()) {
+                const data = userSnap.data();
+                currentRole = pickRole(data.role);
                 currentB2bPersonas = Array.isArray(data.b2bPersonas) ? data.b2bPersonas : [];
                 currentAllowedOrganizations = Array.isArray(data.allowedOrganizations) ? data.allowedOrganizations : [];
                 currentB2bOrganizationIds = Array.isArray(data.b2bOrganizationIds) ? data.b2bOrganizationIds : [];
+              } else {
+                await setDoc(userRef, {
+                  email: currentUser.email,
+                  displayName: currentUser.displayName,
+                  role: 'user',
+                  createdAt: new Date().toISOString()
+                });
               }
-            } else {
-              // Registrasi user baru di Firestore
-              await setDoc(userRef, {
-                email: currentUser.email,
-                displayName: currentUser.displayName,
-                role: 'user',
-                createdAt: new Date().toISOString()
-              });
             }
           }
 
           try {
             const referral = getStoredReferralAttribution();
             const visitorId = ensureReferralVisitorId();
-
             if (referral?.affiliateCode && visitorId) {
               const bindAttribution = httpsCallable(functions, 'bindReferralAttributionToUser');
               await bindAttribution({ visitorId });
@@ -134,15 +131,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setAllowedOrganizations(currentAllowedOrganizations);
           setB2bOrganizationIds(currentB2bOrganizationIds);
 
-          // Subscribe to real-time changes in users doc for quota
+          // Get assessment quota one-time instead of onSnapshot
           const userRef = doc(db, 'users', currentUser.uid);
-          unsubscribeSnapshot = onSnapshot(userRef, (snap) => {
-             if (snap.exists()) {
-                setAssessmentQuota(snap.data().assessmentQuota || 0);
-             } else {
-                setAssessmentQuota(0);
-             }
-          });
+          const userSnap = await getDoc(userRef).catch(() => null);
+          if (userSnap && userSnap.exists()) {
+            setAssessmentQuota(userSnap.data().assessmentQuota || 0);
+          } else {
+            setAssessmentQuota(0);
+          }
 
         } catch (error) {
           console.error("Gagal memeriksa role user:", error);

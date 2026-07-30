@@ -28,6 +28,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { collection, query, where, onSnapshot } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import { useUserActivity } from '@/contexts/UserActivityContext'
 
 interface NavItem {
   href: string
@@ -42,60 +43,13 @@ export function BottomNav() {
   const pathname = usePathname()
   const router = useRouter()
   const { user, role, logout } = useAuth()
-  const [unreadCount, setUnreadCount] = useState(0)
-  const [pendingAssessments, setPendingAssessments] = useState(0)
   const [drawerOpen, setDrawerOpen] = useState(false)
 
   // Sembunyikan di halaman admin / assessor / curator
   const hiddenRoutes = ['/admin', '/assessor', '/curator']
   const shouldHide = hiddenRoutes.some((r) => pathname?.startsWith(r))
 
-  // Real-time listener untuk asesmen yang masih PROCESSING
-  useEffect(() => {
-    if (!user?.uid) {
-      setPendingAssessments(0)
-      return
-    }
-    const q = query(
-      collection(db, 'assessments'),
-      where('userId', '==', user.uid),
-      where('status', 'in', [
-        'ANALYZING_MASTER',
-        'ANALYZING_METRICS',
-        'PLANNING_ACTION',
-        'GENERATING_ASSETS',
-      ])
-    )
-    const unsub = onSnapshot(
-      q,
-      (snap) => {
-        setPendingAssessments(snap.size)
-      },
-      () => setPendingAssessments(0)
-    )
-    return () => unsub()
-  }, [user?.uid])
-
-  // Real-time listener untuk notifikasi belum dibaca
-  useEffect(() => {
-    if (!user?.uid) {
-      setUnreadCount(0)
-      return
-    }
-    const q = query(
-      collection(db, 'notifications'),
-      where('userId', '==', user.uid),
-      where('isRead', '==', false)
-    )
-    const unsub = onSnapshot(
-      q,
-      (snap) => {
-        setUnreadCount(snap.size)
-      },
-      () => setUnreadCount(0)
-    )
-    return () => unsub()
-  }, [user?.uid])
+  const { pendingAssessmentsCount: pendingAssessments, unreadCount } = useUserActivity()
 
   // Close drawer on route change
   useEffect(() => {

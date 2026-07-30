@@ -20,9 +20,11 @@ import { AssessorTemplatePreview } from '@/app/components/assessor/AssessorTempl
 
 // IMPORT CUSTOM HOOK MOBILE BACK
 import { useMobileBack } from '@/hooks/useMobileBack';
+import { useTenantScope } from '@/hooks/useTenantScope';
 
 export default function AssessorDashboardPage() {
   const { user } = useAuth();
+  const { accessibleOrgs, getTenantScopeConstraints } = useTenantScope();
   const [allocation, setAllocation] = useState<any>(null);
   const [assessments, setAssessments] = useState<any[]>([]);
   const [scopeOrganizations, setScopeOrganizations] = useState<string[]>([]);
@@ -56,7 +58,7 @@ export default function AssessorDashboardPage() {
     if (user?.email) {
       fetchAssessorData();
     }
-  }, [user]);
+  }, [user, accessibleOrgs]);
 
   useEffect(() => {
     return () => {
@@ -86,28 +88,11 @@ export default function AssessorDashboardPage() {
         assessmentsUnsubscribeRef.current = null;
       }
 
-      // 1. Ambil Data Profil Asesor
+      // 1. Ambil Data Profil Asesor (Parallel dengan scope resolution)
       const assessorRef = doc(db, 'assessors', user.email);
       const assessorSnap = await getDoc(assessorRef);
 
-      // 2. Ambil Data Scope B2B dari users (uid / email doc)
-      const userDocByUid = await getDoc(doc(db, 'users', user.uid)).catch(() => null);
-      const userDocByEmail = await getDoc(doc(db, 'users', user.email)).catch(() => null);
-      const userProfile = userDocByUid?.data() || userDocByEmail?.data() || {};
-
-      const toStringArray = (raw: unknown): string[] => {
-        if (!Array.isArray(raw)) {
-          return [];
-        }
-
-        return raw.map((entry) => (typeof entry === 'string' ? entry.trim() : '')).filter(Boolean);
-      };
-
-      const mergedScopes = Array.from(new Set([
-        ...toStringArray(userProfile.allowedOrganizations),
-        ...toStringArray(userProfile.organizationScopes),
-        ...toStringArray(userProfile.accessibleOrganizations),
-      ]));
+      const mergedScopes = accessibleOrgs;
 
       if (!assessorSnap.exists()) {
         if (mergedScopes.length === 0) {

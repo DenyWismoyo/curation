@@ -9,6 +9,7 @@ import { db } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useUserActivity } from '@/contexts/UserActivityContext';
 
 export interface NotificationItem {
   id: string;
@@ -43,35 +44,9 @@ interface NotificationBellProps {
 export function NotificationBell({ className = '' }: NotificationBellProps) {
   const { user } = useAuth();
   const router = useRouter();
-  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const { notifications, unreadCount } = useUserActivity();
   const [isOpen, setIsOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
-
-  const unreadCount = notifications.filter(n => !n.isRead).length;
-
-  useEffect(() => {
-    if (!user?.uid) {
-      setNotifications([]);
-      return;
-    }
-
-    const q = query(
-      collection(db, 'notifications'),
-      where('userId', '==', user.uid),
-      orderBy('createdAt', 'desc'),
-      limit(20)
-    );
-
-    const unsub = onSnapshot(q, (snap) => {
-      const items: NotificationItem[] = snap.docs.map(d => ({
-        id: d.id,
-        ...d.data()
-      } as NotificationItem));
-      setNotifications(items);
-    }, () => setNotifications([]));
-
-    return () => unsub();
-  }, [user?.uid]);
 
   // Close panel when clicking outside
   useEffect(() => {

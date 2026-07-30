@@ -14,6 +14,7 @@ import {
 } from 'firebase/firestore';
 import { AlertTriangle, CheckCircle2, Clock3, Plus, ShieldCheck, Target, Users2, Search, BarChart3 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTenantScope } from '@/hooks/useTenantScope';
 import { db } from '@/lib/firebase';
 import {
   buildB2BDashboardSnapshot,
@@ -106,6 +107,9 @@ export function TenantSelfServiceDashboard({ persona }: { persona: PersonaView }
   const [activeTab, setActiveTab] = useState<'overview' | 'intake' | 'actions' | 'branding'>('overview');
   const [selectedParticipant, setSelectedParticipant] = useState<DashboardAssessmentRecord | null>(null);
 
+  const { b2bPersonas } = useAuth();
+  const { accessibleOrgs, isSuperAdmin, getTenantScopeConstraints } = useTenantScope();
+
   useEffect(() => {
     if (authLoading) {
       return;
@@ -121,32 +125,12 @@ export function TenantSelfServiceDashboard({ persona }: { persona: PersonaView }
     setLoading(true);
     setError(null);
 
-    const normalizeScopeArray = (value: unknown): string[] => {
-      if (!Array.isArray(value)) {
-        return [];
-      }
-
-      return value
-        .map((entry) => (typeof entry === 'string' ? entry.trim() : ''))
-        .filter(Boolean);
-    };
-
     const init = async () => {
       try {
-        const userDocByUid = await getDoc(doc(db, 'users', user.uid)).catch(() => null);
-        const userDocByEmail = user.email ? await getDoc(doc(db, 'users', user.email)).catch(() => null) : null;
-        const uidData = userDocByUid?.data() || {};
-        const emailData = userDocByEmail?.data() || {};
-        
-        const mergedB2bPersonas = uidData.b2bPersonas || emailData.b2bPersonas;
-        const mergedAllowedOrgs = uidData.allowedOrganizations || emailData.allowedOrganizations;
-        const mergedOrgScopes = uidData.organizationScopes || emailData.organizationScopes;
-        const mergedAccessibleOrgs = uidData.accessibleOrganizations || emailData.accessibleOrganizations;
-        const mergedB2bOrganizationIds = uidData.b2bOrganizationIds || emailData.b2bOrganizationIds;
-
-        const scopedPersonas = toStringArray(mergedB2bPersonas)
+        const scopedPersonas = (b2bPersonas || [])
           .map(entry => entry.toLowerCase())
           .filter((entry): entry is PersonaView => entry === 'executive' || entry === 'hr' || entry === 'leader');
+        
         const effectivePersonas: PersonaView[] = scopedPersonas.length > 0 ? scopedPersonas : ['leader'];
         setAllowedPersonas(effectivePersonas);
 
@@ -155,13 +139,6 @@ export function TenantSelfServiceDashboard({ persona }: { persona: PersonaView }
           setLoading(false);
           return;
         }
-
-        const scopedOrganizations = [
-          ...normalizeScopeArray(mergedAllowedOrgs),
-          ...normalizeScopeArray(mergedOrgScopes),
-          ...normalizeScopeArray(mergedAccessibleOrgs),
-          ...normalizeScopeArray(mergedB2bOrganizationIds),
-        ];
 
         if (role === 'assessor') {
           const assessorSnap = user.email ? await getDoc(doc(db, 'assessors', user.email)).catch(() => null) : null;
@@ -175,7 +152,7 @@ export function TenantSelfServiceDashboard({ persona }: { persona: PersonaView }
             return;
           }
 
-          const scopedQuery = query(collection(db, 'assessments'), where('b2bOrganizationId', '==', assessorProgram));
+          const scopedQuery = query(collection(db, 'assessments'), where('corporateEntity', '==', assessorProgram));
           unsubscribeAssessments = onSnapshot(scopedQuery, (snapshot) => {
             const next = snapshot.docs
               .map((item) => parseRecord(item.id, item.data() as Record<string, unknown>))
@@ -183,56 +160,34 @@ export function TenantSelfServiceDashboard({ persona }: { persona: PersonaView }
             setRecords(next);
             setLoading(false);
           });
-
           return;
         }
 
-        if (scopedOrganizations.length === 0) {
+        if (!isSuperAdmin && accessibleOrgs.length === 0) {
           setError('Akun Anda belum memiliki organization scope. Hubungi admin untuk menambahkan allowedOrganizations.');
           setLoading(false);
           return;
         }
 
-        if (scopedOrganizations.length === 1) {
-          const scopedQuery = query(collection(db, 'assessments'), where('b2bOrganizationId', '==', scopedOrganizations[0]));
-          unsubscribeAssessments = onSnapshot(scopedQuery, (snapshot) => {
-            const next = snapshot.docs
-              .map((item) => parseRecord(item.id, item.data() as Record<string, unknown>))
-              .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-            setRecords(next);
-            setLoading(false);
-          });
-          return;
-        }
-
-        const chunks: string[][] = [];
-        for (let index = 0; index < scopedOrganizations.length; index += 10) {
-          chunks.push(scopedOrganizations.slice(index, index + 10));
-        }
-
-        const cacheByChunk = new Map<number, DashboardAssessmentRecord[]>();
-        const unsubs = chunks.map((orgChunk, chunkIndex) => {
-          const scopedQuery = query(collection(db, 'assessments'), where('b2bOrganizationId', 'in', orgChunk));
-          return onSnapshot(scopedQuery, (snapshot) => {
-            const parsed = snapshot.docs.map((item) => parseRecord(item.id, item.data() as Record<string, unknown>));
-            cacheByChunk.set(chunkIndex, parsed);
-
-            const merged = Array.from(cacheByChunk.values())
-              .flat()
-              .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-
-            setRecords(merged);
-            setLoading(false);
-          }, (watchError) => {
-            console.error('Gagal memuat scope multi-tenant B2B:', watchError);
-            setError('Terjadi kendala saat memuat sebagian scope organization B2B.');
-            setLoading(false);
-          });
+        // Gunakan useTenantScope
+        const constraints = getTenantScopeConstraints('corporateEntity');
+        
+        // Firestore 'in' hanya mendukung maksimal 30 item, useTenantScope membatasi maksimal 30.
+        // Jika butuh lebih dari 30 (sangat jarang terjadi), logic lama `chunks` diperlukan. Tapi dengan design sekarang 30 sudah sangat cukup untuk 1 user
+        const scopedQuery = query(collection(db, 'assessments'), ...constraints);
+        
+        unsubscribeAssessments = onSnapshot(scopedQuery, (snapshot) => {
+          const next = snapshot.docs
+            .map((item) => parseRecord(item.id, item.data() as Record<string, unknown>))
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+          setRecords(next);
+          setLoading(false);
+        }, (watchError) => {
+          console.error('Gagal memuat scope multi-tenant B2B:', watchError);
+          setError('Terjadi kendala saat memuat scope organization B2B.');
+          setLoading(false);
         });
 
-        unsubscribeAssessments = () => {
-          unsubs.forEach((unsub) => unsub());
-        };
       } catch (err) {
         console.error('Gagal memuat tenant self-service dashboard:', err);
         setError('Terjadi kesalahan saat memuat dashboard B2B tenant.');
@@ -247,7 +202,7 @@ export function TenantSelfServiceDashboard({ persona }: { persona: PersonaView }
         unsubscribeAssessments();
       }
     };
-  }, [authLoading, role, user]);
+  }, [authLoading, role, user, b2bPersonas, accessibleOrgs, isSuperAdmin]);
 
   const organizationOptions = useMemo(() => getOrganizationOptions(records), [records]);
 
