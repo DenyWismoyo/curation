@@ -43,7 +43,16 @@ export const assessmentOrchestrator = onDocumentCreated({
     
     if (geminiFiles.length === 0 && storageFilePaths.length > 0) {
       const fileManager = new GoogleAIFileManager(API_KEY);
-      const bucket = admin.storage().bucket();
+      
+      // FIX: Ensure bucket is instantiated safely
+      let bucket;
+      try {
+        bucket = admin.storage().bucket();
+      } catch (e) {
+        console.warn("admin.storage().bucket() failed, falling back to explicit bucket name:", e);
+        bucket = admin.storage().bucket("teknopark-surakarta.firebasestorage.app");
+      }
+
       const tempFiles: string[] = [];
       const newGeminiFiles = [];
 
