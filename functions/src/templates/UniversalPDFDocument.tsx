@@ -3,14 +3,16 @@
 import React from 'react';
 import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
 
+import path from 'path';
+
 // Register font tanpa italic untuk mencegah eror fatal di react-pdf
 Font.register({
   family: 'Inter',
   fonts: [
-    { src: 'https://curation--teknopark-surakarta.asia-southeast1.hosted.app/fonts/Inter-Regular.ttf', fontWeight: 400 },
-    { src: 'https://curation--teknopark-surakarta.asia-southeast1.hosted.app/fonts/Inter-Medium.ttf', fontWeight: 500 },
-    { src: 'https://curation--teknopark-surakarta.asia-southeast1.hosted.app/fonts/Inter-Bold.ttf', fontWeight: 700 },
-    { src: 'https://curation--teknopark-surakarta.asia-southeast1.hosted.app/fonts/Inter-Black.ttf', fontWeight: 900 }
+    { src: path.join(__dirname, '../fonts/Inter-Regular.ttf'), fontWeight: 400 },
+    { src: path.join(__dirname, '../fonts/Inter-Medium.ttf'), fontWeight: 500 },
+    { src: path.join(__dirname, '../fonts/Inter-Bold.ttf'), fontWeight: 700 },
+    { src: path.join(__dirname, '../fonts/Inter-Black.ttf'), fontWeight: 900 }
   ]
 });
 
@@ -108,6 +110,13 @@ export interface ExportRole {
   formData: any;
   aiResult: any;
   downloadedBy?: { name: string; email: string };
+  exportOptions?: {
+    includeVerification?: boolean;
+    includeCustomBlocks?: boolean;
+    includeMetricsSwot?: boolean;
+    includeStrategyRisks?: boolean;
+    includeAppendix?: boolean;
+  };
 }
 
 // FUNGSI Parser untuk React-PDF membaca teks Bold (**)
@@ -141,7 +150,15 @@ const renderBullets = (text: string) => {
   });
 };
 
-export function UniversalPDFDocument({ role, trackType, formData, aiResult, downloadedBy }: ExportRole) {
+export function UniversalPDFDocument({ role, trackType, formData, aiResult, downloadedBy, exportOptions }: ExportRole) {
+  const {
+    includeVerification = true,
+    includeCustomBlocks = true,
+    includeMetricsSwot = true,
+    includeStrategyRisks = true,
+    includeAppendix = true,
+  } = exportOptions || {};
+  
   const printDateObj = new Date();
   const dateStr = printDateObj.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
   
@@ -214,7 +231,7 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
           </View>
         )}
 
-        {aiResult?.fileAnalysisInsights && (
+        {includeVerification && aiResult?.fileAnalysisInsights && (
           <View style={[styles.section, { marginTop: role === 'user' ? 32 : 0 }]} wrap={false}>
             <Text style={styles.sectionTitle}>Document Verification</Text>
             <View style={styles.grid2Col}>
@@ -249,7 +266,7 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
           </View>
         )}
 
-        {aiResult?.customAnalysisBlocks && aiResult.customAnalysisBlocks.length > 0 && (
+        {includeCustomBlocks && aiResult?.customAnalysisBlocks && aiResult.customAnalysisBlocks.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Specific Parameters</Text>
             <View style={styles.grid2Col}>
@@ -273,6 +290,7 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
       </Page>
 
       {/* ================= PAGE 2: METRICS & SWOT ================= */}
+      {includeMetricsSwot && (
       <Page size="A4" style={styles.page} wrap={true}>
         <SecurityWatermark />
         <PageHeader subtitle="Metrics & Capabilities" />
@@ -320,8 +338,10 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
 
         <PageFooter />
       </Page>
+      )}
 
       {/* ================= PAGE 3: STRATEGY & RISKS ================= */}
+      {includeStrategyRisks && (
       <Page size="A4" style={styles.page} wrap={true}>
         <SecurityWatermark />
         <PageHeader subtitle="Strategy & Risks" />
@@ -379,9 +399,10 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
 
         <PageFooter />
       </Page>
+      )}
 
       {/* ================= PAGE 4: APPENDIX (INTERNAL ONLY) ================= */}
-      {isInternal && (
+      {isInternal && includeAppendix && (
         <Page size="A4" style={styles.page} wrap={true}>
           <PageHeader subtitle="Appendix / Raw Data" />
           

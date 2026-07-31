@@ -29,7 +29,14 @@ export const generatePDFReport = onCall(
     const db = getFirestore(admin.app(), "curation");
     const docRef = db.collection("assessments").doc(assessmentId);
     
-    const bucket = admin.storage().bucket();
+    let bucket;
+    try {
+      bucket = admin.storage().bucket();
+    } catch (e) {
+      console.warn("admin.storage().bucket() failed in documentGenerator, falling back to explicit bucket name:", e);
+      bucket = admin.storage().bucket("teknopark-surakarta.firebasestorage.app");
+    }
+
     const fileName = `pdf_exports/${assessmentId}_${role}.pdf`;
     const file = bucket.file(fileName);
 
@@ -71,6 +78,7 @@ export const generatePDFReport = onCall(
         formData: payload.formData,
         aiResult: payload.aiResult,
         downloadedBy: payload.downloadedBy,
+        exportOptions: payload.exportOptions,
       });
 
       const pdfStream = await ReactPDF.renderToStream(documentElement as any);
@@ -115,7 +123,12 @@ export const generatePDFReport = onCall(
  * FUNGSI 2: FUNGSI INTERNAL (OTOMATISASI BACKGROUND)
  */
 export const generateInternalPDF = async (assessmentId: string, docData: any, role: string = 'user') => {
-  const bucket = admin.storage().bucket();
+  let bucket;
+  try {
+    bucket = admin.storage().bucket();
+  } catch (e) {
+    bucket = admin.storage().bucket("teknopark-surakarta.firebasestorage.app");
+  }
   const fileName = `pdf_exports/${assessmentId}_${role}.pdf`;
   const file = bucket.file(fileName);
 
