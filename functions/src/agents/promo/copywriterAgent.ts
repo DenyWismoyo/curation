@@ -37,7 +37,7 @@ export const generateCopywriting = onCall({
     const genAI = new GoogleGenerativeAI(API_KEY);
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash", // Menggunakan model mutakhir untuk copywriting
+      model: "gemini-3.5-flash", // Menggunakan model mutakhir untuk copywriting
       systemInstruction: "Anda adalah Expert Social Media Copywriter dengan spesialisasi konversi tinggi. Anda SANGAT PINTAR memainkan emosi audiens, menggunakan bahasa yang hangat, relatable, dan TIDAK KAKU/AKADEMIS. Anda paham cara merangkai kalimat persuasif tanpa terlihat seperti robot.",
       generationConfig: {
         temperature: 0.8, // Suhu dinaikkan agar hasil lebih kreatif, emosional, dan 'menjual'
@@ -138,7 +138,7 @@ export const reviseCopywriting = onCall({
     const API_KEY = geminiApiKeySecret.value();
     const genAI = new GoogleGenerativeAI(API_KEY);
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-2.5-flash",
+      model: "gemini-3.5-flash",
       generationConfig: { temperature: 0.8 } // Suhu tinggi agar luwes saat revisi
     });
 
@@ -178,7 +178,7 @@ export const reviseSlidePrompt = onCall({
     const API_KEY = geminiApiKeySecret.value();
     const genAI = new GoogleGenerativeAI(API_KEY);
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-2.5-flash", 
+      model: "gemini-3.5-flash", 
       generationConfig: { temperature: 0.5 } // Suhu dijaga sedikit lebih rendah untuk prompt gambar agar konsisten
     });
 

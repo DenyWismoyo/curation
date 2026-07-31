@@ -1,0 +1,23 @@
+[debug] [2026-07-31T09:18:22.308Z] ----------------------------------------------------------------------
+[debug] [2026-07-31T09:18:22.373Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\ASUS\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only functions
+[debug] [2026-07-31T09:18:22.373Z] CLI Version:   15.25.1
+[debug] [2026-07-31T09:18:22.373Z] Platform:      win32
+[debug] [2026-07-31T09:18:22.373Z] Node Version:  v24.13.1
+[debug] [2026-07-31T09:18:22.373Z] Detected Agent: unknown
+[debug] [2026-07-31T09:18:22.373Z] Time:          Fri Jul 31 2026 16:18:22 GMT+0700 (Western Indonesia Time)
+[debug] [2026-07-31T09:18:22.373Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-07-31T09:18:25.315Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-07-31T09:18:25.315Z] > authorizing via signed-in user (deny.wismoyo@gmail.com)
+[debug] [2026-07-31T09:18:25.315Z] [iam] checking project teknopark-surakarta for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2026-07-31T09:18:25.325Z] Checked if tokens are valid: true, expires at: 1785492097081
+[debug] [2026-07-31T09:18:25.325Z] Checked if tokens are valid: true, expires at: 1785492097081
+[debug] [2026-07-31T09:18:25.326Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions [none]
+[debug] [2026-07-31T09:18:25.326Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions  x-goog-user-project=teknopark-surakarta
+[debug] [2026-07-31T09:18:25.326Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2026-07-31T09:18:25.865Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions 200
+[debug] [2026-07-31T09:18:25.865Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2026-07-31T09:18:25.865Z] Checked if tokens are valid: true, expires at: 1785492097081
+[debug] [2026-07-31T09:18:25.866Z] Checked if tokens are valid: true, expires at: 1785492097081
+[debug] [2026-07-31T09:18:25.866Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/teknopark-surakarta/serviceAccounts/teknopark-surakarta@appspot.gserviceaccount.com:testIamPermissions [none]
+[debug] [2026-07-31T09:18:25.866Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/teknopark-surakarta/serviceAccounts/teknopark-surakarta@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}

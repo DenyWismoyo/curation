@@ -300,7 +300,7 @@ export const generateAdaptiveOnboardingPlan = onCall({
   try {
     const genAI = new GoogleGenerativeAI(geminiApiKeySecret.value());
     const model = genAI.getGenerativeModel({
-      model: "gemini-3.1-flash-lite",
+      model: "gemini-3.5-flash-lite",
       systemInstruction: "Anda adalah Strategic Onboarding Agent. Pilih 5 langkah paling relevan dan rekomendasikan modul katalog secara presisi.",
       generationConfig: {
         temperature: 0.35,

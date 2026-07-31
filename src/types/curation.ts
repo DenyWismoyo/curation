@@ -107,9 +107,20 @@ export interface FormField {
   options?: any[]; 
   fileAccept?: string;    
   gridSpan?: 1 | 2;       
+  weightMultiplier?: number; // Ekstra bobot untuk field ini (default 1)
+  validation?: {
+    min?: number;
+    max?: number;
+    minLength?: number;
+    maxLength?: number;
+    regexPattern?: string;
+    customErrorMessage?: string;
+  };
   showIf?: {
     fieldId: string;
-    equals: string | number | boolean;
+    operator?: 'equals' | 'not_equals' | 'greater_than' | 'less_than' | 'contains';
+    value?: string | number | boolean; // Menggantikan 'equals' sebelumnya
+    equals?: string | number | boolean; // Dipertahankan untuk backward compatibility
   };
   aiReasoning?: string; // Menyimpan penjelasan mengapa AI mengajukan pertanyaan ini
 }

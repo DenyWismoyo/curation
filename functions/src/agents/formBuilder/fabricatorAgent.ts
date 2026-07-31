@@ -36,7 +36,7 @@ export const executeFabricator = async (
     const genAI = new GoogleGenerativeAI(API_KEY);
 
     const sectionModel = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
+      model: "gemini-3.5-flash",
       generationConfig: {
         temperature: 0.2,
         responseMimeType: "application/json",
@@ -51,11 +51,27 @@ export const executeFabricator = async (
               placeholder: { type: SchemaType.STRING }, description: { type: SchemaType.STRING },
               aiReasoning: { type: SchemaType.STRING },
               gridSpan: { type: SchemaType.INTEGER }, fileAccept: { type: SchemaType.STRING },
+              weightMultiplier: { type: SchemaType.INTEGER, description: "Bobot ekstra (1, 2, 3, atau 5)" },
+              validation: {
+                type: SchemaType.OBJECT,
+                properties: {
+                  min: { type: SchemaType.NUMBER },
+                  max: { type: SchemaType.NUMBER },
+                  minLength: { type: SchemaType.INTEGER },
+                  maxLength: { type: SchemaType.INTEGER },
+                  customErrorMessage: { type: SchemaType.STRING }
+                }
+              },
               options: { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, properties: { label: { type: SchemaType.STRING }, weight: { type: SchemaType.INTEGER } } } },
               showIf: {
                 type: SchemaType.OBJECT,
-                required: ["fieldId", "equals"],
-                properties: { fieldId: { type: SchemaType.STRING }, equals: { type: SchemaType.STRING } }
+                required: ["fieldId"],
+                properties: { 
+                  fieldId: { type: SchemaType.STRING }, 
+                  operator: { type: SchemaType.STRING, description: "equals, not_equals, greater_than, less_than" },
+                  value: { type: SchemaType.STRING },
+                  equals: { type: SchemaType.STRING }
+                }
               }
             }
           }
@@ -196,11 +212,13 @@ export const executeFabricator = async (
           4. SMART PLACEHOLDER (MUTLAK): Gunakan teks dari "suggestedPlaceholder" ke dalam properti "placeholder".
           5. Konversi "suggestedType" ke "type" form builder (Valid: text, textarea, number, date, select, radio, checkbox, file).
           6. OPSI BERBOBOT: Jika tipe adalah radio, checkbox, atau select, Anda WAJIB meracik array "options" (berisi "label" dan "weight" 0-100).
-          7. THE AUDITOR'S TRAP (EKSPANSI SHOW-IF BERANTAI): Jika draf memiliki "followUpLogic":
+          7. BOBOT EKSTRA (WEIGHT MULTIPLIER): Jika pertanyaan ditandai "isCritical": true di draf, berikan "weightMultiplier": 2, 3, atau 5 sesuai tingkat krusialnya. Jika biasa saja, abaikan atau set 1.
+          8. DATA HYGIENE (VALIDASI): Untuk input number, berikan "validation" (min/max) jika logis (misal umur min 18). Untuk text, berikan minLength jika butuh jawaban panjang.
+          9. THE AUDITOR'S TRAP (EKSPANSI SHOW-IF BERANTAI): Jika draf memiliki "followUpLogic":
              - Anda WAJIB memecahnya menjadi MULTIPLE FIELD dalam JSON. 
              - SANGAT KRITIS: Setiap Field Lanjutan WAJIB MEMILIKI "id" YANG BERBEDA dari field utamanya! Dilarang keras memakai "id" yang sama berulang kali. (Contoh Benar: id pemicu "punyaSertifikasi", id lanjutan "uploadBuktiSertifikasi").
              - Rangkai logika jebakan secara berantai (Chaining). Contoh: Field A memicu Field B, lalu jawaban di Field B memicu Field C.
-             - Gunakan properti "showIf" pada setiap Field Lanjutan. Di dalam "showIf", pastikan "fieldId" merujuk ke ID field pendahulunya, dan "equals" SAMA PERSIS dengan teks opsi yang memicunya (contoh: "Ya").
+             - Gunakan properti "showIf" pada setiap Field Lanjutan. Di dalam "showIf", tentukan "fieldId" ke ID pendahulunya, "operator" (bisa 'equals', 'greater_than', dll), dan "value" pemicunya (atau "equals" untuk backward compatibility).
              - Gunakan tipe interaktif untuk Field Lanjutan ("file" untuk tagih dokumen, "textarea" untuk tagih penjelasan).
              
           ATURAN ANTI-DUPLIKASI MUTLAK: DILARANG KERAS menanyakan Identitas Dasar (Nama, Nama Usaha, Email, Telepon) di seksi ini! Seksi Identitas sudah diselesaikan.

@@ -427,7 +427,39 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                                   <input type="checkbox" checked={field.gridSpan === 2} onChange={e => updateField(sIdx, fIdx, 'gridSpan', e.target.checked ? 2 : 1)} className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
                                   Lebar Penuh (100%)
                                 </label>
+                                {!isPrimaryIdentity && (
+                                  <div className="flex items-center gap-2 ml-auto">
+                                    <span className="text-xs font-bold text-slate-600">Bobot Ekstra:</span>
+                                    <select value={field.weightMultiplier || 1} onChange={e => updateField(sIdx, fIdx, 'weightMultiplier', parseInt(e.target.value))} className="border border-slate-200 h-8 rounded-lg text-xs px-2 bg-white text-slate-700 font-bold">
+                                      <option value={1}>1x (Standar)</option>
+                                      <option value={2}>2x (Penting)</option>
+                                      <option value={3}>3x (Krusial)</option>
+                                      <option value={5}>5x (Sangat Krusial)</option>
+                                    </select>
+                                  </div>
+                                )}
                               </div>
+
+                              {/* VALIDATION BLOCK */}
+                              {!isPrimaryIdentity && (field.type === 'text' || field.type === 'textarea' || field.type === 'number') && (
+                                <div className="md:col-span-2 space-y-2 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider block">Validasi Input</label>
+                                  <div className="flex items-center gap-3">
+                                    {field.type === 'number' ? (
+                                      <>
+                                        <Input type="number" placeholder="Min" value={field.validation?.min || ''} onChange={e => updateField(sIdx, fIdx, 'validation', { ...field.validation, min: e.target.value ? parseFloat(e.target.value) : undefined })} className="h-8 text-xs bg-white w-24" />
+                                        <Input type="number" placeholder="Max" value={field.validation?.max || ''} onChange={e => updateField(sIdx, fIdx, 'validation', { ...field.validation, max: e.target.value ? parseFloat(e.target.value) : undefined })} className="h-8 text-xs bg-white w-24" />
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Input type="number" placeholder="Min Char" value={field.validation?.minLength || ''} onChange={e => updateField(sIdx, fIdx, 'validation', { ...field.validation, minLength: e.target.value ? parseInt(e.target.value) : undefined })} className="h-8 text-xs bg-white w-24" />
+                                        <Input type="number" placeholder="Max Char" value={field.validation?.maxLength || ''} onChange={e => updateField(sIdx, fIdx, 'validation', { ...field.validation, maxLength: e.target.value ? parseInt(e.target.value) : undefined })} className="h-8 text-xs bg-white w-24" />
+                                      </>
+                                    )}
+                                    <Input placeholder="Pesan Error Kustom (Opsional)" value={field.validation?.customErrorMessage || ''} onChange={e => updateField(sIdx, fIdx, 'validation', { ...field.validation, customErrorMessage: e.target.value })} className="h-8 text-xs bg-white flex-1" />
+                                  </div>
+                                </div>
+                              )}
 
                               {/* --- LOGIKA BERCABANG (SHOW-IF) --- */}
                               {!isPrimaryIdentity && (
@@ -441,7 +473,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                                           updateField(sIdx, fIdx, 'showIf', undefined);
                                         } else {
                                           const avail = getAllAvailableFields();
-                                          updateField(sIdx, fIdx, 'showIf', { fieldId: avail[0]?.id || '', equals: '' });
+                                          updateField(sIdx, fIdx, 'showIf', { fieldId: avail[0]?.id || '', operator: 'equals', value: '', equals: '' });
                                         }
                                       }}
                                       className="border border-slate-200 h-10 rounded-xl text-xs px-2 bg-white text-slate-700"
@@ -454,8 +486,8 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                                       <>
                                         <select 
                                           value={field.showIf.fieldId} 
-                                          onChange={(e) => updateField(sIdx, fIdx, 'showIf', { ...field.showIf, fieldId: e.target.value, equals: '' })}
-                                          className="border border-indigo-200 h-10 rounded-xl text-xs px-2 bg-white text-indigo-900 font-medium"
+                                          onChange={(e) => updateField(sIdx, fIdx, 'showIf', { ...field.showIf, fieldId: e.target.value, value: '', equals: '' })}
+                                          className="border border-indigo-200 h-10 rounded-xl text-xs px-2 bg-white text-indigo-900 font-medium col-span-1"
                                         >
                                           <option value="" disabled>Pilih Pertanyaan Pemicu...</option>
                                           {getAllAvailableFields().map(f => (
@@ -463,15 +495,29 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                                           ))}
                                         </select>
                                         
+                                        <select 
+                                          value={field.showIf.operator || 'equals'} 
+                                          onChange={(e) => updateField(sIdx, fIdx, 'showIf', { ...field.showIf, operator: e.target.value as any })}
+                                          className="border border-indigo-200 h-10 rounded-xl text-xs px-2 bg-white text-indigo-900 font-bold col-span-1"
+                                        >
+                                          <option value="equals">Sama Dengan (=)</option>
+                                          <option value="not_equals">Tidak Sama (≠)</option>
+                                          <option value="greater_than">Lebih Besar (&gt;)</option>
+                                          <option value="less_than">Lebih Kecil (&lt;)</option>
+                                          <option value="contains">Mengandung Kata</option>
+                                        </select>
+
                                         {(() => {
                                           const targetField = getAllAvailableFields().find(f => f.id === field.showIf?.fieldId);
+                                          const isEqualsOrNot = field.showIf?.operator === 'equals' || field.showIf?.operator === 'not_equals' || !field.showIf?.operator;
+                                          const showValue = field.showIf?.value !== undefined ? field.showIf.value : field.showIf?.equals;
                                           
-                                          if (targetField && targetField.options && targetField.options.length > 0) {
+                                          if (isEqualsOrNot && targetField && targetField.options && targetField.options.length > 0) {
                                             return (
                                               <select 
-                                                value={String(field.showIf?.equals || '')} 
-                                                onChange={(e) => updateField(sIdx, fIdx, 'showIf', { ...field.showIf, equals: e.target.value })}
-                                                className="border border-indigo-300 h-10 rounded-xl text-xs px-2 bg-indigo-50 text-indigo-700 font-bold"
+                                                value={String(showValue || '')} 
+                                                onChange={(e) => updateField(sIdx, fIdx, 'showIf', { ...field.showIf, value: e.target.value, equals: e.target.value })}
+                                                className="border border-indigo-300 h-10 rounded-xl text-xs px-2 bg-indigo-50 text-indigo-700 font-bold col-span-1"
                                               >
                                                 <option value="" disabled>Pilih Jawaban Pemicu...</option>
                                                 {targetField.options.map((opt: any, i: number) => {
@@ -485,9 +531,9 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                                           return (
                                             <Input 
                                               placeholder="Ketik Nilai Pemicu (Cth: Ya)" 
-                                              value={String(field.showIf?.equals || '')} 
-                                              onChange={(e) => updateField(sIdx, fIdx, 'showIf', { ...field.showIf, equals: e.target.value })}
-                                              className="bg-indigo-50 border-indigo-200 h-10 text-xs rounded-xl font-bold text-indigo-700"
+                                              value={String(showValue || '')} 
+                                              onChange={(e) => updateField(sIdx, fIdx, 'showIf', { ...field.showIf, value: e.target.value, equals: e.target.value })}
+                                              className="bg-indigo-50 border-indigo-200 h-10 text-xs rounded-xl font-bold text-indigo-700 col-span-1"
                                             />
                                           );
                                         })()}

@@ -128,7 +128,18 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
       });
       const data = result.data as any;
       if (data.success && data.anchors) {
-        onChange({ ...template, specificTargetContext: data.anchors.specificTargetContext, methodologyContext: data.anchors.methodologyContext });
+        onChange({ 
+          ...template, 
+          specificTargetContext: data.anchors.specificTargetContext, 
+          methodologyContext: data.anchors.methodologyContext,
+          formBuilderInstruction: data.anchors.formBuilderInstruction || template.formBuilderInstruction,
+          aiPromptConfig: {
+            expectedMetrics: template.aiPromptConfig?.expectedMetrics || [],
+            expectedRecommendations: template.aiPromptConfig?.expectedRecommendations || [],
+            ...template.aiPromptConfig,
+            aiPersona: data.anchors.aiPersona || template.aiPromptConfig?.aiPersona
+          }
+        });
         toast.success("Berhasil Generate Anchor.");
       }
     } catch(e: any) { toast.error("Gagal Generate Anchors", { description: e.message }); } finally { setIsGeneratingAnchors(false); }

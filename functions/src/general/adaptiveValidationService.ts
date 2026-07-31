@@ -101,9 +101,9 @@ export const generateAdaptiveQuestions = onCall({
       // PROSES GENERATE AI (Ini tetap menggunakan SDK karena terbukti aman dan jalan)
       const model = genAI.getGenerativeModel({
         model: "gemini-3.1-flash-lite", 
-        systemInstruction: `Anda adalah ${persona}. Tugas Anda merancang atau memilih instrumen pertanyaan kuesioner dinamis secara real-time. Output WAJIB berupa array JSON berisi objek 'FormField'.`,
+        systemInstruction: `Anda adalah ${persona}. Tugas Anda merancang instrumen pertanyaan kuesioner dinamis secara real-time. Output WAJIB berupa array JSON berisi objek 'FormField'.`,
         generationConfig: {
-          temperature: 0.4,
+          temperature: 0.7,
           responseMimeType: "application/json",
           responseSchema: {
             type: SchemaType.ARRAY,
@@ -119,21 +119,67 @@ export const generateAdaptiveQuestions = onCall({
                 required: { type: SchemaType.BOOLEAN },
                 gridSpan: { type: SchemaType.INTEGER },
                 fileAccept: { type: SchemaType.STRING },
+                weightMultiplier: { type: SchemaType.INTEGER },
+                validation: {
+                  type: SchemaType.OBJECT,
+                  properties: {
+                    min: { type: SchemaType.NUMBER },
+                    max: { type: SchemaType.NUMBER },
+                    minLength: { type: SchemaType.INTEGER },
+                    maxLength: { type: SchemaType.INTEGER },
+                    customErrorMessage: { type: SchemaType.STRING }
+                  }
+                },
                 options: { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, properties: { label: { type: SchemaType.STRING }, weight: { type: SchemaType.INTEGER } } } },
-                showIf: { type: SchemaType.OBJECT, properties: { fieldId: { type: SchemaType.STRING }, equals: { type: SchemaType.STRING } } }
+                showIf: { 
+                  type: SchemaType.OBJECT, 
+                  properties: { 
+                    fieldId: { type: SchemaType.STRING }, 
+                    operator: { type: SchemaType.STRING },
+                    value: { type: SchemaType.STRING },
+                    equals: { type: SchemaType.STRING } 
+                  } 
+                }
               }
             }
           }
         }
       });
 
+      const reportTone = aiPromptConfig?.reportTone || "investigative";
+      const formPurpose = aiPromptConfig?.formPurpose || "assessment";
+      
+      const audienceType = aiPromptConfig?.targetAudience || 'company';
+      let audienceContext = "";
+      if (audienceType === 'individual' || audienceType === 'student') {
+        audienceContext = "TARGET AUDIENS: INDIVIDU / PERSONAL. Gunakan sapaan langsung (Anda/Bapak/Ibu). DILARANG KERAS menanyakan aspek perusahaan, omzet, atau operasional bisnis perusahaan.";
+      } else if (audienceType === 'government') {
+        audienceContext = "TARGET AUDIENS: INSTANSI PEMERINTAH. Fokus pada tata kelola, pelayanan publik, dan kepatuhan regulasi.";
+      } else if (audienceType === 'startup' || audienceType === 'umkm') {
+        audienceContext = "TARGET AUDIENS: BISNIS KECIL/MENENGAH/STARTUP. Fokus pada operasional bisnis, inovasi, dan penjualan.";
+      } else {
+        audienceContext = "TARGET AUDIENS: PERUSAHAAN / KORPORAT. Gunakan bahasa profesional bisnis (B2B).";
+      }
+
       const dynamicRules = `
+          GAYA BAHASA & PENDEKATAN TANYA JAWAB:
+          - Sifat Pendekatan (Strictness): ${strictness}
+          - Nada/Tone: ${reportTone}
+          - Tujuan Kuesioner (Purpose): ${formPurpose}
+          - ${audienceContext}
+          
+          Sesuaikan gaya penyusunan pertanyaan Anda dengan pengaturan di atas. Jika tujuannya adalah konseling, mentoring, atau supportive, gunakan bahasa yang empatik, menggali, dan merangkul. Jika ini adalah audit/investigative (strict), gunakan pendekatan interogasi yang tajam dan meminta pembuktian absolut.
+
+          ${aiPromptConfig?.customSystemPrompt ? `ATURAN KONDISIONAL KHUSUS:\n${aiPromptConfig.customSystemPrompt}\n` : ''}
+          ${aiPromptConfig?.negativePrompts ? `PANTANGAN KERAS (DILARANG):\n${aiPromptConfig.negativePrompts}\n` : ''}
+
           ATURAN KUSTOMISASI WAJIB (AGAR TIDAK MONOTON):
-          1. VARIASI TIPE: Gunakan campuran tipe input seperti 'radio', 'select', 'textarea', 'number', dan 'file'.
-          2. LOGIKA BERCABANG (showIf): Buat setidaknya 1-2 pertanyaan berlapis. Gunakan properti "showIf" (contoh: { fieldId: "idPertanyaanSebelumnya", equals: "Ya" }) untuk menagih detail lanjutan atau file bukti jika peserta memilih opsi tertentu.
-          3. TIPE SPESIFIK: Jika menanyakan nominal/angka gunakan 'number'. Jika butuh dokumen/foto bukti gunakan 'file'.
-          4. OPSI BERBOBOT: Untuk 'radio' atau 'select', WAJIB isi properti 'options' dengan format [{label: 'Opsi A', weight: 100}, {label: 'Opsi B', weight: 50}].
-          5. PERSONALISASI: Jelaskan pada 'aiReasoning' mengapa AI memilih merancang pertanyaan ini secara khusus berdasarkan data peserta sebelumnya.
+          1. HYPER-PERSONALIZATION (MUTLAK): Singgung secara spesifik data dari "Data Peserta Sebelumnya" ke dalam label pertanyaan atau deskripsinya. Buat seakan Anda berbicara langsung dengan peserta merujuk pada profil/jawaban mereka di langkah sebelumnya.
+          2. VARIASI TIPE & VALIDASI: Gunakan tipe input yang beragam (radio, select, textarea, number, file). Jika menggunakan tipe number atau text, tambahkan objek "validation" (misal: min, max, minLength) untuk menjaga kebersihan data.
+          3. LOGIKA BERCABANG ADVANCED (showIf): Buat 1-2 pertanyaan berlapis. Gunakan properti "showIf" dengan kombinasi "operator" (misal: 'equals', 'greater_than') dan "value" untuk memicu detail/bukti lanjutan dari pertanyaan sebelumnya.
+          4. PEMBOBOTAN KRITIS (weightMultiplier): Untuk 1-2 pertanyaan yang paling krusial di tahap ini, set "weightMultiplier": 2, 3, atau 5. Biarkan properti ini kosong atau 1 untuk pertanyaan sekunder.
+          5. OPSI BERBOBOT: Untuk 'radio' atau 'select', WAJIB isi properti 'options' dengan format [{label: 'Opsi A', weight: 100}, {label: 'Opsi B', weight: 50}].
+          6. PERSONALISASI REASONING: Jelaskan secara cerdas pada 'aiReasoning' mengapa AI merancang pertanyaan ini secara khusus berdasarkan konteks partisipan.
       `;
 
       let prompt = "";
@@ -209,15 +255,15 @@ export const evaluateMacroBranching = onCall({
   cors: true,
 }, async (request) => {
   if (!request.auth) throw new HttpsError("unauthenticated", "Akses ditolak.");
-  const { formData, trackName, currentTotalSteps } = request.data;
+  const { formData, trackName, currentTotalSteps, maxAdaptiveSections = 7 } = request.data;
   const API_KEY = geminiApiKeySecret.value();
   const genAI = new GoogleGenerativeAI(API_KEY);
 
-  if (currentTotalSteps >= 7) return { requiresNewSection: false };
+  if (currentTotalSteps >= maxAdaptiveSections) return { requiresNewSection: false };
 
   const model = genAI.getGenerativeModel({
     model: "gemini-3.1-flash-lite", 
-    systemInstruction: "Anda adalah Asesor Ahli. Putuskan apakah partisipan butuh SEKSI INVESTIGASI TAMBAHAN.",
+    systemInstruction: `Anda adalah Asesor Ahli. Karena target asesmen ini adalah ${maxAdaptiveSections} seksi dan saat ini baru tercapai ${currentTotalSteps} seksi, Anda WAJIB MENGHASILKAN 1 SEKSI INVESTIGASI TAMBAHAN. Anda dilarang menghentikan asesmen (requiresNewSection WAJIB true). Fokuslah mendalami area yang paling berisiko, lemah, atau menarik dari jawaban sebelumnya.`,
     generationConfig: {
       temperature: 0.3,
       responseMimeType: "application/json",
@@ -238,7 +284,7 @@ export const evaluateMacroBranching = onCall({
     }
   });
 
-  const prompt = `Konteks: ${trackName}\nTotal Seksi Saat Ini: ${currentTotalSteps}\nJawaban: ${JSON.stringify(formData)}\nAnalisis apakah butuh pendalaman.`;
+  const prompt = `Konteks: ${trackName}\nTotal Seksi Saat Ini: ${currentTotalSteps}\nTarget Maksimal Seksi: ${maxAdaptiveSections}\nJawaban: ${JSON.stringify(formData)}\nAnalisis area mana yang perlu didalami di seksi berikutnya.`;
   
   try {
     const result = await model.generateContent(prompt);

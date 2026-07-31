@@ -95,7 +95,7 @@ ATURAN KONTEN WAJIB:
 4. Pastikan setiap blok narasi 100% selaras dengan konteks target audiens di atas.`;
 
   const model = genAI.getGenerativeModel({
-    model: "gemini-2.5-flash",
+    model: "gemini-3.6-flash",
     systemInstruction: "Anda adalah AI Synthesis & Reporting Expert tingkat lanjut. Hasilkan narasi laporan yang mendalam, kritis, dan koheren berdasarkan kompilasi data dari berbagai agen evaluasi. Format dalam JSON murni.",
     generationConfig: { 
       temperature: 0.4,

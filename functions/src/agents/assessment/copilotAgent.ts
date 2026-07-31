@@ -43,7 +43,7 @@ export const actionPlanCopilotChat = onCall({
     if (!apiKey) throw new HttpsError("internal", "API Key tidak dikonfigurasi.");
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-3.1-flash-lite" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash-lite" });
 
     // Ambil riwayat chat dari Firestore
     const chatRef = db.collection("assessments").doc(assessmentId).collection("copilot").doc("chat");

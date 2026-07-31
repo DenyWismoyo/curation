@@ -413,6 +413,23 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
              ))}
           </div>
         </div>
+
+        <div className="pt-4 border-t border-slate-200/60 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-1.5 p-4 bg-indigo-50/50 rounded-2xl border border-indigo-100">
+            <label className="text-[10px] font-black text-indigo-900 uppercase tracking-wider flex items-center justify-between">
+              <span>Mode Asesmen Adaptif (Living Form)</span>
+              <input type="checkbox" checked={template.aiPromptConfig?.isAdaptive || false} onChange={e => updateConfig('isAdaptive', e.target.checked)} className="w-4 h-4 rounded border-indigo-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer" />
+            </label>
+            <p className="text-xs text-indigo-700/70 font-medium leading-relaxed mt-1">
+              Jika aktif, AI hanya akan merancang field secara utuh untuk Langkah 1. Pertanyaan di langkah berikutnya akan dikosongkan dan di-generate saat user mengisi form.
+            </p>
+          </div>
+          <div className="space-y-1.5 p-4 bg-slate-50/80 rounded-2xl border border-slate-200">
+            <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider block">Batas Maksimal Seksi Adaptif</label>
+            <Input type="number" min={1} max={10} value={template.aiPromptConfig?.maxAdaptiveSections || 5} onChange={e => updateConfig('maxAdaptiveSections', parseInt(e.target.value))} className="h-10 bg-white font-bold rounded-xl" disabled={!template.aiPromptConfig?.isAdaptive} />
+            <p className="text-[11px] text-slate-500 font-medium mt-1">Jumlah limit langkah/seksi maksimal saat meracik form dinamis.</p>
+          </div>
+        </div>
       </div>
 
       <div className="p-6 md:p-8 bg-gradient-to-br from-indigo-900 to-slate-900 rounded-[2rem] shadow-xl relative overflow-hidden text-white border border-indigo-800">

@@ -13,7 +13,7 @@ export const executeDomainExperts = async (
   const genAI = new GoogleGenerativeAI(API_KEY);
 
   const getWorkerModel = (schema: any) => genAI.getGenerativeModel({
-    model: "gemini-2.5-flash",
+    model: "gemini-3.6-flash",
     systemInstruction: "Anda adalah AI Content Elaborator berkecepatan tinggi. Ekstrak wawasan menjadi narasi PRESISI dalam format JSON murni. Gunakan '\\n' untuk baris baru.",
     generationConfig: { temperature: 0.1, responseMimeType: "application/json", responseSchema: schema }
   });

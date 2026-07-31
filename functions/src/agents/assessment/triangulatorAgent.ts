@@ -46,7 +46,7 @@ export const executeTriangulator = async (
 
   const genAI = new GoogleGenerativeAI(API_KEY);
   const model = genAI.getGenerativeModel({
-    model: "gemini-3.1-pro-preview",
+    model: "gemini-3.6-flash",
     systemInstruction: getSystemPrompt(true),
     generationConfig: {
       temperature: 0.1,

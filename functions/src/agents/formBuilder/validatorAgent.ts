@@ -70,7 +70,7 @@ export const executeValidator = async (
 
     // 3. MENGGUNAKAN GEMINI 3.1 FLASH-LITE DENGAN SKEMA ABSOLUT
     const validatorModel = genAI.getGenerativeModel({
-      model: "gemini-3.1-flash-lite",
+      model: "gemini-3.5-flash-lite",
       generationConfig: { 
         temperature: 0.15, // Diturunkan sedikit agar lebih presisi dalam copy-paste logika
         responseMimeType: "application/json",

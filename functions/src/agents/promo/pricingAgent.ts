@@ -26,7 +26,7 @@ export const batchGenerateSmartPricing = onCall({
     
     // Menggunakan Gemini 3.1 Flash-Lite yang sangat tajam dan responsif
     const model = genAI.getGenerativeModel({
-      model: "gemini-3.1-flash-lite", 
+      model: "gemini-3.5-flash-lite", 
       generationConfig: {
         temperature: 0.2, // Dibuat rendah agar AI sangat patuh pada aturan kategori baku
         responseMimeType: "application/json",

@@ -40,19 +40,41 @@ export interface DynamicWizardProps {
 
 export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardProps) {
   const CACHE_KEY = `curation_draft_dynamic_${template.id}`;
+  const CACHE_KEY_STEPS = `curation_draft_dynamic_steps_${template.id}`;
+  const CACHE_KEY_STEP_INDEX = `curation_draft_dynamic_step_index_${template.id}`;
+  
   const { role, user } = useAuth();
   
   // STATE MENGGUNAKAN LOCAL STEPS (Agar bisa diinjeksi pertanyaan baru oleh AI)
-  const [localSteps, setLocalSteps] = useState<FormStep[]>(template.steps);
+  const [localSteps, setLocalSteps] = useState<FormStep[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(CACHE_KEY_STEPS);
+      if (saved) {
+        try { return JSON.parse(saved); } catch (e) {}
+      }
+    }
+    return template.steps;
+  });
+  
   const totalSteps = localSteps.length;
   
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(CACHE_KEY_STEP_INDEX);
+      if (saved) {
+        try { return parseInt(saved); } catch (e) {}
+      }
+    }
+    return 1;
+  });
+
   const [saveStatus, setSaveStatus] = useState('');
   const [isReviewMode, setIsReviewMode] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   // State khusus saat AI sedang men-generate pertanyaan untuk step berikutnya
   const [isGeneratingStep, setIsGeneratingStep] = useState(false);
+  const [generationError, setGenerationError] = useState(false);
   
   // Ref untuk mengatur auto-scroll ke atas setiap ganti step
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -72,19 +94,17 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
                       ? (LucideIcons as any)[currentStepData.icon] 
                       : AiSparkIcon;
 
-  // Auto-Save ke LocalStorage
+  // Auto-Save ke LocalStorage (Jawaban, Steps, dan Current Step)
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      // 1. Save Form Data
       const dataToSave: any = {};
       for (const key in formData) {
         const val = formData[key];
         if (val !== null && val !== undefined) {
-          // Format file baru: { downloadURL, storagePath, fileName } — aman diserialisasi ke JSON
           if (val && typeof val === 'object' && 'downloadURL' in val && 'storagePath' in val) {
             dataToSave[key] = val; // objek ini sudah serializable
           } else if (val instanceof File) {
-            // Jangan simpan File object (binary tidak bisa JSON), buang saja
-            // File akan perlu diunggah ulang jika user refresh halaman
             dataToSave[key] = `[FILE:${val.name}]`;
           } else if (typeof val !== 'object' || Array.isArray(val)) {
             dataToSave[key] = val;
@@ -95,10 +115,19 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
         localStorage.setItem(CACHE_KEY, JSON.stringify(dataToSave));
         setSaveStatus('Tersimpan');
         const timeout = setTimeout(() => setSaveStatus(''), 2500);
+        
+        // 2. Save Dynamic Steps & Step Index
+        localStorage.setItem(CACHE_KEY_STEPS, JSON.stringify(localSteps));
+        localStorage.setItem(CACHE_KEY_STEP_INDEX, step.toString());
+        
         return () => clearTimeout(timeout);
+      } else {
+        // Tetap simpan state step dan steps meski formdata kosong
+        localStorage.setItem(CACHE_KEY_STEPS, JSON.stringify(localSteps));
+        localStorage.setItem(CACHE_KEY_STEP_INDEX, step.toString());
       }
     }
-  }, [formData, CACHE_KEY]);
+  }, [formData, localSteps, step, CACHE_KEY, CACHE_KEY_STEPS, CACHE_KEY_STEP_INDEX]);
 
   const handleChange = (id: string, value: any) => {
     setFormData((prev: any) => ({ ...prev, [id]: value }));
@@ -107,10 +136,15 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
   const handleClearForm = () => {
     if (window.confirm('Apakah Anda yakin ingin mengosongkan semua isian form dan mengulang dari awal?')) {
       setFormData({});
-      if (typeof window !== 'undefined') localStorage.removeItem(CACHE_KEY);
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem(CACHE_KEY);
+        localStorage.removeItem(CACHE_KEY_STEPS);
+        localStorage.removeItem(CACHE_KEY_STEP_INDEX);
+      }
       setStep(1);
       setLocalSteps(template.steps); // Reset steps ke awal template
       setIsReviewMode(false);
+      setGenerationError(false);
     }
   };
 
@@ -138,6 +172,7 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
   // FUNGSI INJEKSI PERTANYAAN (MICRO-ADAPTIVE)
   const executeAdaptiveFieldInjection = async (targetStepData: FormStep, targetStepIndex: number) => {
     setIsGeneratingStep(true);
+    setGenerationError(false);
     if (scrollContainerRef.current) scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
     
     try {
@@ -164,8 +199,9 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
       setStep(targetStepIndex + 1);
     } catch (error: any) {
       console.error("AI Adaptive Generation Error:", error);
-      toast.error("Gagal menyinkronkan pertanyaan AI. Silakan coba lagi atau lewati.", { duration: 4000 });
-      setStep(targetStepIndex + 1);
+      toast.error("Gagal menyinkronkan pertanyaan AI. Tekan Coba Lagi.", { duration: 4000 });
+      setGenerationError(true);
+      // HAPUS setStep agar user tidak melewati step ini
     } finally {
       setIsGeneratingStep(false);
     }
@@ -198,6 +234,7 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
     // 2. MACRO-ADAPTIVE BRANCHING (Di Ujung Form)
     else if (template.formMode === 'hybrid' || template.formMode === 'adaptive') {
       setIsGeneratingStep(true);
+      setGenerationError(false);
       if (scrollContainerRef.current) scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
 
       try {
@@ -207,7 +244,8 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
         const response = await evaluateBranching({ 
           formData, 
           trackName: template.trackName,
-          currentTotalSteps: localSteps.length 
+          currentTotalSteps: localSteps.length,
+          maxAdaptiveSections: (template.aiPromptConfig as any)?.maxAdaptiveSections || 7
         });
         const data = response.data as { requiresNewSection: boolean; newStep?: FormStep };
 
@@ -224,8 +262,8 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
         }
       } catch (error: any) {
         console.error("Macro-Adaptive Error:", error);
-        setIsReviewMode(true); // Fallback ke Review jika API gagal
-        if (scrollContainerRef.current) scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+        toast.error("Gagal mengevaluasi seksi lanjutan. Tekan Coba Lagi.", { duration: 4000 });
+        setGenerationError(true);
       } finally {
         setIsGeneratingStep(false);
       }
@@ -384,7 +422,31 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-10 pb-24">
           
           <AnimatePresence mode="wait">
-            {isGeneratingStep ? (
+            {generationError ? (
+              <motion.div key="ai-error" variants={formVariants} initial="enter" animate="center" exit="exit" className="flex flex-col items-center justify-center py-20 text-center space-y-6">
+                <div className="w-20 h-20 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center shadow-inner">
+                  <AlertTriangle size={36} />
+                </div>
+                <div className="space-y-3">
+                  <h3 className="text-2xl font-black text-slate-900">Koneksi Terputus</h3>
+                  <p className="text-slate-500 font-medium max-w-md mx-auto leading-relaxed">
+                    Gagal meracik pertanyaan khusus untuk Anda. Pastikan koneksi internet Anda stabil.
+                  </p>
+                </div>
+                <Button 
+                  onClick={() => {
+                    if (step > localSteps.length || (step === localSteps.length && (!currentStepData?.fields || currentStepData.fields.length > 0))) {
+                      handleNext();
+                    } else {
+                      executeAdaptiveFieldInjection(localSteps[step - 1], step - 1);
+                    }
+                  }} 
+                  className="bg-indigo-600 hover:bg-indigo-700 h-12 px-8 rounded-full shadow-lg shadow-indigo-200"
+                >
+                  Coba Lagi (Retry)
+                </Button>
+              </motion.div>
+            ) : isGeneratingStep ? (
               // LAYAR LOADING ADAPTIVE AI
               <motion.div key="ai-loading" variants={formVariants} initial="enter" animate="center" exit="exit" className="flex flex-col items-center justify-center py-20 text-center space-y-6">
                 <div className="relative w-24 h-24 flex items-center justify-center">

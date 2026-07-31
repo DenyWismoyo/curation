@@ -25,7 +25,7 @@ export function TabAdaptive({ template, onChange }: TabAdaptiveProps) {
       aiPromptConfig: {
         ...(template.aiPromptConfig || {}),
         [field]: value
-      }
+      } as any
     });
   };
 

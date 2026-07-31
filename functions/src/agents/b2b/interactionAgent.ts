@@ -107,7 +107,7 @@ ${logs.map((l, i) => `[Sesi ${i+1}] Tanggal: ${l.createdAt}, Tipe: ${l.interacti
       const API_KEY = geminiApiKeySecret.value();
       const genAI = new GoogleGenerativeAI(API_KEY);
       const model = genAI.getGenerativeModel({
-        model: "gemini-2.5-flash",
+        model: "gemini-3.5-flash",
         generationConfig: {
           temperature: 0.3,
           responseMimeType: "application/json",

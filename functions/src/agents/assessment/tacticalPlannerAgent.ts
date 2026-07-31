@@ -60,6 +60,17 @@ export const executeTacticalPlanner = async (
   };
   const audienceDetail = audienceDetailMap[audienceType] || audienceDetailMap['company'];
 
+  const perspectiveInstructionMap: Record<string, string> = {
+    'individual': 'Tuliskan rencana tindakan sebagai SARAN PENGEMBANGAN DIRI yang ditujukan langsung ke individu secara personal (Contoh: "Luangkan waktu 15 menit setiap pagi untuk meditasi").',
+    'student': 'Tuliskan rencana tindakan sebagai SARAN PENGEMBANGAN AKADEMIK/SKILL (Contoh: "Bergabunglah dengan unit kegiatan mahasiswa yang relevan").',
+    'government': 'Tuliskan rencana tindakan sebagai LANGKAH BIROKRASI/TATA KELOLA (Contoh: "Tinjau kembali SOP pelayanan publik").',
+    'community': 'Tuliskan rencana tindakan sebagai LANGKAH ORGANISASI SOSIAL (Contoh: "Adakan pertemuan dengan relawan inti").',
+    'startup': 'Tuliskan rencana tindakan sebagai LANGKAH STRATEGIS BISNIS (Contoh: "Lakukan pivot pada fitur utama").',
+    'umkm': 'Tuliskan rencana tindakan sebagai LANGKAH OPERASIONAL BISNIS (Contoh: "Catat setiap pengeluaran harian").',
+    'company': 'Tuliskan rencana tindakan sebagai LANGKAH STRATEGIS PERUSAHAAN (Contoh: "Lakukan audit internal di sistem Anda").'
+  };
+  const perspectiveInstruction = perspectiveInstructionMap[audienceType] || perspectiveInstructionMap['company'];
+
   const strictnessActionMap: Record<string, string> = {
     'supportive': 'Gaya action plan SUPORTIF: Mulai dari quick-win yang mudah dicapai untuk membangun momentum. Framing setiap langkah sebagai peluang, bukan kewajiban.',
     'standard': 'Gaya action plan STANDAR: Kombinasi langkah jangka pendek (quick-win) dan jangka menengah. Realistis dan terukur.',
@@ -86,11 +97,10 @@ ${resolvedStrictnessAction}
 ${aiPromptConfig.customScoringRubric ? `RUBRIK PENILAIAN (Gunakan sebagai panduan prioritas action plan):\n${aiPromptConfig.customScoringRubric}` : ''}
 ${aiPromptConfig.negativePrompts ? `\nPANTANGAN KERAS DALAM MEMBUAT ACTION PLAN:\n${aiPromptConfig.negativePrompts}` : ''}
 ${aiPromptConfig.actionPlanBehavior ? `\nATURAN GAYA KHUSUS ACTION PLAN:\n${aiPromptConfig.actionPlanBehavior}` : ''}
-
-PERINGATAN SUDUT PANDANG MUTLAK: Rencana tindakan ini WAJIB ditujukan LANGSUNG kepada subjek yang dinilai agar mereka bisa memperbaiki diri/operasi mereka sendiri. DILARANG KERAS menulis instruksi untuk tim auditor/penilai (Jangan menulis "Lakukan verifikasi lapangan", tapi tulislah "Lakukan audit internal di sistem Anda").`;
+PERINGATAN SUDUT PANDANG MUTLAK: Rencana tindakan ini WAJIB ditujukan LANGSUNG kepada subjek yang dinilai agar mereka bisa memperbaiki diri/operasi mereka sendiri. DILARANG KERAS menulis instruksi untuk tim auditor/penilai. ${perspectiveInstruction}`;
   
   const model = genAI.getGenerativeModel({
-    model: "gemini-2.5-flash",
+    model: "gemini-3.5-flash",
     systemInstruction: "Hasilkan Action Plan format JSON.",
     generationConfig: { 
       temperature: 0.3,

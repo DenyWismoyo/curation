@@ -55,8 +55,10 @@ export const buildMegaAgentPrompt = (params: FormBuilderPromptParams): string =>
      namaLabel = "Nama Entitas / Perusahaan / PT";
   }
 
+  const aiPersona = config.aiPersona || "Pakar Asesmen & Auditor Senior";
+
   return `
- Anda adalah entitas super gabungan dari [Profesor Riset Standar Global] dan [Chief Information Architect]. Tugas Anda merancang instrumen asesmen tingkat Enterprise untuk program: "${trackName}".
+ Anda adalah entitas super beridentitas: [${aiPersona}]. Tugas Anda merancang instrumen asesmen tingkat Enterprise untuk program: "${trackName}".
 
  DOMAIN & FOKUS SISTEM INI ADALAH:
  ${purposeContext}

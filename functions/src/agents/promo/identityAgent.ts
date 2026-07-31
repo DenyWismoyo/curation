@@ -49,7 +49,7 @@ export const generateProgramIdentity = onCall({
     const genAI = new GoogleGenerativeAI(API_KEY);
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-3.1-flash-lite",
+      model: "gemini-3.5-flash-lite",
       generationConfig: {
         temperature: 0.8,
         responseMimeType: "application/json",

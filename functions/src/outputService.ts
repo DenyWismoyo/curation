@@ -127,7 +127,7 @@ export const generatePromptAnchors = onCall({
           responseMimeType: "application/json",
           responseSchema: {
             type: SchemaType.OBJECT,
-            required: ["specificTargetContext", "methodologyContext"],
+            required: ["specificTargetContext", "methodologyContext", "formBuilderInstruction", "aiPersona"],
             properties: {
               specificTargetContext: { 
                 type: SchemaType.STRING, 
@@ -136,6 +136,14 @@ export const generatePromptAnchors = onCall({
               methodologyContext: { 
                 type: SchemaType.STRING, 
                 description: "Metodologi, framework, atau standar global yang PALING TEPAT untuk asesmen ini, beserta alasan singkat mengapa dipilih dan bagaimana kerangkanya diterapkan. 3-4 kalimat padat." 
+              },
+              formBuilderInstruction: {
+                type: SchemaType.STRING,
+                description: "Instruksi spesifik bagi arsitek AI mengenai cara meracik soal untuk audiens ini. Berisi panduan gaya penyusunan soal yang selaras dengan target."
+              },
+              aiPersona: {
+                type: SchemaType.STRING,
+                description: "Gelar/Identitas pakar yang paling relevan (AI Persona) untuk melakukan asesmen ini (Contoh: 'Konsultan Psikologi Klinis & Pakar Karir')."
               }
             }
           }
@@ -167,6 +175,14 @@ export const generatePromptAnchors = onCall({
            Identifikasi framework atau metodologi TERBAIK yang relevan untuk program ini.
            Harus mencakup: nama framework spesifik, alasan dipilih untuk konteks ini, dan bagaimana kerangkanya diterapkan dalam asesmen.
            CONTOH KUALITAS YANG DIINGINKAN: "Asesmen mengadopsi kerangka Business Model Canvas (BMC) dari Osterwalder dikombinasikan dengan Growth Readiness Framework UNDP. Pemilihan BMC memungkinkan pemetaan 9 elemen bisnis secara holistik, sementara Growth Readiness Framework mengukur kesiapan kapasitas internal. Standar skoring mengacu pada Benchmark UMKM Kemendag 2023 untuk memberikan konteks komparatif yang relevan."
+           
+        3. INSTRUKSI FORM BUILDER (formBuilderInstruction):
+           Berikan instruksi kuat kepada AI pembuat formulir tentang bagaimana meracik soal yang tepat untuk audiens ini. 
+           CONTOH KUALITAS: "Gunakan bahasa yang sederhana namun menggali. Hindari jargon teknis yang membingungkan UMKM. Fokus pada validasi lapangan bukan teori."
+           
+        4. AI PERSONA (aiPersona):
+           Sebutkan gelar/identitas pakar yang paling tepat untuk melakukan asesmen ini dan memberikan laporan Action Plan nantinya.
+           CONTOH KUALITAS: "Konsultan Strategi Bisnis UMKM & Pakar Digital Marketing"
       `;
 
       const result = await model.generateContent(prompt);

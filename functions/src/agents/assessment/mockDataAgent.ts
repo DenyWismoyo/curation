@@ -42,7 +42,7 @@ export const adminGenerateMockData = onCall({
 
   try {
     const model = genAI.getGenerativeModel({
-      model: "gemini-3.1-flash-lite",
+      model: "gemini-3.5-flash-lite",
       systemInstruction: "Anda adalah asisten QA tester. Hasilkan mock data berupa jawaban hipotetis untuk formulir asesmen bisnis. Berikan jawaban yang detail, masuk akal dan komprehensif untuk pertanyaan esai (textarea), dan pilih salah satu/beberapa opsi logis untuk select/multiselect. Semua jawaban harus saling berhubungan untuk satu perusahaan.",
       generationConfig: {
         temperature: 0.7,

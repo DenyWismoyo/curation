@@ -28,10 +28,10 @@ export const executeArchitect = async (
     const genAI = new GoogleGenerativeAI(API_KEY);
 
     const masterModel = genAI.getGenerativeModel({
-      model: "gemini-3.1-pro-preview",
+      model: "gemini-3.6-flash",
       tools: [{ googleSearch: {} } as any],
       generationConfig: {
-        temperature: 0.2, // Diturunkan agar kerangka struktur JSON lebih deterministik
+        temperature: 0.4, // Dinaikkan sedikit (dari 0.2) agar interogasi lebih kreatif namun tetap patuh skema JSON
         responseMimeType: "application/json",
         responseSchema: {
           type: SchemaType.OBJECT,
@@ -98,7 +98,8 @@ export const executeArchitect = async (
                         questionText: { type: SchemaType.STRING, description: "Teks pertanyaan aktual yang akan dibaca oleh user" },
                         suggestedType: { type: SchemaType.STRING, description: "Tipe input yang disarankan (contoh: text, textarea, select, radio_weight, file)" },
                         suggestedPlaceholder: { type: SchemaType.STRING, description: "Contoh jawaban dunia nyata yang sangat spesifik (Smart Placeholder)" },
-                        followUpLogic: { type: SchemaType.STRING, description: "Instruksi jebakan logika/showIf multi-layer (contoh: 'Jika jawab Ya, tagih dokumen. Jika dokumen tidak ada, tagih justifikasi')" }
+                        followUpLogic: { type: SchemaType.STRING, description: "Instruksi jebakan logika/showIf multi-layer (contoh: 'Jika jawab Ya, tagih dokumen. Jika dokumen tidak ada, tagih justifikasi')" },
+                        isCritical: { type: SchemaType.BOOLEAN, description: "Tandai true jika pertanyaan ini sangat krusial (akan diberi bobot ganda oleh Fabricator)" }
                       }
                     }
                   }
@@ -173,6 +174,7 @@ export const executeArchitect = async (
       FITUR "WOW" YANG WAJIB ANDA IMPLEMENTASIKAN:
       1. THE AUDITOR'S TRAP: Rancang alur logika berantai pada properti 'followUpLogic'. Jika ini adalah asesmen yang ketat (strict), jangan hanya berhenti di 1 pertanyaan. Buat skenario berlapis (Contoh: "Jika Ya, minta dokumen. Jika dokumen di-upload, minta penjelasan teks mengapa dokumen tersebut valid").
       2. SMART PLACEHOLDERS: Isi properti 'suggestedPlaceholder' dengan contoh jawaban dunia nyata yang SANGAT SPESIFIK dan sesuai dengan industri target, bukan contoh murahan (Contoh Benar: "Misal: Kami menggunakan enkripsi AES-256 dan rotasi kunci AWS KMS tiap 90 hari").
+      3. CRITICAL QUESTION MARKING: Identifikasi 2-3 pertanyaan paling mematikan dan penting di setiap seksi dan tandai "isCritical": true. Ini akan digunakan oleh sistem untuk mengkalibrasi bobot penilaian ekstra (Weight Multiplier).
     `;
 
     const masterResult = await masterModel.generateContent(masterPrompt);
