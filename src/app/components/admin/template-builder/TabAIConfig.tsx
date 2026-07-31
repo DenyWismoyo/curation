@@ -48,8 +48,6 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
   const [presetSearchTerm, setPresetSearchTerm] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const isAdaptive = (template.aiPromptConfig as any)?.isAdaptive || false;
-
   // PERBAIKAN 1: Menyimpan state template terakhir agar bisa dipanggil tanpa memicu re-render
   const templateRef = useRef<FormTemplate>(template);
   useEffect(() => {
@@ -142,11 +140,8 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
       return;
     }
 
-    if (!template.aiPromptConfig?.assessmentGoal) {
-      alert("Mohon isi 'Tujuan / Fokus Analisis Utama' atau pilih Preset terlebih dahulu.");
-      return;
-    }
-    
+    // Tujuan / Fokus Analisis Utama tidak lagi wajib diisi sebelum di-generate
+    // karena ini justru yang akan dibantu digenerate oleh AI berdasarkan konteks lain.
     if (template.steps && template.steps.length > 0) {
       if (!confirm("PERINGATAN: Proses ini akan mereset dan menimpa seluruh langkah form Anda yang ada di Tab Form Builder. Lanjutkan?")) return;
     }
@@ -167,7 +162,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
     }
 
     let adaptiveInstruction = "";
-    if (isAdaptive) {
+    if (template.aiPromptConfig?.isAdaptive) {
       adaptiveInstruction = `
       ==================================================
       PERHATIAN: MODE ADAPTIVE LIVING FORM DIAKTIFKAN!
@@ -446,27 +441,6 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
                })}
              </div>
 
-             <div className="mt-4 pt-4 border-t border-slate-700">
-               <label className="flex items-start gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 bg-slate-900/40 hover:bg-slate-800 border-indigo-500/30">
-                 <div className="pt-0.5">
-                   <input
-                       type="checkbox"
-                       className="w-5 h-5 rounded border-slate-600 text-indigo-500 focus:ring-indigo-500 bg-slate-800"
-                      checked={isAdaptive}
-                      onChange={(e) => updateConfig('isAdaptive', e.target.checked)}
-                    />
-                 </div>
-                 <div className="flex-1">
-                   <h5 className="text-sm font-black text-white flex items-center gap-2">
-                     <Fingerprint className="w-4 h-4 text-emerald-400"/> Aktifkan Adaptive Living Form
-                   </h5>
-                   <p className="text-[11px] text-slate-400 font-medium leading-relaxed mt-1">
-                     Alih-alih meracik semua pertanyaan di awal, AI <strong className="text-emerald-400">hanya akan membuat pertanyaan untuk Step 1</strong>, beserta judul-judul untuk Step selanjutnya. Pertanyaan Step lanjutan akan digenerate secara real-time menyesuaikan jawaban peserta.
-                   </p>
-                 </div>
-               </label>
-             </div>
-             
              <label className="text-[10px] font-black text-indigo-300 uppercase tracking-wider block mt-4">Instruksi Spesifik Pembentukan Kuesioner (Opsional):</label>
              <Textarea
                value={template.formBuilderInstruction || ''}

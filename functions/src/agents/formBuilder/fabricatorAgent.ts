@@ -38,7 +38,7 @@ export const executeFabricator = async (
     const sectionModel = genAI.getGenerativeModel({
       model: "gemini-2.5-flash",
       generationConfig: {
-        temperature: 0.2, 
+        temperature: 0.2,
         responseMimeType: "application/json",
         responseSchema: {
           type: SchemaType.ARRAY,
@@ -52,51 +52,91 @@ export const executeFabricator = async (
               aiReasoning: { type: SchemaType.STRING },
               gridSpan: { type: SchemaType.INTEGER }, fileAccept: { type: SchemaType.STRING },
               options: { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, properties: { label: { type: SchemaType.STRING }, weight: { type: SchemaType.INTEGER } } } },
-              showIf: { 
-                 type: SchemaType.OBJECT, 
-                 required: ["fieldId", "equals"],
-                properties: { fieldId: { type: SchemaType.STRING }, equals: { type: SchemaType.STRING } } 
-               }
+              showIf: {
+                type: SchemaType.OBJECT,
+                required: ["fieldId", "equals"],
+                properties: { fieldId: { type: SchemaType.STRING }, equals: { type: SchemaType.STRING } }
+              }
             }
           }
         }
       }
     });
 
-    const baseInstructions = buildMegaAgentPrompt({ 
-      trackName, 
-      config: aiPromptConfig, 
+    const baseInstructions = buildMegaAgentPrompt({
+      trackName,
+      config: aiPromptConfig,
       archetypeInstruction,
       specificTargetContext: afterData.specificTargetContext,
       methodologyContext: afterData.methodologyContext
     });
-    
+
     // ====================================================================
     // PERBAIKAN: Sub-Agen Profiler (Injeksi Langkah 1)
     // ====================================================================
     const audienceType = aiPromptConfig?.targetAudience || 'company';
     let identityContext = "";
-    
+
+    const purpose = aiPromptConfig?.formPurpose || 'assessment';
+
+    // 1. Tentukan Label Cerdas (Smart Label Injection) berdasarkan Target Audiens & Purpose
+    let namaUsahaLabel = "Nama Usaha / Organisasi / Entitas";
+    let namaUsahaPlaceholder = "Contoh: PT. Teknologi Masa Depan";
+
+    let namaPengisiLabel = "Nama Lengkap Pengisi Form";
+    let namaPengisiPlaceholder = "Contoh: Budi Santoso";
+    let showNamaPengisi = true;
+
     if (audienceType === 'individual' || audienceType === 'student') {
-        identityContext = "Buat 2 pertanyaan identitas tambahan yang relevan dengan personal/karir (misal: Usia atau Profesi).";
+      namaUsahaLabel = "Nama Lengkap Anda";
+      namaUsahaPlaceholder = "Sesuai KTP/Identitas Resmi";
+      showNamaPengisi = false; // Individu tidak butuh redundansi nama
     } else if (audienceType === 'government') {
-        identityContext = "Buat 2 pertanyaan identitas tambahan yang relevan dengan ASN/Pemerintahan (misal: NIP atau Jabatan/Instansi).";
+      namaUsahaLabel = "Nama Instansi / Dinas / Desa";
+      namaUsahaPlaceholder = "Contoh: Dinas Kesehatan Provinsi X";
     } else if (audienceType === 'community') {
-        identityContext = "Buat 2 pertanyaan identitas tambahan yang relevan dengan komunitas (misal: Peran di Komunitas atau Fokus Isu Sosial).";
+      namaUsahaLabel = "Nama Komunitas / Yayasan";
+      namaUsahaPlaceholder = "Contoh: Yayasan Peduli Sesama";
+    } else if (audienceType === 'startup') {
+      namaUsahaLabel = "Nama Startup / Usaha";
+      namaUsahaPlaceholder = "Contoh: TechEdu App";
+    } else if (audienceType === 'umkm') {
+      namaUsahaLabel = "Nama Usaha / Toko / Perusahaan";
+      namaUsahaPlaceholder = "Contoh: Toko Kopi Sejahtera";
+    }
+
+    if (purpose === 'counseling') {
+      namaUsahaLabel = "Nama Anda (Klien / Pasangan)";
+      namaUsahaPlaceholder = "Contoh: Budi & Ani";
+      showNamaPengisi = false;
+    }
+
+    // 2. Tentukan Konteks Profiler (AI Generative Identity)
+    identityContext = "";
+    if (purpose === 'counseling') {
+      identityContext = "Buat 4-6 pertanyaan identitas tambahan yang relevan dengan konseling (misal: Tanggal Pernikahan, Nama Pasangan, atau Status Anak).";
+    } else if (audienceType === 'student') {
+      identityContext = "Buat 4-6 pertanyaan identitas tambahan yang relevan dengan mahasiswa (misal: Jurusan/Program Studi, Nama Universitas, atau Semester).";
+    } else if (audienceType === 'individual') {
+      identityContext = "Buat 4-6 pertanyaan identitas tambahan yang relevan dengan personal/karir (misal: Usia, Pekerjaan/Profesi, Pendidikan Terakhir, atau Domisili).";
+    } else if (audienceType === 'government') {
+      identityContext = "Buat 4-6 pertanyaan identitas tambahan yang relevan dengan ASN/Pemerintahan (misal: NIP, Unit Kerja, Golongan, atau Jabatan).";
+    } else if (audienceType === 'community') {
+      identityContext = "Buat 4-6 pertanyaan identitas tambahan yang relevan dengan komunitas (misal: Peran di Komunitas, Lama Bergabung, atau Fokus Isu Sosial).";
     } else if (audienceType === 'startup' || audienceType === 'umkm') {
-        identityContext = "Buat 2 pertanyaan identitas tambahan yang relevan dengan bisnis (misal: Kategori Produk/Jasa atau Skala Operasional/Karyawan).";
+      identityContext = "Buat 4-6 pertanyaan identitas tambahan yang relevan dengan bisnis (misal: Bidang Usaha/Industri, Lama Berdiri, atau Skala Operasional).";
     } else {
-        identityContext = "Buat 2 pertanyaan identitas tambahan yang relevan dengan B2B/Korporasi (misal: Jabatan Pengisi Form atau Sektor Industri).";
+      identityContext = "Buat 4-6 pertanyaan identitas tambahan yang relevan dengan B2B/Korporasi (misal: Sektor Industri, Skala Perusahaan, Departemen, atau Jabatan Anda).";
     }
 
     await logToTerminal(templateRef, "Mengunci Seksi 1 (Data Profil Identitas) melalui Profiler Sub-Agent...", "info");
 
     const profilerPrompt = `
       Anda adalah sub-agen pembuat formulir identitas.
-      Target Audiens: ${audienceType}.
+      Target Audiens: ${audienceType}. Tujuan Form: ${purpose}.
       Tugas: ${identityContext}
-      Format output HARUS array JSON sesuai skema form (hanya array of object dengan properti: id, label, type, required, placeholder).
-      Pastikan id unik bergaya camelCase. required wajib true. type gunakan "text" atau "select".
+      Format output HARUS array JSON murni (hanya array of object dengan properti: id, label, type, required, placeholder).
+      Pastikan id unik bergaya camelCase. required wajib true. type gunakan "text", "select", atau "number".
     `;
     let dynamicIdentityFields = [];
     try {
@@ -108,15 +148,22 @@ export const executeFabricator = async (
       console.warn("Profiler failed, using default fields.", e);
     }
 
-    // Injeksi Paksa Seksi 1
+    // 3. Injeksi Paksa Seksi 1 dengan Smart Label
+    const step1Fields = [
+      { id: "namaUsaha", label: namaUsahaLabel, type: "text", required: true, gridSpan: 12, placeholder: namaUsahaPlaceholder, aiReasoning: "Identifikasi utama subjek asesmen (Mutlak)" }
+    ];
+
+    if (showNamaPengisi) {
+      step1Fields.push({ id: "namaPengisi", label: namaPengisiLabel, type: "text", required: true, gridSpan: 12, placeholder: namaPengisiPlaceholder, aiReasoning: "Identifikasi penanggung jawab pengisian form (Mutlak)" });
+    }
+
     const step1 = {
       stepNumber: 1,
       title: "Data Profil & Identitas",
-      description: "Mohon lengkapi data profil dasar Anda sebelum melanjutkan ke tahap asesmen. Data ini bersifat rahasia.",
+      description: "Mohon lengkapi data profil dasar sebelum melanjutkan ke tahap asesmen. Data ini bersifat rahasia.",
       fields: [
-        { id: "namaUsaha", label: "Nama Usaha / Organisasi / Entitas", type: "text", required: true, gridSpan: 12, placeholder: "Contoh: PT. Teknologi Masa Depan", aiReasoning: "Identifikasi utama subjek asesmen (Mutlak)" },
-        { id: "namaPengisi", label: "Nama Lengkap Pengisi Form", type: "text", required: true, gridSpan: 12, placeholder: "Contoh: Budi Santoso", aiReasoning: "Identifikasi penanggung jawab pengisian form (Mutlak)" },
-        ...dynamicIdentityFields.map((f: any) => ({...f, gridSpan: 12, aiReasoning: "Kelengkapan data profil sekunder berbasis target audiens"}))
+        ...step1Fields,
+        ...dynamicIdentityFields.map((f: any) => ({ ...f, gridSpan: 12, aiReasoning: "Kelengkapan data profil sekunder berbasis target audiens dan tujuan" }))
       ]
     };
 
@@ -125,8 +172,8 @@ export const executeFabricator = async (
 
     for (let i = 0; i < stepOutlines.length; i += batchSize) {
       const batch = stepOutlines.slice(i, i + batchSize);
-      
-      await logToTerminal(templateRef, `Meracik Kuesioner Batch ${Math.ceil(i/batchSize) + 1}...`, "info");
+
+      await logToTerminal(templateRef, `Meracik Kuesioner Batch ${Math.ceil(i / batchSize) + 1}...`, "info");
 
       const batchPromises = batch.map(async (step: any, indexInBatch: number) => {
         const absoluteIndex = i + indexInBatch;
@@ -143,7 +190,7 @@ export const executeFabricator = async (
           ${JSON.stringify(step.draftedQuestions || [])}
           
           INSTRUKSI TRANSLASI JSON:
-          1. Hasilkan "id" camelCase unik (misal: "pendapatanTahunan").
+          1. Hasilkan "id" camelCase SANGAT UNIK untuk setiap pertanyaan (misal: "pendapatanTahunan"). DILARANG KERAS menggunakan "id" yang sama lebih dari satu kali dalam seluruh array ini. Pastikan 100% tidak ada duplikasi "id"!
           2. Gunakan "questionText" sebagai "label".
           3. ADMIN'S X-RAY VISION (MUTLAK): Salin persis teks dari "interrogationGoal" ke dalam properti "aiReasoning". Ini wajib ada!
           4. SMART PLACEHOLDER (MUTLAK): Gunakan teks dari "suggestedPlaceholder" ke dalam properti "placeholder".
@@ -163,7 +210,7 @@ export const executeFabricator = async (
           const sectionResult = await withRetry(() => sectionModel.generateContent(sectionPrompt));
           let rawJsonText = sectionResult.response.text().trim();
           if (rawJsonText.startsWith('```')) rawJsonText = rawJsonText.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
-          
+
           return { stepNumber: currentStepNumber, title: step.title, description: step.description, fields: JSON.parse(rawJsonText) };
         } catch (error: any) {
           await logToTerminal(templateRef, `Peringatan: Gagal meracik Seksi ${currentStepNumber} "${step.title}".`, "error");
@@ -175,12 +222,48 @@ export const executeFabricator = async (
       rawFinalSteps.push(...batchResults);
     }
 
-    await logToTerminal(templateRef, "Seluruh seksi formulir berhasil diracik.", "success");
+    // ====================================================================
+    // SAFEGUARD: Post-Processing Anti-Duplikasi ID (Global)
+    // ====================================================================
+    const globalIdSet = new Set<string>();
+    for (const step of rawFinalSteps) {
+      if (step.fields && Array.isArray(step.fields)) {
+        const idMapping: Record<string, string> = {};
+        
+        // 1. Validasi dan pastikan unik
+        for (const field of step.fields) {
+          if (!field.id) field.id = "field_" + Math.random().toString(36).substring(2, 9);
+          
+          let originalId = field.id;
+          let newId = originalId;
+          let counter = 1;
+          while (globalIdSet.has(newId)) {
+            newId = `${originalId}_${counter}`;
+            counter++;
+          }
+          
+          if (newId !== originalId) {
+            idMapping[originalId] = newId;
+            field.id = newId;
+          }
+          globalIdSet.add(newId);
+        }
+        
+        // 2. Update referensi showIf jika ada ID yang berubah
+        for (const field of step.fields) {
+          if (field.showIf && field.showIf.fieldId && idMapping[field.showIf.fieldId]) {
+            field.showIf.fieldId = idMapping[field.showIf.fieldId];
+          }
+        }
+      }
+    }
+
+    await logToTerminal(templateRef, "Seluruh seksi formulir berhasil diracik dan divalidasi.", "success");
 
     const updateData = {
       rawStepsCache: rawFinalSteps,
       aiGenerationStatus: {
-        phase: "FABRICATING", 
+        phase: "FABRICATING",
         message: "Produksi kuesioner selesai. Mengalihkan komando ke Validator Agent untuk QA Logika...",
         updatedAt: admin.firestore.FieldValue.serverTimestamp()
       }

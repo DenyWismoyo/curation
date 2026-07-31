@@ -64,6 +64,7 @@ import {
 
 import { TabGeneral } from '@/app/components/admin/template-builder/TabGeneral'
 import { TabAIConfig } from '@/app/components/admin/template-builder/TabAIConfig'
+import { TabAdaptive } from '@/app/components/admin/template-builder/TabAdaptive'
 import { TabFormBuilder } from '@/app/components/admin/template-builder/TabFormBuilder'
 import { AdminTemplatePreview } from '@/app/components/admin/AdminTemplatePreview'
 import { TabLogs } from '@/app/components/admin/template-builder/TabLogs'
@@ -1019,6 +1020,9 @@ function TemplateBuilderContent() {
           <TabsTrigger value="ai" className="rounded-xl px-5 py-2 text-xs font-bold gap-2">
             <BrainCircuit className="w-4 h-4" /> Konfigurasi AI
           </TabsTrigger>
+          <TabsTrigger value="adaptive" className="rounded-xl px-5 py-2 text-xs font-bold gap-2">
+            <Sparkles className="w-4 h-4" /> Adaptive RAG
+          </TabsTrigger>
           <TabsTrigger value="preview" className="rounded-xl px-5 py-2 text-xs font-bold gap-2">
             <Eye className="w-4 h-4" /> Preview Live
           </TabsTrigger>
@@ -1048,6 +1052,15 @@ function TemplateBuilderContent() {
         <TabsContent value="ai" className="mt-6">
           {activeTemplate && (
             <TabAIConfig
+              template={activeTemplate}
+              onChange={(updated) => setActiveTemplate(updated)}
+            />
+          )}
+        </TabsContent>
+
+        <TabsContent value="adaptive" className="mt-6">
+          {activeTemplate && (
+            <TabAdaptive
               template={activeTemplate}
               onChange={(updated) => setActiveTemplate(updated)}
             />

@@ -158,6 +158,8 @@ export interface AiPromptConfig {
   formPurpose?: FormDomainPurpose; 
   customUiLabels?: CustomUiLabels;
   actionPlanBehavior?: string;
+  isAdaptive?: boolean;
+  maxAdaptiveSections?: number;
 }
 
 export interface FormTemplate {

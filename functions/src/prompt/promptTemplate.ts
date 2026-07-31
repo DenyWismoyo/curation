@@ -19,12 +19,14 @@ export interface PromptParams {
   negativePrompts?: string;           
   formatInstructions?: string;       
   customScoringRubric?: string; 
-  targetAudience?: string; 
+  targetAudience?: string;
+  formPurpose?: string; // 'assessment' | 'counseling' | 'monitoring' | 'consultation' | 'custom'
 }
 
 export const buildAssessmentPrompt = (params: PromptParams) => {
   // PERBAIKAN: Gaya instruksi dan aturan dilarang yang jauh lebih spesifik untuk tiap audiens
   const audienceType = params.targetAudience || 'company';
+  const formPurpose = params.formPurpose || 'assessment';
   let audienceInstruction = "";
   let isIndividual = false;
   
@@ -41,11 +43,37 @@ export const buildAssessmentPrompt = (params: PromptParams) => {
      audienceInstruction = "TARGET AUDIENS: PERUSAHAAN BESAR / BISNIS KORPORAT. Gunakan bahasa profesional korporat (B2B), fokus pada metrik bisnis makro, skalabilitas, manajemen supply chain, dan ekspansi penetrasi pasar.";
   }
 
+  // ═══════════════════════════════════════════════════════════════════
+  // PERBAIKAN: formPurpose-aware framing untuk non-assessment use cases
+  // ═══════════════════════════════════════════════════════════════════
+  let formPurposeInstruction = "";
+  if (formPurpose === 'counseling') {
+    formPurposeInstruction = `
+KONTEKS FORM: INI ADALAH SESI KONSELING, BUKAN AUDIT BISNIS.
+- Ganti framing "swotAnalysis" menjadi pemetaan karakter: strengths = kekuatan pribadi, weaknesses = area pengembangan, opportunities = peluang pertumbuhan, threats = hambatan psikologis/eksternal.
+- "incubationRoute" WAJIB berupa rekomendasi sesi, latihan, atau program pengembangan diri/konseling — BUKAN rute bisnis.
+- "riskAssessment.criticalRisks" WAJIB berupa risiko psikologis atau hambatan personal — BUKAN risiko bisnis.
+- Gunakan bahasa empatik, tidak menghakimi, dan memberdayakan di seluruh output.`;
+  } else if (formPurpose === 'monitoring') {
+    formPurposeInstruction = `
+KONTEKS FORM: INI ADALAH MONITORING/EVALUASI PROGRES.
+- Fokus pada capaian versus target, efektivitas implementasi, dan hambatan operasional yang teridentifikasi.
+- "incubationRoute" berupa rekomendasi perbaikan proses atau intervensi spesifik.
+- "executiveSummary" harus mencerminkan progres yang telah dicapai, bukan hanya penilaian awal.`;
+  } else if (formPurpose === 'consultation') {
+    formPurposeInstruction = `
+KONTEKS FORM: INI ADALAH SESI KONSULTASI PAKAR.
+- Fokus pada identifikasi akar masalah dan penyusunan solusi yang sangat spesifik.
+- "incubationRoute" berupa roadmap solusi yang terstruktur.
+- Setiap rekomendasi harus actionable dan dapat langsung diimplementasikan.`;
+  }
+
   return `
   ANDA ADALAH: ${params.aiPersona}. Tugas Anda adalah melakukan penilaian terhadap profil/entitas/peserta berikut dalam kategori: "${params.trackContext}".
   
   TUJUAN UTAMA: ${params.assessmentGoal}
   ${audienceInstruction}
+  ${formPurposeInstruction}
   
   ATURAN PENILAIAN UMUM: ${params.strictnessInstruction}
   ${params.fewShotContext || ''}

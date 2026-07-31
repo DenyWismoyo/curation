@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { FormTemplate, FormStep, FormField, FieldType } from '@/types/curation';
-import { ChevronUp, ChevronDown, Trash2, Sparkles, ArrowUp, ArrowDown, Plus, GitBranch, Save, Loader2, Bot } from 'lucide-react';
+import { ChevronUp, ChevronDown, Trash2, Sparkles, Plus, GitBranch, Save, Loader2, Bot, GripVertical, Lock, Edit2, ShieldAlert } from 'lucide-react';
 import { doc, onSnapshot, updateDoc } from 'firebase/firestore'; 
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { db } from '@/lib/firebase'; 
@@ -18,9 +18,14 @@ interface TabFormBuilderProps {
 
 export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilderProps) {
   const [expandedSteps, setExpandedSteps] = useState<number[]>([0]);
+  const [expandedFields, setExpandedFields] = useState<string[]>([]);
   const [stepToDelete, setStepToDelete] = useState<number | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [enhancingStepIndex, setEnhancingStepIndex] = useState<number | null>(null);
+  
+  // Drag and Drop State
+  const [draggedField, setDraggedField] = useState<{ stepIdx: number, fieldIdx: number } | null>(null);
+  const [dragOverField, setDragOverField] = useState<{ stepIdx: number, fieldIdx: number } | null>(null);
 
   const templateRef = useRef<FormTemplate>(template);
   useEffect(() => {
@@ -32,7 +37,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
   useEffect(() => {
     if (!template.id) return;
     
-    const unsubscribe = onSnapshot(doc(db, "form_templates", template.id), (snapshot) => {
+    const unsubscribe = onSnapshot(doc(db, 'form_templates', template.id), (snapshot) => {
       if (snapshot.exists()) {
         const docData = snapshot.data();
         const status = docData.aiGenerationStatus;
@@ -68,7 +73,6 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
     return fields;
   };
 
-  // PERBAIKAN: Mencegah Form Submit bawaan & Mengunci Status AI
   const handleManualSave = async (e?: React.MouseEvent) => {
     if (e) {
       e.preventDefault();
@@ -79,22 +83,26 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
       await onAutoSave(template);
     } else {
       try {
-        await updateDoc(doc(db, "form_templates", template.id), {
+        await updateDoc(doc(db, 'form_templates', template.id), {
           steps: template.steps,
           lastUpdated: new Date().toISOString(),
-          // Paksa AI untuk standby agar tidak ada trigger tak terduga
-          "aiGenerationStatus.phase": "COMPLETED",
-          "aiGenerationStatus.message": "Formulir disimpan secara manual oleh Admin."
+          'aiGenerationStatus.phase': 'COMPLETED',
+          'aiGenerationStatus.message': 'Formulir disimpan secara manual oleh Admin.'
         });
-        toast.success("Formulir berhasil disimpan secara permanen!");
+        toast.success('Formulir berhasil disimpan secara permanen!');
       } catch (e: any) {
-        toast.error("Gagal menyimpan perubahan: " + e.message);
+        toast.error('Gagal menyimpan perubahan: ' + e.message);
       }
     }
   };
 
   const toggleStepExpansion = (stepIndex: number) => {
     setExpandedSteps(prev => prev.includes(stepIndex) ? prev.filter(idx => idx !== stepIndex) : [...prev, stepIndex]);
+  };
+
+  const toggleFieldExpansion = (stepIdx: number, fieldIdx: number) => {
+    const fieldKey = `${stepIdx}-${fieldIdx}`;
+    setExpandedFields(prev => prev.includes(fieldKey) ? prev.filter(k => k !== fieldKey) : [...prev, fieldKey]);
   };
 
   const addStep = () => {
@@ -116,9 +124,10 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
 
   const addField = (stepIndex: number) => {
     const newSteps = [...template.steps];
-    const newField: FormField = { id: `field_${Date.now().toString().slice(-4)}`, label: "Pertanyaan Baru", type: "text", required: false, gridSpan: 2 };
+    const newField: FormField = { id: `field_${Date.now().toString().slice(-4)}`, label: 'Pertanyaan Baru', type: 'text', required: false, gridSpan: 2 };
     newSteps[stepIndex].fields = [...newSteps[stepIndex].fields, newField];
     onChange({ ...template, steps: newSteps });
+    setExpandedFields(prev => [...prev, `${stepIndex}-${newSteps[stepIndex].fields.length - 1}`]);
   };
 
   const updateField = (stepIndex: number, fieldIndex: number, key: keyof FormField, value: any) => {
@@ -139,23 +148,42 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
     onChange({ ...template, steps: newSteps });
   };
 
-  const moveField = (stepIndex: number, fieldIndex: number, direction: 'up' | 'down') => {
-    const newSteps = [...template.steps];
-    const fields = [...newSteps[stepIndex].fields];
-    
-    if (direction === 'up' && fieldIndex > 0) {
-      [fields[fieldIndex - 1], fields[fieldIndex]] = [fields[fieldIndex], fields[fieldIndex - 1]];
-    } else if (direction === 'down' && fieldIndex < fields.length - 1) {
-      [fields[fieldIndex], fields[fieldIndex + 1]] = [fields[fieldIndex + 1], fields[fieldIndex]];
+  const handleDragStart = (e: React.DragEvent, stepIdx: number, fieldIdx: number) => {
+    e.dataTransfer.effectAllowed = 'move';
+    setDraggedField({ stepIdx, fieldIdx });
+  };
+
+  const handleDragOver = (e: React.DragEvent, stepIdx: number, fieldIdx: number) => {
+    e.preventDefault(); // Diperlukan untuk membolehkan drop
+    if (draggedField && draggedField.stepIdx === stepIdx) {
+      setDragOverField({ stepIdx, fieldIdx });
     }
-    
-    newSteps[stepIndex].fields = fields;
-    onChange({ ...template, steps: newSteps });
+  };
+
+  const handleDrop = (e: React.DragEvent, stepIdx: number, fieldIdx: number) => {
+    e.preventDefault();
+    if (draggedField && draggedField.stepIdx === stepIdx && draggedField.fieldIdx !== fieldIdx) {
+      const newSteps = [...template.steps];
+      const fields = [...newSteps[stepIdx].fields];
+      
+      const [movedItem] = fields.splice(draggedField.fieldIdx, 1);
+      fields.splice(fieldIdx, 0, movedItem);
+      
+      newSteps[stepIdx].fields = fields;
+      onChange({ ...template, steps: newSteps });
+    }
+    setDraggedField(null);
+    setDragOverField(null);
+  };
+  
+  const handleDragEnd = () => {
+    setDraggedField(null);
+    setDragOverField(null);
   };
 
   const handleEnhanceStep = async (stepIndex: number, stepData: FormStep) => {
     if (!stepData.fields || stepData.fields.length === 0) {
-      toast.warning("Seksi ini masih kosong.", { description: "Harap buat minimal 1 pertanyaan mentah terlebih dahulu." });
+      toast.warning('Seksi ini masih kosong.', { description: 'Harap buat minimal 1 pertanyaan mentah terlebih dahulu.' });
       return;
     }
 
@@ -179,12 +207,12 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
         const newSteps = [...template.steps];
         newSteps[stepIndex].fields = data.fields;
         onChange({ ...template, steps: newSteps });
-        toast.success("Berhasil!", { description: `Seksi "${stepData.title}" berhasil disempurnakan secara massal oleh AI.` });
+        toast.success('Berhasil!', { description: `Seksi "${stepData.title}" berhasil disempurnakan secara massal oleh AI.` });
       }
 
     } catch (error: any) {
       console.error(error);
-      toast.error("Gagal menyempurnakan seksi: " + error.message);
+      toast.error('Gagal menyempurnakan seksi: ' + error.message);
     } finally {
       setEnhancingStepIndex(null);
     }
@@ -202,7 +230,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center bg-white p-4 rounded-3xl ring-1 ring-slate-200 shadow-sm mb-6">
+      <div className="sticky top-0 z-50 flex justify-between items-center bg-white/90 backdrop-blur-md p-4 rounded-3xl ring-1 ring-slate-200 shadow-sm mb-6">
         <div className="flex items-center gap-3">
           <div className="p-2.5 bg-slate-100 text-slate-600 rounded-xl"><Bot className="w-5 h-5"/></div>
           <div>
@@ -210,7 +238,6 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Hasil Generasi Otak AI</p>
           </div>
         </div>
-        {/* PERBAIKAN: Menambahkan type="button" untuk mencegah form parent ter-submit */}
         <Button type="button" onClick={handleManualSave} variant="outline" className="bg-slate-900 text-white hover:bg-slate-800 font-bold hidden sm:flex gap-2 rounded-xl h-10 shadow-sm">
           <Save className="w-4 h-4" /> Simpan Form
         </Button>
@@ -276,188 +303,265 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
               </div>
 
               {isExpanded && (
-                <div className="p-4 sm:p-6 bg-slate-50/40 space-y-6 border-t border-slate-100">
+                <div className="p-4 sm:p-6 bg-slate-50/40 space-y-3 border-t border-slate-100">
                   {step.fields?.map((field, fIdx) => {
                     const isPrimaryIdentity = ['namaUsaha', 'namaPengisi'].includes(field.id);
-                    
+                    const fieldKey = `${sIdx}-${fIdx}`;
+                    const isFieldExpanded = expandedFields.includes(fieldKey);
+                    const isDragging = draggedField?.stepIdx === sIdx && draggedField?.fieldIdx === fIdx;
+                    const isDragOver = dragOverField?.stepIdx === sIdx && dragOverField?.fieldIdx === fIdx;
+
                     return (
-                      <div key={`field-${sIdx}-${fIdx}`} className={`p-4 sm:p-5 rounded-2xl ring-1 shadow-sm flex flex-col md:flex-row gap-5 relative transition-all ${isPrimaryIdentity ? 'bg-indigo-50/20 ring-indigo-100/60' : 'bg-white ring-slate-200/70 hover:ring-indigo-200'}`}>
-                        
-                        <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
-                          
-                          <div className="space-y-1 md:col-span-2 relative">
-                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Label Pertanyaan</label>
-                            <Input value={field.label} onChange={e => updateField(sIdx, fIdx, 'label', e.target.value)} className="bg-white border-slate-200 h-10 rounded-xl font-bold text-slate-800 text-sm" />
-                          </div>
-
-                          <div className="space-y-1">
-                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tipe Input</label>
-                            <select value={field.type} disabled={isPrimaryIdentity} onChange={e => updateField(sIdx, fIdx, 'type', e.target.value as FieldType)} className="w-full border border-slate-200 h-10 rounded-xl text-xs px-3 bg-white text-slate-800 font-medium">
-                              <option value="text">Teks Pendek</option>
-                              <option value="textarea">Teks Panjang</option>
-                              <option value="number">Angka / Nominal (IDR)</option>
-                              <option value="date">Tanggal</option>
-                              <option value="select">Dropdown</option>
-                              <option value="radio">Pilihan Tunggal</option>
-                              <option value="checkbox">Pilihan Ganda</option>
-                              <option value="file">Upload Dokumen</option>
-                            </select>
-                          </div>
-
-                          <div className="space-y-1">
-                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex justify-between items-center">
-                              <span>Key Database (ID)</span>
-                              {!isPrimaryIdentity && <button type="button" onClick={() => generateAutoIdFromLabel(sIdx, fIdx)} className="text-indigo-600 text-[9px] font-black flex items-center gap-0.5 bg-indigo-50 px-1.5 py-0.5 rounded"><Sparkles className="w-2.5 h-2.5"/> Auto-ID</button>}
-                            </label>
-                            <Input value={field.id} disabled={isPrimaryIdentity} onChange={e => updateField(sIdx, fIdx, 'id', e.target.value.replace(/[^a-zA-Z0-9_]/g, ''))} className="bg-white border-slate-200 text-indigo-700 h-10 rounded-xl text-xs font-mono" />
-                          </div>
-                          
-                          <div className="flex items-center gap-5 pt-1 md:col-span-2">
-                            <label className="flex items-center gap-2 text-xs font-bold text-slate-600 cursor-pointer select-none">
-                              <input type="checkbox" checked={field.required} disabled={isPrimaryIdentity} onChange={e => updateField(sIdx, fIdx, 'required', e.target.checked)} className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
-                              Wajib Diisi
-                            </label>
-                            <label className="flex items-center gap-2 text-xs font-bold text-slate-600 cursor-pointer select-none">
-                              <input type="checkbox" checked={field.gridSpan === 2} onChange={e => updateField(sIdx, fIdx, 'gridSpan', e.target.checked ? 2 : 1)} className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
-                              Lebar Penuh (100%)
-                            </label>
-                          </div>
-
-                          {/* --- LOGIKA BERCABANG (SHOW-IF) --- */}
-                          {!isPrimaryIdentity && (
-                            <div className="md:col-span-2 space-y-2 p-3.5 bg-indigo-50/30 rounded-xl border border-indigo-100/50">
-                              <label className="text-[10px] font-black text-indigo-900 uppercase tracking-wider flex items-center gap-1.5"><GitBranch className="w-3.5 h-3.5 text-indigo-600"/> Logika Aliran Cabang Pertanyaan</label>
-                              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                                <select 
-                                  value={field.showIf ? "conditional" : "always"} 
-                                  onChange={(e) => {
-                                    if (e.target.value === "always") {
-                                      updateField(sIdx, fIdx, 'showIf', undefined);
-                                    } else {
-                                      const avail = getAllAvailableFields();
-                                      updateField(sIdx, fIdx, 'showIf', { fieldId: avail[0]?.id || '', equals: '' });
-                                    }
-                                  }}
-                                  className="border border-slate-200 h-9 rounded-lg text-xs px-2 bg-white text-slate-700"
-                                >
-                                  <option value="always">Tampilkan Selalu</option>
-                                  <option value="conditional">Tampilkan Kondisional...</option>
-                                </select>
-                                
+                      <div 
+                        key={`field-${sIdx}-${fIdx}`} 
+                        draggable={!isPrimaryIdentity}
+                        onDragStart={(e) => handleDragStart(e, sIdx, fIdx)}
+                        onDragOver={(e) => handleDragOver(e, sIdx, fIdx)}
+                        onDrop={(e) => handleDrop(e, sIdx, fIdx)}
+                        onDragEnd={handleDragEnd}
+                        className={`rounded-2xl ring-1 shadow-sm transition-all overflow-hidden 
+                          ${isPrimaryIdentity ? 'bg-indigo-50/20 ring-indigo-100/60' : 'bg-white ring-slate-200/70 hover:ring-indigo-300'}
+                          ${isDragging ? 'opacity-40 scale-[0.98]' : ''}
+                          ${isDragOver ? 'border-t-4 border-t-indigo-500' : ''}
+                        `}
+                      >
+                        {/* SUMMARY VIEW */}
+                        <div 
+                          onClick={() => toggleFieldExpansion(sIdx, fIdx)}
+                          className={`flex items-center gap-3 p-3 sm:p-4 cursor-pointer hover:bg-slate-50/50 select-none ${isFieldExpanded ? 'bg-slate-50 border-b border-slate-100' : ''}`}
+                        >
+                          <div className="flex items-center gap-3 flex-1 min-w-0">
+                            {!isPrimaryIdentity ? (
+                              <div className="cursor-grab active:cursor-grabbing p-1 text-slate-300 hover:text-indigo-600 hidden sm:block">
+                                <GripVertical className="w-5 h-5" />
+                              </div>
+                            ) : (
+                              <div className="p-1 text-indigo-400 hidden sm:block" title="Field Wajib Sistem">
+                                <Lock className="w-4 h-4" />
+                              </div>
+                            )}
+                            
+                            <div className="flex-1 truncate">
+                              <h4 className="text-sm font-bold text-slate-800 truncate">{field.label || "Pertanyaan Tanpa Label"}</h4>
+                              <div className="flex flex-wrap items-center gap-2 mt-1">
+                                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-200/60 text-slate-600">
+                                  {field.type}
+                                </span>
+                                <span className="text-[10px] text-slate-400 font-mono hidden sm:block">ID: {field.id}</span>
+                                {field.required && (
+                                  <span className="text-[10px] font-bold text-rose-500 flex items-center gap-1">
+                                    <ShieldAlert className="w-3 h-3" /> Wajib
+                                  </span>
+                                )}
                                 {field.showIf && (
-                                  <>
-                                    <select 
-                                      value={field.showIf.fieldId} 
-                                      onChange={(e) => updateField(sIdx, fIdx, 'showIf', { ...field.showIf, fieldId: e.target.value, equals: '' })}
-                                      className="border border-slate-200 h-9 rounded-lg text-xs px-2 bg-white text-slate-700"
-                                    >
-                                      <option value="" disabled>Pilih Pertanyaan Pemicu...</option>
-                                      {getAllAvailableFields().map(f => (
-                                        <option key={f.id} value={f.id}>{f.label} ({f.id})</option>
-                                      ))}
-                                    </select>
-                                    
-                                    {/* BLOK PINTAR: Merubah input menjadi Dropdown jika pertanyaan pemicu memiliki opsi */}
-                                    {(() => {
-                                      const targetField = getAllAvailableFields().find(f => f.id === field.showIf?.fieldId);
-                                      
-                                      if (targetField && targetField.options && targetField.options.length > 0) {
-                                        return (
-                                          <select 
-                                            value={String(field.showIf?.equals || '')} 
-                                            onChange={(e) => updateField(sIdx, fIdx, 'showIf', { ...field.showIf, equals: e.target.value })}
-                                            className="border border-slate-200 h-9 rounded-lg text-xs px-2 bg-white text-slate-700 font-bold"
-                                          >
-                                            <option value="" disabled>Pilih Jawaban Pemicu...</option>
-                                            {targetField.options.map((opt: any, i: number) => {
-                                              const optLabel = typeof opt === 'object' ? opt.label : opt;
-                                              return <option key={i} value={optLabel}>{optLabel}</option>;
-                                            })}
-                                          </select>
-                                        );
-                                      }
-                                      
-                                      // Fallback jika pertanyaan pemicu bertipe Text biasa
-                                      return (
-                                        <Input 
-                                          placeholder="Ketik Nilai Pemicu (Cth: Ya)" 
-                                          value={String(field.showIf?.equals || '')} 
-                                          onChange={(e) => updateField(sIdx, fIdx, 'showIf', { ...field.showIf, equals: e.target.value })}
-                                          className="bg-white border-slate-200 h-9 text-xs rounded-lg"
-                                        />
-                                      );
-                                    })()}
-                                  </>
+                                  <span className="text-[10px] font-bold text-indigo-600 flex items-center gap-1 bg-indigo-100/50 px-1.5 py-0.5 rounded">
+                                    <GitBranch className="w-3 h-3" /> Kondisional
+                                  </span>
                                 )}
                               </div>
                             </div>
-                          )}
+                          </div>
 
-                          {/* SCORING MATRIX COMPONENT */}
-                          {(field.type === 'radio' || field.type === 'checkbox' || field.type === 'select') && !isPrimaryIdentity && (
-                            <div className="md:col-span-2 space-y-2.5 p-4 bg-slate-50 border border-slate-200 rounded-xl">
-                              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Opsi Jawaban & Matrix Bobot Kuantitatif (0-100)</label>
-                              
-                              <div className="space-y-2">
-                                {(field.options || []).map((opt, optIdx) => {
-                                  const isObj = typeof opt === 'object' && opt !== null;
-                                  const optLabel = isObj ? opt.label : String(opt);
-                                  const optWeight = isObj ? opt.weight : 0;
-
-                                  return (
-                                    <div key={optIdx} className="flex items-center gap-2 bg-white p-2 border border-slate-200 rounded-lg shadow-sm">
-                                      <Input 
-                                        value={optLabel} 
-                                        onChange={e => {
-                                          const newOpts = [...(field.options || [])];
-                                          newOpts[optIdx] = { label: e.target.value, weight: optWeight };
-                                          updateField(sIdx, fIdx, 'options', newOpts);
-                                        }} 
-                                        className="h-8 text-xs bg-white flex-1" 
-                                      />
-                                      <div className="flex items-center gap-1 shrink-0">
-                                        <span className="text-[9px] font-bold text-indigo-500 uppercase">Bobot:</span>
-                                        <Input 
-                                          type="number" value={optWeight} min={0} max={100}
-                                          onChange={e => {
-                                            const newOpts = [...(field.options || [])];
-                                            newOpts[optIdx] = { label: optLabel, weight: parseInt(e.target.value) || 0 };
-                                            updateField(sIdx, fIdx, 'options', newOpts);
-                                          }} 
-                                          className="w-14 h-8 text-center text-xs font-bold text-indigo-600 bg-indigo-50/40 border-indigo-100" 
-                                        />
-                                      </div>
-                                      <Button type="button" variant="ghost" onClick={() => {
-                                        const newOpts = [...(field.options || [])];
-                                        newOpts.splice(optIdx, 1);
-                                        updateField(sIdx, fIdx, 'options', newOpts);
-                                      }} className="h-8 w-8 text-slate-400 hover:text-rose-500 p-0 rounded-md">
-                                        <Trash2 className="w-3.5 h-3.5"/>
-                                      </Button>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                              <Button type="button" variant="outline" size="sm" onClick={() => {
-                                const newOpts = [...(field.options || [])];
-                                newOpts.push({ label: `Pilihan ${newOpts.length + 1}`, weight: 0 });
-                                updateField(sIdx, fIdx, 'options', newOpts);
-                              }} className="w-full h-8 text-[11px] border-dashed font-bold text-slate-500">
-                                <Plus className="w-3.5 h-3.5 mr-1"/> Tambah Parameter Pilihan Berbobot
+                          <div className="flex items-center gap-2 shrink-0">
+                            {!isPrimaryIdentity && (
+                              <Button 
+                                type="button" 
+                                variant="ghost" 
+                                size="sm"
+                                onClick={(e) => { e.stopPropagation(); removeField(sIdx, fIdx); }} 
+                                className="h-8 w-8 p-0 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 hidden sm:flex"
+                              >
+                                <Trash2 className="h-4 w-4" />
                               </Button>
-                            </div>
-                          )}
+                            )}
+                            <Button 
+                              type="button" 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={(e) => { e.stopPropagation(); toggleFieldExpansion(sIdx, fIdx); }}
+                              className={`h-8 w-8 p-0 rounded-xl ${isFieldExpanded ? 'bg-indigo-100 text-indigo-600' : 'text-slate-400 hover:text-indigo-600 hover:bg-indigo-50'}`}
+                            >
+                              {isFieldExpanded ? <ChevronUp className="w-4 h-4" /> : <Edit2 className="w-4 h-4" />}
+                            </Button>
+                          </div>
                         </div>
 
-                        <div className="flex md:flex-col gap-1 items-center justify-center pt-3 md:pt-0 md:pl-3 border-t md:border-t-0 md:border-l border-slate-100 shrink-0">
-                          <button type="button" onClick={() => moveField(sIdx, fIdx, 'up')} disabled={fIdx === 0} className="p-1.5 text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg"><ArrowUp className="h-4 w-4" /></button>
-                          <button type="button" onClick={() => moveField(sIdx, fIdx, 'down')} disabled={fIdx === step.fields.length - 1} className="p-1.5 text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg"><ArrowDown className="h-4 w-4" /></button>
-                          <button type="button" onClick={() => removeField(sIdx, fIdx)} disabled={isPrimaryIdentity} className="p-1.5 text-slate-400 hover:bg-rose-50 hover:text-rose-600 rounded-lg"><Trash2 className="h-4 w-4" /></button>
-                        </div>
+                        {/* EXPANDED EDIT VIEW */}
+                        {isFieldExpanded && (
+                          <div className="p-4 sm:p-5 bg-white/40">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                              
+                              <div className="space-y-1 md:col-span-2 relative">
+                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Label Pertanyaan</label>
+                                <Input value={field.label} onChange={e => updateField(sIdx, fIdx, 'label', e.target.value)} className="bg-white border-slate-200 h-10 rounded-xl font-bold text-slate-800 text-sm" />
+                              </div>
+
+                              <div className="space-y-1">
+                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tipe Input</label>
+                                <select value={field.type} disabled={isPrimaryIdentity} onChange={e => updateField(sIdx, fIdx, 'type', e.target.value as FieldType)} className="w-full border border-slate-200 h-10 rounded-xl text-xs px-3 bg-white text-slate-800 font-medium">
+                                  <option value="text">Teks Pendek</option>
+                                  <option value="textarea">Teks Panjang</option>
+                                  <option value="number">Angka / Nominal (IDR)</option>
+                                  <option value="date">Tanggal</option>
+                                  <option value="select">Dropdown</option>
+                                  <option value="radio">Pilihan Tunggal</option>
+                                  <option value="checkbox">Pilihan Ganda</option>
+                                  <option value="file">Upload Dokumen</option>
+                                </select>
+                              </div>
+
+                              <div className="space-y-1">
+                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex justify-between items-center">
+                                  <span>Key Database (ID)</span>
+                                  {!isPrimaryIdentity && <button type="button" onClick={() => generateAutoIdFromLabel(sIdx, fIdx)} className="text-indigo-600 text-[9px] font-black flex items-center gap-0.5 bg-indigo-50 px-1.5 py-0.5 rounded"><Sparkles className="w-2.5 h-2.5"/> Auto-ID</button>}
+                                </label>
+                                <Input value={field.id} disabled={isPrimaryIdentity} onChange={e => updateField(sIdx, fIdx, 'id', e.target.value.replace(/[^a-zA-Z0-9_]/g, ''))} className="bg-white border-slate-200 text-indigo-700 h-10 rounded-xl text-xs font-mono" />
+                              </div>
+                              
+                              <div className="flex items-center gap-5 pt-1 md:col-span-2">
+                                <label className="flex items-center gap-2 text-xs font-bold text-slate-600 cursor-pointer select-none">
+                                  <input type="checkbox" checked={field.required} disabled={isPrimaryIdentity} onChange={e => updateField(sIdx, fIdx, 'required', e.target.checked)} className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
+                                  Wajib Diisi
+                                </label>
+                                <label className="flex items-center gap-2 text-xs font-bold text-slate-600 cursor-pointer select-none">
+                                  <input type="checkbox" checked={field.gridSpan === 2} onChange={e => updateField(sIdx, fIdx, 'gridSpan', e.target.checked ? 2 : 1)} className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
+                                  Lebar Penuh (100%)
+                                </label>
+                              </div>
+
+                              {/* --- LOGIKA BERCABANG (SHOW-IF) --- */}
+                              {!isPrimaryIdentity && (
+                                <div className="md:col-span-2 space-y-2 p-4 bg-indigo-50/50 rounded-2xl border border-indigo-100">
+                                  <label className="text-[10px] font-black text-indigo-900 uppercase tracking-wider flex items-center gap-1.5"><GitBranch className="w-3.5 h-3.5 text-indigo-600"/> Logika Aliran Cabang Pertanyaan</label>
+                                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                    <select 
+                                      value={field.showIf ? "conditional" : "always"} 
+                                      onChange={(e) => {
+                                        if (e.target.value === "always") {
+                                          updateField(sIdx, fIdx, 'showIf', undefined);
+                                        } else {
+                                          const avail = getAllAvailableFields();
+                                          updateField(sIdx, fIdx, 'showIf', { fieldId: avail[0]?.id || '', equals: '' });
+                                        }
+                                      }}
+                                      className="border border-slate-200 h-10 rounded-xl text-xs px-2 bg-white text-slate-700"
+                                    >
+                                      <option value="always">Tampilkan Selalu</option>
+                                      <option value="conditional">Tampilkan Kondisional...</option>
+                                    </select>
+                                    
+                                    {field.showIf && (
+                                      <>
+                                        <select 
+                                          value={field.showIf.fieldId} 
+                                          onChange={(e) => updateField(sIdx, fIdx, 'showIf', { ...field.showIf, fieldId: e.target.value, equals: '' })}
+                                          className="border border-indigo-200 h-10 rounded-xl text-xs px-2 bg-white text-indigo-900 font-medium"
+                                        >
+                                          <option value="" disabled>Pilih Pertanyaan Pemicu...</option>
+                                          {getAllAvailableFields().map(f => (
+                                            <option key={f.id} value={f.id}>{f.label} ({f.id})</option>
+                                          ))}
+                                        </select>
+                                        
+                                        {(() => {
+                                          const targetField = getAllAvailableFields().find(f => f.id === field.showIf?.fieldId);
+                                          
+                                          if (targetField && targetField.options && targetField.options.length > 0) {
+                                            return (
+                                              <select 
+                                                value={String(field.showIf?.equals || '')} 
+                                                onChange={(e) => updateField(sIdx, fIdx, 'showIf', { ...field.showIf, equals: e.target.value })}
+                                                className="border border-indigo-300 h-10 rounded-xl text-xs px-2 bg-indigo-50 text-indigo-700 font-bold"
+                                              >
+                                                <option value="" disabled>Pilih Jawaban Pemicu...</option>
+                                                {targetField.options.map((opt: any, i: number) => {
+                                                  const optLabel = typeof opt === 'object' ? opt.label : opt;
+                                                  return <option key={i} value={optLabel}>{optLabel}</option>;
+                                                })}
+                                              </select>
+                                            );
+                                          }
+                                          
+                                          return (
+                                            <Input 
+                                              placeholder="Ketik Nilai Pemicu (Cth: Ya)" 
+                                              value={String(field.showIf?.equals || '')} 
+                                              onChange={(e) => updateField(sIdx, fIdx, 'showIf', { ...field.showIf, equals: e.target.value })}
+                                              className="bg-indigo-50 border-indigo-200 h-10 text-xs rounded-xl font-bold text-indigo-700"
+                                            />
+                                          );
+                                        })()}
+                                      </>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* SCORING MATRIX COMPONENT */}
+                              {(field.type === 'radio' || field.type === 'checkbox' || field.type === 'select') && !isPrimaryIdentity && (
+                                <div className="md:col-span-2 space-y-3 p-4 sm:p-5 bg-slate-50 border border-slate-200 rounded-2xl">
+                                  <label className="text-[10px] font-black text-slate-600 uppercase tracking-wider block">Opsi Jawaban & Matrix Bobot Kuantitatif (0-100)</label>
+                                  
+                                  <div className="space-y-2">
+                                    {(field.options || []).map((opt, optIdx) => {
+                                      const isObj = typeof opt === 'object' && opt !== null;
+                                      const optLabel = isObj ? opt.label : String(opt);
+                                      const optWeight = isObj ? opt.weight : 0;
+
+                                      return (
+                                        <div key={optIdx} className="flex items-center gap-2 bg-white p-2 border border-slate-200 rounded-xl shadow-sm">
+                                          <Input 
+                                            value={optLabel} 
+                                            onChange={e => {
+                                              const newOpts = [...(field.options || [])];
+                                              newOpts[optIdx] = { label: e.target.value, weight: optWeight };
+                                              updateField(sIdx, fIdx, 'options', newOpts);
+                                            }} 
+                                            className="h-9 text-xs font-medium bg-white flex-1 border-none focus-visible:ring-0 shadow-none" 
+                                            placeholder="Teks Pilihan..."
+                                          />
+                                          <div className="w-px h-5 bg-slate-200 mx-1"></div>
+                                          <div className="flex items-center gap-2 shrink-0">
+                                            <span className="text-[9px] font-black text-indigo-400 uppercase tracking-widest hidden sm:block">Bobot:</span>
+                                            <Input 
+                                              type="number" value={optWeight} min={0} max={100}
+                                              onChange={e => {
+                                                const newOpts = [...(field.options || [])];
+                                                newOpts[optIdx] = { label: optLabel, weight: parseInt(e.target.value) || 0 };
+                                                updateField(sIdx, fIdx, 'options', newOpts);
+                                              }} 
+                                              className="w-16 h-9 text-center text-xs font-black text-indigo-700 bg-indigo-50/50 border-indigo-100 rounded-lg" 
+                                            />
+                                          </div>
+                                          <Button type="button" variant="ghost" onClick={() => {
+                                            const newOpts = [...(field.options || [])];
+                                            newOpts.splice(optIdx, 1);
+                                            updateField(sIdx, fIdx, 'options', newOpts);
+                                          }} className="h-9 w-9 text-slate-300 hover:bg-rose-50 hover:text-rose-600 p-0 rounded-lg ml-1 shrink-0">
+                                            <Trash2 className="w-4 h-4"/>
+                                          </Button>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                  <Button type="button" variant="outline" size="sm" onClick={() => {
+                                    const newOpts = [...(field.options || [])];
+                                    newOpts.push({ label: `Pilihan ${newOpts.length + 1}`, weight: 0 });
+                                    updateField(sIdx, fIdx, 'options', newOpts);
+                                  }} className="w-full h-10 text-[11px] border-dashed border-2 font-bold text-slate-500 rounded-xl hover:bg-slate-100">
+                                    <Plus className="w-4 h-4 mr-1.5"/> Tambah Pilihan Berbobot
+                                  </Button>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     );
                   })}
-                  <Button type="button" variant="outline" onClick={() => addField(sIdx)} className="w-full border-dashed border-2 h-12 text-xs font-bold text-slate-500 rounded-xl hover:bg-slate-50"><Plus className="h-4 w-4 mr-1.5" /> Tambah Kuesioner Pertanyaan</Button>
+                  <div className="pt-2">
+                    <Button type="button" variant="outline" onClick={() => addField(sIdx)} className="w-full border-dashed border-2 h-12 text-xs font-black text-indigo-500 border-indigo-200 bg-indigo-50/30 rounded-xl hover:bg-indigo-50"><Plus className="h-4 w-4 mr-1.5" /> Tambah Pertanyaan Baru</Button>
+                  </div>
                 </div>
               )}
             </div>
@@ -465,7 +569,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
         })
       )}
 
-      <Button type="button" onClick={addStep} className="w-full bg-slate-200 text-slate-700 hover:bg-slate-300 h-12 font-bold text-sm rounded-xl mt-4 border-dashed border-2 border-slate-300"><Plus className="h-4 w-4 mr-1.5" /> Tambah Seksi Langkah Baru (Manual)</Button>
+      <Button type="button" onClick={addStep} className="w-full bg-slate-100 text-slate-600 hover:bg-slate-200 h-14 font-black text-sm rounded-2xl mt-4 border-dashed border-2 border-slate-300"><Plus className="h-5 w-5 mr-1.5" /> Tambah Seksi Langkah Baru (Manual)</Button>
 
       {/* DIALOG MODAL CONFIRM DELETE STEP */}
       {stepToDelete !== null && (

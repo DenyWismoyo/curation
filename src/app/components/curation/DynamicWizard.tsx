@@ -176,11 +176,15 @@ export function DynamicWizard({ template, onComplete, onBack }: DynamicWizardPro
     // 1. Kondisi Lanjut ke Step Lokal Berikutnya
     if (step < localSteps.length) {
       const nextStepIndex = step; // Index array base-0
-      const nextStepData = localSteps[nextStepIndex];
+      let nextStepData = { ...localSteps[nextStepIndex] };
       
       // Jika formMode di-set adaptive, kosongkan field agar AI meracik ulang berdasarkan jawaban terbaru
       if (template.formMode === 'adaptive' && nextStepData.fields && nextStepData.fields.length > 0) {
           nextStepData.fields = [];
+          
+          const updatedSteps = [...localSteps];
+          updatedSteps[nextStepIndex] = nextStepData;
+          setLocalSteps(updatedSteps);
       }
 
       // Cek jika field kosong dan butuh micro-adaptive (injeksi pertanyaan)

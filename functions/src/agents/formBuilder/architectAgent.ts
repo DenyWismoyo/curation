@@ -123,6 +123,19 @@ export const executeArchitect = async (
 
     const specificTargetContext = afterData.specificTargetContext || 'Tergantung konfigurasi targetAudience, dilarang meleset dari ini.';
     const methodologyContext = afterData.methodologyContext || 'Standar Global Terbaik yang paling relevan dengan profil.';
+    
+    // ═══════════════════════════════════════════════════════════════════
+    // PERBAIKAN: formBuilderInstruction sebagai instruksi prioritas tinggi
+    // ═══════════════════════════════════════════════════════════════════
+    const formBuilderInstruction = afterData.formBuilderInstruction || '';
+    const mandatoryAdminInstruction = formBuilderInstruction.trim()
+      ? `\n      ══════════════════════════════════════════════
+      🔴 INSTRUKSI KHUSUS DARI ADMIN (PRIORITAS TERTINGGI — WAJIB DIEKSEKUSI):
+      ${formBuilderInstruction}
+      ══════════════════════════════════════════════
+      PERINGATAN: Instruksi admin di atas adalah HUKUM TERTINGGI yang tidak boleh diabaikan atau dikurangi. 
+      Jika ada konflik antara instruksi admin dan aturan umum lainnya, SELALU DAHULUKAN instruksi admin.`
+      : '';
 
     // PERBAIKAN 2: Instruksi dinamis khusus untuk AI meracik label UI jika modenya "custom"
     const customUiInstruction = existingConfig.formPurpose === 'custom'
@@ -131,6 +144,7 @@ export const executeArchitect = async (
 
     const masterPrompt = `
       Anda adalah Chief Research Officer tingkat Enterprise. Topik program/asesmen: "${trackName}".
+      ${mandatoryAdminInstruction}
       
       KONTEKS ANCHOR (ACUAN MUTLAK PENELITIAN ANDA):
       - Profil Spesifik Subjek Asesmen: ${specificTargetContext}
@@ -144,7 +158,7 @@ export const executeArchitect = async (
       
       ATURAN KETAT VOLUME OUTPUT:
       - expectedMetrics: TEPAT ${targetMetricCount} metrik.
-      - expectedAnalysisBlocks: TEPAT ${targetBlockCount} blok analisis. (Format 'Judul Blok: Sub-poin 1, Sub-poin 2')
+      - expectedAnalysisBlocks: TEPAT ${targetBlockCount} blok analisis. (Format '[NAMA TEMA/KATEGORI YANG RELEVAN]: Sub-poin 1, Sub-poin 2'. DILARANG KERAS menggunakan kata literal 'Judul Blok', gunakan nama topik analisis yang sesungguhnya)
       - customReadinessTiers: TEPAT ${targetTierCount} tingkatan (tiers).
       - expectedRecommendations: TEPAT ${targetRecCount} rekomendasi.${customUiInstruction}
       

@@ -32,13 +32,23 @@ export const executeDomainExperts = async (
 
 Data Subjek: ${dataString}.${fileInstruction}`;
 
-  // 2. Worker C (Field Arguments / Analisis Detil)
+  // ═══════════════════════════════════════════════════════════════════
+  // PERBAIKAN: Worker C sekarang di-align dengan expectedAnalysisBlocks
+  // agar evaluasi per-field terhubung ke blok analisis admin
+  // ═══════════════════════════════════════════════════════════════════
+  // 2. Worker C (Field Arguments / Analisis Detail yang aligned dengan Analysis Blocks)
   const schemaC = { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, required: ["label", "score", "description"], properties: { label: { type: SchemaType.STRING }, score: { type: SchemaType.INTEGER }, description: { type: SchemaType.STRING } } } };
+  
+  const analysisBlocksContext = aiPromptConfig.expectedAnalysisBlocks?.length > 0
+    ? `\n\nKERANGKA BLOK ANALISIS YANG HARUS DIEVALUASI (gunakan ini sebagai panduan untuk menentukan relevansi setiap field):\n${aiPromptConfig.expectedAnalysisBlocks.map((b: string) => `- ${b}`).join('\n')}`
+    : '';
+    
   const promptC = `TUGAS ANDA:
 Lakukan evaluasi mendalam pada SETIAP poin data/jawaban yang ada di form berikut. Untuk setiap poin data, buatkan satu entri yang berisi:
-- label: (Nama atau pertanyaan dari poin data tersebut, misal 'D39. Manajemen Pengetahuan')
-- score: (Nilai 0-100 untuk poin ini)
-- description: (Analisis/argumen tajam AI tentang poin ini)
+- label: (Nama atau pertanyaan dari poin data tersebut)
+- score: (Nilai 0-100 untuk poin ini, selaras dengan rubrik penilaian: ${aiPromptConfig.customScoringRubric || 'Standar objektif'})
+- description: (Analisis/argumen tajam AI tentang poin ini, dan kaitannya dengan blok analisis yang relevan)
+${analysisBlocksContext}
 
 Data Subjek: ${dataString}.${fileInstruction}`;
 

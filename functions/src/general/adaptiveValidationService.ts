@@ -127,21 +127,34 @@ export const generateAdaptiveQuestions = onCall({
         }
       });
 
+      const dynamicRules = `
+          ATURAN KUSTOMISASI WAJIB (AGAR TIDAK MONOTON):
+          1. VARIASI TIPE: Gunakan campuran tipe input seperti 'radio', 'select', 'textarea', 'number', dan 'file'.
+          2. LOGIKA BERCABANG (showIf): Buat setidaknya 1-2 pertanyaan berlapis. Gunakan properti "showIf" (contoh: { fieldId: "idPertanyaanSebelumnya", equals: "Ya" }) untuk menagih detail lanjutan atau file bukti jika peserta memilih opsi tertentu.
+          3. TIPE SPESIFIK: Jika menanyakan nominal/angka gunakan 'number'. Jika butuh dokumen/foto bukti gunakan 'file'.
+          4. OPSI BERBOBOT: Untuk 'radio' atau 'select', WAJIB isi properti 'options' dengan format [{label: 'Opsi A', weight: 100}, {label: 'Opsi B', weight: 50}].
+          5. PERSONALISASI: Jelaskan pada 'aiReasoning' mengapa AI memilih merancang pertanyaan ini secara khusus berdasarkan data peserta sebelumnya.
+      `;
+
       let prompt = "";
       if (candidateQuestions.length >= 5) {
         prompt = `
           Konteks Program Asesmen: ${trackName}
           Judul Seksi: "${stepTitle}"
           BERIKUT ADALAH KANDIDAT PERTANYAAN: ${JSON.stringify(candidateQuestions)}
-          INSTRUKSI: Pilih 4-6 pertanyaan TERBAIK yang cocok dengan data peserta: ${contextString}
-          Berikan alasan di 'aiReasoning'.
+          INSTRUKSI: Pilih 4-6 pertanyaan TERBAIK yang cocok dengan profil peserta di bawah ini.
+          Data Peserta Sebelumnya: ${contextString}
+          
+${dynamicRules}
         `;
       } else {
         prompt = `
           Konteks Program Asesmen: ${trackName}
           Data Peserta Sebelumnya: ${contextString}
           TUGAS MERANCANG PERTANYAAN UNTUK: "${stepTitle}" (${stepDescription || '-'})
-          INSTRUKSI: Rancang 4-8 pertanyaan baru. Pastikan 'aiReasoning' terisi transparan.
+          INSTRUKSI: Rancang 4-8 pertanyaan baru secara spesifik untuk membedah profil ini.
+          
+${dynamicRules}
         `;
       }
 
@@ -254,6 +267,31 @@ export const manualTriggerRAGSeed = onRequest({
   cors: true,
 }, async (req, res) => {
   try {
+    // TANGANI PREFLIGHT CORS SECARA MANUAL AGAR TIDAK DIBLOKIR OLEH AUTH CHECK
+    if (req.method === 'OPTIONS') {
+      res.set('Access-Control-Allow-Origin', '*');
+      res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+      res.set('Access-Control-Allow-Headers', 'Authorization, Content-Type');
+      res.status(204).send('');
+      return;
+    }
+    
+    res.set('Access-Control-Allow-Origin', '*');
+
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      res.status(401).send("UNAUTHORIZED: Missing or invalid token.");
+      return;
+    }
+    
+    const token = authHeader.split('Bearer ')[1];
+    try {
+      await admin.auth().verifyIdToken(token);
+    } catch (e) {
+      res.status(401).send("UNAUTHORIZED: Invalid or expired token.");
+      return;
+    }
+
     const templateId = req.query.templateId as string;
     
     if (!templateId) {

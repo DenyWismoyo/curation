@@ -75,7 +75,8 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
       const result = await generateIdentityFn({ 
         trackName: template.trackName, 
         trackDescription: template.trackDescription,
-        targetAudience: template.aiPromptConfig?.targetAudience 
+        targetAudience: template.aiPromptConfig?.targetAudience,
+        formPurpose: template.aiPromptConfig?.formPurpose
       });
       const data = result.data as any;
       
@@ -118,7 +119,13 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
     try {
       const functions = getFunctions(undefined, 'asia-southeast2');
       const generateAnchorsFn = httpsCallable(functions, 'generatePromptAnchors');
-      const result = await generateAnchorsFn({ trackName: template.trackName, trackDescription: template.trackDescription, targetAudience: template.aiPromptConfig?.targetAudience });
+      const result = await generateAnchorsFn({ 
+        trackName: template.trackName, 
+        trackDescription: template.trackDescription, 
+        targetAudience: template.aiPromptConfig?.targetAudience,
+        formPurpose: template.aiPromptConfig?.formPurpose,
+        aiPromptConfig: template.aiPromptConfig
+      });
       const data = result.data as any;
       if (data.success && data.anchors) {
         onChange({ ...template, specificTargetContext: data.anchors.specificTargetContext, methodologyContext: data.anchors.methodologyContext });
@@ -279,6 +286,52 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
         </Button>
       </div>
 
+      {/* ─── QUICK CONTEXT SELECTORS ─── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 bg-slate-50/50 p-4 rounded-2xl ring-1 ring-slate-100">
+        <div className="space-y-2">
+          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">
+            Tujuan Utama (Purpose)
+          </label>
+          <select 
+            value={template.aiPromptConfig?.formPurpose || 'assessment'}
+            onChange={(e) => {
+              const currentConfig = template.aiPromptConfig || {} as any;
+              onChange({ ...template, aiPromptConfig: { ...currentConfig, formPurpose: e.target.value } });
+            }}
+            className="w-full text-sm font-semibold text-slate-800 bg-white border-slate-200 rounded-xl h-10 px-3 outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+            <option value="assessment">Asesmen / Penilaian (Objektif)</option>
+            <option value="counseling">Konseling / Psikologi (Empatik)</option>
+            <option value="consultation">Konsultasi Pakar (Strategis)</option>
+            <option value="monitoring">Monitoring / Evaluasi (Progres)</option>
+          </select>
+        </div>
+        <div className="space-y-2">
+          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">
+            Target Audiens Utama
+          </label>
+          <select 
+            value={template.aiPromptConfig?.targetAudience || 'company'}
+            onChange={(e) => {
+              const currentConfig = template.aiPromptConfig || {} as any;
+              onChange({ ...template, aiPromptConfig: { ...currentConfig, targetAudience: e.target.value } });
+            }}
+            className="w-full text-sm font-semibold text-slate-800 bg-white border-slate-200 rounded-xl h-10 px-3 outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+            <option value="company">Perusahaan / Korporat B2B</option>
+            <option value="startup">Startup / Founder</option>
+            <option value="umkm">UMKM / Bisnis Menengah</option>
+            <option value="individual">Individu / Karier Pribadi</option>
+            <option value="student">Pelajar / Mahasiswa</option>
+            <option value="gen_z">Gen Z / Milenial (Mental Health)</option>
+            <option value="parenting">Orang Tua / Parenting</option>
+            <option value="couple">Pasangan / Relationship</option>
+            <option value="government">Pemerintah / ASN</option>
+            <option value="community">Komunitas / NGO</option>
+          </select>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Nama Program</label>
@@ -318,8 +371,29 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
               <Textarea value={template.methodologyContext || ''} onChange={e => onChange({ ...template, methodologyContext: e.target.value })} className="rounded-xl bg-white border-amber-200 min-h-[80px] text-xs font-medium" />
             </div>
           </div>
+
+          {/* ─── FIELD BARU: Instruksi Khusus untuk AI Form Builder ─── */}
+          <div className="space-y-2 pt-3 border-t border-amber-100 mt-1">
+            <div className="flex items-center justify-between">
+              <label className="text-[10px] font-black text-amber-800 uppercase tracking-widest flex items-center gap-1.5">
+                <Wand2 size={11} className="text-amber-600" />
+                Instruksi Khusus untuk AI Form Builder
+              </label>
+              <span className="text-[9px] text-amber-600/80 font-semibold bg-amber-100 px-2 py-0.5 rounded-md">Opsional · Langsung Mempengaruhi Generasi Form</span>
+            </div>
+            <Textarea 
+              value={(template as any).formBuilderInstruction || ''} 
+              onChange={e => onChange({ ...template, formBuilderInstruction: e.target.value } as any)} 
+              className="rounded-xl bg-white border-amber-300 min-h-[90px] text-xs font-medium focus-visible:ring-amber-400" 
+              placeholder={`Tulis instruksi khusus yang ingin Anda berikan kepada AI saat membangun form. Contoh:\n• "Tambahkan seksi khusus untuk upload portofolio proyek terdahulu"\n• "Pastikan ada pertanyaan tentang sertifikasi ISO yang dimiliki"\n• "Buat pertanyaan dengan banyak jawaban berbobot (radio_weight), hindari pertanyaan terbuka"\n• "Jangan tanyakan soal data keuangan, fokus pada proses operasional saja"`}
+            />
+            <p className="text-[9px] text-amber-600/70 font-medium">
+              ✦ Instruksi ini akan dibaca langsung oleh Architect Agent sebagai panduan wajib dalam merancang struktur dan konten form.
+            </p>
+          </div>
         </div>
       </div>
+
 
       <div className="space-y-4 p-6 bg-slate-50/80 rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden mt-8">
         <div className="absolute top-0 left-0 w-1.5 h-full bg-indigo-500"></div>

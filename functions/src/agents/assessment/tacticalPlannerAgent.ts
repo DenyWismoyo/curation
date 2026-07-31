@@ -44,11 +44,50 @@ export const executeTacticalPlanner = async (
   };
     
   const audienceType = aiPromptConfig.targetAudience || 'entitas';
-  const promptC = `Buat Rencana Tindakan TAKTIS untuk area rekomendasi ini: ${JSON.stringify(aiPromptConfig.expectedRecommendations)}. Fokus pada risiko: ${JSON.stringify(aiResult.riskAssessment?.criticalRisks)}. 
   
-  PERINGATAN SUDUT PANDANG MUTLAK: Rencana tindakan ini WAJIB ditujukan LANGSUNG kepada subjek yang dinilai (Kategori Klien: ${audienceType}) agar mereka bisa memperbaiki operasi/diri mereka sendiri. DILARANG KERAS menulis instruksi untuk tim auditor/penilai (Jangan menulis "Lakukan verifikasi lapangan", tapi tulislah "Lakukan audit internal di sistem Anda").
-  
-  Konteks Target: ${audienceType}. Aturan gaya: ${aiPromptConfig.actionPlanBehavior || 'Profesional.'}`;
+  // ═══════════════════════════════════════════════════════════════════
+  // PERBAIKAN: Expand context audience, inject customScoringRubric,
+  // negativePrompts, gradingStrictness, dan formPurpose
+  // ═══════════════════════════════════════════════════════════════════
+  const audienceDetailMap: Record<string, string> = {
+    'individual': 'INDIVIDU / PERSONAL. Rencana tindakan harus ditujukan langsung kepada individu untuk pengembangan diri, skill, atau karir mereka. Gunakan bahasa personal ("Anda perlu...", "Langkah Anda selanjutnya...").',
+    'student': 'PELAJAR / MAHASISWA. Fokus pada pengembangan akademik, soft skill, dan kesiapan karir. Bahasa suportif dan memotivasi.',
+    'government': 'INSTANSI PEMERINTAH. Action plan harus berupa kebijakan, SOP, atau program yang bisa diimplementasikan dalam birokrasi.',
+    'community': 'KOMUNITAS / NGO / YAYASAN. Rencana tindakan fokus pada mobilisasi relawan, fundraising, dan peningkatan dampak sosial.',
+    'startup': 'STARTUP TEKNOLOGI. Action plan harus aggressive, berbasis traksi, dan fokus pada growth hacking, pivot, atau fundraising.',
+    'umkm': 'UMKM / BISNIS MENENGAH. Rencana tindakan harus praktis, realistis dalam keterbatasan sumber daya, dan berbasis pada peningkatan penjualan.',
+    'company': 'PERUSAHAAN / KORPORAT. Action plan berskala enterprise, fokus pada efisiensi sistem, ekspansi pasar, dan manajemen risiko strategis.',
+  };
+  const audienceDetail = audienceDetailMap[audienceType] || audienceDetailMap['company'];
+
+  const strictnessActionMap: Record<string, string> = {
+    'supportive': 'Gaya action plan SUPORTIF: Mulai dari quick-win yang mudah dicapai untuk membangun momentum. Framing setiap langkah sebagai peluang, bukan kewajiban.',
+    'standard': 'Gaya action plan STANDAR: Kombinasi langkah jangka pendek (quick-win) dan jangka menengah. Realistis dan terukur.',
+    'strict': 'Gaya action plan KETAT: Langkah-langkah harus spesifik, terukur, dan dengan deadline yang tegas. Sertakan risiko dari ketidakpatuhan terhadap setiap langkah.',
+  };
+  const resolvedStrictnessAction = strictnessActionMap[aiPromptConfig.gradingStrictness || 'standard'] || strictnessActionMap['standard'];
+
+  const formPurposeAction = aiPromptConfig.formPurpose === 'counseling'
+    ? 'KONTEKS KONSELING: Rencana tindakan berupa sesi, latihan, atau praktik pengembangan diri dan mental. Gunakan terminologi psikologi/konseling.'
+    : aiPromptConfig.formPurpose === 'monitoring'
+    ? 'KONTEKS MONITORING: Rencana tindakan berupa perbaikan proses, milestone update, dan solusi hambatan operasional.'
+    : aiPromptConfig.formPurpose === 'consultation'
+    ? 'KONTEKS KONSULTASI: Rencana tindakan berupa solusi konkret untuk masalah spesifik yang teridentifikasi.'
+    : 'KONTEKS ASESMEN: Rencana tindakan strategis untuk peningkatan dan pengembangan berkelanjutan.';
+
+  const promptC = `Buat Rencana Tindakan TAKTIS untuk area rekomendasi berikut: ${JSON.stringify(aiPromptConfig.expectedRecommendations)}.
+Fokus pada risiko kritis yang teridentifikasi: ${JSON.stringify(aiResult.riskAssessment?.criticalRisks)}.
+Skor total subjek: ${aiResult.totalScore || 0}/100 (${aiResult.readinessLevel || 'N/A'}).
+
+TARGET AUDIENS SUBJEK: ${audienceDetail}
+${formPurposeAction}
+${resolvedStrictnessAction}
+
+${aiPromptConfig.customScoringRubric ? `RUBRIK PENILAIAN (Gunakan sebagai panduan prioritas action plan):\n${aiPromptConfig.customScoringRubric}` : ''}
+${aiPromptConfig.negativePrompts ? `\nPANTANGAN KERAS DALAM MEMBUAT ACTION PLAN:\n${aiPromptConfig.negativePrompts}` : ''}
+${aiPromptConfig.actionPlanBehavior ? `\nATURAN GAYA KHUSUS ACTION PLAN:\n${aiPromptConfig.actionPlanBehavior}` : ''}
+
+PERINGATAN SUDUT PANDANG MUTLAK: Rencana tindakan ini WAJIB ditujukan LANGSUNG kepada subjek yang dinilai agar mereka bisa memperbaiki diri/operasi mereka sendiri. DILARANG KERAS menulis instruksi untuk tim auditor/penilai (Jangan menulis "Lakukan verifikasi lapangan", tapi tulislah "Lakukan audit internal di sistem Anda").`;
   
   const model = genAI.getGenerativeModel({
     model: "gemini-2.5-flash",

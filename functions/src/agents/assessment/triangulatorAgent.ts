@@ -73,12 +73,39 @@ export const executeTriangulator = async (
   const dataString = Object.entries(textData).map(([k, v]) => `- [Data ${k}]: ${Array.isArray(v) ? v.join(", ") : v}`).join("\n") + expertMetrics + expertArgs + expertFiles;
   const targetAudience = aiPromptConfig.targetAudience || 'company';
 
+  // ═══════════════════════════════════════════════════════════════════
+  // PERBAIKAN: Expand gradingStrictness & reportTone menjadi instruksi
+  // bermakna agar AI benar-benar mengikuti tone & keketatan yang diset admin
+  // ═══════════════════════════════════════════════════════════════════
+  const strictnessMap: Record<string, string> = {
+    'supportive': 'Penilaian SUPORTIF: Fokus pada potensi dan sisi positif subjek. Awali setiap evaluasi dengan apresiasi yang genuine sebelum menyampaikan area perbaikan. Gunakan bahasa yang membesarkan hati. DILARANG menggunakan bahasa yang menghakimi atau menjatuhkan. Framing kelemahan sebagai "peluang pengembangan".',
+    'standard': 'Penilaian STANDAR (OBJEKTIF): Berikan evaluasi yang berimbang antara kekuatan dan kelemahan berdasarkan fakta. Hindari bias positif atau negatif yang berlebihan. Sampaikan kritik secara konstruktif dengan disertai rekomendasi perbaikan yang konkret.',
+    'strict': 'Penilaian SANGAT KETAT (FORENSIK): Lakukan analisis dengan standar audit tertinggi. Tantang setiap klaim yang tidak disertai bukti. Hancurkan asumsi yang lemah. Berikan penalti skor signifikan untuk klaim besar tanpa substantiasi. Ungkap semua anomali, inkonsistensi, dan potensi manipulasi data. Jangan ada toleransi untuk jawaban generik atau superfisial.',
+  };
+
+  const toneMap: Record<string, string> = {
+    'consultative': 'Gaya Bahasa KONSULTATIF: Tulis seperti konsultan terpercaya yang berbicara langsung kepada klien. Gunakan kata "kami merekomendasikan", berikan 2-3 opsi solusi, tunjukkan empati terhadap tantangan yang dihadapi, dan tutup setiap poin dengan langkah konkret yang actionable.',
+    'investigative': 'Gaya Bahasa INVESTIGATIF: Tulis seperti lead auditor berpengalaman. Gunakan bahasa yang tegas, faktual, dan tidak ambigu. Tunjukkan anomali dan red flag secara eksplisit. Setiap temuan harus didukung oleh data spesifik dari jawaban subjek. Hindari bahasa bersayap atau kiasan.',
+    'academic': 'Gaya Bahasa AKADEMIS: Tulis dengan struktur ilmiah yang sistematis dan terstruktur. Gunakan terminologi domain yang tepat, referensikan standar atau kerangka yang relevan, dan dukung setiap pernyataan dengan data atau logika yang terverifikasi. Gunakan bahasa formal tanpa ekspresi emosional.',
+  };
+
+  const resolvedStrictness = strictnessMap[aiPromptConfig.gradingStrictness || 'standard'] || strictnessMap['standard'];
+  const resolvedTone = toneMap[aiPromptConfig.reportTone || 'consultative'] || toneMap['consultative'];
+
+  // Ekstrak tier names untuk fewShotContext jika ada customReadinessTiers
+  const tierNames = (aiPromptConfig.customReadinessTiers || [])
+    .map((t: string) => t.split('(')[0]?.trim())
+    .filter(Boolean);
+  const fewShotContext = tierNames.length > 0
+    ? `\nCONTOH FORMAT READINESS LEVEL YANG VALID (WAJIB IKUTI):\n${tierNames.map((n: string) => `- "${n} | [3-5 kata sifat deskriptif yang dinamis]"`).join('\n')}\n`
+    : '';
+
   const finalPrompt = buildAssessmentPrompt({
     aiPersona: aiPromptConfig.aiPersona || "AHLI ANALISIS",
     trackContext: trackType,
     assessmentGoal: aiPromptConfig.assessmentGoal || "Evaluasi kelayakan",
-    strictnessInstruction: aiPromptConfig.gradingStrictness === 'strict' ? "Penilaian SANGAT KETAT" : "Penilaian objektif",
-    toneInstruction: aiPromptConfig.reportTone || "Gaya bahasa: Konsultatif",
+    strictnessInstruction: resolvedStrictness,
+    toneInstruction: resolvedTone,
     dataString,
     hasFiles: (data.storageFilePaths && data.storageFilePaths.length > 0) || (data.geminiFiles && data.geminiFiles.length > 0),
     mediaFocus: aiPromptConfig.mediaAnalysisFocus ? `Fokus Media: ${aiPromptConfig.mediaAnalysisFocus}.` : '',
@@ -86,12 +113,14 @@ export const executeTriangulator = async (
     targetMetrics: aiPromptConfig.expectedMetrics || ["Validasi", "Keuangan"],
     riskInstruction: aiPromptConfig.riskFramework || "Identifikasi risiko.",
     targetRecommendations: aiPromptConfig.expectedRecommendations?.map((r: string) => `- ${r}`).join("\n") || "- Strategi",
-    tiersString: (aiPromptConfig.customReadinessTiers || []).join(', ') || '"Pra-Inkubasi", "Siap Akselerasi"',
+    tiersString: (aiPromptConfig.customReadinessTiers || []).join(' | ') || '"Pra-Inkubasi", "Siap Akselerasi"',
+    fewShotContext,
     customSystemPrompt: aiPromptConfig.customSystemPrompt || '',
     negativePrompts: aiPromptConfig.negativePrompts,
     formatInstructions: aiPromptConfig.formatInstructions,
     customScoringRubric: aiPromptConfig.customScoringRubric,
-    targetAudience: targetAudience
+    targetAudience: targetAudience,
+    formPurpose: aiPromptConfig.formPurpose || 'assessment',
   });
 
   const result = await withRetry(async () => {

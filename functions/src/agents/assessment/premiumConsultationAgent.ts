@@ -46,11 +46,37 @@ export const premiumConsultationChat = onCall({
   const internalDoc = await assessmentRef.collection("internal").doc("details").get();
   const internalData = internalDoc.exists ? internalDoc.data() : {};
 
+  // ═══════════════════════════════════════════════════════════════════
+  // PERBAIKAN: Baca aiPromptConfig untuk membangun persona Premium
+  // Consultation yang selaras dengan template yang digunakan admin
+  // ═══════════════════════════════════════════════════════════════════
+  const config = assessmentData.aiPromptConfig || {};
+  const aiPersona = config.aiPersona || 'Konsultan Ahli (Domain Expert)';
+
+  const toneInstructionMap: Record<string, string> = {
+    'consultative': 'Gunakan gaya konsultatif premium: sangat empatik, berikan 2-3 opsi solusi, dan tutup setiap saran dengan langkah konkret.',
+    'investigative': 'Gunakan gaya investigatif: tegas, forensik, ungkap akar masalah secara langsung tanpa basa-basi.',
+    'academic': 'Gunakan gaya akademis dan saintifik: sistematis, berbasis data, referensikan standar industri yang relevan.',
+  };
+  const toneInstruction = toneInstructionMap[config.reportTone || 'consultative'] || toneInstructionMap['consultative'];
+
+  const formPurposeInstruction = config.formPurpose === 'counseling'
+    ? 'MODE KONSELING PREMIUM: Anda memberikan konseling intensif berbayar. Gunakan pendekatan terapeutik yang mendalam, empatik, dan transformatif.'
+    : config.formPurpose === 'monitoring'
+    ? 'MODE MONITORING PREMIUM: Anda memberikan review mendalam atas progres. Identifikasi hambatan tersembunyi dan berikan solusi akseleratif.'
+    : config.formPurpose === 'consultation'
+    ? 'MODE KONSULTASI PREMIUM: Anda adalah konsultan ahli berbayar. Berikan insight level C-Suite yang sangat tajam dan actionable.'
+    : 'MODE ASESMEN PREMIUM: Anda memberikan panduan pasca-asesmen tingkat lanjut yang sangat personal dan mendalam.';
+
   // Susun Prompt Konteks
   const contextString = `
-    IDENTITAS USER: ${assessmentData.namaUsaha || 'Pengguna'}
+    IDENTITAS SUBJEK: ${assessmentData.namaUsaha || 'Pengguna'}
     SKOR AKHIR: ${assessmentData.score || assessmentData.aiResult?.totalScore || 0}/100
-    LEVEL KESIAPAN: ${assessmentData.readinessLevel || 'N/A'}
+    LEVEL: ${assessmentData.readinessLevel || 'N/A'}
+    
+    ANDA ADALAH: ${aiPersona}
+    ${formPurposeInstruction}
+    GAYA BAHASA: ${toneInstruction}
     
     ANALISIS SWOT:
     ${JSON.stringify(assessmentData.aiResult?.swotAnalysis || {})}
@@ -63,9 +89,11 @@ export const premiumConsultationChat = onCall({
     
     [RAHASIA - ANOMALI DATA]:
     ${JSON.stringify(internalData?.contradictionsFound || [])}
+    ${config.customSystemPrompt ? `\n    ATURAN KONDISIONAL KHUSUS:\n    ${config.customSystemPrompt}` : ''}
+    ${config.negativePrompts ? `\n    PANTANGAN KERAS (DILARANG):\n    ${config.negativePrompts}` : ''}
     
     TUGAS ANDA:
-    Anda adalah Konsultan Ahli (Domain Expert) yang sedang memberikan konsultasi privat berbayar (Premium) kepada pengguna di atas.
+    Anda adalah ${aiPersona} yang sedang memberikan konsultasi privat premium kepada subjek di atas.
     Gunakan data asesmen dan data rahasia di atas untuk memberikan jawaban yang sangat tajam, spesifik, dan actionable.
     Jika relevan, Anda memiliki alat (tool) 'add_to_action_plan' untuk menambahkan langkah konkret ke Rencana Aksi pengguna.
   `;
