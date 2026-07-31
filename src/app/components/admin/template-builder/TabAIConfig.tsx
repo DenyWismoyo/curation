@@ -163,13 +163,15 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
 
     let adaptiveInstruction = "";
     if (template.aiPromptConfig?.isAdaptive) {
+      const maxSections = template.aiPromptConfig?.maxAdaptiveSections || 15;
       adaptiveInstruction = `
       ==================================================
       PERHATIAN: MODE ADAPTIVE LIVING FORM DIAKTIFKAN!
       ==================================================
-      1. Anda WAJIB membuat daftar pertanyaan (fields) SECARA LENGKAP **HANYA UNTUK STEP 1** (Langkah 1).
-      2. Untuk Step 2, Step 3, dan seterusnya, Anda WAJIB membuat kerangka seksinya (title dan description) yang mengarahkan pada metrik evaluasi.
-      3. TETAPI, untuk Step 2 dan seterusnya, array "fields" WAJIB DIBIARKAN KOSONG ([]). JANGAN ISI PERTANYAAN APA PUN di Step 2 ke atas! Pertanyaan untuk seksi tersebut akan dirancang oleh Agen AI lain secara real-time saat peserta mengisi form.
+      1. Anda WAJIB membuat TEPAT ${maxSections} Seksi kuesioner (Langkah). Abaikan instruksi 5-8 seksi sebelumnya!
+      2. Anda WAJIB membuat daftar pertanyaan (fields) SECARA LENGKAP **HANYA UNTUK STEP 1** (Langkah 1).
+      3. Untuk Step 2 hingga Step ${maxSections}, Anda WAJIB membuat kerangka seksinya (title dan description) yang mengarahkan pada metrik evaluasi.
+      4. SANGAT KRITIS: Untuk Step 2 dan seterusnya, array "fields" atau "draftedQuestions" WAJIB DIBIARKAN KOSONG ([]). JANGAN ISI PERTANYAAN APA PUN di Step 2 ke atas! Pertanyaan untuk seksi tersebut akan dirancang oleh Agen AI lain secara real-time saat peserta mengisi form.
       `;
     }
 
@@ -426,7 +428,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
           </div>
           <div className="space-y-1.5 p-4 bg-slate-50/80 rounded-2xl border border-slate-200">
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider block">Batas Maksimal Seksi Adaptif</label>
-            <Input type="number" min={1} max={10} value={template.aiPromptConfig?.maxAdaptiveSections || 5} onChange={e => updateConfig('maxAdaptiveSections', parseInt(e.target.value))} className="h-10 bg-white font-bold rounded-xl" disabled={!template.aiPromptConfig?.isAdaptive} />
+            <Input type="number" min={1} max={15} value={template.aiPromptConfig?.maxAdaptiveSections || 5} onChange={e => updateConfig('maxAdaptiveSections', parseInt(e.target.value))} className="h-10 bg-white font-bold rounded-xl" disabled={!template.aiPromptConfig?.isAdaptive} />
             <p className="text-[11px] text-slate-500 font-medium mt-1">Jumlah limit langkah/seksi maksimal saat meracik form dinamis.</p>
           </div>
         </div>

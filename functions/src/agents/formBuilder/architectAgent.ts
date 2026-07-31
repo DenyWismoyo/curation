@@ -89,7 +89,7 @@ export const executeArchitect = async (
                   },
                   draftedQuestions: {
                     type: SchemaType.ARRAY,
-                    description: "Daftar 8-12 pertanyaan spesifik yang dirancang secara tajam dan berkesinambungan",
+                    description: "Daftar 8-12 pertanyaan spesifik. CATATAN PENTING: Kosongkan array ini ([]) untuk Step 2 dan seterusnya JIKA mode Adaptive diaktifkan.",
                     items: {
                       type: SchemaType.OBJECT,
                       required: ["interrogationGoal", "questionText", "suggestedType", "suggestedPlaceholder"],
@@ -142,6 +142,16 @@ export const executeArchitect = async (
     const customUiInstruction = existingConfig.formPurpose === 'custom'
       ? "\n- MODE MANUAL (CUSTOM) TERDETEKSI: Anda WAJIB meracik ulang data 'customUiLabels' (scoreLabel, swotLabel, riskLabel, roadmapLabel, executionLabel). Buatlah istilah yang relevan, inovatif, dan berbahasa Indonesia untuk metrik UI."
       : "";
+      
+    const isAdaptive = existingConfig.isAdaptive || false;
+    const maxAdaptiveSections = existingConfig.maxAdaptiveSections || 15;
+    const sectionsCountInstruction = isAdaptive ? `TEPAT ${maxAdaptiveSections}` : "5 hingga 8";
+    const draftingQuestionsInstruction = isAdaptive 
+      ? `TUGAS UTAMA (DRAFTING PERTANYAAN):
+      Di dalam Step 1 saja, Anda WAJIB mengisi array "draftedQuestions" dengan 8-12 pertanyaan. 
+      SANGAT KRITIS: Untuk Step 2 dan seterusnya, Anda WAJIB mengosongkan array "draftedQuestions" ([]). JANGAN BUAT PERTANYAAN SAMA SEKALI di Step 2 ke atas!`
+      : `TUGAS UTAMA (DRAFTING PERTANYAAN): 
+      Di dalam setiap seksi, Anda WAJIB mengisi array "draftedQuestions" dengan 8-12 pertanyaan.`;
 
     const masterPrompt = `
       Anda adalah Chief Research Officer tingkat Enterprise. Topik program/asesmen: "${trackName}".
@@ -164,11 +174,10 @@ export const executeArchitect = async (
       - expectedRecommendations: TEPAT ${targetRecCount} rekomendasi.${customUiInstruction}
       
       LANGKAH 2: PEMBUATAN KERANGKA FORMULIR (stepOutlines) & DRAFT PERTANYAAN (draftedQuestions)
-      Berdasarkan "aiPromptConfig" yang BARU SAJA Anda sempurnakan, susun 5 hingga 8 Seksi kuesioner yang 100% sejajar dengan metrik tersebut.
+      Berdasarkan "aiPromptConfig" yang BARU SAJA Anda sempurnakan, susun ${sectionsCountInstruction} Seksi kuesioner yang 100% sejajar dengan metrik tersebut.
       KRITIS: Setiap seksi WAJIB memiliki array "targetMetrics" yang berisi list metrik dari "expectedMetrics" yang akan DIUKUR melalui pertanyaan-pertanyaan di seksi tersebut. Pastikan SELURUH metrik di expectedMetrics terwakili minimal 1x di seluruh seksi.
       
-      TUGAS UTAMA (DRAFTING PERTANYAAN): 
-      Di dalam setiap seksi, Anda WAJIB mengisi array "draftedQuestions" dengan 8-12 pertanyaan. 
+      ${draftingQuestionsInstruction}
       Terapkan "Interrogation Logic" yang tajam dan profesional (sesuaikan dengan targetAudience dan gradingStrictness). 
       
       FITUR "WOW" YANG WAJIB ANDA IMPLEMENTASIKAN:
