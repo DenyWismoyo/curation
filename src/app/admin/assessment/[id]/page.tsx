@@ -7,8 +7,9 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { ChevronLeft, Briefcase, ShieldCheck, Loader2, Mail, Phone, BarChart3, Brain, Cpu, FileSearch } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { UniversalAssessmentView } from '@/components/shared';
+import { UniversalAssessmentView, AdaptiveAssessmentView } from '@/components/shared';
 import { AdminExportPDF } from '@/app/components/admin/AdminExportPDF';
+import { resolveAssessmentOutputMode } from '@/lib/assessmentOutputMode';
 
 export default function AdminAssessmentDetailPage() {
   const params = useParams();
@@ -77,6 +78,7 @@ export default function AdminAssessmentDetailPage() {
 
   const { formData, aiResult, score, readinessLevel, trackType, corporateEntity, status, curatorAssessment, curatorNotes, analyticsSummary } = data;
   const isCuratorValidated = status === 'Curator_Validated' || curatorAssessment !== undefined;
+  const isAdaptiveMode = resolveAssessmentOutputMode(data?.aiPromptConfig, aiResult, formData) === 'adaptive';
   
   const formatKey = (key: string) => key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
   
@@ -143,26 +145,34 @@ export default function AdminAssessmentDetailPage() {
 
       {/* VIEW KONTEN */}
       {activeTab === 'evaluasi' && (
-        <UniversalAssessmentView
-          mode="admin"
-          trackType={trackType}
-          corporateEntity={corporateEntity}
-          formData={formData}
-          aiResult={aiResult}
-          curatorData={{
-            isEditing: false, 
-            curatorScore: curatorAssessment?.verifiedScore || 0,
-            curatorLevel: curatorAssessment?.verifiedLevel || readinessLevel || '',
-            curatorRoute: curatorAssessment?.finalRoute || '',
-            curatorNotes: curatorNotes || '',
-            customBlockNotes: curatorAssessment?.customBlockNotes || {},
-            documentNotes: curatorAssessment?.documentNotes || '',
-            metricsNotes: curatorAssessment?.metricsNotes || '',
-            swotNotes: curatorAssessment?.swotNotes || '',
-            selectedTags: curatorAssessment?.tags || [],
-            isCuratorValidated: isCuratorValidated,
-          }}
-        />
+        isAdaptiveMode ? (
+          <AdaptiveAssessmentView
+            formData={formData}
+            aiResult={aiResult}
+            assessmentId={params.id as string}
+          />
+        ) : (
+          <UniversalAssessmentView
+            mode="admin"
+            trackType={trackType}
+            corporateEntity={corporateEntity}
+            formData={formData}
+            aiResult={aiResult}
+            curatorData={{
+              isEditing: false, 
+              curatorScore: curatorAssessment?.verifiedScore || 0,
+              curatorLevel: curatorAssessment?.verifiedLevel || readinessLevel || '',
+              curatorRoute: curatorAssessment?.finalRoute || '',
+              curatorNotes: curatorNotes || '',
+              customBlockNotes: curatorAssessment?.customBlockNotes || {},
+              documentNotes: curatorAssessment?.documentNotes || '',
+              metricsNotes: curatorAssessment?.metricsNotes || '',
+              swotNotes: curatorAssessment?.swotNotes || '',
+              selectedTags: curatorAssessment?.tags || [],
+              isCuratorValidated: isCuratorValidated,
+            }}
+          />
+        )
       )}
 
       {activeTab === 'input' && (

@@ -6,9 +6,10 @@ import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { ChevronLeft, Briefcase, ShieldCheck, Loader2, Edit3, CheckCircle2, MessageCircle, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { UniversalAssessmentView } from '@/components/shared';
+import { UniversalAssessmentView, AdaptiveAssessmentView } from '@/components/shared';
 import { useAuth } from '@/contexts/AuthContext';
 import { logCuratorAuditEvent } from '@/lib/b2b-curator-audit';
+import { resolveAssessmentOutputMode } from '@/lib/assessmentOutputMode';
 
 // IMPORT KOMPONEN EXPORT
 import { CuratorExportPDF } from '@/app/components/curator/PDFReportTemplate';
@@ -39,6 +40,7 @@ export default function CuratorAssessmentDetailPage() {
   const [metricsNotes, setMetricsNotes] = useState<string>('');
   const [swotNotes, setSwotNotes] = useState<string>('');
   const auditOpenLoggedRef = useRef(false);
+  const isAdaptiveMode = resolveAssessmentOutputMode(data?.aiPromptConfig, data?.aiResult, data?.formData) === 'adaptive';
 
   const hasRoleAccess = (currentRole: string | null): boolean => (
     currentRole === 'curator' || currentRole === 'assessor' || currentRole === 'admin_csrs' || currentRole === 'admin_omnifit'
@@ -280,27 +282,35 @@ export default function CuratorAssessmentDetailPage() {
 
         {/* VIEW KONTEN */}
         {activeTab === 'evaluasi' && (
-          <UniversalAssessmentView
-            mode="curator"
-            trackType={data.trackType}
-            corporateEntity={data.corporateEntity}
-            formData={data.formData}
-            aiResult={data.aiResult || {}}
-            curatorData={{
-              isEditing,
-              curatorScore, setCuratorScore,
-              curatorLevel, setCuratorLevel,
-              curatorRoute, setCuratorRoute,
-              curatorNotes, setCuratorNotes,
-              customBlockNotes, setCustomBlockNotes: (t, v) => setCustomBlockNotes(p => ({...p, [t]: v})),
-              documentNotes, setDocumentNotes,
-              metricsNotes, setMetricsNotes,
-              swotNotes, setSwotNotes,
-              selectedTags, toggleTag: (tag) => setSelectedTags(p => p.includes(tag) ? p.filter(x => x !== tag) : [...p, tag]),
-              availableTags: masterTags,
-              isCuratorValidated: data.status === 'Curator_Validated',
-            }}
-          />
+          isAdaptiveMode ? (
+            <AdaptiveAssessmentView
+              formData={data.formData}
+              aiResult={data.aiResult || {}}
+              assessmentId={data.id}
+            />
+          ) : (
+            <UniversalAssessmentView
+              mode="curator"
+              trackType={data.trackType}
+              corporateEntity={data.corporateEntity}
+              formData={data.formData}
+              aiResult={data.aiResult || {}}
+              curatorData={{
+                isEditing,
+                curatorScore, setCuratorScore,
+                curatorLevel, setCuratorLevel,
+                curatorRoute, setCuratorRoute,
+                curatorNotes, setCuratorNotes,
+                customBlockNotes, setCustomBlockNotes: (t, v) => setCustomBlockNotes(p => ({...p, [t]: v})),
+                documentNotes, setDocumentNotes,
+                metricsNotes, setMetricsNotes,
+                swotNotes, setSwotNotes,
+                selectedTags, toggleTag: (tag) => setSelectedTags(p => p.includes(tag) ? p.filter(x => x !== tag) : [...p, tag]),
+                availableTags: masterTags,
+                isCuratorValidated: data.status === 'Curator_Validated',
+              }}
+            />
+          )
         )}
 
         {activeTab === 'input' && (

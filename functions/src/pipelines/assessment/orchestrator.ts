@@ -6,14 +6,32 @@ import { executeTriangulator } from "../../agents/assessment/triangulatorAgent";
 import { executeTacticalPlanner } from "../../agents/assessment/tacticalPlannerAgent";
 import { executeSynthesis } from "../../agents/assessment/synthesisAgent";
 import { executePostProcessing } from "../../agents/assessment/postProcessingAgent";
+import { executeAdaptiveAssessment } from "../../agents/assessment/adaptiveAssessmentAgent";
 import { GoogleAIFileManager } from "@google/generative-ai/server";
 import * as os from "os";
 import * as path from "path";
 import * as fs from "fs";
 
 const geminiApiKeySecret = defineSecret("GEMINI_API_KEY");
+const deepseekApiKeySecret = defineSecret("DEEPSEEK_API_KEY");
 const smtpEmailSecret = defineSecret("SMTP_EMAIL");
 const smtpPasswordSecret = defineSecret("SMTP_PASSWORD");
+
+const stripUndefined = (value: any): any => {
+  if (Array.isArray(value)) {
+    return value.map(stripUndefined).filter((item) => item !== undefined);
+  }
+
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value)
+        .map(([key, nestedValue]) => [key, stripUndefined(nestedValue)] as const)
+        .filter(([, nestedValue]) => nestedValue !== undefined)
+    );
+  }
+
+  return value;
+};
 
 export const assessmentOrchestrator = onDocumentCreated({
   database: "curation",
@@ -21,7 +39,7 @@ export const assessmentOrchestrator = onDocumentCreated({
   region: "asia-southeast2",
   memory: "2GiB",
   timeoutSeconds: 540,
-  secrets: [geminiApiKeySecret, smtpEmailSecret, smtpPasswordSecret],
+  secrets: [geminiApiKeySecret, deepseekApiKeySecret, smtpEmailSecret, smtpPasswordSecret],
 }, async (event) => {
   const snapshot = event.data;
   if (!snapshot) return;
@@ -145,10 +163,26 @@ export const assessmentOrchestrator = onDocumentCreated({
       }
     }
 
-    // 1. Domain Experts
-    const { metricsResult, fieldArgsResult, finalFiles } = await executeDomainExperts(assessmentId, data, API_KEY);
-    
-    data.aiResult.metrics = metricsResult;
+    const isAdaptive = data.aiPromptConfig?.isAdaptive === true || data.formMode === 'adaptive' || data.formData?.isAdaptive === true;
+
+    if (isAdaptive) {
+      console.log(`[Orchestrator] Running Adaptive Assessment Agent for ${assessmentId}`);
+      const DEEPSEEK_KEY = deepseekApiKeySecret.value();
+      const adaptiveResult = await executeAdaptiveAssessment(assessmentId, data, DEEPSEEK_KEY);
+      
+      data.aiResult = {
+        ...data.aiResult,
+        ...adaptiveResult,
+        isAdaptiveAssessment: true,
+        formPurpose: data.aiPromptConfig?.formPurpose || data.formData?.formPurpose,
+      };
+      
+      await docRef.update({ status: "GENERATING_ASSETS" });
+    } else {
+      // 1. Domain Experts
+      const { metricsResult, fieldArgsResult, finalFiles } = await executeDomainExperts(assessmentId, data, API_KEY);
+      
+      data.aiResult.metrics = metricsResult;
     data.aiResult.fieldArguments = fieldArgsResult;
     data.aiResult.fileAnalysisInsights = finalFiles;
     
@@ -192,6 +226,7 @@ export const assessmentOrchestrator = onDocumentCreated({
     
     // Progress update: hanya tulis status (data lengkap dikirim di final update)
     await docRef.update({ status: "GENERATING_ASSETS" });
+    } // End of else block for non-adaptive
 
     // 5. Post Processing
     const smtpEmail = smtpEmailSecret.value();
@@ -204,30 +239,37 @@ export const assessmentOrchestrator = onDocumentCreated({
     // dan memastikan assessmentAnalyticsAgent hanya terpanggil SEKALI
     // pada transisi status GENERATING_ASSETS → COMPLETED.
     // ═══════════════════════════════════════════════════════════════════
-    await docRef.update({
+    const isAdaptiveMode = Boolean(data.aiResult?.isAdaptiveAssessment);
+
+    const finalUpdate = stripUndefined({
       status: "COMPLETED",
-      score: data.aiResult?.totalScore || 0,
-      readinessLevel: data.aiResult?.readinessLevel || "Belum Ditentukan",
+      score: isAdaptiveMode ? admin.firestore.FieldValue.delete() : (data.aiResult?.totalScore || 0),
+      readinessLevel: isAdaptiveMode ? admin.firestore.FieldValue.delete() : (data.aiResult?.readinessLevel || "Belum Ditentukan"),
       // Tulis ulang seluruh aiResult sekaligus agar analytics agent
       // mendapat data lengkap saat ia dipicu oleh update ini.
-      "aiResult.metrics": data.aiResult.metrics,
-      "aiResult.fieldArguments": data.aiResult.fieldArguments,
-      "aiResult.fileAnalysisInsights": data.aiResult.fileAnalysisInsights,
-      "aiResult.readinessLevel": data.aiResult.readinessLevel,
-      "aiResult.totalScore": data.aiResult.totalScore,
-      "aiResult.dataConfidenceScore": data.aiResult.dataConfidenceScore,
-      "aiResult.contradictionsFound": data.aiResult.contradictionsFound,
-      "aiResult.incubationRoute": data.aiResult.incubationRoute,
-      "aiResult.executiveSummary": data.aiResult.executiveSummary,
-      "aiResult.swotAnalysis": data.aiResult.swotAnalysis,
+      "aiResult.metrics": isAdaptiveMode ? admin.firestore.FieldValue.delete() : data.aiResult.metrics,
+      "aiResult.fieldArguments": isAdaptiveMode ? admin.firestore.FieldValue.delete() : data.aiResult.fieldArguments,
+      "aiResult.fileAnalysisInsights": isAdaptiveMode ? admin.firestore.FieldValue.delete() : data.aiResult.fileAnalysisInsights,
+      "aiResult.readinessLevel": isAdaptiveMode ? admin.firestore.FieldValue.delete() : data.aiResult.readinessLevel,
+      "aiResult.totalScore": isAdaptiveMode ? admin.firestore.FieldValue.delete() : data.aiResult.totalScore,
+      "aiResult.dataConfidenceScore": isAdaptiveMode ? admin.firestore.FieldValue.delete() : data.aiResult.dataConfidenceScore,
+      "aiResult.contradictionsFound": isAdaptiveMode ? admin.firestore.FieldValue.delete() : data.aiResult.contradictionsFound,
+      "aiResult.incubationRoute": isAdaptiveMode ? admin.firestore.FieldValue.delete() : data.aiResult.incubationRoute,
+      "aiResult.executiveSummary": isAdaptiveMode ? data.aiResult.executiveSummary : data.aiResult.executiveSummary,
+      "aiResult.swotAnalysis": isAdaptiveMode ? admin.firestore.FieldValue.delete() : data.aiResult.swotAnalysis,
       "aiResult.riskAssessment": data.aiResult.riskAssessment,
-      "aiResult.recommendations": data.aiResult.recommendations,
+      "aiResult.recommendations": isAdaptiveMode ? admin.firestore.FieldValue.delete() : data.aiResult.recommendations,
       "aiResult.nextActionSteps": data.aiResult.nextActionSteps,
-      "aiResult.customAnalysisBlocks": data.aiResult.customAnalysisBlocks,
-      "aiResult._internalReasoning": data.aiResult._internalReasoning,
+      "aiResult.customAnalysisBlocks": isAdaptiveMode ? admin.firestore.FieldValue.delete() : data.aiResult.customAnalysisBlocks,
+      "aiResult._internalReasoning": isAdaptiveMode ? admin.firestore.FieldValue.delete() : data.aiResult._internalReasoning,
+      "aiResult.tipsAndTricks": isAdaptiveMode ? admin.firestore.FieldValue.delete() : data.aiResult.tipsAndTricks,
+      "aiResult.isAdaptiveAssessment": data.aiResult.isAdaptiveAssessment,
+      "aiResult.formPurpose": data.aiResult.formPurpose,
       geminiFiles: admin.firestore.FieldValue.delete(),
       completedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
+
+    await docRef.update(finalUpdate);
 
   } catch (error: any) {
     console.error("Pipeline Error:", error);

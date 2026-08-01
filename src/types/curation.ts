@@ -76,6 +76,7 @@ export interface AIResult {
   customUiLabels?: CustomUiLabels;
   // 2. TAMBAHAN BARU: Field untuk menyimpan hasil generate Action Plan
   customActionPlan?: ActionItem[]; 
+  tipsAndTricks?: string[];
   sellingOutput?: {
     hookTitle: string;
     compellingSummary: string;
@@ -83,6 +84,7 @@ export interface AIResult {
     closingCallToAction: string;
   };
   actionPlanBehavior?: string;
+  isAdaptiveAssessment?: boolean;
 }
 
 export interface CurationHistory {
@@ -93,6 +95,7 @@ export interface CurationHistory {
   score: number;
   data: CurationFormData;
   result: AIResult;
+  aiPromptConfig?: AiPromptConfig;
 }
 
 export type FieldType = 'text' | 'textarea' | 'number' | 'radio' | 'checkbox' | 'file' | 'select' | 'date';
@@ -130,6 +133,7 @@ export interface FormStep {
   title: string;
   icon?: string;          
   description?: string;
+  targetMetrics?: string[];
   fields: FormField[];    
 }
 
@@ -171,6 +175,16 @@ export interface AiPromptConfig {
   actionPlanBehavior?: string;
   isAdaptive?: boolean;
   maxAdaptiveSections?: number;
+  assessmentOutputMode?: 'auto' | 'adaptive' | 'universal';
+  adaptiveLanguageStylePreset?:
+    | 'auto'
+    | 'friendly_counseling'
+    | 'friendly_self_assessment'
+    | 'warm_supportive'
+    | 'neutral_professional'
+    | 'direct_coach';
+  adaptiveQuestionTonePrompt?: string;
+  adaptiveResultTonePrompt?: string;
 }
 
 export interface FormTemplate {

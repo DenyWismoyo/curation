@@ -144,7 +144,7 @@ export const executeArchitect = async (
       : "";
       
     const isAdaptive = existingConfig.isAdaptive || false;
-    const maxAdaptiveSections = existingConfig.maxAdaptiveSections || 15;
+    const maxAdaptiveSections = existingConfig.maxAdaptiveSections || 10;
     const sectionsCountInstruction = isAdaptive ? `TEPAT ${maxAdaptiveSections}` : "5 hingga 8";
     const draftingQuestionsInstruction = isAdaptive 
       ? `TUGAS UTAMA (DRAFTING PERTANYAAN):

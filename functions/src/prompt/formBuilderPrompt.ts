@@ -109,60 +109,15 @@ export const buildMegaAgentPrompt = (params: FormBuilderPromptParams): string =>
  ${archetypeInstruction}
 
  INSTRUKSI TEKNIS STRUKTUR JSON & "POWERFUL MIXING":
- 1. Langkah 1 WAJIB memiliki 2 field pertama dengan ID: "namaUsaha", "namaPengisi". Sisa pertanyaan identitas disesuaikan dengan konteks tanpa menanyakan Email/Telepon.
- 2. SINERGI TIPE INPUT (WAJIB DITERAPKAN): Anda memiliki senjata input ("text", "textarea", "number", "date", "select", "radio", "checkbox", "file"). Anda WAJIB menggabungkan mereka secara cerdas!
+ 1. SINERGI TIPE INPUT (WAJIB DITERAPKAN): Anda memiliki senjata input ("text", "textarea", "number", "date", "select", "radio", "checkbox", "file"). Anda WAJIB menggabungkan mereka secara cerdas!
     - Gunakan "checkbox" untuk menanyakan kelengkapan.
     - Gunakan "number" khusus untuk data kuantitatif presisi (contoh: Omzet, Jumlah Pengguna, Umur).
     - Gunakan "radio" atau "select" untuk pilihan tunggal tingkat kematangan (maturity level).
- 3. SECRET SCORING MATRIX: Untuk tipe 'radio', 'checkbox', atau 'select', array "options" WAJIB berupa objek: {"label": "Teks", "weight": angka_bobot_0_hingga_100}. Berikan bobot skor yang ketat dan selaras dengan Rubrik Klien berikut: "${config.customScoringRubric}".
- 4. AGGRESSIVE CONDITIONAL LOGIC (INVESTIGASI FORENSIK): Gunakan properti "showIf": {"fieldId": "id_pemicu", "equals": "opsi_pemicu"} untuk membuat form yang reaktif dan cerdas:
+ 2. SECRET SCORING MATRIX: Untuk tipe 'radio', 'checkbox', atau 'select', array "options" WAJIB berupa objek: {"label": "Teks", "weight": angka_bobot_0_hingga_100}. Berikan bobot skor yang ketat dan selaras dengan Rubrik Klien berikut: "${config.customScoringRubric}".
+ 3. AGGRESSIVE CONDITIONAL LOGIC (INVESTIGASI FORENSIK): Gunakan properti "showIf": {"fieldId": "id_pemicu", "equals": "opsi_pemicu"} untuk membuat form yang reaktif dan cerdas:
     - Skenario Pembuktian: Jika peserta merespon positif/klaim besar di pertanyaan 'radio'/'select' (misal: "Sudah memiliki sertifikasi"), WAJIB pancing pertanyaan baru bertipe "file" untuk menagih bukti dokumennya menggunakan showIf.
     - Skenario Justifikasi: Jika peserta memilih opsi berisiko tinggi atau menjawab "Belum ada", pancing pertanyaan baru bertipe "textarea" menggunakan showIf untuk meminta alasan/justifikasi mereka.
     - ATURAN MUTLAK KONDISIONAL: Nilai properti "equals" WAJIB diisi dan SAMA PERSIS dengan string "label" pada opsi jawaban yang memicunya.
- 5. SKALA ENTERPRISE: Rangkai 10 hingga 15 pertanyaan berbobot dan tajam secara leluasa khusus untuk seksi ini. Tidak perlu menahan diri, gali informasi target sedalam-dalamnya.
-
- ==================================================
- FORMAT KELUARAN (MUTLAK)
- ==================================================
- Keluarkan HANYA format JSON murni TANPA markdown block, TANPA teks pengantar apapun. Tiru persis struktur JSON berikut (termasuk cara penerapan showIf dan file):
-
- {
-   "researchNotes": "Tuliskan ringkasan riset dalam satu paragraf lurus menggunakan Bahasa Indonesia tanpa enter.",
-   "steps": [
-     {
-       "stepNumber": 1,
-       "title": "Identitas Dasar",
-       "description": "Lengkapi profil Anda",
-       "fields": [
-         {
-           "id": "namaUsaha", "label": "${namaLabel}", "type": "text", "required": true, "gridSpan": 2
-         },
-         {
-           "id": "namaPengisi", "label": "Nama Pengisi Form", "type": "text", "required": true, "gridSpan": 2
-         },
-         {
-           "id": "statusSertifikasi",
-           "label": "Status Sertifikasi",
-           "type": "radio",
-           "required": true,
-           "gridSpan": 2,
-           "options": [
-             {"label": "Belum Memiliki", "weight": 0},
-             {"label": "Sudah Memiliki", "weight": 100}
-           ]
-         },
-         {
-           "id": "buktiSertifikasi",
-           "label": "Unggah Dokumen Sertifikasi Anda",
-           "type": "file",
-           "required": true,
-           "gridSpan": 2,
-           "fileAccept": ".pdf",
-           "showIf": { "fieldId": "statusSertifikasi", "equals": "Sudah Memiliki" }
-         }
-       ]
-     }
-   ]
- }
+ 4. SKALA ENTERPRISE: Rangkai pertanyaan berbobot dan tajam secara leluasa khusus untuk seksi ini. Tidak perlu menahan diri, gali informasi target sedalam-dalamnya.
   `.trim();
 };

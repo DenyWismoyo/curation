@@ -94,6 +94,7 @@ export default function Home() {
         trackType={state.selectedTemplate?.trackName || 'Model Bisnis'}
         formData={state.formData}
         aiResult={state.aiResult}
+        aiPromptConfig={state.selectedTemplate?.aiPromptConfig}
         onRestart={() => {
           actions.restart();
           router.push('/');

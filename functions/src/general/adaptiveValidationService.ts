@@ -2,11 +2,53 @@
 
 import { onCall, onRequest, HttpsError } from "firebase-functions/v2/https";
 import { defineSecret } from "firebase-functions/params";
+import OpenAI from "openai";
 import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 import * as admin from "firebase-admin";
 import { getFirestore } from "firebase-admin/firestore";
 
 const geminiApiKeySecret = defineSecret("GEMINI_API_KEY");
+const deepseekApiKeySecret = defineSecret("DEEPSEEK_API_KEY");
+
+const resolveAdaptiveToneGuidance = (
+  aiPromptConfig: any,
+  mode: 'question' | 'result'
+): string => {
+  const preset = aiPromptConfig?.adaptiveLanguageStylePreset || 'auto';
+  const formPurpose = String(aiPromptConfig?.formPurpose || 'assessment').toLowerCase();
+  const audience = String(aiPromptConfig?.targetAudience || 'company').toLowerCase();
+
+  const autoPreset =
+    formPurpose === 'counseling'
+      ? 'friendly_counseling'
+      : (audience === 'individual' || audience === 'student')
+        ? 'friendly_self_assessment'
+        : 'neutral_professional';
+
+  const activePreset = preset === 'auto' ? autoPreset : preset;
+
+  const map: Record<string, string> = {
+    friendly_counseling:
+      'Gunakan bahasa empatik, lembut, tidak menghakimi, dan terasa seperti pendamping konseling mandiri.',
+    friendly_self_assessment:
+      'Gunakan bahasa santai-profesional, jelas, membumi, dan mudah dipahami untuk asesmen mandiri.',
+    warm_supportive:
+      'Gunakan bahasa hangat, suportif, memberi dorongan, dan fokus pada kemajuan kecil yang realistis.',
+    neutral_professional:
+      'Gunakan bahasa profesional yang ringan, rapi, dan tetap mudah dipahami non-teknis.',
+    direct_coach:
+      'Gunakan bahasa tegas seperti coach, langsung ke inti, tetap sopan, dan actionable.',
+  };
+
+  const base = map[activePreset] || map.neutral_professional;
+  const custom = mode === 'question'
+    ? aiPromptConfig?.adaptiveQuestionTonePrompt
+    : aiPromptConfig?.adaptiveResultTonePrompt;
+
+  return custom && String(custom).trim().length > 0
+    ? `${base}\nInstruksi tambahan khusus: ${String(custom).trim()}`
+    : base;
+};
 
 // ============================================================================
 // HELPER: BYPASS SDK DENGAN DIRECT REST API & ZERO-VECTOR FALLBACK
@@ -46,13 +88,13 @@ export const generateAdaptiveQuestions = onCall({
     memory: "512MiB",
     timeoutSeconds: 120,
     region: "asia-southeast2",
-    secrets: [geminiApiKeySecret],
+  secrets: [geminiApiKeySecret, deepseekApiKeySecret],
     cors: true,
   },
   async (request) => {
     if (!request.auth) throw new HttpsError("unauthenticated", "Akses ditolak.");
     
-    const { formData, trackName, aiPromptConfig, stepTitle, stepDescription, templateId, stepIndex } = request.data;
+    const { formData, trackName, aiPromptConfig, stepTitle, stepDescription, templateId, stepIndex, targetMetrics } = request.data;
     if (!formData) throw new HttpsError("invalid-argument", "Data formulir tidak ditemukan.");
 
     try {
@@ -62,6 +104,7 @@ export const generateAdaptiveQuestions = onCall({
 
       const persona = aiPromptConfig?.aiPersona || "Asesor Profesional & Auditor Analitis";
       const strictness = aiPromptConfig?.gradingStrictness || "standard";
+      const adaptiveToneGuidance = resolveAdaptiveToneGuidance(aiPromptConfig, 'question');
 
       // Ekstrak teks penting
       const textData: Record<string, any> = {};
@@ -98,7 +141,27 @@ export const generateAdaptiveQuestions = onCall({
         console.warn("Pencarian Vektor dilewati:", vectorErr.message);
       }
 
-      // PROSES GENERATE AI (Ini tetap menggunakan SDK karena terbukti aman dan jalan)
+      const deepseekApiKey = deepseekApiKeySecret.value();
+
+      const candidateQuestionSample = candidateQuestions.slice(0, 8);
+      const deepseekSystemInstruction = `
+    Anda adalah ${persona}.
+    Tugas: merancang pertanyaan kuesioner dinamis untuk satu seksi assessment.
+    Prioritas kualitas:
+    1. Pertanyaan harus tajam, relevan, dan tidak mengulang informasi yang sudah ada.
+    2. Fokuskan 80% pada radio/select/checkbox, 20% pada text/textarea untuk probing.
+    3. Jangan gunakan showIf, branching, atau logika pertanyaan bersyarat apa pun.
+    4. Gunakan options berbobot untuk radio/select/checkbox.
+    5. Tandai 1-2 pertanyaan paling krusial dengan weightMultiplier 2, 3, atau 5.
+    6. Tulis aiReasoning yang menjelaskan kenapa pertanyaan itu penting.
+    7. WAJIB patuhi gaya bahasa berikut: ${adaptiveToneGuidance}
+    Output wajib: JSON object murni dengan key "fields" berisi array FormField.
+    `;
+
+      const buildAdaptiveQuestionPrompt = (instructions: string) => `
+    ${instructions}
+    `;
+
       const model = genAI.getGenerativeModel({
         model: "gemini-3.1-flash-lite", 
         systemInstruction: `Anda adalah ${persona}. Tugas Anda merancang instrumen pertanyaan kuesioner dinamis secara real-time. Output WAJIB berupa array JSON berisi objek 'FormField'.`,
@@ -131,15 +194,6 @@ export const generateAdaptiveQuestions = onCall({
                   }
                 },
                 options: { type: SchemaType.ARRAY, items: { type: SchemaType.OBJECT, properties: { label: { type: SchemaType.STRING }, weight: { type: SchemaType.INTEGER } } } },
-                showIf: { 
-                  type: SchemaType.OBJECT, 
-                  properties: { 
-                    fieldId: { type: SchemaType.STRING }, 
-                    operator: { type: SchemaType.STRING },
-                    value: { type: SchemaType.STRING },
-                    equals: { type: SchemaType.STRING } 
-                  } 
-                }
               }
             }
           }
@@ -167,19 +221,25 @@ export const generateAdaptiveQuestions = onCall({
           - Nada/Tone: ${reportTone}
           - Tujuan Kuesioner (Purpose): ${formPurpose}
           - ${audienceContext}
+          - GUIDANCE ADAPTIVE TONE: ${adaptiveToneGuidance}
           
-          Sesuaikan gaya penyusunan pertanyaan Anda dengan pengaturan di atas. Jika tujuannya adalah konseling, mentoring, atau supportive, gunakan bahasa yang empatik, menggali, dan merangkul. Jika ini adalah audit/investigative (strict), gunakan pendekatan interogasi yang tajam dan meminta pembuktian absolut.
+          Sesuaikan gaya penyusunan pertanyaan Anda dengan pengaturan di atas. Jika tujuannya adalah konseling, mentoring, atau supportive, gunakan bahasa yang empatik, menggali, dan merangkul.
 
           ${aiPromptConfig?.customSystemPrompt ? `ATURAN KONDISIONAL KHUSUS:\n${aiPromptConfig.customSystemPrompt}\n` : ''}
           ${aiPromptConfig?.negativePrompts ? `PANTANGAN KERAS (DILARANG):\n${aiPromptConfig.negativePrompts}\n` : ''}
+          ${aiPromptConfig?.customScoringRubric ? `RUBRIK PENILAIAN (PANDUAN BOBOT SKOR):\n${aiPromptConfig.customScoringRubric}\n` : ''}
 
-          ATURAN KUSTOMISASI WAJIB (AGAR TIDAK MONOTON):
-          1. HYPER-PERSONALIZATION (MUTLAK): Singgung secara spesifik data dari "Data Peserta Sebelumnya" ke dalam label pertanyaan atau deskripsinya. Buat seakan Anda berbicara langsung dengan peserta merujuk pada profil/jawaban mereka di langkah sebelumnya.
-          2. VARIASI TIPE & VALIDASI: Gunakan tipe input yang beragam (radio, select, textarea, number, file). Jika menggunakan tipe number atau text, tambahkan objek "validation" (misal: min, max, minLength) untuk menjaga kebersihan data.
-          3. LOGIKA BERCABANG ADVANCED (showIf): Buat 1-2 pertanyaan berlapis. Gunakan properti "showIf" dengan kombinasi "operator" (misal: 'equals', 'greater_than') dan "value" untuk memicu detail/bukti lanjutan dari pertanyaan sebelumnya.
-          4. PEMBOBOTAN KRITIS (weightMultiplier): Untuk 1-2 pertanyaan yang paling krusial di tahap ini, set "weightMultiplier": 2, 3, atau 5. Biarkan properti ini kosong atau 1 untuk pertanyaan sekunder.
-          5. OPSI BERBOBOT: Untuk 'radio' atau 'select', WAJIB isi properti 'options' dengan format [{label: 'Opsi A', weight: 100}, {label: 'Opsi B', weight: 50}].
-          6. PERSONALISASI REASONING: Jelaskan secara cerdas pada 'aiReasoning' mengapa AI merancang pertanyaan ini secara khusus berdasarkan konteks partisipan.
+          ATURAN KUSTOMISASI WAJIB (AGAR TIDAK MONOTON & TEPAT SASARAN):
+          1. FOKUS TARGET METRIK: Pertanyaan yang Anda buat WAJIB difokuskan untuk mengukur metrik berikut: [${targetMetrics?.join(', ') || 'Metrik Umum'}].
+          2. ANTI-DUPLIKASI (MUTLAK): Baca 'Data Peserta Sebelumnya' dengan teliti. DILARANG KERAS membuat pertanyaan yang esensinya sama persis dengan informasi yang sudah dijawab. Anda boleh menggunakan jawaban sebelumnya sebagai dasar/pijakan untuk bertanya LEBIH DALAM (probing), tapi jangan mengulang pertanyaan.
+          3. HYPER-PERSONALIZATION: Singgung secara spesifik data/jawaban dari "Data Peserta Sebelumnya" ke dalam label pertanyaan atau deskripsi agar terasa relevan.
+          4. STRUKTUR TIPE INPUT (PRIORITAS):
+             - FOKUS 80% pada tipe "radio", "select", dan "checkbox" agar peserta mudah mengisi.
+             - Untuk 'radio'/'select', WAJIB isi properti 'options' dengan format [{label: 'Opsi A', weight: 100}, {label: 'Opsi B', weight: 50}]. Gunakan Rubrik Penilaian di atas sebagai acuan bobot 0-100.
+               - FOKUS 20% pada tipe "textarea" atau "text" khusus untuk probing/penggalian alasan yang mendalam.
+             ${audienceType === 'individual' || audienceType === 'student' ? '- DILARANG menggunakan tipe "file" (unggah dokumen) karena ini untuk individu/personal.' : '- Gunakan tipe "file" HANYA jika sangat krusial untuk meminta bukti.'}
+             5. PEMBOBOTAN KRITIS (weightMultiplier): Untuk 1-2 pertanyaan yang paling krusial di tahap ini, set "weightMultiplier": 2, 3, atau 5. Biarkan properti ini kosong atau 1 untuk pertanyaan sekunder.
+             6. PERSONALISASI REASONING: Jelaskan secara cerdas pada 'aiReasoning' mengapa AI merancang pertanyaan ini secara khusus berdasarkan konteks partisipan.
       `;
 
       let prompt = "";
@@ -187,8 +247,9 @@ export const generateAdaptiveQuestions = onCall({
         prompt = `
           Konteks Program Asesmen: ${trackName}
           Judul Seksi: "${stepTitle}"
-          BERIKUT ADALAH KANDIDAT PERTANYAAN: ${JSON.stringify(candidateQuestions)}
-          INSTRUKSI: Pilih 4-6 pertanyaan TERBAIK yang cocok dengan profil peserta di bawah ini.
+          Target Metrik Seksi Ini: [${targetMetrics?.join(', ') || 'Metrik Umum'}]
+          BERIKUT ADALAH KANDIDAT PERTANYAAN: ${JSON.stringify(candidateQuestionSample)}
+          INSTRUKSI: Pilih 4-6 pertanyaan TERBAIK yang cocok dengan profil peserta di bawah ini dan modifikasi sesuai dengan aturan.
           Data Peserta Sebelumnya: ${contextString}
           
 ${dynamicRules}
@@ -198,22 +259,72 @@ ${dynamicRules}
           Konteks Program Asesmen: ${trackName}
           Data Peserta Sebelumnya: ${contextString}
           TUGAS MERANCANG PERTANYAAN UNTUK: "${stepTitle}" (${stepDescription || '-'})
+          Target Metrik Seksi Ini: [${targetMetrics?.join(', ') || 'Metrik Umum'}]
           INSTRUKSI: Rancang 4-8 pertanyaan baru secara spesifik untuk membedah profil ini.
           
 ${dynamicRules}
         `;
       }
 
-      const result = await model.generateContent(prompt);
-      let rawText = result.response.text().trim();
-      if (rawText.startsWith('```')) rawText = rawText.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
-      
-      const dynamicFields = JSON.parse(rawText);
+      const deepseekClient = new OpenAI({
+        baseURL: 'https://api.deepseek.com',
+        apiKey: deepseekApiKey,
+      });
+
+      const deepseekPrompt = buildAdaptiveQuestionPrompt(`
+          Konteks Program Asesmen: ${trackName}
+          Judul Seksi: "${stepTitle}"
+          Target Metrik Seksi Ini: [${targetMetrics?.join(', ') || 'Metrik Umum'}]
+          ${candidateQuestions.length >= 5 ? `BERIKUT ADALAH KANDIDAT PERTANYAAN: ${JSON.stringify(candidateQuestionSample)}` : ''}
+          Data Peserta Sebelumnya: ${contextString}
+          ${dynamicRules}
+      `);
+
+      let dynamicFields: any[] = [];
+      try {
+        const response = await deepseekClient.chat.completions.create({
+          model: 'deepseek-chat',
+          messages: [
+            {
+              role: 'system',
+              content: deepseekSystemInstruction,
+            },
+            { role: 'user', content: deepseekPrompt },
+          ],
+          response_format: { type: 'json_object' },
+          temperature: 0.65,
+        });
+
+        let rawText = response.choices[0]?.message?.content || '[]';
+        if (rawText.startsWith('```')) rawText = rawText.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
+
+        const parsedDeepseek = JSON.parse(rawText);
+        dynamicFields = Array.isArray(parsedDeepseek)
+          ? parsedDeepseek
+          : Array.isArray(parsedDeepseek.fields)
+            ? parsedDeepseek.fields
+            : [];
+      } catch (deepseekErr: any) {
+        console.warn('[AdaptiveWizard] DeepSeek gagal, fallback ke Gemini untuk menjaga pengalaman user.', deepseekErr?.message || deepseekErr);
+
+        const result = await model.generateContent(prompt);
+        let rawText = result.response.text().trim();
+        if (rawText.startsWith('```')) rawText = rawText.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
+        dynamicFields = JSON.parse(rawText);
+      }
+
+      const flattenedFields = Array.isArray(dynamicFields)
+        ? dynamicFields.map((field) => {
+            if (!field || typeof field !== 'object') return field;
+            const { showIf, ...rest } = field;
+            return rest;
+          })
+        : [];
 
       // BACKGROUND HARVESTING DENGAN BYPASS REST API
-      if (candidateQuestions.length < 5 && Array.isArray(dynamicFields)) {
+      if (candidateQuestions.length < 5 && Array.isArray(flattenedFields)) {
         try {
-          for (const field of dynamicFields) {
+          for (const field of flattenedFields) {
             const textToEmbed = `Track: ${trackName}, Step: ${stepTitle}, Label: ${field.label}`;
             const vectorVal = await getSafeEmbedding(textToEmbed, API_KEY);
 
@@ -237,7 +348,7 @@ ${dynamicRules}
         }
       }
 
-      return { success: true, fields: dynamicFields };
+      return { success: true, fields: flattenedFields };
 
     } catch (error: any) {
       console.error("Gagal men-generate form adaptif:", error);
@@ -255,7 +366,7 @@ export const evaluateMacroBranching = onCall({
   cors: true,
 }, async (request) => {
   if (!request.auth) throw new HttpsError("unauthenticated", "Akses ditolak.");
-  const { formData, trackName, currentTotalSteps, maxAdaptiveSections = 7 } = request.data;
+  const { formData, trackName, currentTotalSteps, maxAdaptiveSections = 10 } = request.data;
   const API_KEY = geminiApiKeySecret.value();
   const genAI = new GoogleGenerativeAI(API_KEY);
 

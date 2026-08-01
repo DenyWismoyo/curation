@@ -27,6 +27,21 @@ export const useCuration = () => {
     history: [],
   });
 
+  const normalizeHistoryItem = useCallback((item: any, templates: any[]) => {
+    const templateMatch = templates.find((template) => template.trackName === item.trackType);
+    const inferredAdaptive = Boolean(
+      item?.result?.isAdaptiveAssessment ||
+      item?.data?.formMode === 'adaptive' ||
+      item?.data?.mode === 'adaptive' ||
+      item?.data?.isAdaptive
+    );
+
+    return {
+      ...item,
+      aiPromptConfig: item.aiPromptConfig || templateMatch?.aiPromptConfig || (inferredAdaptive ? { isAdaptive: true, assessmentOutputMode: 'adaptive' } : undefined),
+    };
+  }, []);
+
   // 1. Ambil Template Kuesioner dari Database saat Hook pertama kali dimuat
   useEffect(() => {
     const fetchTemplates = async () => {
@@ -60,30 +75,49 @@ export const useCuration = () => {
     };
 
     fetchTemplates();
-
-    // Muat riwayat lokal (Local Storage) untuk user tamu/anonim
-    const savedHistory = localStorage.getItem('curationHistory');
-    if (savedHistory) {
-      try {
-        setState(prev => ({ ...prev, history: JSON.parse(savedHistory) }));
-      } catch (e) {
-        console.error("Gagal memparsing riwayat lokal:", e);
-      }
-    }
   }, []);
+
+  useEffect(() => {
+    if (state.isLoadingTemplates || state.templates.length === 0) return;
+    if (typeof window === 'undefined') return;
+
+    const savedHistory = localStorage.getItem('curationHistory');
+    if (!savedHistory) return;
+
+    try {
+      const parsedHistory = JSON.parse(savedHistory);
+      if (!Array.isArray(parsedHistory)) return;
+
+      const normalizedHistory = parsedHistory.map((item) => normalizeHistoryItem(item, state.templates));
+      setState(prev => ({ ...prev, history: normalizedHistory }));
+
+      if (JSON.stringify(parsedHistory) !== JSON.stringify(normalizedHistory)) {
+        localStorage.setItem('curationHistory', JSON.stringify(normalizedHistory));
+      }
+    } catch (e) {
+      console.error("Gagal memparsing riwayat lokal:", e);
+    }
+  }, [state.isLoadingTemplates, state.templates, normalizeHistoryItem]);
 
   const saveToHistory = (item: any) => {
     setState(prev => {
-      const newHistory = [item, ...prev.history].slice(0, 50); // Maksimal simpan 50 riwayat lokal
+      const historyItem = {
+        ...item,
+        aiPromptConfig: state.selectedTemplate?.aiPromptConfig || item.aiPromptConfig,
+      };
+      const newHistory = [historyItem, ...prev.history].slice(0, 50); // Maksimal simpan 50 riwayat lokal
       localStorage.setItem('curationHistory', JSON.stringify(newHistory));
       return { ...prev, history: newHistory };
     });
   };
 
   // 2. FUNGSI UTAMA: MENGIRIM ASESMEN DAN MEMANTAU AGEN AI SECARA DINAMIS
-  const submitAssessment = async (data: any) => {
+  const submitAssessment = async (data: any, templateOverride?: any) => {
+    const activeTemplate = templateOverride || state.selectedTemplate;
+
     setState(prev => ({
       ...prev,
+      selectedTemplate: activeTemplate || prev.selectedTemplate,
       formData: data,
       viewState: 'processing',
       currentAssessmentId: null,
@@ -103,9 +137,10 @@ export const useCuration = () => {
 
       const response = await processAssessment({
         formData: cleanFormData,
-        trackType: state.selectedTemplate?.trackName || 'Evaluasi Umum',
+        trackType: activeTemplate?.trackName || 'Evaluasi Umum',
+        templateId: activeTemplate?.id || null,
         tokenUsed: tokenUsed,
-        aiPromptConfig: state.selectedTemplate?.aiPromptConfig || {},
+        aiPromptConfig: activeTemplate?.aiPromptConfig || {},
         storageFilePaths: data.storageFilePaths || []
       }) as any;
 
@@ -116,8 +151,8 @@ export const useCuration = () => {
       }
 
       // FIX: Bersihkan draf lokal karena data berhasil terkirim ke server
-      if (state.selectedTemplate?.id) {
-        localStorage.removeItem(`curation_draft_dynamic_${state.selectedTemplate.id}`);
+      if (activeTemplate?.id) {
+        localStorage.removeItem(`curation_draft_dynamic_${activeTemplate.id}`);
       }
 
       setState(prev => ({ ...prev, currentAssessmentId: assessmentId }));
@@ -143,7 +178,8 @@ export const useCuration = () => {
               namaUsaha: data.namaUsaha || 'Tanpa Nama',
               score: finalResult?.totalScore || 0,
               data: data,
-              result: finalResult
+              result: finalResult,
+              aiPromptConfig: activeTemplate?.aiPromptConfig || docData.aiPromptConfig || {}
             });
 
             unsub();
@@ -185,14 +221,20 @@ export const useCuration = () => {
   }, []);
 
   const loadHistoryItem = useCallback((item: any) => {
+    const normalizedItem = normalizeHistoryItem(item, state.templates);
+    const templateMatch = state.templates.find(
+      (template) => template.trackName === normalizedItem.trackType
+    );
+
     setState(prev => ({
       ...prev,
-      formData: item.data,
-      aiResult: item.result,
+      selectedTemplate: templateMatch || prev.selectedTemplate,
+      formData: normalizedItem.data,
+      aiResult: normalizedItem.result,
       viewState: 'dashboard',
-      currentAssessmentId: item.id || null
+      currentAssessmentId: normalizedItem.id || null
     }));
-  }, []);
+  }, [normalizeHistoryItem, state.templates]);
 
   return {
     state,

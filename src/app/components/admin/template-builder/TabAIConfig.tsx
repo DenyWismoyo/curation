@@ -34,6 +34,15 @@ const ADVANCED_SCENARIOS = [
   { id: 'financial_risk', label: 'Analisis Kelayakan Finansial (Investasi)' }
 ];
 
+const ADAPTIVE_LANGUAGE_PRESETS = [
+  { id: 'auto', label: 'Auto (ikuti Tujuan & Audiens)' },
+  { id: 'friendly_counseling', label: 'Friendly Konseling Mandiri' },
+  { id: 'friendly_self_assessment', label: 'Friendly Asesmen Mandiri' },
+  { id: 'warm_supportive', label: 'Hangat & Supportive' },
+  { id: 'neutral_professional', label: 'Netral Profesional (ringan)' },
+  { id: 'direct_coach', label: 'Coach Tegas (tetap ramah)' },
+];
+
 interface TabAIConfigProps {
   template: FormTemplate;
   onChange: (updatedTemplate: FormTemplate) => void;
@@ -163,7 +172,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
 
     let adaptiveInstruction = "";
     if (template.aiPromptConfig?.isAdaptive) {
-      const maxSections = template.aiPromptConfig?.maxAdaptiveSections || 15;
+      const maxSections = template.aiPromptConfig?.maxAdaptiveSections || 10;
       adaptiveInstruction = `
       ==================================================
       PERHATIAN: MODE ADAPTIVE LIVING FORM DIAKTIFKAN!
@@ -417,19 +426,82 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
         </div>
 
         <div className="pt-4 border-t border-slate-200/60 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-1.5 p-4 bg-indigo-50/50 rounded-2xl border border-indigo-100">
-            <label className="text-[10px] font-black text-indigo-900 uppercase tracking-wider flex items-center justify-between">
-              <span>Mode Asesmen Adaptif (Living Form)</span>
+          <div className="space-y-1.5 p-4 rounded-2xl border bg-white border-slate-200 shadow-sm">
+            <label className="text-[10px] font-black uppercase tracking-wider flex items-center justify-between text-slate-600">
+              <span className="flex items-center gap-2">
+                <Settings className="w-4 h-4 text-indigo-500" />
+                Output Detail Assessment
+              </span>
+            </label>
+            <select
+              value={template.aiPromptConfig?.assessmentOutputMode || 'auto'}
+              onChange={(e) => updateConfig('assessmentOutputMode', e.target.value)}
+              className="w-full h-10 rounded-xl border border-slate-200 bg-white text-slate-900 font-semibold px-3 focus:ring-2 focus:ring-indigo-500 text-sm shadow-sm"
+            >
+              <option value="auto">Otomatis (ikuti mode assessment)</option>
+              <option value="adaptive">Adaptive Assessment View</option>
+              <option value="universal">Universal Assessment View</option>
+            </select>
+            <p className="text-[11px] text-slate-500 font-medium">
+              Pilih tampilan hasil yang dipakai user dan admin saat membuka laporan.
+            </p>
+          </div>
+
+          <div className={`space-y-1.5 p-4 rounded-2xl border transition-all duration-300 ${template.aiPromptConfig?.isAdaptive ? 'bg-indigo-600 border-indigo-700 shadow-lg text-white' : 'bg-indigo-50/50 border-indigo-100'}`}>
+            <label className={`text-[10px] font-black uppercase tracking-wider flex items-center justify-between ${template.aiPromptConfig?.isAdaptive ? 'text-indigo-50' : 'text-indigo-900'}`}>
+              <span className="flex items-center gap-2">
+                <Sparkles className={`w-4 h-4 ${template.aiPromptConfig?.isAdaptive ? 'text-yellow-300' : 'text-indigo-500'}`} /> 
+                Mode Asesmen Adaptif (Living Form)
+              </span>
               <input type="checkbox" checked={template.aiPromptConfig?.isAdaptive || false} onChange={e => updateConfig('isAdaptive', e.target.checked)} className="w-4 h-4 rounded border-indigo-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer" />
             </label>
-            <p className="text-xs text-indigo-700/70 font-medium leading-relaxed mt-1">
+            <p className={`text-xs font-medium leading-relaxed mt-2 ${template.aiPromptConfig?.isAdaptive ? 'text-indigo-100' : 'text-indigo-700/70'}`}>
               Jika aktif, AI hanya akan merancang field secara utuh untuk Langkah 1. Pertanyaan di langkah berikutnya akan dikosongkan dan di-generate saat user mengisi form.
             </p>
           </div>
-          <div className="space-y-1.5 p-4 bg-slate-50/80 rounded-2xl border border-slate-200">
+          <div className={`space-y-1.5 p-4 rounded-2xl border transition-all duration-300 ${template.aiPromptConfig?.isAdaptive ? 'bg-white border-indigo-300 ring-4 ring-indigo-500/10' : 'bg-slate-50/80 border-slate-200 opacity-60 grayscale-[50%]'}`}>
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider block">Batas Maksimal Seksi Adaptif</label>
-            <Input type="number" min={1} max={15} value={template.aiPromptConfig?.maxAdaptiveSections || 5} onChange={e => updateConfig('maxAdaptiveSections', parseInt(e.target.value))} className="h-10 bg-white font-bold rounded-xl" disabled={!template.aiPromptConfig?.isAdaptive} />
-            <p className="text-[11px] text-slate-500 font-medium mt-1">Jumlah limit langkah/seksi maksimal saat meracik form dinamis.</p>
+            <Input type="number" min={1} max={15} value={template.aiPromptConfig?.maxAdaptiveSections || 10} onChange={e => updateConfig('maxAdaptiveSections', parseInt(e.target.value))} className="h-10 bg-white font-bold rounded-xl border-slate-200 focus:border-indigo-400 focus:ring-indigo-400" disabled={!template.aiPromptConfig?.isAdaptive} />
+            <p className="text-[11px] text-slate-500 font-medium mt-1">Jumlah limit langkah/seksi (rekomendasi 10-15) saat meracik form dinamis.</p>
+          </div>
+
+          <div className={`space-y-1.5 p-4 rounded-2xl border transition-all duration-300 ${template.aiPromptConfig?.isAdaptive ? 'bg-white border-indigo-300 ring-4 ring-indigo-500/10' : 'bg-slate-50/80 border-slate-200 opacity-60 grayscale-[50%]'}`}>
+            <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider block">Preset Tone Bahasa Adaptive</label>
+            <select
+              value={template.aiPromptConfig?.adaptiveLanguageStylePreset || 'auto'}
+              onChange={(e) => updateConfig('adaptiveLanguageStylePreset', e.target.value)}
+              className="w-full h-10 rounded-xl border border-slate-200 bg-white text-slate-900 font-semibold px-3 focus:ring-2 focus:ring-indigo-500 text-sm shadow-sm"
+              disabled={!template.aiPromptConfig?.isAdaptive}
+            >
+              {ADAPTIVE_LANGUAGE_PRESETS.map((preset) => (
+                <option key={preset.id} value={preset.id}>{preset.label}</option>
+              ))}
+            </select>
+            <p className="text-[11px] text-slate-500 font-medium mt-1">Mode Auto akan membaca Tujuan Form (Tab General) + Target Audiens sebagai default gaya bahasa.</p>
+          </div>
+
+          <div className={`space-y-1.5 p-4 rounded-2xl border transition-all duration-300 md:col-span-2 ${template.aiPromptConfig?.isAdaptive ? 'bg-white border-indigo-300 ring-4 ring-indigo-500/10' : 'bg-slate-50/80 border-slate-200 opacity-60 grayscale-[50%]'}`}>
+            <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider block">Instruksi Tambahan Tone Pertanyaan Adaptive (Opsional)</label>
+            <Textarea
+              value={template.aiPromptConfig?.adaptiveQuestionTonePrompt || ''}
+              onChange={(e) => updateConfig('adaptiveQuestionTonePrompt', e.target.value)}
+              placeholder="Contoh: Gunakan bahasa yang membumi, tidak menghakimi, dan hindari istilah teknis berat."
+              className="rounded-xl bg-white border-slate-200 min-h-[80px] text-sm font-medium"
+              disabled={!template.aiPromptConfig?.isAdaptive}
+            />
+            <p className="text-[11px] text-slate-500 font-medium">Khusus untuk gaya bahasa saat AI meracik pertanyaan per sesi di Dynamic Wizard.</p>
+          </div>
+
+          <div className={`space-y-1.5 p-4 rounded-2xl border transition-all duration-300 md:col-span-2 ${template.aiPromptConfig?.isAdaptive ? 'bg-white border-indigo-300 ring-4 ring-indigo-500/10' : 'bg-slate-50/80 border-slate-200 opacity-60 grayscale-[50%]'}`}>
+            <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider block">Instruksi Tambahan Tone Hasil Adaptive (Opsional)</label>
+            <Textarea
+              value={template.aiPromptConfig?.adaptiveResultTonePrompt || ''}
+              onChange={(e) => updateConfig('adaptiveResultTonePrompt', e.target.value)}
+              placeholder="Contoh: Buat hasil terasa seperti mentor pribadi, ringkas, memotivasi, dan actionable."
+              className="rounded-xl bg-white border-slate-200 min-h-[80px] text-sm font-medium"
+              disabled={!template.aiPromptConfig?.isAdaptive}
+            />
+            <p className="text-[11px] text-slate-500 font-medium">Khusus untuk gaya bahasa narasi hasil asesmen adaptive.</p>
           </div>
         </div>
       </div>
@@ -469,12 +541,26 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
              />
              
              {!isGenerating && (
-               <div className="p-4 bg-slate-800/50 rounded-xl border border-slate-700 text-xs font-mono text-slate-300 mt-4">
+               <div className="p-4 bg-slate-800/50 rounded-xl border border-slate-700 text-xs font-mono text-slate-300 mt-4 relative overflow-hidden">
+                 {template.aiPromptConfig?.isAdaptive && (
+                   <div className="absolute top-0 right-0 bg-indigo-500 text-white text-[9px] font-black px-3 py-1 rounded-bl-xl shadow-sm">
+                     ADAPTIVE MODE ON
+                   </div>
+                 )}
                  <p className="text-[10px] font-black text-indigo-300 uppercase mb-2">Preview Konteks & Aturan AI (Checklist):</p>
                  <p>🎯 <strong className="text-white">Target:</strong> {template.aiPromptConfig?.targetAudience} | {template.aiPromptConfig?.formPurpose}</p>
                  <p>📊 <strong className="text-white">Metrik:</strong> {template.aiPromptConfig?.expectedMetrics?.length || 0} metrik (Radar)</p>
                  <p>🔥 <strong className="text-white">Keketatan:</strong> {template.aiPromptConfig?.gradingStrictness || 'standard'}</p>
                  <p>📝 <strong className="text-white">Komposisi:</strong> {(template.preferredQuestionTypes || []).length > 0 ? (template.preferredQuestionTypes || []).length + ' aturan khusus diaktifkan' : 'Default (Otomatis)'}</p>
+                 {template.aiPromptConfig?.isAdaptive && (
+                   <p className="mt-3 text-indigo-200 border-t border-slate-700/80 pt-3 flex items-start gap-2">
+                     <span className="text-xl leading-none">⚡</span>
+                     <span>
+                       <strong className="text-white">Living Form Aktif:</strong> AI akan membangun struktur untuk <strong>{template.aiPromptConfig?.maxAdaptiveSections || 10} Seksi</strong> secara berantai. 
+                       <br/><span className="text-[10px] opacity-80">(Hanya Step 1 yang akan diisi dengan daftar pertanyaan awal).</span>
+                     </span>
+                   </p>
+                 )}
                </div>
              )}
           </div>

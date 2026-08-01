@@ -8,6 +8,7 @@ import { generateAssessmentCacheKey, getCachedAssessmentResult } from "../../gen
 const processAssessmentSchema = z.object({
   formData: z.record(z.string(), z.any()).default({}),
   trackType: z.string().trim().optional(),
+  templateId: z.union([z.string().trim(), z.null()]).optional(),
   tokenUsed: z.union([z.string().trim(), z.null()]).optional(),
   token: z.union([z.string().trim(), z.null()]).optional(),
   aiPromptConfig: z.record(z.string(), z.any()).default({}),
@@ -29,7 +30,7 @@ export const processCurationAssessment = onCall({
     throw new HttpsError("invalid-argument", "Data request tidak valid: " + parsed.error.issues[0]?.message);
   }
 
-  const { formData, aiPromptConfig, storageFilePaths } = parsed.data;
+  const { formData, aiPromptConfig, storageFilePaths, templateId } = parsed.data;
   const trackType = parsed.data.trackType || formData.trackType || "Evaluasi Umum";
   const tokenUsed = parsed.data.tokenUsed || formData.tokenUsed || parsed.data.token || formData.token || null;
   
@@ -60,29 +61,30 @@ export const processCurationAssessment = onCall({
       let corporateEntityName = null;
       let b2bOrganizationId = null;
       let allowedDocTemplates: string[] = [];
+      let resolvedTokenUsed: string | null = null;
 
       if (tokenCorpId && tokenCode) {
         const corpRef = db.collection('corporate_tokens').doc(tokenCorpId);
         const corpDoc = await transaction.get(corpRef);
-        
-        if (!corpDoc.exists) throw new HttpsError("not-found", `Entitas korporat tidak ditemukan.`);
 
-        const corpData = corpDoc.data();
-        const tData = (corpData?.tokens || {})[tokenCode];
+        if (corpDoc.exists) {
+          const corpData = corpDoc.data();
+          const tData = (corpData?.tokens || {})[tokenCode];
 
-        if (!tData) throw new HttpsError("not-found", `Token tidak ditemukan.`);
-        if (tData.isUsed) throw new HttpsError("permission-denied", "Token telah digunakan.");
+          if (tData && !tData.isUsed) {
+            corporateEntityName = corpData?.corporateName || tokenCorpId;
+            b2bOrganizationId = corpData?.organizationId || null;
+            allowedDocTemplates = corpData?.allowedDocumentTemplates || [];
+            resolvedTokenUsed = tokenUsed;
 
-        corporateEntityName = corpData?.corporateName || tokenCorpId;
-        b2bOrganizationId = corpData?.organizationId || null;
-        allowedDocTemplates = corpData?.allowedDocumentTemplates || [];
-
-        transaction.update(corpRef, {
-          [`tokens.${tokenCode}.isUsed`]: true,
-          [`tokens.${tokenCode}.usedAt`]: new Date().toISOString(),
-          [`tokens.${tokenCode}.usedByNamaUsaha`]: formData.namaUsaha || 'Tanpa Nama',
-          usedCount: admin.firestore.FieldValue.increment(1)
-        });
+            transaction.update(corpRef, {
+              [`tokens.${tokenCode}.isUsed`]: true,
+              [`tokens.${tokenCode}.usedAt`]: new Date().toISOString(),
+              [`tokens.${tokenCode}.usedByNamaUsaha`]: formData.namaUsaha || 'Tanpa Nama',
+              usedCount: admin.firestore.FieldValue.increment(1)
+            });
+          }
+        }
       }
 
       const newAssessmentRef = db.collection("assessments").doc();
@@ -94,15 +96,16 @@ export const processCurationAssessment = onCall({
         userId: userId,
         userEmail: formData.email || userEmail,
         trackType: trackType,
+        templateId: templateId || null,
         corporateEntity: corporateEntityName,
         namaUsaha: formData.namaUsaha || 'Tanpa Nama',
         whatsapp: formData.whatsapp || '',
         formData: formData,
         aiPromptConfig: aiPromptConfig,
         storageFilePaths: storageFilePaths,
-        tokenUsed: tokenUsed || null,
+        tokenUsed: resolvedTokenUsed,
         allowedDocumentTemplates: allowedDocTemplates,
-        documentGenerationQuota: tokenUsed ? 1 : 0,
+        documentGenerationQuota: resolvedTokenUsed ? 1 : 0,
         hasPaidForDocument: false,
         cacheKey: cacheKey || null,
         isCacheHit: isCacheHit,
@@ -134,4 +137,4 @@ export const processCurationAssessment = onCall({
     if (error instanceof HttpsError) throw error;
     throw new HttpsError("internal", error.message || "Gagal menginisiasi asesmen.");
   }
-});
+});
