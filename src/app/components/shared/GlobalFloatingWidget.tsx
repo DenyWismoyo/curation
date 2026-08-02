@@ -28,12 +28,8 @@ const OmniAiWidget = dynamic(
 export function GlobalFloatingWidget() {
   const { user } = useAuth()
   const pathname = usePathname()
-
-  // Sembunyikan widget jika berada di halaman UniversalAssessmentView (seperti /result)
-  // agar tidak menimpa ActionPlanCopilot
-  if (pathname?.includes('/result') || pathname?.includes('/dashboard/result')) {
-    return null;
-  }
+  const shouldHideWidget =
+    pathname?.includes('/result') || pathname?.includes('/dashboard/result')
 
   // State Management
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -64,6 +60,10 @@ export function GlobalFloatingWidget() {
       window.removeEventListener('open_omniai_chat', handleOpenAiEvent)
     }
   }, [])
+
+  if (shouldHideWidget) {
+    return null
+  }
 
 
   return (

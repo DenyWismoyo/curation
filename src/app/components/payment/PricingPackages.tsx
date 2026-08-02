@@ -41,19 +41,24 @@ interface PricingPackagesProps {
 const getCategoryTheme = (title: string, category: string) => {
   const text = `${title} ${category}`.toLowerCase();
 
-  if (text.includes('koperasi') || text.includes('kelurahan') || text.includes('komunitas') || text.includes('hijau') || text.includes('sampah') || text.includes('properti')) {
-    return { bg: 'bg-emerald-50', text: 'text-emerald-600', ring: 'ring-emerald-200', btn: 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/20 text-white', pill: 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100', gradient: 'from-emerald-50/50 to-white' };
-  }
-  if (text.includes('pemerintah') || text.includes('skp') || text.includes('kecamatan') || text.includes('layanan') || text.includes('disposisi') || text.includes('anak') || text.includes('parenting')) {
-    return { bg: 'bg-amber-50', text: 'text-amber-600', ring: 'ring-amber-200', btn: 'bg-amber-500 hover:bg-amber-600 shadow-amber-500/20 text-white', pill: 'bg-amber-50 text-amber-600 hover:bg-amber-100', gradient: 'from-amber-50/50 to-white' };
-  }
-  if (text.includes('riset') || text.includes('akademik') || text.includes('perguruan') || text.includes('techno park') || text.includes('inkubasi') || text.includes('gen z') || text.includes('gen-z') || text.includes('talent')) {
+  if (text.includes('mahasiswa') || text.includes('akademisi') || text.includes('riset') || text.includes('perguruan')) {
     return { bg: 'bg-sky-50', text: 'text-sky-600', ring: 'ring-sky-200', btn: 'bg-sky-600 hover:bg-sky-700 shadow-sky-600/20 text-white', pill: 'bg-sky-50 text-sky-600 hover:bg-sky-100', gradient: 'from-sky-50/50 to-white' };
   }
-  if (text.includes('kesehatan') || text.includes('medis') || text.includes('psikologi') || text.includes('mental')) {
+  if (text.includes('pekerja') || text.includes('profesional') || text.includes('karir')) {
+    return { bg: 'bg-indigo-50', text: 'text-indigo-600', ring: 'ring-indigo-200', btn: 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-600/20 text-white', pill: 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100', gradient: 'from-indigo-50/50 to-white' };
+  }
+  if (text.includes('parenting') || text.includes('keluarga') || text.includes('anak')) {
     return { bg: 'bg-rose-50', text: 'text-rose-600', ring: 'ring-rose-200', btn: 'bg-rose-600 hover:bg-rose-700 shadow-rose-600/20 text-white', pill: 'bg-rose-50 text-rose-600 hover:bg-rose-100', gradient: 'from-rose-50/50 to-white' };
   }
-  return { bg: 'bg-indigo-50', text: 'text-indigo-600', ring: 'ring-indigo-200', btn: 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-600/20 text-white', pill: 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100', gradient: 'from-indigo-50/50 to-white' };
+  if (text.includes('umkm') || text.includes('pengusaha') || text.includes('startup')) {
+    return { bg: 'bg-amber-50', text: 'text-amber-600', ring: 'ring-amber-200', btn: 'bg-amber-500 hover:bg-amber-600 shadow-amber-500/20 text-white', pill: 'bg-amber-50 text-amber-600 hover:bg-amber-100', gradient: 'from-amber-50/50 to-white' };
+  }
+  if (text.includes('korporasi') || text.includes('b2b') || text.includes('perusahaan')) {
+    return { bg: 'bg-emerald-50', text: 'text-emerald-600', ring: 'ring-emerald-200', btn: 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/20 text-white', pill: 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100', gradient: 'from-emerald-50/50 to-white' };
+  }
+  
+  // Default (Umum & Personal)
+  return { bg: 'bg-slate-50', text: 'text-slate-600', ring: 'ring-slate-200', btn: 'bg-slate-800 hover:bg-slate-900 shadow-slate-800/20 text-white', pill: 'bg-slate-50 text-slate-600 hover:bg-slate-100', gradient: 'from-slate-50/50 to-white' };
 };
 
 const formatRupiah = (angka: number) => {

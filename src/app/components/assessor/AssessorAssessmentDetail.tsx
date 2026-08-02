@@ -151,6 +151,7 @@ export function AssessorAssessmentDetail({ data, onClose, onSaveSuccess }: any) 
                 formData={data.formData}
                 aiResult={data.aiResult || {}}
                 assessmentId={data.id}
+                aiPromptConfig={data.aiPromptConfig}
               />
             ) : (
               <UniversalAssessmentView

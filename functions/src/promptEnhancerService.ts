@@ -2,46 +2,35 @@
 
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { defineSecret } from "firebase-functions/params";
-import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
+import OpenAI from "openai";
+import { withRetry } from "./utils/retry";
 
-const geminiApiKeySecret = defineSecret("GEMINI_API_KEY");
+const deepseekApiKeySecret = defineSecret("DEEPSEEK_API_KEY");
+
+const resolveImpactGuidance = (mode: unknown): string => {
+  const value = String(mode || "bold").toLowerCase();
+  if (value === "soft") {
+    return "Gunakan gaya aman, empatik, humanis, dan tidak terlalu konfrontatif.";
+  }
+  if (value === "aggressive") {
+    return "Gunakan gaya sangat tajam, eksplisit, berenergi tinggi, dan mendorong tindakan cepat.";
+  }
+  return "Gunakan gaya tegas, kuat, persuasif, namun tetap seimbang dan profesional.";
+};
 
 export const generateAdvancedPrompts = onCall({
     memory: "256MiB",
     region: "asia-southeast2",
-    secrets: [geminiApiKeySecret],
+  secrets: [deepseekApiKeySecret],
     cors: true,
   },
   async (request) => {
     if (!request.auth) throw new HttpsError("unauthenticated", "Akses ditolak.");
 
-    const { trackName, specificTargetContext, methodologyContext, targetAudience, scenario } = request.data;
+    const { trackName, specificTargetContext, methodologyContext, targetAudience, scenario, promptImpactMode } = request.data;
+    const impactGuidance = resolveImpactGuidance(promptImpactMode);
 
     try {
-      const API_KEY = geminiApiKeySecret.value();
-      const genAI = new GoogleGenerativeAI(API_KEY);
-      
-      const model = genAI.getGenerativeModel({
-        model: "gemini-3.1-flash-lite",
-        systemInstruction: "Anda adalah 'Lead Enterprise Prompt Engineer'. Tugas Anda adalah merumuskan instruksi sistem (system prompts), aturan kuantifikasi, dan batasan (negative prompts) untuk menyetel kepribadian sebuah AI Assessor agar 100% sesuai dengan skema yang diminta klien.",
-        generationConfig: {
-          temperature: 0.4,
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: SchemaType.OBJECT,
-            required: ["customScoringRubric", "customSystemPrompt", "negativePrompts", "formatInstructions", "actionPlanBehavior"],
-            properties: {
-              customScoringRubric: { type: SchemaType.STRING, description: "Panduan cara AI memberikan skor angka 0-100 secara spesifik berdasarkan metodologi." },
-              customSystemPrompt: { type: SchemaType.STRING, description: "Aturan logika IF-THEN dan cara AI menganalisis data (Apakah mencari celah/kritis, atau suportif)." },
-              negativePrompts: { type: SchemaType.STRING, description: "Larangan mutlak / Red Flags / Kata-kata yang tidak boleh digunakan oleh AI." },
-              formatInstructions: { type: SchemaType.STRING, description: "Instruksi format penulisan. Wajib menginstruksikan AI untuk menggunakan markdown **tebal**, *miring*, dan ### sub-heading." },
-              
-              // PERBAIKAN: Mempertegas instruksi untuk memastikan AI merespons dengan kalimat lengkap, bukan placeholder
-              actionPlanBehavior: { type: SchemaType.STRING, description: "Instruksi KHUSUS berupa 1-2 kalimat detail tentang bagaimana AI harus menulis rencana aksi. (CONTOH: 'Fokuskan action plan pada pembuatan SOP, metrik KPI, dan taktik efisiensi biaya. Gunakan bahasa korporat yang asertif.')" }
-            }
-          }
-        }
-      });
 
       // PERBAIKAN: Menerjemahkan opsi skenario baru ke dalam instruksi prompt builder
       let scenarioInstruction = "";
@@ -83,18 +72,72 @@ export const generateAdvancedPrompts = onCall({
         INSTRUKSI SKEMA KEPRIBADIAN (MUTLAK):
         ${scenarioInstruction}
 
+        MODE KUALITAS IMPACT:
+        ${impactGuidance}
+
         ATURAN TAMBAHAN UNTUK 'formatInstructions' (UI OPTIMIZATION):
         Anda WAJIB menyisipkan instruksi format visual berikut secara eksplisit ke dalam teks 'formatInstructions':
         "Gunakan Markdown secara maksimal untuk kemudahan membaca: Gunakan penanda **teks tebal** untuk menyoroti nama metrik/istilah penting, *miring* untuk penekanan atau kutipan, dan gunakan awalan ### (Heading 3) untuk memisahkan sub-topik laporan agar sistem merendernya dengan rapi."
 
         Tugas: Hasilkan 5 komponen Advanced Prompting yang tajam, detail, dan langsung bisa dieksekusi oleh mesin AI. Pastikan seluruh kolom terisi dengan kalimat penuh.
+
+        OUTPUT WAJIB JSON murni:
+        {
+          "customScoringRubric": "...",
+          "customSystemPrompt": "...",
+          "negativePrompts": "...",
+          "formatInstructions": "...",
+          "actionPlanBehavior": "..."
+        }
       `;
 
-      const result = await model.generateContent(prompt);
-      let rawText = result.response.text().trim();
-      if (rawText.startsWith('```')) rawText = rawText.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
-      
-      const advancedPrompts = JSON.parse(rawText);
+      const deepseekClient = new OpenAI({
+        baseURL: "https://api.deepseek.com",
+        apiKey: deepseekApiKeySecret.value(),
+      });
+
+      const systemInstruction = `Anda adalah Lead Enterprise Prompt Engineer.
+Rancang konfigurasi prompt tingkat lanjut yang membuat hasil assessment lebih tajam, elegan, dan actionable.
+
+Aturan mutlak:
+1. Keluarkan JSON valid saja.
+2. Semua field wajib terisi kalimat penuh, bukan placeholder.
+3. Bahasa Indonesia profesional-modern, tidak kaku.
+4. Hasil harus terasa premium dan siap pakai di produksi.
+5. Gaya dampak yang wajib dipatuhi: ${impactGuidance}
+`;
+
+      const result = await withRetry(() => deepseekClient.chat.completions.create({
+        model: "deepseek-v4-flash",
+        messages: [
+          { role: "system", content: systemInstruction },
+          { role: "user", content: prompt },
+        ],
+        temperature: 0.45,
+        response_format: { type: "json_object" },
+      }));
+
+      let rawText = result.choices[0]?.message?.content || "{}";
+      rawText = rawText.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
+      const parsed = JSON.parse(rawText);
+
+      const advancedPrompts = {
+        customScoringRubric: typeof parsed?.customScoringRubric === "string" && parsed.customScoringRubric.trim().length > 0
+          ? parsed.customScoringRubric.trim()
+          : "Gunakan skala 0-100 dengan pembobotan per metrik, penalti untuk gap kritis, dan bonus untuk evidence kuat agar skor mencerminkan kondisi nyata.",
+        customSystemPrompt: typeof parsed?.customSystemPrompt === "string" && parsed.customSystemPrompt.trim().length > 0
+          ? parsed.customSystemPrompt.trim()
+          : "Analisis data secara tajam namun adil. Prioritaskan akar masalah, validasi konsistensi jawaban, lalu berikan rekomendasi bertahap dari quick wins ke strategi menengah.",
+        negativePrompts: typeof parsed?.negativePrompts === "string" && parsed.negativePrompts.trim().length > 0
+          ? parsed.negativePrompts.trim()
+          : "Dilarang memberi jawaban generik, dilarang jargon berlebihan, dilarang rekomendasi tanpa langkah implementasi.",
+        formatInstructions: typeof parsed?.formatInstructions === "string" && parsed.formatInstructions.trim().length > 0
+          ? parsed.formatInstructions.trim()
+          : "Gunakan Markdown dengan struktur rapi: ### untuk sub-topik, **tebal** untuk insight kunci, dan bullet ringkas untuk langkah aksi.",
+        actionPlanBehavior: typeof parsed?.actionPlanBehavior === "string" && parsed.actionPlanBehavior.trim().length > 0
+          ? parsed.actionPlanBehavior.trim()
+          : "Susun rencana aksi yang konkret, berurutan, dan terukur. Setiap langkah wajib memiliki tujuan, indikator hasil, dan prioritas eksekusi.",
+      };
 
       return { success: true, advancedPrompts };
     } catch (error: any) {

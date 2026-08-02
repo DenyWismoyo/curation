@@ -150,6 +150,7 @@ export default function AdminAssessmentDetailPage() {
             formData={formData}
             aiResult={aiResult}
             assessmentId={params.id as string}
+            aiPromptConfig={data?.aiPromptConfig}
           />
         ) : (
           <UniversalAssessmentView

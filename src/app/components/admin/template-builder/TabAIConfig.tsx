@@ -43,6 +43,12 @@ const ADAPTIVE_LANGUAGE_PRESETS = [
   { id: 'direct_coach', label: 'Coach Tegas (tetap ramah)' },
 ];
 
+const PROMPT_IMPACT_MODES = [
+  { id: 'soft', label: 'Soft (halus, aman, empatik)' },
+  { id: 'bold', label: 'Bold (tegas, menjual, energik)' },
+  { id: 'aggressive', label: 'Aggressive (high-impact, sangat tajam)' },
+];
+
 interface TabAIConfigProps {
   template: FormTemplate;
   onChange: (updatedTemplate: FormTemplate) => void;
@@ -208,7 +214,10 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
         specificTargetContext: template.specificTargetContext || "",
         methodologyContext: template.methodologyContext || "",
         formBuilderInstruction: finalInstruction,
-        aiPromptConfig: template.aiPromptConfig,
+        aiPromptConfig: {
+          ...(template.aiPromptConfig || {}),
+          promptImpactMode: template.aiPromptConfig?.promptImpactMode || 'bold'
+        },
         generationLogs: [],
         aiGenerationStatus: {
           phase: "INITIATING",
@@ -239,6 +248,7 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
         specificTargetContext: template.specificTargetContext,
         methodologyContext: template.methodologyContext,
         targetAudience: template.aiPromptConfig?.targetAudience,
+        promptImpactMode: template.aiPromptConfig?.promptImpactMode || 'bold',
         scenario: advancedScenario
       };
 
@@ -606,6 +616,19 @@ export function TabAIConfig({ template, onChange }: TabAIConfigProps) {
               <option value="investigative">Investigatif & Analitis (Tajam & Mendeteksi Red Flags)</option>
               <option value="academic">Akademis Formal (Kaku & Berbasis Terminologi Ilmiah)</option>
             </select>
+          </div>
+          <div className="space-y-2">
+            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Mode Kualitas Prompt (High Impact)</label>
+            <select
+              value={template.aiPromptConfig?.promptImpactMode || 'bold'}
+              onChange={e => updateConfig('promptImpactMode', e.target.value)}
+              className="w-full bg-slate-50 border border-slate-200 h-11 rounded-xl text-sm px-3 font-bold text-slate-700 focus:outline-none"
+            >
+              {PROMPT_IMPACT_MODES.map((mode) => (
+                <option key={mode.id} value={mode.id}>{mode.label}</option>
+              ))}
+            </select>
+            <p className="text-[11px] text-slate-500 font-medium">Soft cocok untuk narasi aman. Bold untuk standar conversion. Aggressive untuk kampanye yang sangat tajam dan punchy.</p>
           </div>
         </div>
 

@@ -29,6 +29,12 @@ export const executeFabricator = async (
     const aiPromptConfig = afterData.aiPromptConfig || {};
     const trackName = afterData.trackName || "Asesmen Umum";
     const archetypeInstruction = afterData.formBuilderInstruction || "";
+    const promptImpactMode = aiPromptConfig.promptImpactMode || "bold";
+    const impactGuidance = promptImpactMode === "soft"
+      ? "Gunakan diksi lebih halus, aman, dan empatik sambil tetap jelas."
+      : promptImpactMode === "aggressive"
+        ? "Gunakan diksi sangat tajam, direct, dan high-impact untuk menggali informasi penting tanpa basa-basi."
+        : "Gunakan diksi tegas, profesional, dan persuasif dengan keseimbangan emosi dan kredibilitas.";
 
     await logToTerminal(templateRef, `FASE 2: Fabricator Agent (Gemini 2.5 Flash) dikerahkan. Memproduksi ${stepOutlines.length} seksi formulir...`, "info");
 
@@ -139,6 +145,8 @@ export const executeFabricator = async (
       - Konteks Kustom: "${afterData.specificTargetContext || 'Umum'}"
       - Target Audiens: ${audienceType}
       - Tujuan Form: ${purpose}
+      - Mode Kualitas Prompt: ${promptImpactMode}
+      - Panduan Mode: ${impactGuidance}
 
       PANDUAN PENGGALIAN KONTEKS (JADIKAN INSPIRASI):
       - Jika Parenting / Konseling: Tanyakan usia anak, jumlah anak, atau tantangan utama pengasuhan saat ini.

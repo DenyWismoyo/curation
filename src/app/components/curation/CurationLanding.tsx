@@ -116,6 +116,26 @@ interface DraftItem {
   price: number;
 }
 
+const asSafeText = (value: unknown, fallback = '-'): string => {
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+  if (!value) return fallback;
+
+  if (typeof value === 'object') {
+    const maybeName = (value as any).name || (value as any).label || (value as any).title || (value as any).value;
+    if (typeof maybeName === 'string' && maybeName.trim().length > 0) return maybeName;
+    return fallback;
+  }
+
+  return fallback;
+};
+
+const asSafeNumber = (value: unknown, fallback = 0): number => {
+  if (typeof value === 'number' && Number.isFinite(value)) return value;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+};
+
 // ─── Animation variants ───────────────────────────────────────────────────────
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -704,7 +724,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                           Tersimpan Lokal
                         </span>
                         <h4 className="font-black text-slate-900 text-sm group-hover:text-amber-600 line-clamp-2 transition-colors flex-1 mb-3">
-                          {draft.trackName}
+                          {asSafeText(draft.trackName, 'Draft Tanpa Nama')}
                         </h4>
                         <p className="text-[11px] font-bold text-slate-400 group-hover:text-amber-500 flex items-center gap-1.5 transition-colors mt-auto">
                           {isCheckingToken && selectedDraftTemplate === draft.templateId ? (
@@ -742,17 +762,17 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                         className="bg-white p-5 rounded-[1.5rem] ring-1 ring-slate-200/60 shadow-sm cursor-pointer group hover:ring-indigo-300 hover:shadow-md transition-all flex flex-col min-h-[140px]"
                       >
                         <span className="text-[9px] font-black uppercase tracking-widest text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-md ring-1 ring-indigo-100 w-fit mb-3">
-                          {item.trackType}
+                          {asSafeText(item.trackType, 'Evaluasi')}
                         </span>
                         <h4 className="font-black text-slate-900 text-sm group-hover:text-indigo-600 line-clamp-2 transition-colors flex-1 mb-4">
-                          {item.namaUsaha}
+                          {asSafeText(item.namaUsaha, 'Tanpa Nama')}
                         </h4>
                         <div className="flex items-center justify-between pt-3 border-t border-slate-100 mt-auto">
                           <div className="flex items-center gap-2">
                             <div className="p-1.5 bg-slate-50 rounded-lg ring-1 ring-slate-200 group-hover:ring-indigo-200 group-hover:bg-indigo-50 transition-colors">
                               <BrainIcon size={13} className="text-slate-400 group-hover:text-indigo-500 transition-colors" />
                             </div>
-                            <p className="text-xs font-bold text-slate-600">Skor: {item.score}</p>
+                            <p className="text-xs font-bold text-slate-600">Skor: {asSafeNumber(item.score, 0)}</p>
                           </div>
                           <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-indigo-500 transition-colors" />
                         </div>

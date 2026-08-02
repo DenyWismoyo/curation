@@ -28,6 +28,7 @@ export { analyzeEvidence } from './general/evidenceService'
 export {
   generateActionPlanChecklist,
   generateSubTaskChecklist,
+  generatePersonalActionPlan,
 } from './actionPlanService'
 export {
   generateTemplateSellingPoints,
@@ -76,6 +77,7 @@ export { renderSingleSlide } from './agents/promo/imageRendererAgent'
 export { generateArticleFromTemplate } from './agents/promo/articleAgent'
 export { batchGenerateSmartPricing } from './agents/promo/pricingAgent'
 export { generateProgramIdentity } from './agents/promo/identityAgent'
+export { generateTemplateIdentityInspirations } from './agents/promo/templateIdentityInspirationAgent'
 export { generateArticleImage } from './agents/promo/articleImageAgent'
 export {
   createOrGetAffiliateProfile,

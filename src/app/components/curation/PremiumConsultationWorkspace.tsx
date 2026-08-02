@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { collection, query, orderBy, onSnapshot, getDoc, doc } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, doc } from 'firebase/firestore';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { db, app } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
@@ -17,6 +17,15 @@ interface Message {
   content: string;
 }
 
+interface PremiumPersona {
+  version?: string;
+  personaCore?: {
+    communicationStyle?: string;
+    decisionStyle?: string;
+    riskTolerance?: string;
+  };
+}
+
 export function PremiumConsultationWorkspace({ assessmentId }: { assessmentId: string }) {
   const { user } = useAuth();
   const router = useRouter();
@@ -25,21 +34,35 @@ export function PremiumConsultationWorkspace({ assessmentId }: { assessmentId: s
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [assessmentData, setAssessmentData] = useState<any>(null);
+  const [persona, setPersona] = useState<PremiumPersona | null>(null);
+  const [remainingCredits, setRemainingCredits] = useState<number | null>(null);
+  const [lastCreditCost, setLastCreditCost] = useState<number | null>(null);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Fetch Assessment Data
-    const fetchAssessment = async () => {
-      const docRef = doc(db, 'assessments', assessmentId);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        setAssessmentData(data);
+    const assessmentRef = doc(db, 'assessments', assessmentId);
+    const unsubscribe = onSnapshot(assessmentRef, (snapshot) => {
+      if (!snapshot.exists()) return;
+      const data = snapshot.data();
+      setAssessmentData(data);
+      if (typeof data.premiumChatCredits === 'number') {
+        setRemainingCredits(data.premiumChatCredits);
       }
-    };
-    fetchAssessment();
+    });
+
+    return () => unsubscribe();
   }, [assessmentId, router]);
+
+  useEffect(() => {
+    const personaRef = doc(db, 'assessments', assessmentId, 'premium', 'persona');
+    const unsubscribe = onSnapshot(personaRef, (snapshot) => {
+      if (!snapshot.exists()) return;
+      setPersona(snapshot.data() as PremiumPersona);
+    });
+
+    return () => unsubscribe();
+  }, [assessmentId]);
 
   const handlePayment = async () => {
     setIsTyping(true); // Reuse as loading state
@@ -111,11 +134,22 @@ export function PremiumConsultationWorkspace({ assessmentId }: { assessmentId: s
         parts: [{ text: m.content }]
       }));
 
-      await chatFn({
+      const res = await chatFn({
         assessmentId,
         message: userText,
         history: recentHistory
       });
+
+      const data = res.data as any;
+      if (typeof data?.remainingCredits === 'number') {
+        setRemainingCredits(data.remainingCredits);
+      }
+      if (typeof data?.creditCost === 'number') {
+        setLastCreditCost(data.creditCost);
+      }
+      if (data?.persona) {
+        setPersona(data.persona);
+      }
 
     } catch (error: any) {
       alert(error.message || "Gagal mengirim pesan.");
@@ -183,7 +217,7 @@ export function PremiumConsultationWorkspace({ assessmentId }: { assessmentId: s
                 <div className="bg-indigo-100 text-indigo-600 p-2 rounded-xl shrink-0"><Zap size={16} /></div>
                 <div>
                   <h4 className="font-bold text-slate-800 text-sm">Model AI Super Pintar</h4>
-                  <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">Ditenagai oleh Gemini tingkat mahir dengan <em>prompt</em> khusus (setara konsultan level elit) yang merespons jauh lebih analitis.</p>
+                  <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">Ditenagai DeepSeek premium dengan persona khusus dari hasil asesmen agar respons lebih tajam, personal, dan actionable.</p>
                 </div>
               </div>
             </div>
@@ -219,6 +253,21 @@ export function PremiumConsultationWorkspace({ assessmentId }: { assessmentId: s
             <Sparkles size={20} className="text-indigo-400" /> Premium Consultation
           </h2>
           <p className="text-slate-400 text-sm font-medium">Bahas hasil asesmen Anda secara intensif dengan Omni AI Expert.</p>
+          <div className="mt-4 grid grid-cols-1 gap-2">
+            <div className="bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-xs">
+              <p className="text-slate-300 font-semibold">DeepSeek Persona</p>
+              <p className="text-white font-bold mt-0.5">
+                {persona?.personaCore?.communicationStyle || 'Sedang disiapkan saat chat pertama...'}
+              </p>
+            </div>
+            <div className="bg-indigo-500/20 border border-indigo-300/30 rounded-xl px-3 py-2 text-xs flex items-center justify-between">
+              <span className="text-indigo-100 font-semibold">Sisa Credit</span>
+              <span className="text-white font-black text-sm">{remainingCredits ?? '...'} </span>
+            </div>
+            {lastCreditCost !== null && (
+              <p className="text-[11px] text-slate-300">Biaya pesan terakhir: {lastCreditCost} credit.</p>
+            )}
+          </div>
         </div>
         
         <div className="p-6 flex-1">
@@ -318,17 +367,22 @@ export function PremiumConsultationWorkspace({ assessmentId }: { assessmentId: s
               onChange={(e) => setInputValue(e.target.value)}
               placeholder="Diskusikan strategi, minta saran, atau perintahkan membuat task..."
               className="pr-14 h-14 bg-slate-50 border-slate-200 focus-visible:ring-indigo-500 rounded-2xl font-medium shadow-inner text-sm w-full"
-              disabled={isTyping}
+              disabled={isTyping || (assessmentData?.hasPaidForPremiumConsultation && (remainingCredits !== null && remainingCredits <= 0))}
             />
             <Button
               type="submit"
-              disabled={!inputValue.trim() || isTyping}
+              disabled={!inputValue.trim() || isTyping || (assessmentData?.hasPaidForPremiumConsultation && (remainingCredits !== null && remainingCredits <= 0))}
               size="icon"
               className="absolute right-2 w-10 h-10 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white transition-transform active:scale-95 disabled:opacity-50"
             >
               <Send size={18} className="ml-0.5" />
             </Button>
           </form>
+          {assessmentData?.hasPaidForPremiumConsultation && remainingCredits !== null && remainingCredits <= 0 && (
+            <p className="text-xs text-rose-600 font-semibold mt-2 text-center">
+              Credit premium habis. Silakan top-up paket premium untuk lanjut chat.
+            </p>
+          )}
         </div>
       </div>
     </div>

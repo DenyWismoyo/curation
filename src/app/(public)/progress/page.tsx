@@ -35,19 +35,28 @@ interface AssessmentRecord {
   updatedAt?: string
 }
 
-function ScoreBadge({ score }: { score?: number }) {
-  if (!score) return <span className="text-xs text-slate-400 font-bold">Proses...</span>
-  
-  const color =
-    score >= 80 ? 'bg-emerald-50 text-emerald-700 ring-emerald-200'
-      : score >= 60 ? 'bg-amber-50 text-amber-700 ring-amber-200'
-      : 'bg-rose-50 text-rose-700 ring-rose-200'
+function ScoreBadge({ score, status, isAdaptive }: { score?: number, status: string, isAdaptive?: boolean }) {
+  if (score != null) {
+    const numScore = Number(score);
+    if (!isNaN(numScore)) {
+      const color =
+        numScore >= 80 ? 'bg-emerald-50 text-emerald-700 ring-emerald-200'
+          : numScore >= 60 ? 'bg-amber-50 text-amber-700 ring-amber-200'
+          : 'bg-rose-50 text-rose-700 ring-rose-200'
 
-  return (
-    <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-sm font-black ring-1 ${color}`}>
-      {score}
-    </span>
-  )
+      return (
+        <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-sm font-black ring-1 ${color}`}>
+          {numScore}
+        </span>
+      )
+    }
+  }
+  
+  if (status === 'COMPLETED' || isAdaptive) {
+    return <span className="text-xs text-indigo-600 font-bold bg-indigo-50 px-2.5 py-1 rounded-lg ring-1 ring-indigo-200">Selesai</span>
+  }
+  
+  return <span className="text-xs text-slate-400 font-bold">Proses...</span>
 }
 
 export default function ProgressPage() {
@@ -92,8 +101,9 @@ export default function ProgressPage() {
     }
   }
 
-  const completed = records.filter((r) => r.status === 'COMPLETED' && r.score)
-  const scores = completed.map((r) => r.score!)
+  // Pisahkan record yang valid memiliki skor angka untuk chart
+  const completedWithScores = records.filter((r) => r.status === 'COMPLETED' && r.score != null && !isNaN(Number(r.score)))
+  const scores = completedWithScores.map((r) => Number(r.score))
   const bestScore = scores.length > 0 ? Math.max(...scores) : 0
   const latestScore = scores.length > 0 ? scores[scores.length - 1] : 0
   const avgScore = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0
@@ -223,7 +233,7 @@ export default function ProgressPage() {
                     <div className="flex items-center justify-between pt-3 border-t border-slate-100 mt-auto">
                       <div className="flex items-center gap-2">
                         <AiSparkIcon size={16} className={rec.status === 'COMPLETED' ? 'text-emerald-500' : 'text-slate-400'} />
-                        <ScoreBadge score={rec.score} />
+                        <ScoreBadge score={rec.score} status={rec.status} isAdaptive={rec.trackType?.toLowerCase().includes('adaptive')} />
                       </div>
                       {rec.status === 'COMPLETED' && (
                         <button

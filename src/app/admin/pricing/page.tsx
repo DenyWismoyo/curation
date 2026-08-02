@@ -35,6 +35,8 @@ import {
   Wand2,
   ArrowUpDown,
   CheckSquare,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react'
 import { FormTemplate } from '@/types/curation'
 import { Badge } from '@/components/ui/badge'
@@ -51,6 +53,7 @@ type PricingFormState = {
   isBestSeller: boolean
   userCount: string
   customUSPs: string
+  trackName: string
 }
 
 export default function PricingManagerPage() {
@@ -70,10 +73,12 @@ export default function PricingManagerPage() {
   // STATE FILTER & SORTING
   const [searchTerm, setSearchTerm] = useState('')
   const [activeCategory, setActiveCategory] = useState<string>('Semua')
-  const [activeStatusTab, setActiveStatusTab] = useState<'Aktif' | 'Draft'>(
-    'Aktif'
-  )
+  const [activeStatusTab, setActiveStatusTab] = useState<'Aktif' | 'Draft'>('Aktif')
+  const [activeFormMode, setActiveFormMode] = useState<string>('Semua Tipe')
   const [sortBy, setSortBy] = useState<string>('date_desc')
+
+  // EXPANDABLE ROWS STATE
+  const [expandedRows, setExpandedRows] = useState<string[]>([])
 
   const [generatedTokens, setGeneratedTokens] = useState<
     Record<string, string>
@@ -125,6 +130,7 @@ export default function PricingManagerPage() {
           isBestSeller: tpl.isBestSeller || false,
           userCount: tpl.userCount ? tpl.userCount.toString() : '0',
           customUSPs: tpl.customUSPs ? tpl.customUSPs.join('\n') : '',
+          trackName: tpl.trackName || '',
         }
       })
 
@@ -193,13 +199,20 @@ export default function PricingManagerPage() {
       state.discountExpiry !== originalDate ||
       state.isBestSeller !== (tpl.isBestSeller || false) ||
       state.userCount !== (tpl.userCount?.toString() || '0') ||
-      state.customUSPs !== (tpl.customUSPs ? tpl.customUSPs.join('\n') : '')
+      state.customUSPs !== (tpl.customUSPs ? tpl.customUSPs.join('\n') : '') ||
+      state.trackName !== (tpl.trackName || '')
     )
   }
 
   const toggleSelectTemplate = (id: string) => {
     setSelectedTemplates((prev) =>
       prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id]
+    )
+  }
+
+  const toggleExpandRow = (id: string) => {
+    setExpandedRows((prev) =>
+      prev.includes(id) ? prev.filter((r) => r !== id) : [...prev, id]
     )
   }
 
@@ -249,6 +262,7 @@ export default function PricingManagerPage() {
             price: res.price.toString(),
             discountPercentage: res.discountPercentage.toString(),
             isPaid: true,
+            trackName: res.consistentTitle || template.trackName,
           },
         }))
 
@@ -306,6 +320,7 @@ export default function PricingManagerPage() {
                 price: res.price.toString(),
                 discountPercentage: res.discountPercentage.toString(),
                 isPaid: true,
+                trackName: res.consistentTitle || newStates[res.templateId].trackName,
               }
             }
           })
@@ -347,6 +362,7 @@ export default function PricingManagerPage() {
       .split('\n')
       .map((s) => s.trim())
       .filter((s) => s !== ''),
+    trackName: state.trackName,
     lastUpdated: new Date().toISOString(),
   })
 
@@ -517,7 +533,18 @@ export default function PricingManagerPage() {
       })
     }
 
-    // 4. Sorting
+    // 4. Filter Tipe Asesmen (Form Mode)
+    if (activeFormMode !== 'Semua Tipe') {
+      filtered = filtered.filter((t) => {
+        const mode = t.formMode || 'standard'
+        if (activeFormMode === 'Standard') return mode === 'standard'
+        if (activeFormMode === 'Adaptive') return mode === 'adaptive'
+        if (activeFormMode === 'Hybrid') return mode === 'hybrid'
+        return true
+      })
+    }
+
+    // 5. Sorting
     filtered.sort((a, b) => {
       const stateA = formStates[a.id]
       const stateB = formStates[b.id]
@@ -549,6 +576,7 @@ export default function PricingManagerPage() {
     searchTerm,
     activeCategory,
     activeStatusTab,
+    activeFormMode,
     sortBy,
     formStates,
   ])
@@ -805,7 +833,7 @@ export default function PricingManagerPage() {
                   </div>
 
                   {/* List Modul di Dalam Kategori */}
-                  <div className="flex flex-col gap-5">
+                  <div className="flex flex-col gap-4">
                     {items.map((template) => {
                       const state = formStates[template.id]
                       if (!state) return null
@@ -820,9 +848,11 @@ export default function PricingManagerPage() {
                         originalPrice - originalPrice * (discountPerc / 100)
 
                       const isSelected = selectedTemplates.includes(template.id)
+                      const isExpanded = expandedRows.includes(template.id)
+                      const isAdaptive = template.formMode === 'adaptive'
 
-                      // HIGHLIGHT CARD JIKA SEDANG DIPILIH (BATCH MODE)
-                      const highlightCardClass = isSelected
+                      // HIGHLIGHT ROW JIKA SEDANG DIPILIH (BATCH MODE)
+                      const highlightRowClass = isSelected
                         ? 'border-l-[4px] border-l-indigo-600 border-t border-r border-b border-indigo-200 bg-indigo-50/40 shadow-md ring-1 ring-indigo-500'
                         : state.isDisplayedOnLanding && state.isActive
                           ? 'border-l-[4px] border-l-emerald-500 border-t border-r border-b border-slate-200 bg-emerald-50/10 hover:bg-emerald-50/30 shadow-sm'
@@ -831,334 +861,359 @@ export default function PricingManagerPage() {
                       return (
                         <div
                           key={template.id}
-                          onClick={() =>
-                            isEditMode
-                              ? toggleSelectTemplate(template.id)
-                              : undefined
-                          }
-                          className={`relative flex flex-col lg:flex-row gap-5 lg:gap-8 p-5 md:p-6 rounded-2xl transition-all duration-200 ${highlightCardClass} ${isEditMode ? 'cursor-pointer' : ''}`}
+                          className={`relative flex flex-col rounded-2xl transition-all duration-200 ${highlightRowClass}`}
                         >
-                          {/* OVERLAY CHECKBOX SAAT EDIT MODE */}
-                          {isEditMode && (
-                            <div className="absolute top-4 right-4 z-20">
+                          {/* HEADER BAR (COMPACT VIEW) */}
+                          <div className="flex flex-col sm:flex-row items-center gap-4 p-4">
+                            {/* OVERLAY CHECKBOX SAAT EDIT MODE */}
+                            {isEditMode && (
                               <div
-                                className={`w-6 h-6 rounded-lg flex items-center justify-center border-2 transition-all shadow-sm ${isSelected ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-300 text-transparent hover:border-indigo-400'}`}
+                                onClick={() => toggleSelectTemplate(template.id)}
+                                className={`w-6 h-6 shrink-0 cursor-pointer rounded-lg flex items-center justify-center border-2 transition-all shadow-sm ${
+                                  isSelected
+                                    ? 'bg-indigo-600 border-indigo-600 text-white'
+                                    : 'bg-white border-slate-300 text-transparent hover:border-indigo-400'
+                                }`}
                               >
                                 <CheckSquare className="w-4 h-4" />
                               </div>
-                            </div>
-                          )}
+                            )}
 
-                          {/* KOLOM 1: Info Modul & Aktivasi */}
-                          <div
-                            className={`flex-1 lg:max-w-[320px] space-y-4 ${isEditMode ? 'pointer-events-none' : ''}`}
-                          >
-                            <div className="flex items-start gap-4">
+                            {/* Info Dasar */}
+                            <div className="flex-1 flex items-center gap-3 w-full">
                               <div
-                                className={`mt-0.5 w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ring-1 shadow-sm ${state.isActive ? 'bg-indigo-50 text-indigo-600 ring-indigo-200' : 'bg-slate-100 text-slate-400 ring-slate-200'}`}
+                                className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ring-1 shadow-sm ${
+                                  state.isActive
+                                    ? 'bg-indigo-50 text-indigo-600 ring-indigo-200'
+                                    : 'bg-slate-100 text-slate-400 ring-slate-200'
+                                }`}
                               >
                                 <LayoutGrid size={18} />
                               </div>
-                              <div className={isEditMode ? 'pr-8' : ''}>
-                                <p className="font-black text-slate-900 text-[15px] leading-snug">
-                                  {template.trackName}
-                                </p>
-                                <p
-                                  className="text-xs text-slate-400 font-medium line-clamp-2 mt-1"
-                                  title={template.trackDescription}
-                                >
-                                  {template.trackDescription ||
-                                    'Deskripsi singkat.'}
-                                </p>
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2">
+                                  <p className="font-black text-slate-900 text-[15px] leading-snug line-clamp-1">
+                                    {template.trackName}
+                                  </p>
+                                  {isAdaptive && (
+                                    <Badge className="bg-purple-100 text-purple-700 hover:bg-purple-200 border-purple-200 px-1.5 py-0 text-[9px] uppercase tracking-wider font-bold flex items-center gap-1 shadow-sm">
+                                      <Wand2 className="w-3 h-3" /> Adaptive
+                                    </Badge>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-2 mt-1">
+                                  <span className="text-xs text-slate-500 font-medium">
+                                    {state.category}
+                                  </span>
+                                  <span className="text-slate-300">•</span>
+                                  {state.isPaid ? (
+                                    <span className="text-xs font-bold text-emerald-600">
+                                      {discountPerc > 0
+                                        ? formatRupiah(finalPrice)
+                                        : formatRupiah(originalPrice)}
+                                    </span>
+                                  ) : (
+                                    <span className="text-xs font-bold text-slate-400">
+                                      Gratis
+                                    </span>
+                                  )}
+                                </div>
                               </div>
                             </div>
 
-                            <div className="space-y-3 pt-2">
-                              {/* Panel Aktivasi & Katalog (Lebih rapi) */}
-                              <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 flex flex-col gap-3">
-                                <SwitchToggle
-                                  checked={state.isActive}
-                                  onChange={() =>
-                                    handleToggle(template.id, 'isActive')
-                                  }
-                                  label="Aktifkan Modul Ini"
-                                />
-                                <SwitchToggle
-                                  checked={state.isDisplayedOnLanding}
-                                  onChange={() =>
-                                    handleToggle(
-                                      template.id,
-                                      'isDisplayedOnLanding'
-                                    )
-                                  }
-                                  label="Tampilkan di Etalase Katalog"
-                                />
-                              </div>
-
-                              <div className="space-y-1">
-                                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">
-                                  Kategori Modul
-                                </label>
-                                <Input
-                                  type="text"
-                                  list="category-suggestions"
-                                  placeholder="Misal: Zona Gen Z & Karir"
-                                  value={state.category}
-                                  onChange={(e) =>
-                                    handleInputChange(
-                                      template.id,
-                                      'category',
-                                      e.target.value
-                                    )
-                                  }
-                                  className="h-9 text-xs font-bold bg-white border-slate-200 shadow-sm focus-visible:ring-indigo-500"
-                                />
-                              </div>
-
-                              <div className="bg-orange-50/50 p-3 rounded-xl border border-orange-100/50 space-y-3 mt-2">
-                                <SwitchToggle
-                                  checked={state.isBestSeller}
-                                  onChange={() =>
-                                    handleToggle(template.id, 'isBestSeller')
-                                  }
-                                  label="Tandai Best Seller"
-                                />
-                                <div className="flex items-center gap-2">
-                                  <Users className="w-3.5 h-3.5 text-orange-400" />
-                                  <Input
-                                    type="text"
-                                    placeholder="Jml Pengguna"
-                                    value={state.userCount}
-                                    onChange={(e) =>
-                                      handleInputChange(
+                            {/* Quick Toggles & Action */}
+                            <div className="flex items-center gap-4 w-full sm:w-auto shrink-0 border-t sm:border-t-0 sm:border-l border-slate-200 pt-3 sm:pt-0 sm:pl-4 justify-between sm:justify-end">
+                              <div className="flex items-center gap-3">
+                                <div className="flex flex-col gap-2">
+                                  <SwitchToggle
+                                    checked={state.isActive}
+                                    onChange={() =>
+                                      handleToggle(template.id, 'isActive')
+                                    }
+                                    label="Aktif"
+                                  />
+                                  <SwitchToggle
+                                    checked={state.isDisplayedOnLanding}
+                                    onChange={() =>
+                                      handleToggle(
                                         template.id,
-                                        'userCount',
-                                        e.target.value
+                                        'isDisplayedOnLanding'
                                       )
                                     }
-                                    className="h-8 w-24 text-xs font-bold bg-white"
+                                    label="Etalase"
                                   />
-                                  <span className="text-[10px] font-bold text-slate-400 uppercase">
-                                    Pengguna
-                                  </span>
                                 </div>
                               </div>
-                            </div>
-                          </div>
 
-                          {/* Garis Pemisah Mobile */}
-                          <div className="w-full h-px bg-slate-200/60 lg:hidden"></div>
-
-                          {/* KOLOM 2: Harga & FOMO */}
-                          <div
-                            className={`flex-1 lg:max-w-[280px] space-y-4 ${isEditMode ? 'pointer-events-none' : ''}`}
-                          >
-                            <SwitchToggle
-                              checked={state.isPaid}
-                              onChange={() =>
-                                handleToggle(template.id, 'isPaid')
-                              }
-                              label="Berbayar"
-                            />
-
-                            <div className="relative w-full">
-                              <span
-                                className={`absolute left-3 top-1/2 -translate-y-1/2 font-bold ${!state.isPaid ? 'text-slate-300' : 'text-slate-400'}`}
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => toggleExpandRow(template.id)}
+                                className="h-9 px-3 rounded-lg text-slate-500 hover:text-indigo-600 hover:bg-indigo-50"
                               >
-                                Rp
-                              </span>
-                              <Input
-                                type="text"
-                                value={state.price}
-                                onChange={(e) =>
-                                  handleInputChange(
-                                    template.id,
-                                    'price',
-                                    e.target.value
-                                  )
-                                }
-                                disabled={!state.isPaid}
-                                className={`pl-9 h-10 font-bold text-sm rounded-xl transition-all ${!state.isPaid ? 'bg-slate-50 opacity-50 border-slate-200 text-slate-400' : 'bg-white border-slate-200 shadow-sm focus-visible:ring-indigo-500'}`}
-                              />
+                                {isExpanded ? (
+                                  <ChevronUp className="w-4 h-4 mr-1" />
+                                ) : (
+                                  <ChevronDown className="w-4 h-4 mr-1" />
+                                )}
+                                {isExpanded ? 'Tutup' : 'Atur Detail'}
+                              </Button>
                             </div>
+                          </div>
 
-                            {state.isPaid && (
-                              <div className="bg-rose-50/50 p-3 rounded-xl border border-rose-100 space-y-3 shadow-sm">
-                                <div className="flex items-center justify-between gap-2">
-                                  <div className="relative w-[110px] shrink-0">
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400">
-                                      <Tag className="w-3.5 h-3.5" />
-                                    </span>
-                                    <Input
-                                      type="text"
-                                      value={state.discountPercentage}
-                                      onChange={(e) =>
-                                        handleInputChange(
-                                          template.id,
-                                          'discountPercentage',
-                                          e.target.value
-                                        )
+                          {/* EXPANDED CONTENT AREA */}
+                          {isExpanded && (
+                            <div className="p-4 md:p-5 border-t border-slate-200 bg-slate-50/50 rounded-b-2xl animate-in slide-in-from-top-2 duration-200">
+                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {/* Column 1: Pricing */}
+                                <div className="space-y-4">
+                                  <h4 className="text-xs font-black text-slate-700 uppercase tracking-widest border-b border-slate-200 pb-2 flex items-center gap-2">
+                                    <Tag className="w-4 h-4 text-emerald-500" />{' '}
+                                    Pengaturan Harga
+                                  </h4>
+                                  <div className="space-y-3">
+                                    <SwitchToggle
+                                      checked={state.isPaid}
+                                      onChange={() =>
+                                        handleToggle(template.id, 'isPaid')
                                       }
-                                      className="pl-8 pr-7 h-9 font-bold text-sm bg-white border-rose-200 text-rose-700 focus-visible:ring-rose-500"
+                                      label="Jadikan Berbayar"
                                     />
-                                    <span className="absolute right-3 top-1/2 -translate-y-1/2 font-bold text-rose-500">
-                                      %
-                                    </span>
-                                  </div>
-                                  {discountPerc > 0 && (
-                                    <div className="text-[10px] font-black text-rose-600 bg-rose-100 px-2 py-1 rounded-md text-right leading-tight">
-                                      Final:
-                                      <br />
-                                      {formatRupiah(finalPrice)}
+                                    <div className="relative w-full">
+                                      <span
+                                        className={`absolute left-3 top-1/2 -translate-y-1/2 font-bold ${
+                                          !state.isPaid
+                                            ? 'text-slate-300'
+                                            : 'text-slate-400'
+                                        }`}
+                                      >
+                                        Rp
+                                      </span>
+                                      <Input
+                                        type="text"
+                                        value={state.price}
+                                        onChange={(e) =>
+                                          handleInputChange(
+                                            template.id,
+                                            'price',
+                                            e.target.value
+                                          )
+                                        }
+                                        disabled={!state.isPaid}
+                                        className={`pl-9 h-10 font-bold text-sm rounded-xl transition-all ${
+                                          !state.isPaid
+                                            ? 'bg-slate-50 opacity-50 border-slate-200 text-slate-400'
+                                            : 'bg-white border-slate-200 shadow-sm focus-visible:ring-indigo-500'
+                                        }`}
+                                      />
                                     </div>
-                                  )}
+                                    {state.isPaid && (
+                                      <div className="flex items-center gap-3">
+                                        <div className="relative w-[120px]">
+                                          <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400">
+                                            <Tag className="w-3.5 h-3.5" />
+                                          </span>
+                                          <Input
+                                            type="text"
+                                            value={state.discountPercentage}
+                                            onChange={(e) =>
+                                              handleInputChange(
+                                                template.id,
+                                                'discountPercentage',
+                                                e.target.value
+                                              )
+                                            }
+                                            className="pl-8 pr-7 h-9 font-bold text-sm bg-white border-rose-200 text-rose-700 focus-visible:ring-rose-500"
+                                          />
+                                          <span className="absolute right-3 top-1/2 -translate-y-1/2 font-bold text-rose-500">
+                                            %
+                                          </span>
+                                        </div>
+                                        <div className="flex-1">
+                                          <Input
+                                            type="datetime-local"
+                                            value={state.discountExpiry}
+                                            onChange={(e) =>
+                                              handleInputChange(
+                                                template.id,
+                                                'discountExpiry',
+                                                e.target.value
+                                              )
+                                            }
+                                            className="h-9 text-xs font-bold text-slate-600 bg-white"
+                                            title="Batas waktu diskon"
+                                          />
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
                                 </div>
 
-                                {discountPerc > 0 && (
-                                  <div className="space-y-1.5">
-                                    <label className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1">
-                                      <Flame className="w-3 h-3 text-orange-500" />{' '}
-                                      Batas Waktu Diskon (Opsional)
-                                    </label>
-                                    <Input
-                                      type="datetime-local"
-                                      value={state.discountExpiry}
-                                      onChange={(e) =>
-                                        handleInputChange(
+                                {/* Column 2: Curation & Display */}
+                                <div className="space-y-4">
+                                  <h4 className="text-xs font-black text-slate-700 uppercase tracking-widest border-b border-slate-200 pb-2 flex items-center gap-2">
+                                    <Store className="w-4 h-4 text-orange-500" />{' '}
+                                    Katalog & Etalase
+                                  </h4>
+                                  <div className="space-y-3">
+                                    <div className="space-y-1">
+                                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">
+                                        Kategori Modul
+                                      </label>
+                                      <Input
+                                        type="text"
+                                        list="category-suggestions"
+                                        placeholder="Misal: Zona Gen Z"
+                                        value={state.category}
+                                        onChange={(e) =>
+                                          handleInputChange(
+                                            template.id,
+                                            'category',
+                                            e.target.value
+                                          )
+                                        }
+                                        className="h-9 text-xs font-bold bg-white border-slate-200 shadow-sm focus-visible:ring-indigo-500"
+                                      />
+                                    </div>
+                                    <div className="flex items-center gap-4 bg-orange-50/50 p-3 rounded-xl border border-orange-100/50">
+                                      <SwitchToggle
+                                        checked={state.isBestSeller}
+                                        onChange={() =>
+                                          handleToggle(template.id, 'isBestSeller')
+                                        }
+                                        label="Best Seller"
+                                      />
+                                      <div className="w-px h-6 bg-orange-200/50"></div>
+                                      <div className="flex items-center gap-2">
+                                        <Users className="w-3.5 h-3.5 text-orange-400" />
+                                        <Input
+                                          type="text"
+                                          value={state.userCount}
+                                          onChange={(e) =>
+                                            handleInputChange(
+                                              template.id,
+                                              'userCount',
+                                              e.target.value
+                                            )
+                                          }
+                                          className="h-8 w-16 text-xs font-bold bg-white text-center px-1"
+                                        />
+                                        <span className="text-[10px] font-bold text-slate-400 uppercase">
+                                          User
+                                        </span>
+                                      </div>
+                                    </div>
+                                    <div className="space-y-1">
+                                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">
+                                        <ListChecks className="w-3 h-3" />{' '}
+                                        Keunggulan Tambahan
+                                      </label>
+                                      <Textarea
+                                        placeholder="Prioritas Sesi Konsultasi..."
+                                        value={state.customUSPs}
+                                        onChange={(e) =>
+                                          handleInputChange(
+                                            template.id,
+                                            'customUSPs',
+                                            e.target.value
+                                          )
+                                        }
+                                        className="text-xs bg-white resize-y min-h-[60px] shadow-sm border-slate-200 focus-visible:ring-indigo-500"
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Column 3: Actions */}
+                                <div className="space-y-4">
+                                  <h4 className="text-xs font-black text-slate-700 uppercase tracking-widest border-b border-slate-200 pb-2 flex items-center gap-2">
+                                    <Wand2 className="w-4 h-4 text-indigo-500" />{' '}
+                                    Aksi & Token
+                                  </h4>
+                                  <div className="flex flex-col gap-2">
+                                    <Button
+                                      onClick={() => handleAIOptimize(template)}
+                                      disabled={isOptimizing === template.id}
+                                      variant="outline"
+                                      className="w-full h-9 rounded-xl font-black border-indigo-200 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 hover:text-indigo-800 transition-all text-xs flex items-center justify-center gap-1.5 shadow-sm"
+                                    >
+                                      {isOptimizing === template.id ? (
+                                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                      ) : (
+                                        <Wand2 className="w-3.5 h-3.5" />
+                                      )}{' '}
+                                      AI Smart Monetize
+                                    </Button>
+                                    <Button
+                                      onClick={() => handleCopyShareLink(template.id)}
+                                      variant="outline"
+                                      className="w-full h-9 rounded-xl font-bold border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 transition-all text-xs flex items-center justify-center gap-1.5 shadow-sm"
+                                    >
+                                      <Share2 className="w-3.5 h-3.5" /> Copy Link Share
+                                    </Button>
+                                    <Button
+                                      onClick={() =>
+                                        handleGenerateB2CToken(
                                           template.id,
-                                          'discountExpiry',
-                                          e.target.value
+                                          template.trackName
                                         )
                                       }
-                                      className="h-9 text-xs font-bold text-slate-600 bg-white"
-                                    />
+                                      disabled={isGeneratingToken === template.id}
+                                      variant="outline"
+                                      className="w-full h-9 rounded-xl font-bold border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-all text-xs flex items-center justify-center gap-1.5 shadow-sm"
+                                    >
+                                      {isGeneratingToken === template.id ? (
+                                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                      ) : (
+                                        <KeyRound className="w-3.5 h-3.5" />
+                                      )}{' '}
+                                      Generate Token B2C
+                                    </Button>
+
+                                    {generatedTokens[template.id] && (
+                                      <div className="w-full flex items-center justify-between p-2 bg-emerald-100/50 rounded-xl border border-emerald-300 mt-1 shadow-sm">
+                                        <span className="font-mono text-xs font-black text-emerald-900 tracking-tight pl-2">
+                                          {generatedTokens[template.id]}
+                                        </span>
+                                        <button
+                                          onClick={() =>
+                                            handleCopyManual(
+                                              template.id,
+                                              generatedTokens[template.id]
+                                            )
+                                          }
+                                          className="shrink-0 p-1.5 bg-white rounded-lg hover:bg-emerald-50 shadow-sm ring-1 ring-emerald-200/50"
+                                        >
+                                          {copiedTokens[template.id] ? (
+                                            <Check className="w-3.5 h-3.5 text-emerald-600" />
+                                          ) : (
+                                            <Copy className="w-3.5 h-3.5 text-emerald-600" />
+                                          )}
+                                        </button>
+                                      </div>
+                                    )}
+
+                                    <Button
+                                      onClick={() => handleSaveItem(template.id)}
+                                      disabled={!isChanged || isSaving === template.id}
+                                      variant="outline"
+                                      className={`w-full mt-2 h-10 rounded-xl font-bold transition-all text-xs ${
+                                        isChanged
+                                          ? 'bg-slate-900 border-slate-900 text-white shadow-md hover:bg-indigo-600 hover:border-indigo-600'
+                                          : 'bg-slate-50 text-slate-400 border-slate-200 cursor-not-allowed'
+                                      }`}
+                                    >
+                                      {isSaving === template.id ? (
+                                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                      ) : (
+                                        'Simpan Perubahan'
+                                      )}
+                                    </Button>
                                   </div>
-                                )}
+                                </div>
                               </div>
-                            )}
-                          </div>
-
-                          {/* Garis Pemisah Mobile */}
-                          <div className="w-full h-px bg-slate-200/60 lg:hidden"></div>
-
-                          {/* KOLOM 3: Custom USP */}
-                          <div
-                            className={`flex-1 lg:max-w-[280px] space-y-2 ${isEditMode ? 'pointer-events-none' : ''}`}
-                          >
-                            <label className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1.5">
-                              <ListChecks className="w-3.5 h-3.5 text-emerald-500" />{' '}
-                              Keunggulan Tambahan (Opsional)
-                            </label>
-                            <Textarea
-                              placeholder="Sesi Konsultasi Eksklusif 30 Menit&#10;Prioritas Validasi Dokumen"
-                              value={state.customUSPs}
-                              onChange={(e) =>
-                                handleInputChange(
-                                  template.id,
-                                  'customUSPs',
-                                  e.target.value
-                                )
-                              }
-                              className="text-xs bg-white resize-y min-h-[120px] shadow-sm border-slate-200 focus-visible:ring-indigo-500"
-                            />
-                            <p className="text-[9px] text-slate-400 font-medium">
-                              Tekan Enter untuk memisahkan setiap poin.
-                            </p>
-                          </div>
-
-                          {/* Garis Pemisah Mobile */}
-                          <div className="w-full h-px bg-slate-200/60 lg:hidden"></div>
-
-                          {/* KOLOM 4: Aksi Simpan & Generate Token */}
-                          <div
-                            className={`flex flex-col justify-end gap-3 w-full lg:max-w-[180px] ${isEditMode ? 'pointer-events-none opacity-50' : ''}`}
-                          >
-                            <Button
-                              onClick={() => handleAIOptimize(template)}
-                              disabled={isOptimizing === template.id}
-                              variant="outline"
-                              className="w-full h-10 rounded-xl font-black border-indigo-200 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 hover:text-indigo-800 transition-all text-xs flex items-center justify-center gap-1.5 shadow-sm"
-                              title="Gunakan AI untuk mengatur Harga dan Kategori secara cerdas"
-                            >
-                              {isOptimizing === template.id ? (
-                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                              ) : (
-                                <Wand2 className="w-3.5 h-3.5" />
-                              )}
-                              AI Smart Monetize
-                            </Button>
-
-                            <Button
-                              onClick={() => handleSaveItem(template.id)}
-                              disabled={!isChanged || isSaving === template.id}
-                              variant="outline"
-                              className={`w-full h-10 rounded-xl font-bold transition-all text-xs ${
-                                isChanged
-                                  ? 'bg-slate-900 border-slate-900 text-white shadow-md hover:bg-indigo-600 hover:border-indigo-600'
-                                  : 'bg-slate-50 text-slate-400 border-slate-200 cursor-not-allowed'
-                              }`}
-                            >
-                              {isSaving === template.id ? (
-                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                              ) : (
-                                'Simpan Perubahan'
-                              )}
-                            </Button>
-
-                            <Button
-                              onClick={() => handleCopyShareLink(template.id)}
-                              variant="outline"
-                              className="w-full h-10 rounded-xl font-bold border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 hover:text-blue-800 transition-all text-xs flex items-center justify-center gap-1.5 shadow-sm"
-                              title="Salin link direct untuk dikirim ke customer"
-                            >
-                              <Share2 className="w-3.5 h-3.5" />
-                              Copy Link Share
-                            </Button>
-
-                            <Button
-                              onClick={() =>
-                                handleGenerateB2CToken(
-                                  template.id,
-                                  template.trackName
-                                )
-                              }
-                              disabled={isGeneratingToken === template.id}
-                              variant="outline"
-                              className="w-full h-10 rounded-xl font-bold border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800 transition-all text-xs flex items-center justify-center gap-1.5 shadow-sm"
-                              title="Buat token eceran sekali pakai untuk pelanggan"
-                            >
-                              {isGeneratingToken === template.id ? (
-                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                              ) : (
-                                <KeyRound className="w-3.5 h-3.5" />
-                              )}
-                              Generate Token B2C
-                            </Button>
-
-                            {generatedTokens[template.id] && (
-                              <div className="w-full flex items-center justify-between p-2.5 bg-emerald-100/50 rounded-xl border border-emerald-300 mt-1 animate-in zoom-in-95 duration-200 shadow-sm">
-                                <span className="font-mono text-[12px] font-black text-emerald-900 tracking-tight truncate">
-                                  {generatedTokens[template.id]}
-                                </span>
-                                <button
-                                  onClick={() =>
-                                    handleCopyManual(
-                                      template.id,
-                                      generatedTokens[template.id]
-                                    )
-                                  }
-                                  className="shrink-0 ml-2 p-2 bg-white rounded-lg hover:bg-emerald-50 transition-colors shadow-sm ring-1 ring-emerald-200/50"
-                                  title="Salin Ulang Token"
-                                >
-                                  {copiedTokens[template.id] ? (
-                                    <Check className="w-4 h-4 text-emerald-600" />
-                                  ) : (
-                                    <Copy className="w-4 h-4 text-emerald-600" />
-                                  )}
-                                </button>
-                              </div>
-                            )}
-                          </div>
+                            </div>
+                          )}
                         </div>
                       )
                     })}

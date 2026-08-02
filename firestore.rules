@@ -247,6 +247,24 @@ service cloud.firestore {
         allow read: if isAuthenticated() && (get(/databases/$(database)/documents/assessments/$(assessmentId)).data.userId == request.auth.uid || isSuperAdmin());
         allow create, update, delete: if isAuthenticated() && get(/databases/$(database)/documents/assessments/$(assessmentId)).data.userId == request.auth.uid;
       }
+
+      // Chat premium dan persona dibaca oleh pemilik asesmen atau tim operasional,
+      // tetapi seluruh write dari client ditutup (hanya Cloud Functions/Admin SDK).
+      match /consultation_history/{entryId} {
+        allow read: if isAuthenticated() && (
+          get(/databases/$(database)/documents/assessments/$(assessmentId)).data.userId == request.auth.uid
+          || isOpsAdmin()
+        );
+        allow write: if false;
+      }
+
+      match /premium/{document=**} {
+        allow read: if isAuthenticated() && (
+          get(/databases/$(database)/documents/assessments/$(assessmentId)).data.userId == request.auth.uid
+          || isOpsAdmin()
+        );
+        allow write: if false;
+      }
     }
 
     match /form_templates/{document=**} { allow read: if true; allow write: if isSuperAdmin(); }

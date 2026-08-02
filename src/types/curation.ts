@@ -36,6 +36,10 @@ export interface ActionItem {
   isCompleted: boolean;
   contextualTip?: string; // NEW: Tips praktis/motivasi harian
   searchKeyword?: string; // NEW: Kata kunci pencarian resource
+  youtubeRecommendations?: {
+    title: string;
+    query: string;
+  }[];
   subTasks?: {
     id: string;
     text: string;
@@ -76,7 +80,10 @@ export interface AIResult {
   customUiLabels?: CustomUiLabels;
   // 2. TAMBAHAN BARU: Field untuk menyimpan hasil generate Action Plan
   customActionPlan?: ActionItem[]; 
+  personalActionPlan?: ActionItem[];
   tipsAndTricks?: string[];
+  motivationalQuote?: string;
+  keyFocusArea?: string;
   sellingOutput?: {
     hookTitle: string;
     compellingSummary: string;
@@ -173,6 +180,7 @@ export interface AiPromptConfig {
   formPurpose?: FormDomainPurpose; 
   customUiLabels?: CustomUiLabels;
   actionPlanBehavior?: string;
+  promptImpactMode?: 'soft' | 'bold' | 'aggressive';
   isAdaptive?: boolean;
   maxAdaptiveSections?: number;
   assessmentOutputMode?: 'auto' | 'adaptive' | 'universal';

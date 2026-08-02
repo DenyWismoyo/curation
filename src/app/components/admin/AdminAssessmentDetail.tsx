@@ -118,6 +118,7 @@ export function AdminAssessmentDetail({ data, onClose }: AdminAssessmentDetailPr
                 formData={formData}
                 aiResult={mergedAiResult}
                 assessmentId={documentId}
+                aiPromptConfig={data?.aiPromptConfig}
               />
             ) : (
               <UniversalAssessmentView

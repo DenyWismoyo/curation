@@ -9,6 +9,14 @@ import { Trash2, Plus, Sparkles, Loader2, Target, Image as ImageIcon, Copy, PenT
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { toast } from 'sonner';
 
+interface IdentityInspirationItem {
+  id: string;
+  trackName: string;
+  trackDescription: string;
+  trackIcon?: string;
+  angle?: string;
+}
+
 interface TabGeneralProps {
   template: FormTemplate;
   onChange: (updatedTemplate: FormTemplate) => void;
@@ -18,6 +26,8 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isGeneratingAnchors, setIsGeneratingAnchors] = useState(false);
   const [isGeneratingIdentity, setIsGeneratingIdentity] = useState(false); // STATE BARU UNTUK IDENTITAS
+  const [isGeneratingInspirations, setIsGeneratingInspirations] = useState(false);
+  const [identityInspirations, setIdentityInspirations] = useState<IdentityInspirationItem[]>([]);
 
   // STATE MARKETING KIT
   const [isGeneratingCopy, setIsGeneratingCopy] = useState(false);
@@ -76,7 +86,8 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
         trackName: template.trackName, 
         trackDescription: template.trackDescription,
         targetAudience: template.aiPromptConfig?.targetAudience,
-        formPurpose: template.aiPromptConfig?.formPurpose
+        formPurpose: template.aiPromptConfig?.formPurpose,
+        promptImpactMode: template.aiPromptConfig?.promptImpactMode || 'bold'
       });
       const data = result.data as any;
       
@@ -94,6 +105,46 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
     } finally { 
       setIsGeneratingIdentity(false); 
     }
+  };
+
+  const handleGenerateIdentityInspirations = async () => {
+    setIsGeneratingInspirations(true);
+    try {
+      const functions = getFunctions(undefined, 'asia-southeast2');
+      const inspirationFn = httpsCallable(functions, 'generateTemplateIdentityInspirations');
+      const result = await inspirationFn({
+        trackName: template.trackName,
+        trackDescription: template.trackDescription,
+        targetAudience: template.aiPromptConfig?.targetAudience,
+        formPurpose: template.aiPromptConfig?.formPurpose,
+        promptImpactMode: template.aiPromptConfig?.promptImpactMode || 'bold',
+        specificTargetContext: template.specificTargetContext,
+        methodologyContext: template.methodologyContext,
+        expectedMetrics: template.aiPromptConfig?.expectedMetrics || [],
+      });
+
+      const data = result.data as any;
+      if (data.success && Array.isArray(data.inspirations)) {
+        setIdentityInspirations(data.inspirations);
+        toast.success('Inspirasi judul & deskripsi siap dipilih.');
+      } else {
+        throw new Error('Respons AI tidak valid.');
+      }
+    } catch (e: any) {
+      toast.error('Gagal cari inspirasi DeepSeek', { description: e.message });
+    } finally {
+      setIsGeneratingInspirations(false);
+    }
+  };
+
+  const applyIdentityInspiration = (item: IdentityInspirationItem) => {
+    onChange({
+      ...template,
+      trackName: item.trackName,
+      trackDescription: item.trackDescription,
+      trackIcon: item.trackIcon || template.trackIcon,
+    });
+    toast.success('Inspirasi diterapkan ke form.');
   };
 
   const handleGenerateOutputs = async () => {
@@ -154,7 +205,9 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
       const result = await generateCopyFn({
         trackName: template.trackName, trackDescription: template.trackDescription,
         expectedOutputs: template.expectedOutputs, targetAudience: template.aiPromptConfig?.targetAudience,
-        targetPlatform: activePlatform, formSteps: template.steps
+        targetPlatform: activePlatform,
+        promptImpactMode: template.aiPromptConfig?.promptImpactMode || 'bold',
+        formSteps: template.steps
       });
       
       const data = result.data as any;
@@ -194,7 +247,12 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
       const reviseCopyFn = httpsCallable(functions, 'reviseCopywriting');
       const currentCaption = (template.promoAssets as any)?.[activePlatform]?.copywriting;
       
-      const result = await reviseCopyFn({ originalText: currentCaption, instruction: copyRevisionText, platform: activePlatform });
+      const result = await reviseCopyFn({
+        originalText: currentCaption,
+        instruction: copyRevisionText,
+        platform: activePlatform,
+        promptImpactMode: template.aiPromptConfig?.promptImpactMode || 'bold'
+      });
       const data = result.data as any;
       
       if (data.success && data.revisedText) {
@@ -217,7 +275,11 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
       const currentSlides = [...(template.promoAssets as any)?.[activePlatform]?.carouselSlides];
       const targetSlide = currentSlides[index];
       
-      const result = await revisePromptFn({ originalPrompt: targetSlide.imagePrompt, instruction });
+      const result = await revisePromptFn({
+        originalPrompt: targetSlide.imagePrompt,
+        instruction,
+        promptImpactMode: template.aiPromptConfig?.promptImpactMode || 'bold'
+      });
       const data = result.data as any;
       
       if (data.success && data.revisedPrompt) {
@@ -286,16 +348,65 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
           <h3 className="text-xl font-black text-slate-900">Identitas Program</h3>
           <p className="text-sm text-slate-500 font-medium mt-1">Tampilan yang akan dilihat peserta di halaman depan katalog.</p>
         </div>
-        <Button 
-          type="button" 
-          onClick={handleGenerateIdentity} 
-          disabled={isGeneratingIdentity}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl h-10 px-5 shadow-sm shrink-0 transition-all"
-        >
-          {isGeneratingIdentity ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Wand2 className="w-4 h-4 mr-2" />} 
-          AI Auto-Enhance
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            type="button"
+            onClick={handleGenerateIdentityInspirations}
+            disabled={isGeneratingInspirations}
+            variant="outline"
+            className="border-indigo-200 text-indigo-700 hover:bg-indigo-50 font-bold rounded-xl h-10 px-4 shadow-sm shrink-0 transition-all"
+          >
+            {isGeneratingInspirations ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
+            Inspirasi DeepSeek
+          </Button>
+          <Button 
+            type="button" 
+            onClick={handleGenerateIdentity} 
+            disabled={isGeneratingIdentity}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl h-10 px-5 shadow-sm shrink-0 transition-all"
+          >
+            {isGeneratingIdentity ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Wand2 className="w-4 h-4 mr-2" />} 
+            AI Auto-Enhance
+          </Button>
+        </div>
       </div>
+
+      {identityInspirations.length > 0 && (
+        <div className="mb-6 rounded-2xl border border-indigo-100 bg-indigo-50/50 p-4">
+          <div className="flex items-center justify-between gap-3 mb-3">
+            <div>
+              <h4 className="text-sm font-black text-indigo-900 uppercase tracking-wider">Kandidat Inspirasi DeepSeek</h4>
+              <p className="text-xs text-indigo-700/80 font-medium mt-1">Pilih satu kandidat untuk langsung mengganti Nama Program dan Deskripsi.</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {identityInspirations.map((item, idx) => (
+              <div key={item.id || idx} className="rounded-xl border border-indigo-200 bg-white p-4 space-y-2 shadow-sm">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[10px] uppercase tracking-widest font-bold text-indigo-500">Opsi {idx + 1}</span>
+                  {item.angle ? <span className="text-[10px] font-semibold text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded-md">{item.angle}</span> : null}
+                </div>
+
+                <div>
+                  <p className="text-sm font-black text-slate-900 leading-snug">{item.trackName}</p>
+                  {item.trackIcon ? <p className="text-[11px] text-slate-500 font-semibold mt-1">Ikon: {item.trackIcon}</p> : null}
+                </div>
+
+                <p className="text-xs text-slate-600 leading-relaxed">{item.trackDescription}</p>
+
+                <Button
+                  type="button"
+                  onClick={() => applyIdentityInspiration(item)}
+                  className="w-full h-8 text-xs font-bold rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white"
+                >
+                  Terapkan Inspirasi Ini
+                </Button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* ─── QUICK CONTEXT SELECTORS ─── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 bg-slate-50/50 p-4 rounded-2xl ring-1 ring-slate-100">

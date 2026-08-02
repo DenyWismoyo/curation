@@ -121,6 +121,12 @@ export const executeArchitect = async (
     const targetBlockCount = existingConfig.targetBlockCount || 6;
     const targetTierCount = existingConfig.targetTierCount || 4;
     const targetRecCount = existingConfig.targetRecommendationCount || 5;
+    const promptImpactMode = existingConfig.promptImpactMode || 'bold';
+    const impactGuidance = promptImpactMode === 'soft'
+      ? 'Gunakan nada narasi halus, empatik, aman, dan lebih menenangkan.'
+      : promptImpactMode === 'aggressive'
+        ? 'Gunakan nada narasi sangat tajam, berenergi tinggi, eksplisit, dan berorientasi urgensi.'
+        : 'Gunakan nada narasi tegas, kuat, conversion-friendly, namun tetap profesional.';
 
     const specificTargetContext = afterData.specificTargetContext || 'Tergantung konfigurasi targetAudience, dilarang meleset dari ini.';
     const methodologyContext = afterData.methodologyContext || 'Standar Global Terbaik yang paling relevan dengan profil.';
@@ -172,6 +178,10 @@ export const executeArchitect = async (
       - expectedAnalysisBlocks: TEPAT ${targetBlockCount} blok analisis. (Format '[NAMA TEMA/KATEGORI YANG RELEVAN]: Sub-poin 1, Sub-poin 2'. DILARANG KERAS menggunakan kata literal 'Judul Blok', gunakan nama topik analisis yang sesungguhnya)
       - customReadinessTiers: TEPAT ${targetTierCount} tingkatan (tiers).
       - expectedRecommendations: TEPAT ${targetRecCount} rekomendasi.${customUiInstruction}
+
+      MODE KUALITAS PROMPT (WAJIB DIIKUTI): ${promptImpactMode}
+      PANDUAN MODE: ${impactGuidance}
+      PENTING: JANGAN ubah nilai mode ini secara mandiri. Ikuti mode dari konfigurasi admin.
       
       LANGKAH 2: PEMBUATAN KERANGKA FORMULIR (stepOutlines) & DRAFT PERTANYAAN (draftedQuestions)
       Berdasarkan "aiPromptConfig" yang BARU SAJA Anda sempurnakan, susun ${sectionsCountInstruction} Seksi kuesioner yang 100% sejajar dengan metrik tersebut.
@@ -202,7 +212,8 @@ export const executeArchitect = async (
       // 3. KUNCI ABSOLUT: Pastikan target audience, purpose, dan adaptive tidak diganggu AI
       formPurpose: existingConfig.formPurpose || 'assessment',
       targetAudience: existingConfig.targetAudience || 'company',
-      isAdaptive: existingConfig.isAdaptive || false
+      isAdaptive: existingConfig.isAdaptive || false,
+      promptImpactMode: existingConfig.promptImpactMode || 'bold'
     };
 
     // LOGIKA PENENTU LABEL UI

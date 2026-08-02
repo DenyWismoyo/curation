@@ -262,6 +262,8 @@ export const assessmentOrchestrator = onDocumentCreated({
       "aiResult.nextActionSteps": data.aiResult.nextActionSteps,
       "aiResult.customAnalysisBlocks": isAdaptiveMode ? admin.firestore.FieldValue.delete() : data.aiResult.customAnalysisBlocks,
       "aiResult._internalReasoning": isAdaptiveMode ? admin.firestore.FieldValue.delete() : data.aiResult._internalReasoning,
+      "aiResult.motivationalQuote": isAdaptiveMode ? data.aiResult.motivationalQuote : admin.firestore.FieldValue.delete(),
+      "aiResult.keyFocusArea": isAdaptiveMode ? data.aiResult.keyFocusArea : admin.firestore.FieldValue.delete(),
       "aiResult.tipsAndTricks": isAdaptiveMode ? admin.firestore.FieldValue.delete() : data.aiResult.tipsAndTricks,
       "aiResult.isAdaptiveAssessment": data.aiResult.isAdaptiveAssessment,
       "aiResult.formPurpose": data.aiResult.formPurpose,

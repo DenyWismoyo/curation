@@ -134,6 +134,7 @@ export function CurationDashboard({
           aiResult={resolvedAiResult}
           assessmentId={assessmentId}
           headerActions={headerActionsContent}
+          aiPromptConfig={aiPromptConfig}
         />
       ) : (
         <UniversalAssessmentView

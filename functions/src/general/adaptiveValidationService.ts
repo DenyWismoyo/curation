@@ -149,12 +149,15 @@ export const generateAdaptiveQuestions = onCall({
     Tugas: merancang pertanyaan kuesioner dinamis untuk satu seksi assessment.
     Prioritas kualitas:
     1. Pertanyaan harus tajam, relevan, dan tidak mengulang informasi yang sudah ada.
-    2. Fokuskan 80% pada radio/select/checkbox, 20% pada text/textarea untuk probing.
+    2. DILARANG menggunakan tipe input "select" (dropdown). Fokuskan 80% pada "radio" (pilihan tunggal) atau "checkbox" (pilihan ganda), dan 20% pada "text"/"textarea" untuk probing.
     3. Jangan gunakan showIf, branching, atau logika pertanyaan bersyarat apa pun.
-    4. Gunakan options berbobot untuk radio/select/checkbox.
+    4. Gunakan options berbobot untuk tipe "radio" dan "checkbox". Pastikan bobot terdistribusi dengan baik pada skala 0 hingga 100.
     5. Tandai 1-2 pertanyaan paling krusial dengan weightMultiplier 2, 3, atau 5.
-    6. Tulis aiReasoning yang menjelaskan kenapa pertanyaan itu penting.
-    7. WAJIB patuhi gaya bahasa berikut: ${adaptiveToneGuidance}
+    6. Tulis aiReasoning yang menjelaskan kenapa pertanyaan ini penting dan hubungannya dengan metrik target.
+    7. WAJIB patuhi gaya bahasa berikut (berlaku untuk pertanyaan dan pilihan jawaban): ${adaptiveToneGuidance}
+    8. Gunakan kata-kata pertanyaan yang sederhana, jelas, dan mudah dipahami pengguna non-teknis.
+       Hindari jargon teknis, istilah abstrak, dan kalimat panjang berlapis.
+    Nilai untuk properti "type" HANYA boleh: "radio", "checkbox", "text", "textarea", atau "file".
     Output wajib: JSON object murni dengan key "fields" berisi array FormField.
     `;
 
@@ -230,16 +233,19 @@ export const generateAdaptiveQuestions = onCall({
           ${aiPromptConfig?.customScoringRubric ? `RUBRIK PENILAIAN (PANDUAN BOBOT SKOR):\n${aiPromptConfig.customScoringRubric}\n` : ''}
 
           ATURAN KUSTOMISASI WAJIB (AGAR TIDAK MONOTON & TEPAT SASARAN):
-          1. FOKUS TARGET METRIK: Pertanyaan yang Anda buat WAJIB difokuskan untuk mengukur metrik berikut: [${targetMetrics?.join(', ') || 'Metrik Umum'}].
+          1. FOKUS TARGET METRIK: Pertanyaan yang Anda buat WAJIB difokuskan untuk mengukur secara spesifik metrik berikut: [${targetMetrics?.join(', ') || 'Metrik Umum'}].
           2. ANTI-DUPLIKASI (MUTLAK): Baca 'Data Peserta Sebelumnya' dengan teliti. DILARANG KERAS membuat pertanyaan yang esensinya sama persis dengan informasi yang sudah dijawab. Anda boleh menggunakan jawaban sebelumnya sebagai dasar/pijakan untuk bertanya LEBIH DALAM (probing), tapi jangan mengulang pertanyaan.
           3. HYPER-PERSONALIZATION: Singgung secara spesifik data/jawaban dari "Data Peserta Sebelumnya" ke dalam label pertanyaan atau deskripsi agar terasa relevan.
+          3a. KEJELASAN BAHASA: Setiap pertanyaan dan pilihan jawaban (options) harus mudah dimengerti dalam sekali baca oleh pengguna awam. Gunakan kalimat singkat, langsung, dan tidak berbelit sesuai Tone yang ditetapkan.
           4. STRUKTUR TIPE INPUT (PRIORITAS):
-             - FOKUS 80% pada tipe "radio", "select", dan "checkbox" agar peserta mudah mengisi.
-             - Untuk 'radio'/'select', WAJIB isi properti 'options' dengan format [{label: 'Opsi A', weight: 100}, {label: 'Opsi B', weight: 50}]. Gunakan Rubrik Penilaian di atas sebagai acuan bobot 0-100.
-               - FOKUS 20% pada tipe "textarea" atau "text" khusus untuk probing/penggalian alasan yang mendalam.
+             - DILARANG menggunakan tipe "select" (dropdown).
+             - FOKUS 80% pada tipe "radio" (untuk satu pilihan) dan "checkbox" (untuk banyak pilihan) agar peserta mudah mengisi.
+             - Untuk 'radio'/'checkbox', WAJIB isi properti 'options' dengan format [{label: 'Opsi A', weight: 100}, {label: 'Opsi B', weight: 50}]. Gunakan Rubrik Penilaian di atas sebagai acuan bobot 0-100, pastikan ada opsi yang bernilai rendah, sedang, dan tinggi.
+             - FOKUS 20% pada tipe "textarea" atau "text" khusus untuk probing/penggalian alasan yang mendalam.
+             - Nilai "type" HANYA boleh: "radio", "checkbox", "text", "textarea", atau "file".
              ${audienceType === 'individual' || audienceType === 'student' ? '- DILARANG menggunakan tipe "file" (unggah dokumen) karena ini untuk individu/personal.' : '- Gunakan tipe "file" HANYA jika sangat krusial untuk meminta bukti.'}
-             5. PEMBOBOTAN KRITIS (weightMultiplier): Untuk 1-2 pertanyaan yang paling krusial di tahap ini, set "weightMultiplier": 2, 3, atau 5. Biarkan properti ini kosong atau 1 untuk pertanyaan sekunder.
-             6. PERSONALISASI REASONING: Jelaskan secara cerdas pada 'aiReasoning' mengapa AI merancang pertanyaan ini secara khusus berdasarkan konteks partisipan.
+          5. PEMBOBOTAN KRITIS (weightMultiplier): Untuk 1-2 pertanyaan yang paling krusial di tahap ini (yang paling menentukan target metrik), set "weightMultiplier": 2, 3, atau 5. Biarkan properti ini kosong atau 1 untuk pertanyaan sekunder.
+          6. PERSONALISASI REASONING: Jelaskan secara cerdas pada 'aiReasoning' mengapa AI merancang pertanyaan ini dan jelaskan kaitan spesifiknya dengan Metrik yang dituju.
       `;
 
       let prompt = "";
@@ -283,7 +289,7 @@ ${dynamicRules}
       let dynamicFields: any[] = [];
       try {
         const response = await deepseekClient.chat.completions.create({
-          model: 'deepseek-chat',
+          model: 'deepseek-v4-flash',
           messages: [
             {
               role: 'system',

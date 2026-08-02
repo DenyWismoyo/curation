@@ -7,12 +7,14 @@ import { getFirestore } from "firebase-admin/firestore";
 import { withRetry } from "./utils/retry";
 
 const geminiApiKeySecret = defineSecret("GEMINI_API_KEY");
+const deepseekApiKeySecret = defineSecret("DEEPSEEK_API_KEY");
+import OpenAI from "openai";
 
 // 1. FUNGSI EKSISTING (JANGAN DIHAPUS, BIARKAN SEPERTI INI)
 export const generateActionPlanChecklist = onCall({
     memory: "256MiB",
     region: "asia-southeast2",
-    secrets: [geminiApiKeySecret],
+  secrets: [deepseekApiKeySecret],
     cors: true,
   },
   async (request) => {
@@ -22,8 +24,11 @@ export const generateActionPlanChecklist = onCall({
     if (!assessmentId || !aiResult) throw new HttpsError("invalid-argument", "Data tidak lengkap.");
 
     try {
-      const API_KEY = geminiApiKeySecret.value();
-      const genAI = new GoogleGenerativeAI(API_KEY);
+      const DEEPSEEK_KEY = deepseekApiKeySecret.value();
+      const deepseekClient = new OpenAI({
+        baseURL: 'https://api.deepseek.com',
+        apiKey: DEEPSEEK_KEY,
+      });
       
       // LOGIKA ANCHOR ACTION PLAN:
       const targetAudience = aiResult.targetAudience || 'company';
@@ -37,32 +42,6 @@ export const generateActionPlanChecklist = onCall({
           // Fallback ke logika universal adaptif
           personaInstruction = `Anda adalah Pakar Konsultan. Tugas Anda merumuskan 10 langkah eksekusi yang DITUJUKAN LANGSUNG KEPADA SUBJEK ASESMEN YANG DINILAI (bisa berupa Organisasi, Bisnis, Instansi Pemerintah, Komunitas, atau Individu - sesuaikan dengan konteks ringkasan laporan). Gunakan sudut pandang direktif ke subjek ("Organisasi harus...", "Anda perlu..."), DILARANG KERAS membuat instruksi untuk auditor/penilai melakukan audit/verifikasi. Langkah ini adalah panduan bagi subjek untuk berkembang.`;
       }
-
-      const model = genAI.getGenerativeModel({
-        model: "gemini-3.1-flash-lite",
-        systemInstruction: personaInstruction,
-        generationConfig: {
-          temperature: 0.1, 
-          maxOutputTokens: 3000, 
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: SchemaType.ARRAY,
-            items: {
-              type: SchemaType.OBJECT,
-              required: ["id", "task", "description", "timeframe", "isCompleted", "contextualTip", "searchKeyword"],
-              properties: {
-                id: { type: SchemaType.STRING },
-                task: { type: SchemaType.STRING, description: "Maksimal 6-8 kata. Wajib berupa kata kerja perintah taktis (atau ajakan refleksi jika individu)." },
-                description: { type: SchemaType.STRING, description: "Penjelasan eksekusi maksimal 2 kalimat padat dan jelas." },
-                timeframe: { type: SchemaType.STRING, description: "WAJIB pilih salah satu: 'Harian', 'Mingguan', atau 'Bulanan'." },
-                isCompleted: { type: SchemaType.BOOLEAN, description: "Wajib diset false" },
-                contextualTip: { type: SchemaType.STRING, description: "Satu kalimat singkat tips praktis, panduan kecil, atau motivasi untuk mengeksekusi tugas ini." },
-                searchKeyword: { type: SchemaType.STRING, description: "Satu frasa kata kunci YouTube/Google. Jika audiens individu/konseling, arahkan ke teknik psikologi/habit. Jika bisnis, arahkan ke strategi/SOP." }
-              }
-            }
-          }
-        }
-      });
 
       const prompt = `
         Tugas Anda adalah merumuskan TEPAT 10 item checklist (tidak boleh kurang atau lebih).
@@ -78,13 +57,106 @@ export const generateActionPlanChecklist = onCall({
         - Sisanya "Bulanan".
         
         ATURAN MUTLAK: Bahasa Indonesia asertif, profesional, dilarang mengulang.
+
+        ATURAN WAJIB TAMBAHAN:
+        - Setiap item wajib memiliki 3 sampai 5 subTasks yang sangat praktis dan berurutan.
+        - Setiap item wajib memiliki rekomendasi konten YouTube dalam format query (2 sampai 3 rekomendasi).
+        - Gunakan judul rekomendasi yang jelas agar user paham harus menonton apa.
+
+        Output WAJIB JSON murni dengan format berikut:
+        {
+          "tasks": [
+            {
+              "id": "task-1",
+              "task": "...",
+              "description": "...",
+              "timeframe": "Harian",
+              "isCompleted": false,
+              "contextualTip": "...",
+              "searchKeyword": "...",
+              "subTasks": [
+                { "id": "sub-1-1", "text": "...", "isCompleted": false }
+              ],
+              "youtubeRecommendations": [
+                { "title": "...", "query": "..." }
+              ]
+            }
+          ]
+        }
       `;
 
-      const result = await withRetry(() => model.generateContent(prompt));
-      let rawText = result.response.text().trim();
+      const result = await withRetry(() => deepseekClient.chat.completions.create({
+        model: 'deepseek-v4-flash',
+        messages: [
+          { role: 'system', content: personaInstruction },
+          { role: 'user', content: prompt }
+        ],
+        temperature: 0.1,
+        response_format: { type: 'json_object' }
+      }));
+
+      let rawText = result.choices[0]?.message?.content || '{}';
       rawText = rawText.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
 
-      const generatedChecklist = JSON.parse(rawText);
+      const parsedData = JSON.parse(rawText);
+      const generatedChecklistRaw = Array.isArray(parsedData)
+        ? parsedData
+        : (Array.isArray(parsedData?.tasks) ? parsedData.tasks : []);
+
+      const generatedChecklist = generatedChecklistRaw.map((item: any, index: number) => {
+        const fallbackQuery = typeof item?.searchKeyword === 'string' && item.searchKeyword.trim().length > 0
+          ? item.searchKeyword.trim()
+          : `${item?.task || `langkah ${index + 1}`} tutorial Indonesia`;
+
+        const subTasksRaw = Array.isArray(item?.subTasks) ? item.subTasks : [];
+        const subTasks = subTasksRaw
+          .filter((sub: any) => sub && typeof sub === 'object')
+          .slice(0, 5)
+          .map((sub: any, subIdx: number) => ({
+            id: typeof sub?.id === 'string' && sub.id.trim().length > 0 ? sub.id : `sub-${index + 1}-${subIdx + 1}`,
+            text: typeof sub?.text === 'string' && sub.text.trim().length > 0
+              ? sub.text.trim()
+              : `Lakukan langkah kecil ${subIdx + 1} untuk menjalankan tugas ini.`,
+            isCompleted: false,
+          }));
+
+        const safeSubTasks = subTasks.length > 0
+          ? subTasks
+          : [
+              { id: `sub-${index + 1}-1`, text: 'Tentukan target kecil yang ingin diselesaikan hari ini.', isCompleted: false },
+              { id: `sub-${index + 1}-2`, text: 'Siapkan bahan atau alat yang diperlukan.', isCompleted: false },
+              { id: `sub-${index + 1}-3`, text: 'Eksekusi dan catat hasilnya secara singkat.', isCompleted: false },
+            ];
+
+        const youtubeRaw = Array.isArray(item?.youtubeRecommendations) ? item.youtubeRecommendations : [];
+        const youtubeRecommendations = youtubeRaw
+          .filter((rec: any) => rec && typeof rec === 'object')
+          .slice(0, 3)
+          .map((rec: any, recIdx: number) => ({
+            title: typeof rec?.title === 'string' && rec.title.trim().length > 0
+              ? rec.title.trim()
+              : `Rekomendasi Video ${recIdx + 1}`,
+            query: typeof rec?.query === 'string' && rec.query.trim().length > 0
+              ? rec.query.trim()
+              : fallbackQuery,
+          }));
+
+        return {
+          id: typeof item?.id === 'string' && item.id.trim().length > 0 ? item.id : `task-${index + 1}`,
+          task: typeof item?.task === 'string' && item.task.trim().length > 0 ? item.task.trim() : `Langkah Strategis ${index + 1}`,
+          description: typeof item?.description === 'string' && item.description.trim().length > 0
+            ? item.description.trim()
+            : 'Fokus pada eksekusi sederhana namun konsisten.',
+          timeframe: typeof item?.timeframe === 'string' && item.timeframe.trim().length > 0 ? item.timeframe.trim() : 'Mingguan',
+          isCompleted: false,
+          contextualTip: typeof item?.contextualTip === 'string' && item.contextualTip.trim().length > 0
+            ? item.contextualTip.trim()
+            : 'Mulai dari tindakan kecil agar progres terasa ringan.',
+          searchKeyword: fallbackQuery,
+          subTasks: safeSubTasks,
+          youtubeRecommendations,
+        };
+      });
 
       const db = getFirestore(admin.app(), "curation");
       await db.collection("assessments").doc(assessmentId).update({
@@ -156,3 +228,92 @@ export const generateSubTaskChecklist = onCall({
       throw new HttpsError("internal", error.message || "Gagal menyusun Sub-Checklist.");
     }
   });
+
+// 3. FUNGSI BARU: MEMBUAT ACTION PLAN PERSONAL VIA DEEPSEEK
+export const generatePersonalActionPlan = onCall({
+    memory: "512MiB",
+    region: "asia-southeast2",
+    secrets: [deepseekApiKeySecret],
+    cors: true,
+  },
+  async (request) => {
+    if (!request.auth) throw new HttpsError("unauthenticated", "Akses ditolak.");
+
+    const { assessmentId, aiResult, formData, aiPromptConfig } = request.data;
+    if (!assessmentId || !aiResult) throw new HttpsError("invalid-argument", "Data tidak lengkap.");
+
+    try {
+      const DEEPSEEK_KEY = deepseekApiKeySecret.value();
+      const deepseekClient = new OpenAI({
+        baseURL: 'https://api.deepseek.com',
+        apiKey: DEEPSEEK_KEY,
+      });
+
+      const tone = aiPromptConfig?.toneAndStyle || "Mentor / Coach Personal yang suportif namun asertif";
+      const audience = aiPromptConfig?.targetAudience || formData?.corporateEntity || "Individu";
+      
+      const systemInstruction = `Anda adalah Pakar Eksekutor. Tugas Anda menyintesis laporan analitik menjadi TEPAT 5 langkah eksekusi utama yang sangat terperinci dan aplikatif.
+AUDIENS: ${audience}
+NADA BAHASA: ${tone}
+
+PERINGATAN MUTLAK:
+1. Hasil WAJIB berformat JSON murni bertipe Object dengan key "tasks" yang berisi Array.
+2. Setiap tugas utama HARUS memiliki 3 hingga 5 sub-tugas (micro-steps).
+3. Berikan saran/tips praktis (contextualTip).`;
+
+      const prompt = `
+        Kompilasi dan ekstrak poin-poin dari laporan berikut:
+        1. Ringkasan: ${aiResult.executiveSummary}
+        2. Fokus Utama / Aksi AI: ${aiResult.nextActionSteps ? JSON.stringify(aiResult.nextActionSteps) : '-'}
+        
+        Buat TEPAT 5 item checklist.
+        Gunakan struktur JSON persis seperti berikut (Hanya kembalikan JSON Object murni, tanpa teks lain):
+        {
+          "tasks": [
+            {
+              "id": "task-1",
+              "task": "Judul tugas utama",
+              "description": "Deskripsi maksimal 2 kalimat",
+              "timeframe": "Harian / Mingguan / Bulanan",
+              "isCompleted": false,
+              "contextualTip": "Tips praktis / motivasi",
+              "searchKeyword": "Kata kunci pencarian",
+              "subTasks": [
+                { "id": "sub-1-1", "text": "Sub-langkah aksi 1", "isCompleted": false },
+                { "id": "sub-1-2", "text": "Sub-langkah aksi 2", "isCompleted": false }
+              ]
+            }
+          ]
+        }
+      `;
+
+      const response = await deepseekClient.chat.completions.create({
+        model: 'deepseek-v4-flash',
+        messages: [
+          { role: 'system', content: systemInstruction },
+          { role: 'user', content: prompt }
+        ],
+        temperature: 0.2,
+        response_format: { type: 'json_object' }
+      });
+
+      let rawText = response.choices[0].message.content || "{}";
+      rawText = rawText.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
+
+      const parsedData = JSON.parse(rawText);
+      const generatedChecklist = parsedData.tasks || [];
+
+      const db = getFirestore(admin.app(), "curation");
+      await db.collection("assessments").doc(assessmentId).update({
+        "aiResult.personalActionPlan": generatedChecklist,
+        personalActionPlanGeneratedAt: admin.firestore.FieldValue.serverTimestamp()
+      });
+
+      return { success: true, actionPlan: generatedChecklist };
+
+    } catch (error: any) {
+      console.error("Gagal membuat Personal Action Plan:", error);
+      throw new HttpsError("internal", error.message || "Gagal memproses Personal Action Plan.");
+    }
+  }
+);

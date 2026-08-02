@@ -10,6 +10,13 @@ export interface FormBuilderPromptParams {
 
 export const buildMegaAgentPrompt = (params: FormBuilderPromptParams): string => {
   const { trackName, config, archetypeInstruction, specificTargetContext, methodologyContext } = params;
+
+   const promptImpactMode = config.promptImpactMode || 'bold';
+   const impactGuidance = promptImpactMode === 'soft'
+      ? 'Gunakan gaya bahasa halus, empatik, aman, dan tetap profesional.'
+      : promptImpactMode === 'aggressive'
+         ? 'Gunakan gaya bahasa sangat tajam, direct, high-impact, dan memicu sense of urgency.'
+         : 'Gunakan gaya bahasa tegas, menjual, dan berenergi dengan keseimbangan kredibilitas.';
   
   const metrics = config.expectedMetrics?.join(', ') || 'Metrik standar kelayakan bisnis';
   const analysisBlocks = config.expectedAnalysisBlocks?.join(' | ') || '';
@@ -83,6 +90,9 @@ export const buildMegaAgentPrompt = (params: FormBuilderPromptParams): string =>
  ${config.gradingStrictness === 'supportive' ? '→ Rancang pertanyaan yang memberdayakan, suportif, dan menggali potensi.' : ''}
 
  GAYA BAHASA (Report Tone): ${config.reportTone || 'consultative'}
+
+ MODE KUALITAS PROMPT (Prompt Impact Mode): ${promptImpactMode}
+ ${impactGuidance}
 
  ATURAN KHUSUS (Custom System Rules):
  ${config.customSystemPrompt || 'Tidak ada aturan khusus tambahan.'}

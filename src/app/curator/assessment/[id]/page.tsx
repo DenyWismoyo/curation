@@ -287,6 +287,7 @@ export default function CuratorAssessmentDetailPage() {
               formData={data.formData}
               aiResult={data.aiResult || {}}
               assessmentId={data.id}
+              aiPromptConfig={data.aiPromptConfig}
             />
           ) : (
             <UniversalAssessmentView

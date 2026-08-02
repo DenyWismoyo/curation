@@ -219,6 +219,7 @@ export function CuratorAssessmentDetail({ data, availableTags = [], onClose, onS
                 formData={formData}
                 aiResult={currentAiResult}
                 assessmentId={id}
+                aiPromptConfig={data?.aiPromptConfig}
                 headerActions={
                   <>
                     {isEditing && (
