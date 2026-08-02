@@ -2,15 +2,15 @@ import OpenAI from "openai";
 import { safeJsonParse } from "./shared";
 
 const buildPlannerPrompt = (projectData: any, outline: any) => `
-Anda adalah Chapter Planner untuk kajian profesional.
+Anda adalah Chapter Planner untuk kajian riset profesional berskala besar.
 
 TUGAS:
-Untuk setiap bab di bawah ini, buat planning draft ringkas yang nanti dipakai writer agent.
-Setiap bab butuh:
-- objective
-- targetWordCount
-- suggestedSections
-- evidenceFocus
+Untuk setiap bab di bawah ini, buat *planning draft* yang sangat terstruktur, analitis, dan mendalam, yang nanti akan dipakai oleh agen penulis (*writer agent*).
+Setiap bab WAJIB mencakup:
+- objective: Sasaran akademik dari bab ini (fokus pada argumen, bukan sekadar merangkum).
+- targetWordCount: Target panjang kata.
+- suggestedSections: Daftar sub-bab. WAJIB menggunakan penomoran sub-bab hierarkis standar akademik (contoh: "1.1 Latar Belakang", "1.2 Kerangka Teori"). Pastikan nomor sub-bab sesuai dengan urutan babnya (jika ini Bab 2, maka sub-bab diawali 2.1, 2.2, dst). Gunakan *Title Case*, jangan huruf kapital semua. Susun agar bab mengalir deduktif dan tidak terasa dangkal.
+- evidenceFocus: Aspek pembuktian spesifik yang harus ditekankan (misal: analisis klaim X menggunakan data Y).
 
 KONTEKS PROYEK:
 - Judul: ${projectData.title}

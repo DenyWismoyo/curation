@@ -189,7 +189,7 @@ export const createStudyProject = onCall({
     modelPlan: {
       architect: "deepseek-v4-pro",
       planner: "deepseek-v4-flash",
-      embeddings: "text-embedding-001",
+      embeddings: "gemini-embedding-2",
     },
     createdAt: now,
     updatedAt: now,
@@ -310,7 +310,8 @@ export const startStudyProjectPipeline = onCall({
   }
 
   const currentStatus = String(projectData.status || "DRAFT") as StudyStatus;
-  if (!["DRAFT", "FAILED", "READY_FOR_REVIEW"].includes(currentStatus)) {
+  const isFailed = currentStatus === "FAILED" || projectData?.orchestration?.phase === "failed";
+  if (!["DRAFT", "READY_FOR_REVIEW", "INDEXING_SOURCES", "WRITING_CHAPTERS"].includes(currentStatus) && !isFailed) {
     throw new HttpsError("failed-precondition", `Project tidak bisa dimulai ulang dari status ${currentStatus}.`);
   }
 
@@ -393,4 +394,53 @@ export const assignStudyProjectReviewers = onCall({
     reviewerIds,
     reviewerEmails,
   };
+});
+
+const approveStudyOutlineSchema = z.object({
+  projectId: z.string().trim().min(1).max(128),
+});
+
+export const approveStudyOutline = onCall({
+  region: "asia-southeast2",
+  memory: "256MiB",
+  cors: true,
+}, async (request) => {
+  if (!request.auth) {
+    throw new HttpsError("unauthenticated", "Anda harus login.");
+  }
+
+  const parsed = approveStudyOutlineSchema.safeParse(request.data || {});
+  if (!parsed.success) {
+    throw new HttpsError("invalid-argument", "Payload persetujuan outline tidak valid.");
+  }
+
+  const uid = request.auth.uid;
+  const email = normalizeEmail(request.auth.token.email);
+  const { projectRef, projectData } = await assertStudyOperator(uid, email, parsed.data.projectId);
+  
+  if (!projectRef || !projectData) {
+    throw new HttpsError("not-found", "Project kajian tidak ditemukan.");
+  }
+
+  if (projectData.status !== "REVIEWING_OUTLINE") {
+    throw new HttpsError("failed-precondition", "Project tidak sedang dalam fase review outline.");
+  }
+
+  const now = admin.firestore.FieldValue.serverTimestamp();
+
+  await projectRef.set({
+    status: "PLANNING_CHAPTERS",
+    "orchestration.phase": "chapter_planning",
+    updatedAt: now,
+    lastActivityAt: now,
+  }, { merge: true });
+
+  await projectRef.collection("audits").add({
+    action: "outline_approved",
+    actorUid: uid,
+    actorEmail: email,
+    createdAt: now,
+  });
+
+  return { success: true };
 });

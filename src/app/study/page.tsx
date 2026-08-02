@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { collection, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { httpsCallable } from 'firebase/functions';
-import { Loader2, BookOpenText, ShieldCheck, UploadCloud, Sparkles, FileText, Database } from 'lucide-react';
+import { Loader2, BookOpenText, ShieldCheck, UploadCloud, Sparkles, FileText, Database, Globe, FileUp } from 'lucide-react';
 import { db, functions, storage } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -34,6 +34,7 @@ type StudyProject = {
   } | null;
   orchestration?: {
     phase?: string;
+    completedPhases?: string[];
   };
 };
 
@@ -63,7 +64,9 @@ export default function StudyWorkspacePage() {
   const [submittingProject, setSubmittingProject] = useState(false);
   const [uploadingSource, setUploadingSource] = useState(false);
   const [startingPipeline, setStartingPipeline] = useState(false);
+  const [approvingOutline, setApprovingOutline] = useState(false);
   const [sourceNote, setSourceNote] = useState('');
+  const [sources, setSources] = useState<any[]>([]);
 
   const hasStudyAccess = role ? ALLOWED_ROLES.has(role) : false;
   const canManageProjects = role ? MANAGER_ROLES.has(role) : false;
@@ -90,6 +93,19 @@ export default function StudyWorkspacePage() {
 
     return () => unsubscribe();
   }, [user, hasStudyAccess, selectedProjectId]);
+
+  useEffect(() => {
+    if (!selectedProjectId) {
+      setSources([]);
+      return;
+    }
+    const sourcesRef = collection(db, 'study_projects', selectedProjectId, 'sources');
+    const sourcesQuery = query(sourcesRef, orderBy('createdAt', 'desc'));
+    const unsubscribe = onSnapshot(sourcesQuery, (snapshot) => {
+      setSources(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    });
+    return () => unsubscribe();
+  }, [selectedProjectId]);
 
   const selectedProject = useMemo(
     () => projects.find((project) => project.id === selectedProjectId) || null,
@@ -141,8 +157,8 @@ export default function StudyWorkspacePage() {
   };
 
   const handleUploadSource = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file || !user || !selectedProjectId) {
+    const files = event.target.files;
+    if (!files || files.length === 0 || !user || !selectedProjectId) {
       return;
     }
 
@@ -150,30 +166,34 @@ export default function StudyWorkspacePage() {
     setUploadingSource(true);
 
     try {
-      const safeName = sanitizeFileName(file.name);
-      const storagePath = `study_kb/${user.uid}/${selectedProjectId}/${Date.now()}_${safeName}`;
-      const storageRef = ref(storage, storagePath);
-      await uploadBytes(storageRef, file);
-      const downloadUrl = await getDownloadURL(storageRef);
+      const uploadPromises = Array.from(files).map(async (file) => {
+        const safeName = sanitizeFileName(file.name);
+        const storagePath = `study_kb/${user.uid}/${selectedProjectId}/${Date.now()}_${Math.random().toString(36).substring(7)}_${safeName}`;
+        const storageRef = ref(storage, storagePath);
+        await uploadBytes(storageRef, file);
+        const downloadUrl = await getDownloadURL(storageRef);
 
-      const callable = httpsCallable(functions, 'registerStudySource');
-      await callable({
-        projectId: selectedProjectId,
-        title: file.name.replace(/\.[^.]+$/, ''),
-        kind: 'file',
-        storagePath,
-        downloadUrl,
-        contentType: file.type,
-        fileName: file.name,
-        fileSize: file.size,
-        summaryHint: sourceNote,
+        const callable = httpsCallable(functions, 'registerStudySource');
+        await callable({
+          projectId: selectedProjectId,
+          title: file.name.replace(/\.[^.]+$/, ''),
+          kind: 'file',
+          storagePath,
+          downloadUrl,
+          contentType: file.type,
+          fileName: file.name,
+          fileSize: file.size,
+          summaryHint: sourceNote,
+        });
       });
+
+      await Promise.all(uploadPromises);
 
       setSourceNote('');
       event.target.value = '';
     } catch (uploadError: unknown) {
       console.error('Gagal upload source study:', uploadError);
-      setError(getErrorMessage(uploadError, 'Gagal upload source knowledge base.'));
+      setError(getErrorMessage(uploadError, 'Gagal upload batch source knowledge base.'));
     } finally {
       setUploadingSource(false);
     }
@@ -181,6 +201,11 @@ export default function StudyWorkspacePage() {
 
   const handleStartPipeline = async () => {
     if (!selectedProjectId) {
+      return;
+    }
+
+    const isConfirmed = window.confirm("Apakah Anda yakin ingin menjalankan ulang pipeline dari awal (Ingestion + Writer + Auditor)? Proses ini akan memakan waktu dan mengulang dari tahap awal.");
+    if (!isConfirmed) {
       return;
     }
 
@@ -195,6 +220,22 @@ export default function StudyWorkspacePage() {
       setError(getErrorMessage(pipelineError, 'Gagal memulai pipeline kajian.'));
     } finally {
       setStartingPipeline(false);
+    }
+  };
+
+  const handleApproveOutline = async () => {
+    if (!selectedProjectId) return;
+    setError('');
+    setApprovingOutline(true);
+
+    try {
+      const callable = httpsCallable(functions, 'approveStudyOutline');
+      await callable({ projectId: selectedProjectId });
+    } catch (err: unknown) {
+      console.error('Gagal menyetujui outline:', err);
+      setError(getErrorMessage(err, 'Gagal menyetujui outline.'));
+    } finally {
+      setApprovingOutline(false);
     }
   };
 
@@ -294,7 +335,7 @@ export default function StudyWorkspacePage() {
 
           <div className="rounded-2xl bg-stone-50 p-4 ring-1 ring-stone-200 text-xs text-stone-600 leading-relaxed">
             <p className="font-black uppercase tracking-[0.14em] text-stone-900 mb-2">State Machine Studi</p>
-            <p>DRAFT -&gt; INDEXING_SOURCES -&gt; GENERATING_OUTLINE -&gt; PLANNING_CHAPTERS -&gt; WRITING_CHAPTERS -&gt; AUDITING_CHAPTERS -&gt; READY_FOR_REVIEW</p>
+            <p>DRAFT -&gt; INDEXING_SOURCES -&gt; GENERATING_OUTLINE -&gt; REVIEWING_OUTLINE -&gt; PLANNING_CHAPTERS -&gt; WRITING_CHAPTERS -&gt; AUDITING_CHAPTERS -&gt; READY_FOR_REVIEW</p>
           </div>
         </section>
 
@@ -314,23 +355,44 @@ export default function StudyWorkspacePage() {
             </div>
 
             {selectedProject ? (
-              <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="rounded-2xl bg-stone-50 ring-1 ring-stone-200 p-4">
-                  <p className="text-[11px] font-black uppercase tracking-[0.18em] text-stone-500">Status</p>
-                  <p className="text-lg font-black text-slate-900 mt-2">{selectedProject.status}</p>
-                  <p className="text-xs text-slate-500 mt-1">Phase: {selectedProject.orchestration?.phase || '-'}</p>
+              <>
+                {selectedProject.status && !["DRAFT", "READY_FOR_REVIEW", "FAILED", "COMPLETED"].includes(selectedProject.status) ? (
+                  <div className="mt-6 p-4 rounded-2xl bg-emerald-50 ring-1 ring-emerald-200 flex items-start gap-4 animate-pulse">
+                    <div className="p-2 bg-emerald-100 rounded-xl">
+                      <Loader2 className="w-5 h-5 text-emerald-700 animate-spin" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-black text-emerald-900 uppercase tracking-wide">Pipeline Aktif: {selectedProject.status}</p>
+                      <p className="text-sm text-emerald-800 mt-1 font-medium">
+                        Sedang mengerjakan: <span className="font-mono bg-emerald-200/50 px-1.5 py-0.5 rounded text-emerald-900">{selectedProject.orchestration?.phase || "Inisialisasi..."}</span>
+                      </p>
+                      {selectedProject.orchestration?.completedPhases && selectedProject.orchestration.completedPhases.length > 0 && (
+                        <p className="text-[11px] text-emerald-600 mt-2 font-bold uppercase tracking-wider">
+                          Selesai: {selectedProject.orchestration.completedPhases.length} tahap
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ) : null}
+
+                <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="rounded-2xl bg-stone-50 ring-1 ring-stone-200 p-4">
+                    <p className="text-[11px] font-black uppercase tracking-[0.18em] text-stone-500">Status</p>
+                    <p className="text-lg font-black text-slate-900 mt-2">{selectedProject.status}</p>
+                    <p className="text-xs text-slate-500 mt-1">Phase: {selectedProject.orchestration?.phase || '-'}</p>
+                  </div>
+                  <div className="rounded-2xl bg-stone-50 ring-1 ring-stone-200 p-4">
+                    <p className="text-[11px] font-black uppercase tracking-[0.18em] text-stone-500">Sources</p>
+                    <p className="text-lg font-black text-slate-900 mt-2">{selectedProject.sourceStats?.total || 0}</p>
+                    <p className="text-xs text-slate-500 mt-1">Indexed: {selectedProject.sourceStats?.indexed || 0}</p>
+                  </div>
+                  <div className="rounded-2xl bg-stone-50 ring-1 ring-stone-200 p-4">
+                    <p className="text-[11px] font-black uppercase tracking-[0.18em] text-stone-500">Outline</p>
+                    <p className="text-lg font-black text-slate-900 mt-2">{selectedProject.outline?.chapters?.length || 0} bab</p>
+                    <p className="text-xs text-slate-500 mt-1">Review: {selectedProject.reviewStatus || 'DRAFTING'}</p>
+                  </div>
                 </div>
-                <div className="rounded-2xl bg-stone-50 ring-1 ring-stone-200 p-4">
-                  <p className="text-[11px] font-black uppercase tracking-[0.18em] text-stone-500">Sources</p>
-                  <p className="text-lg font-black text-slate-900 mt-2">{selectedProject.sourceStats?.total || 0}</p>
-                  <p className="text-xs text-slate-500 mt-1">Indexed: {selectedProject.sourceStats?.indexed || 0}</p>
-                </div>
-                <div className="rounded-2xl bg-stone-50 ring-1 ring-stone-200 p-4">
-                  <p className="text-[11px] font-black uppercase tracking-[0.18em] text-stone-500">Outline</p>
-                  <p className="text-lg font-black text-slate-900 mt-2">{selectedProject.outline?.chapters?.length || 0} bab</p>
-                  <p className="text-xs text-slate-500 mt-1">Review: {selectedProject.reviewStatus || 'DRAFTING'}</p>
-                </div>
-              </div>
+              </>
             ) : (
               <div className="mt-6 rounded-2xl bg-stone-50 ring-1 ring-stone-200 p-6 text-sm text-stone-600">Belum ada project dipilih.</div>
             )}
@@ -346,12 +408,45 @@ export default function StudyWorkspacePage() {
               <textarea value={sourceNote} onChange={(event) => setSourceNote(event.target.value)} placeholder="Opsional: catatan ringkas kenapa sumber ini relevan" className="w-full min-h-[96px] rounded-xl border border-slate-200 px-3 py-3 text-sm" />
               <label className="flex items-center justify-center gap-2 rounded-2xl border border-dashed border-slate-300 bg-stone-50 px-4 py-8 text-sm font-bold text-stone-700 cursor-pointer hover:border-amber-500 hover:text-amber-700 transition-colors">
                 {uploadingSource ? <Loader2 className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4" />} Upload PDF/DOCX/TXT/CSV/XLSX pendukung
-                <input type="file" className="hidden" onChange={handleUploadSource} disabled={!selectedProjectId || uploadingSource} />
+                <input type="file" multiple className="hidden" onChange={handleUploadSource} disabled={!selectedProjectId || uploadingSource} />
               </label>
 
               <button type="button" onClick={handleStartPipeline} disabled={!selectedProjectId || startingPipeline} className="w-full h-11 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-black text-sm flex items-center justify-center gap-2 disabled:opacity-60">
                 {startingPipeline ? <Loader2 className="w-4 h-4 animate-spin" /> : <Database className="w-4 h-4" />} Jalankan Ingestion + Writer + Auditor
               </button>
+              
+              {sources.length > 0 && (
+                <div className="mt-8 border-t border-slate-200 pt-6">
+                  <h3 className="text-sm font-black uppercase tracking-widest text-slate-500 mb-4">Daftar Sumber Kajian ({sources.length})</h3>
+                  <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2">
+                    {sources.map((src) => (
+                      <div key={src.id} className="flex flex-col bg-stone-50 rounded-xl border border-stone-200 p-3">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <div className="flex items-center gap-2">
+                            {src.kind === 'url' ? <Globe className="w-4 h-4 text-sky-600 shrink-0" /> : src.kind === 'file' ? <FileUp className="w-4 h-4 text-rose-600 shrink-0" /> : <Database className="w-4 h-4 text-amber-500 shrink-0" />}
+                            <p className="text-xs font-bold text-slate-800 break-all line-clamp-2">
+                              {src.title}
+                            </p>
+                          </div>
+                          {src.isSupplemental && (
+                            <span className="text-[9px] font-bold bg-violet-100 text-violet-700 px-1.5 py-0.5 rounded uppercase tracking-wider shrink-0">
+                              Revisi Tambahan
+                            </span>
+                          )}
+                        </div>
+                        {src.summaryHint && (
+                          <div className="mt-2 p-2 bg-white border border-stone-100 rounded-lg max-h-[80px] overflow-y-auto text-[10px] text-stone-600 font-mono line-clamp-3">
+                            {src.summaryHint}
+                          </div>
+                        )}
+                        <p className="text-[10px] text-stone-400 mt-2">
+                          {src.createdAt ? new Date(src.createdAt.toMillis ? src.createdAt.toMillis() : src.createdAt).toLocaleString() : 'Baru ditambahkan'}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           ) : null}
 
@@ -361,9 +456,21 @@ export default function StudyWorkspacePage() {
                 <p className="text-[11px] font-black uppercase tracking-[0.22em] text-violet-700">Generated Outline</p>
                 <div className="flex items-center justify-between mt-2">
                   <h2 className="text-2xl font-black text-slate-900">Rencana Bab</h2>
-                  <Link href={`/study/${selectedProjectId}`} className="h-9 px-4 rounded-lg bg-stone-900 hover:bg-amber-700 text-white font-bold text-sm flex items-center gap-2 transition-colors">
-                    <FileText className="w-4 h-4" /> Buka Document Viewer
-                  </Link>
+                  <div className="flex items-center gap-2">
+                    {selectedProject.status === "REVIEWING_OUTLINE" && isCurrentProjectManager && (
+                      <button 
+                        onClick={handleApproveOutline}
+                        disabled={approvingOutline}
+                        className="h-9 px-4 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-sm flex items-center gap-2 transition-colors disabled:opacity-60"
+                      >
+                        {approvingOutline ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                        Setujui Outline & Lanjut Penulisan
+                      </button>
+                    )}
+                    <Link href={`/study/${selectedProjectId}`} className="h-9 px-4 rounded-lg bg-stone-900 hover:bg-amber-700 text-white font-bold text-sm flex items-center gap-2 transition-colors">
+                      <FileText className="w-4 h-4" /> Buka Document Viewer
+                    </Link>
+                  </div>
                 </div>
               </div>
 

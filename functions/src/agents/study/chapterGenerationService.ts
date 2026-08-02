@@ -33,12 +33,13 @@ const parseJson = <T>(value: string, fallback: T): T => {
   }
 };
 
-export const writeChapterDraft = async (
+export const executeStudyWriter = async (
   apiKey: string,
   projectData: any,
   chapter: ChapterRecord,
   evidenceChunks: EvidenceChunk[],
-  reviewerFeedback?: string
+  reviewerFeedback?: string,
+  crossChapterContext?: string
 ) => {
   const client = clientFromKey(apiKey);
   const evidencePack = evidenceChunks
@@ -54,6 +55,7 @@ KONTEKS PROYEK:
 - Pertanyaan riset: ${projectData.researchQuestion}
 - Gaya penulisan: ${projectData.writingTone || "academic"}
 - Gaya sitasi internal: gunakan marker [SRC:sourceId] di dalam paragraf saat klaim bergantung pada sumber.
+${crossChapterContext ? `\nMASTER OUTLINE (CROSS-CHAPTER AWARENESS):\nBerikut adalah rancangan keseluruhan bab di kajian ini agar Anda mengerti posisi bab ini dan menjaga benang merah (kesinambungan):\n${crossChapterContext}\n` : ''}
 
 DATA BAB:
 - ID: ${chapter.chapterId}
@@ -69,11 +71,13 @@ ${reviewerFeedback ? `\nCATATAN REVISI DARI REVIEWER:\n${reviewerFeedback}\n(Tul
 EVIDENCE PACK NYATA:
 ${evidencePack || "Tidak ada evidence pack. Tulis draft konservatif dan nyatakan keterbatasan data."}
 
-ATURAN:
-1. Tulis dalam markdown.
-2. Jangan mengarang kutipan literal jika tidak ada di evidence pack.
-3. Gunakan marker [SRC:sourceId] hanya bila ada dukungan jelas.
-4. Buat isi yang koheren, formal, dan siap diaudit.
+ATURAN PENULISAN (SANGAT PENTING):
+1. WAJIB gunakan Markdown Headings untuk setiap bagian persis sesuai dengan penamaan dan penomoran dari Planner (misal: \`# Bab 1: Pendahuluan\`, \`## 1.1 Latar Belakang\`, \`### 1.1.1 Konteks Makro\`). JANGAN gunakan format teks biasa dengan huruf kapital semua tanpa tag markdown. Pertahankan konsistensi penomoran hierarkis.
+2. Tulis dengan gaya bahasa akademik, profesional, mendalam, dan analitis. JANGAN HANYA MERINGKAS. Lakukan SINTESIS (hubungkan berbagai sumber menjadi satu argumen yang utuh). Gunakan frasa transisi akademik yang elegan (contoh: "Sejalan dengan hal tersebut...", "Sebaliknya, analisis menunjukkan bahwa...").
+3. Cetak tebal (**bold**) istilah-istilah atau poin-poin kunci.
+4. Gunakan marker [SRC:sourceId] HANYA bila kalimat tersebut memang didukung kuat oleh bukti dari Evidence Pack. Tempatkan marker di akhir kalimat.
+5. Buat isi yang sangat koheren, terstruktur dengan baik (gunakan bullet points jika perlu), dan siap diaudit. Gunakan pola argumen Claim-Evidence-Reasoning.
+6. Jangan mengarang kutipan literal jika tidak ada di evidence pack.
 
 OUTPUT WAJIB JSON VALID:
 {
@@ -135,10 +139,11 @@ ${JSON.stringify(citations)}
 EVIDENCE PACK:
 ${evidencePack || "Tidak ada evidence pack."}
 
-TUGAS:
+TUGAS AUDITOR:
 1. Nilai apakah klaim penting punya dukungan sumber nyata.
-2. Rapikan konten jika ada bagian terlalu spekulatif.
-3. Nilai konsistensi nada dan fokus terhadap ringkasan bab.
+2. Deteksi teks yang dangkal, repetitif, atau hanya "copy-paste" ide tanpa sintesis/analisis. Jika dangkal, beri status NEEDS_REVIEW dan temuan severity "high".
+3. Nilai konsistensi nada (harus sangat profesional/akademik). Tandai bahasa yang kasual atau tidak baku.
+4. Rapikan atau tulis ulang (Revised Content) paragraf yang terlalu spekulatif atau kurang runut agar lebih padat dan akademis.
 
 OUTPUT WAJIB JSON VALID:
 {

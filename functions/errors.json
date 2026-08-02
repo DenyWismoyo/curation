@@ -1,0 +1,9 @@
+[
+  [
+    {
+      "phase": "source_indexing",
+      "message": "9 FAILED_PRECONDITION: Missing vector index configuration. Please create the required index with the following gcloud command: gcloud firestore indexes composite create --project=teknopark-surakarta --database=\"curation\" --collection-group=vectors --query-scope=COLLECTION --field-config=order=ASCENDING,field-path=sourceId --field-config=vector-config='{\"dimension\":\"768\",\"flat\": \"{}\"}',field-path=embedding",
+      "createdAt": "2026-08-02T09:28:55.710Z"
+    }
+  ]
+]

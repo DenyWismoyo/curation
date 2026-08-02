@@ -1,1 +1,1 @@
-export { writeChapterDraft as executeStudyWriter } from "./chapterGenerationService";
+export { executeStudyWriter } from "./chapterGenerationService";

@@ -110,10 +110,12 @@ export {
   registerStudySource,
   assignStudyProjectReviewers,
   startStudyProjectPipeline,
+  approveStudyOutline,
 } from './agents/study/studyProjectAgent'
-export { requestChapterRevision } from './agents/study/chapterRevisionAgent'
+export { requestChapterRevision, generateRevisionMaterials } from './agents/study/chapterRevisionAgent'
 export { exportStudyDocument } from './agents/study/exportService'
 export { studyProjectOrchestrator } from './pipelines/study/orchestrator'
+export { studyChapterOrchestrator } from './pipelines/study/chapterOrchestrator'
 
 // ============================================================================
 // INISIALISASI FIREBASE

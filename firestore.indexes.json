@@ -53,6 +53,20 @@
           }
         }
       ]
+    },
+    {
+      "collectionGroup": "vectors",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "sourceId", "order": "ASCENDING" },
+        {
+          "fieldPath": "embedding",
+          "vectorConfig": {
+            "dimension": 768,
+            "flat": {}
+          }
+        }
+      ]
     }
   ]
 }

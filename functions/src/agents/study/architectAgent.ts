@@ -2,13 +2,14 @@ import OpenAI from "openai";
 import { safeJsonParse, StudySource } from "./shared";
 
 const buildArchitectPrompt = (projectData: any, sources: StudySource[]) => `
-Anda adalah Study Architect senior untuk penyusunan kajian panjang profesional.
+Anda adalah Study Architect senior untuk penyusunan kajian akademis dan profesional yang komprehensif.
 
 TUGAS:
-1. Susun outline kajian yang kredibel, runtut, dan realistis untuk dipecah menjadi dokumen 100-200 halaman pada fase lanjutan.
-2. Hasilkan 6 sampai 10 bab inti.
-3. Setiap bab harus punya ringkasan singkat, key themes, dan petunjuk sumber relevan.
-4. Gunakan isi sumber yang telah diekstrak untuk menaikkan kualitas outline bila tersedia.
+1. Susun outline kajian yang berbobot, kredibel, dan berstandar akademik tinggi (setara naskah kebijakan atau tesis). 
+2. Hasilkan 6 sampai 10 bab inti. Pastikan struktur mengikuti alur deduktif logis.
+3. WAJIB gunakan format penamaan dan penomoran bab standar akademik yang seragam. Contoh: "Bab 1: Pendahuluan", "Bab 2: Kerangka Hukum dan Kebijakan". DILARANG menggunakan huruf kapital semua pada judul. Gunakan *Title Case*.
+4. Setiap bab harus punya ringkasan singkat yang jelas, key themes spesifik, dan petunjuk sumber yang relevan.
+5. Gunakan isi sumber yang telah diekstrak untuk merancang alur analisis kajian secara tajam.
 
 PROYEK:
 - Judul: ${projectData.title}
