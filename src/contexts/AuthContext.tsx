@@ -19,7 +19,7 @@ import { ensureReferralVisitorId, getStoredReferralAttribution } from '@/lib/ref
 
 interface AuthContextType {
   user: User | null;
-  role: 'user' | 'admin_omnifit' | 'admin_csrs' | 'assessor' | 'curator' | null;
+  role: 'user' | 'admin_omnifit' | 'admin_csrs' | 'assessor' | 'curator' | 'study_author' | 'study_reviewer' | null;
   b2bPersonas: string[];
   allowedOrganizations: string[];
   b2bOrganizationIds: string[];
@@ -32,11 +32,24 @@ interface AuthContextType {
   logout: () => Promise<void>;
 }
 
+type AuthClaims = {
+  role?: string;
+  b2bPersonas?: unknown;
+  orgScopes?: unknown;
+};
+
+type WindowWithTokenRefreshFlag = Window & {
+  __hasRefreshedToken?: boolean;
+};
+
+const toStringArray = (value: unknown): string[] =>
+  Array.isArray(value) ? value.filter((entry): entry is string => typeof entry === 'string') : [];
+
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [role, setRole] = useState<'user' | 'admin_omnifit' | 'admin_csrs' | 'assessor' | 'curator' | null>(null);
+  const [role, setRole] = useState<'user' | 'admin_omnifit' | 'admin_csrs' | 'assessor' | 'curator' | 'study_author' | 'study_reviewer' | null>(null);
   const [b2bPersonas, setB2bPersonas] = useState<string[]>([]);
   const [allowedOrganizations, setAllowedOrganizations] = useState<string[]>([]);
   const [b2bOrganizationIds, setB2bOrganizationIds] = useState<string[]>([]);
@@ -56,14 +69,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         try {
           // Baca Custom Claims
           const tokenResult = await currentUser.getIdTokenResult();
-          const claims = tokenResult.claims as any;
+          const claims = tokenResult.claims as AuthClaims;
           
-          let currentRole: 'user' | 'admin_omnifit' | 'admin_csrs' | 'assessor' | 'curator' = 'user';
+          let currentRole: 'user' | 'admin_omnifit' | 'admin_csrs' | 'assessor' | 'curator' | 'study_author' | 'study_reviewer' = 'user';
           let currentB2bPersonas: string[] = [];
           let currentAllowedOrganizations: string[] = [];
           let currentB2bOrganizationIds: string[] = [];
           
-          const validRoles = new Set(['user', 'admin_omnifit', 'admin_csrs', 'assessor', 'curator']);
+          const validRoles = new Set(['user', 'admin_omnifit', 'admin_csrs', 'assessor', 'curator', 'study_author', 'study_reviewer']);
           const pickRole = (raw: unknown): typeof currentRole => {
             if (typeof raw === 'string' && validRoles.has(raw)) {
               return raw as typeof currentRole;
@@ -73,9 +86,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
           if (claims.role && claims.role !== 'user') {
             currentRole = pickRole(claims.role);
-            currentB2bPersonas = Array.isArray(claims.b2bPersonas) ? claims.b2bPersonas : [];
-            currentAllowedOrganizations = Array.isArray(claims.orgScopes) ? claims.orgScopes : [];
-            currentB2bOrganizationIds = Array.isArray(claims.orgScopes) ? claims.orgScopes : [];
+            currentB2bPersonas = toStringArray(claims.b2bPersonas);
+            currentAllowedOrganizations = toStringArray(claims.orgScopes);
+            currentB2bOrganizationIds = toStringArray(claims.orgScopes);
           } else {
             // Fallback (Migration compatibility):
             const emailRef = doc(db, 'users', currentUser.email || '');
@@ -122,8 +135,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               console.log('Force refreshing token to sync B2B claims...');
               await currentUser.getIdToken(true);
               // Refresh halaman agar claims baru terbaca dari awal
-              if (typeof window !== 'undefined' && !(window as any).__hasRefreshedToken) {
-                (window as any).__hasRefreshedToken = true;
+              const browserWindow = window as WindowWithTokenRefreshFlag;
+              if (typeof window !== 'undefined' && !browserWindow.__hasRefreshedToken) {
+                browserWindow.__hasRefreshedToken = true;
                 setTimeout(() => window.location.reload(), 500);
               }
             }

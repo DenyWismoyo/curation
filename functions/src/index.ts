@@ -105,6 +105,15 @@ export {
   b2bAddInteractionLog,
   b2bGenerateInteractionSummary,
 } from './agents/b2b/interactionAgent'
+export {
+  createStudyProject,
+  registerStudySource,
+  assignStudyProjectReviewers,
+  startStudyProjectPipeline,
+} from './agents/study/studyProjectAgent'
+export { requestChapterRevision } from './agents/study/chapterRevisionAgent'
+export { exportStudyDocument } from './agents/study/exportService'
+export { studyProjectOrchestrator } from './pipelines/study/orchestrator'
 
 // ============================================================================
 // INISIALISASI FIREBASE

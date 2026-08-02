@@ -103,7 +103,7 @@ interface Props {
   history: CurationHistory[];
   onLoadHistory: (item: CurationHistory) => void;
   user: User | null;
-  role: 'user' | 'admin_omnifit' | 'admin_csrs' | 'assessor' | 'curator' | null;
+  role: 'user' | 'admin_omnifit' | 'admin_csrs' | 'assessor' | 'curator' | 'study_author' | 'study_reviewer' | null;
   onLogin: () => void;
   onLogout: () => void;
   templates?: any[];

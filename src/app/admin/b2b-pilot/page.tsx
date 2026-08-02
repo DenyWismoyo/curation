@@ -62,7 +62,7 @@ const UNCLASSIFIED_READINESS_LABEL = 'Belum terklasifikasi';
 
 type DashboardPackage = 'lite' | 'standard';
 type DashboardPersona = 'executive' | 'hr' | 'leader' | 'partnerOps';
-type AuthRole = 'user' | 'admin_omnifit' | 'admin_csrs' | 'assessor' | 'curator' | null;
+type AuthRole = 'user' | 'admin_omnifit' | 'admin_csrs' | 'assessor' | 'curator' | 'study_author' | 'study_reviewer' | null;
 
 interface CuratorAuditEntry {
   id: string;
@@ -193,6 +193,8 @@ export default function AdminB2BPilotDashboardPage() {
       admin_omnifit: ['executive', 'hr', 'leader', 'partnerOps'],
       assessor: ['leader', 'partnerOps'],
       curator: ['leader', 'partnerOps'],
+      study_author: ['leader'],
+      study_reviewer: ['leader'],
       user: ['leader'],
     };
 

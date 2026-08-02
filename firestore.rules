@@ -22,6 +22,22 @@ service cloud.firestore {
       );
     }
 
+    function isStudyAuthor() {
+      return isAuthenticated() && (
+        request.auth.token.role == 'study_author' ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'study_author') ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.token.email)) && get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role == 'study_author')
+      );
+    }
+
+    function isStudyReviewer() {
+      return isAuthenticated() && (
+        request.auth.token.role == 'study_reviewer' ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'study_reviewer') ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.token.email)) && get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role == 'study_reviewer')
+      );
+    }
+
     function isAdminOmnifit() {
       return isAuthenticated() && (
         request.auth.token.role == 'admin_omnifit' ||
@@ -48,6 +64,14 @@ service cloud.firestore {
 
     function isOpsAdmin() {
       return isSuperAdmin() || isAdminCSRS() || isAdminOmnifit() || isAssessor();
+    }
+
+    function isStudyOperator() {
+      return isSuperAdmin() || isAdminCSRS() || isAdminOmnifit() || isStudyAuthor();
+    }
+
+    function isStudyRole() {
+      return isStudyOperator() || isStudyReviewer();
     }
 
     function isSelfUserDoc(userId) {
@@ -213,6 +237,144 @@ service cloud.firestore {
         || hasOrgInField(request.auth.token.email, 'b2bOrganizationIds', orgName);
     }
 
+    function canReadStudyProject(projectId) {
+      return isAuthenticated() && (
+        isSuperAdmin()
+        || isAdminCSRS()
+        || isAdminOmnifit()
+        || get(/databases/$(database)/documents/study_projects/$(projectId)).data.authorId == request.auth.uid
+        || request.auth.uid in get(/databases/$(database)/documents/study_projects/$(projectId)).data.get('memberIds', [])
+        || (
+          get(/databases/$(database)/documents/study_projects/$(projectId)).data.get('organizationId', '') != ''
+          && canAccessOrganization(get(/databases/$(database)/documents/study_projects/$(projectId)).data.organizationId)
+        )
+      );
+    }
+
+    function isValidStudyStatus(status) {
+      return status == 'DRAFT'
+        || status == 'INDEXING_SOURCES'
+        || status == 'GENERATING_OUTLINE'
+        || status == 'PLANNING_CHAPTERS'
+        || status == 'WRITING_CHAPTERS'
+        || status == 'AUDITING_CHAPTERS'
+        || status == 'READY_FOR_REVIEW'
+        || status == 'FAILED';
+    }
+
+    function isValidReviewStatus(status) {
+      return status == 'DRAFTING'
+        || status == 'GENERATING'
+        || status == 'READY_FOR_REVIEW'
+        || status == 'NEEDS_REWORK';
+    }
+
+    function isSafeStudyMemberList(data, fieldName, maxSize) {
+      return !(fieldName in data)
+        || (data[fieldName] is list && data[fieldName].size() <= maxSize);
+    }
+
+    function hasStudyProjectKeys(data) {
+      return data.keys().hasOnly([
+        'projectId', 'title', 'description', 'researchQuestion', 'organizationId', 'methodology',
+        'targetPages', 'targetWordCount', 'citationStyle', 'writingTone', 'authorId', 'authorEmail',
+        'collaboratorIds', 'reviewerIds', 'reviewerEmails', 'memberIds', 'memberEmails', 'sourceStats',
+        'outline', 'reviewStatus', 'reviewSummary', 'status', 'orchestration', 'modelPlan',
+        'createdAt', 'updatedAt', 'lastActivityAt'
+      ]);
+    }
+
+    function isValidStudyProjectDoc(data) {
+      return hasStudyProjectKeys(data)
+        && data.projectId is string
+        && data.title is string
+        && data.title.size() >= 4
+        && data.title.size() <= 180
+        && data.researchQuestion is string
+        && data.researchQuestion.size() >= 12
+        && data.researchQuestion.size() <= 2000
+        && (!('description' in data) || data.description is string)
+        && (!('organizationId' in data) || data.organizationId is string)
+        && (!('methodology' in data) || data.methodology is string)
+        && data.targetPages is int
+        && data.targetPages >= 10
+        && data.targetPages <= 200
+        && data.targetWordCount is int
+        && data.targetWordCount >= 3000
+        && data.targetWordCount <= 120000
+        && data.authorId is string
+        && data.authorEmail is string
+        && isValidStudyStatus(data.status)
+        && isValidReviewStatus(data.reviewStatus)
+        && isSafeStudyMemberList(data, 'collaboratorIds', 20)
+        && isSafeStudyMemberList(data, 'reviewerIds', 20)
+        && isSafeStudyMemberList(data, 'reviewerEmails', 20)
+        && isSafeStudyMemberList(data, 'memberIds', 25)
+        && isSafeStudyMemberList(data, 'memberEmails', 25)
+        && data.memberIds is list
+        && request.auth.uid in data.memberIds;
+    }
+
+    function studyProjectSecurityFieldsStable() {
+      return request.resource.data.authorId == resource.data.authorId
+        && request.resource.data.authorEmail == resource.data.authorEmail
+        && request.resource.data.projectId == resource.data.projectId
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.memberIds == resource.data.memberIds
+        && request.resource.data.memberEmails == resource.data.memberEmails
+        && request.resource.data.reviewerIds == resource.data.reviewerIds
+        && request.resource.data.reviewerEmails == resource.data.reviewerEmails;
+    }
+
+    function canManageStudyProject(projectId) {
+      return isStudyOperator()
+        && (
+          isSuperAdmin()
+          || isAdminCSRS()
+          || isAdminOmnifit()
+          || get(/databases/$(database)/documents/study_projects/$(projectId)).data.authorId == request.auth.uid
+        );
+    }
+
+    function isValidStudySourceDoc(data, projectId) {
+      return data.keys().hasOnly([
+        'sourceId', 'projectId', 'kind', 'title', 'storagePath', 'downloadUrl', 'contentType', 'sourceUrl',
+        'fileName', 'fileSize', 'summaryHint', 'extractedText', 'extractedCharCount', 'extractedWordCount',
+        'chunkCount', 'extractionMode', 'embeddingGenerated', 'status', 'uploadedByUid', 'uploadedByEmail',
+        'uploadedAt', 'indexedAt', 'updatedAt'
+      ])
+      && data.projectId == projectId
+      && data.sourceId is string
+      && data.title is string
+      && data.title.size() >= 2
+      && data.title.size() <= 200
+      && data.kind is string
+      && (!('storagePath' in data) || data.storagePath is string)
+      && (!('downloadUrl' in data) || data.downloadUrl is string)
+      && (!('contentType' in data) || data.contentType is string)
+      && (!('sourceUrl' in data) || data.sourceUrl is string)
+      && (!('summaryHint' in data) || data.summaryHint is string)
+      && data.uploadedByUid is string
+      && data.uploadedByEmail is string;
+    }
+
+    function isValidStudyChapterDoc(data, projectId) {
+      return data.keys().hasOnly([
+        'projectId', 'chapterId', 'chapterNumber', 'title', 'summary', 'keyThemes', 'relevantSourceIds',
+        'draftStatus', 'objective', 'targetWordCount', 'suggestedSections', 'evidenceFocus', 'content',
+        'citations', 'generatedAt', 'auditStatus', 'citationCoverageScore', 'consistencyScore',
+        'auditFindings', 'auditedAt', 'createdAt', 'updatedAt'
+      ])
+      && data.projectId == projectId
+      && data.chapterId is string
+      && data.chapterNumber is int
+      && data.title is string
+      && data.title.size() >= 2
+      && data.title.size() <= 240
+      && (!('summary' in data) || data.summary is string)
+      && (!('content' in data) || data.content is string);
+    }
+
     match /users/{userId} {
       allow read: if isAuthenticated() && (isSelfUserDoc(userId) || isB2BAdmin());
       allow create: if isB2BAdmin() || (isSelfUserDoc(userId) && isSafeSelfUserCreate());
@@ -336,6 +498,53 @@ service cloud.firestore {
         && canAccessOrganization(request.resource.data.corporateEntity)
         && (isCurator() || isAssessor() || isB2BAdmin());
       allow update, delete: if false;
+    }
+
+    match /study_projects/{projectId} {
+      allow read: if canReadStudyProject(projectId);
+      allow create: if isStudyOperator()
+        && request.resource.data.authorId == request.auth.uid
+        && request.resource.data.authorEmail == request.auth.token.email
+        && isValidStudyProjectDoc(request.resource.data)
+        && request.resource.data.status == 'DRAFT';
+      allow update: if isValidStudyProjectDoc(request.resource.data)
+        && (
+          (canManageStudyProject(projectId) && studyProjectSecurityFieldsStable())
+          || isSuperAdmin()
+          || isAdminCSRS()
+          || isAdminOmnifit()
+        );
+      allow delete: if isSuperAdmin() || (isAuthenticated() && resource.data.authorId == request.auth.uid);
+
+      match /sources/{sourceId} {
+        allow read: if canReadStudyProject(projectId);
+        allow create: if canManageStudyProject(projectId)
+          && isValidStudySourceDoc(request.resource.data, projectId);
+        allow update: if canManageStudyProject(projectId)
+          && isValidStudySourceDoc(request.resource.data, projectId)
+          && request.resource.data.projectId == resource.data.projectId
+          && request.resource.data.sourceId == resource.data.sourceId
+          && request.resource.data.uploadedByUid == resource.data.uploadedByUid
+          && request.resource.data.uploadedByEmail == resource.data.uploadedByEmail;
+        allow delete: if canManageStudyProject(projectId);
+      }
+
+      match /chapters/{chapterId} {
+        allow read: if canReadStudyProject(projectId);
+        allow create, update: if canManageStudyProject(projectId)
+          && isValidStudyChapterDoc(request.resource.data, projectId);
+        allow delete: if canManageStudyProject(projectId);
+      }
+
+      match /audits/{auditId} {
+        allow read: if canReadStudyProject(projectId);
+        allow write: if false;
+      }
+
+      match /vectors/{vectorId} {
+        allow read: if canManageStudyProject(projectId);
+        allow write: if false;
+      }
     }
 
     match /affiliates/{affiliateCode} {

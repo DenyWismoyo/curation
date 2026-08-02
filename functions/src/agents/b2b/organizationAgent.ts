@@ -3,7 +3,7 @@ import * as admin from "firebase-admin";
 import { getFirestore } from "firebase-admin/firestore";
 import { z } from "zod";
 
-type UserRole = "user" | "assessor" | "curator" | "admin_omnifit" | "admin_csrs";
+type UserRole = "user" | "assessor" | "curator" | "study_author" | "study_reviewer" | "admin_omnifit" | "admin_csrs";
 type B2BPersona = "executive" | "hr" | "leader";
 type OrgStatus = "active" | "pilot" | "inactive";
 
@@ -35,7 +35,7 @@ const setUserAccessSchema = z.object({
   targetEmail: z.string().trim().email().max(160),
   targetUid: z.string().trim().max(128).nullish(),
   displayName: z.string().trim().max(120).nullish(),
-  role: z.enum(["user", "assessor", "curator", "admin_omnifit", "admin_csrs"]).default("user"),
+  role: z.enum(["user", "assessor", "curator", "study_author", "study_reviewer", "admin_omnifit", "admin_csrs"]).default("user"),
   personas: z.array(z.enum(["executive", "hr", "leader"]))
     .min(1)
     .max(3),
