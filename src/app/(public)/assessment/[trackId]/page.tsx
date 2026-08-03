@@ -278,6 +278,16 @@ export default function AssessmentPage({ params }: { params: Promise<{ trackId: 
     }
   }, [state.isLoadingTemplates, state.templates, template, router]);
 
+  useEffect(() => {
+    const shouldRedirectToResult =
+      (state.viewState === 'processing' || state.viewState === 'dashboard') &&
+      !!state.currentAssessmentId;
+
+    if (shouldRedirectToResult) {
+      router.replace(`/result/${state.currentAssessmentId}`);
+    }
+  }, [state.viewState, state.currentAssessmentId, router]);
+
   if (state.isLoadingTemplates) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50">
@@ -315,6 +325,7 @@ export default function AssessmentPage({ params }: { params: Promise<{ trackId: 
         trackType={template.trackName}
         formData={state.formData}
         aiResult={state.aiResult}
+        aiPromptConfig={state.selectedTemplate?.aiPromptConfig}
         onRestart={() => {
           actions.restart();
           router.push('/login?next=/assessment');
@@ -335,7 +346,7 @@ export default function AssessmentPage({ params }: { params: Promise<{ trackId: 
         }}
         onComplete={async (data) => {
           actions.setSelectedTemplate(template);
-          await actions.submitAssessment(data);
+          await actions.submitAssessment(data, template);
         }}
       />
     </main>

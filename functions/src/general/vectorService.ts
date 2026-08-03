@@ -17,7 +17,7 @@ export const generateAndStoreVectorEmbedding = async (assessmentId: string, docD
     const genAI = new GoogleGenerativeAI(apiKey);
     
     // Gunakan model khusus embedding (sangat murah dan cepat)
-    const model = genAI.getGenerativeModel({ model: "text-embedding-001" });
+    const model = genAI.getGenerativeModel({ model: "gemini-embedding-2" });
 
     // RAG STRATEGY: Rangkum intisari data untuk diubah menjadi Vector
     // Kita gabungkan Data Profil + Executive Summary + SWOT + Rekomendasi
@@ -35,7 +35,7 @@ export const generateAndStoreVectorEmbedding = async (assessmentId: string, docD
     // PERBAIKAN: Potong teks jika terlalu panjang agar model embedding tidak over-token
     const safeTextToEmbed = rawText.length > 25000 ? rawText.substring(0, 25000) + "...[TRUNCATED]" : rawText;
 
-    const result = await model.embedContent(safeTextToEmbed);
+    const result = await model.embedContent({ content: { role: "user", parts: [{ text: safeTextToEmbed }] }, outputDimensionality: 768 } as any);
     const vectorArray = result.embedding.values;
 
     // 🛡️ ANTI-CRASH FALLBACK: Jika SDK Firebase usang, simpan sebagai Array biasa
@@ -79,11 +79,11 @@ export const matchBusinessWithIndustry = onCall(
 
     const API_KEY = geminiApiKeySecret.value();
     const genAI = new GoogleGenerativeAI(API_KEY);
-    const model = genAI.getGenerativeModel({ model: "text-embedding-001" });
+    const model = genAI.getGenerativeModel({ model: "gemini-embedding-2" });
 
     try {
       // 1. Ubah query pencarian investor menjadi Vector
-      const queryResult = await model.embedContent(query);
+      const queryResult = await model.embedContent({ content: { role: "user", parts: [{ text: query }] }, outputDimensionality: 768 } as any);
       const queryVector = queryResult.embedding.values;
 
       const db = getFirestore(admin.app(), "curation");
@@ -124,7 +124,7 @@ export const storeTemplateResearchVector = async (templateId: string, trackName:
     const db = getFirestore(admin.app(), "curation");
     const genAI = new GoogleGenerativeAI(apiKey);
     
-    const model = genAI.getGenerativeModel({ model: "text-embedding-001" });
+    const model = genAI.getGenerativeModel({ model: "gemini-embedding-2" });
 
     // PERBAIKAN: Potong data riset jika terlampau panjang (Limit Embedding Model ~9600 token / ~30.000 karakter)
     // Teks dipotong hanya untuk kepentingan ekstraksi Vector, namun data teks asli (full) tetap disimpan ke DB
@@ -138,7 +138,7 @@ export const storeTemplateResearchVector = async (templateId: string, trackName:
       ${safeResearchData}
     `.trim();
 
-    const result = await model.embedContent(textToEmbed);
+    const result = await model.embedContent({ content: { role: "user", parts: [{ text: textToEmbed }] }, outputDimensionality: 768 } as any);
     const vectorArray = result.embedding.values;
 
     // 🛡️ ANTI-CRASH FALLBACK: Jika SDK Firebase usang, simpan sebagai Array biasa

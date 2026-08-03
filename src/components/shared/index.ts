@@ -26,4 +26,5 @@ export { TemplateQuestionsPDF } from '@/app/components/shared/TemplateQuestionsP
 export { TokenBatchPDFDocument } from '@/app/components/shared/TokenBatchPDFDocument';
 export { TokenExportPDFButton } from '@/app/components/shared/TokenExportPDFButton';
 export { UniversalAssessmentView } from '@/app/components/shared/UniversalAssessmentView';
+export { AdaptiveAssessmentView } from '@/app/components/shared/AdaptiveAssessmentView';
 export { UniversalPDFDocument } from '@/app/components/shared/UniversalPDFDocument';

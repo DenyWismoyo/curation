@@ -36,6 +36,10 @@ export interface ActionItem {
   isCompleted: boolean;
   contextualTip?: string; // NEW: Tips praktis/motivasi harian
   searchKeyword?: string; // NEW: Kata kunci pencarian resource
+  youtubeRecommendations?: {
+    title: string;
+    query: string;
+  }[];
   subTasks?: {
     id: string;
     text: string;
@@ -76,6 +80,10 @@ export interface AIResult {
   customUiLabels?: CustomUiLabels;
   // 2. TAMBAHAN BARU: Field untuk menyimpan hasil generate Action Plan
   customActionPlan?: ActionItem[]; 
+  personalActionPlan?: ActionItem[];
+  tipsAndTricks?: string[];
+  motivationalQuote?: string;
+  keyFocusArea?: string;
   sellingOutput?: {
     hookTitle: string;
     compellingSummary: string;
@@ -83,6 +91,7 @@ export interface AIResult {
     closingCallToAction: string;
   };
   actionPlanBehavior?: string;
+  isAdaptiveAssessment?: boolean;
 }
 
 export interface CurationHistory {
@@ -93,6 +102,7 @@ export interface CurationHistory {
   score: number;
   data: CurationFormData;
   result: AIResult;
+  aiPromptConfig?: AiPromptConfig;
 }
 
 export type FieldType = 'text' | 'textarea' | 'number' | 'radio' | 'checkbox' | 'file' | 'select' | 'date';
@@ -130,6 +140,7 @@ export interface FormStep {
   title: string;
   icon?: string;          
   description?: string;
+  targetMetrics?: string[];
   fields: FormField[];    
 }
 
@@ -169,8 +180,19 @@ export interface AiPromptConfig {
   formPurpose?: FormDomainPurpose; 
   customUiLabels?: CustomUiLabels;
   actionPlanBehavior?: string;
+  promptImpactMode?: 'soft' | 'bold' | 'aggressive';
   isAdaptive?: boolean;
   maxAdaptiveSections?: number;
+  assessmentOutputMode?: 'auto' | 'adaptive' | 'universal';
+  adaptiveLanguageStylePreset?:
+    | 'auto'
+    | 'friendly_counseling'
+    | 'friendly_self_assessment'
+    | 'warm_supportive'
+    | 'neutral_professional'
+    | 'direct_coach';
+  adaptiveQuestionTonePrompt?: string;
+  adaptiveResultTonePrompt?: string;
 }
 
 export interface FormTemplate {

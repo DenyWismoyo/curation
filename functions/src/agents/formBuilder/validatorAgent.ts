@@ -41,6 +41,12 @@ export const executeValidator = async (
     const rawSteps = afterData.rawStepsCache || [];
     const targetAudience = afterData.aiPromptConfig?.targetAudience === 'individual' ? 'Personal/Individu' : 'Perusahaan/B2B';
     const preferredTypes = afterData.preferredQuestionTypes || [];
+    const promptImpactMode = afterData.aiPromptConfig?.promptImpactMode || 'bold';
+    const impactGuidance = promptImpactMode === 'soft'
+      ? 'Gunakan tone polishing yang lebih lembut, aman, empatik, dan mudah dicerna.'
+      : promptImpactMode === 'aggressive'
+        ? 'Gunakan tone polishing yang lebih tajam, tegas, berenergi, dan kuat secara copywriting.'
+        : 'Gunakan tone polishing yang tegas, profesional, dan persuasive-modern.';
 
     // 1. HARDCODE DEDUPLICATION (Mencegah ID ganda)
     const seenIds = new Set<string>();
@@ -111,6 +117,8 @@ export const executeValidator = async (
         Anda adalah "Lead Quality Assurance & Eksekutif UI/UX Copywriter".
         Tugas Anda adalah meninjau, menyembuhkan (healing), dan mempercantik JSON array pertanyaan untuk Seksi: "${step.title}".
         Target Audiens Asesmen: ${targetAudience}.
+        Mode Kualitas Prompt: ${promptImpactMode}.
+        Panduan Gaya: ${impactGuidance}
 
         REFERENSI SELURUH PERTANYAAN (KAMUS LOGIKA):
         Gunakan data di bawah ini HANYA sebagai contekan untuk memastikan properti "showIf.fieldId" dan "showIf.equals" valid!

@@ -2,15 +2,200 @@ import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { defineSecret } from "firebase-functions/params";
 import * as admin from "firebase-admin";
 import { getFirestore } from "firebase-admin/firestore";
-import { GoogleGenerativeAI, FunctionDeclaration, SchemaType } from "@google/generative-ai";
+import OpenAI from "openai";
+import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
+import { z } from "zod";
 
-const geminiApiKeySecret = defineSecret("GEMINI_API_KEY");
+const deepseekApiKeySecret = defineSecret("DEEPSEEK_API_KEY");
 const getDb = () => getFirestore(admin.app(), "curation");
+
+const DEFAULT_PREMIUM_CHAT_CREDITS = 120;
+
+const personaSchema = z.object({
+  version: z.string().default("v1"),
+  personaCore: z.object({
+    communicationStyle: z.string().default("Ramah, jelas, dan suportif"),
+    decisionStyle: z.string().default("Pragmatis, bertahap, dan berbasis prioritas"),
+    riskTolerance: z.string().default("Moderat dengan mitigasi bertahap"),
+    learningPreference: z.string().default("Contoh konkret dan checklist"),
+    motivationTrigger: z.string().default("Progress kecil yang terukur"),
+  }).default({
+    communicationStyle: "Ramah, jelas, dan suportif",
+    decisionStyle: "Pragmatis, bertahap, dan berbasis prioritas",
+    riskTolerance: "Moderat dengan mitigasi bertahap",
+    learningPreference: "Contoh konkret dan checklist",
+    motivationTrigger: "Progress kecil yang terukur",
+  }),
+  contextBoundaries: z.object({
+    whatToPrioritize: z.array(z.string()).default([]),
+    whatToAvoid: z.array(z.string()).default([]),
+  }).default({ whatToPrioritize: [], whatToAvoid: [] }),
+  userGoals: z.object({
+    shortTerm: z.array(z.string()).default([]),
+    midTerm: z.array(z.string()).default([]),
+    longTerm: z.array(z.string()).default([]),
+  }).default({ shortTerm: [], midTerm: [], longTerm: [] }),
+  recommendedPromptHints: z.array(z.string()).default([]),
+  safetyFlags: z.array(z.string()).default([]),
+}).passthrough();
+
+const estimateCreditCost = (totalTokens?: number) => {
+  if (!totalTokens || totalTokens <= 0) return 1;
+  return Math.max(1, Math.ceil(totalTokens / 1000));
+};
+
+const mapToneGuidance = (config: any) => {
+  const map: Record<string, string> = {
+    consultative: "Gunakan bahasa konsultatif premium: empatik, jelas, dan selalu tutup dengan langkah konkret.",
+    investigative: "Gunakan bahasa investigatif: tegas, runtut, membongkar akar masalah tanpa bertele-tele.",
+    academic: "Gunakan bahasa akademis: sistematis, bernalar, dengan struktur argumentasi rapi.",
+  };
+  return map[config?.reportTone || "consultative"] || map.consultative;
+};
+
+const mapAdaptiveToneGuidance = (config: any) => {
+  const preset = config?.adaptiveLanguageStylePreset || "auto";
+  const purpose = String(config?.formPurpose || "assessment").toLowerCase();
+  const audience = String(config?.targetAudience || "company").toLowerCase();
+
+  const autoPreset = purpose === "counseling"
+    ? "friendly_counseling"
+    : (audience === "individual" || audience === "student")
+      ? "friendly_self_assessment"
+      : "neutral_professional";
+
+  const activePreset = preset === "auto" ? autoPreset : preset;
+  const map: Record<string, string> = {
+    friendly_counseling: "Bahasa empatik, lembut, aman, dan tidak menghakimi.",
+    friendly_self_assessment: "Bahasa membumi, ringan, mudah dipahami pengguna awam.",
+    warm_supportive: "Bahasa suportif yang memotivasi dan menjaga momentum progres.",
+    neutral_professional: "Bahasa profesional yang ringan dan jelas.",
+    direct_coach: "Bahasa tegas ala coach, ringkas, praktis, tetap sopan.",
+  };
+
+  const base = map[activePreset] || map.neutral_professional;
+  const custom = config?.adaptiveResultTonePrompt;
+  return custom && String(custom).trim().length > 0
+    ? `${base} Instruksi tambahan: ${String(custom).trim()}`
+    : base;
+};
+
+const buildPersonaPrompt = (assessmentData: any, internalData: any, config: any) => `
+Anda adalah Persona Architect untuk AI Copilot premium.
+Bangun profil persona pengguna dari data asesmen berikut dalam format JSON murni.
+
+Nama subjek: ${assessmentData?.namaUsaha || "Pengguna"}
+Skor: ${assessmentData?.score || assessmentData?.aiResult?.totalScore || 0}
+Level: ${assessmentData?.readinessLevel || assessmentData?.aiResult?.readinessLevel || "N/A"}
+Target audience: ${config?.targetAudience || "general"}
+Form purpose: ${config?.formPurpose || "assessment"}
+Tone instruction: ${mapToneGuidance(config)}
+Adaptive tone instruction: ${mapAdaptiveToneGuidance(config)}
+SWOT: ${JSON.stringify(assessmentData?.aiResult?.swotAnalysis || {})}
+Risks: ${JSON.stringify(assessmentData?.aiResult?.riskAssessment || {})}
+Action steps: ${JSON.stringify(assessmentData?.aiResult?.nextActionSteps || [])}
+Internal reasoning: ${internalData?._internalReasoning || ""}
+Contradictions: ${JSON.stringify(internalData?.contradictionsFound || [])}
+
+Output wajib JSON dengan struktur:
+{
+  "version": "v1",
+  "personaCore": {
+    "communicationStyle": "...",
+    "decisionStyle": "...",
+    "riskTolerance": "...",
+    "learningPreference": "...",
+    "motivationTrigger": "..."
+  },
+  "contextBoundaries": {
+    "whatToPrioritize": ["..."],
+    "whatToAvoid": ["..."]
+  },
+  "userGoals": {
+    "shortTerm": ["..."],
+    "midTerm": ["..."],
+    "longTerm": ["..."]
+  },
+  "recommendedPromptHints": ["..."],
+  "safetyFlags": ["..."]
+}
+`;
+
+const ensurePersonaProfile = async (
+  openai: OpenAI,
+  assessmentRef: FirebaseFirestore.DocumentReference,
+  assessmentData: any,
+  internalData: any,
+  config: any
+) => {
+  const personaRef = assessmentRef.collection("premium").doc("persona");
+  const personaSnap = await personaRef.get();
+
+  if (personaSnap.exists) {
+    return personaSchema.parse(personaSnap.data() || {});
+  }
+
+  const personaPrompt = buildPersonaPrompt(assessmentData, internalData, config);
+
+  const response = await openai.chat.completions.create({
+    model: "deepseek-v4-flash",
+    messages: [
+      {
+        role: "system",
+        content: "Anda adalah arsitek persona premium. Keluarkan JSON valid saja tanpa markdown.",
+      },
+      { role: "user", content: personaPrompt },
+    ],
+    response_format: { type: "json_object" },
+    temperature: 0.35,
+  });
+
+  let content = response.choices[0]?.message?.content || "{}";
+  if (content.startsWith("```")) {
+    content = content.replace(/^```(json)?/gi, "").replace(/```$/g, "").trim();
+  }
+
+  const parsed = personaSchema.parse(JSON.parse(content));
+  await personaRef.set({
+    ...parsed,
+    generatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    model: "deepseek-v4-flash",
+  }, { merge: true });
+
+  return parsed;
+};
+
+const buildSystemPrompt = (assessmentData: any, internalData: any, config: any, persona: any) => `
+Anda adalah Premium Copilot berbasis DeepSeek untuk sesi konsultasi berbayar.
+
+[Persona Pengguna]
+${JSON.stringify(persona, null, 2)}
+
+[Konteks Assessment]
+Subjek: ${assessmentData?.namaUsaha || "Pengguna"}
+Skor: ${assessmentData?.score || assessmentData?.aiResult?.totalScore || 0}
+Level: ${assessmentData?.readinessLevel || assessmentData?.aiResult?.readinessLevel || "N/A"}
+SWOT: ${JSON.stringify(assessmentData?.aiResult?.swotAnalysis || {})}
+Risiko: ${JSON.stringify(assessmentData?.aiResult?.riskAssessment || {})}
+Action Plan Saat Ini: ${JSON.stringify(assessmentData?.aiResult?.nextActionSteps || [])}
+
+[Data Internal]
+Internal reasoning: ${internalData?._internalReasoning || "-"}
+Anomali: ${JSON.stringify(internalData?.contradictionsFound || [])}
+
+[Aturan Jawaban Premium]
+1. Boleh menjawab topik universal di luar assessment, selama tetap dipersonalisasi ke persona pengguna.
+2. Jika data eksternal real-time dibutuhkan, jangan halusinasi; jelaskan asumsi dan langkah riset praktis.
+3. Jawaban wajib actionable, berstruktur, dan kreatif (nilai premium).
+4. Gaya bahasa: ${mapToneGuidance(config)}
+5. Gaya adaptif tambahan: ${mapAdaptiveToneGuidance(config)}
+6. Jika relevan, berikan 3 opsi: konservatif, seimbang, agresif.
+`;
 
 export const premiumConsultationChat = onCall({
   region: "asia-southeast2",
   memory: "512MiB",
-  secrets: [geminiApiKeySecret],
+  secrets: [deepseekApiKeySecret],
   cors: true
 }, async (request) => {
   if (!request.auth) {
@@ -42,139 +227,78 @@ export const premiumConsultationChat = onCall({
     throw new HttpsError("permission-denied", "Anda belum membeli akses Konsultasi Premium untuk asesmen ini.");
   }
 
+  const openai = new OpenAI({
+    baseURL: "https://api.deepseek.com",
+    apiKey: deepseekApiKeySecret.value(),
+  });
+
   // Ambil data internal / rahasia asesmen (jika ada)
   const internalDoc = await assessmentRef.collection("internal").doc("details").get();
   const internalData = internalDoc.exists ? internalDoc.data() : {};
 
-  // ═══════════════════════════════════════════════════════════════════
-  // PERBAIKAN: Baca aiPromptConfig untuk membangun persona Premium
-  // Consultation yang selaras dengan template yang digunakan admin
-  // ═══════════════════════════════════════════════════════════════════
   const config = assessmentData.aiPromptConfig || {};
-  const aiPersona = config.aiPersona || 'Konsultan Ahli (Domain Expert)';
 
-  const toneInstructionMap: Record<string, string> = {
-    'consultative': 'Gunakan gaya konsultatif premium: sangat empatik, berikan 2-3 opsi solusi, dan tutup setiap saran dengan langkah konkret.',
-    'investigative': 'Gunakan gaya investigatif: tegas, forensik, ungkap akar masalah secara langsung tanpa basa-basi.',
-    'academic': 'Gunakan gaya akademis dan saintifik: sistematis, berbasis data, referensikan standar industri yang relevan.',
-  };
-  const toneInstruction = toneInstructionMap[config.reportTone || 'consultative'] || toneInstructionMap['consultative'];
+  const persona = await ensurePersonaProfile(openai, assessmentRef, assessmentData, internalData, config);
+  const systemPrompt = buildSystemPrompt(assessmentData, internalData, config, persona);
 
-  const formPurposeInstruction = config.formPurpose === 'counseling'
-    ? 'MODE KONSELING PREMIUM: Anda memberikan konseling intensif berbayar. Gunakan pendekatan terapeutik yang mendalam, empatik, dan transformatif.'
-    : config.formPurpose === 'monitoring'
-    ? 'MODE MONITORING PREMIUM: Anda memberikan review mendalam atas progres. Identifikasi hambatan tersembunyi dan berikan solusi akseleratif.'
-    : config.formPurpose === 'consultation'
-    ? 'MODE KONSULTASI PREMIUM: Anda adalah konsultan ahli berbayar. Berikan insight level C-Suite yang sangat tajam dan actionable.'
-    : 'MODE ASESMEN PREMIUM: Anda memberikan panduan pasca-asesmen tingkat lanjut yang sangat personal dan mendalam.';
-
-  // Susun Prompt Konteks
-  const contextString = `
-    IDENTITAS SUBJEK: ${assessmentData.namaUsaha || 'Pengguna'}
-    SKOR AKHIR: ${assessmentData.score || assessmentData.aiResult?.totalScore || 0}/100
-    LEVEL: ${assessmentData.readinessLevel || 'N/A'}
-    
-    ANDA ADALAH: ${aiPersona}
-    ${formPurposeInstruction}
-    GAYA BAHASA: ${toneInstruction}
-    
-    ANALISIS SWOT:
-    ${JSON.stringify(assessmentData.aiResult?.swotAnalysis || {})}
-    
-    RISIKO KRITIS:
-    ${JSON.stringify(assessmentData.aiResult?.riskAssessment?.criticalRisks || [])}
-    
-    [RAHASIA - PENALARAN INTERNAL AI PENILAI]:
-    ${internalData?._internalReasoning || 'Tidak ada catatan internal.'}
-    
-    [RAHASIA - ANOMALI DATA]:
-    ${JSON.stringify(internalData?.contradictionsFound || [])}
-    ${config.customSystemPrompt ? `\n    ATURAN KONDISIONAL KHUSUS:\n    ${config.customSystemPrompt}` : ''}
-    ${config.negativePrompts ? `\n    PANTANGAN KERAS (DILARANG):\n    ${config.negativePrompts}` : ''}
-    
-    TUGAS ANDA:
-    Anda adalah ${aiPersona} yang sedang memberikan konsultasi privat premium kepada subjek di atas.
-    Gunakan data asesmen dan data rahasia di atas untuk memberikan jawaban yang sangat tajam, spesifik, dan actionable.
-    Jika relevan, Anda memiliki alat (tool) 'add_to_action_plan' untuk menambahkan langkah konkret ke Rencana Aksi pengguna.
-  `;
-
-  const API_KEY = geminiApiKeySecret.value();
-  const genAI = new GoogleGenerativeAI(API_KEY);
-
-  // Definisi Tools
-  const addToActionPlanTool: FunctionDeclaration = {
-    name: "add_to_action_plan",
-    description: "Tambahkan langkah konkret (task) ke Rencana Aksi pengguna. Gunakan ini jika Anda memberikan saran strategis yang harus dieksekusi.",
-    parameters: {
-      type: SchemaType.OBJECT,
-      properties: {
-        task: {
-          type: SchemaType.STRING,
-          description: "Deskripsi tugas spesifik yang harus dilakukan pengguna (maks. 2 kalimat)."
-        },
-        timeframe: {
-          type: SchemaType.STRING,
-          description: "Perkiraan waktu eksekusi (misal: '1 Minggu', '30 Hari', 'Segera')."
-        }
-      },
-      required: ["task", "timeframe"],
-    },
-  };
-
-  const model = genAI.getGenerativeModel({
-    model: "gemini-3.6-flash",
-    systemInstruction: contextString,
-    tools: [{ functionDeclarations: [addToActionPlanTool] }]
-  });
-
-  const chat = model.startChat({
-    history: history,
-  });
+  const normalizedHistory = Array.isArray(history)
+    ? history.slice(-12).map((msg: any) => {
+        const role: "assistant" | "user" = msg?.role === "model" ? "assistant" : "user";
+        const content = Array.isArray(msg?.parts)
+          ? msg.parts.map((p: any) => p?.text || "").join("\n").trim()
+          : (msg?.content || "");
+        return { role, content };
+      }).filter((msg: any) => msg.content && msg.content.length > 0)
+    : [];
 
   try {
-    const result = await chat.sendMessage(message);
-    const response = result.response;
-    let replyText = response.text();
-    let actionPlanAdded = false;
-    let addedTask = null;
+    const messagesPayload: ChatCompletionMessageParam[] = [
+      { role: "system", content: systemPrompt },
+      ...normalizedHistory,
+      { role: "user", content: message },
+    ];
 
-    // Periksa apakah model memanggil function
-    const functionCalls = response.functionCalls();
-    if (functionCalls && functionCalls.length > 0) {
-      for (const call of functionCalls) {
-        if (call.name === "add_to_action_plan") {
-          const args = call.args as { task: string; timeframe: string };
-          
-          // Tambahkan ke aiResult.nextActionSteps di Firestore
-          const currentSteps = assessmentData.aiResult?.nextActionSteps || [];
-          currentSteps.push({
-            task: args.task,
-            timeframe: args.timeframe,
-            source: "Premium Consultation"
-          });
-          
-          await assessmentRef.update({
-            "aiResult.nextActionSteps": currentSteps
-          });
-          
-          actionPlanAdded = true;
-          addedTask = args.task;
-          
-          // Reply ke model bahwa function berhasil dieksekusi
-          const functionResponse = await chat.sendMessage([{
-            functionResponse: {
-              name: "add_to_action_plan",
-              response: { status: "SUCCESS", message: "Task added to user's Action Plan." }
-            }
-          }]);
-          
-          replyText = functionResponse.response.text();
-        }
+    const completion = await openai.chat.completions.create({
+      model: "deepseek-v4-pro",
+      messages: messagesPayload,
+      temperature: 0.75,
+    });
+
+    const replyText = completion.choices[0]?.message?.content?.trim() || "Saya siap bantu. Coba spesifikkan target yang ingin dicapai.";
+    const totalTokens = completion.usage?.total_tokens || 0;
+    const creditCost = estimateCreditCost(totalTokens);
+
+    let remainingCredits = 0;
+    await db.runTransaction(async (trx) => {
+      const fresh = await trx.get(assessmentRef);
+      if (!fresh.exists) {
+        throw new HttpsError("not-found", "Asesmen tidak ditemukan saat update kuota premium.");
       }
-    }
+
+      const latest = fresh.data() || {};
+      if (!latest.hasPaidForPremiumConsultation) {
+        throw new HttpsError("permission-denied", "Akses premium belum aktif.");
+      }
+
+      const available = typeof latest.premiumChatCredits === "number"
+        ? latest.premiumChatCredits
+        : DEFAULT_PREMIUM_CHAT_CREDITS;
+
+      if (available < creditCost) {
+        throw new HttpsError("resource-exhausted", "Kuota chat premium Anda tidak cukup. Silakan top-up paket premium.");
+      }
+
+      remainingCredits = available - creditCost;
+      trx.update(assessmentRef, {
+        premiumChatCredits: remainingCredits,
+        premiumChatUsedTokens: admin.firestore.FieldValue.increment(totalTokens),
+        premiumChatLastUsedAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+    });
 
     // Simpan history ke Firestore (User & AI)
     const historyRef = assessmentRef.collection("consultation_history");
+    const premiumChatsRef = assessmentRef.collection("premium").doc("chat-index").collection("chats");
     const batch = db.batch();
     
     const userMsgRef = historyRef.doc();
@@ -184,6 +308,16 @@ export const premiumConsultationChat = onCall({
       createdAt: admin.firestore.FieldValue.serverTimestamp()
     });
 
+    const userPremiumRef = premiumChatsRef.doc();
+    batch.set(userPremiumRef, {
+      role: "user",
+      content: message,
+      model: "deepseek-v4-pro",
+      creditCost: 0,
+      tokenCost: 0,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
     const aiMsgRef = historyRef.doc();
     batch.set(aiMsgRef, {
       role: "model",
@@ -191,17 +325,32 @@ export const premiumConsultationChat = onCall({
       createdAt: admin.firestore.FieldValue.serverTimestamp()
     });
 
+    const aiPremiumRef = premiumChatsRef.doc();
+    batch.set(aiPremiumRef, {
+      role: "model",
+      content: replyText,
+      model: "deepseek-v4-pro",
+      creditCost,
+      tokenCost: totalTokens,
+      personaVersion: persona.version || "v1",
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
     await batch.commit();
 
     return {
       success: true,
       reply: replyText,
-      actionPlanAdded,
-      addedTask
+      remainingCredits,
+      creditCost,
+      persona
     };
 
   } catch (error: any) {
     console.error("Premium Consultation Error:", error);
+    if (error instanceof HttpsError) {
+      throw error;
+    }
     throw new HttpsError("internal", error.message || "Gagal menghubungi layanan konsultasi premium.");
   }
 });

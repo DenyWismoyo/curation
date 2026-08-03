@@ -60,8 +60,21 @@ service firebase.storage {
       allow read: if true; 
       allow delete: if isAuthenticated(); 
     }
+
+    // --- 8. FOLDER STUDY KB (KNOWLEDGE BASE KAJIAN) ---
+    match /study_kb/{allPaths=**} {
+      allow read: if isAuthenticated();
+      // Untuk upload, user harus terautentikasi.
+      // Opsional: validasi file pdf/docx bisa ditambah.
+      allow write: if isAuthenticated();
+    }
     
-    // --- 8. BLOKIR SEMUA FOLDER LAINNYA ---
+    // --- 9. FOLDER STUDY PROJECTS ---
+    match /study_projects/{allPaths=**} {
+      allow read, write: if isAuthenticated();
+    }
+    
+    // --- 10. BLOKIR SEMUA FOLDER LAINNYA ---
     match /{allPaths=**} {
       allow read, write: if false;
     }

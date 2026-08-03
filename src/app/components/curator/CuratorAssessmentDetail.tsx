@@ -9,7 +9,8 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CuratorExportPDF } from './PDFReportTemplate';
-import { UniversalAssessmentView } from '@/components/shared';
+import { UniversalAssessmentView, AdaptiveAssessmentView } from '@/components/shared';
+import { resolveAssessmentOutputMode } from '@/lib/assessmentOutputMode';
 
 interface CuratorAssessmentDetailProps {
   data: any;
@@ -46,6 +47,7 @@ export function CuratorAssessmentDetail({ data, availableTags = [], onClose, onS
   const [documentNotes, setDocumentNotes] = useState<string>(data.curatorAssessment?.documentNotes || '');
   const [metricsNotes, setMetricsNotes] = useState<string>(data.curatorAssessment?.metricsNotes || '');
   const [swotNotes, setSwotNotes] = useState<string>(data.curatorAssessment?.swotNotes || '');
+  const isAdaptiveMode = resolveAssessmentOutputMode(data?.aiPromptConfig, currentAiResult, formData) === 'adaptive';
 
   // --- LOGIC AUTOSAVE ---
   useEffect(() => {
@@ -212,69 +214,103 @@ export function CuratorAssessmentDetail({ data, availableTags = [], onClose, onS
           )}
 
           {activeTab === 'evaluasi' && (
-            <UniversalAssessmentView
-              mode="curator"
-              trackType={trackType}
-              corporateEntity={corporateEntity}
-              formData={formData}
-              aiResult={currentAiResult}
-              curatorData={{
-                isEditing,
-                curatorScore, setCuratorScore,
-                curatorLevel, setCuratorLevel,
-                curatorRoute, setCuratorRoute,
-                curatorNotes, setCuratorNotes,
-                customBlockNotes, setCustomBlockNotes: (t, v) => setCustomBlockNotes(p => ({...p, [t]: v})),
-                documentNotes, setDocumentNotes,
-                metricsNotes, setMetricsNotes,
-                swotNotes, setSwotNotes,
-                selectedTags, toggleTag: (tag) => setSelectedTags(p => p.includes(tag) ? p.filter(x => x !== tag) : [...p, tag]),
-                availableTags,
-                isCuratorValidated: isAlreadyValidated,
-                voiceDictation: { isListening, toggleRecord: toggleVoiceRecord }
-              }}
-              headerActions={
-                <>
-                  {isEditing && (
-                    <div className="hidden sm:flex items-center mr-2 text-[10px] font-bold uppercase tracking-widest">
-                      {autoSaveStatus === 'saving' && <span className="text-indigo-500 flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin"/> Menyimpan...</span>}
-                      {autoSaveStatus === 'saved' && <span className="text-emerald-500 flex items-center gap-1"><Check className="w-3 h-3"/> Draf Tersimpan</span>}
-                    </div>
-                  )}
-                  
-                  {/* Ekspor Terintegrasi State Realtime Kurator */}
-                  <CuratorExportPDF 
-                    assessmentId={data.id}
-                    trackType={trackType}
-                    formData={formData}
-                    aiResult={currentAiResult}
-                    namaUsaha={namaUsaha}
-                    liveData={{
-                      curatorScore,
-                      curatorLevel,
-                      curatorRoute,
-                      curatorNotes
-                    }}
-                  />
+            isAdaptiveMode ? (
+              <AdaptiveAssessmentView
+                formData={formData}
+                aiResult={currentAiResult}
+                assessmentId={id}
+                aiPromptConfig={data?.aiPromptConfig}
+                headerActions={
+                  <>
+                    {isEditing && (
+                      <div className="hidden sm:flex items-center mr-2 text-[10px] font-bold uppercase tracking-widest">
+                        {autoSaveStatus === 'saving' && <span className="text-indigo-500 flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin"/> Menyimpan...</span>}
+                        {autoSaveStatus === 'saved' && <span className="text-emerald-500 flex items-center gap-1"><Check className="w-3 h-3"/> Draf Tersimpan</span>}
+                      </div>
+                    )}
+                    
+                    <CuratorExportPDF 
+                      assessmentId={data.id}
+                      trackType={trackType}
+                      formData={formData}
+                      aiResult={currentAiResult}
+                      namaUsaha={namaUsaha}
+                      liveData={{
+                        curatorScore,
+                        curatorLevel,
+                        curatorRoute,
+                        curatorNotes
+                      }}
+                    />
 
-                  <Button onClick={handleShareWhatsApp} variant="outline" className="bg-white hover:bg-emerald-50 text-emerald-600 border-emerald-200 rounded-xl font-bold h-10 px-4 shadow-sm">
-                    <MessageCircle className="w-4 h-4 sm:mr-2" /> <span className="hidden sm:inline">Bagikan</span>
-                  </Button>
-                  {!isEditing ? (
-                    <Button onClick={() => setIsEditing(true)} className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold h-10 px-4 shadow-md">
-                      <Edit3 className="w-4 h-4 sm:mr-2" /> <span className="hidden sm:inline">Lanjutkan Validasi</span>
+                    <Button onClick={handleShareWhatsApp} variant="outline" className="bg-white hover:bg-emerald-50 text-emerald-600 border-emerald-200 rounded-xl font-bold h-10 px-4 shadow-sm">Bagikan</Button>
+                  </>
+                }
+              />
+            ) : (
+              <UniversalAssessmentView
+                mode="curator"
+                trackType={trackType}
+                corporateEntity={corporateEntity}
+                formData={formData}
+                aiResult={currentAiResult}
+                curatorData={{
+                  isEditing,
+                  curatorScore, setCuratorScore,
+                  curatorLevel, setCuratorLevel,
+                  curatorRoute, setCuratorRoute,
+                  curatorNotes, setCuratorNotes,
+                  customBlockNotes, setCustomBlockNotes: (t, v) => setCustomBlockNotes(p => ({...p, [t]: v})),
+                  documentNotes, setDocumentNotes,
+                  metricsNotes, setMetricsNotes,
+                  swotNotes, setSwotNotes,
+                  selectedTags, toggleTag: (tag) => setSelectedTags(p => p.includes(tag) ? p.filter(x => x !== tag) : [...p, tag]),
+                  availableTags,
+                  isCuratorValidated: isAlreadyValidated,
+                  voiceDictation: { isListening, toggleRecord: toggleVoiceRecord }
+                }}
+                headerActions={
+                  <>
+                    {isEditing && (
+                      <div className="hidden sm:flex items-center mr-2 text-[10px] font-bold uppercase tracking-widest">
+                        {autoSaveStatus === 'saving' && <span className="text-indigo-500 flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin"/> Menyimpan...</span>}
+                        {autoSaveStatus === 'saved' && <span className="text-emerald-500 flex items-center gap-1"><Check className="w-3 h-3"/> Draf Tersimpan</span>}
+                      </div>
+                    )}
+                    
+                    <CuratorExportPDF 
+                      assessmentId={data.id}
+                      trackType={trackType}
+                      formData={formData}
+                      aiResult={currentAiResult}
+                      namaUsaha={namaUsaha}
+                      liveData={{
+                        curatorScore,
+                        curatorLevel,
+                        curatorRoute,
+                        curatorNotes
+                      }}
+                    />
+
+                    <Button onClick={handleShareWhatsApp} variant="outline" className="bg-white hover:bg-emerald-50 text-emerald-600 border-emerald-200 rounded-xl font-bold h-10 px-4 shadow-sm">
+                      <MessageCircle className="w-4 h-4 sm:mr-2" /> <span className="hidden sm:inline">Bagikan</span>
                     </Button>
-                  ) : (
-                    <>
-                      <Button onClick={() => setIsEditing(false)} variant="outline" className="rounded-xl h-10 px-4 font-bold border-slate-200 text-slate-600">Tutup Editor</Button>
-                      <Button onClick={handleFinalizeClick} disabled={isFinalizing} className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black h-10 px-4 shadow-md">
-                        <CheckCircle2 className="w-4 h-4 mr-2"/> Finalisasi
+                    {!isEditing ? (
+                      <Button onClick={() => setIsEditing(true)} className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold h-10 px-4 shadow-md">
+                        <Edit3 className="w-4 h-4 sm:mr-2" /> <span className="hidden sm:inline">Lanjutkan Validasi</span>
                       </Button>
-                    </>
-                  )}
-                </>
-              }
-            />
+                    ) : (
+                      <>
+                        <Button onClick={() => setIsEditing(false)} variant="outline" className="rounded-xl h-10 px-4 font-bold border-slate-200 text-slate-600">Tutup Editor</Button>
+                        <Button onClick={handleFinalizeClick} disabled={isFinalizing} className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black h-10 px-4 shadow-md">
+                          <CheckCircle2 className="w-4 h-4 mr-2"/> Finalisasi
+                        </Button>
+                      </>
+                    )}
+                  </>
+                }
+              />
+            )
           )}
 
           {activeTab === 'input' && (

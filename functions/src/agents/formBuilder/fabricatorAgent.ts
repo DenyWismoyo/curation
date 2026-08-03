@@ -29,6 +29,12 @@ export const executeFabricator = async (
     const aiPromptConfig = afterData.aiPromptConfig || {};
     const trackName = afterData.trackName || "Asesmen Umum";
     const archetypeInstruction = afterData.formBuilderInstruction || "";
+    const promptImpactMode = aiPromptConfig.promptImpactMode || "bold";
+    const impactGuidance = promptImpactMode === "soft"
+      ? "Gunakan diksi lebih halus, aman, dan empatik sambil tetap jelas."
+      : promptImpactMode === "aggressive"
+        ? "Gunakan diksi sangat tajam, direct, dan high-impact untuk menggali informasi penting tanpa basa-basi."
+        : "Gunakan diksi tegas, profesional, dan persuasif dengan keseimbangan emosi dan kredibilitas.";
 
     await logToTerminal(templateRef, `FASE 2: Fabricator Agent (Gemini 2.5 Flash) dikerahkan. Memproduksi ${stepOutlines.length} seksi formulir...`, "info");
 
@@ -127,32 +133,32 @@ export const executeFabricator = async (
       showNamaPengisi = false;
     }
 
-    // 2. Tentukan Konteks Profiler (AI Generative Identity)
-    identityContext = "";
-    if (purpose === 'counseling') {
-      identityContext = "Buat 4-6 pertanyaan identitas tambahan yang relevan dengan konseling (misal: Tanggal Pernikahan, Nama Pasangan, atau Status Anak).";
-    } else if (audienceType === 'student') {
-      identityContext = "Buat 4-6 pertanyaan identitas tambahan yang relevan dengan mahasiswa (misal: Jurusan/Program Studi, Nama Universitas, atau Semester).";
-    } else if (audienceType === 'individual') {
-      identityContext = "Buat 4-6 pertanyaan identitas tambahan yang relevan dengan personal/karir (misal: Usia, Pekerjaan/Profesi, Pendidikan Terakhir, atau Domisili).";
-    } else if (audienceType === 'government') {
-      identityContext = "Buat 4-6 pertanyaan identitas tambahan yang relevan dengan ASN/Pemerintahan (misal: NIP, Unit Kerja, Golongan, atau Jabatan).";
-    } else if (audienceType === 'community') {
-      identityContext = "Buat 4-6 pertanyaan identitas tambahan yang relevan dengan komunitas (misal: Peran di Komunitas, Lama Bergabung, atau Fokus Isu Sosial).";
-    } else if (audienceType === 'startup' || audienceType === 'umkm') {
-      identityContext = "Buat 4-6 pertanyaan identitas tambahan yang relevan dengan bisnis (misal: Bidang Usaha/Industri, Lama Berdiri, atau Skala Operasional).";
-    } else {
-      identityContext = "Buat 4-6 pertanyaan identitas tambahan yang relevan dengan B2B/Korporasi (misal: Sektor Industri, Skala Perusahaan, Departemen, atau Jabatan Anda).";
-    }
-
-    await logToTerminal(templateRef, "Mengunci Seksi 1 (Data Profil Identitas) melalui Profiler Sub-Agent...", "info");
+    // 2. Tentukan Konteks Profiler Dinamis Berbasis Topik (AI Generative Identity)
+    await logToTerminal(templateRef, "Mengunci Seksi 1 (Data Profil Identitas Dinamis) melalui Profiler Sub-Agent...", "info");
 
     const profilerPrompt = `
-      Anda adalah sub-agen pembuat formulir identitas.
-      Target Audiens: ${audienceType}. Tujuan Form: ${purpose}.
-      Tugas: ${identityContext}
-      Format output HARUS array JSON murni (hanya array of object dengan properti: id, label, type, required, placeholder).
-      Pastikan id unik bergaya camelCase. required wajib true. type gunakan "text", "select", atau "number".
+      Anda adalah sub-agen Profiler Ahli. Tugas Anda adalah meracik 4-7 pertanyaan profil/identitas awal yang SANGAT SPESIFIK dan RELEVAN dengan konteks topik asesmen di bawah ini.
+      Tujuannya agar agen penilai (evaluator) nantinya memiliki konteks subjek yang sangat kaya (seolah-olah sedang berbicara dengan teliti kepada manusia).
+      
+      INFORMASI ASESMEN:
+      - Topik Utama (Track Name): "${trackName}"
+      - Konteks Kustom: "${afterData.specificTargetContext || 'Umum'}"
+      - Target Audiens: ${audienceType}
+      - Tujuan Form: ${purpose}
+      - Mode Kualitas Prompt: ${promptImpactMode}
+      - Panduan Mode: ${impactGuidance}
+
+      PANDUAN PENGGALIAN KONTEKS (JADIKAN INSPIRASI):
+      - Jika Parenting / Konseling: Tanyakan usia anak, jumlah anak, atau tantangan utama pengasuhan saat ini.
+      - Jika UMKM / Bisnis: Tanyakan nama/jenis produk unggulan, lama usaha, atau platform jualan (gunakan checkbox jika ada banyak).
+      - Jika Konten Kreator: Tanyakan platform utama (TikTok/IG/dll), niche, jumlah follower estimasi.
+      - Jika Pekerja / Karir: Tanyakan posisi spesifik, industri, atau fokus area keahlian.
+      - Jika topik lainnya: Rancanglah pertanyaan cerdas Anda sendiri yang paling masuk akal untuk menembus kulit luar dari topik "${trackName}".
+
+      ATURAN JSON (MUTLAK):
+      - Format HARUS array JSON murni (Array of Objects).
+      - Tiap objek Field WAJIB memiliki: id (camelCase unik), label (teks pertanyaan), type (text, number, select, radio, checkbox, textarea), required (wajib true), placeholder, gridSpan (wajib integer 12), dan aiReasoning (tujuan menggali info ini).
+      - Jika tipe adalah "select", "radio", atau "checkbox", Anda WAJIB menyediakan array "options" yang berisi objek dengan properti "label" (string) dan "weight" (integer 0).
     `;
     let dynamicIdentityFields = [];
     try {
@@ -195,6 +201,21 @@ export const executeFabricator = async (
         const absoluteIndex = i + indexInBatch;
         const currentStepNumber = absoluteIndex + 2; // +2 karena Seksi 1 sudah diisi oleh Profiler
 
+        // OPTIMASI TOKEN: Jika Mode Adaptif dan ini bukan Step pertama dari Architect, 
+        // ATAU jika draftedQuestions memang kosong, kita bypass panggilan LLM.
+        const isAdaptive = aiPromptConfig?.isAdaptive === true;
+        const hasNoDraftedQuestions = !step.draftedQuestions || step.draftedQuestions.length === 0;
+        
+        if ((isAdaptive && absoluteIndex > 0) || hasNoDraftedQuestions) {
+          console.log(`[Fabricator] Bypassing LLM untuk Seksi ${currentStepNumber} (Adaptive/Empty)`);
+          return { 
+            stepNumber: currentStepNumber, 
+            title: step.title, 
+            description: step.description, 
+            fields: [] 
+          };
+        }
+
         const sectionPrompt = `
           ${baseInstructions}
           
@@ -227,7 +248,7 @@ export const executeFabricator = async (
         try {
           const sectionResult = await withRetry(() => sectionModel.generateContent(sectionPrompt));
           let rawJsonText = sectionResult.response.text().trim();
-          if (rawJsonText.startsWith('```')) rawJsonText = rawJsonText.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
+          if (rawJsonText.startsWith('\`\`\`')) rawJsonText = rawJsonText.replace(/^\`\`\`(json)?/gi, '').replace(/\`\`\`$/g, '').trim();
 
           return { stepNumber: currentStepNumber, title: step.title, description: step.description, fields: JSON.parse(rawJsonText) };
         } catch (error: any) {

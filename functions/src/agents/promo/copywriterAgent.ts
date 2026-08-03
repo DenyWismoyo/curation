@@ -1,22 +1,35 @@
 // functions/src/agents/promo/copywriterAgent.ts
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { defineSecret } from "firebase-functions/params";
-import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
+import OpenAI from "openai";
+import { withRetry } from "../../utils/retry";
 
-const geminiApiKeySecret = defineSecret("GEMINI_API_KEY");
+const deepseekApiKeySecret = defineSecret("DEEPSEEK_API_KEY");
+
+const resolveImpactGuidance = (mode: unknown): string => {
+  const value = String(mode || "bold").toLowerCase();
+  if (value === "soft") {
+    return "Gaya halus, empatik, aman, dan hangat. Hindari nada terlalu menekan.";
+  }
+  if (value === "aggressive") {
+    return "Gaya sangat tajam, berenergi tinggi, conversion-heavy, penuh urgensi dan FOMO.";
+  }
+  return "Gaya tegas, menjual, berkelas, dan tetap seimbang antara emosi dan kredibilitas.";
+};
 
 // 1. FUNGSI UTAMA (GENERATE AWAL)
 export const generateCopywriting = onCall({
   memory: "512MiB",
   timeoutSeconds: 120,
   region: "asia-southeast2",
-  secrets: [geminiApiKeySecret],
+  secrets: [deepseekApiKeySecret],
   cors: true,
 }, async (request) => {
   if (!request.auth) throw new HttpsError("unauthenticated", "Akses ditolak.");
 
-  const { trackName, trackDescription, expectedOutputs, targetAudience, targetPlatform, formSteps } = request.data;
+  const { trackName, trackDescription, expectedOutputs, targetAudience, targetPlatform, formSteps, promptImpactMode } = request.data;
   const platform = targetPlatform || 'instagram';
+  const impactGuidance = resolveImpactGuidance(promptImpactMode);
 
   let stepsContext = "Belum ada seksi formulir.";
   if (Array.isArray(formSteps) && formSteps.length > 0) {
@@ -33,42 +46,9 @@ export const generateCopywriting = onCall({
   const currentGuideline = platformGuidelines[platform];
 
   try {
-    const API_KEY = geminiApiKeySecret.value();
-    const genAI = new GoogleGenerativeAI(API_KEY);
-
-    const model = genAI.getGenerativeModel({
-      model: "gemini-3.5-flash", // Menggunakan model mutakhir untuk copywriting
-      systemInstruction: "Anda adalah Expert Social Media Copywriter dengan spesialisasi konversi tinggi. Anda SANGAT PINTAR memainkan emosi audiens, menggunakan bahasa yang hangat, relatable, dan TIDAK KAKU/AKADEMIS. Anda paham cara merangkai kalimat persuasif tanpa terlihat seperti robot.",
-      generationConfig: {
-        temperature: 0.8, // Suhu dinaikkan agar hasil lebih kreatif, emosional, dan 'menjual'
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: SchemaType.OBJECT,
-          required: ["copywriting", "carouselSlides"],
-          properties: {
-            copywriting: { type: SchemaType.STRING },
-            carouselSlides: {
-              type: SchemaType.ARRAY,
-              description: "Daftar gambar (WAJIB 4 Slide)",
-              items: {
-                type: SchemaType.OBJECT,
-                required: ["slideNumber", "textOnImage", "imagePrompt"],
-                properties: {
-                  slideNumber: { type: SchemaType.INTEGER },
-                  textOnImage: { 
-                    type: SchemaType.STRING, 
-                    description: "Judul utama/kesimpulan singkat dari slide tersebut (Bahasa Indonesia). Maksimal 3-4 kata." 
-                  },
-                  imagePrompt: { 
-                    type: SchemaType.STRING, 
-                    description: "Instruksi visual EXTREMELY DETAILED berbahasa INGGRIS, dengan instruksi penulisan teks berbahasa INDONESIA di dalam tanda kutip ganda." 
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+    const deepseekClient = new OpenAI({
+      baseURL: "https://api.deepseek.com",
+      apiKey: deepseekApiKeySecret.value(),
     });
 
     const prompt = `
@@ -83,6 +63,7 @@ export const generateCopywriting = onCall({
       
       TUGAS 1: Buat "copywriting" (caption) Bahasa Indonesia yang SANGAT MENJUAL.
       Aturan Platform: ${currentGuideline}. 
+      Mode Kualitas Impact: ${impactGuidance}
       
       ATURAN KETAT FORMAT & COPYWRITING (WAJIB DIPATUHI 100%):
       1. TONE & EMOSI: Jangan kaku atau menggunakan istilah akademis/robotik (seperti 'kesenjangan literasi' atau 'pemetaan presisi'). Ubah menjadi bahasa sehari-hari yang menyentuh 'pain point' audiens.
@@ -110,13 +91,61 @@ export const generateCopywriting = onCall({
         
       - SLIDE 4 (KESIMPULAN/ACTION): 
         Format imagePrompt: "Vertical Portrait Aspect Ratio 3:4. Flat vector illustration, corporate minimalist, Teal and Vibrant Orange on white background. A visual of a successful person matching the target audience. On a clipboard, write the large text "[KESIMPULAN SINGKAT]". No 3D, no photorealism."
+
+      OUTPUT WAJIB JSON murni:
+      {
+        "copywriting": "...",
+        "carouselSlides": [
+          { "slideNumber": 1, "textOnImage": "...", "imagePrompt": "..." }
+        ]
+      }
     `;
 
-    const result = await model.generateContent(prompt);
-    let rawText = result.response.text().trim();
-    if (rawText.startsWith('```')) rawText = rawText.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
-    
-    return { success: true, ...JSON.parse(rawText) };
+    const result = await withRetry(() => deepseekClient.chat.completions.create({
+      model: "deepseek-v4-flash",
+      messages: [
+        {
+          role: "system",
+          content: `Anda adalah social media copywriter premium. Keluarkan JSON valid saja. Buat copywriting lebih wow, emosional, dan tetap actionable. Wajib patuhi mode impact berikut: ${impactGuidance}`,
+        },
+        { role: "user", content: prompt },
+      ],
+      temperature: 0.82,
+      response_format: { type: "json_object" },
+    }));
+
+    let rawText = result.choices[0]?.message?.content || "{}";
+    rawText = rawText.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
+    const parsed = JSON.parse(rawText);
+
+    const copywriting = typeof parsed?.copywriting === "string" && parsed.copywriting.trim().length > 0
+      ? parsed.copywriting.trim()
+      : "Insight tajam tanpa eksekusi tidak akan mengubah apa pun. Mulai evaluasi sekarang dan konversikan temuan menjadi langkah nyata.\n\n#Omnifit #Assessment";
+
+    const slidesRaw = Array.isArray(parsed?.carouselSlides) ? parsed.carouselSlides : [];
+    const carouselSlides = slidesRaw
+      .filter((slide: any) => slide && typeof slide === "object")
+      .slice(0, 4)
+      .map((slide: any, idx: number) => ({
+        slideNumber: typeof slide?.slideNumber === "number" ? slide.slideNumber : idx + 1,
+        textOnImage: typeof slide?.textOnImage === "string" && slide.textOnImage.trim().length > 0
+          ? slide.textOnImage.trim()
+          : `Slide ${idx + 1}`,
+        imagePrompt: typeof slide?.imagePrompt === "string" && slide.imagePrompt.trim().length > 0
+          ? slide.imagePrompt.trim()
+          : `Vertical Portrait Aspect Ratio 3:4. Flat vector illustration, Teal and Vibrant Orange palette. Write bold Indonesian text \"Slide ${idx + 1}\". No 3D.`,
+      }));
+
+    while (carouselSlides.length < 4) {
+      const idx = carouselSlides.length + 1;
+      carouselSlides.push({
+        slideNumber: idx,
+        textOnImage: `Slide ${idx}`,
+        imagePrompt: `Vertical Portrait Aspect Ratio 3:4. Flat vector illustration, Teal and Vibrant Orange palette. Write bold Indonesian text \"Slide ${idx}\". No 3D.`,
+      });
+    }
+
+    return { success: true, copywriting, carouselSlides };
   } catch (error: any) {
     throw new HttpsError("internal", error.message || "Gagal membuat Copywriting Carousel.");
   }
@@ -127,19 +156,18 @@ export const reviseCopywriting = onCall({
   memory: "256MiB",
   timeoutSeconds: 60,
   region: "asia-southeast2",
-  secrets: [geminiApiKeySecret],
+  secrets: [deepseekApiKeySecret],
   cors: true,
 }, async (request) => {
   if (!request.auth) throw new HttpsError("unauthenticated", "Akses ditolak.");
 
-  const { originalText, instruction, platform } = request.data;
+  const { originalText, instruction, platform, promptImpactMode } = request.data;
+  const impactGuidance = resolveImpactGuidance(promptImpactMode);
   
   try {
-    const API_KEY = geminiApiKeySecret.value();
-    const genAI = new GoogleGenerativeAI(API_KEY);
-    const model = genAI.getGenerativeModel({ 
-      model: "gemini-3.5-flash",
-      generationConfig: { temperature: 0.8 } // Suhu tinggi agar luwes saat revisi
+    const deepseekClient = new OpenAI({
+      baseURL: "https://api.deepseek.com",
+      apiKey: deepseekApiKeySecret.value(),
     });
 
     const prompt = `Anda Expert Social Media Copywriter. Revisi caption ${platform} ini: 
@@ -154,11 +182,21 @@ export const reviseCopywriting = onCall({
     3. WAJIB pertahankan spasi ganda (\\n\\n) antar paragraf.
     4. DILARANG pakai asterisk (*) untuk list. WAJIB pakai Emoji di awal kalimat jika ada list/poin.
     5. WAJIB sertakan/pertahankan HASHTAG di akhir caption. 
+    6. Mode kualitas impact: ${impactGuidance}
     
     Berikan HANYA teks hasil revisi tanpa basa-basi.`;
 
-    const result = await model.generateContent(prompt);
-    return { success: true, revisedText: result.response.text().trim() };
+    const result = await withRetry(() => deepseekClient.chat.completions.create({
+      model: "deepseek-v4-flash",
+      messages: [
+        { role: "system", content: "Anda adalah copywriter conversion specialist. Jawab dengan teks final saja, tanpa preface." },
+        { role: "user", content: prompt },
+      ],
+      temperature: 0.85,
+    }));
+
+    const revisedText = result.choices[0]?.message?.content?.trim() || originalText || "";
+    return { success: true, revisedText };
   } catch (error: any) { throw new HttpsError("internal", error.message); }
 });
 
@@ -167,23 +205,31 @@ export const reviseSlidePrompt = onCall({
   memory: "256MiB",
   timeoutSeconds: 60,
   region: "asia-southeast2",
-  secrets: [geminiApiKeySecret],
+  secrets: [deepseekApiKeySecret],
   cors: true,
 }, async (request) => {
   if (!request.auth) throw new HttpsError("unauthenticated", "Akses ditolak.");
 
-  const { originalPrompt, instruction } = request.data;
+  const { originalPrompt, instruction, promptImpactMode } = request.data;
+  const impactGuidance = resolveImpactGuidance(promptImpactMode);
   
   try {
-    const API_KEY = geminiApiKeySecret.value();
-    const genAI = new GoogleGenerativeAI(API_KEY);
-    const model = genAI.getGenerativeModel({ 
-      model: "gemini-3.5-flash", 
-      generationConfig: { temperature: 0.5 } // Suhu dijaga sedikit lebih rendah untuk prompt gambar agar konsisten
+    const deepseekClient = new OpenAI({
+      baseURL: "https://api.deepseek.com",
+      apiKey: deepseekApiKeySecret.value(),
     });
 
-    const prompt = `Anda AI Art Director. Revisi prompt gambar ini: "${originalPrompt}"\nInstruksi klien: "${instruction}"\nATURAN MUTLAK:\n1. Prompt bahasa Inggris, teks tipografi di dalam prompt WAJIB bahasa Indonesia dan diapit tanda kutip ("..."). Teks maksimal 3 kata!\n2. Pertahankan Aspect Ratio 3:4, warna Teal/Orange/Yellow, gaya Flat Vector. No 3D.\nBerikan HANYA teks prompt hasil revisinya tanpa basa-basi.`;
-    const result = await model.generateContent(prompt);
-    return { success: true, revisedPrompt: result.response.text().trim() };
+    const prompt = `Anda AI Art Director. Revisi prompt gambar ini: "${originalPrompt}"\nInstruksi klien: "${instruction}"\nATURAN MUTLAK:\n1. Prompt bahasa Inggris, teks tipografi di dalam prompt WAJIB bahasa Indonesia dan diapit tanda kutip ("..."). Teks maksimal 3 kata!\n2. Pertahankan Aspect Ratio 3:4, warna Teal/Orange/Yellow, gaya Flat Vector. No 3D.\n3. Mode kualitas impact: ${impactGuidance}\nBerikan HANYA teks prompt hasil revisinya tanpa basa-basi.`;
+    const result = await withRetry(() => deepseekClient.chat.completions.create({
+      model: "deepseek-v4-flash",
+      messages: [
+        { role: "system", content: "Anda adalah AI Art Director. Jawab hanya 1 prompt final tanpa markdown." },
+        { role: "user", content: prompt },
+      ],
+      temperature: 0.55,
+    }));
+
+    const revisedPrompt = result.choices[0]?.message?.content?.trim() || originalPrompt || "";
+    return { success: true, revisedPrompt };
   } catch (error: any) { throw new HttpsError("internal", error.message); }
 });

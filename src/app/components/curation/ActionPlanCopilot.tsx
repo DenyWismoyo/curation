@@ -9,7 +9,7 @@ import remarkGfm from 'remark-gfm';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { MessageSquare, Send, Loader2, Sparkles, User as UserIcon, Bot } from 'lucide-react';
+import { MessageSquare, Send, Loader2, Sparkles, User as UserIcon, Bot, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Message {
@@ -106,21 +106,21 @@ export const ActionPlanCopilot = ({ assessmentId }: ActionPlanCopilotProps) => {
       <SheetTrigger asChild>
         <Button 
           size="lg" 
-          className="fixed bottom-6 right-6 h-14 rounded-full px-6 shadow-2xl bg-indigo-600 hover:bg-indigo-700 text-white z-50 flex items-center gap-2 group transition-all"
+          className={`fixed bottom-24 sm:bottom-6 right-4 sm:right-6 h-14 w-14 sm:w-auto p-0 sm:px-6 rounded-full shadow-2xl bg-indigo-600 hover:bg-indigo-700 text-white z-[90] flex items-center justify-center sm:gap-2 group transition-all duration-300 ${isOpen ? 'scale-0 opacity-0 pointer-events-none' : 'scale-100 opacity-100'}`}
         >
-          <Sparkles className="w-5 h-5 group-hover:animate-pulse text-indigo-200" />
-          <span className="font-bold">AI Copilot</span>
+          <Sparkles className="w-6 h-6 sm:w-5 sm:h-5 group-hover:animate-pulse text-indigo-200" />
+          <span className="font-bold hidden sm:inline">AI Copilot</span>
         </Button>
       </SheetTrigger>
       
       <SheetContent className="w-full sm:max-w-md border-l-0 sm:border-l sm:rounded-l-2xl flex flex-col p-0 bg-slate-50">
-        <SheetHeader className="p-4 sm:p-6 border-b border-slate-200 bg-white shadow-sm z-10">
-          <SheetTitle className="flex items-center gap-2 text-indigo-950">
+        <SheetHeader className="flex flex-row items-center justify-between p-4 sm:p-6 border-b border-slate-200 bg-white shadow-sm z-10 space-y-0">
+          <SheetTitle className="flex items-center gap-3 text-indigo-950">
             <div className="p-2 bg-indigo-100 rounded-lg text-indigo-600">
               <Bot size={20} />
             </div>
-            <div>
-              <div className="text-lg font-black tracking-tight">Omnifit Copilot</div>
+            <div className="text-left">
+              <div className="text-lg font-black tracking-tight leading-none mb-1">Omnifit Copilot</div>
               <div className="text-xs text-emerald-600 font-medium flex items-center gap-1">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -130,6 +130,9 @@ export const ActionPlanCopilot = ({ assessmentId }: ActionPlanCopilotProps) => {
               </div>
             </div>
           </SheetTitle>
+          <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="rounded-full h-8 w-8 text-slate-500 hover:bg-slate-100">
+            <X size={20} />
+          </Button>
         </SheetHeader>
 
         {/* Chat Area */}

@@ -17,7 +17,7 @@ export function TabAdaptive({ template, onChange }: TabAdaptiveProps) {
 
   const formMode = template.formMode || 'standard';
   const isAdaptive = (template.aiPromptConfig as any)?.isAdaptive || false;
-  const maxAdaptiveSections = (template.aiPromptConfig as any)?.maxAdaptiveSections || 7;
+  const maxAdaptiveSections = (template.aiPromptConfig as any)?.maxAdaptiveSections || 10;
 
   const updateConfig = (field: string, value: any) => {
     onChange({

@@ -35,7 +35,7 @@ export const executeRagSeeder = async (
     const bankPromises = cleanedSteps.flatMap((step: any) => 
        (step.fields || []).map(async (field: any) => {
         const textToEmbed = `Track: ${trackName}, Step: ${step.title}, Label: ${field.label}`;
-        const embRes = await embedModel.embedContent(textToEmbed);
+        const embRes = await embedModel.embedContent({ content: { role: "user", parts: [{ text: textToEmbed }] }, outputDimensionality: 768 } as any);
         const vectorVal = embRes.embedding.values;
         
         return db.collection('adaptive_question_banks').doc().set({

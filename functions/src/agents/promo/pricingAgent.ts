@@ -1,15 +1,16 @@
 // functions/src/agents/promo/pricingAgent.ts
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { defineSecret } from "firebase-functions/params";
-import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
+import OpenAI from "openai";
+import { withRetry } from "../../utils/retry";
 
-const geminiApiKeySecret = defineSecret("GEMINI_API_KEY");
+const deepseekApiKeySecret = defineSecret("DEEPSEEK_API_KEY");
 
 export const batchGenerateSmartPricing = onCall({
   memory: "512MiB",
-  timeoutSeconds: 300, // Waktu dilonggarkan untuk menampung batch besar
+  timeoutSeconds: 300,
   region: "asia-southeast2",
-  secrets: [geminiApiKeySecret],
+  secrets: [deepseekApiKeySecret],
   cors: true,
 }, async (request) => {
   if (!request.auth) throw new HttpsError("unauthenticated", "Akses ditolak.");
@@ -21,73 +22,77 @@ export const batchGenerateSmartPricing = onCall({
   }
 
   try {
-    const API_KEY = geminiApiKeySecret.value();
-    const genAI = new GoogleGenerativeAI(API_KEY);
-    
-    // Menggunakan Gemini 3.1 Flash-Lite yang sangat tajam dan responsif
-    const model = genAI.getGenerativeModel({
-      model: "gemini-3.5-flash-lite", 
-      generationConfig: {
-        temperature: 0.2, // Dibuat rendah agar AI sangat patuh pada aturan kategori baku
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: SchemaType.OBJECT,
-          properties: {
-            results: {
-              type: SchemaType.ARRAY,
-              items: {
-                type: SchemaType.OBJECT,
-                properties: {
-                  templateId: { type: SchemaType.STRING },
-                  category: { type: SchemaType.STRING },
-                  price: { type: SchemaType.INTEGER },
-                  discountPercentage: { type: SchemaType.INTEGER },
-                  aiReasoning: { type: SchemaType.STRING }
-                },
-                required: ["templateId", "category", "price", "discountPercentage", "aiReasoning"]
-              }
-            }
-          },
-          required: ["results"]
-        }
-      }
+    const API_KEY = deepseekApiKeySecret.value();
+    const deepseekClient = new OpenAI({
+      baseURL: "https://api.deepseek.com",
+      apiKey: API_KEY,
     });
 
+    const systemInstruction = `
+Anda adalah Enterprise Pricing Strategist & Katalog Organizer.
+Tugas: Tentukan Kategori Baku (berbasis Audiens/Objek), Harga Jual (Rupiah), Diskon, dan Judul Modul yang Konsisten secara MASSAL untuk array modul asesmen yang diberikan.
+
+PANTANGAN & ATURAN KATEGORI BAKU (WAJIB DIPATUHI 100%):
+Anda WAJIB memilih SALAH SATU dari 6 kategori audiens di bawah ini. DILARANG KERAS MENCIPTAKAN KATEGORI LAIN.
+1. "Mahasiswa & Akademisi"
+2. "Pekerja & Profesional"
+3. "Parenting & Keluarga"
+4. "UMKM & Pengusaha"
+5. "Korporasi (B2B)"
+6. "Umum & Personal"
+
+ATURAN STRATEGI HARGA & DISKON:
+1. Klien Korporasi (B2B): Harga premium (Rp 499.000 - Rp 1.500.000).
+2. Klien UMKM: Harga menengah (Rp 199.000 - Rp 499.000).
+3. Klien Mahasiswa/Parenting/Umum/Pekerja: Harga massal terjangkau (Rp 49.000 - Rp 149.000).
+4. Berikan diskon promosi yang logis untuk memicu FOMO (15% hingga 60%).
+
+ATURAN KONSISTENSI JUDUL (consistentTitle):
+Berdasarkan kategori audiens yang Anda pilih, rapikan dan buat judul (trackName) menjadi seragam, profesional, dan menonjolkan objeknya. Maksimal 60 karakter. 
+Misalnya, jika aslinya "Asesmen Kinerja", ubah menjadi "Asesmen Kinerja: Profesional" atau "Evaluasi Kinerja Pekerja".
+Jika modul tentang Mindfulness untuk mahasiswa, jadikan "Mindfulness Mahasiswa". Pastikan judul sangat spesifik ke target audiens.
+
+OUTPUT JSON WAJIB MENGGUNAKAN FORMAT INI:
+{
+  "results": [
+    {
+      "templateId": "string",
+      "category": "Mahasiswa & Akademisi",
+      "consistentTitle": "string",
+      "price": 100000,
+      "discountPercentage": 20,
+      "aiReasoning": "alasan singkat (maks 2 kalimat)"
+    }
+  ]
+}
+`;
+
     const prompt = `
-      Anda adalah Enterprise Pricing Strategist & Katalog Organizer.
-      Tugas: Tentukan Kategori Baku, Harga Jual (Rupiah), dan Diskon secara MASSAL untuk array modul asesmen di bawah ini.
+DATA ARRAY MODUL YANG HARUS DIANALISA:
+${JSON.stringify(templates.map((t: any) => ({
+  templateId: t.id,
+  trackName: t.trackName,
+  trackDescription: t.trackDescription,
+  expectedOutputs: t.expectedOutputs
+})), null, 2)}
+`;
 
-      PANTANGAN & ATURAN KATEGORI BAKU (WAJIB DIPATUHI 100%):
-      Anda WAJIB memilih SALAH SATU dari 8 kategori di bawah ini. DILARANG KERAS MENCIPTAKAN KATEGORI LAIN.
-      1. "Parenting & Keluarga" (Untuk modul anak, toddler, remaja, komunikasi orang tua)
-      2. "Zona Gen Z & Karir" (Untuk pemetaan bakat, persiapan kerja, personal branding, kesiapan karir)
-      3. "Kesehatan Mental & Diri" (Untuk mindfulness, resiliensi emosional, keseimbangan hidup)
-      4. "Startup & Inovasi" (Untuk tech startup, founder, kesiapan produk, technopreneur)
-      5. "UMKM & Bisnis" (Untuk bisnis menengah, omzet, pemetaan peran usaha)
-      6. "Aparatur Negara (ASN)" (Untuk PNS, keseimbangan kerja ASN, iklim kerja instansi, minat jabatan)
-      7. "Riset & Akademik" (Untuk perguruan tinggi, hilirisasi riset, mahasiswa)
-      8. "Manajemen Korporasi" (Untuk B2B, audit tata kelola perusahaan besar, leadership)
+    const result = await withRetry(() => deepseekClient.chat.completions.create({
+      model: "deepseek-v4-flash",
+      messages: [
+        { role: "system", content: systemInstruction },
+        { role: "user", content: prompt },
+      ],
+      temperature: 0.2, // Rendah agar konsisten dengan aturan baku
+      response_format: { type: "json_object" },
+    }));
 
-      ATURAN STRATEGI HARGA & DISKON:
-      1. Klien Enterprise/B2B/Startup/ASN: Harga premium (Rp 499.000 - Rp 1.500.000).
-      2. Klien B2C/Parenting/Gen Z/UMKM: Harga massal terjangkau (Rp 49.000 - Rp 199.000).
-      3. Berikan diskon promosi yang logis untuk memicu FOMO (15% hingga 60%).
-
-      DATA ARRAY MODUL YANG HARUS DIANALISA:
-      ${JSON.stringify(templates.map((t: any) => ({
-        templateId: t.id,
-        trackName: t.trackName,
-        trackDescription: t.trackDescription,
-        expectedOutputs: t.expectedOutputs
-      })), null, 2)}
-    `;
-
-    const result = await model.generateContent(prompt);
-    let rawText = result.response.text().trim();
-    if (rawText.startsWith('```')) rawText = rawText.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
+    let rawText = result.choices[0]?.message?.content || "{}";
+    rawText = rawText.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
 
     return { success: true, ...JSON.parse(rawText) };
   } catch (error: any) {
+    console.error("Gagal batchGenerateSmartPricing:", error);
     throw new HttpsError("internal", error.message);
   }
 });

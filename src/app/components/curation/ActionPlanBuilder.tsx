@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   CheckCircle2, Loader2, Sparkles, Target, 
-  PlayCircle, SplitSquareVertical, ChevronDown, 
+  PlayCircle, ChevronDown, 
   ChevronUp, Trophy, CalendarPlus 
 } from 'lucide-react';
 import { doc, updateDoc } from 'firebase/firestore';
@@ -27,9 +27,6 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  
-  // State untuk melacak tugas mana yang sedang digenerate sub-task nya
-  const [isGeneratingSubtask, setIsGeneratingSubtask] = useState<string | null>(null);
 
   const completedCount = checklist.filter(item => item.isCompleted).length;
   const totalCount = checklist.length;
@@ -44,7 +41,7 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
       const response = await generatePlan({ assessmentId, aiResult });
       const data = response.data as { actionPlan: ActionItem[] };
       setChecklist(data.actionPlan);
-      toast.success("10 Langkah Eksekusi telah disusun!");
+      toast.success("Action Plan lengkap (sub-task + rekomendasi YouTube) berhasil disusun!");
     } catch (error: any) {
       toast.error(error.message || "Gagal menyusun Action Plan. Coba lagi nanti.");
     } finally {
@@ -78,31 +75,6 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
     });
     setChecklist(updatedChecklist);
     saveToFirestore(updatedChecklist);
-  };
-
-  const handleGenerateSubTasks = async (item: ActionItem, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (item.subTasks && item.subTasks.length > 0) return; 
-    setIsGeneratingSubtask(item.id);
-    try {
-      const functions = getFunctions(app, 'asia-southeast2');
-      const generateSubTask = httpsCallable(functions, 'generateSubTaskChecklist');
-      
-      const response = await generateSubTask({ taskName: item.task, taskDescription: item.description });
-      const data = response.data as { subTasks: any[] };
-      
-      const updatedChecklist = checklist.map(chk => 
-        chk.id === item.id ? { ...chk, subTasks: data.subTasks } : chk
-      );
-      
-      setChecklist(updatedChecklist);
-      saveToFirestore(updatedChecklist);
-      toast.success("Tugas berhasil dipecah menjadi langkah kecil!");
-    } catch (error: any) {
-      toast.error("Gagal memecah tugas. Coba lagi.");
-    } finally {
-      setIsGeneratingSubtask(null);
-    }
   };
 
   const saveToFirestore = async (dataToSave: ActionItem[]) => {
@@ -195,7 +167,7 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
         </div>
         <h3 className="text-2xl sm:text-3xl font-black text-white mb-3 tracking-tight z-10">Cetak Biru Eksekusi</h3>
         <p className="text-slate-400 text-xs sm:text-sm font-medium mb-8 max-w-lg mx-auto leading-relaxed z-10">
-          Sistem akan merangkum seluruh temuan dan merekonstruksinya menjadi <strong className="text-indigo-400">10 Langkah Strategis</strong> harian yang dapat dilacak progresnya serta disinkronkan ke kalender Anda.
+          Sistem akan merangkum seluruh temuan dan merekonstruksinya menjadi <strong className="text-indigo-400">10 Langkah Strategis</strong> lengkap dengan sub-task dan rekomendasi konten YouTube.
         </p>
         <Button 
           onClick={handleGenerate} 
@@ -391,6 +363,25 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
                            </div>
                         </div>
                       )}
+
+                      {item.youtubeRecommendations && item.youtubeRecommendations.length > 0 && (
+                        <div className="bg-rose-50/40 p-5 rounded-2xl border border-rose-100/70 mb-6">
+                          <p className="text-[10px] font-black text-rose-500 uppercase tracking-widest mb-3">Rekomendasi Konten YouTube</p>
+                          <div className="space-y-2">
+                            {item.youtubeRecommendations.map((rec, recIdx) => (
+                              <button
+                                key={`${item.id}-yt-${recIdx}`}
+                                onClick={(e) => openYoutubeSearch(rec.query, e)}
+                                className="w-full text-left bg-white hover:bg-rose-50 border border-slate-200 hover:border-rose-200 rounded-xl px-3 py-2 transition-colors"
+                                type="button"
+                              >
+                                <p className="text-xs font-black text-slate-800 leading-snug">{rec.title}</p>
+                                <p className="text-[11px] text-slate-500 mt-0.5">{rec.query}</p>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                       
                       {/* ACTION BUTTONS */}
                       <div className="flex flex-col sm:flex-row gap-3">
@@ -410,22 +401,6 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
                             className="flex-1 bg-white hover:bg-rose-50 border-slate-200 hover:border-rose-200 text-slate-700 hover:text-rose-600 h-12 rounded-xl shadow-sm"
                           >
                             <PlayCircle size={16} className="mr-2 text-rose-500" /> Cari Referensi Visual
-                          </Button>
-                        )}
-                        
-                        {/* TOMBOL MICRO-AGENT */}
-                        {(!item.subTasks || item.subTasks.length === 0) && (
-                          <Button 
-                            onClick={(e) => handleGenerateSubTasks(item, e)}
-                            disabled={isGeneratingSubtask === item.id}
-                            variant="outline" 
-                            className="flex-1 bg-white hover:bg-indigo-50 border-slate-200 hover:border-indigo-200 text-slate-700 hover:text-indigo-700 h-12 rounded-xl shadow-sm"
-                          >
-                            {isGeneratingSubtask === item.id ? (
-                              <><Loader2 size={16} className="mr-2 animate-spin text-indigo-500" /> Memecah Tugas...</>
-                            ) : (
-                              <><SplitSquareVertical size={16} className="mr-2 text-indigo-500" /> Pecah Sub-Tugas (AI)</>
-                            )}
                           </Button>
                         )}
                       </div>

@@ -1,64 +1,109 @@
 // functions/src/outputService.ts
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { defineSecret } from "firebase-functions/params";
-import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
+import OpenAI from "openai";
+import { withRetry } from "./utils/retry";
 
-const geminiApiKeySecret = defineSecret("GEMINI_API_KEY");
+const deepseekApiKeySecret = defineSecret("DEEPSEEK_API_KEY");
+
+const resolveImpactGuidance = (mode: unknown): string => {
+  const value = String(mode || "bold").toLowerCase();
+  if (value === "soft") {
+    return "Gunakan narasi halus, empatik, aman, dan elegan. Tetap jelas namun tidak terlalu provokatif.";
+  }
+  if (value === "aggressive") {
+    return "Gunakan narasi high-impact, sangat tajam, berenergi tinggi, sangat conversion-oriented, namun tetap profesional.";
+  }
+  return "Gunakan narasi tegas, kuat, menjual, dan mudah dipahami, dengan keseimbangan antara kredibilitas dan emosi.";
+};
 
 // 1. FUNGSI EKSISTING: Generate Selling Points (Output)
 export const generateTemplateSellingPoints = onCall({
     memory: "256MiB",
     region: "asia-southeast2",
-    secrets: [geminiApiKeySecret],
+  secrets: [deepseekApiKeySecret],
     cors: true,
   },
   async (request) => {
     if (!request.auth) throw new HttpsError("unauthenticated", "Akses ditolak.");
     const { trackName, trackDescription, aiPromptConfig } = request.data;
+    const promptImpactMode = aiPromptConfig?.promptImpactMode || "bold";
+    const impactGuidance = resolveImpactGuidance(promptImpactMode);
 
     if (!aiPromptConfig) throw new HttpsError("invalid-argument", "Konfigurasi Otak AI tidak ditemukan.");
 
     try {
-      const API_KEY = geminiApiKeySecret.value();
-      const genAI = new GoogleGenerativeAI(API_KEY);
-      
-      const model = genAI.getGenerativeModel({
-        model: "gemini-3.1-flash-lite",
-        systemInstruction: "Anda adalah Copywriter Senior spesialis konversi penjualan (Sales Copy). Tugas Anda merumuskan 4 poin keuntungan (Benefit & Output) yang akan didapatkan user setelah mereka menggunakan modul asesmen ini. Fokus pada hasil akhir: Mitigasi, Rekomendasi, Action Plan, dan Insight Matrix.",
-        generationConfig: {
-          temperature: 0.7,
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: SchemaType.ARRAY,
-            items: {
-              type: SchemaType.OBJECT,
-              required: ["title", "description"],
-              properties: {
-                title: { type: SchemaType.STRING, description: "Judul output (misal: 'Rencana Aksi Harian', 'Peta Mitigasi Risiko')" },
-                description: { type: SchemaType.STRING, description: "Penjelasan copywriting 1 kalimat mengenai manfaat dari output ini." }
-              }
-            }
-          }
-        }
+      const deepseekClient = new OpenAI({
+        baseURL: "https://api.deepseek.com",
+        apiKey: deepseekApiKeySecret.value(),
       });
 
+      const systemInstruction = `Anda adalah Senior Growth Copywriter untuk produk assessment.
+Tugas: hasilkan poin benefit yang sangat kuat, jelas, dan menjual.
+
+Aturan mutlak:
+1. Output WAJIB JSON valid.
+2. Berikan TEPAT 4 poin benefit.
+3. Setiap poin harus berbentuk objek: { "title": string, "description": string }.
+4. Title: 3-6 kata, tajam, bernilai tinggi.
+5. Description: 1 kalimat yang menjelaskan dampak praktis ke pengguna.
+6. Hindari jargon generik, wajib konkret dan relevan konteks.
+7. Gaya dampak (impact mode): ${impactGuidance}
+`;
+
       const prompt = `
-        Konteks Modul: "${trackName}"
-        Deskripsi: "${trackDescription}"
-        
-        Kerangka yang akan dianalisis AI:
-        - Metrik yang dinilai: ${JSON.stringify(aiPromptConfig.expectedMetrics)}
-        - Fokus Risiko: ${aiPromptConfig.riskFramework || 'Risiko umum'}
-        - Target Rekomendasi: ${JSON.stringify(aiPromptConfig.expectedRecommendations)}
+Konteks Modul: "${trackName || "Modul Asesmen"}"
+Deskripsi: "${trackDescription || "-"}"
+Metrik: ${JSON.stringify(aiPromptConfig.expectedMetrics || [])}
+Fokus Risiko: ${aiPromptConfig.riskFramework || "Risiko umum"}
+Target Rekomendasi: ${JSON.stringify(aiPromptConfig.expectedRecommendations || [])}
 
-        Buatlah TEPAT 4 poin benefit output yang memikat dalam bahasa Indonesia.
-      `;
+Output format:
+{
+  "sellingPoints": [
+    { "title": "...", "description": "..." }
+  ]
+}
+`;
 
-      const result = await model.generateContent(prompt);
-      let rawText = result.response.text().trim();
-      if (rawText.startsWith('```')) rawText = rawText.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
+      const result = await withRetry(() => deepseekClient.chat.completions.create({
+        model: "deepseek-v4-flash",
+        messages: [
+          { role: "system", content: systemInstruction },
+          { role: "user", content: prompt },
+        ],
+        temperature: 0.65,
+        response_format: { type: "json_object" },
+      }));
 
-      const sellingPoints = JSON.parse(rawText);
+      let rawText = result.choices[0]?.message?.content || "{}";
+      rawText = rawText.replace(/^```(json)?/gi, "").replace(/```$/g, "").trim();
+
+      const parsedData = JSON.parse(rawText);
+      const sellingPointsRaw = Array.isArray(parsedData)
+        ? parsedData
+        : (Array.isArray(parsedData?.sellingPoints) ? parsedData.sellingPoints : []);
+
+      const sellingPoints = sellingPointsRaw
+        .filter((item: any) => item && typeof item === "object")
+        .slice(0, 4)
+        .map((item: any, index: number) => ({
+          title: typeof item?.title === "string" && item.title.trim().length > 0
+            ? item.title.trim()
+            : `Benefit Strategis ${index + 1}`,
+          description: typeof item?.description === "string" && item.description.trim().length > 0
+            ? item.description.trim()
+            : "Memberikan dampak nyata dan langkah terarah bagi pengguna.",
+        }));
+
+      while (sellingPoints.length < 4) {
+        const idx = sellingPoints.length + 1;
+        sellingPoints.push({
+          title: `Benefit Strategis ${idx}`,
+          description: "Membantu pengguna bergerak lebih cepat dari analisis ke eksekusi.",
+        });
+      }
+
       return { success: true, sellingPoints };
 
     } catch (error: any) {
@@ -72,12 +117,14 @@ export const generateTemplateSellingPoints = onCall({
 export const generatePromptAnchors = onCall({
     memory: "256MiB",
     region: "asia-southeast2",
-    secrets: [geminiApiKeySecret],
+  secrets: [deepseekApiKeySecret],
     cors: true,
   },
   async (request) => {
     if (!request.auth) throw new HttpsError("unauthenticated", "Akses ditolak.");
     const { trackName, trackDescription, targetAudience, formPurpose, aiPromptConfig } = request.data;
+    const promptImpactMode = aiPromptConfig?.promptImpactMode || "bold";
+    const impactGuidance = resolveImpactGuidance(promptImpactMode);
 
     if (!trackName) throw new HttpsError("invalid-argument", "Nama Program wajib diisi untuk merumuskan konteks.");
 
@@ -116,39 +163,21 @@ export const generatePromptAnchors = onCall({
       : '';
 
     try {
-      const API_KEY = geminiApiKeySecret.value();
-      const genAI = new GoogleGenerativeAI(API_KEY);
-      
-      const model = genAI.getGenerativeModel({
-        model: "gemini-3.1-flash-lite",
-        systemInstruction: "Anda adalah AI Architect dan Pakar Asesmen Global yang memahami ratusan framework evaluasi, psikologi, manajemen, dan pengembangan organisasi. Tugas Anda merumuskan KONTEKS SPESIFIK yang sangat tajam dan METODOLOGI yang presisi — dua teks ini akan menjadi PANDUAN UTAMA bagi sistem AI dalam menghasilkan template asesmen dan form yang tepat sasaran.",
-        generationConfig: {
-          temperature: 0.5,
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: SchemaType.OBJECT,
-            required: ["specificTargetContext", "methodologyContext", "formBuilderInstruction", "aiPersona"],
-            properties: {
-              specificTargetContext: { 
-                type: SchemaType.STRING, 
-                description: "Profil spesifik dan sangat detail tentang siapa subjek penilaian, kondisi mereka, dan aspek kritis yang akan dinilai. 3-4 kalimat padat yang kaya informasi kontekstual." 
-              },
-              methodologyContext: { 
-                type: SchemaType.STRING, 
-                description: "Metodologi, framework, atau standar global yang PALING TEPAT untuk asesmen ini, beserta alasan singkat mengapa dipilih dan bagaimana kerangkanya diterapkan. 3-4 kalimat padat." 
-              },
-              formBuilderInstruction: {
-                type: SchemaType.STRING,
-                description: "Instruksi spesifik bagi arsitek AI mengenai cara meracik soal untuk audiens ini. Berisi panduan gaya penyusunan soal yang selaras dengan target."
-              },
-              aiPersona: {
-                type: SchemaType.STRING,
-                description: "Gelar/Identitas pakar yang paling relevan (AI Persona) untuk melakukan asesmen ini (Contoh: 'Konsultan Psikologi Klinis & Pakar Karir')."
-              }
-            }
-          }
-        }
+      const deepseekClient = new OpenAI({
+        baseURL: "https://api.deepseek.com",
+        apiKey: deepseekApiKeySecret.value(),
       });
+
+      const systemInstruction = `Anda adalah Lead Assessment Architect.
+Tugas: merumuskan anchor berkualitas enterprise untuk template builder.
+
+Aturan mutlak:
+1. Output WAJIB JSON valid.
+2. Wajib isi key: specificTargetContext, methodologyContext, formBuilderInstruction, aiPersona.
+3. Gaya bahasa harus konkret, strategis, dan bisa langsung dieksekusi.
+4. Hasil harus terasa lebih tajam, relevan, dan bernilai jual tinggi.
+5. Gaya dampak (impact mode): ${impactGuidance}
+`;
 
       const prompt = `
         DATA PROGRAM:
@@ -183,13 +212,44 @@ export const generatePromptAnchors = onCall({
         4. AI PERSONA (aiPersona):
            Sebutkan gelar/identitas pakar yang paling tepat untuk melakukan asesmen ini dan memberikan laporan Action Plan nantinya.
            CONTOH KUALITAS: "Konsultan Strategi Bisnis UMKM & Pakar Digital Marketing"
+
+        OUTPUT WAJIB JSON murni:
+        {
+          "specificTargetContext": "...",
+          "methodologyContext": "...",
+          "formBuilderInstruction": "...",
+          "aiPersona": "..."
+        }
       `;
 
-      const result = await model.generateContent(prompt);
-      let rawText = result.response.text().trim();
-      if (rawText.startsWith('```')) rawText = rawText.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
+      const result = await withRetry(() => deepseekClient.chat.completions.create({
+        model: "deepseek-v4-pro",
+        messages: [
+          { role: "system", content: systemInstruction },
+          { role: "user", content: prompt },
+        ],
+        temperature: 0.55,
+        response_format: { type: "json_object" },
+      }));
 
-      const anchors = JSON.parse(rawText);
+      let rawText = result.choices[0]?.message?.content || "{}";
+      rawText = rawText.replace(/^```(json)?/gi, "").replace(/```$/g, "").trim();
+
+      const parsed = JSON.parse(rawText);
+      const anchors = {
+        specificTargetContext: typeof parsed?.specificTargetContext === "string" && parsed.specificTargetContext.trim().length > 0
+          ? parsed.specificTargetContext.trim()
+          : `Subjek utama program ${trackName || "ini"} memiliki kebutuhan asesmen yang beragam dan membutuhkan diagnosis berbasis konteks nyata agar rekomendasi tidak generik.`,
+        methodologyContext: typeof parsed?.methodologyContext === "string" && parsed.methodologyContext.trim().length > 0
+          ? parsed.methodologyContext.trim()
+          : "Gunakan pendekatan asesmen berbasis evidence, kombinasi maturity model, dan prioritas dampak agar hasil dapat ditindaklanjuti secara bertahap.",
+        formBuilderInstruction: typeof parsed?.formBuilderInstruction === "string" && parsed.formBuilderInstruction.trim().length > 0
+          ? parsed.formBuilderInstruction.trim()
+          : "Rancang pertanyaan bertahap dari konteks dasar ke validasi kritis, utamakan bahasa jelas, dan pastikan setiap seksi menghasilkan data yang dapat ditindaklanjuti.",
+        aiPersona: typeof parsed?.aiPersona === "string" && parsed.aiPersona.trim().length > 0
+          ? parsed.aiPersona.trim()
+          : "Konsultan Strategi Asesmen & Transformasi Kinerja",
+      };
       return { success: true, anchors };
 
     } catch (error: any) {

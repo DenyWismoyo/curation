@@ -28,6 +28,7 @@ export { analyzeEvidence } from './general/evidenceService'
 export {
   generateActionPlanChecklist,
   generateSubTaskChecklist,
+  generatePersonalActionPlan,
 } from './actionPlanService'
 export {
   generateTemplateSellingPoints,
@@ -76,6 +77,7 @@ export { renderSingleSlide } from './agents/promo/imageRendererAgent'
 export { generateArticleFromTemplate } from './agents/promo/articleAgent'
 export { batchGenerateSmartPricing } from './agents/promo/pricingAgent'
 export { generateProgramIdentity } from './agents/promo/identityAgent'
+export { generateTemplateIdentityInspirations } from './agents/promo/templateIdentityInspirationAgent'
 export { generateArticleImage } from './agents/promo/articleImageAgent'
 export {
   createOrGetAffiliateProfile,
@@ -103,6 +105,17 @@ export {
   b2bAddInteractionLog,
   b2bGenerateInteractionSummary,
 } from './agents/b2b/interactionAgent'
+export {
+  createStudyProject,
+  registerStudySource,
+  assignStudyProjectReviewers,
+  startStudyProjectPipeline,
+  approveStudyOutline,
+} from './agents/study/studyProjectAgent'
+export { requestChapterRevision, generateRevisionMaterials } from './agents/study/chapterRevisionAgent'
+export { exportStudyDocument } from './agents/study/exportService'
+export { studyProjectOrchestrator } from './pipelines/study/orchestrator'
+export { studyChapterOrchestrator } from './pipelines/study/chapterOrchestrator'
 
 // ============================================================================
 // INISIALISASI FIREBASE
