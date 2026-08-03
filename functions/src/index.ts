@@ -117,7 +117,9 @@ export { exportStudyDocument } from './agents/study/exportService'
 export { studyProjectOrchestrator } from './pipelines/study/orchestrator'
 export { studyChapterOrchestrator } from './pipelines/study/chapterOrchestrator'
 export { cryptoCronAgent } from './agents/crypto/cryptoCronAgent'
-export { cryptoCopilotChat } from './agents/crypto/cryptoCopilotAgent'
+export { cryptoHiddenGemAgent } from './agents/crypto/cryptoHiddenGemAgent'
+export { cryptoPremiumIntelligenceAgent } from './agents/crypto/cryptoPremiumIntelligenceAgent'
+export { cryptoCopilotChat, cryptoCopilotSuggestions } from './agents/crypto/cryptoCopilotAgent'
 
 // ============================================================================
 // INISIALISASI FIREBASE

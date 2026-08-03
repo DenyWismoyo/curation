@@ -590,7 +590,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                         <AdminShieldIcon size={15} /> Brankas
                       </Button>
                     </Link>
-                    {(role === 'admin_csrs' || role === 'admin_omnifit') && (
+                    {role?.startsWith('admin') && (
                       <Link href="/admin" className="col-span-2">
                         <Button variant="outline" className="w-full h-11 rounded-xl text-xs gap-2 bg-slate-50">
                           <LayoutDashboard size={15} /> Dasbor Admin

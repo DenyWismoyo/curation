@@ -29,7 +29,7 @@ export function GlobalFloatingWidget() {
   const { user } = useAuth()
   const pathname = usePathname()
   const shouldHideWidget =
-    pathname?.includes('/result') || pathname?.includes('/dashboard/result')
+    pathname?.includes('/result') || pathname?.includes('/dashboard/result') || pathname?.startsWith('/crypto-report')
 
   // State Management
   const [isMenuOpen, setIsMenuOpen] = useState(false)

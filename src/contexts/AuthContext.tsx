@@ -19,7 +19,7 @@ import { ensureReferralVisitorId, getStoredReferralAttribution } from '@/lib/ref
 
 interface AuthContextType {
   user: User | null;
-  role: 'user' | 'admin_omnifit' | 'admin_csrs' | 'assessor' | 'curator' | 'study_author' | 'study_reviewer' | null;
+  role: 'user' | 'admin_omnifit' | 'admin_csrs' | 'admin_crypto' | 'assessor' | 'curator' | 'study_author' | 'study_reviewer' | null;
   b2bPersonas: string[];
   allowedOrganizations: string[];
   b2bOrganizationIds: string[];
@@ -49,7 +49,7 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [role, setRole] = useState<'user' | 'admin_omnifit' | 'admin_csrs' | 'assessor' | 'curator' | 'study_author' | 'study_reviewer' | null>(null);
+  const [role, setRole] = useState<'user' | 'admin_omnifit' | 'admin_csrs' | 'admin_crypto' | 'assessor' | 'curator' | 'study_author' | 'study_reviewer' | null>(null);
   const [b2bPersonas, setB2bPersonas] = useState<string[]>([]);
   const [allowedOrganizations, setAllowedOrganizations] = useState<string[]>([]);
   const [b2bOrganizationIds, setB2bOrganizationIds] = useState<string[]>([]);
@@ -71,12 +71,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           const tokenResult = await currentUser.getIdTokenResult();
           const claims = tokenResult.claims as AuthClaims;
           
-          let currentRole: 'user' | 'admin_omnifit' | 'admin_csrs' | 'assessor' | 'curator' | 'study_author' | 'study_reviewer' = 'user';
+          let currentRole: 'user' | 'admin_omnifit' | 'admin_csrs' | 'admin_crypto' | 'assessor' | 'curator' | 'study_author' | 'study_reviewer' = 'user';
           let currentB2bPersonas: string[] = [];
           let currentAllowedOrganizations: string[] = [];
           let currentB2bOrganizationIds: string[] = [];
           
-          const validRoles = new Set(['user', 'admin_omnifit', 'admin_csrs', 'assessor', 'curator', 'study_author', 'study_reviewer']);
+          const validRoles = new Set(['user', 'admin_omnifit', 'admin_csrs', 'admin_crypto', 'assessor', 'curator', 'study_author', 'study_reviewer']);
           const pickRole = (raw: unknown): typeof currentRole => {
             if (typeof raw === 'string' && validRoles.has(raw)) {
               return raw as typeof currentRole;

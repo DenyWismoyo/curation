@@ -1,0 +1,172 @@
+"use client";
+
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { collection, query, orderBy, limit, getDocs, doc, getDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { useAuth } from "@/contexts/AuthContext";
+import { Loader2, TrendingUp, Target, ShieldAlert, Activity, ArrowLeft } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+
+export default function CryptoPerformancePage() {
+  const { role, loading: authLoading } = useAuth();
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [globalStats, setGlobalStats] = useState({ totalWins: 0, totalLosses: 0 });
+  const [history, setHistory] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (authLoading) return;
+      
+      if (!role || !role.startsWith("admin")) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        // Fetch global stats
+        const statsDoc = await getDoc(doc(db, "cryptoPerformanceMetrics", "global_stats"));
+        if (statsDoc.exists()) {
+           const data = statsDoc.data();
+           setGlobalStats({
+             totalWins: data.totalWins || 0,
+             totalLosses: data.totalLosses || 0
+           });
+        }
+
+        // Fetch reports for history
+        const q = query(collection(db, "cryptoReports"), orderBy("createdAt", "desc"), limit(20));
+        const snap = await getDocs(q);
+        
+        const allEvals: any[] = [];
+        snap.forEach(docSnap => {
+           const data = docSnap.data();
+           const date = data.createdAt?.toDate ? data.createdAt.toDate().toLocaleString("id-ID") : "Unknown Date";
+           if (data.reportData && data.reportData.previousScalpingEvaluation) {
+              data.reportData.previousScalpingEvaluation.forEach((ev: any) => {
+                 allEvals.push({
+                   ...ev,
+                   date
+                 });
+              });
+           }
+        });
+
+        setHistory(allEvals);
+        setLoading(false);
+      } catch (err) {
+        console.error("Failed to fetch performance data:", err);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [authLoading, role]);
+
+  if (authLoading || loading) {
+    return <div className="flex justify-center items-center h-screen"><Loader2 className="animate-spin h-10 w-10 text-indigo-500" /></div>;
+  }
+
+  if (!role || !role.startsWith("admin")) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen text-slate-500">
+        <ShieldAlert className="w-12 h-12 mb-4 opacity-50" />
+        <h2 className="text-xl font-bold mb-2">Akses Ditolak</h2>
+        <p>Anda tidak memiliki izin untuk melihat laporan ini.</p>
+      </div>
+    );
+  }
+
+  const totalFinished = globalStats.totalWins + globalStats.totalLosses;
+  const winRate = totalFinished > 0 ? ((globalStats.totalWins / totalFinished) * 100).toFixed(1) : "0.0";
+
+  return (
+    <div className="container mx-auto px-4 py-8 max-w-5xl mt-16">
+      <div className="flex items-center gap-4 mb-8">
+        <Button onClick={() => router.back()} variant="outline" size="icon" className="rounded-full">
+            <ArrowLeft className="w-5 h-5" />
+        </Button>
+        <div>
+          <h1 className="text-3xl font-black text-slate-800 dark:text-slate-100 flex items-center gap-3">
+            <Activity className="w-8 h-8 text-indigo-500" /> Scalping Analytics
+          </h1>
+          <p className="text-slate-500 font-medium mt-1">Dashboard evaluasi akurasi sinyal AI Screener</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <Card className="bg-indigo-600 border-none shadow-lg text-white">
+          <CardContent className="p-8">
+            <div className="text-indigo-200 text-sm font-bold uppercase tracking-wider mb-2">Win Rate</div>
+            <div className="text-5xl font-black">{winRate}%</div>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30">
+          <CardContent className="p-8 flex flex-col justify-center h-full">
+            <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold mb-2">
+               <Target className="w-5 h-5" /> Total WIN
+            </div>
+            <div className="text-4xl font-black text-slate-800 dark:text-slate-100">{globalStats.totalWins} <span className="text-lg text-slate-400 font-medium">sinyal</span></div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-rose-50 dark:bg-rose-950/20 border-rose-100 dark:border-rose-900/30">
+          <CardContent className="p-8 flex flex-col justify-center h-full">
+            <div className="flex items-center gap-2 text-rose-600 dark:text-rose-400 font-bold mb-2">
+               <ShieldAlert className="w-5 h-5" /> Total LOSS
+            </div>
+            <div className="text-4xl font-black text-slate-800 dark:text-slate-100">{globalStats.totalLosses} <span className="text-lg text-slate-400 font-medium">sinyal</span></div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+        <TrendingUp className="w-5 h-5 text-indigo-500" /> Riwayat Sinyal Terakhir
+      </h2>
+
+      {history.length === 0 ? (
+         <div className="text-center py-20 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 text-slate-500">
+            Belum ada riwayat evaluasi sinyal.
+         </div>
+      ) : (
+         <div className="bg-white dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+            <div className="overflow-x-auto">
+               <table className="w-full text-left border-collapse">
+                  <thead>
+                     <tr className="bg-slate-50 dark:bg-slate-900/50 text-slate-500 text-xs uppercase tracking-wider">
+                        <th className="p-4 font-bold border-b border-slate-200 dark:border-slate-800">Tanggal</th>
+                        <th className="p-4 font-bold border-b border-slate-200 dark:border-slate-800">Pair</th>
+                        <th className="p-4 font-bold border-b border-slate-200 dark:border-slate-800">Status</th>
+                        <th className="p-4 font-bold border-b border-slate-200 dark:border-slate-800">Keterangan</th>
+                     </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
+                     {history.map((item, i) => (
+                        <tr key={i} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/30 transition-colors">
+                           <td className="p-4 text-sm text-slate-500 whitespace-nowrap">{item.date}</td>
+                           <td className="p-4 font-bold text-slate-900 dark:text-slate-100">{item.symbol}</td>
+                           <td className="p-4">
+                              {item.status === 'WIN' ? (
+                                 <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-0">WIN</Badge>
+                              ) : item.status === 'LOSS' ? (
+                                 <Badge className="bg-rose-100 text-rose-700 hover:bg-rose-100 border-0">LOSS</Badge>
+                              ) : (
+                                 <Badge variant="outline" className="text-amber-600 border-amber-300">PENDING</Badge>
+                              )}
+                           </td>
+                           <td className="p-4 text-sm text-slate-600 dark:text-slate-400 max-w-md">{item.reason}</td>
+                        </tr>
+                     ))}
+                  </tbody>
+               </table>
+            </div>
+         </div>
+      )}
+    </div>
+  );
+}

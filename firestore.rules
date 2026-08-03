@@ -8,49 +8,49 @@ service cloud.firestore {
     
     function isAssessor() {
       return isAuthenticated() && (
-        request.auth.token.role == 'assessor' ||
-        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'assessor') ||
-        (exists(/databases/$(database)/documents/users/$(request.auth.token.email)) && get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role == 'assessor')
+        request.auth.token.get('role', '') == 'assessor' ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', '') == 'assessor') ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.token.email)) && get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.get('role', '') == 'assessor')
       );
     }
 
     function isCurator() {
       return isAuthenticated() && (
-        request.auth.token.role == 'curator' ||
-        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'curator') ||
-        (exists(/databases/$(database)/documents/users/$(request.auth.token.email)) && get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role == 'curator')
+        request.auth.token.get('role', '') == 'curator' ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', '') == 'curator') ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.token.email)) && get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.get('role', '') == 'curator')
       );
     }
 
     function isStudyAuthor() {
       return isAuthenticated() && (
-        request.auth.token.role == 'study_author' ||
-        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'study_author') ||
-        (exists(/databases/$(database)/documents/users/$(request.auth.token.email)) && get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role == 'study_author')
+        request.auth.token.get('role', '') == 'study_author' ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', '') == 'study_author') ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.token.email)) && get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.get('role', '') == 'study_author')
       );
     }
 
     function isStudyReviewer() {
       return isAuthenticated() && (
-        request.auth.token.role == 'study_reviewer' ||
-        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'study_reviewer') ||
-        (exists(/databases/$(database)/documents/users/$(request.auth.token.email)) && get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role == 'study_reviewer')
+        request.auth.token.get('role', '') == 'study_reviewer' ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', '') == 'study_reviewer') ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.token.email)) && get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.get('role', '') == 'study_reviewer')
       );
     }
 
     function isAdminOmnifit() {
       return isAuthenticated() && (
-        request.auth.token.role == 'admin_omnifit' ||
-        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin_omnifit') ||
-        (exists(/databases/$(database)/documents/users/$(request.auth.token.email)) && get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role == 'admin_omnifit')
+        request.auth.token.get('role', '') == 'admin_omnifit' ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', '') == 'admin_omnifit') ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.token.email)) && get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.get('role', '') == 'admin_omnifit')
       );
     }
 
     function isAdminCSRS() {
       return isAuthenticated() && (
-        request.auth.token.role == 'admin_csrs' ||
-        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin_csrs') ||
-        (exists(/databases/$(database)/documents/users/$(request.auth.token.email)) && get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role == 'admin_csrs')
+        request.auth.token.get('role', '') == 'admin_csrs' ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', '') == 'admin_csrs') ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.token.email)) && get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.get('role', '') == 'admin_csrs')
       );
     }
 
@@ -603,15 +603,60 @@ service cloud.firestore {
       allow write: if isSuperAdmin() || isAdminCSRS(); 
     }
     
+    match /admin_fcm_tokens/{document=**} {
+      allow read, write: if isSuperAdmin() || isAdminCSRS() || isAdminOmnifit() || (request.auth != null && request.auth.token.get('role', '') != '' && request.auth.token.get('role', '').matches('^admin.*'));
+    }
+    
+    function isAdminCrypto() {
+      return isAuthenticated() && (
+        request.auth.token.get('role', '') == 'admin_csrs' ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', '') == 'admin_crypto') ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.token.email)) && get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.get('role', '') == 'admin_crypto')
+      );
+    }
+    
     // ATURAN BARU UNTUK CRYPTO REPORTS & ALERTS
     match /cryptoReports/{document=**} {
-      allow read: if isSuperAdmin() || isAdminCSRS() || isAdminOmnifit() || (request.auth != null && request.auth.token.get('role', '') != '' && request.auth.token.role.matches('^admin.*'));
+      allow read: if isSuperAdmin() || isAdminCSRS() || isAdminOmnifit() || isAdminCrypto() || (request.auth != null && request.auth.token.get('role', '') != '' && request.auth.token.get('role', '').matches('^admin.*'));
       allow write: if false; // Hanya Cloud Functions (Backend) yang boleh menulis
     }
     
     match /cryptoAlerts/{document=**} {
-      allow read: if isSuperAdmin() || isAdminCSRS() || isAdminOmnifit() || (request.auth != null && request.auth.token.get('role', '') != '' && request.auth.token.role.matches('^admin.*'));
+      allow read: if isSuperAdmin() || isAdminCSRS() || isAdminOmnifit() || isAdminCrypto() || (request.auth != null && request.auth.token.get('role', '') != '' && request.auth.token.get('role', '').matches('^admin.*'));
       allow write: if false; // Hanya Cloud Functions (Backend) yang boleh menulis
+    }
+
+    match /cryptoHiddenGems/{document=**} {
+      allow read: if isSuperAdmin() || isAdminCSRS() || isAdminOmnifit() || isAdminCrypto() || (request.auth != null && request.auth.token.get('role', '') != '' && request.auth.token.get('role', '').matches('^admin.*'));
+      allow write: if false; // Hanya Cloud Functions (Backend) yang boleh menulis
+    }
+    
+    match /cryptoSmartMoney/{document=**} {
+      allow read: if isSuperAdmin() || isAdminCSRS() || isAdminOmnifit() || isAdminCrypto() || (request.auth != null && request.auth.token.get('role', '') != '' && request.auth.token.get('role', '').matches('^admin.*'));
+      allow write: if false;
+    }
+    
+    match /cryptoLiquidity/{document=**} {
+      allow read: if isSuperAdmin() || isAdminCSRS() || isAdminOmnifit() || isAdminCrypto() || (request.auth != null && request.auth.token.get('role', '') != '' && request.auth.token.get('role', '').matches('^admin.*'));
+      allow write: if false;
+    }
+    
+    match /cryptoDangerZone/{document=**} {
+      allow read: if isSuperAdmin() || isAdminCSRS() || isAdminOmnifit() || isAdminCrypto() || (request.auth != null && request.auth.token.get('role', '') != '' && request.auth.token.get('role', '').matches('^admin.*'));
+      allow write: if false;
+    }
+    
+    match /cryptoPerformanceMetrics/{document=**} {
+      allow read: if isSuperAdmin() || isAdminCSRS() || isAdminOmnifit() || isAdminCrypto() || (request.auth != null && request.auth.token.get('role', '') != '' && request.auth.token.get('role', '').matches('^admin.*'));
+      allow write: if false;
+    }
+    
+    match /cryptoCopilotChats/{chatId} {
+      allow read, write: if isAuthenticated() && (resource == null || resource.data.userId == request.auth.uid || isSuperAdmin() || isAdminCSRS() || isAdminOmnifit());
+      
+      match /messages/{messageId} {
+         allow read, write: if isAuthenticated(); // Inherits security from parent via UI or we can strictly enforce parent's userId
+      }
     }
     
     match /{document=**} { allow read, write: if false; }

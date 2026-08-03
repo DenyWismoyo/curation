@@ -4,16 +4,18 @@ import * as admin from "firebase-admin";
 import { getFirestore } from "firebase-admin/firestore";
 import axios from "axios";
 import OpenAI from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { gatherCryptoMarketData } from "./cryptoOrchestrator";
 import { withRetry } from "../../utils/retry"; 
 
 const deepseekApiKeySecret = defineSecret("DEEPSEEK_API_KEY");
+const geminiApiKeySecret = defineSecret("GEMINI_API_KEY");
 
 export const cryptoCronAgent = onSchedule(
   {
     schedule: "0 3,7,11,15,19,23 * * *",
     timeZone: "Asia/Jakarta", 
-    secrets: [deepseekApiKeySecret],
+    secrets: [deepseekApiKeySecret, geminiApiKeySecret],
     region: "asia-southeast2",
     timeoutSeconds: 300,
     memory: "512MiB",
@@ -41,6 +43,7 @@ export const cryptoCronAgent = onSchedule(
     // Ambil laporan sebelumnya untuk self-correction dan win-rate tracking
     let previousReport = null;
     let previousScalpingStatus = "";
+    let finalEvaluatedScalps: any[] = [];
     
     try {
       const prevSnapshot = await db.collection("cryptoReports")
@@ -68,29 +71,26 @@ export const cryptoCronAgent = onSchedule(
               let currentPrice = 0;
               
               try {
-                // Ambil Klines histori 4 jam ke belakang untuk cek High/Low
-                const klinesRes = await axios.get(`https://api.binance.com/api/v3/klines?symbol=${scalp.symbol}&interval=1h&limit=4`);
+                // Ambil Klines histori 4 jam ke belakang dengan interval 1 menit untuk akurasi tertinggi
+                const klinesRes = await axios.get(`https://api.binance.com/api/v3/klines?symbol=${scalp.symbol}&interval=1m&limit=240`);
                 const klines = klinesRes.data;
                 
                 if (klines && klines.length > 0) {
                    currentPrice = parseFloat(klines[klines.length - 1][4]); // Close price terakhir
                    
-                   let highestHigh = 0;
-                   let lowestLow = Infinity;
-                   
-                   for (const candle of klines) {
-                      const high = parseFloat(candle[2]);
-                      const low = parseFloat(candle[3]);
-                      if (high > highestHigh) highestHigh = high;
-                      if (low < lowestLow) lowestLow = low;
-                   }
-                   
                    if (target > 0 && sl > 0) {
-                      // Asumsi Long Position
-                      if (highestHigh >= target) {
-                         status = "WIN";
-                      } else if (lowestLow <= sl) {
-                         status = "LOSS";
+                      // Asumsi Long Position: Cek kronologis per 1m candle
+                      for (const candle of klines) {
+                         const high = parseFloat(candle[2]);
+                         const low = parseFloat(candle[3]);
+                         
+                         if (low <= sl) {
+                            status = "LOSS";
+                            break; // Stop loss kena duluan
+                         } else if (high >= target) {
+                            status = "WIN";
+                            break; // Target kena duluan
+                         }
                       }
                    }
                 }
@@ -113,6 +113,7 @@ export const cryptoCronAgent = onSchedule(
             });
             
             const evaluatedScalps = await Promise.all(evaluatedScalpsPromises);
+            finalEvaluatedScalps = evaluatedScalps;
             
             const totalFinished = totalWins + totalLosses;
             const winRate = totalFinished > 0 ? ((totalWins / totalFinished) * 100).toFixed(2) + "%" : "N/A";
@@ -179,7 +180,7 @@ Output Anda WAJIB berupa JSON rapi tanpa markdown block (seperti \`\`\`json):
   "scalpingOpportunities": [
      {
        "symbol": "Nama Koin",
-       "momentum": "Alasan singkat (Evaluasi juga dari EMA, MACD, Bollinger Bands, dan Funding Rate/Long-Short Ratio jika ada)",
+       "momentum": "Alasan memilih koin ini. WAJIB gabungkan data 'setupReasoning' (dari sistem) dengan analisis teknikal & berita Anda sendiri.",
        "entryPrice": 65000.0,
        "targetPrice": 66000.0,
        "stopLossPrice": 64500.0,
@@ -240,20 +241,84 @@ Buatkan laporan JSON yang komprehensif, actionable, dan jujur!
 `;
 
     try {
-      const response = await withRetry(() => client.chat.completions.create({
-        model: "deepseek-reasoner",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt }
-        ],
-      }));
+      let finalContent = "{}";
+      
+      try {
+        console.log("Starting Multi-Agent Pipeline...");
+        
+        // ==========================================
+        // AGENT 1: The Fast Quant (DeepSeek V4)
+        // ==========================================
+        console.log("Agent 1 (Fast Quant) analyzing technicals...");
+        const agent1Prompt = `Anda adalah Quant AI (Agent 1).
+Tugas Anda HANYA membedah teknikal dari data koin berikut dan memilih TOP 3 terbaik berdasarkan setupScore dan setupReasoning.
+Berikan output JSON ketat: { "draftScalpingOpportunities": [ { "symbol": "...", "technicalThesis": "..." } ] }
 
-      let content = response.choices[0]?.message?.content || "{}";
-      if (content.startsWith("\`\`\`")) {
-        content = content.replace(/^\`\`\`(json)?/gi, "").replace(/\`\`\`$/g, "").trim();
+Data Koin:
+${JSON.stringify(scalpingCandidatesData, null, 2)}`;
+
+        const response1 = await withRetry(() => client.chat.completions.create({
+          model: "deepseek-chat", // DeepSeek V4
+          messages: [
+            { role: "system", content: "Anda adalah Quant AI murni. Output WAJIB JSON." },
+            { role: "user", content: agent1Prompt }
+          ],
+        }));
+        
+        let agent1Output = response1.choices[0]?.message?.content || "{}";
+        if (agent1Output.startsWith("\`\`\`")) {
+           agent1Output = agent1Output.replace(/^\`\`\`(json)?/gi, "").replace(/\`\`\`$/g, "").trim();
+        }
+        
+        let draftScalping = [];
+        try {
+           draftScalping = JSON.parse(agent1Output).draftScalpingOpportunities || [];
+        } catch (e) {
+           console.error("Agent 1 JSON parse error", e);
+        }
+
+        // ==========================================
+        // AGENT 2: The Chief Risk Officer (DeepSeek Reasoner)
+        // ==========================================
+        console.log("Agent 2 (Risk Officer) reviewing macro and drafts...");
+        
+        // Memasukkan hasil Agent 1 ke dalam prompt Agent 2
+        const enrichedUserPrompt = userPrompt + `\n\nDraft Scalping dari Quant AI (Agent 1):\n${JSON.stringify(draftScalping, null, 2)}\n\nTugas Anda (Agent 2) adalah me-review draft di atas. Buang yang berisiko tinggi terhadap berita makro/fundamental hari ini, dan hasilkan 'scalpingOpportunities' final.`;
+
+        const response = await withRetry(() => client.chat.completions.create({
+          model: "deepseek-reasoner",
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: enrichedUserPrompt }
+          ],
+        }));
+        
+        finalContent = response.choices[0]?.message?.content || "{}";
+      } catch (multiAgentErr) {
+        console.error("Multi-Agent Pipeline failed. Falling back to Single Agent Gemini...", multiAgentErr);
+        const geminiClient = new GoogleGenerativeAI(geminiApiKeySecret.value());
+        const geminiModel = geminiClient.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const geminiResponse = await withRetry(() => geminiModel.generateContent({
+           contents: [{ role: "user", parts: [{ text: userPrompt }] }],
+           systemInstruction: systemPrompt,
+        }));
+        finalContent = geminiResponse.response.text();
+      }
+
+      if (finalContent.startsWith("\`\`\`")) {
+        finalContent = finalContent.replace(/^\`\`\`(json)?/gi, "").replace(/\`\`\`$/g, "").trim();
       }
       
-      const parsed = JSON.parse(content);
+      const parsed = JSON.parse(finalContent);
+      
+      // Inject struktur evaluasi murni ke hasil parsed agar frontend bisa merendernya
+      if (finalEvaluatedScalps && finalEvaluatedScalps.length > 0) {
+         parsed.previousScalpingEvaluation = finalEvaluatedScalps.map((ev: any) => ({
+             symbol: ev.symbol,
+             status: ev.status,
+             reason: ev.status === 'WIN' ? `Harga menyentuh target ${ev.targetPrice}` : ev.status === 'LOSS' ? `Harga mengenai Stop Loss ${ev.stopLossPrice}` : `Sedang berjalan, harga terkini ${ev.currentPrice}`
+         }));
+      }
       
       await db.collection("cryptoReports").add({
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -266,22 +331,11 @@ Buatkan laporan JSON yang komprehensif, actionable, dan jujur!
         rawFundamental: { fearAndGreed, latestNews, stablecoinGrowth, dexVolumeGrowth, macroCalendar }
       });
       
-      // Kirim Push Notification ke Admin
+      // Simpan Riwayat Peringatan & Kirim Push Notification ke Admin
       if (parsed.scalpingOpportunities && parsed.scalpingOpportunities.length > 0) {
-        try {
-           const tokensSnap = await db.collection("admin_fcm_tokens").get();
-           const tokens = tokensSnap.docs.map(d => d.data().token);
-           if (tokens.length > 0) {
-              const bestScalp = parsed.scalpingOpportunities[0];
-              await admin.messaging().sendEachForMulticast({
-                 tokens: tokens,
-                 notification: {
-                    title: `🚨 Peluang Scalping: ${bestScalp.symbol}`,
-                    body: `Target: ${bestScalp.targetPrice} | Stop Loss: ${bestScalp.stopLossPrice}\n${bestScalp.momentum}`
-                 }
-              });
-              
-              // Simpan ke riwayat peringatan
+        // 1. Selalu simpan ke riwayat peringatan (Notification Center UI)
+        for (const bestScalp of parsed.scalpingOpportunities) {
+           try {
               await db.collection("cryptoAlerts").add({
                  title: `Peluang Scalping: ${bestScalp.symbol}`,
                  body: `Target: ${bestScalp.targetPrice} | Stop Loss: ${bestScalp.stopLossPrice}\n${bestScalp.momentum}`,
@@ -291,7 +345,25 @@ Buatkan laporan JSON yang komprehensif, actionable, dan jujur!
                  momentum: bestScalp.momentum,
                  createdAt: admin.firestore.FieldValue.serverTimestamp()
               });
+           } catch (alertErr) {
+              console.error("Failed to save cryptoAlerts:", alertErr);
+           }
+        }
 
+        // 2. Coba kirim Push Notification FCM
+        try {
+           const tokensSnap = await db.collection("admin_fcm_tokens").get();
+           const tokens = tokensSnap.docs.map(d => d.data().token);
+           if (tokens.length > 0) {
+              for (const bestScalp of parsed.scalpingOpportunities) {
+                 await admin.messaging().sendEachForMulticast({
+                    tokens: tokens,
+                    notification: {
+                       title: `🚨 Peluang Scalping: ${bestScalp.symbol}`,
+                       body: `Target: ${bestScalp.targetPrice} | Stop Loss: ${bestScalp.stopLossPrice}\n${bestScalp.momentum}`
+                    }
+                 });
+              }
               console.log("Push notifications sent to admins.");
            }
         } catch (fcmErr) {
