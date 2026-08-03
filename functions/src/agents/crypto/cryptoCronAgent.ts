@@ -46,105 +46,103 @@ export const cryptoCronAgent = onSchedule(
     let finalEvaluatedScalps: any[] = [];
     
     try {
-      const prevSnapshot = await db.collection("cryptoReports")
-        .orderBy("createdAt", "desc")
-        .limit(1)
+      // PHASE 1: EVALUATE PENDING TRADES
+      const pendingTradesSnap = await db.collection("cryptoActiveTrades")
+        .where("status", "==", "PENDING")
         .get();
         
-      if (!prevSnapshot.empty) {
-        previousReport = prevSnapshot.docs[0].data();
-        const prevScalps = previousReport.reportData?.scalpingOpportunities;
+      if (!pendingTradesSnap.empty) {
+        const pendingTrades = pendingTradesSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        let totalWins = 0;
+        let totalLosses = 0;
+        let totalPending = 0;
         
-        if (prevScalps && Array.isArray(prevScalps) && prevScalps.length > 0) {
-          // Fetch current prices for previous scalps to evaluate win/loss
+        const evaluatedScalpsPromises = pendingTrades.map(async (trade: any) => {
+          const target = parseFloat(trade.targetPrice);
+          const sl = parseFloat(trade.stopLossPrice);
+          let status = "PENDING";
+          let currentPrice = 0;
+          
           try {
-            const symbols = prevScalps.map((s: any) => s.symbol.replace(/[^A-Z0-9]/g, '') + 'USDT');
-            let totalWins = 0;
-            let totalLosses = 0;
-            let totalPending = 0;
-
-            const evaluatedScalpsPromises = prevScalps.map(async (scalp: any) => {
-              const target = parseFloat(scalp.targetPrice);
-              const sl = parseFloat(scalp.stopLossPrice);
-              const entry = parseFloat(scalp.entryPrice);
-              let status = "PENDING";
-              let currentPrice = 0;
-              
-              try {
-                // Ambil Klines histori 4 jam ke belakang dengan interval 1 menit untuk akurasi tertinggi
-                const klinesRes = await axios.get(`https://api.binance.com/api/v3/klines?symbol=${scalp.symbol}&interval=1m&limit=240`);
-                const klines = klinesRes.data;
-                
-                if (klines && klines.length > 0) {
-                   currentPrice = parseFloat(klines[klines.length - 1][4]); // Close price terakhir
-                   
-                   if (target > 0 && sl > 0) {
-                      // Asumsi Long Position: Cek kronologis per 1m candle
-                      for (const candle of klines) {
-                         const high = parseFloat(candle[2]);
-                         const low = parseFloat(candle[3]);
-                         
-                         if (low <= sl) {
-                            status = "LOSS";
-                            break; // Stop loss kena duluan
-                         } else if (high >= target) {
-                            status = "WIN";
-                            break; // Target kena duluan
-                         }
-                      }
-                   }
-                }
-              } catch (e) {
-                 console.error("Gagal mengambil klines untuk " + scalp.symbol, e);
-              }
-              
-              if (status === "WIN") totalWins++;
-              else if (status === "LOSS") totalLosses++;
-              else totalPending++;
-
-              return {
-                symbol: scalp.symbol,
-                entryPrice: entry,
-                targetPrice: target,
-                stopLossPrice: sl,
-                currentPrice,
-                status
-              };
-            });
+            // Ambil Klines histori 4 jam ke belakang (240 menit)
+            // Karena cron berjalan tiap 4 jam, ini cukup untuk memantau pergerakan terbaru
+            const klinesRes = await axios.get(`https://api.binance.com/api/v3/klines?symbol=${trade.symbol}&interval=1m&limit=240`);
+            const klines = klinesRes.data;
             
-            const evaluatedScalps = await Promise.all(evaluatedScalpsPromises);
-            finalEvaluatedScalps = evaluatedScalps;
-            
-            const totalFinished = totalWins + totalLosses;
-            const winRate = totalFinished > 0 ? ((totalWins / totalFinished) * 100).toFixed(2) + "%" : "N/A";
+            if (klines && klines.length > 0) {
+               currentPrice = parseFloat(klines[klines.length - 1][4]); 
+               
+               if (target > 0 && sl > 0) {
+                  for (const candle of klines) {
+                     const high = parseFloat(candle[2]);
+                     const low = parseFloat(candle[3]);
+                     
+                     if (trade.direction === "SHORT") {
+                        if (high >= sl) { status = "LOSS"; break; } 
+                        else if (low <= target) { status = "WIN"; break; }
+                     } else { // LONG
+                        if (low <= sl) { status = "LOSS"; break; } 
+                        else if (high >= target) { status = "WIN"; break; }
+                     }
+                  }
+               }
+            }
+          } catch (e) {
+             console.error("Gagal mengambil klines untuk " + trade.symbol, e);
+          }
+          
+          if (status === "WIN") totalWins++;
+          else if (status === "LOSS") totalLosses++;
+          else totalPending++;
+          
+          // Update status di Firestore jika sudah tidak PENDING
+          if (status !== "PENDING") {
+             await db.collection("cryptoActiveTrades").doc(trade.id).update({
+                status,
+                resolvedAt: admin.firestore.FieldValue.serverTimestamp(),
+                resolvedPrice: currentPrice
+             });
+          }
 
-            previousScalpingStatus = `
-Evaluasi Kinerja Scalping (Otomatis Dihitung oleh Sistem):
-- Total Sinyal: ${prevScalps.length}
-- WIN (Hit Target): ${totalWins}
-- LOSS (Hit Stoploss): ${totalLosses}
-- PENDING (Floating): ${totalPending}
-- WIN RATE: ${winRate}
+          return {
+            symbol: trade.symbol,
+            entryPrice: trade.entryPrice,
+            targetPrice: target,
+            stopLossPrice: sl,
+            direction: trade.direction || "LONG",
+            currentPrice,
+            status
+          };
+        });
+        
+        finalEvaluatedScalps = await Promise.all(evaluatedScalpsPromises);
+        
+        const totalFinished = totalWins + totalLosses;
+        const winRate = totalFinished > 0 ? ((totalWins / totalFinished) * 100).toFixed(2) + "%" : "N/A";
+
+        previousScalpingStatus = `
+Evaluasi Kinerja Scalping (Otomatis Dihitung oleh Sistem dari Active Trades):
+- Total Sinyal Dievaluasi: ${pendingTrades.length}
+- WIN BARU (Hit Target): ${totalWins}
+- LOSS BARU (Hit Stoploss): ${totalLosses}
+- MASIH PENDING (Floating): ${totalPending}
+- WIN RATE (Sesi Ini): ${winRate}
 
 Rincian Evaluasi:
-${JSON.stringify(evaluatedScalps, null, 2)}
+${JSON.stringify(finalEvaluatedScalps, null, 2)}
 
 (Tugas Anda: Analisis secara singkat mengapa sinyal WIN berhasil dan mengapa LOSS gagal berdasarkan pergerakan market terbaru di bagian 'selfCorrection'. JANGAN hitung ulang Win Rate, gunakan data di atas.)`;
-            
-            // Simpan akumulasi metrik ini ke koleksi terpisah untuk dibaca oleh Copilot
-            await db.collection("cryptoPerformanceMetrics").doc("global_stats").set({
-               totalWins: admin.firestore.FieldValue.increment(totalWins),
-               totalLosses: admin.firestore.FieldValue.increment(totalLosses),
-               lastUpdated: admin.firestore.FieldValue.serverTimestamp()
-            }, { merge: true });
-
-          } catch (e) {
-            console.error("Failed to fetch current prices for evaluation", e);
-          }
+        
+        if (totalWins > 0 || totalLosses > 0) {
+           await db.collection("cryptoPerformanceMetrics").doc("global_stats").set({
+              totalWins: admin.firestore.FieldValue.increment(totalWins),
+              totalLosses: admin.firestore.FieldValue.increment(totalLosses),
+              lastUpdated: admin.firestore.FieldValue.serverTimestamp()
+           }, { merge: true });
         }
       }
     } catch (e) {
-      console.log("No previous report found for correction", e);
+      console.log("No pending trades found for evaluation", e);
     }
 
     const client = new OpenAI({
@@ -180,7 +178,8 @@ Output Anda WAJIB berupa JSON rapi tanpa markdown block (seperti \`\`\`json):
   "scalpingOpportunities": [
      {
        "symbol": "Nama Koin",
-       "momentum": "Alasan memilih koin ini. WAJIB gabungkan data 'setupReasoning' (dari sistem) dengan analisis teknikal & berita Anda sendiri.",
+       "direction": "LONG atau SHORT",
+       "momentum": "Alasan memilih koin ini (gabungkan setupReasoning). Jika SHORT, jelaskan kenapa berpotensi turun.",
        "entryPrice": 65000.0,
        "targetPrice": 66000.0,
        "stopLossPrice": 64500.0,
@@ -237,6 +236,8 @@ ${JSON.stringify(scalpingCandidatesData, null, 2)}
 Proyeksi Anda Sebelumnya (Untuk Evaluasi Akurasi, bandingkan dengan harga terkini!):
 ${previousReport ? JSON.stringify(previousReport.projection) + "\\nSinyal Koin Sebelumnya: " + JSON.stringify(previousReport.coinsAnalysis) : "Tidak ada data sebelumnya."}
 
+PENTING: Untuk 'scalpingOpportunities', WAJIB perhatikan 'setupDirection' dari Data Koin. Jika 'SHORT', maka TargetPrice HARUS LEBIH KECIL dari EntryPrice, dan StopLoss HARUS LEBIH BESAR. 
+Gunakan nilai ATR (Average True Range) yang tersedia di data koin untuk menentukan jarak Stop Loss agar terhindar dari volatilitas liar (Whipsaw)!
 Buatkan laporan JSON yang komprehensif, actionable, dan jujur!
 `;
 
@@ -333,33 +334,50 @@ ${JSON.stringify(scalpingCandidatesData, null, 2)}`;
       
       // Simpan Riwayat Peringatan & Kirim Push Notification ke Admin
       if (parsed.scalpingOpportunities && parsed.scalpingOpportunities.length > 0) {
-        // 1. Selalu simpan ke riwayat peringatan (Notification Center UI)
+        
+        // PHASE 2: INJECT NEW TRADES TO ACTIVE TRADES
         for (const bestScalp of parsed.scalpingOpportunities) {
            try {
+              // 1. Simpan ke active trades
+              await db.collection("cryptoActiveTrades").add({
+                 symbol: bestScalp.symbol,
+                 direction: bestScalp.direction || "LONG",
+                 entryPrice: bestScalp.entryPrice,
+                 targetPrice: bestScalp.targetPrice,
+                 stopLossPrice: bestScalp.stopLossPrice,
+                 momentum: bestScalp.momentum,
+                 status: "PENDING",
+                 createdAt: admin.firestore.FieldValue.serverTimestamp()
+              });
+
+              // 2. Simpan ke riwayat peringatan (Notification Center UI)
+              const dirBadge = bestScalp.direction === "SHORT" ? "🔴 SHORT" : "🟢 LONG";
               await db.collection("cryptoAlerts").add({
-                 title: `Peluang Scalping: ${bestScalp.symbol}`,
+                 title: `Peluang Scalping [${dirBadge}]: ${bestScalp.symbol}`,
                  body: `Target: ${bestScalp.targetPrice} | Stop Loss: ${bestScalp.stopLossPrice}\n${bestScalp.momentum}`,
                  symbol: bestScalp.symbol,
+                 direction: bestScalp.direction || "LONG",
                  targetPrice: bestScalp.targetPrice,
                  stopLossPrice: bestScalp.stopLossPrice,
                  momentum: bestScalp.momentum,
                  createdAt: admin.firestore.FieldValue.serverTimestamp()
               });
            } catch (alertErr) {
-              console.error("Failed to save cryptoAlerts:", alertErr);
+              console.error("Failed to save cryptoAlerts / activeTrades:", alertErr);
            }
         }
 
-        // 2. Coba kirim Push Notification FCM
+        // 3. Coba kirim Push Notification FCM
         try {
            const tokensSnap = await db.collection("admin_fcm_tokens").get();
            const tokens = tokensSnap.docs.map(d => d.data().token);
            if (tokens.length > 0) {
               for (const bestScalp of parsed.scalpingOpportunities) {
+                 const dirBadge = bestScalp.direction === "SHORT" ? "🔴 SHORT" : "🟢 LONG";
                  await admin.messaging().sendEachForMulticast({
                     tokens: tokens,
                     notification: {
-                       title: `🚨 Peluang Scalping: ${bestScalp.symbol}`,
+                       title: `🚨 Peluang Scalping [${dirBadge}]: ${bestScalp.symbol}`,
                        body: `Target: ${bestScalp.targetPrice} | Stop Loss: ${bestScalp.stopLossPrice}\n${bestScalp.momentum}`
                     }
                  });

@@ -136,9 +136,14 @@ export default function ScalpingRadarPage() {
                             </div>
                             <div>
                                <h3 className="text-2xl font-black text-white">{scalp.symbol}</h3>
-                               <Badge className="bg-orange-500/10 text-orange-400 border border-orange-500/20 text-[10px] uppercase font-bold tracking-widest mt-1">
-                                 {scalp.confidenceScore} CONVICTION
-                               </Badge>
+                               <div className="flex flex-wrap gap-2 mt-2">
+                                 <Badge className={`border text-[10px] uppercase font-bold tracking-widest ${scalp.direction === 'SHORT' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'}`}>
+                                   {scalp.direction === 'SHORT' ? '🔴 SHORT' : '🟢 LONG'}
+                                 </Badge>
+                                 <Badge className="bg-orange-500/10 text-orange-400 border border-orange-500/20 text-[10px] uppercase font-bold tracking-widest">
+                                   {scalp.confidenceScore} CONVICTION
+                                 </Badge>
+                               </div>
                             </div>
                          </div>
                          

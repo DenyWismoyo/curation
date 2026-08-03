@@ -9,8 +9,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import ReactMarkdown from "react-markdown";
-import { Loader2, Activity, Bot, TrendingUp, Zap, Calendar, Clock, Target, ShieldAlert, BarChart3, LineChart, Anchor, Bell, BellRing, Globe, Sunrise, RotateCcw, Sun, CalendarDays, Diamond, Eye, Radar, Flame } from "lucide-react";
+import { Loader2, Activity, Bot, TrendingUp, Zap, Calendar, Clock, Target, ShieldAlert, BarChart3, LineChart, Anchor, Bell, BellRing, Globe, Sunrise, RotateCcw, Sun, CalendarDays, Diamond, Eye, Radar, Flame, Menu } from "lucide-react";
 import CryptoChat from "@/components/crypto/CryptoChat";
 import CryptoCandlestick from "@/components/crypto/CryptoCandlestick";
 import CryptoLiveTicker from "@/components/crypto/CryptoLiveTicker";
@@ -90,6 +91,79 @@ export default function CryptoReportPage() {
      setIsChatOpen(true);
   };
 
+  const renderActionButtons = (isMobile = false) => (
+    <>
+      {notificationPermissionStatus !== 'granted' && (
+        <Button 
+          onClick={requestPermissionAndGetToken}
+          disabled={fcmLoading}
+          variant="outline"
+          className={`rounded-xl px-4 py-2.5 h-auto text-sm font-semibold bg-white dark:bg-slate-900 border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-all ${!isMobile ? 'shrink-0' : 'w-full justify-start'}`}
+        >
+          {fcmLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Bell className="w-4 h-4 mr-2" />}
+          Notifikasi
+        </Button>
+      )}
+      {notificationPermissionStatus === 'granted' && (
+        <Button 
+          disabled
+          variant="outline"
+          className={`rounded-xl px-4 py-2.5 h-auto text-sm font-semibold bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 opacity-100 ${!isMobile ? 'shrink-0' : 'w-full justify-start'}`}
+        >
+          <BellRing className="w-4 h-4 mr-2" />
+          Notifikasi Aktif
+        </Button>
+      )}
+      <Link href="/crypto-report/smart-money" className={!isMobile ? 'shrink-0' : 'w-full'}>
+        <Button 
+          className={`w-full rounded-xl px-4 py-2.5 h-auto text-sm font-semibold bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-md shadow-purple-500/20 hover:shadow-purple-500/40 transition-all ${isMobile ? 'justify-start' : 'hover:-translate-y-0.5'}`}
+        >
+          <Eye className="w-4 h-4 mr-2" />
+          Smart Money
+        </Button>
+      </Link>
+      <Link href="/crypto-report/liquidity" className={!isMobile ? 'shrink-0' : 'w-full'}>
+        <Button 
+          className={`w-full rounded-xl px-4 py-2.5 h-auto text-sm font-semibold bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white shadow-md shadow-blue-500/20 hover:shadow-blue-500/40 transition-all ${isMobile ? 'justify-start' : 'hover:-translate-y-0.5'}`}
+        >
+          <Radar className="w-4 h-4 mr-2" />
+          Liquidity Heatmap
+        </Button>
+      </Link>
+      <Link href="/crypto-report/danger-zone" className={!isMobile ? 'shrink-0' : 'w-full'}>
+        <Button 
+          className={`w-full rounded-xl px-4 py-2.5 h-auto text-sm font-semibold bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-700 hover:to-rose-800 text-white shadow-md shadow-red-500/20 hover:shadow-red-500/40 transition-all ${isMobile ? 'justify-start' : 'hover:-translate-y-0.5'}`}
+        >
+          <Flame className="w-4 h-4 mr-2" />
+          Danger Zone
+        </Button>
+      </Link>
+      <Link href="/crypto-report/hidden-gems" className={!isMobile ? 'shrink-0' : 'w-full'}>
+        <Button 
+          className={`w-full rounded-xl px-4 py-2.5 h-auto text-sm font-semibold bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-md shadow-emerald-500/20 hover:shadow-emerald-500/40 transition-all ${isMobile ? 'justify-start' : 'hover:-translate-y-0.5'}`}
+        >
+          <Diamond className="w-4 h-4 mr-2 fill-current" />
+          Hidden Gems
+        </Button>
+      </Link>
+      <Link href="/crypto-report/scalping-radar" className={!isMobile ? 'shrink-0' : 'w-full'}>
+        <Button 
+          className={`w-full rounded-xl px-4 py-2.5 h-auto text-sm font-semibold bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white shadow-md shadow-orange-500/20 hover:shadow-orange-500/40 transition-all ${isMobile ? 'justify-start' : 'hover:-translate-y-0.5'}`}
+        >
+          <Zap className="w-4 h-4 mr-2 fill-current" />
+          Scalping Radar
+        </Button>
+      </Link>
+      <Button 
+        onClick={() => setIsChatOpen(true)}
+        className={`rounded-xl px-5 py-2.5 h-auto text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-600/20 hover:shadow-indigo-600/40 transition-all ${!isMobile ? 'shrink-0 hover:-translate-y-0.5' : 'w-full justify-start mt-2'}`}
+      >
+        <Bot className="w-4 h-4 mr-2" />
+        Hedge Fund Copilot
+      </Button>
+    </>
+  );
+
   return (
     <div className="min-h-screen bg-slate-50/50 dark:bg-slate-950/50 pb-20">
       <div className="w-full mx-auto py-8 px-4 sm:px-6 lg:px-8">
@@ -111,77 +185,33 @@ export default function CryptoReportPage() {
           </div>
           
           
-          <div className="flex overflow-x-auto no-scrollbar gap-3 pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:pb-0 sm:flex-wrap">
+          {/* Desktop View */}
+          <div className="hidden sm:flex overflow-x-auto no-scrollbar gap-3 sm:flex-wrap items-center">
              <CryptoAlertsWidget />
-             
-             {notificationPermissionStatus !== 'granted' && (
-                <Button 
-                  onClick={requestPermissionAndGetToken}
-                  disabled={fcmLoading}
-                  variant="outline"
-                  className="rounded-xl px-4 py-2.5 h-auto text-sm font-semibold bg-white dark:bg-slate-900 border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-all shrink-0"
-                >
-                  {fcmLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Bell className="w-4 h-4 mr-2" />}
-                  Notifikasi
-                </Button>
-             )}
-             {notificationPermissionStatus === 'granted' && (
-                <Button 
-                  disabled
-                  variant="outline"
-                  className="rounded-xl px-4 py-2.5 h-auto text-sm font-semibold bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 opacity-100 shrink-0"
-                >
-                  <BellRing className="w-4 h-4 mr-2" />
-                  Notifikasi Aktif
-                </Button>
-             )}
-             <Link href="/crypto-report/smart-money" className="shrink-0">
-               <Button 
-                 className="w-full rounded-xl px-4 py-2.5 h-auto text-sm font-semibold bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-md shadow-purple-500/20 hover:shadow-purple-500/40 transition-all hover:-translate-y-0.5"
-               >
-                 <Eye className="w-4 h-4 mr-2" />
-                 Smart Money
-               </Button>
-             </Link>
-             <Link href="/crypto-report/liquidity" className="shrink-0">
-               <Button 
-                 className="w-full rounded-xl px-4 py-2.5 h-auto text-sm font-semibold bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white shadow-md shadow-blue-500/20 hover:shadow-blue-500/40 transition-all hover:-translate-y-0.5"
-               >
-                 <Radar className="w-4 h-4 mr-2" />
-                 Liquidity Heatmap
-               </Button>
-             </Link>
-             <Link href="/crypto-report/danger-zone" className="shrink-0">
-               <Button 
-                 className="w-full rounded-xl px-4 py-2.5 h-auto text-sm font-semibold bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-700 hover:to-rose-800 text-white shadow-md shadow-red-500/20 hover:shadow-red-500/40 transition-all hover:-translate-y-0.5"
-               >
-                 <Flame className="w-4 h-4 mr-2" />
-                 Danger Zone
-               </Button>
-             </Link>
-             <Link href="/crypto-report/hidden-gems" className="shrink-0">
-               <Button 
-                 className="w-full rounded-xl px-4 py-2.5 h-auto text-sm font-semibold bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-md shadow-emerald-500/20 hover:shadow-emerald-500/40 transition-all hover:-translate-y-0.5"
-               >
-                 <Diamond className="w-4 h-4 mr-2 fill-current" />
-                 Hidden Gems
-               </Button>
-             </Link>
-             <Link href="/crypto-report/scalping-radar" className="shrink-0">
-               <Button 
-                 className="w-full rounded-xl px-4 py-2.5 h-auto text-sm font-semibold bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white shadow-md shadow-orange-500/20 hover:shadow-orange-500/40 transition-all hover:-translate-y-0.5"
-               >
-                 <Zap className="w-4 h-4 mr-2 fill-current" />
-                 Scalping Radar
-               </Button>
-             </Link>
-             <Button 
-               onClick={() => setIsChatOpen(true)}
-               className="rounded-xl px-5 py-2.5 h-auto text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-600/20 hover:shadow-indigo-600/40 transition-all hover:-translate-y-0.5 shrink-0"
-             >
-               <Bot className="w-4 h-4 mr-2" />
-               Hedge Fund Copilot
-             </Button>
+             {renderActionButtons(false)}
+          </div>
+
+          {/* Mobile View */}
+          <div className="flex sm:hidden items-center justify-between gap-3 w-full mt-2">
+             <CryptoAlertsWidget />
+             <Sheet>
+               <SheetTrigger asChild>
+                 <Button variant="outline" size="icon" className="rounded-xl shrink-0 border-indigo-200 text-indigo-600 bg-indigo-50/50 dark:bg-indigo-950/30 dark:border-indigo-800 dark:text-indigo-400">
+                   <Menu className="w-5 h-5" />
+                 </Button>
+               </SheetTrigger>
+               <SheetContent side="bottom" className="rounded-t-3xl border-t border-slate-200 dark:border-slate-800 pb-10 max-h-[85vh] overflow-y-auto">
+                 <SheetHeader className="mb-6 text-left">
+                   <SheetTitle className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+                     <Activity className="w-5 h-5 text-indigo-500" />
+                     Menu Intelijen
+                   </SheetTitle>
+                 </SheetHeader>
+                 <div className="flex flex-col gap-3">
+                   {renderActionButtons(true)}
+                 </div>
+               </SheetContent>
+             </Sheet>
           </div>
         </div>
 
@@ -353,7 +383,9 @@ export default function CryptoReportPage() {
                                             <h4 className="flex items-center gap-2 text-indigo-300 font-bold text-sm uppercase tracking-widest mb-3">
                                                <RotateCcw className="w-4 h-4"/> Recap Kemarin
                                             </h4>
-                                            <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap">{data.dailyRecap}</p>
+                                            <div className="prose prose-sm prose-invert max-w-none text-slate-300 leading-relaxed">
+                                              <ReactMarkdown>{data.dailyRecap}</ReactMarkdown>
+                                            </div>
                                          </div>
                                       )}
                                       
@@ -363,7 +395,9 @@ export default function CryptoReportPage() {
                                             <h4 className="flex items-center gap-2 text-amber-400 font-bold text-sm uppercase tracking-widest mb-3 relative z-10">
                                                <Sun className="w-4 h-4"/> Insight Hari Ini
                                             </h4>
-                                            <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap relative z-10">{data.dailyProjection}</p>
+                                            <div className="prose prose-sm prose-invert max-w-none text-slate-300 leading-relaxed relative z-10">
+                                              <ReactMarkdown>{data.dailyProjection}</ReactMarkdown>
+                                            </div>
                                          </div>
                                       )}
                                       
@@ -372,7 +406,9 @@ export default function CryptoReportPage() {
                                             <h4 className="flex items-center gap-2 text-indigo-300 font-bold text-sm uppercase tracking-widest mb-3">
                                                <CalendarDays className="w-4 h-4"/> Kalender Makro & Naratif
                                             </h4>
-                                            <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap">{data.dailyCalendarSummary}</p>
+                                            <div className="prose prose-sm prose-invert max-w-none text-slate-300 leading-relaxed">
+                                              <ReactMarkdown>{data.dailyCalendarSummary}</ReactMarkdown>
+                                            </div>
                                          </div>
                                       )}
                                    </div>

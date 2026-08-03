@@ -651,6 +651,11 @@ service cloud.firestore {
       allow write: if false;
     }
     
+    match /cryptoActiveTrades/{document=**} {
+      allow read: if isSuperAdmin() || isAdminCSRS() || isAdminOmnifit() || isAdminCrypto() || (request.auth != null && request.auth.token.get('role', '') != '' && request.auth.token.get('role', '').matches('^admin.*'));
+      allow write: if false; // Hanya Cloud Functions
+    }
+    
     match /cryptoCopilotChats/{chatId} {
       allow read, write: if isAuthenticated() && (resource == null || resource.data.userId == request.auth.uid || isSuperAdmin() || isAdminCSRS() || isAdminOmnifit());
       

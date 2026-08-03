@@ -1,5 +1,5 @@
 import { HttpsError } from "firebase-functions/v2/https";
-import { MACD, EMA, BollingerBands } from "technicalindicators";
+import { MACD, EMA, BollingerBands, ATR } from "technicalindicators";
 
 export interface CryptoMarketData {
   symbol: string;
@@ -19,7 +19,9 @@ export interface CryptoMarketData {
   bb?: { lower?: number; middle?: number; upper?: number } | null;
   fundingRate?: number | null;
   longShortRatio?: number | null;
+  atr?: number | null;
   setupScore?: number;
+  setupDirection?: "LONG" | "SHORT" | "NEUTRAL";
   setupReasoning?: string;
 }
 
@@ -76,45 +78,72 @@ const calculateIndicators = (klinesData: any[]): Partial<CryptoMarketData> => {
     if (bbData.length > 0) bb = bbData[bbData.length - 1];
   }
 
-  return { rsi14, macd: macdResult as any, ema50, ema200, bb: bb as any };
+  let atr = null;
+  if (klinesData.length >= 14) {
+    const high = klinesData.map(k => parseFloat(k.high));
+    const low = klinesData.map(k => parseFloat(k.low));
+    const close = closes;
+    const atrData = ATR.calculate({ high, low, close, period: 14 });
+    if (atrData.length > 0) atr = atrData[atrData.length - 1];
+  }
+
+  return { rsi14, macd: macdResult as any, ema50, ema200, bb: bb as any, atr };
 };
 
 // Algoritma Screener 3.0 (Multi-Factor Scoring Model)
-const calculateSetupScore = (coin: CryptoMarketData): { score: number, reasoning: string } => {
+const calculateSetupScore = (coin: CryptoMarketData): { score: number, direction: "LONG" | "SHORT" | "NEUTRAL", reasoning: string } => {
   let score = 0;
   let reasons: string[] = [];
+  let longWeight = 0;
+  let shortWeight = 0;
   
-  if (!coin.klines || coin.klines.length === 0) return { score: 0, reasoning: "No data" };
+  if (!coin.klines || coin.klines.length === 0) return { score: 0, direction: "NEUTRAL", reasoning: "No data" };
   const currentPrice = parseFloat(coin.klines[coin.klines.length - 1].close);
   
+  if (coin.atr) {
+     reasons.push(`ATR (Volatilitas): ${coin.atr.toFixed(4)}`);
+  }
+
   // 1. Trend Alignment Score (25%)
   if (coin.ema50 && coin.ema200) {
      if (coin.ema50 > coin.ema200) {
-        score += 15; // Bullish macro
+        score += 15;
+        longWeight += 2;
         reasons.push("Bullish Macro (EMA50 > EMA200)");
         
         // Bounce on EMA50
         if (currentPrice > coin.ema50 && currentPrice < coin.ema50 * 1.02) {
            score += 10;
+           longWeight += 1;
            reasons.push("Perfect bounce di EMA50");
         }
      } else {
-        // Bearish macro (we can look for short squeeze)
+        score += 15;
+        shortWeight += 2;
         reasons.push("Bearish Macro (EMA50 < EMA200)");
+        
+        // Rejection at EMA50
+        if (currentPrice < coin.ema50 && currentPrice > coin.ema50 * 0.98) {
+           score += 10;
+           shortWeight += 1;
+           reasons.push("Rejection di EMA50 (Potensi lanjut turun)");
+        }
      }
   }
 
   // 2. Squeeze & Volatility Score (25%)
   if (coin.bb && coin.bb.upper && coin.bb.lower && coin.bb.middle) {
      const bbWidth = (coin.bb.upper - coin.bb.lower) / coin.bb.middle;
-     if (bbWidth < 0.05) { // Very tight squeeze
+     if (bbWidth < 0.05) { 
         score += 25;
         reasons.push("Bollinger Squeeze Ekstrem (Potensi Breakout Kuat)");
      } else if (currentPrice < coin.bb.lower) {
         score += 15;
+        longWeight += 2;
         reasons.push("Oversold Ekstrem di bawah BB Lower (Potensi Mean Reversion LONG)");
      } else if (currentPrice > coin.bb.upper) {
         score += 15;
+        shortWeight += 2;
         reasons.push("Overbought Ekstrem di atas BB Upper (Potensi Mean Reversion SHORT)");
      }
   }
@@ -126,41 +155,49 @@ const calculateSetupScore = (coin: CryptoMarketData): { score: number, reasoning
      const lastVol = parseFloat(coin.klines[coin.klines.length - 1].volume);
      if (lastVol > avgVol * 2.5) {
         score += 25;
-        reasons.push(`Volume Anomaly 2.5x rata-rata (Whale Footprint / Uang besar masuk)`);
+        reasons.push(`Volume Anomaly 2.5x rata-rata`);
      } else if (lastVol > avgVol * 1.5) {
         score += 10;
-        reasons.push("Volume meningkat di atas rata-rata");
+        reasons.push("Volume meningkat");
      }
   }
 
   // 4. Derivative Sentiment Score (25%)
   if (coin.fundingRate !== undefined && coin.fundingRate !== null) {
-     if (coin.fundingRate < -0.05) { // Sangat negatif, retail heavily shorting
+     if (coin.fundingRate < -0.05) { 
         score += 15;
-        reasons.push("Funding Rate sangat negatif (High probability SHORT SQUEEZE)");
+        longWeight += 2; // Short squeeze is a long play
+        reasons.push("Funding Rate sangat negatif (High probability SHORT SQUEEZE - LONG)");
      } else if (coin.fundingRate > 0.05) {
         score += 10;
-        reasons.push("Funding Rate tinggi (Retail heavily long, hati-hati bull trap)");
+        shortWeight += 2;
+        reasons.push("Funding Rate tinggi (Retail heavily long, hati-hati bull trap - SHORT)");
      }
   }
   
   if (coin.longShortRatio !== undefined && coin.longShortRatio !== null) {
      if (coin.longShortRatio > 2.5) {
-        score += 10; // Biasa di-trade against
-        reasons.push("Long/Short Ratio > 2.5 (Retail over-long, potensi dip/drop tinggi)");
+        score += 10; 
+        shortWeight += 1;
+        reasons.push("Long/Short Ratio > 2.5 (Retail over-long, potensi dip/drop tinggi - SHORT)");
      } else if (coin.longShortRatio < 0.8) {
         score += 10;
-        reasons.push("Long/Short Ratio < 0.8 (Pesimisme retail tinggi, bagus untuk contrarian LONG)");
+        longWeight += 1;
+        reasons.push("Long/Short Ratio < 0.8 (Pesimisme retail tinggi, contrarian LONG)");
      }
   }
   
   // Bonus: RSI Extremes
   if (coin.rsi14) {
-     if (coin.rsi14 < 30) { score += 5; reasons.push("RSI Oversold (< 30)"); }
-     if (coin.rsi14 > 70) { score += 5; reasons.push("RSI Overbought (> 70)"); }
+     if (coin.rsi14 < 30) { score += 5; longWeight += 1; reasons.push("RSI Oversold (< 30)"); }
+     if (coin.rsi14 > 70) { score += 5; shortWeight += 1; reasons.push("RSI Overbought (> 70)"); }
   }
 
-  return { score, reasoning: reasons.join(", ") };
+  let finalDirection: "LONG" | "SHORT" | "NEUTRAL" = "NEUTRAL";
+  if (longWeight > shortWeight) finalDirection = "LONG";
+  else if (shortWeight > longWeight) finalDirection = "SHORT";
+
+  return { score, direction: finalDirection, reasoning: reasons.join(", ") };
 };
 
 export const fetchTrendingCoins = async (): Promise<string[]> => {
@@ -397,6 +434,7 @@ export const gatherCryptoMarketData = async (isWeekly = false): Promise<{
      .map((k) => {
         const setup = calculateSetupScore(k);
         k.setupScore = setup.score;
+        k.setupDirection = setup.direction;
         k.setupReasoning = setup.reasoning;
         return k;
      })

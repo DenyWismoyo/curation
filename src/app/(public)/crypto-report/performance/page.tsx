@@ -38,22 +38,26 @@ export default function CryptoPerformancePage() {
            });
         }
 
-        // Fetch reports for history
-        const q = query(collection(db, "cryptoReports"), orderBy("createdAt", "desc"), limit(20));
+        // Fetch reports for history (dari Active Trades yang persisten)
+        const q = query(collection(db, "cryptoActiveTrades"), orderBy("createdAt", "desc"), limit(20));
         const snap = await getDocs(q);
         
         const allEvals: any[] = [];
         snap.forEach(docSnap => {
            const data = docSnap.data();
            const date = data.createdAt?.toDate ? data.createdAt.toDate().toLocaleString("id-ID") : "Unknown Date";
-           if (data.reportData && data.reportData.previousScalpingEvaluation) {
-              data.reportData.previousScalpingEvaluation.forEach((ev: any) => {
-                 allEvals.push({
-                   ...ev,
-                   date
-                 });
-              });
-           }
+           
+           let reason = "";
+           if (data.status === 'WIN') reason = `Harga menyentuh target ${data.targetPrice}`;
+           else if (data.status === 'LOSS') reason = `Harga mengenai Stop Loss ${data.stopLossPrice}`;
+           else reason = `Sedang berjalan (Target: ${data.targetPrice} | SL: ${data.stopLossPrice})`;
+           
+           allEvals.push({
+             symbol: data.symbol,
+             status: data.status,
+             reason: reason,
+             date
+           });
         });
 
         setHistory(allEvals);
