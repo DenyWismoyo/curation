@@ -116,6 +116,8 @@ export { requestChapterRevision, generateRevisionMaterials } from './agents/stud
 export { exportStudyDocument } from './agents/study/exportService'
 export { studyProjectOrchestrator } from './pipelines/study/orchestrator'
 export { studyChapterOrchestrator } from './pipelines/study/chapterOrchestrator'
+export { cryptoCronAgent } from './agents/crypto/cryptoCronAgent'
+export { cryptoCopilotChat } from './agents/crypto/cryptoCopilotAgent'
 
 // ============================================================================
 // INISIALISASI FIREBASE

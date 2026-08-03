@@ -603,6 +603,17 @@ service cloud.firestore {
       allow write: if isSuperAdmin() || isAdminCSRS(); 
     }
     
+    // ATURAN BARU UNTUK CRYPTO REPORTS & ALERTS
+    match /cryptoReports/{document=**} {
+      allow read: if isSuperAdmin() || isAdminCSRS() || isAdminOmnifit() || (request.auth != null && request.auth.token.get('role', '') != '' && request.auth.token.role.matches('^admin.*'));
+      allow write: if false; // Hanya Cloud Functions (Backend) yang boleh menulis
+    }
+    
+    match /cryptoAlerts/{document=**} {
+      allow read: if isSuperAdmin() || isAdminCSRS() || isAdminOmnifit() || (request.auth != null && request.auth.token.get('role', '') != '' && request.auth.token.role.matches('^admin.*'));
+      allow write: if false; // Hanya Cloud Functions (Backend) yang boleh menulis
+    }
+    
     match /{document=**} { allow read, write: if false; }
   }
 }

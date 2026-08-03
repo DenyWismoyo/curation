@@ -20,6 +20,7 @@
     "@google/generative-ai": "^0.24.1",
     "@react-pdf/renderer": "^4.5.1",
     "@sparticuz/chromium": "^149.0.0",
+    "axios": "^1.19.0",
     "docx": "^9.7.1",
     "firebase-admin": "^13.6.0",
     "firebase-functions": "^7.0.0",
@@ -30,6 +31,7 @@
     "puppeteer-core": "^25.1.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
+    "technicalindicators": "^3.1.0",
     "xendit-node": "^7.0.0",
     "xlsx": "^0.18.5",
     "zod": "^4.4.3"
