@@ -10,7 +10,9 @@ export type StudySource = {
   extractedText?: string;
   extractedCharCount?: number;
   chunkCount?: number;
+  status?: string;
 };
+
 
 export type StudyChapterPlan = {
   chapterId: string;

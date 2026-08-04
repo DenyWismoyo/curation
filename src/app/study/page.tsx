@@ -5,8 +5,9 @@ import Link from 'next/link';
 import { collection, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { httpsCallable } from 'firebase/functions';
-import { Loader2, BookOpenText, ShieldCheck, UploadCloud, Sparkles, FileText, Database, Globe, FileUp } from 'lucide-react';
-import { db, functions, storage } from '@/lib/firebase';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { Loader2, BookOpenText, ShieldCheck, UploadCloud, Sparkles, FileText, Database, Globe, FileUp, HardDrive } from 'lucide-react';
+import { auth, db, functions, storage } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
 
 type StudyProject = {
@@ -41,6 +42,11 @@ type StudyProject = {
 const ALLOWED_ROLES = new Set(['study_author', 'study_reviewer', 'admin_omnifit', 'admin_csrs']);
 const MANAGER_ROLES = new Set(['study_author', 'admin_omnifit', 'admin_csrs']);
 
+const extractDriveFileId = (url: string) => {
+  const match = url.match(/[-\w]{25,}/);
+  return match ? match[0] : null;
+};
+
 const sanitizeFileName = (value: string): string => value.replace(/[^a-zA-Z0-9._-]/g, '_');
 const getErrorMessage = (error: unknown, fallback: string): string => {
   if (error instanceof Error && error.message.trim()) {
@@ -67,6 +73,8 @@ export default function StudyWorkspacePage() {
   const [approvingOutline, setApprovingOutline] = useState(false);
   const [sourceNote, setSourceNote] = useState('');
   const [sources, setSources] = useState<any[]>([]);
+  const [driveUrl, setDriveUrl] = useState('');
+  const [importingDrive, setImportingDrive] = useState(false);
 
   const hasStudyAccess = (role ? ALLOWED_ROLES.has(role) : false) || isPremium;
   const canManageProjects = role ? MANAGER_ROLES.has(role) : false;
@@ -156,8 +164,7 @@ export default function StudyWorkspacePage() {
     }
   };
 
-  const handleUploadSource = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
+  const processSourceFiles = async (files: File[]) => {
     if (!files || files.length === 0 || !user || !selectedProjectId) {
       return;
     }
@@ -166,36 +173,110 @@ export default function StudyWorkspacePage() {
     setUploadingSource(true);
 
     try {
-      const uploadPromises = Array.from(files).map(async (file) => {
-        const safeName = sanitizeFileName(file.name);
-        const storagePath = `study_kb/${user.uid}/${selectedProjectId}/${Date.now()}_${Math.random().toString(36).substring(7)}_${safeName}`;
-        const storageRef = ref(storage, storagePath);
-        await uploadBytes(storageRef, file);
-        const downloadUrl = await getDownloadURL(storageRef);
+      const batchSize = 3;
+      for (let i = 0; i < files.length; i += batchSize) {
+        const batch = files.slice(i, i + batchSize);
+        await Promise.all(batch.map(async (file) => {
+          const safeName = sanitizeFileName(file.name);
+          const storagePath = `study_kb/${user.uid}/${selectedProjectId}/${Date.now()}_${Math.random().toString(36).substring(7)}_${safeName}`;
+          const storageRef = ref(storage, storagePath);
+          await uploadBytes(storageRef, file);
+          const downloadUrl = await getDownloadURL(storageRef);
 
-        const callable = httpsCallable(functions, 'registerStudySource');
-        await callable({
-          projectId: selectedProjectId,
-          title: file.name.replace(/\.[^.]+$/, ''),
-          kind: 'file',
-          storagePath,
-          downloadUrl,
-          contentType: file.type,
-          fileName: file.name,
-          fileSize: file.size,
-          summaryHint: sourceNote,
-        });
-      });
-
-      await Promise.all(uploadPromises);
+          const callable = httpsCallable(functions, 'registerStudySource');
+          await callable({
+            projectId: selectedProjectId,
+            title: file.name.replace(/\.[^.]+$/, ''),
+            kind: 'file',
+            storagePath,
+            downloadUrl,
+            contentType: file.type,
+            fileName: file.name,
+            fileSize: file.size,
+            summaryHint: sourceNote,
+          });
+        }));
+      }
 
       setSourceNote('');
-      event.target.value = '';
     } catch (uploadError: unknown) {
       console.error('Gagal upload source study:', uploadError);
       setError(getErrorMessage(uploadError, 'Gagal upload batch source knowledge base.'));
     } finally {
       setUploadingSource(false);
+    }
+  };
+
+  const handleUploadSource = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      await processSourceFiles(Array.from(event.target.files));
+      event.target.value = '';
+    }
+  };
+
+  const handleGoogleDriveImport = async () => {
+    if (!driveUrl.trim() || !user || !selectedProjectId) return;
+    
+    const fileId = extractDriveFileId(driveUrl);
+    if (!fileId) {
+      setError('Format URL Google Drive tidak valid.');
+      return;
+    }
+
+    setError('');
+    setImportingDrive(true);
+
+    try {
+      const provider = new GoogleAuthProvider();
+      provider.addScope('https://www.googleapis.com/auth/drive.readonly');
+      
+      const result = await signInWithPopup(auth, provider);
+      const credential = GoogleAuthProvider.credentialFromResult(result);
+      const token = credential?.accessToken;
+      
+      if (!token) {
+        throw new Error("Tidak bisa mendapatkan akses token Google Drive.");
+      }
+
+      const metaRes = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?fields=name,mimeType`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      if (!metaRes.ok) {
+        throw new Error("Gagal mengakses file Google Drive. Pastikan file ada dan izin memadai.");
+      }
+      
+      const metadata = await metaRes.json();
+      
+      let downloadUrl = `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`;
+      let fileName = metadata.name;
+      let mimeType = metadata.mimeType;
+
+      if (mimeType === 'application/vnd.google-apps.document') {
+        downloadUrl = `https://www.googleapis.com/drive/v3/files/${fileId}/export?mimeType=application/pdf`;
+        fileName = `${fileName}.pdf`;
+        mimeType = 'application/pdf';
+      }
+
+      const fileRes = await fetch(downloadUrl, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (!fileRes.ok) {
+        throw new Error("Gagal mendownload konten file dari Google Drive.");
+      }
+
+      const blob = await fileRes.blob();
+      const file = new File([blob], fileName, { type: mimeType });
+      
+      await processSourceFiles([file]);
+      setDriveUrl('');
+      
+    } catch (err: unknown) {
+      console.error('Gagal import dari Google Drive:', err);
+      setError(getErrorMessage(err, 'Gagal mengimpor dari Google Drive.'));
+    } finally {
+      setImportingDrive(false);
     }
   };
 
@@ -415,6 +496,27 @@ export default function StudyWorkspacePage() {
                 {uploadingSource ? <Loader2 className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4" />} Upload PDF/DOCX/TXT/CSV/XLSX pendukung
                 <input type="file" multiple className="hidden" onChange={handleUploadSource} disabled={!selectedProjectId || uploadingSource} />
               </label>
+
+              <div className="flex flex-col gap-2 mt-4">
+                <p className="text-[11px] font-black uppercase tracking-[0.15em] text-slate-500">Atau Import dari Google Drive</p>
+                <div className="flex gap-2">
+                  <input 
+                    type="url" 
+                    value={driveUrl} 
+                    onChange={(e) => setDriveUrl(e.target.value)} 
+                    placeholder="https://docs.google.com/document/d/..." 
+                    className="flex-1 h-11 rounded-xl border border-slate-200 px-3 text-sm" 
+                  />
+                  <button 
+                    type="button" 
+                    onClick={handleGoogleDriveImport} 
+                    disabled={!driveUrl.trim() || importingDrive || !selectedProjectId} 
+                    className="h-11 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black text-sm flex items-center justify-center gap-2 disabled:opacity-60 transition-colors"
+                  >
+                    {importingDrive ? <Loader2 className="w-4 h-4 animate-spin" /> : <HardDrive className="w-4 h-4" />} Import
+                  </button>
+                </div>
+              </div>
 
               <button type="button" onClick={handleStartPipeline} disabled={!selectedProjectId || startingPipeline} className="w-full h-11 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-black text-sm flex items-center justify-center gap-2 disabled:opacity-60">
                 {startingPipeline ? <Loader2 className="w-4 h-4 animate-spin" /> : <Database className="w-4 h-4" />} Jalankan Ingestion + Writer + Auditor

@@ -1,0 +1,28 @@
+[debug] [2026-08-04T23:10:14.495Z] ----------------------------------------------------------------------
+[debug] [2026-08-04T23:10:14.497Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\akuno\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\bin\firebase.js deploy --only functions
+[debug] [2026-08-04T23:10:14.498Z] CLI Version:   15.25.1
+[debug] [2026-08-04T23:10:14.498Z] Platform:      win32
+[debug] [2026-08-04T23:10:14.498Z] Node Version:  v24.16.0
+[debug] [2026-08-04T23:10:14.498Z] Detected Agent: antigravity
+[debug] [2026-08-04T23:10:14.498Z] Time:          Wed Aug 05 2026 06:10:14 GMT+0700 (Western Indonesia Time)
+[debug] [2026-08-04T23:10:14.498Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-08-04T23:10:15.875Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-08-04T23:10:15.875Z] > authorizing via signed-in user (deny.wismoyo@gmail.com)
+[debug] [2026-08-04T23:10:15.875Z] [iam] checking project teknopark-surakarta for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2026-08-04T23:10:15.884Z] Checked if tokens are valid: false, expires at: 1785883350310
+[debug] [2026-08-04T23:10:15.884Z] Checked if tokens are valid: false, expires at: 1785883350310
+[debug] [2026-08-04T23:10:15.884Z] > refreshing access token with scopes: []
+[debug] [2026-08-04T23:10:15.886Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-08-04T23:10:15.886Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-08-04T23:10:16.025Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-08-04T23:10:16.025Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-08-04T23:10:16.038Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions [none]
+[debug] [2026-08-04T23:10:16.039Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions  x-goog-user-project=teknopark-surakarta
+[debug] [2026-08-04T23:10:16.039Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2026-08-04T23:10:16.418Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions 200
+[debug] [2026-08-04T23:10:16.418Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2026-08-04T23:10:16.418Z] Checked if tokens are valid: true, expires at: 1785888615026
+[debug] [2026-08-04T23:10:16.418Z] Checked if tokens are valid: true, expires at: 1785888615026
+[debug] [2026-08-04T23:10:16.418Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/teknopark-surakarta/serviceAccounts/teknopark-surakarta@appspot.gserviceaccount.com:testIamPermissions [none]
+[debug] [2026-08-04T23:10:16.418Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/teknopark-surakarta/serviceAccounts/teknopark-surakarta@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}

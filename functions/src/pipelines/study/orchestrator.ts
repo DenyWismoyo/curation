@@ -74,12 +74,21 @@ export const studyProjectOrchestrator = onDocumentUpdated({
         bucket = admin.storage().bucket("teknopark-surakarta.firebasestorage.app");
       }
 
-      const sources = sourceSnap.docs.map(doc => ({ sourceId: doc.id, ...(doc.data() as Omit<StudySource, "sourceId">) })) as StudySource[];
+      const allSources = sourceSnap.docs.map(doc => ({ sourceId: doc.id, ...(doc.data() as Omit<StudySource, "sourceId">) })) as StudySource[];
+      const unindexedSources = allSources.filter(s => s.status !== "INDEXED");
       
-      for (const source of sources) {
+      for (const source of unindexedSources) {
         const extracted = await extractAndChunkSource(bucket, source);
         const previousChunkSnap = await projectRef.collection("vectors").where("sourceId", "==", source.sourceId).get();
-        await Promise.all(previousChunkSnap.docs.map((docSnap) => docSnap.ref.delete()));
+        
+        const deleteBatches = chunkArray(previousChunkSnap.docs, 500);
+        for (const batchDocs of deleteBatches) {
+          const deleteBatch = admin.firestore().batch();
+          for (const docSnap of batchDocs) {
+            deleteBatch.delete(docSnap.ref);
+          }
+          await deleteBatch.commit();
+        }
 
         // Batch proses chunk 25 per 25 agar tidak memblokir dan sangat cepat
         const chunkBatches = chunkArray(extracted.chunks, 25);
