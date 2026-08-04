@@ -6,7 +6,7 @@
 
 ## 📂 Daftar Dokumen
 
-### Untuk Pengguna & Calon Pelanggan
+### 👤 Untuk Pengguna & Calon Pelanggan
 
 | Dokumen | Deskripsi |
 |---------|-----------|
@@ -14,13 +14,23 @@
 | [🎓 Edukasi Pasar Kripto](./edukasi-pasar-kripto.md) | Panduan memahami kripto, indikator, dan manajemen risiko |
 | [🚀 Keunggulan Platform](./keunggulan-platform.md) | Keunggulan kompetitif vs platform lain, teknologi AI, roadmap |
 
-### Untuk Tim Teknis
+### 🛠️ Untuk Tim Teknis
 
 | Dokumen | Deskripsi |
 |---------|-----------|
 | [⚙️ Arsitektur Cron Jobs](./cron-jobs-architecture.md) | Alur kerja agen AI otomatis, jadwal, koleksi Firestore |
 | [🔒 Audit Keamanan](./audit-keamanan.md) | Celah yang ditemukan, perbaikan yang diterapkan, rekomendasi |
+
+### 🗺️ Untuk Founder & Strategi
+
+| Dokumen | Deskripsi |
+|---------|-----------|
 | [🗺️ Rencana Pengembangan](./rencana-pengembangan.md) | Visi 5 fase ke depan: Crypto Academy, AI v3, On-Chain, Mobile App |
+| [🔀 Rencana Alternatif](./rencana_alternative_pengembangan.md) | Plan B–E jika jalur utama menemui hambatan (pivot strategies) |
+| [📢 Rencana Pemasaran](./rencana_pemasaran.md) | Strategi marketing 90 hari: Twitter, Telegram, YouTube, SEO |
+| [💰 Rencana Keuangan](./rencana_keuangan.md) | Unit economics, proyeksi P&L, BEP, manajemen cash flow |
+| [🧠 Panduan Operasional Founder](./panduan_operasional_founder.md) | Rutinitas harian, sistem prioritas, penanganan krisis |
+| [⚖️ Regulasi & Kepatuhan](./regulasi_dan_kepatuhan.md) | Aspek legal: OJK, Bappebti, UU PDP, pajak, perizinan |
 
 ---
 
