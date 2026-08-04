@@ -8,30 +8,7 @@ import { withRetry } from "../../utils/retry";
 
 const deepseekApiKeySecret = defineSecret("DEEPSEEK_API_KEY");
 
-function calculateRSI(closes: number[], period = 14) {
-    if (closes.length < period + 1) return null;
-    let gains = 0;
-    let losses = 0;
-    for (let i = 1; i <= period; i++) {
-        const change = closes[i] - closes[i - 1];
-        if (change > 0) gains += change;
-        else losses -= change;
-    }
-    let avgGain = gains / period;
-    let avgLoss = losses / period;
-    
-    for (let i = period + 1; i < closes.length; i++) {
-        const change = closes[i] - closes[i - 1];
-        const gain = change > 0 ? change : 0;
-        const loss = change < 0 ? -change : 0;
-        avgGain = (avgGain * (period - 1) + gain) / period;
-        avgLoss = (avgLoss * (period - 1) + loss) / period;
-    }
-    
-    if (avgLoss === 0) return 100;
-    const rs = avgGain / avgLoss;
-    return 100 - (100 / (1 + rs));
-}
+import { calculateRSI, calculateStochRSI, calculateOBV } from "./utils/indicators";
 
 export const cryptoHiddenGemAgent = onSchedule(
   {
@@ -49,13 +26,36 @@ export const cryptoHiddenGemAgent = onSchedule(
     try {
       // 1. Fetch top USDT pairs by volume
       const tickerRes = await axios.get("https://api.binance.com/api/v3/ticker/24hr");
-      let allTickers = tickerRes.data.filter((t: any) => t.symbol.endsWith("USDT") && parseFloat(t.quoteVolume) > 10000000);
+      
+      // Exclude Top 15 Mega Caps (> $10B) so we actually find "Hidden Gems"
+      const megaCaps = ["BTCUSDT", "ETHUSDT", "BNBUSDT", "SOLUSDT", "XRPUSDT", "ADAUSDT", "DOGEUSDT", "AVAXUSDT", "DOTUSDT", "TRXUSDT", "LINKUSDT", "MATICUSDT", "TONUSDT", "SHIBUSDT", "BCHUSDT"];
+      
+      let allTickers = tickerRes.data.filter((t: any) => 
+         t.symbol.endsWith("USDT") && 
+         parseFloat(t.quoteVolume) > 30000000 &&
+         !megaCaps.includes(t.symbol)
+      );
       
       // Sort by volume descending and take top 50
       allTickers.sort((a: any, b: any) => parseFloat(b.quoteVolume) - parseFloat(a.quoteVolume));
       const topCoins = allTickers.slice(0, 50).map((t: any) => t.symbol);
 
       const oversoldCandidates = [];
+
+      // 1.5 Fetch BTC Macro Trend
+      let btcMacroTrend = "NEUTRAL";
+      let btcChangePct = "0%";
+      try {
+         const btcRes = await axios.get(`https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1d&limit=7`);
+         if (btcRes.data && btcRes.data.length >= 7) {
+            const btcFirst = parseFloat(btcRes.data[0][4]);
+            const btcLast = parseFloat(btcRes.data[6][4]);
+            btcChangePct = (((btcLast - btcFirst) / btcFirst) * 100).toFixed(2) + "%";
+            btcMacroTrend = btcLast > btcFirst ? "BULLISH" : "BEARISH";
+         }
+      } catch (e) {
+         console.warn("Failed to fetch BTC trend", e);
+      }
 
       // 2. Fetch Klines (1d and 4h) for each coin to calculate RSI
       for (const symbol of topCoins) {
@@ -66,18 +66,30 @@ export const cryptoHiddenGemAgent = onSchedule(
              const rsi1d = calculateRSI(closes1d);
 
              // 4H Klines
-             const klines4hRes = await axios.get(`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=4h&limit=30`);
-             const closes4h = klines4hRes.data.map((k: any) => parseFloat(k[4]));
+             const klines4hRes = await axios.get(`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=4h&limit=50`);
+             const klines4h = klines4hRes.data;
+             const closes4h = klines4h.map((k: any) => parseFloat(k[4]));
              const rsi4h = calculateRSI(closes4h);
+             const stochRSI4h = calculateStochRSI(closes4h);
+             
+             // OBV Calculation
+             const klineObjs = klines4h.map((k: any) => ({ close: k[4], volume: k[5] }));
+             const obv = calculateOBV(klineObjs);
+             const obvTrendingUp = obv.length > 5 ? (obv[obv.length - 1] > obv[obv.length - 5]) : false;
              
              const currentPrice = closes1d[closes1d.length - 1];
 
-             if ((rsi1d !== null && rsi1d < 35) || (rsi4h !== null && rsi4h < 30)) {
+             const isRsiOversold = (rsi1d !== null && rsi1d !== undefined && rsi1d < 35) || (rsi4h !== null && rsi4h !== undefined && rsi4h < 30);
+             const isStochOversold = stochRSI4h ? (stochRSI4h.k < 20) : false;
+
+             if (isRsiOversold && isStochOversold && obvTrendingUp) {
                  oversoldCandidates.push({
                      symbol,
                      price: currentPrice,
                      rsi1d: rsi1d ? rsi1d.toFixed(2) : "N/A",
-                     rsi4h: rsi4h ? rsi4h.toFixed(2) : "N/A"
+                     rsi4h: rsi4h ? rsi4h.toFixed(2) : "N/A",
+                     stochRsi4h: stochRSI4h ? stochRSI4h.k.toFixed(2) : "N/A",
+                     obvTrend: "Accumulating"
                  });
              }
          } catch (e) {
@@ -109,16 +121,27 @@ export const cryptoHiddenGemAgent = onSchedule(
 
       const prompt = `
 Anda adalah "Hedge Fund AI Analyst" yang brilian.
+Gunakan nada "Contrarian Investor" (mencari peluang saat pasar sedang takut).
+
+KONTEKS MAKRO:
+Tren BTC dalam 7 Hari Terakhir: ${btcMacroTrend} (${btcChangePct})
+PERINGATAN: Jika Tren BTC sedang BEARISH, sangat berbahaya untuk mencari reversal pada altcoin. Rekomendasi Anda harus sangat konservatif jika makro sedang buruk.
+
 Berikut adalah daftar koin kripto yang saat ini berada di area jenuh jual (Oversold) berdasarkan RSI (Relative Strength Index) harian dan 4 jam:
 ${JSON.stringify(oversoldCandidates, null, 2)}
 
 TUGAS ANDA:
-1. Analisis koin-koin di atas berdasarkan naratif fundamental terkini, potensi ekosistemnya, dan kondisi makro pasar.
-2. Pilih TEPAT 1 hingga 3 koin yang menurut Anda merupakan "Hidden Gem" terbaik untuk potensi pembalikan arah (reversal) jangka menengah.
-3. Berikan alasan tajam bergaya hedge fund.
-4. Tentukan target reversal (harga Take Profit medium-term) dan area invalidasi (Stop Loss) yang rasional berdasarkan kondisi harganya saat ini.
+1. Analisis koin-koin di atas berdasarkan naratif fundamental terkini, potensi ekosistemnya, dan kondisi makro pasar (BTC Trend).
+2. Tentukan *Catalyst* (Pemicu) potensial untuk setiap koin. Oversold saja tidak cukup, harus ada alasan kuat mengapa harga akan berbalik (misal: event yang akan datang, rotasi naratif, partnership).
+3. Pilih TEPAT 1 hingga 3 koin yang menurut Anda merupakan "Hidden Gem" terbaik untuk potensi pembalikan arah (reversal) jangka menengah.
+4. Berikan alasan tajam bergaya hedge fund, sebutkan katalisnya secara spesifik.
+5. Tentukan target reversal (harga Take Profit medium-term) dan area invalidasi (Stop Loss) yang rasional berdasarkan kondisi harganya saat ini.
 
-PENTING: Output Anda HARUS murni berformat JSON tanpa teks pengantar, markdown blok, atau penutup. 
+ATURAN KERAS (TIDAK BOLEH DILANGGAR):
+- Karena ini adalah setup Oversold Reversal (LONG), targetPrice WAJIB lebih besar dari currentPrice, dan stopLoss WAJIB lebih kecil dari currentPrice.
+- Rasio jarak target terhadap stop loss (Risk/Reward) minimal 1:2.
+- Output Anda HARUS murni JSON valid. JANGAN membungkus JSON dengan markdown block (\`\`\`json). JANGAN menambahkan teks pengantar atau penutup.
+
 Skema JSON yang harus dikembalikan:
 {
   "marketConditionSummary": "Ringkasan kondisi pasar secara keseluruhan hari ini dalam 2-3 kalimat tajam.",
@@ -128,9 +151,12 @@ Skema JSON yang harus dikembalikan:
       "currentPrice": "harga dari data",
       "rsi1d": "rsi dari data",
       "rsi4h": "rsi dari data",
-      "reasoning": "Alasan fundamental dan teknikal tajam kenapa koin ini siap reversal (minimal 3 kalimat).",
-      "targetPrice": "Angka target pembalikan (reversal) menengah",
-      "stopLoss": "Angka stop loss invalidasi teknikal"
+      "stochRsi4h": "stoch rsi dari data",
+      "reasoning": "Alasan fundamental tajam (sebutkan CATALYST pembalikan arah) kenapa koin ini siap reversal (minimal 3 kalimat).",
+      "targetPrice": "Angka target pembalikan menengah (HARUS > currentPrice, buat rasio masuk akal berdasarkan chart structure)",
+      "stopLoss": "Angka stop loss invalidasi teknikal (HARUS < currentPrice)",
+      "riskLevel": "Conservative | Moderate | Aggressive",
+      "potentialReturnPct": "Persentase potensi keuntungan (misal: 15.5)"
     }
   ]
 }

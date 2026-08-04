@@ -1,0 +1,28 @@
+[debug] [2026-08-04T09:19:43.254Z] ----------------------------------------------------------------------
+[debug] [2026-08-04T09:19:43.256Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\ASUS\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only functions
+[debug] [2026-08-04T09:19:43.256Z] CLI Version:   15.25.1
+[debug] [2026-08-04T09:19:43.256Z] Platform:      win32
+[debug] [2026-08-04T09:19:43.256Z] Node Version:  v24.13.1
+[debug] [2026-08-04T09:19:43.256Z] Detected Agent: unknown
+[debug] [2026-08-04T09:19:43.256Z] Time:          Tue Aug 04 2026 16:19:43 GMT+0700 (Western Indonesia Time)
+[debug] [2026-08-04T09:19:43.257Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-08-04T09:19:45.229Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-08-04T09:19:45.229Z] > authorizing via signed-in user (deny.wismoyo@gmail.com)
+[debug] [2026-08-04T09:19:45.229Z] [iam] checking project teknopark-surakarta for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2026-08-04T09:19:45.239Z] Checked if tokens are valid: false, expires at: 1785832666668
+[debug] [2026-08-04T09:19:45.240Z] Checked if tokens are valid: false, expires at: 1785832666668
+[debug] [2026-08-04T09:19:45.240Z] > refreshing access token with scopes: []
+[debug] [2026-08-04T09:19:45.242Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-08-04T09:19:45.242Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-08-04T09:19:45.449Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-08-04T09:19:45.449Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-08-04T09:19:45.457Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions [none]
+[debug] [2026-08-04T09:19:45.458Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions  x-goog-user-project=teknopark-surakarta
+[debug] [2026-08-04T09:19:45.458Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2026-08-04T09:19:45.854Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions 200
+[debug] [2026-08-04T09:19:45.854Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/teknopark-surakarta:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2026-08-04T09:19:45.854Z] Checked if tokens are valid: true, expires at: 1785838784449
+[debug] [2026-08-04T09:19:45.854Z] Checked if tokens are valid: true, expires at: 1785838784449
+[debug] [2026-08-04T09:19:45.854Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/teknopark-surakarta/serviceAccounts/teknopark-surakarta@appspot.gserviceaccount.com:testIamPermissions [none]
+[debug] [2026-08-04T09:19:45.854Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/teknopark-surakarta/serviceAccounts/teknopark-surakarta@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import { createChart, CandlestickSeries, ColorType, CrosshairMode } from "lightweight-charts";
+import { createChart, CandlestickSeries, HistogramSeries, ColorType, CrosshairMode } from "lightweight-charts";
 
 interface KlineData {
   openTime: string;
@@ -70,6 +70,20 @@ export default function CryptoCandlestick({ symbol, klines, targetPrice, stopLos
       wickDownColor: '#f43f5e',
     });
 
+    const volumeSeries = chart.addSeries(HistogramSeries, {
+      priceFormat: {
+        type: 'volume',
+      },
+      priceScaleId: '',
+    });
+    
+    chart.priceScale('').applyOptions({
+      scaleMargins: {
+        top: 0.8, // margin top
+        bottom: 0,
+      },
+    });
+
     // Format data for lightweight-charts
     const data = klines.map((k) => ({
       time: new Date(k.openTime).getTime() / 1000 as any, // Unix timestamp in seconds
@@ -78,11 +92,23 @@ export default function CryptoCandlestick({ symbol, klines, targetPrice, stopLos
       low: parseFloat(k.low),
       close: parseFloat(k.close),
     }));
+    
+    const volumeData = klines.map((k) => {
+      const openPrice = parseFloat(k.open);
+      const closePrice = parseFloat(k.close);
+      return {
+        time: new Date(k.openTime).getTime() / 1000 as any,
+        value: parseFloat(k.volume),
+        color: closePrice >= openPrice ? 'rgba(16, 185, 129, 0.4)' : 'rgba(244, 63, 94, 0.4)',
+      };
+    });
 
     // Ensure data is sorted by time
     data.sort((a: any, b: any) => a.time - b.time);
+    volumeData.sort((a: any, b: any) => a.time - b.time);
 
     candlestickSeries.setData(data);
+    volumeSeries.setData(volumeData);
 
     // Add price lines if available
     if (targetPrice) {
@@ -142,13 +168,23 @@ export default function CryptoCandlestick({ symbol, klines, targetPrice, stopLos
              // MEXC kline data structure: { c: "spot@public.kline.v3.api@BTCUSDT@Min1", d: { k: { t, o, c, h, l } } }
              if (message.d && message.d.k) {
                 const k = message.d.k;
-                candlestickSeries.update({
-                   time: Math.floor(k.t / 1000) as any,
-                   open: parseFloat(k.o),
-                   high: parseFloat(k.h),
-                   low: parseFloat(k.l),
-                   close: parseFloat(k.c),
-                });
+                 const time = Math.floor(k.t / 1000) as any;
+                 const open = parseFloat(k.o);
+                 const close = parseFloat(k.c);
+                 candlestickSeries.update({
+                    time,
+                    open,
+                    high: parseFloat(k.h),
+                    low: parseFloat(k.l),
+                    close,
+                 });
+                 if (k.v) {
+                   volumeSeries.update({
+                      time,
+                      value: parseFloat(k.v),
+                      color: close >= open ? 'rgba(16, 185, 129, 0.4)' : 'rgba(244, 63, 94, 0.4)',
+                   });
+                 }
              }
           } catch(e) {
              console.error("WS parsing error", e);
@@ -164,7 +200,7 @@ export default function CryptoCandlestick({ symbol, klines, targetPrice, stopLos
   }, [klines, targetPrice, stopLossPrice, symbol]);
 
   return (
-    <div className="w-full h-32 md:h-48 mt-2 overflow-hidden rounded-xl bg-slate-50/50 bg-slate-950/50 border border-slate-800 relative z-0">
+    <div className="w-full h-48 md:h-64 mt-2 overflow-hidden rounded-xl bg-slate-50/50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800 relative z-0">
       <div ref={chartContainerRef} className="w-full h-full" />
     </div>
   );

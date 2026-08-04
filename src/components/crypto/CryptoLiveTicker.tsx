@@ -11,34 +11,43 @@ interface TickerData {
   flash?: "up" | "down" | null;
 }
 
+const idToSymbol: Record<string, string> = {
+  bitcoin: "BTC",
+  ethereum: "ETH",
+  solana: "SOL"
+};
+
 export default function CryptoLiveTicker() {
   const [tickers, setTickers] = useState<Record<string, TickerData>>({
-    BTCUSDT: { symbol: "BTC", price: "...", change: "...", isUp: true },
-    ETHUSDT: { symbol: "ETH", price: "...", change: "...", isUp: true },
-    SOLUSDT: { symbol: "SOL", price: "...", change: "...", isUp: true },
+    BTC: { symbol: "BTC", price: "...", change: "...", isUp: true },
+    ETH: { symbol: "ETH", price: "...", change: "...", isUp: true },
+    SOL: { symbol: "SOL", price: "...", change: "...", isUp: true },
   });
 
   useEffect(() => {
     let ws: WebSocket;
-    
+    let interval: NodeJS.Timeout;
+
     const fetchInitialData = async () => {
       try {
-        const res = await fetch("https://api.mexc.com/api/v3/ticker/24hr");
+        const res = await fetch("https://api.coincap.io/v2/assets?ids=bitcoin,ethereum,solana");
         const json = await res.json();
-        if (Array.isArray(json)) {
+        if (json.data && Array.isArray(json.data)) {
           setTickers((prev) => {
             const next = { ...prev };
-            json.forEach((asset: any) => {
-              const symbolKey = asset.symbol; // e.g. BTCUSDT
-              if (next[symbolKey]) {
-                next[symbolKey] = {
-                  ...next[symbolKey],
-                  price: parseFloat(asset.lastPrice).toLocaleString("en-US", {
-                    minimumFractionDigits: symbolKey === "SOLUSDT" ? 2 : 0,
+            json.data.forEach((asset: any) => {
+              const sym = idToSymbol[asset.id];
+              if (sym && next[sym]) {
+                const priceNum = parseFloat(asset.priceUsd);
+                const changeNum = parseFloat(asset.changePercent24Hr);
+                next[sym] = {
+                  ...next[sym],
+                  price: priceNum.toLocaleString("en-US", {
+                    minimumFractionDigits: sym === "SOL" ? 2 : 0,
                     maximumFractionDigits: 2,
                   }),
-                  change: (parseFloat(asset.priceChangePercent) * 100).toFixed(2),
-                  isUp: parseFloat(asset.priceChangePercent) >= 0,
+                  change: changeNum.toFixed(2),
+                  isUp: changeNum >= 0,
                 };
               }
             });
@@ -46,67 +55,74 @@ export default function CryptoLiveTicker() {
           });
         }
       } catch (err) {
-        console.error("Failed to fetch initial ticker data", err);
+        console.error("Failed to fetch initial ticker data from CoinCap", err);
       }
     };
 
     fetchInitialData();
+    // Poll every 60s for 24h change updates
+    interval = setInterval(fetchInitialData, 60000);
 
-    // Use MEXC WebSocket (Bypasses Indonesian ISP block)
-    ws = new WebSocket("wss://wbs.mexc.com/ws");
-    ws.onopen = () => {
-       ws.send(JSON.stringify({
-          method: "SUBSCRIPTION",
-          params: [
-             "spot@public.miniTicker.v3.api@BTCUSDT",
-             "spot@public.miniTicker.v3.api@ETHUSDT",
-             "spot@public.miniTicker.v3.api@SOLUSDT"
-          ]
-       }));
-    };
-
-    ws.onmessage = (event) => {
-      try {
-         const message = JSON.parse(event.data);
-         // MEXC miniTicker data structure: { c: "spot@public.miniTicker.v3.api@BTCUSDT", d: { s: "BTCUSDT", p: "63000", tr: "0.015" } }
-         if (message.d && message.d.s) {
-            const symbolKey = message.d.s;
-            if (tickers[symbolKey] || ["BTCUSDT", "ETHUSDT", "SOLUSDT"].includes(symbolKey)) {
-               setTickers((prev) => {
-                  const next = { ...prev };
-                  if (next[symbolKey]) {
-                     const newPriceNum = parseFloat(message.d.p);
-                     const oldPriceNum = parseFloat(next[symbolKey].price.replace(/,/g, ""));
-                     
-                     let flash: "up" | "down" | null = null;
-                     if (newPriceNum > oldPriceNum) flash = "up";
-                     else if (newPriceNum < oldPriceNum) flash = "down";
-
-                     const percent = message.d.tr !== undefined ? parseFloat(message.d.tr) * 100 : parseFloat(next[symbolKey].change);
-
-                     next[symbolKey] = {
-                        ...next[symbolKey],
-                        price: newPriceNum.toLocaleString("en-US", {
-                           minimumFractionDigits: symbolKey === "SOLUSDT" ? 2 : 0,
-                           maximumFractionDigits: 2,
-                        }),
-                        change: percent.toFixed(2),
-                        isUp: percent >= 0,
-                        flash: flash || next[symbolKey].flash,
-                     };
-                     return next;
+    // CoinCap WebSocket for live prices (Bypasses Indonesian ISP block)
+    const connectWs = () => {
+       ws = new WebSocket("wss://ws.coincap.io/prices?assets=bitcoin,ethereum,solana");
+       
+       ws.onmessage = (event) => {
+         try {
+            const message = JSON.parse(event.data);
+            setTickers((prev) => {
+               const next = { ...prev };
+               let hasChanges = false;
+               
+               Object.keys(message).forEach((id) => {
+                  const sym = idToSymbol[id];
+                  if (sym && next[sym]) {
+                     const newPriceNum = parseFloat(message[id]);
+                     const oldPriceStr = next[sym].price;
+                     if (oldPriceStr !== "...") {
+                        const oldPriceNum = parseFloat(oldPriceStr.replace(/,/g, ""));
+                        let flash: "up" | "down" | null = null;
+                        if (newPriceNum > oldPriceNum) flash = "up";
+                        else if (newPriceNum < oldPriceNum) flash = "down";
+                        
+                        next[sym] = {
+                           ...next[sym],
+                           price: newPriceNum.toLocaleString("en-US", {
+                              minimumFractionDigits: sym === "SOL" ? 2 : 0,
+                              maximumFractionDigits: 2,
+                           }),
+                           flash: flash || next[sym].flash,
+                        };
+                        hasChanges = true;
+                     }
                   }
-                  return prev;
                });
-            }
+               
+               return hasChanges ? next : prev;
+            });
+         } catch(e) {
+            // ignore
          }
-      } catch(e) {
-         // ignore
-      }
+       };
+
+       ws.onerror = () => {
+          console.error("CoinCap WS error");
+       };
+
+       ws.onclose = () => {
+          // Try to reconnect after 5s
+          setTimeout(connectWs, 5000);
+       };
     };
+
+    connectWs();
 
     return () => {
-      if (ws) ws.close();
+      clearInterval(interval);
+      if (ws) {
+         ws.onclose = null;
+         ws.close();
+      }
     };
   }, []);
 

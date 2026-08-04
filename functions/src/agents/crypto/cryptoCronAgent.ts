@@ -28,8 +28,20 @@ export const cryptoCronAgent = onSchedule(
     const isDaily = date.getHours() === 7 || date.getUTCHours() === 0;
     // Siklus Mingguan: Senin jam 07:00 WIB (00:00 UTC)
     const isWeekly = date.getUTCDay() === 1 && date.getUTCHours() === 0;
+    const isMonthly = date.getUTCDate() === 1 && date.getUTCHours() === 0;
 
-    const { fearAndGreed, latestNews, stablecoinGrowth, dexVolumeGrowth, marketData, scalpingCandidatesData, weeklyMarketData } = await gatherCryptoMarketData(isWeekly);
+    const { fearAndGreed, globalMarket, latestNews, stablecoinGrowth, dexVolumeGrowth, marketData, scalpingCandidatesData, weeklyMarketData, monthlyMarketData } = await gatherCryptoMarketData(isWeekly, isMonthly);
+    
+    // MARKET REGIME GUARD
+    const fearGreedValue = fearAndGreed?.current?.value ? parseInt(fearAndGreed.current.value) : 50;
+    const isExtremeMarket = fearGreedValue < 20 || fearGreedValue > 80;
+    
+    // Filter out scalping candidates if market is too extreme
+    let safeScalpingCandidates = scalpingCandidatesData;
+    if (isExtremeMarket) {
+        console.log(`Market regime ekstrim (F&G: ${fearGreedValue}). Skip scalping signals.`);
+        safeScalpingCandidates = [];
+    }
     
     // Fetch Macro Economic Calendar
     let macroCalendar = [];
@@ -41,9 +53,22 @@ export const cryptoCronAgent = onSchedule(
     }
 
     // Ambil laporan sebelumnya untuk self-correction dan win-rate tracking
-    let previousReport = null;
+    let previousReport: any = null;
     let previousScalpingStatus = "";
     let finalEvaluatedScalps: any[] = [];
+    
+    try {
+      const prevReportSnap = await db.collection("cryptoReports")
+        .orderBy("createdAt", "desc")
+        .limit(1)
+        .get();
+        
+      if (!prevReportSnap.empty) {
+         previousReport = prevReportSnap.docs[0].data().reportData;
+      }
+    } catch (e) {
+      console.log("No previous report found");
+    }
     
     try {
       // PHASE 1: EVALUATE PENDING TRADES
@@ -64,16 +89,20 @@ export const cryptoCronAgent = onSchedule(
           let currentPrice = 0;
           
           try {
-            // Ambil Klines histori 4 jam ke belakang (240 menit)
+            // Ambil Klines histori 12 jam ke belakang (720 menit)
             // Karena cron berjalan tiap 4 jam, ini cukup untuk memantau pergerakan terbaru
-            const klinesRes = await axios.get(`https://api.binance.com/api/v3/klines?symbol=${trade.symbol}&interval=1m&limit=240`);
-            const klines = klinesRes.data;
+            const klinesRes = await axios.get(`https://api.binance.com/api/v3/klines?symbol=${trade.symbol}&interval=1m&limit=720`);
+            const allKlines = klinesRes.data;
             
-            if (klines && klines.length > 0) {
-               currentPrice = parseFloat(klines[klines.length - 1][4]); 
+            if (allKlines && allKlines.length > 0) {
+               currentPrice = parseFloat(allKlines[allKlines.length - 1][4]); 
                
                if (target > 0 && sl > 0) {
-                  for (const candle of klines) {
+                  // Filter klines to only include those after the trade was created
+                  const tradeCreatedAt = trade.createdAt ? trade.createdAt.toDate().getTime() : 0;
+                  const relevantKlines = allKlines.filter((k: any) => parseInt(k[0]) >= tradeCreatedAt);
+                  
+                  for (const candle of relevantKlines) {
                      const high = parseFloat(candle[2]);
                      const low = parseFloat(candle[3]);
                      
@@ -90,17 +119,38 @@ export const cryptoCronAgent = onSchedule(
           } catch (e) {
              console.error("Gagal mengambil klines untuk " + trade.symbol, e);
           }
+
+          // Auto-expire zombie trades (> 6 hours)
+          if (status === "PENDING" && trade.createdAt) {
+             const tradeAgeMs = Date.now() - trade.createdAt.toDate().getTime();
+             if (tradeAgeMs > 6 * 60 * 60 * 1000) {
+                status = "EXPIRED";
+             }
+          }
+          
+          let pnl = 0;
+          const entryPrice = parseFloat(trade.entryPrice);
+          if (entryPrice > 0) {
+             if (status === "WIN") {
+                pnl = trade.direction === "SHORT" ? ((entryPrice - target) / entryPrice) * 100 : ((target - entryPrice) / entryPrice) * 100;
+             } else if (status === "LOSS") {
+                pnl = trade.direction === "SHORT" ? ((entryPrice - sl) / entryPrice) * 100 : ((sl - entryPrice) / entryPrice) * 100;
+             } else if (status === "EXPIRED") {
+                pnl = trade.direction === "SHORT" ? ((entryPrice - currentPrice) / entryPrice) * 100 : ((currentPrice - entryPrice) / entryPrice) * 100;
+             }
+          }
           
           if (status === "WIN") totalWins++;
           else if (status === "LOSS") totalLosses++;
-          else totalPending++;
+          else if (status === "PENDING") totalPending++;
           
           // Update status di Firestore jika sudah tidak PENDING
           if (status !== "PENDING") {
              await db.collection("cryptoActiveTrades").doc(trade.id).update({
                 status,
                 resolvedAt: admin.firestore.FieldValue.serverTimestamp(),
-                resolvedPrice: currentPrice
+                resolvedPrice: currentPrice,
+                pnlPercent: pnl
              });
           }
 
@@ -111,7 +161,8 @@ export const cryptoCronAgent = onSchedule(
             stopLossPrice: sl,
             direction: trade.direction || "LONG",
             currentPrice,
-            status
+            status,
+            pnlPercent: pnl.toFixed(2)
           };
         });
         
@@ -152,18 +203,40 @@ ${JSON.stringify(finalEvaluatedScalps, null, 2)}
 
     const systemPrompt = `Anda adalah Konsultan Ahli dan Analis Keuangan Kripto Institusional.
 Tugas Anda adalah merangkum sentimen pasar dari K-lines, Fear & Greed Index, dan Berita Utama, serta membuat proyeksi 4 jam ke depan.
-Anda JUGA harus mengevaluasi seberapa akurat prediksi Anda pada 4 jam sebelumnya (jika data sebelumnya diberikan).
+
+ALUR BERPIKIR WAJIB (CHAIN OF THOUGHT):
+Sebelum menentukan rekomendasi akhir, pikirkan langkah-langkah berikut:
+1. Fase Makro: Evaluasi Fear & Greed, berita, dan data aliran dana. Tentukan apakah pasar sedang akumulasi, distribusi, atau panik.
+2. Fase BTC: Gunakan Bitcoin sebagai barometer utama. Apakah tren BTC mendukung pergerakan altcoin?
+3. Fase Seleksi Scalping: Cross-check rekomendasi scalping dari Quant AI dengan kondisi makro. Buang posisi LONG jika makro/BTC sangat buruk.
+
+ATURAN KERAS UNTUK SCALPING OPPORTUNITIES (TIDAK BOLEH DILANGGAR):
+1. Minimum Risk:Reward Ratio = 1:2 (Jarak Target minimal 2x lebih besar dari jarak Stop Loss).
+2. Stop Loss WAJIB berbasis ATR: SL = entryPrice ± (1.5 × ATR). JANGAN gunakan persentase sembarangan!
+3. JANGAN rekomendasikan LONG jika marketRegime = "BEARISH" atau sentimen = "BEARISH".
+4. Entry price HARUS sangat dekat dengan harga terkini (current price di data kline terakhir).
+5. Maksimal hanya berikan 2 sinyal scalping. Kualitas lebih penting dari kuantitas.
+6. Minimum confidenceScore untuk masuk: HIGH atau MEDIUM saja. Jika tidak yakin, KOSONGKAN array scalpingOpportunities.
+
 Output Anda WAJIB berupa JSON rapi tanpa markdown block (seperti \`\`\`json):
 {
   "title": "Judul laporan (misal: Rekap Pasar & Sinyal Trading)",
   "sentiment": "BULLISH / BEARISH / NEUTRAL",
   "marketRegime": "Fase pasar (Bullish Trend / Bearish Trend / Choppy / High Volatility)",
-  "macroInsight": "Analisis singkat tentang pengaruh makro (Fear & Greed, Long/Short ratio, Stablecoin flow) terhadap pasar",
+  "macroInsight": "Analisis mendalam (2-3 kalimat): Apakah ini fase akumulasi/distribusi? Apa sentimen institusional dari berita/F&G?",
   "whaleActivity": "Aktivitas uang besar (Heavy Accumulation / Distribution / Trap / Neutral)",
-  "summary": "Ringkasan markdown (analisis mendalam 4 jam terakhir + berita + fear & greed)",
+  "summary": "Ringkasan komprehensif (markdown) mencakup: Kondisi makro, analisis tren BTC, dan dampaknya ke altcoin.",
   "projection": "Proyeksi 4 jam ke depan (markdown)",
   "accuracyScore": "Tingkat akurasi dari tebakan sebelumnya (0-100), atau null jika belum ada data sebelumnya",
   "selfCorrection": "Evaluasi jujur mengapa proyeksi sebelumnya benar/salah dan apa yang dipelajari",
+  "btcDominance": "Persentase dominasi BTC terkini, misal: '55.2%'",
+  "globalMarketCap": "Global Market Cap kripto, misal: '$2.1T'",
+  "fearGreedTrend": "Tren Fear & Greed 7 hari terakhir (meningkat/menurun/stabil)",
+  "temporalComparison": {
+     "sentimentChange": "Perubahan sentimen dari kemarin",
+     "btcPriceDelta": "Perubahan harga BTC vs open kemarin",
+     "notableMovers": "Koin yang paling banyak bergerak vs kemarin"
+  },
   "coinsAnalysis": [
      {
        "symbol": "BTCUSDT",
@@ -202,7 +275,16 @@ Output Anda WAJIB berupa JSON rapi tanpa markdown block (seperti \`\`\`json):
        "entryPrice": 0.0,
        "targetPrice": 0.0
      }
-  ] // HANYA diisi jika siklus mingguan, jika tidak biarkan array kosong []
+  ], // HANYA diisi jika siklus mingguan, jika tidak biarkan array kosong []
+  "monthlyOutlook": "Narasi panjang (3-4 paragraf) mengenai kondisi makro bulanan dan prediksi tren utama aset kripto untuk 1 bulan ke depan. (Hanya jika siklus bulanan)",
+  "monthlyKeyLevels": [
+     {
+       "symbol": "BTCUSDT",
+       "criticalSupport": "Level kritis support bulanan",
+       "criticalResistance": "Level kritis resistance bulanan",
+       "narrative": "Narasi singkat mengapa level ini sangat penting bulan ini"
+     }
+  ] // HANYA diisi jika siklus bulanan, jika tidak biarkan array kosong []
 }`;
 
     const userPrompt = `
@@ -224,14 +306,23 @@ ${dexVolumeGrowth ? JSON.stringify(dexVolumeGrowth, null, 2) : "Tidak tersedia"}
 Kalender Ekonomi Makro Global (Minggu Ini):
 ${macroCalendar && macroCalendar.length > 0 ? JSON.stringify(macroCalendar.slice(0, 50), null, 2) : "Tidak tersedia"}
 
-Fear & Greed Index: ${fearAndGreed ? fearAndGreed.value + " - " + fearAndGreed.value_classification : "Tidak tersedia"}
+Fear & Greed Index (Sekarang vs Histori 7 Hari): 
+${fearAndGreed ? JSON.stringify(fearAndGreed, null, 2) : "Tidak tersedia"}
+
+Global Market Info (CoinGecko):
+${globalMarket ? JSON.stringify({
+  market_cap_percentage: globalMarket.market_cap_percentage,
+  total_market_cap: globalMarket.total_market_cap?.usd,
+  total_volume: globalMarket.total_volume?.usd
+}, null, 2) : "Tidak tersedia"}
 
 Data Pasar Utama (Candlestick 4-Jam Terakhir + Indikator Teknikal + Derivatif):
 ${JSON.stringify(marketData, null, 2)}
 
 ${isWeekly ? `Data Makro Mingguan (Candlestick 1-Minggu Terakhir):\n${JSON.stringify(weeklyMarketData, null, 2)}\n` : ""}
-Data Altcoin Volatil (Kandidat Scalping, Candlestick 1-Jam Terakhir):
-${JSON.stringify(scalpingCandidatesData, null, 2)}
+${isMonthly ? `Data Makro Bulanan (Candlestick 1-Bulan Terakhir):\n${JSON.stringify(monthlyMarketData, null, 2)}\n` : ""}
+Data Altcoin Volatil (Kandidat Scalping, Candlestick 15-Menit Terakhir):
+${JSON.stringify(safeScalpingCandidates, null, 2)}
 
 Proyeksi Anda Sebelumnya (Untuk Evaluasi Akurasi, bandingkan dengan harga terkini!):
 ${previousReport ? JSON.stringify(previousReport.projection) + "\\nSinyal Koin Sebelumnya: " + JSON.stringify(previousReport.coinsAnalysis) : "Tidak ada data sebelumnya."}
@@ -253,10 +344,11 @@ Buatkan laporan JSON yang komprehensif, actionable, dan jujur!
         console.log("Agent 1 (Fast Quant) analyzing technicals...");
         const agent1Prompt = `Anda adalah Quant AI (Agent 1).
 Tugas Anda HANYA membedah teknikal dari data koin berikut dan memilih TOP 3 terbaik berdasarkan setupScore dan setupReasoning.
+PERHATIKAN KONTEKS MAKRO SAAT INI: Fear & Greed Index berada di angka ${fearGreedValue}. JANGAN menyarankan setup LONG agresif jika makro sedang ketakutan ekstrim (< 30).
 Berikan output JSON ketat: { "draftScalpingOpportunities": [ { "symbol": "...", "technicalThesis": "..." } ] }
 
 Data Koin:
-${JSON.stringify(scalpingCandidatesData, null, 2)}`;
+${JSON.stringify(safeScalpingCandidates, null, 2)}`;
 
         const response1 = await withRetry(() => client.chat.completions.create({
           model: "deepseek-chat", // DeepSeek V4
@@ -317,7 +409,10 @@ ${JSON.stringify(scalpingCandidatesData, null, 2)}`;
          parsed.previousScalpingEvaluation = finalEvaluatedScalps.map((ev: any) => ({
              symbol: ev.symbol,
              status: ev.status,
-             reason: ev.status === 'WIN' ? `Harga menyentuh target ${ev.targetPrice}` : ev.status === 'LOSS' ? `Harga mengenai Stop Loss ${ev.stopLossPrice}` : `Sedang berjalan, harga terkini ${ev.currentPrice}`
+             reason: ev.status === 'WIN' ? `Harga menyentuh target ${ev.targetPrice} (+${ev.pnlPercent}%)` : 
+                     ev.status === 'LOSS' ? `Harga mengenai Stop Loss ${ev.stopLossPrice} (${ev.pnlPercent}%)` : 
+                     ev.status === 'EXPIRED' ? `Waktu trading habis (12h+). PnL: ${ev.pnlPercent}%` :
+                     `Sedang berjalan, harga terkini ${ev.currentPrice}`
          }));
       }
       
@@ -325,11 +420,13 @@ ${JSON.stringify(scalpingCandidatesData, null, 2)}`;
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
         isDaily,
         isWeekly,
+        isMonthly,
         reportData: parsed,
         rawMarketData: marketData,
-        rawScalpingData: scalpingCandidatesData,
+        rawScalpingData: safeScalpingCandidates,
         rawWeeklyData: weeklyMarketData || null,
-        rawFundamental: { fearAndGreed, latestNews, stablecoinGrowth, dexVolumeGrowth, macroCalendar }
+        rawMonthlyData: monthlyMarketData || null,
+        rawFundamental: { fearAndGreed, globalMarket, latestNews, stablecoinGrowth, dexVolumeGrowth, macroCalendar }
       });
       
       // Simpan Riwayat Peringatan & Kirim Push Notification ke Admin
@@ -386,6 +483,28 @@ ${JSON.stringify(scalpingCandidatesData, null, 2)}`;
            }
         } catch (fcmErr) {
            console.error("Failed to send FCM:", fcmErr);
+        }
+
+        // 4. Telegram Auto-Broadcast
+        try {
+           const telegramToken = process.env.TELEGRAM_BOT_TOKEN;
+           const telegramChats = (process.env.TELEGRAM_AUTHORIZED_CHATS || "").split(",").filter((c: string) => c.trim() !== "");
+           
+           if (telegramToken && telegramChats.length > 0) {
+              for (const chatId of telegramChats) {
+                 for (const bestScalp of parsed.scalpingOpportunities) {
+                    const dirBadge = bestScalp.direction === "SHORT" ? "🔴 SHORT" : "🟢 LONG";
+                    const msg = `🚨 *NEW SCALPING SIGNAL* 🚨\n\n${dirBadge}: *${bestScalp.symbol}*\nEntry: ${bestScalp.entryPrice}\nTarget: ${bestScalp.targetPrice}\nSL: ${bestScalp.stopLossPrice}\n\n_Analisis:_ ${bestScalp.momentum}`;
+                    await axios.post(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
+                       chat_id: chatId,
+                       text: msg,
+                       parse_mode: "Markdown"
+                    }).catch(e => console.error(`Telegram send error to ${chatId}:`, e.message));
+                 }
+              }
+           }
+        } catch (tgErr) {
+           console.error("Failed to send Telegram Broadcast:", tgErr);
         }
       }
 

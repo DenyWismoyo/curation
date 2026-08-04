@@ -621,6 +621,11 @@ service cloud.firestore {
       allow write: if false; // Hanya Cloud Functions (Backend) yang boleh menulis
     }
     
+    match /cryptoNews/{document=**} {
+      allow read: if isSuperAdmin() || isAdminCSRS() || isAdminOmnifit() || isAdminCrypto() || (request.auth != null && request.auth.token.get('role', '') != '' && request.auth.token.get('role', '').matches('^admin.*'));
+      allow write: if false; // Hanya Cloud Functions (Backend) yang boleh menulis
+    }
+    
     match /cryptoAlerts/{document=**} {
       allow read: if isSuperAdmin() || isAdminCSRS() || isAdminOmnifit() || isAdminCrypto() || (request.auth != null && request.auth.token.get('role', '') != '' && request.auth.token.get('role', '').matches('^admin.*'));
       allow write: if false; // Hanya Cloud Functions (Backend) yang boleh menulis
@@ -634,6 +639,14 @@ service cloud.firestore {
     match /cryptoSmartMoney/{document=**} {
       allow read: if isSuperAdmin() || isAdminCSRS() || isAdminOmnifit() || isAdminCrypto() || (request.auth != null && request.auth.token.get('role', '') != '' && request.auth.token.get('role', '').matches('^admin.*'));
       allow write: if false;
+    }
+    
+    match /adminRealtimeScalping/{document=**} {
+      allow read, write: if isSuperAdmin() || isAdminCSRS();
+    }
+    
+    match /adminRealtimeGems/{document=**} {
+      allow read, write: if isSuperAdmin() || isAdminCSRS();
     }
     
     match /cryptoLiquidity/{document=**} {
@@ -661,6 +674,15 @@ service cloud.firestore {
       
       match /messages/{messageId} {
          allow read, write: if isAuthenticated(); // Inherits security from parent via UI or we can strictly enforce parent's userId
+      }
+    }
+    
+    match /storyboards/{storyboardId} {
+      allow read, update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      
+      match /scenes/{sceneId} {
+         allow read, write: if isAuthenticated(); 
       }
     }
     

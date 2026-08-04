@@ -15,6 +15,7 @@ import { buildAssessmentPrompt, getSystemPrompt } from './prompt/promptTemplate'
 // ============================================================================
 export { generatePDFReport } from './general/documentGenerator'
 export { matchBusinessWithIndustry } from './general/vectorService'
+export { generateScenePrompt, generateFullStoryboard } from './agents/storyboard/videoPromptAgent'
 
 export {
   createPaymentInvoice,
@@ -118,8 +119,11 @@ export { studyProjectOrchestrator } from './pipelines/study/orchestrator'
 export { studyChapterOrchestrator } from './pipelines/study/chapterOrchestrator'
 export { cryptoCronAgent } from './agents/crypto/cryptoCronAgent'
 export { cryptoHiddenGemAgent } from './agents/crypto/cryptoHiddenGemAgent'
-export { cryptoPremiumIntelligenceAgent } from './agents/crypto/cryptoPremiumIntelligenceAgent'
+export { cryptoPremiumIntelligenceAgent } from "./agents/crypto/cryptoPremiumIntelligenceAgent";
+export { telegramWebhook } from "./agents/telegram/telegramBot";
 export { cryptoCopilotChat, cryptoCopilotSuggestions } from './agents/crypto/cryptoCopilotAgent'
+export { cryptoNewsAgent } from './agents/crypto/cryptoNewsAgent'
+export { generateRealtimeScalping, generateRealtimeHiddenGem } from './agents/crypto/cryptoAdminAgents'
 
 // ============================================================================
 // INISIALISASI FIREBASE

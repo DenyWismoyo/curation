@@ -8,31 +8,12 @@ import { withRetry } from "../../utils/retry";
 
 const deepseekApiKeySecret = defineSecret("DEEPSEEK_API_KEY");
 
-function calculateATR(klines: any[], period = 14) {
-    if (klines.length < period + 1) return 0;
-    
-    const trueRanges = [];
-    for (let i = 1; i < klines.length; i++) {
-        const high = parseFloat(klines[i][2]);
-        const low = parseFloat(klines[i][3]);
-        const prevClose = parseFloat(klines[i-1][4]);
-        
-        const tr = Math.max(
-            high - low,
-            Math.abs(high - prevClose),
-            Math.abs(low - prevClose)
-        );
-        trueRanges.push(tr);
-    }
-    
-    const recentTRs = trueRanges.slice(-period);
-    const sum = recentTRs.reduce((a, b) => a + b, 0);
-    return sum / period;
-}
+import { calculateATR, calculateOBV } from "./utils/indicators";
+import { fetchBinanceOpenInterest } from "./cryptoOrchestrator";
 
 export const cryptoPremiumIntelligenceAgent = onSchedule(
   {
-    schedule: "15 7 * * *", 
+    schedule: "0 8 * * *", 
     timeZone: "Asia/Jakarta", 
     secrets: [deepseekApiKeySecret],
     region: "asia-southeast2",
@@ -49,6 +30,16 @@ export const cryptoPremiumIntelligenceAgent = onSchedule(
       allTickers.sort((a: any, b: any) => parseFloat(b.quoteVolume) - parseFloat(a.quoteVolume));
       const topCoins = allTickers.slice(0, 40).map((t: any) => t.symbol);
 
+      let tokenUnlocks = [];
+      try {
+         const unlocksRes = await axios.get("https://api.llama.fi/unlocks");
+         if (unlocksRes.data) {
+             tokenUnlocks = unlocksRes.data;
+         }
+      } catch (e) {
+         console.warn("Failed to fetch token unlocks");
+      }
+
       const coinMetrics = [];
 
       for (const symbol of topCoins) {
@@ -60,23 +51,36 @@ export const cryptoPremiumIntelligenceAgent = onSchedule(
              
              const currentPrice = closes[closes.length - 1];
              const currentVolume = volumes[volumes.length - 1];
-             const prevVolume = volumes[volumes.length - 2] || 1;
              
-             const volumeSpikeRatio = currentVolume / prevVolume;
+             const last7Volumes = volumes.slice(-8, -1);
+             const avg7dVolume = last7Volumes.length > 0 ? (last7Volumes.reduce((a: number, b: number) => a + b, 0) / last7Volumes.length) : 1;
+             
+             const volumeSpikeRatio = currentVolume / (avg7dVolume || 1);
              const atr = calculateATR(klines, 14);
              const volatilityPct = (atr / currentPrice) * 100;
              
              const priceChangePct = ((currentPrice - closes[closes.length - 2]) / closes[closes.length - 2]) * 100;
+
+             // Map back to klines object for OBV
+             const klineObjs = klines.map((k: any) => ({ close: k[4], volume: k[5] }));
+             const obv = calculateOBV(klineObjs);
+             const obvDivergence = (obv[obv.length - 1] > obv[obv.length - 2] && priceChangePct < 0) ? "BULLISH_DIV" : 
+                                   (obv[obv.length - 1] < obv[obv.length - 2] && priceChangePct > 0) ? "BEARISH_DIV" : "NONE";
+
+             const openInterest = await fetchBinanceOpenInterest(symbol);
 
              coinMetrics.push({
                  symbol,
                  price: currentPrice,
                  volumeSpikeRatio: volumeSpikeRatio.toFixed(2),
                  volatilityPct: volatilityPct.toFixed(2),
-                 priceChangePct: priceChangePct.toFixed(2)
+                 priceChangePct: priceChangePct.toFixed(2),
+                 obvDivergence,
+                 openInterest,
+                 atr: atr.toFixed(4)
              });
          } catch (e) {
-             console.error(`Failed to fetch klines for ${symbol}`, e);
+             console.error(`Failed to fetch metrics for ${symbol}`, e);
          }
          await new Promise(r => setTimeout(r, 100));
       }
@@ -91,42 +95,59 @@ export const cryptoPremiumIntelligenceAgent = onSchedule(
 
       const prompt = `
 Anda adalah "Hedge Fund AI Architect" yang merancang laporan intelijen premium (Smart Money, Liquidity Heatmap, dan Danger Zone).
-Berikut adalah matriks data dari Top 40 aset kripto berdasarkan anomali volume, volatilitas (ATR), dan persentase perubahan harga (Price Change):
+Gunakan nada yang analitis, kuantitatif, dingin, dan tanpa emosi.
+
+ALUR BERPIKIR (MULTI-TIMEFRAME & MACRO AWARENESS):
+- Selalu pertimbangkan apakah anomali volume 1-Hari ini sejalan dengan tren makro pasar.
+- Jangan tertipu oleh "Volume Spike" yang ternyata adalah buangan (Distribution) dari Whale. Perhatikan "obvDivergence" dan arah harga ("priceChangePct").
+
+Berikut adalah matriks data dari Top 40 aset kripto berdasarkan anomali volume, volatilitas (ATR), persentase perubahan harga, divergensi OBV, dan Open Interest:
 ${JSON.stringify(coinMetrics, null, 2)}
+
+Data Token Unlock (Jika ada yang relevan untuk koin di atas):
+${JSON.stringify(tokenUnlocks.slice(0, 15), null, 2)}
 
 TUGAS ANDA:
 Sintesis data di atas dan identifikasi kandidat terbaik untuk 3 kategori ini:
 
-1. "Smart Money Tracker": Pilih 2 koin di mana "volumeSpikeRatio" tinggi tetapi "priceChangePct" relatif kecil atau tertahan, mengindikasikan bandar (whale) sedang melakukan akumulasi diam-diam sebelum breakout.
-2. "Liquidity Hunter": Pilih 2 koin dengan "volatilityPct" (ATR) tertinggi. Kalkulasikan area "Liquidity Sweep" (Zona Long & Short yang rawan tersapu/likuidasi) berdasarkan harga saat ini.
-3. "Danger Zone": Pilih 2 koin dengan momentum harga yang buruk atau risiko makro tinggi (koin yang mungkin mengalami Token Unlock atau tekanan jual berat). Buat narasi rasional tentang bahaya tersebut.
+1. "Smart Money Tracker": Pilih 3-4 koin di mana "volumeSpikeRatio" tinggi, "obvDivergence" BULLISH_DIV, atau Open Interest meningkat tetapi harga relatif tertahan. Ini mengindikasikan akumulasi paus (whale).
+2. "Liquidity Hunter": Pilih 3-4 koin dengan "volatilityPct" (ATR) tertinggi. Hitung secara matematis "Liquidity Sweep": 'shortLiquidityZone' (Resistance StopLoss) = harga saat ini + (2 * ATR). 'longLiquidityZone' (Support StopLoss) = harga saat ini - (2 * ATR).
+3. "Danger Zone": Pilih 3-4 koin dengan risiko makro tinggi (koin yang mungkin mengalami Token Unlock dalam waktu dekat berdasarkan data di atas) atau momentum harga buruk (BEARISH_DIV OBV). Buat narasi bahaya.
 
-PENTING: Output Anda HARUS murni berformat JSON tanpa teks pengantar, markdown blok, atau penutup. 
+ATURAN KERAS (TIDAK BOLEH DILANGGAR):
+- "accumulationReason", "hunterStrategy", dan "dangerReason" MAKSIMAL 2 kalimat tajam dan padat (gaya bahasa hedge fund institusional).
+- Field "action" pada dangerZone HANYA boleh diisi "AVOID" atau "SHORT".
+- Output Anda HARUS murni JSON valid. JANGAN membungkus JSON dengan markdown block (\`\`\`json). JANGAN menambahkan teks pengantar atau penutup.
+
+Setiap item HARUS mengembalikan field 'quantitativeMetrics' yang berisi data numerik (spesifik dan bukan asal-asalan) yang disintesis dari data di atas agar bisa ditampilkan di grafik oleh frontend.
 Skema JSON yang harus dikembalikan:
 {
   "smartMoney": [
     {
       "symbol": "BTCUSDT",
       "currentPrice": "harga",
-      "accumulationReason": "Alasan tajam mengapa ini terdeteksi sebagai akumulasi Whale (2-3 kalimat)",
-      "breakoutTarget": "Harga target jika akumulasi selesai"
+      "accumulationReason": "Alasan akumulasi Whale (Maks 2 kalimat)",
+      "breakoutTarget": "Harga target penembusan jika akumulasi selesai (harga + 3*ATR)",
+      "quantitativeMetrics": { "volumeSpikeRatio": "2.5", "priceChangePct": "0.1", "obvTrend": "BULLISH_DIV" }
     }
   ],
   "liquidityZones": [
     {
       "symbol": "BTCUSDT",
       "currentPrice": "harga",
-      "shortLiquidityZone": "Harga di atas (resistance) tempat stop loss terkumpul",
-      "longLiquidityZone": "Harga di bawah (support) tempat stop loss terkumpul",
-      "hunterStrategy": "Cara cerdas institusi mengambil keuntungan di zona ini"
+      "shortLiquidityZone": "Harga di atas (resistance) tempat stop loss terkumpul (kalkulasi dari harga + 1-2 ATR)",
+      "longLiquidityZone": "Harga di bawah (support) tempat stop loss terkumpul (kalkulasi dari harga - 1-2 ATR)",
+      "hunterStrategy": "Cara cerdas institusi mengambil keuntungan (Maks 2 kalimat)",
+      "quantitativeMetrics": { "openInterest": "150000", "volatilityPct": "4.5", "atr": "0.85" }
     }
   ],
   "dangerZone": [
     {
       "symbol": "BTCUSDT",
       "currentPrice": "harga",
-      "dangerReason": "Alasan fundamental/teknikal potensi dump atau bahaya",
-      "action": "Avoid | Short"
+      "dangerReason": "Alasan fundamental/teknikal potensi dump (Maks 2 kalimat)",
+      "action": "AVOID | SHORT",
+      "quantitativeMetrics": { "drawdownPct": "-15.2", "volumeChangePct": "-40.5", "unlockDate": "2024-12-01" }
     }
   ]
 }

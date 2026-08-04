@@ -147,6 +147,42 @@ export default function ScalpingRadarPage() {
                             </div>
                          </div>
                          
+                         {(() => {
+                            const rawData = latestReport.rawScalpingData?.find((r: any) => r.symbol === scalp.symbol);
+                            const lastPrice = rawData?.klines?.[rawData.klines.length - 1]?.close ? parseFloat(rawData.klines[rawData.klines.length - 1].close) : null;
+                            const vwap = rawData?.vwap;
+                            const vwapDev = (lastPrice && vwap) ? (((lastPrice - vwap) / vwap) * 100).toFixed(2) : null;
+                            
+                            return (
+                               <div className="grid grid-cols-2 gap-2 mb-6">
+                                  {vwapDev && (
+                                     <div className="bg-black/30 p-2 rounded-lg border border-white/5">
+                                        <div className="text-[10px] text-slate-500 uppercase font-bold">VWAP Dev</div>
+                                        <div className={`text-xs font-bold ${parseFloat(vwapDev) > 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{parseFloat(vwapDev) > 0 ? '+' : ''}{vwapDev}%</div>
+                                     </div>
+                                  )}
+                                  {rawData?.openInterest && (
+                                     <div className="bg-black/30 p-2 rounded-lg border border-white/5">
+                                        <div className="text-[10px] text-slate-500 uppercase font-bold">Open Interest</div>
+                                        <div className="text-xs font-bold text-slate-300">{(rawData.openInterest / 1000000).toFixed(2)}M</div>
+                                     </div>
+                                  )}
+                                  {rawData?.adx?.adx && (
+                                     <div className="bg-black/30 p-2 rounded-lg border border-white/5">
+                                        <div className="text-[10px] text-slate-500 uppercase font-bold">ADX Trend</div>
+                                        <div className={`text-xs font-bold ${rawData.adx.adx > 25 ? 'text-orange-400' : 'text-slate-400'}`}>{rawData.adx.adx.toFixed(1)}</div>
+                                     </div>
+                                  )}
+                                  {rawData?.fundingRate && (
+                                     <div className="bg-black/30 p-2 rounded-lg border border-white/5">
+                                        <div className="text-[10px] text-slate-500 uppercase font-bold">Funding</div>
+                                        <div className={`text-xs font-bold ${rawData.fundingRate < 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{(rawData.fundingRate * 100).toFixed(3)}%</div>
+                                     </div>
+                                  )}
+                               </div>
+                            );
+                         })()}
+                         
                          <div className="space-y-4 mb-6">
                             <div className="bg-black/40 rounded-xl p-4 border border-white/5 flex justify-between items-center">
                                <span className="text-xs text-slate-500 font-bold uppercase tracking-wider">Entry Target</span>

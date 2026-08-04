@@ -17,6 +17,7 @@ export default function CryptoPerformancePage() {
   const [loading, setLoading] = useState(true);
   const [globalStats, setGlobalStats] = useState({ totalWins: 0, totalLosses: 0 });
   const [history, setHistory] = useState<any[]>([]);
+  const [filter, setFilter] = useState("ALL");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -56,7 +57,8 @@ export default function CryptoPerformancePage() {
              symbol: data.symbol,
              status: data.status,
              reason: reason,
-             date
+             date,
+             pnlPercent: data.pnlPercent || 0
            });
         });
 
@@ -87,6 +89,28 @@ export default function CryptoPerformancePage() {
 
   const totalFinished = globalStats.totalWins + globalStats.totalLosses;
   const winRate = totalFinished > 0 ? ((globalStats.totalWins / totalFinished) * 100).toFixed(1) : "0.0";
+
+  const filteredHistory = history.filter(item => filter === "ALL" || item.status === filter);
+
+  let totalProfit = 0;
+  let totalLoss = 0;
+  let winCount = 0;
+  let lossCount = 0;
+  history.forEach(t => {
+     if (t.pnlPercent) {
+        if (t.pnlPercent > 0) {
+           totalProfit += parseFloat(t.pnlPercent);
+           winCount++;
+        } else {
+           totalLoss += Math.abs(parseFloat(t.pnlPercent));
+           lossCount++;
+        }
+     }
+  });
+
+  const avgProfit = winCount > 0 ? (totalProfit / winCount).toFixed(2) : "0.00";
+  const avgLoss = lossCount > 0 ? (totalLoss / lossCount).toFixed(2) : "0.00";
+  const profitFactor = totalLoss > 0 ? (totalProfit / totalLoss).toFixed(2) : "N/A";
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-5xl mt-16">
@@ -129,9 +153,40 @@ export default function CryptoPerformancePage() {
         </Card>
       </div>
 
-      <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-        <TrendingUp className="w-5 h-5 text-indigo-500" /> Riwayat Sinyal Terakhir
-      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <Card className="bg-slate-900 border-slate-800">
+          <CardContent className="p-6">
+            <div className="text-slate-500 text-xs font-bold uppercase tracking-wider mb-2">Avg Profit</div>
+            <div className="text-3xl font-black text-emerald-400">+{avgProfit}%</div>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-slate-900 border-slate-800">
+          <CardContent className="p-6">
+            <div className="text-slate-500 text-xs font-bold uppercase tracking-wider mb-2">Avg Loss</div>
+            <div className="text-3xl font-black text-rose-400">-{avgLoss}%</div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-slate-900 border-slate-800">
+          <CardContent className="p-6">
+            <div className="text-slate-500 text-xs font-bold uppercase tracking-wider mb-2">Profit Factor</div>
+            <div className="text-3xl font-black text-indigo-400">{profitFactor}</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-bold flex items-center gap-2 text-white">
+            <TrendingUp className="w-5 h-5 text-indigo-500" /> Riwayat Sinyal Terakhir
+          </h2>
+          <div className="flex gap-2">
+              <Button size="sm" variant={filter === "ALL" ? "default" : "outline"} onClick={() => setFilter("ALL")}>Semua</Button>
+              <Button size="sm" variant={filter === "WIN" ? "default" : "outline"} onClick={() => setFilter("WIN")} className={filter === "WIN" ? "bg-emerald-600 hover:bg-emerald-700" : ""}>WIN</Button>
+              <Button size="sm" variant={filter === "LOSS" ? "default" : "outline"} onClick={() => setFilter("LOSS")} className={filter === "LOSS" ? "bg-rose-600 hover:bg-rose-700" : ""}>LOSS</Button>
+              <Button size="sm" variant={filter === "PENDING" ? "default" : "outline"} onClick={() => setFilter("PENDING")} className={filter === "PENDING" ? "bg-amber-600 hover:bg-amber-700" : ""}>PENDING</Button>
+          </div>
+      </div>
 
       {history.length === 0 ? (
          <div className="text-center py-20 bg-slate-800/50 rounded-2xl border border-dashed border-slate-800 text-slate-500">
@@ -150,15 +205,17 @@ export default function CryptoPerformancePage() {
                      </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
-                     {history.map((item, i) => (
-                        <tr key={i} className="hover:bg-slate-50/50 hover:bg-slate-900/30 transition-colors">
+                     {filteredHistory.map((item, i) => (
+                        <tr key={i} className={`hover:bg-slate-50/50 hover:bg-slate-900/30 transition-colors ${item.status === 'WIN' ? 'bg-emerald-950/10' : item.status === 'LOSS' ? 'bg-rose-950/10' : ''}`}>
                            <td className="p-4 text-sm text-slate-500 whitespace-nowrap">{item.date}</td>
                            <td className="p-4 font-bold text-slate-900 text-slate-100">{item.symbol}</td>
                            <td className="p-4">
                               {item.status === 'WIN' ? (
-                                 <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-0">WIN</Badge>
+                                 <Badge className="bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 border-0 font-black">WIN {item.pnlPercent ? `(+${item.pnlPercent}%)` : ''}</Badge>
                               ) : item.status === 'LOSS' ? (
-                                 <Badge className="bg-rose-100 text-rose-700 hover:bg-rose-100 border-0">LOSS</Badge>
+                                 <Badge className="bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 border-0 font-black">LOSS {item.pnlPercent ? `(${item.pnlPercent}%)` : ''}</Badge>
+                              ) : item.status === 'EXPIRED' ? (
+                                 <Badge className="bg-slate-500/20 text-slate-400 border-0 font-black">EXPIRED {item.pnlPercent ? `(${item.pnlPercent > 0 ? '+' : ''}${item.pnlPercent}%)` : ''}</Badge>
                               ) : (
                                  <Badge variant="outline" className="text-amber-600 border-amber-300">PENDING</Badge>
                               )}

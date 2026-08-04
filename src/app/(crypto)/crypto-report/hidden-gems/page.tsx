@@ -9,22 +9,26 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, ArrowLeft, Diamond, Target, ShieldAlert, Activity, Clock, TrendingUp } from "lucide-react";
 
 export default function HiddenGemsPage() {
   const router = useRouter();
   const { user, role, loading: authLoading } = useAuth();
-  const [latestReport, setLatestReport] = useState<any>(null);
+  const [reports, setReports] = useState<any[]>([]);
+  const [selectedReportId, setSelectedReportId] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let unsubscribe: () => void;
 
     if (!authLoading && role && role.startsWith("admin")) {
-        const q = query(collection(db, "cryptoHiddenGems"), orderBy("createdAt", "desc"), limit(1));
+        const q = query(collection(db, "cryptoHiddenGems"), orderBy("createdAt", "desc"), limit(14));
         unsubscribe = onSnapshot(q, (snapshot) => {
-           if (!snapshot.empty) {
-               setLatestReport({ id: snapshot.docs[0].id, ...snapshot.docs[0].data() });
+           const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+           setReports(data);
+           if (data.length > 0) {
+               setSelectedReportId(prev => prev ? prev : data[0].id);
            }
            setLoading(false);
         }, (err) => {
@@ -48,8 +52,10 @@ export default function HiddenGemsPage() {
     return <div className="p-8 text-center bg-slate-950 min-h-screen text-white">Akses ditolak. Halaman khusus Executive.</div>;
   }
 
+  const latestReport = reports.find(r => r.id === selectedReportId) || reports[0];
+
   if (!latestReport) {
-    return <div className="p-8 text-center bg-slate-950 min-h-screen text-white">Belum ada data Hidden Gems hari ini.</div>;
+    return <div className="p-8 text-center bg-slate-950 min-h-screen text-white">Belum ada data Hidden Gems.</div>;
   }
 
   const gems = latestReport.hiddenGems || [];
@@ -73,11 +79,27 @@ export default function HiddenGemsPage() {
                 <p className="text-xs font-medium text-slate-500">Medium-Term Reversal Finder</p>
              </div>
           </div>
-          <div className="text-right hidden md:block">
-             <div className="text-xs text-slate-500 font-bold uppercase tracking-widest">Last Scan</div>
-             <div className="text-sm font-medium text-slate-300 flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-emerald-500" /> {createdAt.toLocaleString("id-ID")} WIB
+          <div className="text-right hidden md:flex flex-col items-end gap-2">
+             <div className="text-xs text-slate-500 font-bold uppercase tracking-widest flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-emerald-500" /> Riwayat Scan
              </div>
+             
+             <Select value={selectedReportId} onValueChange={setSelectedReportId}>
+               <SelectTrigger className="w-[220px] h-9 bg-slate-900 border-slate-800 text-slate-300 focus:ring-0 focus:ring-offset-0 rounded-xl">
+                  <SelectValue placeholder="Pilih Waktu" />
+               </SelectTrigger>
+               <SelectContent className="bg-slate-900 border-slate-800 text-slate-300 rounded-xl">
+                  {reports.map(r => {
+                     const d = r.createdAt?.toDate ? r.createdAt.toDate() : new Date(r.createdAt);
+                     const isLatest = r.id === reports[0]?.id;
+                     return (
+                        <SelectItem key={r.id} value={r.id} className="text-sm cursor-pointer py-2">
+                           {d.toLocaleDateString("id-ID", { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })} WIB {isLatest && "(Terbaru)"}
+                        </SelectItem>
+                     )
+                  })}
+               </SelectContent>
+             </Select>
           </div>
         </div>
       </div>
@@ -139,13 +161,28 @@ export default function HiddenGemsPage() {
                              ${gem.currentPrice}
                           </div>
                        </div>
-                       <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-black">
-                          RSI 1D: {gem.rsi1d}
-                       </Badge>
+                       <div className="flex flex-col gap-1 items-end">
+                           <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-black text-[10px]">
+                              RSI 1D: {gem.rsi1d}
+                           </Badge>
+                           {gem.stochRsi4h && (
+                           <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-black text-[10px]">
+                              Stoch 4H: {gem.stochRsi4h}
+                           </Badge>
+                           )}
+                       </div>
                     </div>
 
                     <div className="p-6 flex-1 flex flex-col">
                        <div className="mb-6 flex-1">
+                         {gem.riskLevel && (
+                         <div className="flex items-center gap-2 mb-4">
+                            <Badge className="bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700">{gem.riskLevel} Risk</Badge>
+                            {gem.potentialReturnPct && (
+                            <Badge className="bg-emerald-950 text-emerald-400 border-emerald-800 hover:bg-emerald-900">+{gem.potentialReturnPct}% Upside</Badge>
+                            )}
+                         </div>
+                         )}
                          <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">DeepSeek Reasoning</div>
                          <p className="text-sm text-slate-300 leading-relaxed">
                             {gem.reasoning}

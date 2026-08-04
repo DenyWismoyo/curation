@@ -9,22 +9,26 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, ArrowLeft, Eye, Target, Activity, Clock } from "lucide-react";
 
 export default function SmartMoneyPage() {
   const router = useRouter();
   const { user, role, loading: authLoading } = useAuth();
-  const [latestReport, setLatestReport] = useState<any>(null);
+  const [reports, setReports] = useState<any[]>([]);
+  const [selectedReportId, setSelectedReportId] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let unsubscribe: () => void;
 
     if (!authLoading && role && role.startsWith("admin")) {
-        const q = query(collection(db, "cryptoSmartMoney"), orderBy("createdAt", "desc"), limit(1));
+        const q = query(collection(db, "cryptoSmartMoney"), orderBy("createdAt", "desc"), limit(14));
         unsubscribe = onSnapshot(q, (snapshot) => {
-           if (!snapshot.empty) {
-               setLatestReport({ id: snapshot.docs[0].id, ...snapshot.docs[0].data() });
+           const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+           setReports(data);
+           if (data.length > 0) {
+               setSelectedReportId(prev => prev ? prev : data[0].id);
            }
            setLoading(false);
         }, (err) => {
@@ -48,8 +52,10 @@ export default function SmartMoneyPage() {
     return <div className="p-8 text-center bg-slate-950 min-h-screen text-white">Akses ditolak. Halaman khusus Executive.</div>;
   }
 
+  const latestReport = reports.find(r => r.id === selectedReportId) || reports[0];
+
   if (!latestReport) {
-    return <div className="p-8 text-center bg-slate-950 min-h-screen text-white">Belum ada data Smart Money Tracker hari ini.</div>;
+    return <div className="p-8 text-center bg-slate-950 min-h-screen text-white">Belum ada data Smart Money Tracker.</div>;
   }
 
   const coins = latestReport.coins || [];
@@ -78,13 +84,27 @@ export default function SmartMoneyPage() {
                     <p className="text-xs sm:text-sm text-slate-500 font-medium">Melacak akumulasi paus (Whale) sebelum breakout.</p>
                 </div>
             </div>
-            <div className="hidden sm:flex flex-col items-end">
+            <div className="hidden sm:flex flex-col items-end gap-2">
                 <Badge variant="outline" className="bg-purple-500/10 text-purple-400 border-purple-500/20 shadow-[0_0_15px_rgba(168,85,247,0.15)]">
                     <Activity className="w-3.5 h-3.5 mr-1.5" /> Live Radar
                 </Badge>
-                <span className="text-[10px] text-slate-500 mt-1 flex items-center gap-1 font-medium">
-                    <Clock className="w-3 h-3" /> {createdAt.toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })} WIB
-                </span>
+                
+                <Select value={selectedReportId} onValueChange={setSelectedReportId}>
+                  <SelectTrigger className="w-[200px] h-8 text-xs bg-slate-900 border-slate-800 text-slate-300 focus:ring-0 focus:ring-offset-0 rounded-lg">
+                     <SelectValue placeholder="Pilih Waktu" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-900 border-slate-800 text-slate-300 rounded-lg">
+                     {reports.map(r => {
+                        const d = r.createdAt?.toDate ? r.createdAt.toDate() : new Date(r.createdAt);
+                        const isLatest = r.id === reports[0]?.id;
+                        return (
+                           <SelectItem key={r.id} value={r.id} className="text-xs cursor-pointer">
+                              {d.toLocaleDateString("id-ID", { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })} WIB {isLatest && "(Terbaru)"}
+                           </SelectItem>
+                        )
+                     })}
+                  </SelectContent>
+                </Select>
             </div>
         </div>
       </div>
@@ -128,6 +148,26 @@ export default function SmartMoneyPage() {
                             <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-2">
                                 <Eye className="w-4 h-4 text-purple-500" /> Analisis Akumulasi DeepSeek
                             </h4>
+                            
+                            {coin.quantitativeMetrics && (
+                               <div className="grid grid-cols-3 gap-3 mb-4">
+                                  <div className="bg-black/30 p-3 rounded-lg border border-white/5">
+                                     <div className="text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-1">Vol Spike</div>
+                                     <div className="text-sm font-black text-orange-400">{coin.quantitativeMetrics.volumeSpikeRatio}x</div>
+                                  </div>
+                                  <div className="bg-black/30 p-3 rounded-lg border border-white/5">
+                                     <div className="text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-1">OBV Trend</div>
+                                     <div className="text-sm font-black text-purple-400">{coin.quantitativeMetrics.obvTrend?.replace('_', ' ')}</div>
+                                  </div>
+                                  <div className="bg-black/30 p-3 rounded-lg border border-white/5">
+                                     <div className="text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-1">Price Change</div>
+                                     <div className={`text-sm font-black ${parseFloat(coin.quantitativeMetrics.priceChangePct) > 0 ? 'text-emerald-400' : parseFloat(coin.quantitativeMetrics.priceChangePct) < 0 ? 'text-rose-400' : 'text-slate-400'}`}>
+                                         {parseFloat(coin.quantitativeMetrics.priceChangePct) > 0 ? '+' : ''}{coin.quantitativeMetrics.priceChangePct}%
+                                     </div>
+                                  </div>
+                               </div>
+                            )}
+                            
                             <p className="text-slate-300 text-sm leading-relaxed font-medium bg-purple-950/20 p-4 rounded-xl border border-purple-900/30">
                                 {coin.accumulationReason}
                             </p>

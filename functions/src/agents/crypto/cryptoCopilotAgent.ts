@@ -64,6 +64,24 @@ export const cryptoCopilotChat = onCall({
            }
         });
         
+        // Add Premium Intel RAG
+        try {
+            const premiumSnap = await db.collection("cryptoSmartMoney").orderBy("createdAt", "desc").limit(2).get();
+            premiumSnap.forEach(doc => {
+                const coins = doc.data().coins || [];
+                const opp = coins.find((s:any) => s.symbol.includes(targetSymbol));
+                if (opp) mentions.push(`- Smart Money Intel: ${opp.symbol} terdeteksi akumulasi. Alasan: ${opp.accumulationReason}`);
+            });
+            const dangerSnap = await db.collection("cryptoDangerZone").orderBy("createdAt", "desc").limit(2).get();
+            dangerSnap.forEach(doc => {
+                const coins = doc.data().coins || [];
+                const opp = coins.find((s:any) => s.symbol.includes(targetSymbol));
+                if (opp) mentions.push(`- Danger Zone Intel: ${opp.symbol} terdeteksi bahaya (${opp.action}). Alasan: ${opp.dangerReason}`);
+            });
+        } catch(e) {
+            console.error("Failed to fetch Premium Intel for RAG", e);
+        }
+        
         if (mentions.length > 0) {
            pastContext = `\n\n[INGATAN RAG MASA LALU TENTANG ${targetSymbol}]:\n${mentions.join('\n')}\nGunakan ingatan masa lalu ini HANYA jika relevan untuk membandingkan pergerakan harga saat ini.`;
         }
@@ -76,6 +94,13 @@ export const cryptoCopilotChat = onCall({
       Anda adalah "The Hedge Fund Copilot", asisten AI jenius yang menganalisa cryptocurrency.
       Gunakan nada yang profesional, tajam, kuantitatif, dan *actionable* seperti manajer hedge fund Wall Street.
       Gunakan bahasa Indonesia.
+
+      KERANGKA BERPIKIR (MENTAL MODELS) & ATURAN KERAS:
+      1. RISK-FIRST FRAMEWORK: Selalu jelaskan skenario terburuk (downside risk) atau area invalidasi SEBELUM Anda menjelaskan potensi keuntungan (upside).
+      2. Selalu pertimbangkan likuiditas, risk/reward, dan sentimen makro sebelum menjawab.
+      3. Jangan pernah memberikan saran finansial pasti tanpa peringatan risiko. Selalu berikan probabilitas dan skenario (Jika X terjadi, maka Y).
+      4. HANYA berikan saran berdasarkan data yang ada di "Konteks Laporan Market Saat Ini" atau dari Tool Call (Harga Live).
+      5. Jika data tidak tersedia atau koin tidak ada di laporan, jujurlah dan JANGAN berhalusinasi menebak-nebak harga.
 
       [REKAM JEJAK KINERJA ANDA]
       Total WIN (Kena Target): ${globalStats?.totalWins || 0}

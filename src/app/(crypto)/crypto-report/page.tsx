@@ -18,19 +18,23 @@ import CryptoLiveTicker from "@/components/crypto/CryptoLiveTicker";
 import CryptoAlertsWidget from "@/components/crypto/CryptoAlertsWidget";
 import CryptoCalendar from "@/components/crypto/CryptoCalendar";
 import MacroEconomicCalendar from "@/components/crypto/MacroEconomicCalendar";
-
-
-let cachedReports: any[] = [];
-let isReportsCached = false;
+import MarketPulseWidget from "@/components/crypto/MarketPulseWidget";
+import MarketHeatmapWidget from "@/components/crypto/MarketHeatmapWidget";
+import TemporalComparisonWidget from "@/components/crypto/TemporalComparisonWidget";
+import WeeklyMonthlyOutlookWidget from "@/components/crypto/WeeklyMonthlyOutlookWidget";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function CryptoReportPage() {
   const { user, role, loading: authLoading } = useAuth();
-  const [reports, setReports] = useState<any[]>(cachedReports);
-  const [loading, setLoading] = useState(!isReportsCached);
+  const [reports, setReports] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   
   // State untuk chat
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatContext, setChatContext] = useState<any>(null);
+  
+  // State untuk dropdown tanggal
+  const [selectedDate, setSelectedDate] = useState<string>("");
 
 
   useEffect(() => {
@@ -40,12 +44,13 @@ export default function CryptoReportPage() {
         const q = query(collection(db, "cryptoReports"), orderBy("createdAt", "desc"), limit(20));
         unsubscribe = onSnapshot(q, (snapshot) => {
            const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any));
-           cachedReports = data;
-           isReportsCached = true;
            setReports(data);
            
            if (data.length > 0) {
               setChatContext(data[0].reportData);
+              const d = data[0].createdAt?.toDate ? data[0].createdAt.toDate() : new Date();
+              const dateStr = d.toLocaleDateString("id-ID", { day: '2-digit', month: 'short', year: 'numeric' });
+              setSelectedDate(dateStr);
            }
            setLoading(false);
         }, (err) => {
@@ -101,22 +106,38 @@ export default function CryptoReportPage() {
         <CryptoLiveTicker />
 
         <Tabs defaultValue="ai-reports" className="w-full">
-          <TabsList className="bg-slate-200/50 dark:bg-slate-800/50 p-1 mb-8 rounded-2xl flex w-fit max-w-full overflow-x-auto">
-            <TabsTrigger 
-              value="ai-reports"
-              className="rounded-xl px-6 py-3 font-bold data-[state=active]:bg-white data-[state=active]:text-indigo-600 data-[state=active]:shadow-sm dark:data-[state=active]:bg-slate-900 dark:data-[state=active]:text-indigo-400"
-            >
+          <div className="w-full overflow-x-auto no-scrollbar mb-8 pb-2">
+            <TabsList className="bg-slate-200/50 dark:bg-slate-900/50 p-1.5 rounded-2xl inline-flex min-w-max">
+              <TabsTrigger 
+                value="ai-reports"
+                className="rounded-xl px-5 py-2.5 text-sm sm:text-base font-bold data-[state=active]:bg-white data-[state=active]:text-indigo-600 data-[state=active]:shadow dark:data-[state=active]:bg-slate-800 dark:data-[state=active]:text-indigo-400 transition-all border-0"
+              >
               <Bot className="w-5 h-5 mr-2" />
               AI Market Reports
             </TabsTrigger>
-            <TabsTrigger 
-              value="macro-calendar"
-              className="rounded-xl px-6 py-3 font-bold data-[state=active]:bg-white data-[state=active]:text-indigo-600 data-[state=active]:shadow-sm dark:data-[state=active]:bg-slate-900 dark:data-[state=active]:text-indigo-400"
-            >
+              <TabsTrigger 
+                value="macro-calendar"
+                className="rounded-xl px-5 py-2.5 text-sm sm:text-base font-bold data-[state=active]:bg-white data-[state=active]:text-indigo-600 data-[state=active]:shadow dark:data-[state=active]:bg-slate-800 dark:data-[state=active]:text-indigo-400 transition-all border-0"
+              >
               <Globe className="w-5 h-5 mr-2" />
               Global Economic Calendar
             </TabsTrigger>
-          </TabsList>
+              <TabsTrigger 
+                value="temporal"
+                className="rounded-xl px-5 py-2.5 text-sm sm:text-base font-bold data-[state=active]:bg-white data-[state=active]:text-indigo-600 data-[state=active]:shadow dark:data-[state=active]:bg-slate-800 dark:data-[state=active]:text-indigo-400 transition-all border-0"
+              >
+              <RotateCcw className="w-5 h-5 mr-2" />
+              Kemarin vs Hari Ini
+            </TabsTrigger>
+              <TabsTrigger 
+                value="outlook"
+                className="rounded-xl px-5 py-2.5 text-sm sm:text-base font-bold data-[state=active]:bg-white data-[state=active]:text-indigo-600 data-[state=active]:shadow dark:data-[state=active]:bg-slate-800 dark:data-[state=active]:text-indigo-400 transition-all border-0"
+              >
+                <CalendarDays className="w-5 h-5 mr-2" />
+                Outlook (Weekly/Monthly)
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           <TabsContent value="ai-reports" className="mt-0 focus-visible:outline-none focus-visible:ring-0">
             <CryptoCalendar />
@@ -135,8 +156,68 @@ export default function CryptoReportPage() {
             </CardContent>
           </Card>
         ) : (
-          <Tabs defaultValue={defaultTab} className="w-full">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div className="w-full">
+            <MarketPulseWidget 
+               globalMarket={reports[0]?.rawFundamental?.globalMarket} 
+               fearAndGreed={reports[0]?.rawFundamental?.fearAndGreed} 
+            />
+            <MarketHeatmapWidget 
+               marketData={reports[0]?.rawScalpingData} 
+            />
+
+            {/* QUICK INTELLIGENCE CARDS */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 mt-4">
+               <Link href="/crypto-report/smart-money">
+                 <Card className="bg-purple-950/10 border-purple-900/20 hover:bg-purple-900/30 transition-colors cursor-pointer group h-full">
+                   <CardContent className="p-4 flex flex-col items-center text-center justify-center h-full">
+                      <div className="p-3 bg-purple-500/10 rounded-full mb-3 group-hover:scale-110 transition-transform">
+                         <Eye className="w-6 h-6 text-purple-500" />
+                      </div>
+                      <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-1">Smart Money</h4>
+                      <p className="text-xs text-slate-500">Deteksi akumulasi paus</p>
+                   </CardContent>
+                 </Card>
+               </Link>
+               
+               <Link href="/crypto-report/liquidity">
+                 <Card className="bg-cyan-950/10 border-cyan-900/20 hover:bg-cyan-900/30 transition-colors cursor-pointer group h-full">
+                   <CardContent className="p-4 flex flex-col items-center text-center justify-center h-full">
+                      <div className="p-3 bg-cyan-500/10 rounded-full mb-3 group-hover:scale-110 transition-transform">
+                         <Radar className="w-6 h-6 text-cyan-500" />
+                      </div>
+                      <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-1">Liquidity</h4>
+                      <p className="text-xs text-slate-500">Radar stop-loss area</p>
+                   </CardContent>
+                 </Card>
+               </Link>
+               
+               <Link href="/crypto-report/danger-zone">
+                 <Card className="bg-rose-950/10 border-rose-900/20 hover:bg-rose-900/30 transition-colors cursor-pointer group h-full">
+                   <CardContent className="p-4 flex flex-col items-center text-center justify-center h-full">
+                      <div className="p-3 bg-rose-500/10 rounded-full mb-3 group-hover:scale-110 transition-transform">
+                         <Flame className="w-6 h-6 text-rose-500" />
+                      </div>
+                      <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-1">Danger Zone</h4>
+                      <p className="text-xs text-slate-500">High risk & unlock</p>
+                   </CardContent>
+                 </Card>
+               </Link>
+               
+               <Link href="/crypto-report/hidden-gems">
+                 <Card className="bg-emerald-950/10 border-emerald-900/20 hover:bg-emerald-900/30 transition-colors cursor-pointer group h-full">
+                   <CardContent className="p-4 flex flex-col items-center text-center justify-center h-full">
+                      <div className="p-3 bg-emerald-500/10 rounded-full mb-3 group-hover:scale-110 transition-transform">
+                         <Diamond className="w-6 h-6 text-emerald-500" />
+                      </div>
+                      <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-1">Hidden Gems</h4>
+                      <p className="text-xs text-slate-500">Oversold reversal</p>
+                   </CardContent>
+                 </Card>
+               </Link>
+            </div>
+            
+            <div className="w-full">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                <div className="flex items-center gap-4">
                  <h2 className="text-xl font-bold flex items-center gap-2 text-slate-800 dark:text-slate-200">
                    <Calendar className="w-5 h-5 text-indigo-500" /> Riwayat Laporan
@@ -154,28 +235,26 @@ export default function CryptoReportPage() {
                      <TrendingUp className="w-4 h-4 mr-2" /> Scalping Analytics
                    </Button>
                  </Link>
-                 <div className="w-full overflow-x-auto no-scrollbar pb-1">
-                   <TabsList className="bg-transparent border-0 p-0 h-auto inline-flex justify-start gap-2">
+                 
+                 <Select value={selectedDate} onValueChange={setSelectedDate}>
+                   <SelectTrigger className="w-40 rounded-xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 focus:ring-0 focus:ring-offset-0 font-bold">
+                     <Calendar className="w-4 h-4 mr-2 text-slate-500" />
+                     <SelectValue placeholder="Pilih Tanggal" />
+                   </SelectTrigger>
+                   <SelectContent className="rounded-xl border-slate-200 dark:border-slate-800">
                      {dateKeys.map(date => (
-                     <TabsTrigger 
-                       key={date} 
-                       value={date}
-                       className="rounded-full px-5 py-2.5 text-sm font-semibold whitespace-nowrap bg-slate-900/50 hover:bg-slate-800 text-slate-400 data-[state=active]:bg-indigo-600 data-[state=active]:text-white shadow-none transition-all border border-slate-800 data-[state=active]:border-indigo-500"
-                     >
-                       {date}
-                     </TabsTrigger>
-                   ))}
-                   </TabsList>
-                 </div>
+                       <SelectItem key={date} value={date} className="rounded-lg cursor-pointer font-medium">{date}</SelectItem>
+                     ))}
+                   </SelectContent>
+                 </Select>
                </div>
             </div>
 
-            {dateKeys.map(date => {
-              const reportsForDate = groupedReports[date];
+            {selectedDate && groupedReports[selectedDate] && (() => {
+              const reportsForDate = groupedReports[selectedDate];
               const defaultHourTab = reportsForDate.length > 0 ? reportsForDate[0].id : "empty";
 
               return (
-              <TabsContent key={date} value={date} className="mt-0 focus-visible:outline-none focus-visible:ring-0">
                 <Tabs defaultValue={defaultHourTab} className="w-full">
                   <div className="mb-6 flex items-center gap-3 overflow-x-auto no-scrollbar py-2">
                      <span className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5 shrink-0"><Clock className="w-3.5 h-3.5"/> Waktu Laporan:</span>
@@ -183,11 +262,11 @@ export default function CryptoReportPage() {
                        {reportsForDate.map((r: any) => {
                          const t = r.createdAt?.toDate ? r.createdAt.toDate() : new Date(r.createdAt);
                          const timeStr = t.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
-                         return (
-                           <TabsTrigger key={r.id} value={r.id} className="rounded-full px-4 py-1.5 text-xs font-bold whitespace-nowrap bg-slate-900/40 hover:bg-slate-800 text-slate-400 data-[state=active]:bg-slate-800 data-[state=active]:text-indigo-400 shadow-none transition-all border border-slate-800/60 data-[state=active]:border-indigo-500/40 data-[state=active]:shadow-sm">
-                             {timeStr} WIB
-                           </TabsTrigger>
-                         );
+                           return (
+                             <TabsTrigger key={r.id} value={r.id} className="rounded-full px-4 py-1.5 text-xs font-bold whitespace-nowrap bg-transparent hover:bg-slate-800 text-slate-500 data-[state=active]:bg-indigo-500/10 data-[state=active]:text-indigo-400 shadow-none transition-all border-0">
+                               {timeStr} WIB
+                             </TabsTrigger>
+                           );
                        })}
                      </TabsList>
                   </div>
@@ -196,7 +275,7 @@ export default function CryptoReportPage() {
                     const data = report.reportData || {};
                     const sentimentColor = data.sentiment === "BULLISH" ? "bg-emerald-500" : data.sentiment === "BEARISH" ? "bg-rose-500" : "bg-slate-500";
                     const createdAt = report.createdAt?.toDate ? report.createdAt.toDate() : new Date();
-                    const isLatest = date === dateKeys[0] && idx === 0;
+                    const isLatest = selectedDate === dateKeys[0] && idx === 0;
 
                     return (
                       <TabsContent key={report.id} value={report.id} className="mt-0 outline-none">
@@ -396,7 +475,7 @@ export default function CryptoReportPage() {
                                  <h4 className="font-black text-lg mb-4 flex items-center gap-2 text-slate-800 dark:text-slate-200">
                                   <TrendingUp className="w-5 h-5 text-indigo-500" /> Analisis Teknikal
                                  </h4>
-                                 <div className="space-y-4">
+                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                                    {data.coinsAnalysis.map((coin: any, i: number) => {
                                      const isBuy = coin.recommendation === "BUY";
                                      const isSell = coin.recommendation === "SELL";
@@ -500,15 +579,31 @@ export default function CryptoReportPage() {
                     );
                   })}
                 </Tabs>
-              </TabsContent>
               );
-            })}
-          </Tabs>
+            })()}
+            </div>
+          </div>
         )}
         </TabsContent>
 
           <TabsContent value="macro-calendar" className="mt-0 focus-visible:outline-none focus-visible:ring-0">
             <MacroEconomicCalendar />
+          </TabsContent>
+
+          <TabsContent value="temporal" className="mt-0 focus-visible:outline-none focus-visible:ring-0">
+            {reports.length > 0 ? (
+               <TemporalComparisonWidget reportData={reports[0]?.reportData} />
+            ) : (
+               <div className="flex justify-center p-12 text-slate-500">Belum ada data laporan terbaru.</div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="outlook" className="mt-0 focus-visible:outline-none focus-visible:ring-0">
+            {reports.length > 0 ? (
+               <WeeklyMonthlyOutlookWidget reportData={reports.find(r => r.isWeekly || r.isMonthly)?.reportData || reports[0]?.reportData} />
+            ) : (
+               <div className="flex justify-center p-12 text-slate-500">Belum ada data laporan terbaru.</div>
+            )}
           </TabsContent>
         </Tabs>
       </div>

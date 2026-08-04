@@ -1,5 +1,5 @@
 import { HttpsError } from "firebase-functions/v2/https";
-import { MACD, EMA, BollingerBands, ATR } from "technicalindicators";
+import { MACD, EMA, BollingerBands, ATR, ADX } from "technicalindicators";
 
 export interface CryptoMarketData {
   symbol: string;
@@ -19,40 +19,25 @@ export interface CryptoMarketData {
   bb?: { lower?: number; middle?: number; upper?: number } | null;
   fundingRate?: number | null;
   longShortRatio?: number | null;
+  openInterest?: number | null;
   atr?: number | null;
+  vwap?: number | null;
+  obv?: number[] | null;
+  adx?: { adx?: number; pdi?: number; mdi?: number } | null;
   setupScore?: number;
   setupDirection?: "LONG" | "SHORT" | "NEUTRAL";
   setupReasoning?: string;
 }
 
-// Menghitung RSI 14 Periode
-export const calculateRSI = (klines: any[], period = 14): number | undefined => {
-  if (klines.length <= period) return undefined;
-  let gains = 0, losses = 0;
-  for (let i = 1; i <= period; i++) {
-    const change = parseFloat(klines[i].close) - parseFloat(klines[i - 1].close);
-    if (change > 0) gains += change;
-    else losses -= change;
-  }
-  let avgGain = gains / period;
-  let avgLoss = losses / period;
-  for (let i = period + 1; i < klines.length; i++) {
-    const change = parseFloat(klines[i].close) - parseFloat(klines[i - 1].close);
-    let gain = change > 0 ? change : 0;
-    let loss = change < 0 ? -change : 0;
-    avgGain = (avgGain * (period - 1) + gain) / period;
-    avgLoss = (avgLoss * (period - 1) + loss) / period;
-  }
-  if (avgLoss === 0) return 100;
-  const rs = avgGain / avgLoss;
-  return 100 - (100 / (1 + rs));
-};
+import { calculateRSI, calculateVWAP, calculateOBV } from "./utils/indicators";
 
 const calculateIndicators = (klinesData: any[]): Partial<CryptoMarketData> => {
   if (klinesData.length === 0) return {};
   const closes = klinesData.map((k) => parseFloat(k.close));
   
   const rsi14 = calculateRSI(klinesData, 14);
+  const vwap = calculateVWAP(klinesData);
+  const obv = calculateOBV(klinesData);
   
   let macdResult = null;
   if (closes.length >= 26) {
@@ -79,18 +64,22 @@ const calculateIndicators = (klinesData: any[]): Partial<CryptoMarketData> => {
   }
 
   let atr = null;
+  let adxResult = null;
   if (klinesData.length >= 14) {
     const high = klinesData.map(k => parseFloat(k.high));
     const low = klinesData.map(k => parseFloat(k.low));
     const close = closes;
     const atrData = ATR.calculate({ high, low, close, period: 14 });
     if (atrData.length > 0) atr = atrData[atrData.length - 1];
+
+    const adxData = ADX.calculate({ high, low, close, period: 14 });
+    if (adxData.length > 0) adxResult = adxData[adxData.length - 1];
   }
 
-  return { rsi14, macd: macdResult as any, ema50, ema200, bb: bb as any, atr };
+  return { rsi14, macd: macdResult as any, ema50, ema200, bb: bb as any, atr, vwap, obv, adx: adxResult as any };
 };
 
-// Algoritma Screener 3.0 (Multi-Factor Scoring Model)
+// Algoritma Screener 4.0 (Multi-Factor Scoring Model)
 const calculateSetupScore = (coin: CryptoMarketData): { score: number, direction: "LONG" | "SHORT" | "NEUTRAL", reasoning: string } => {
   let score = 0;
   let reasons: string[] = [];
@@ -104,34 +93,57 @@ const calculateSetupScore = (coin: CryptoMarketData): { score: number, direction
      reasons.push(`ATR (Volatilitas): ${coin.atr.toFixed(4)}`);
   }
 
-  // 1. Trend Alignment Score (25%)
+  // 1. Trend & ADX Strength Score (25%)
   if (coin.ema50 && coin.ema200) {
      if (coin.ema50 > coin.ema200) {
-        score += 15;
+        score += 10;
         longWeight += 2;
         reasons.push("Bullish Macro (EMA50 > EMA200)");
-        
-        // Bounce on EMA50
         if (currentPrice > coin.ema50 && currentPrice < coin.ema50 * 1.02) {
-           score += 10;
-           longWeight += 1;
-           reasons.push("Perfect bounce di EMA50");
+           score += 10; longWeight += 1; reasons.push("Perfect bounce di EMA50");
         }
      } else {
-        score += 15;
+        score += 10;
         shortWeight += 2;
         reasons.push("Bearish Macro (EMA50 < EMA200)");
-        
-        // Rejection at EMA50
         if (currentPrice < coin.ema50 && currentPrice > coin.ema50 * 0.98) {
-           score += 10;
-           shortWeight += 1;
-           reasons.push("Rejection di EMA50 (Potensi lanjut turun)");
+           score += 10; shortWeight += 1; reasons.push("Rejection di EMA50 (Potensi lanjut turun)");
         }
      }
   }
+  
+  if (coin.adx && coin.adx.adx && coin.adx.adx > 25) {
+     score += 10;
+     reasons.push(`Trend Kuat (ADX ${coin.adx.adx.toFixed(1)} > 25)`);
+  }
 
-  // 2. Squeeze & Volatility Score (25%)
+  // 2. VWAP & Volume Divergence (25%)
+  if (coin.vwap) {
+     if (currentPrice > coin.vwap) {
+        score += 10; longWeight += 1;
+        reasons.push("Harga di atas VWAP (Bullish Bias)");
+     } else {
+        score += 10; shortWeight += 1;
+        reasons.push("Harga di bawah VWAP (Bearish Bias)");
+     }
+  }
+
+  if (coin.obv && coin.obv.length >= 10) {
+     const lastOBV = coin.obv[coin.obv.length - 1];
+     const pastOBV = coin.obv[coin.obv.length - 10];
+     const pastPrice = parseFloat(coin.klines[coin.klines.length - 10].close);
+     const priceChange = (currentPrice - pastPrice) / pastPrice;
+     
+     if (lastOBV > pastOBV && priceChange < -0.01) {
+        score += 15; longWeight += 2;
+        reasons.push("Bullish OBV Divergence (Harga turun >1% tapi diakumulasi)");
+     } else if (lastOBV < pastOBV && priceChange > 0.01) {
+        score += 15; shortWeight += 2;
+        reasons.push("Bearish OBV Divergence (Harga naik >1% tapi didistribusi)");
+     }
+  }
+
+  // 3. Squeeze & Volatility Score (25%)
   if (coin.bb && coin.bb.upper && coin.bb.lower && coin.bb.middle) {
      const bbWidth = (coin.bb.upper - coin.bb.lower) / coin.bb.middle;
      if (bbWidth < 0.05) { 
@@ -145,20 +157,6 @@ const calculateSetupScore = (coin: CryptoMarketData): { score: number, direction
         score += 15;
         shortWeight += 2;
         reasons.push("Overbought Ekstrem di atas BB Upper (Potensi Mean Reversion SHORT)");
-     }
-  }
-
-  // 3. Volume Anomaly (25%)
-  if (coin.klines.length >= 20) {
-     const last20 = coin.klines.slice(-20);
-     const avgVol = last20.reduce((acc, k) => acc + parseFloat(k.volume), 0) / 20;
-     const lastVol = parseFloat(coin.klines[coin.klines.length - 1].volume);
-     if (lastVol > avgVol * 2.5) {
-        score += 25;
-        reasons.push(`Volume Anomaly 2.5x rata-rata`);
-     } else if (lastVol > avgVol * 1.5) {
-        score += 10;
-        reasons.push("Volume meningkat");
      }
   }
 
@@ -214,12 +212,27 @@ export const fetchTrendingCoins = async (): Promise<string[]> => {
 
 export const fetchFearAndGreedIndex = async (): Promise<any> => {
   try {
-    const res = await fetch("https://api.alternative.me/fng/");
+    const res = await fetch("https://api.alternative.me/fng/?limit=7");
     if (!res.ok) return null;
     const data = await res.json();
-    return data.data?.[0] || null;
+    return {
+       current: data.data?.[0] || null,
+       history: data.data || []
+    };
   } catch (error) {
     console.error("fetchFearAndGreedIndex err", error);
+    return null;
+  }
+};
+
+export const fetchGlobalMarketInfo = async (): Promise<any> => {
+  try {
+    const res = await fetch("https://api.coingecko.com/api/v3/global");
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.data || null;
+  } catch (error) {
+    console.error("fetchGlobalMarketInfo err", error);
     return null;
   }
 };
@@ -257,6 +270,18 @@ export const fetchBinanceLongShortRatio = async (symbol: string): Promise<number
     if (!res.ok) return null;
     const data = await res.json();
     return data.length > 0 ? parseFloat(data[0].longShortRatio) : null;
+  } catch (error) {
+    return null;
+  }
+};
+
+export const fetchBinanceOpenInterest = async (symbol: string): Promise<number | null> => {
+  try {
+    const pair = symbol.endsWith("USDT") ? symbol : `${symbol}USDT`;
+    const res = await fetch(`https://fapi.binance.com/fapi/v1/openInterest?symbol=${pair}`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.openInterest ? parseFloat(data.openInterest) : null;
   } catch (error) {
     return null;
   }
@@ -350,13 +375,24 @@ export const fetchScalpingCandidates = async (): Promise<{ symbol: string; chang
     const res = await fetch("https://api.binance.com/api/v3/ticker/24hr");
     if (!res.ok) return [];
     const data = await res.json();
-    const usdtPairs = data.filter((item: any) => 
-      item.symbol.endsWith("USDT") && 
-      !["USDCUSDT", "FDUSDUSDT", "TUSDUSDT", "BUSDUSDT", "EURUSDT"].includes(item.symbol) &&
-      parseFloat(item.quoteVolume) > 30000000
-    );
-    const sorted = usdtPairs.sort((a: any, b: any) => Math.abs(parseFloat(b.priceChangePercent)) - Math.abs(parseFloat(a.priceChangePercent)));
-    return sorted.slice(0, 50).map((item: any) => ({
+    const usdtPairs = data.filter((item: any) => {
+      const spread = (parseFloat(item.askPrice) - parseFloat(item.bidPrice)) / parseFloat(item.bidPrice);
+      const change = Math.abs(parseFloat(item.priceChangePercent));
+      const volume = parseFloat(item.quoteVolume);
+      return item.symbol.endsWith("USDT") && 
+             !["USDCUSDT", "FDUSDUSDT", "TUSDUSDT", "BUSDUSDT", "EURUSDT"].includes(item.symbol) &&
+             volume > 20000000 && // Minimum $20M liquidity for scalping
+             spread < 0.005 && // Maximum spread 0.5%
+             change < 10 && // Exclude already-pumped/dumped coins
+             change > 1.0; // Ensure it has at least 1% daily activity
+    });
+    // Sort by Volatility * Volume score to find active movers with high liquidity
+    const sorted = usdtPairs.sort((a: any, b: any) => {
+       const scoreA = parseFloat(a.quoteVolume) * Math.abs(parseFloat(a.priceChangePercent));
+       const scoreB = parseFloat(b.quoteVolume) * Math.abs(parseFloat(b.priceChangePercent));
+       return scoreB - scoreA;
+    });
+    return sorted.slice(0, 30).map((item: any) => ({ // Top 30 most active liquid coins
       symbol: item.symbol, change: item.priceChangePercent, volume: item.quoteVolume
     }));
   } catch (error) {
@@ -364,26 +400,30 @@ export const fetchScalpingCandidates = async (): Promise<{ symbol: string; chang
   }
 };
 
-export const gatherCryptoMarketData = async (isWeekly = false): Promise<{
+export const gatherCryptoMarketData = async (isWeekly = false, isMonthly = false): Promise<{
   fearAndGreed: any;
+  globalMarket: any;
   latestNews: string[];
   stablecoinGrowth: any;
   dexVolumeGrowth: any;
   marketData: CryptoMarketData[];
   scalpingCandidatesData: CryptoMarketData[];
   weeklyMarketData?: CryptoMarketData[];
+  monthlyMarketData?: CryptoMarketData[];
 }> => {
-   const baseCoins = ["BTC", "ETH", "SOL"];
+   const baseCoins = ["BTC", "ETH"];
    const trendingCoins = await fetchTrendingCoins();
    const allCoins = Array.from(new Set([...baseCoins, ...trendingCoins]));
    
    const fearAndGreed = await fetchFearAndGreedIndex();
+   const globalMarket = await fetchGlobalMarketInfo();
    const latestNews = await fetchCryptoNews();
    const stablecoinGrowth = await fetchStablecoinGrowth();
    const dexVolumeGrowth = await fetchDexVolumeGrowth();
 
    const marketData: CryptoMarketData[] = [];
    const weeklyMarketData: CryptoMarketData[] = [];
+   const monthlyMarketData: CryptoMarketData[] = [];
 
    for (const coin of allCoins) {
        // Fetch 200 klines for EMA200
@@ -393,7 +433,7 @@ export const gatherCryptoMarketData = async (isWeekly = false): Promise<{
            Object.assign(klines, indicators);
            klines.fundingRate = await fetchBinanceFundingRate(coin);
            klines.longShortRatio = await fetchBinanceLongShortRatio(coin);
-           klines.klines = klines.klines.slice(-6); // Keep last 6 for UI
+           klines.klines = klines.klines.slice(-50); // Keep last 50 for UI
            marketData.push(klines);
        }
 
@@ -402,8 +442,17 @@ export const gatherCryptoMarketData = async (isWeekly = false): Promise<{
            if (wKlines) {
                const indicators = calculateIndicators(wKlines.klines);
                Object.assign(wKlines, indicators);
-               wKlines.klines = wKlines.klines.slice(-12);
+               wKlines.klines = wKlines.klines.slice(-50);
                weeklyMarketData.push(wKlines);
+           }
+       }
+       
+       if (isMonthly) {
+           const mKlines = await fetchBinanceKline(coin, "1M", 24);
+           if (mKlines) {
+               const indicators = calculateIndicators(mKlines.klines);
+               Object.assign(mKlines, indicators);
+               monthlyMarketData.push(mKlines);
            }
        }
    }
@@ -411,22 +460,28 @@ export const gatherCryptoMarketData = async (isWeekly = false): Promise<{
    const scalpingCandidates = await fetchScalpingCandidates();
    const rawScalpingCandidatesData: CryptoMarketData[] = [];
    
-   // Process scalping candidates in parallel chunks to save time
+   // Process scalping candidates in parallel chunks to save time and prevent rate limiting
    const chunkSize = 10;
+   const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+   
    for (let i = 0; i < scalpingCandidates.length; i += chunkSize) {
        const chunk = scalpingCandidates.slice(i, i + chunkSize);
        await Promise.all(chunk.map(async (cand) => {
            const symbolBase = cand.symbol.replace("USDT", "");
-           const klines = await fetchBinanceKline(symbolBase, "1h", 200);
+           const klines = await fetchBinanceKline(symbolBase, "15m", 200);
            if (klines && klines.klines.length > 50) {
                const indicators = calculateIndicators(klines.klines);
                Object.assign(klines, indicators);
                klines.fundingRate = await fetchBinanceFundingRate(symbolBase);
                klines.longShortRatio = await fetchBinanceLongShortRatio(symbolBase);
-               klines.klines = klines.klines.slice(-12);
+               klines.openInterest = await fetchBinanceOpenInterest(symbolBase);
+               klines.klines = klines.klines.slice(-50);
                rawScalpingCandidatesData.push(klines);
            }
        }));
+       if (i + chunkSize < scalpingCandidates.length) {
+          await delay(500); // 500ms delay between chunks to protect from Binance HTTP 429
+       }
    }
    
    // Screener 3.0: Multi-Factor Scoring Model
@@ -438,17 +493,19 @@ export const gatherCryptoMarketData = async (isWeekly = false): Promise<{
         k.setupReasoning = setup.reasoning;
         return k;
      })
-     .filter((k) => (k.setupScore || 0) > 20) // Hanya ambil setup yang punya score decent
+     .filter((k) => (k.setupScore || 0) >= 35) // Tingkatkan minimum score threshold agar lebih selektif
      .sort((a, b) => (b.setupScore || 0) - (a.setupScore || 0)) // Sort dari score tertinggi
-     .slice(0, 5); // Ambil Top 5 peluang terbaik
+     .slice(0, 2); // Ambil Top 2 peluang terbaik (Quality > Quantity)
    
    return { 
      fearAndGreed, 
+     globalMarket,
      latestNews, 
      stablecoinGrowth,
      dexVolumeGrowth,
      marketData, 
      scalpingCandidatesData,
-     ...(isWeekly ? { weeklyMarketData } : {})
+     ...(isWeekly ? { weeklyMarketData } : {}),
+     ...(isMonthly ? { monthlyMarketData } : {})
    };
 }

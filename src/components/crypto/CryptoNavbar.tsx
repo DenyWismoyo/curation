@@ -3,6 +3,8 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
+import { collection, query, where, orderBy, limit, onSnapshot } from "firebase/firestore"
+import { db } from "@/lib/firebase"
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Activity,
@@ -14,7 +16,9 @@ import {
   X,
   LineChart,
   LogOut,
-  ChevronLeft
+  ChevronLeft,
+  Globe,
+  Zap
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
@@ -26,6 +30,7 @@ const NAV_LINKS = [
   { href: '/crypto-report/danger-zone', label: 'Danger Zone', icon: Flame },
   { href: '/crypto-report/scalping-radar', label: 'Scalping', icon: Target },
   { href: '/crypto-report/hidden-gems', label: 'Hidden Gems', icon: LineChart },
+  { href: '/crypto-report/news', label: 'News & Alpha', icon: Globe },
 ]
 
 export function CryptoNavbar() {
@@ -33,6 +38,39 @@ export function CryptoNavbar() {
   const router = useRouter()
   const { user, logout } = useAuth()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [activeScalps, setActiveScalps] = useState(0)
+  const [hasDanger, setHasDanger] = useState(false)
+
+  const isAdmin = user?.email === 'deny.wismoyo@gmail.com' || (user as any)?.role === 'admin_csrs';
+  const dynamicNavLinks = [...NAV_LINKS];
+  if (isAdmin) {
+    dynamicNavLinks.push({ href: '/crypto-report/realtime-radar', label: 'Realtime Radar', icon: Zap });
+  }
+
+  React.useEffect(() => {
+    if (!user) return;
+    
+    // Fetch active scalps
+    const qScalps = query(collection(db, "cryptoActiveTrades"), where("status", "==", "PENDING"));
+    const unsubScalps = onSnapshot(qScalps, (snap) => {
+        setActiveScalps(snap.size);
+    });
+
+    // Fetch danger zone
+    const qDanger = query(collection(db, "cryptoDangerZone"), orderBy("createdAt", "desc"), limit(1));
+    const unsubDanger = onSnapshot(qDanger, (snap) => {
+        if (!snap.empty && snap.docs[0].data().coins?.length > 0) {
+           setHasDanger(true);
+        } else {
+           setHasDanger(false);
+        }
+    });
+
+    return () => {
+       unsubScalps();
+       unsubDanger();
+    }
+  }, [user]);
 
   const isActive = (href: string) => {
     if (href === '/crypto-report') {
@@ -68,7 +106,7 @@ export function CryptoNavbar() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-1">
-            {NAV_LINKS.map((link) => {
+            {dynamicNavLinks.map((link) => {
               const Icon = link.icon
               const active = isActive(link.href)
               return (
@@ -88,6 +126,14 @@ export function CryptoNavbar() {
                   )}
                   <Icon size={16} className={active ? 'text-purple-400' : ''} />
                   {link.label}
+                  {link.label === 'Scalping' && activeScalps > 0 && (
+                     <span className="bg-emerald-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full min-w-[18px] text-center ml-1">
+                        {activeScalps}
+                     </span>
+                  )}
+                  {link.label === 'Danger Zone' && hasDanger && (
+                     <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                  )}
                 </Link>
               )
             })}
@@ -148,7 +194,7 @@ export function CryptoNavbar() {
             className="fixed inset-x-0 top-16 sm:top-20 bg-slate-950/95 backdrop-blur-3xl border-b border-white/10 z-40 md:hidden overflow-y-auto shadow-2xl max-h-[calc(100vh-4rem)]"
           >
             <div className="flex flex-col p-4 space-y-1">
-              {NAV_LINKS.map((link) => {
+              {dynamicNavLinks.map((link) => {
                 const Icon = link.icon
                 const active = isActive(link.href)
                 return (
@@ -161,7 +207,15 @@ export function CryptoNavbar() {
                     }`}
                   >
                     <Icon size={18} className={active ? 'text-purple-400' : 'text-slate-500'} />
-                    {link.label}
+                    <span className="flex-1">{link.label}</span>
+                    {link.label === 'Scalping' && activeScalps > 0 && (
+                       <span className="bg-emerald-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full">
+                          {activeScalps} LIVE
+                       </span>
+                    )}
+                    {link.label === 'Danger Zone' && hasDanger && (
+                       <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                    )}
                   </Link>
                 )
               })}
