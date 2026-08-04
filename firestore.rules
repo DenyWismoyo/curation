@@ -614,30 +614,41 @@ service cloud.firestore {
         (exists(/databases/$(database)/documents/users/$(request.auth.token.email)) && get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.get('role', '') == 'admin_crypto')
       );
     }
+
+    function isPremium() {
+      return isAuthenticated() && (
+        request.auth.token.get('isPremium', false) == true ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('isPremium', false) == true)
+      );
+    }
+
+    function hasCryptoAccess() {
+      return isSuperAdmin() || isAdminCSRS() || isAdminOmnifit() || isAdminCrypto() || (request.auth != null && request.auth.token.get('role', '') != '' && request.auth.token.get('role', '').matches('^admin.*')) || isPremium();
+    }
     
     // ATURAN BARU UNTUK CRYPTO REPORTS & ALERTS
     match /cryptoReports/{document=**} {
-      allow read: if isSuperAdmin() || isAdminCSRS() || isAdminOmnifit() || isAdminCrypto() || (request.auth != null && request.auth.token.get('role', '') != '' && request.auth.token.get('role', '').matches('^admin.*'));
+      allow read: if false; // Akses via API Route backend
       allow write: if false; // Hanya Cloud Functions (Backend) yang boleh menulis
     }
     
     match /cryptoNews/{document=**} {
-      allow read: if isSuperAdmin() || isAdminCSRS() || isAdminOmnifit() || isAdminCrypto() || (request.auth != null && request.auth.token.get('role', '') != '' && request.auth.token.get('role', '').matches('^admin.*'));
-      allow write: if false; // Hanya Cloud Functions (Backend) yang boleh menulis
+      allow read: if false; // Akses via API Route backend
+      allow write: if false; 
     }
     
     match /cryptoAlerts/{document=**} {
-      allow read: if isSuperAdmin() || isAdminCSRS() || isAdminOmnifit() || isAdminCrypto() || (request.auth != null && request.auth.token.get('role', '') != '' && request.auth.token.get('role', '').matches('^admin.*'));
-      allow write: if false; // Hanya Cloud Functions (Backend) yang boleh menulis
+      allow read: if hasCryptoAccess();
+      allow write: if false; 
     }
 
     match /cryptoHiddenGems/{document=**} {
-      allow read: if isSuperAdmin() || isAdminCSRS() || isAdminOmnifit() || isAdminCrypto() || (request.auth != null && request.auth.token.get('role', '') != '' && request.auth.token.get('role', '').matches('^admin.*'));
-      allow write: if false; // Hanya Cloud Functions (Backend) yang boleh menulis
+      allow read: if false; // Akses via API Route backend
+      allow write: if false; 
     }
     
     match /cryptoSmartMoney/{document=**} {
-      allow read: if isSuperAdmin() || isAdminCSRS() || isAdminOmnifit() || isAdminCrypto() || (request.auth != null && request.auth.token.get('role', '') != '' && request.auth.token.get('role', '').matches('^admin.*'));
+      allow read: if false; // Akses via API Route backend
       allow write: if false;
     }
     
@@ -650,23 +661,23 @@ service cloud.firestore {
     }
     
     match /cryptoLiquidity/{document=**} {
-      allow read: if isSuperAdmin() || isAdminCSRS() || isAdminOmnifit() || isAdminCrypto() || (request.auth != null && request.auth.token.get('role', '') != '' && request.auth.token.get('role', '').matches('^admin.*'));
+      allow read: if hasCryptoAccess();
       allow write: if false;
     }
     
     match /cryptoDangerZone/{document=**} {
-      allow read: if isSuperAdmin() || isAdminCSRS() || isAdminOmnifit() || isAdminCrypto() || (request.auth != null && request.auth.token.get('role', '') != '' && request.auth.token.get('role', '').matches('^admin.*'));
+      allow read: if false; // Akses via API Route backend
       allow write: if false;
     }
     
     match /cryptoPerformanceMetrics/{document=**} {
-      allow read: if isSuperAdmin() || isAdminCSRS() || isAdminOmnifit() || isAdminCrypto() || (request.auth != null && request.auth.token.get('role', '') != '' && request.auth.token.get('role', '').matches('^admin.*'));
+      allow read: if hasCryptoAccess();
       allow write: if false;
     }
     
     match /cryptoActiveTrades/{document=**} {
-      allow read: if isSuperAdmin() || isAdminCSRS() || isAdminOmnifit() || isAdminCrypto() || (request.auth != null && request.auth.token.get('role', '') != '' && request.auth.token.get('role', '').matches('^admin.*'));
-      allow write: if false; // Hanya Cloud Functions
+      allow read: if hasCryptoAccess();
+      allow write: if false;
     }
     
     match /cryptoCopilotChats/{chatId} {

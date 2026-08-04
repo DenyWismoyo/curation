@@ -22,65 +22,88 @@ export default function CoinHistoryPage() {
   const symbol = typeof params.symbol === 'string' ? params.symbol.toUpperCase() : "KOIN";
 
   useEffect(() => {
-    let unsubscribe: () => void;
+    let isMounted = true;
 
-    if (!authLoading && role && role.startsWith("admin")) {
-        const q = query(collection(db, "cryptoReports"), orderBy("createdAt", "desc"), limit(30));
-        unsubscribe = onSnapshot(q, (snapshot) => {
-          const coinHistory: any[] = [];
-          
-          snapshot.docs.forEach(doc => {
-            const report = doc.data();
-            const data = report.reportData || {};
-            const createdAt = report.createdAt?.toDate ? report.createdAt.toDate() : new Date();
-            
-            let coinData = null;
-            let type = "";
-            
-            // Check in scalping
-            const scalpMatch = data.scalpingOpportunities?.find((s: any) => s.symbol === symbol);
-            if (scalpMatch) {
-              coinData = scalpMatch;
-              type = "SCALPING";
-            } else {
-              // Check in technical analysis
-              const techMatch = data.coinsAnalysis?.find((c: any) => c.symbol === symbol);
-              if (techMatch) {
-                coinData = techMatch;
-                type = "TECHNICAL";
-              }
+    const fetchData = async () => {
+        if (authLoading) return;
+        
+        if (!role || !role.startsWith("admin")) {
+            if (isMounted) setLoading(false);
+            return;
+        }
+
+        try {
+            const token = await user?.getIdToken();
+            if (!token) throw new Error("No token");
+
+            const res = await fetch('/api/crypto/reports', {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            if (!res.ok) {
+                const errJson = await res.json().catch(() => ({}));
+                throw new Error(`Failed to fetch: ${res.status} ${errJson.details || res.statusText}`);
             }
-            
-            if (coinData) {
-              // Also grab market data if available for charts
-              const klines = report.rawMarketData?.find((md: any) => md.symbol === symbol)?.klines || 
-                             report.rawScalpingData?.find((md: any) => md.symbol === symbol)?.klines || [];
-                             
-              coinHistory.push({
-                reportId: doc.id,
-                date: createdAt,
-                type,
-                data: coinData,
-                klines,
-                title: data.title
-              });
+
+            const json = await res.json();
+            if (isMounted && json.data) {
+                const coinHistory: any[] = [];
+                
+                json.data.forEach((doc: any) => {
+                    const report = doc;
+                    const data = report.reportData || {};
+                    const createdAt = new Date(report.createdAt);
+                    
+                    let coinData = null;
+                    let type = "";
+                    
+                    // Check in scalping
+                    const scalpMatch = data.scalpingOpportunities?.find((s: any) => s.symbol === symbol);
+                    if (scalpMatch) {
+                      coinData = scalpMatch;
+                      type = "SCALPING";
+                    } else {
+                      // Check in technical analysis
+                      const techMatch = data.coinsAnalysis?.find((c: any) => c.symbol === symbol);
+                      if (techMatch) {
+                        coinData = techMatch;
+                        type = "TECHNICAL";
+                      }
+                    }
+                    
+                    if (coinData) {
+                      // Also grab market data if available for charts
+                      const klines = report.rawMarketData?.find((md: any) => md.symbol === symbol)?.klines || 
+                                     report.rawScalpingData?.find((md: any) => md.symbol === symbol)?.klines || [];
+                                     
+                      coinHistory.push({
+                        reportId: doc.id,
+                        date: createdAt,
+                        type,
+                        data: coinData,
+                        klines,
+                        title: data.title
+                      });
+                    }
+                });
+                
+                setHistory(coinHistory);
             }
-          });
-          
-          setHistory(coinHistory);
-          setLoading(false);
-        }, (err) => {
-          console.error("Failed to fetch coin history:", err);
-          setLoading(false);
-        });
-    } else if (!authLoading) {
-        setLoading(false);
-    }
+        } catch (err) {
+            console.error("Failed to fetch coin history:", err);
+        } finally {
+            if (isMounted) setLoading(false);
+        }
+    };
+
+    fetchData();
 
     return () => {
-      if (unsubscribe) unsubscribe();
+      isMounted = false;
     };
-  }, [authLoading, role, symbol]);
+  }, [authLoading, role, symbol, user]);
 
   if (authLoading || loading) {
     return <div className="flex justify-center items-center h-screen"><Loader2 className="animate-spin h-10 w-10 text-primary" /></div>;

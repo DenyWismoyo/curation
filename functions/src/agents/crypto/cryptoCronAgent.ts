@@ -30,7 +30,7 @@ export const cryptoCronAgent = onSchedule(
     const isWeekly = date.getUTCDay() === 1 && date.getUTCHours() === 0;
     const isMonthly = date.getUTCDate() === 1 && date.getUTCHours() === 0;
 
-    const { fearAndGreed, globalMarket, latestNews, stablecoinGrowth, dexVolumeGrowth, marketData, scalpingCandidatesData, weeklyMarketData, monthlyMarketData } = await gatherCryptoMarketData(isWeekly, isMonthly);
+    const { fearAndGreed, globalMarket, latestNews, stablecoinGrowth, dexVolumeGrowth, marketData, scalpingCandidatesData, weeklyMarketData, monthlyMarketData } = await gatherCryptoMarketData(isWeekly, isMonthly, db);
     
     // MARKET REGIME GUARD
     const fearGreedValue = fearAndGreed?.current?.value ? parseInt(fearAndGreed.current.value) : 50;
@@ -217,6 +217,8 @@ ATURAN KERAS UNTUK SCALPING OPPORTUNITIES (TIDAK BOLEH DILANGGAR):
 4. Entry price HARUS sangat dekat dengan harga terkini (current price di data kline terakhir).
 5. Maksimal hanya berikan 2 sinyal scalping. Kualitas lebih penting dari kuantitas.
 6. Minimum confidenceScore untuk masuk: HIGH atau MEDIUM saja. Jika tidak yakin, KOSONGKAN array scalpingOpportunities.
+7. Field \`poc\` (Volume Point of Control) menunjukkan level harga dengan volume terbanyak. Jika harga > POC, itu adalah support kuat. Jika harga < POC, itu adalah resistance. Gunakan ini sebagai referensi support/resistance di analisis Anda.
+8. DRAWDOWN PROTECTION: Jika pada evaluasi sebelumnya Win Rate < 40% atau LOSS > 2, maka hanya boleh mengeluarkan MAKSIMAL 1 sinyal scalping (Mode Konservatif).
 
 Output Anda WAJIB berupa JSON rapi tanpa markdown block (seperti \`\`\`json):
 {
@@ -228,7 +230,7 @@ Output Anda WAJIB berupa JSON rapi tanpa markdown block (seperti \`\`\`json):
   "summary": "Ringkasan komprehensif (markdown) mencakup: Kondisi makro, analisis tren BTC, dan dampaknya ke altcoin.",
   "projection": "Proyeksi 4 jam ke depan (markdown)",
   "accuracyScore": "Tingkat akurasi dari tebakan sebelumnya (0-100), atau null jika belum ada data sebelumnya",
-  "selfCorrection": "Evaluasi jujur mengapa proyeksi sebelumnya benar/salah dan apa yang dipelajari",
+  "selfCorrection": "Format WAJIB: '[BENAR/SALAH] untuk [SYMBOL] karena [ALASAN TEKNIKAL SPESIFIK]'. Contoh: 'BENAR untuk BTCUSDT — bounced dari EMA50 seperti diprediksi. SALAH untuk ETHUSDT — dump tak terduga akibat berita FED hawkish 2 jam setelah sinyal.' Jika tidak ada data sebelumnya, isi: null.",
   "btcDominance": "Persentase dominasi BTC terkini, misal: '55.2%'",
   "globalMarketCap": "Global Market Cap kripto, misal: '$2.1T'",
   "fearGreedTrend": "Tren Fear & Greed 7 hari terakhir (meningkat/menurun/stabil)",
@@ -256,7 +258,7 @@ Output Anda WAJIB berupa JSON rapi tanpa markdown block (seperti \`\`\`json):
        "entryPrice": 65000.0,
        "targetPrice": 66000.0,
        "stopLossPrice": 64500.0,
-       "allocationPercentage": "10% (Contoh ukuran posisi dari total modal)",
+       "allocationPercentage": "Jika volatilityPct (ATR/Harga) > 3%, alokasi MAKS 5%. Jika F&G < 35, alokasi MAKS 10%.",
        "confidenceScore": "HIGH / MEDIUM / LOW (Berdasarkan konvergensi indikator teknikal & derivatif)",
        "riskRewardRatio": "Rasio numerik (misal: '1:2.5' atau '1:3')"
      }
@@ -345,7 +347,7 @@ Buatkan laporan JSON yang komprehensif, actionable, dan jujur!
         const agent1Prompt = `Anda adalah Quant AI (Agent 1).
 Tugas Anda HANYA membedah teknikal dari data koin berikut dan memilih TOP 3 terbaik berdasarkan setupScore dan setupReasoning.
 PERHATIKAN KONTEKS MAKRO SAAT INI: Fear & Greed Index berada di angka ${fearGreedValue}. JANGAN menyarankan setup LONG agresif jika makro sedang ketakutan ekstrim (< 30).
-Berikan output JSON ketat: { "draftScalpingOpportunities": [ { "symbol": "...", "technicalThesis": "..." } ] }
+Berikan output JSON ketat: { "draftScalpingOpportunities": [ { "symbol": "...", "setupType": "Breakout / Bounce / Continuation", "timeframeDominant": "15m / 1H", "technicalThesis": "...", "counterArgument": "Satu skenario gagal yang paling mungkin" } ] }
 
 Data Koin:
 ${JSON.stringify(safeScalpingCandidates, null, 2)}`;
@@ -414,6 +416,34 @@ ${JSON.stringify(safeScalpingCandidates, null, 2)}`;
                      ev.status === 'EXPIRED' ? `Waktu trading habis (12h+). PnL: ${ev.pnlPercent}%` :
                      `Sedang berjalan, harga terkini ${ev.currentPrice}`
          }));
+      }
+
+      // VALIDATE R:R PROGRAMMATICALLY
+      if (parsed.scalpingOpportunities && parsed.scalpingOpportunities.length > 0) {
+        parsed.scalpingOpportunities = parsed.scalpingOpportunities.filter((bestScalp: any) => {
+              const entryPrice = parseFloat(bestScalp.entryPrice);
+              const targetPrice = parseFloat(bestScalp.targetPrice);
+              const slPrice = parseFloat(bestScalp.stopLossPrice);
+              
+              if (isNaN(entryPrice) || isNaN(targetPrice) || isNaN(slPrice)) return false;
+              
+              const rr = Math.abs(targetPrice - entryPrice) / Math.abs(slPrice - entryPrice);
+              if (rr < 1.8) {
+                 console.warn(`Skipping ${bestScalp.symbol}: R:R ratio ${rr.toFixed(2)} < 1.8`);
+                 return false;
+              }
+              
+              const isLong = bestScalp.direction === "LONG";
+              if (isLong && (targetPrice <= entryPrice || slPrice >= entryPrice)) {
+                 console.warn(`Skipping LONG ${bestScalp.symbol}: Target/SL direction invalid`);
+                 return false;
+              }
+              if (!isLong && (targetPrice >= entryPrice || slPrice <= entryPrice)) {
+                 console.warn(`Skipping SHORT ${bestScalp.symbol}: Target/SL direction invalid`);
+                 return false;
+              }
+              return true;
+        });
       }
       
       await db.collection("cryptoReports").add({

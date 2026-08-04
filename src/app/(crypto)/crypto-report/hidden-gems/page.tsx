@@ -14,35 +14,64 @@ import { Loader2, ArrowLeft, Diamond, Target, ShieldAlert, Activity, Clock, Tren
 
 export default function HiddenGemsPage() {
   const router = useRouter();
-  const { user, role, loading: authLoading } = useAuth();
+  const { user, role, loading: authLoading, isPremium } = useAuth();
   const [reports, setReports] = useState<any[]>([]);
   const [selectedReportId, setSelectedReportId] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    let unsubscribe: () => void;
+  const isAdmin = user?.email === 'deny.wismoyo@gmail.com' || role?.startsWith("admin");
+  const hasAccess = isAdmin || isPremium;
 
-    if (!authLoading && role && role.startsWith("admin")) {
-        const q = query(collection(db, "cryptoHiddenGems"), orderBy("createdAt", "desc"), limit(14));
-        unsubscribe = onSnapshot(q, (snapshot) => {
-           const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-           setReports(data);
-           if (data.length > 0) {
-               setSelectedReportId(prev => prev ? prev : data[0].id);
-           }
-           setLoading(false);
-        }, (err) => {
-           console.error("Failed to fetch latest hidden gems:", err);
-           setLoading(false);
-        });
-    } else if (!authLoading) {
-        setLoading(false);
-    }
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchData = async () => {
+        if (authLoading) return;
+        
+        if (!hasAccess) {
+            if (isMounted) setLoading(false);
+            return;
+        }
+
+        try {
+            const token = await user?.getIdToken();
+            if (!token) throw new Error("No token");
+
+            const res = await fetch('/api/crypto/hidden-gems', {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            if (!res.ok) {
+                const errJson = await res.json().catch(() => ({}));
+                throw new Error(`Failed to fetch: ${res.status} ${errJson.details || res.statusText}`);
+            }
+
+            const json = await res.json();
+            if (isMounted && json.data) {
+                const parsedData = json.data.map((item: any) => ({
+                    ...item,
+                    createdAt: new Date(item.createdAt)
+                }));
+                setReports(parsedData);
+                if (parsedData.length > 0) {
+                    setSelectedReportId(prev => prev ? prev : parsedData[0].id);
+                }
+            }
+        } catch (err) {
+            console.error("Failed to fetch latest hidden gems:", err);
+        } finally {
+            if (isMounted) setLoading(false);
+        }
+    };
+
+    fetchData();
 
     return () => {
-      if (unsubscribe) unsubscribe();
+      isMounted = false;
     };
-  }, [authLoading, role]);
+  }, [authLoading, hasAccess, user]);
 
   if (authLoading || loading) {
     return <div className="flex justify-center items-center h-screen bg-slate-950"><Loader2 className="animate-spin h-10 w-10 text-emerald-500" /></div>;

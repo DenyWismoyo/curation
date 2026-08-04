@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import ReactMarkdown from "react-markdown";
-import { Loader2, Activity, Bot, TrendingUp, Zap, Calendar, Clock, Target, ShieldAlert, BarChart3, LineChart, Anchor, Bell, BellRing, Globe, Sunrise, RotateCcw, Sun, CalendarDays, Diamond, Eye, Radar, Flame, Menu } from "lucide-react";
+import { Loader2, Activity, Bot, TrendingUp, Zap, Calendar, Clock, Target, ShieldAlert, BarChart3, LineChart, Anchor, Bell, BellRing, Globe, Sunrise, RotateCcw, Sun, CalendarDays, Diamond, Eye, Radar, Flame, Menu, Lock } from "lucide-react";
 import CryptoChat from "@/components/crypto/CryptoChat";
 import CryptoCandlestick from "@/components/crypto/CryptoCandlestick";
 import CryptoLiveTicker from "@/components/crypto/CryptoLiveTicker";
@@ -23,9 +23,10 @@ import MarketHeatmapWidget from "@/components/crypto/MarketHeatmapWidget";
 import TemporalComparisonWidget from "@/components/crypto/TemporalComparisonWidget";
 import WeeklyMonthlyOutlookWidget from "@/components/crypto/WeeklyMonthlyOutlookWidget";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { PremiumLockedWrapper } from "@/components/crypto/PremiumLockedWrapper";
 
 export default function CryptoReportPage() {
-  const { user, role, loading: authLoading } = useAuth();
+  const { user, role, isPremium, loading: authLoading } = useAuth();
   const [reports, setReports] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   
@@ -38,46 +39,79 @@ export default function CryptoReportPage() {
 
 
   useEffect(() => {
-    let unsubscribe: () => void;
+    let isMounted = true;
 
-    if (!authLoading && role && role.startsWith("admin")) {
-        const q = query(collection(db, "cryptoReports"), orderBy("createdAt", "desc"), limit(20));
-        unsubscribe = onSnapshot(q, (snapshot) => {
-           const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any));
-           setReports(data);
-           
-           if (data.length > 0) {
-              setChatContext(data[0].reportData);
-              const d = data[0].createdAt?.toDate ? data[0].createdAt.toDate() : new Date();
-              const dateStr = d.toLocaleDateString("id-ID", { day: '2-digit', month: 'short', year: 'numeric' });
-              setSelectedDate(dateStr);
-           }
-           setLoading(false);
-        }, (err) => {
-           console.error("Failed to fetch reports:", err);
-           setLoading(false);
-        });
-    } else if (!authLoading) {
-        setLoading(false);
-    }
+    const fetchData = async () => {
+        if (authLoading) return;
+        
+        if (!user) {
+            if (isMounted) setLoading(false);
+            return;
+        }
+
+        try {
+            const token = await user?.getIdToken();
+            if (!token) throw new Error("No token");
+
+            const res = await fetch('/api/crypto/reports', {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            if (!res.ok) {
+                const errJson = await res.json().catch(() => ({}));
+                throw new Error(`Failed to fetch: ${res.status} ${errJson.details || res.statusText}`);
+            }
+
+            const json = await res.json();
+            if (isMounted && json.data) {
+                const parsedData = json.data.map((item: any) => ({
+                    ...item,
+                    createdAt: {
+                       toDate: () => new Date(item.createdAt)
+                    }
+                }));
+                setReports(parsedData);
+                
+                if (parsedData.length > 0) {
+                   setChatContext(parsedData[0].reportData);
+                   const d = parsedData[0].createdAt.toDate();
+                   const dateStr = d.toLocaleDateString("id-ID", { day: '2-digit', month: 'short', year: 'numeric' });
+                   setSelectedDate(dateStr);
+                }
+            }
+        } catch (err) {
+            console.error("Failed to fetch reports:", err);
+        } finally {
+            if (isMounted) setLoading(false);
+        }
+    };
+
+    fetchData();
 
     return () => {
-      if (unsubscribe) unsubscribe();
+      isMounted = false;
     };
-  }, [authLoading, role]);
+  }, [authLoading, user]);
 
   // Removed full-page loading block to preserve layout and scroll position during navigation
 
   if (authLoading) {
     // Let it render the shell below to preserve scroll position
-  } else if (!role || !role.startsWith("admin")) {
+  } else if (!user) {
     return (
       <div className="flex flex-col items-center justify-center h-screen text-center px-4">
-        <h1 className="text-2xl font-bold text-red-500 mb-2">Akses Ditolak</h1>
-        <p className="text-muted-foreground">Anda harus menjadi admin untuk melihat laporan AI.</p>
+        <h1 className="text-2xl font-bold text-red-500 mb-2">Login Dibutuhkan</h1>
+        <p className="text-muted-foreground">Silakan login untuk melihat dashboard crypto.</p>
+        <Link href="/" className="mt-4">
+          <Button>Kembali ke Beranda</Button>
+        </Link>
       </div>
     );
   }
+
+  const hasAccess = role?.startsWith("admin") || isPremium;
 
   const groupedReports = reports.reduce((acc, report) => {
     const d = report.createdAt?.toDate ? report.createdAt.toDate() : new Date();
@@ -141,6 +175,21 @@ export default function CryptoReportPage() {
 
           <TabsContent value="ai-reports" className="mt-0 focus-visible:outline-none focus-visible:ring-0">
             <CryptoCalendar />
+
+            {/* FREE TIER BANNER */}
+            {!hasAccess && (
+              <div className="mb-8 p-6 bg-indigo-500/10 border border-indigo-500/30 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div>
+                  <h3 className="text-lg font-bold text-indigo-400 flex items-center gap-2">
+                    <Lock className="w-5 h-5" /> Mode Gratis (Pratinjau)
+                  </h3>
+                  <p className="text-sm text-slate-400 mt-1">Beberapa fitur lanjutan telah dikunci (blur). Upgrade ke Premium untuk membuka semua fitur analitik tingkat lanjut.</p>
+                </div>
+                <Link href="/premium">
+                  <Button className="bg-indigo-600 hover:bg-indigo-700">Upgrade Premium</Button>
+                </Link>
+              </div>
+            )}
 
         {(loading || authLoading) ? (
           <div className="flex flex-col items-center justify-center py-32 opacity-50">
@@ -279,10 +328,11 @@ export default function CryptoReportPage() {
 
                     return (
                       <TabsContent key={report.id} value={report.id} className="mt-0 outline-none">
-                        <Card className={`overflow-hidden border-0 shadow-none bg-transparent transition-all duration-300`}>
-                          
-                          {/* CARD HEADER */}
-                          <div className="py-4 md:py-6 flex flex-col sm:flex-row sm:items-start justify-between gap-4 relative">
+                        <PremiumLockedWrapper hasAccess={hasAccess} title="Laporan & AI Analitik" description="Buka akses untuk melihat analisa fundamental dan laporan 4-Jam harian eksklusif.">
+                          <Card className={`overflow-hidden border-0 shadow-none bg-transparent transition-all duration-300`}>
+                            
+                            {/* CARD HEADER */}
+                            <div className="py-4 md:py-6 flex flex-col sm:flex-row sm:items-start justify-between gap-4 relative">
                             {isLatest && (
                                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
                             )}
@@ -382,7 +432,7 @@ export default function CryptoReportPage() {
                                {report.rawFundamental?.fearAndGreed && (
                                  <div className="bg-white/80 dark:bg-slate-950/80 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
                                    <div className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-1 flex items-center gap-1"><LineChart className="w-3 h-3"/> Fear & Greed</div>
-                                   <div className="font-black text-xl text-slate-800 dark:text-slate-200">{report.rawFundamental.fearAndGreed.value} - {report.rawFundamental.fearAndGreed.value_classification}</div>
+                                   <div className="font-black text-xl text-slate-800 dark:text-slate-200">{report.rawFundamental.fearAndGreed?.current?.value || report.rawFundamental.fearAndGreed?.value} - {report.rawFundamental.fearAndGreed?.current?.value_classification || report.rawFundamental.fearAndGreed?.value_classification}</div>
                                  </div>
                                )}
                                
@@ -520,12 +570,12 @@ export default function CryptoReportPage() {
 
                                           {/* Right Section: Metrics & Chart */}
                                           <div className="flex flex-col sm:flex-row xl:flex-col items-center xl:items-end justify-center gap-4 xl:w-[22rem] shrink-0 border-t xl:border-t-0 xl:border-l border-slate-200/50 dark:border-slate-700/50 pt-5 xl:pt-0 xl:pl-5">
-                                             {(coin.supportLevel || coin.resistanceLevel || coin.takeProfit || coin.stopLoss) && (
+                                             {(coin.supportLevel || coin.resistanceLevel || coin.targetPrice || coin.stopLossPrice) && (
                                                 <div className="grid grid-cols-2 gap-3 text-xs w-full bg-white/70 dark:bg-slate-950/70 p-4 rounded-xl border border-slate-200/50 dark:border-slate-800/50 shadow-inner text-left relative z-10">
                                                    {coin.supportLevel && <div className="text-slate-500">Sup: <span className="font-bold text-slate-900 dark:text-white">{coin.supportLevel}</span></div>}
                                                    {coin.resistanceLevel && <div className="text-slate-500">Res: <span className="font-bold text-slate-900 dark:text-white">{coin.resistanceLevel}</span></div>}
-                                                   {coin.takeProfit && <div className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-semibold"><Target className="w-3.5 h-3.5"/> TP: {coin.takeProfit}</div>}
-                                                   {coin.stopLoss && <div className="text-rose-600 dark:text-rose-400 flex items-center gap-1 font-semibold"><ShieldAlert className="w-3.5 h-3.5"/> SL: {coin.stopLoss}</div>}
+                                                   {coin.targetPrice && <div className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-semibold"><Target className="w-3.5 h-3.5"/> TP: {coin.targetPrice}</div>}
+                                                   {coin.stopLossPrice && <div className="text-rose-600 dark:text-rose-400 flex items-center gap-1 font-semibold"><ShieldAlert className="w-3.5 h-3.5"/> SL: {coin.stopLossPrice}</div>}
                                                 </div>
                                              )}
                                              
@@ -536,8 +586,8 @@ export default function CryptoReportPage() {
                                                      <CryptoCandlestick 
                                                         symbol={coin.symbol}
                                                         klines={klinesData} 
-                                                        targetPrice={coin.takeProfit ? parseFloat(coin.takeProfit.toString().replace(/[^0-9.-]+/g, "")) : undefined}
-                                                        stopLossPrice={coin.stopLoss ? parseFloat(coin.stopLoss.toString().replace(/[^0-9.-]+/g, "")) : undefined}
+                                                        targetPrice={coin.targetPrice ? parseFloat(coin.targetPrice.toString().replace(/[^0-9.-]+/g, "")) : undefined}
+                                                        stopLossPrice={coin.stopLossPrice ? parseFloat(coin.stopLossPrice.toString().replace(/[^0-9.-]+/g, "")) : undefined}
                                                       />
                                                    </div>
                                                 </div>
@@ -574,7 +624,8 @@ export default function CryptoReportPage() {
                             )}
                             
                           </div>
-                        </Card>
+                          </Card>
+                        </PremiumLockedWrapper>
                       </TabsContent>
                     );
                   })}

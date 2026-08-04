@@ -11,6 +11,8 @@ import { collection, query, where, orderBy, getDocs, addDoc, updateDoc, doc, ser
 import { app, db } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { PremiumLockedScreen } from '@/components/crypto/PremiumLockedScreen';
 
 interface CryptoChatProps {
   isOpen?: boolean;
@@ -27,6 +29,10 @@ export default function CryptoChat({ isOpen: controlledIsOpen, onClose, reportCo
   const scrollRef = useRef<HTMLDivElement>(null);
   const [reportContext, setReportContext] = useState<any>(controlledContext);
   
+  const isAdmin = user?.email === 'deny.wismoyo@gmail.com' || (user as any)?.role?.startsWith('admin');
+  const isPremium = (user as any)?.isPremium || false;
+  const hasAccess = isAdmin || isPremium;
+
   useEffect(() => {
     setIsOpen(controlledIsOpen);
   }, [controlledIsOpen]);
@@ -224,8 +230,8 @@ export default function CryptoChat({ isOpen: controlledIsOpen, onClose, reportCo
     </div>
 
     <Sheet open={isOpen} onOpenChange={handleOpenChange}>
-      <SheetContent side="right" className="w-full sm:w-[450px] p-0 flex flex-col bg-slate-50 bg-slate-950 border-l border-indigo-800 shadow-2xl">
-        <SheetHeader className="px-6 py-4 bg-indigo-600 bg-indigo-900 border-b border-indigo-700 text-white space-y-0.5 relative z-10 shadow-md">
+      <SheetContent side="right" className="w-full sm:w-[450px] p-0 flex flex-col bg-slate-950 border-l border-indigo-800 shadow-2xl">
+        <SheetHeader className="px-6 py-4 bg-indigo-950/50 border-b border-indigo-900/50 text-white space-y-0.5 relative z-10 shadow-md backdrop-blur-md">
           <div className="flex justify-between items-start">
             <SheetTitle className="text-white flex items-center gap-2 text-xl tracking-tight">
                <Bot className="w-6 h-6 text-indigo-200" />
@@ -248,7 +254,15 @@ export default function CryptoChat({ isOpen: controlledIsOpen, onClose, reportCo
           </SheetDescription>
         </SheetHeader>
         
-        <div className="flex-1 overflow-hidden relative">
+        {!hasAccess ? (
+          <div className="flex-1 overflow-y-auto">
+            <PremiumLockedScreen 
+              title="Akses Copilot" 
+              description="Hedge Fund Copilot adalah AI interaktif yang hanya tersedia untuk pelanggan Premium."
+            />
+          </div>
+        ) : (
+          <div className="flex-1 overflow-hidden relative">
            {view === 'history' ? (
               <ScrollArea className="h-full px-4 py-4">
                  {historySessions.length === 0 ? (
@@ -308,24 +322,24 @@ export default function CryptoChat({ isOpen: controlledIsOpen, onClose, reportCo
                      </div>
                    </div>
                  ) : (
-                   <div className="space-y-6 pb-20">
-                     {messages.map((m) => (
-                       <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                         <div className={`max-w-[85%] rounded-2xl p-4 text-sm shadow-sm ${
-                           m.role === 'user' 
-                             ? 'bg-indigo-600 text-white rounded-br-sm' 
-                             : 'bg-slate-900 border border-slate-800 rounded-bl-sm text-slate-200'
-                         }`}>
-                           <div className={`flex items-center gap-1.5 mb-2 text-[10px] uppercase font-bold tracking-wider ${m.role === 'user' ? 'text-indigo-200' : 'text-slate-500'}`}>
+                    <div className="space-y-6 pb-20">
+                      {messages.map((m) => (
+                        <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                          <div className={`max-w-[85%] rounded-3xl p-5 shadow-sm ${
+                            m.role === 'user' 
+                              ? 'bg-indigo-600/90 border border-indigo-500/50 text-white rounded-br-sm backdrop-blur-sm' 
+                              : 'bg-slate-800/40 border border-slate-700/50 rounded-bl-sm text-slate-200 backdrop-blur-sm'
+                          }`}>
+                            <div className={`flex items-center gap-1.5 mb-3 text-[10px] uppercase font-bold tracking-wider ${m.role === 'user' ? 'text-indigo-200' : 'text-slate-400'}`}>
                              {m.role === 'user' ? <User className="w-3.5 h-3.5" /> : <Bot className="w-3.5 h-3.5" />}
                              {m.role === 'user' ? 'Anda' : 'Copilot'}
                            </div>
-                           <div className="text-sm">
-                             {m.role === 'user' ? (
-                                <div className="whitespace-pre-wrap leading-relaxed">{m.content}</div>
-                             ) : (
-                                <div className="prose prose-sm prose-invert max-w-none prose-p:leading-relaxed prose-pre:bg-slate-900 prose-pre:text-slate-50">
-                                   <ReactMarkdown>
+                            <div className="text-[13px]">
+                              {m.role === 'user' ? (
+                                 <div className="whitespace-pre-wrap leading-relaxed">{m.content}</div>
+                              ) : (
+                                 <div className="prose prose-sm prose-invert max-w-none prose-p:leading-relaxed prose-pre:bg-slate-900/50 prose-pre:border prose-pre:border-slate-700/50 prose-pre:text-slate-200 prose-td:border prose-td:border-slate-700/50 prose-th:border prose-th:border-slate-700/50 prose-table:w-full prose-table:table-auto prose-th:bg-slate-800/50 prose-td:p-3 prose-th:p-3 prose-li:my-0.5">
+                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
                                      {m.content}
                                    </ReactMarkdown>
                                 </div>
@@ -334,11 +348,11 @@ export default function CryptoChat({ isOpen: controlledIsOpen, onClose, reportCo
                          </div>
                        </div>
                      ))}
-                     {isLoading && (
-                       <div className="flex justify-start">
-                         <div className="bg-slate-900 border border-slate-800 rounded-2xl rounded-bl-sm p-4 text-sm flex items-center gap-3 shadow-sm text-slate-500">
-                           <Bot className="w-4 h-4 animate-bounce text-indigo-500" /> 
-                           <span className="animate-pulse font-medium">Copilot sedang menganalisa...</span>
+                      {isLoading && (
+                        <div className="flex justify-start">
+                          <div className="bg-slate-800/40 border border-slate-700/50 rounded-3xl rounded-bl-sm p-5 flex items-center gap-3 shadow-sm text-slate-400 backdrop-blur-sm">
+                            <Bot className="w-4 h-4 animate-bounce text-indigo-400" /> 
+                            <span className="animate-pulse font-medium text-[13px]">Copilot sedang menganalisa...</span>
                          </div>
                        </div>
                      )}
@@ -346,13 +360,13 @@ export default function CryptoChat({ isOpen: controlledIsOpen, onClose, reportCo
                  )}
                </ScrollArea>
                
-               <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-slate-50 via-slate-50 to-transparent dark:from-slate-950 dark:via-slate-950 pt-10">
-                  <form onSubmit={handleSubmit} className="flex items-center gap-2 bg-slate-900 border border-slate-800 rounded-full p-1.5 shadow-lg">
+               <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-slate-950 via-slate-950/90 to-transparent pt-10">
+                  <form onSubmit={handleSubmit} className="flex items-center gap-2 bg-slate-900/80 backdrop-blur-md border border-slate-700/50 rounded-full p-1.5 shadow-xl">
                     <Input 
                       value={input} 
                       onChange={(e) => setInput(e.target.value)} 
                       placeholder="Tanyakan sesuatu..." 
-                      className="flex-1 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-4 bg-transparent text-sm"
+                      className="flex-1 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-4 bg-transparent text-sm text-white placeholder:text-slate-500"
                       disabled={isLoading}
                     />
                     <Button type="submit" size="icon" className="bg-indigo-600 hover:bg-indigo-700 rounded-full h-10 w-10 shrink-0 shadow-md transition-transform active:scale-95" disabled={isLoading || !input.trim()}>
@@ -363,6 +377,7 @@ export default function CryptoChat({ isOpen: controlledIsOpen, onClose, reportCo
              </>
            )}
         </div>
+        )}
       </SheetContent>
     </Sheet>
     </>

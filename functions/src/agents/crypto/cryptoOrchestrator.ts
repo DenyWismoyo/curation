@@ -24,20 +24,23 @@ export interface CryptoMarketData {
   vwap?: number | null;
   obv?: number[] | null;
   adx?: { adx?: number; pdi?: number; mdi?: number } | null;
+  poc?: number | null;
   setupScore?: number;
   setupDirection?: "LONG" | "SHORT" | "NEUTRAL";
   setupReasoning?: string;
 }
 
-import { calculateRSI, calculateVWAP, calculateOBV } from "./utils/indicators";
+import { calculateRSI, calculateVWAP, calculateOBV, calculateVolumeProfilePOC } from "./utils/indicators";
 
 const calculateIndicators = (klinesData: any[]): Partial<CryptoMarketData> => {
   if (klinesData.length === 0) return {};
   const closes = klinesData.map((k) => parseFloat(k.close));
   
   const rsi14 = calculateRSI(klinesData, 14);
-  const vwap = calculateVWAP(klinesData);
+  // Default VWAP anchor is 'daily' for backwards compatibility, session logic handled in indicators
+  const vwap = calculateVWAP(klinesData, 'daily');
   const obv = calculateOBV(klinesData);
+  const poc = calculateVolumeProfilePOC(klinesData);
   
   let macdResult = null;
   if (closes.length >= 26) {
@@ -76,7 +79,7 @@ const calculateIndicators = (klinesData: any[]): Partial<CryptoMarketData> => {
     if (adxData.length > 0) adxResult = adxData[adxData.length - 1];
   }
 
-  return { rsi14, macd: macdResult as any, ema50, ema200, bb: bb as any, atr, vwap, obv, adx: adxResult as any };
+  return { rsi14, macd: macdResult as any, ema50, ema200, bb: bb as any, atr, vwap, obv, adx: adxResult as any, poc };
 };
 
 // Algoritma Screener 4.0 (Multi-Factor Scoring Model)
@@ -148,7 +151,11 @@ const calculateSetupScore = (coin: CryptoMarketData): { score: number, direction
      const bbWidth = (coin.bb.upper - coin.bb.lower) / coin.bb.middle;
      if (bbWidth < 0.05) { 
         score += 25;
-        reasons.push("Bollinger Squeeze Ekstrem (Potensi Breakout Kuat)");
+        if (coin.ema50 && coin.ema200) {
+           if (coin.ema50 > coin.ema200) longWeight += 2;
+           else shortWeight += 2;
+        }
+        reasons.push("Bollinger Squeeze Ekstrem (Potensi Breakout)");
      } else if (currentPrice < coin.bb.lower) {
         score += 15;
         longWeight += 2;
@@ -157,6 +164,17 @@ const calculateSetupScore = (coin: CryptoMarketData): { score: number, direction
         score += 15;
         shortWeight += 2;
         reasons.push("Overbought Ekstrem di atas BB Upper (Potensi Mean Reversion SHORT)");
+     }
+  }
+
+  // Bonus: Volume Point of Control (POC) Breakout
+  if (coin.poc) {
+     if (currentPrice > coin.poc) {
+        score += 10; longWeight += 1;
+        reasons.push("Breakout di atas Volume POC (Support kuat)");
+     } else {
+        score += 10; shortWeight += 1;
+        reasons.push("Breakdown di bawah Volume POC (Resistance kuat)");
      }
   }
 
@@ -334,12 +352,21 @@ export const fetchBybitKlineFallback = async (symbol: string, interval = "240", 
     // Bybit kline format: [startTime, openPrice, highPrice, lowPrice, closePrice, volume, turnover]
     // Note: Bybit returns data in descending order (newest first), so we must reverse it.
     const reversedList = [...data.result.list].reverse();
+    
+    const intervalMs: Record<string, number> = {
+      "1": 60000, "3": 180000, "5": 300000, "15": 900000,
+      "30": 1800000, "60": 3600000, "120": 7200000,
+      "240": 14400000, "360": 21600000, "720": 43200000,
+      "D": 86400000, "W": 604800000, "M": 2592000000
+    };
+    const intervalDuration = intervalMs[bybitInterval] || 14400000;
+    
     return {
        symbol: pair,
        klines: reversedList.map((k: any) => ({
           openTime: new Date(parseInt(k[0])).toISOString(),
           open: k[1], high: k[2], low: k[3], close: k[4], volume: k[5],
-          closeTime: new Date(parseInt(k[0]) + (parseInt(bybitInterval) * 60000)).toISOString(),
+          closeTime: new Date(parseInt(k[0]) + intervalDuration).toISOString(),
        }))
     };
   } catch (error) {
@@ -400,10 +427,10 @@ export const fetchScalpingCandidates = async (): Promise<{ symbol: string; chang
   }
 };
 
-export const gatherCryptoMarketData = async (isWeekly = false, isMonthly = false): Promise<{
+export const gatherCryptoMarketData = async (isWeekly = false, isMonthly = false, db?: any): Promise<{
   fearAndGreed: any;
   globalMarket: any;
-  latestNews: string[];
+  latestNews: any;
   stablecoinGrowth: any;
   dexVolumeGrowth: any;
   marketData: CryptoMarketData[];
@@ -417,7 +444,25 @@ export const gatherCryptoMarketData = async (isWeekly = false, isMonthly = false
    
    const fearAndGreed = await fetchFearAndGreedIndex();
    const globalMarket = await fetchGlobalMarketInfo();
-   const latestNews = await fetchCryptoNews();
+   
+   let latestNews: any = [];
+   if (db) {
+       try {
+           const newsSnapshot = await db.collection("cryptoNews").orderBy("createdAt", "desc").limit(1).get();
+           if (!newsSnapshot.empty) {
+               const newsDoc = newsSnapshot.docs[0].data();
+               latestNews = newsDoc; // Object containing marketSentiment, newsItems, etc.
+           } else {
+               latestNews = await fetchCryptoNews();
+           }
+       } catch (e) {
+           console.warn("Failed fetching cryptoNews from DB, fallback to RSS", e);
+           latestNews = await fetchCryptoNews();
+       }
+   } else {
+       latestNews = await fetchCryptoNews();
+   }
+
    const stablecoinGrowth = await fetchStablecoinGrowth();
    const dexVolumeGrowth = await fetchDexVolumeGrowth();
 
@@ -493,7 +538,7 @@ export const gatherCryptoMarketData = async (isWeekly = false, isMonthly = false
         k.setupReasoning = setup.reasoning;
         return k;
      })
-     .filter((k) => (k.setupScore || 0) >= 35) // Tingkatkan minimum score threshold agar lebih selektif
+     .filter((k) => (k.setupScore || 0) >= 45) // Tingkatkan minimum score threshold agar lebih selektif
      .sort((a, b) => (b.setupScore || 0) - (a.setupScore || 0)) // Sort dari score tertinggi
      .slice(0, 2); // Ambil Top 2 peluang terbaik (Quality > Quantity)
    

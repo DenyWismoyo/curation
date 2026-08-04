@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore'
+import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore'
 import { httpsCallable } from 'firebase/functions'
 import { db, functions } from '@/lib/firebase'
 import { motion } from 'framer-motion'
@@ -13,35 +13,48 @@ export default function RealtimeRadarPage() {
   const { user } = useAuth()
   const [loadingScalping, setLoadingScalping] = useState(false)
   const [loadingGems, setLoadingGems] = useState(false)
-  const [latestScalping, setLatestScalping] = useState<any>(null)
-  const [latestGem, setLatestGem] = useState<any>(null)
+  const [scalpingReports, setScalpingReports] = useState<any[]>([])
+  const [gemReports, setGemReports] = useState<any[]>([])
+  const [selectedScalpingId, setSelectedScalpingId] = useState<string>('')
+  const [selectedGemId, setSelectedGemId] = useState<string>('')
   const [error, setError] = useState('')
 
-  const fetchLatest = async () => {
-    try {
-      const qScalping = query(collection(db, "adminRealtimeScalping"), orderBy("createdAt", "desc"), limit(1))
-      const scalpingSnap = await getDocs(qScalping)
-      if (!scalpingSnap.empty) setLatestScalping(scalpingSnap.docs[0].data().reportData)
-
-      const qGems = query(collection(db, "adminRealtimeGems"), orderBy("createdAt", "desc"), limit(1))
-      const gemsSnap = await getDocs(qGems)
-      if (!gemsSnap.empty) setLatestGem(gemsSnap.docs[0].data().reportData)
-    } catch (err) {
-      console.error(err)
-    }
-  }
-
   useEffect(() => {
-    if (user) fetchLatest()
-  }, [user])
+    if (!user) return;
+    
+    const unsubscribeScalping = onSnapshot(
+      query(collection(db, "adminRealtimeScalping"), orderBy("createdAt", "desc"), limit(10)),
+      (snap) => {
+        const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        setScalpingReports(data);
+        if (data.length > 0) setSelectedScalpingId(prev => prev ? prev : data[0].id);
+      },
+      (err) => console.error(err)
+    );
+
+    const unsubscribeGems = onSnapshot(
+      query(collection(db, "adminRealtimeGems"), orderBy("createdAt", "desc"), limit(10)),
+      (snap) => {
+        const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        setGemReports(data);
+        if (data.length > 0) setSelectedGemId(prev => prev ? prev : data[0].id);
+      },
+      (err) => console.error(err)
+    );
+
+    return () => {
+      unsubscribeScalping();
+      unsubscribeGems();
+    };
+  }, [user]);
 
   const generateScalping = async () => {
     setLoadingScalping(true)
     setError('')
     try {
-      const fn = httpsCallable(functions, 'generateRealtimeScalping')
+      const fn = httpsCallable(functions, 'generateRealtimeScalping', { timeout: 540000 })
       const res = await fn()
-      setLatestScalping((res.data as any).data)
+      // Let the snapshot listener handle the update
     } catch (err: any) {
       setError(err.message || 'Gagal generate scalping')
     }
@@ -52,19 +65,19 @@ export default function RealtimeRadarPage() {
     setLoadingGems(true)
     setError('')
     try {
-      const fn = httpsCallable(functions, 'generateRealtimeHiddenGem')
+      const fn = httpsCallable(functions, 'generateRealtimeHiddenGem', { timeout: 540000 })
       const res = await fn()
-      setLatestGem((res.data as any).data)
+      // Let the snapshot listener handle the update
     } catch (err: any) {
       setError(err.message || 'Gagal generate gems')
     }
     setLoadingGems(false)
   }
 
-  const isAdmin = user?.email === 'deny.wismoyo@gmail.com' || (user as any)?.role === 'admin_csrs';
+  const isAdmin = (user as any)?.role?.startsWith('admin') || user?.email === 'deny.wismoyo@gmail.com';
 
   if (!user) return <div className="p-8 text-center text-slate-400">Harap login...</div>
-  if (!isAdmin) return <div className="p-8 text-center text-rose-500 font-bold">Akses Ditolak! Halaman ini hanya untuk admin_csrs.</div>
+  if (!isAdmin) return <div className="p-8 text-center text-rose-500 font-bold">Akses Ditolak! Halaman ini hanya untuk admin_csrs atau deny.wismoyo@gmail.com.</div>
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -76,8 +89,8 @@ export default function RealtimeRadarPage() {
           </h1>
           <p className="text-slate-400 mt-2">On-demand AI generation untuk Scalping & Hidden Gems tanpa menunggu jadwal Cron.</p>
         </div>
-        <Button onClick={fetchLatest} variant="outline" className="border-white/10 text-white bg-white/5">
-           <RefreshCw size={16} className="mr-2" /> Refresh Data
+        <Button onClick={() => { setSelectedScalpingId(scalpingReports[0]?.id || ''); setSelectedGemId(gemReports[0]?.id || ''); }} variant="outline" className="border-white/10 text-white bg-white/5">
+           <RefreshCw size={16} className="mr-2" /> Reset View to Latest
         </Button>
       </div>
 
@@ -87,18 +100,35 @@ export default function RealtimeRadarPage() {
         </div>
       )}
 
+      {(() => {
+        const latestScalping = scalpingReports.find(r => r.id === selectedScalpingId)?.reportData || null;
+        const latestGem = gemReports.find(r => r.id === selectedGemId)?.reportData || null;
+
+        return (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         
         {/* SCALPING CARD */}
         <div className="bg-slate-900/50 border border-white/10 rounded-2xl p-6 backdrop-blur-xl">
           <div className="flex items-center justify-between mb-6">
-             <div className="flex items-center gap-3">
-               <div className="p-3 bg-purple-500/20 rounded-xl"><Target className="text-purple-400" /></div>
-               <h2 className="text-xl font-bold text-white">Live Scalping</h2>
-             </div>
-             <Button onClick={generateScalping} disabled={loadingScalping} className="bg-purple-600 hover:bg-purple-700 text-white font-bold">
-               {loadingScalping ? <Loader2 className="animate-spin" /> : "Generate Now"}
-             </Button>
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <Zap className="text-yellow-400" size={20} /> Scalping Radar
+            </h2>
+            <div className="flex items-center gap-2">
+              <select 
+                className="bg-slate-800 text-slate-300 text-xs border border-white/10 rounded-md px-2 py-1 outline-none"
+                value={selectedScalpingId}
+                onChange={(e) => setSelectedScalpingId(e.target.value)}
+              >
+                {scalpingReports.map((r, i) => {
+                  const d = r.createdAt?.toDate ? r.createdAt.toDate() : new Date(r.createdAt);
+                  return <option key={r.id} value={r.id}>{d.toLocaleTimeString('id-ID')} WIB {i===0 ? '(Latest)' : ''}</option>
+                })}
+              </select>
+              <Button onClick={generateScalping} disabled={loadingScalping} size="sm" className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold">
+                {loadingScalping ? <Loader2 size={16} className="animate-spin mr-2" /> : <Zap size={16} className="mr-2" />}
+                Generate
+              </Button>
+            </div>
           </div>
           
           {latestScalping ? (
@@ -120,7 +150,7 @@ export default function RealtimeRadarPage() {
                      <div className="grid grid-cols-3 gap-2 text-sm">
                        <div><span className="text-slate-500 text-xs">Entry</span><br/><span className="text-white font-mono">{opp.entryPrice}</span></div>
                        <div><span className="text-slate-500 text-xs">Target</span><br/><span className="text-emerald-400 font-mono">{opp.targetPrice}</span></div>
-                       <div><span className="text-slate-500 text-xs">Stop Loss</span><br/><span className="text-red-400 font-mono">{opp.stopLoss}</span></div>
+                       <div><span className="text-slate-500 text-xs">Stop Loss</span><br/><span className="text-red-400 font-mono">{opp.stopLossPrice || opp.stopLoss}</span></div>
                      </div>
                      <p className="text-xs text-slate-400 mt-2">{opp.momentum}</p>
                    </div>
@@ -132,16 +162,28 @@ export default function RealtimeRadarPage() {
           )}
         </div>
 
-        {/* HIDDEN GEM CARD */}
+        {/* GEMS CARD */}
         <div className="bg-slate-900/50 border border-white/10 rounded-2xl p-6 backdrop-blur-xl">
           <div className="flex items-center justify-between mb-6">
-             <div className="flex items-center gap-3">
-               <div className="p-3 bg-blue-500/20 rounded-xl"><LineChart className="text-blue-400" /></div>
-               <h2 className="text-xl font-bold text-white">Live Hidden Gem</h2>
-             </div>
-             <Button onClick={generateGems} disabled={loadingGems} className="bg-blue-600 hover:bg-blue-700 text-white font-bold">
-               {loadingGems ? <Loader2 className="animate-spin" /> : "Generate Now"}
-             </Button>
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <Target className="text-emerald-400" size={20} /> Hidden Gems Radar
+            </h2>
+            <div className="flex items-center gap-2">
+              <select 
+                className="bg-slate-800 text-slate-300 text-xs border border-white/10 rounded-md px-2 py-1 outline-none"
+                value={selectedGemId}
+                onChange={(e) => setSelectedGemId(e.target.value)}
+              >
+                {gemReports.map((r, i) => {
+                  const d = r.createdAt?.toDate ? r.createdAt.toDate() : new Date(r.createdAt);
+                  return <option key={r.id} value={r.id}>{d.toLocaleTimeString('id-ID')} WIB {i===0 ? '(Latest)' : ''}</option>
+                })}
+              </select>
+              <Button onClick={generateGems} disabled={loadingGems} size="sm" className="bg-emerald-500 hover:bg-emerald-600 text-black font-bold">
+                {loadingGems ? <Loader2 size={16} className="animate-spin mr-2" /> : <Target size={16} className="mr-2" />}
+                Generate
+              </Button>
+            </div>
           </div>
           
           {latestGem ? (
@@ -176,8 +218,9 @@ export default function RealtimeRadarPage() {
             <div className="text-center py-12 text-slate-500">Belum ada data realtime hidden gems.</div>
           )}
         </div>
-
       </div>
+      );
+      })()}
     </div>
   )
 }

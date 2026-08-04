@@ -42,7 +42,7 @@ const fetchRss = async (url: string) => {
 
 export const cryptoNewsAgent = onSchedule(
   {
-    schedule: "0 6,12,18,0 * * *", 
+    schedule: "30 2,6,10,14,18,22 * * *", 
     timeZone: "Asia/Jakarta", 
     secrets: [deepseekApiKeySecret],
     region: "asia-southeast2",
@@ -104,9 +104,11 @@ TUGAS ANDA:
 Sintesis berita di atas ke dalam output JSON ketat berikut.
 Setiap berita harus dinilai "impactScore" nya dari 1 hingga 10 (10 = sangat menggerakkan pasar).
 Berikan "impactAnalysis" yang berfokus pada "Apa yang harus dilakukan trader?" (Actionable insight).
+PENTING — DE-DUPLIKASI: Jika ada beberapa berita yang melaporkan event yang SAMA dari sumber berbeda (misal: 3 artikel tentang FED), GABUNGKAN menjadi 1 item topNews saja. Prioritaskan KEBERAGAMAN topik agar trader mendapat 6-8 insight yang BERBEDA-BEDA, bukan variasi dari 1 event.
 
 ATURAN KERAS (TIDAK BOLEH DILANGGAR):
 - Output Anda HARUS murni JSON valid. JANGAN membungkus JSON dengan markdown block (\`\`\`json). JANGAN menambahkan teks pengantar atau penutup.
+- INSTRUKSI OUTPUT: Semua field "title", "summary", "impactAnalysis", dan "headlineSummary" WAJIB ditulis dalam Bahasa Indonesia yang ringkas, tajam, dan mudah dipahami.
 
 {
   "marketSentiment": "BULLISH | BEARISH | NEUTRAL | MIXED",
@@ -122,7 +124,7 @@ ATURAN KERAS (TIDAK BOLEH DILANGGAR):
       "impactAnalysis": "Actionable insight: Apa yang harus dilakukan trader dengan berita ini? (1-2 kalimat)",
       "originalLink": "URL sumber berita asli"
     }
-  ] // Pilih HANYA 6-8 berita paling penting/berdampak
+  ] // Pilih HANYA 6-8 berita paling penting/berdampak. Prioritaskan berita yang berdampak LANGSUNG pada harga BTC, ETH, atau altcoin utama. Buang berita terlalu umum/tidak berdampak harga.
 }
 `;
 

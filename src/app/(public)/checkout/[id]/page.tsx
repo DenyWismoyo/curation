@@ -44,14 +44,18 @@ export default function CheckoutQrisPage() {
         if (isPaidStatus && data.tokenCode && !hasTriggeredSuccess) {
           hasTriggeredSuccess = true;
           setIsSuccess(true);
-          toast.success("Pembayaran Berhasil! Mengarahkan ke Modul...");
+          toast.success("Pembayaran Berhasil! Mengarahkan ke Dashboard...");
           
           sessionStorage.setItem('active_token', data.tokenCode);
           sessionStorage.setItem('active_allowed_templates', JSON.stringify([data.packageId]));
           sessionStorage.setItem('active_model', 'flash');
           
           setTimeout(() => {
-            window.location.href = '/assessment';
+            if (data.packageId === 'CRYPTO_PREMIUM_MONTHLY') {
+              window.location.href = '/crypto-report';
+            } else {
+              window.location.href = '/assessment';
+            }
           }, 2000);
         }
       } else {

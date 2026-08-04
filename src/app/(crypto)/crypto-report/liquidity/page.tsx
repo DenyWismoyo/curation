@@ -11,18 +11,22 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, ArrowLeft, Radar, Target, Activity, Clock, Crosshair } from "lucide-react";
+import { PremiumLockedWrapper } from "@/components/crypto/PremiumLockedWrapper";
 
 export default function LiquidityHeatmapPage() {
   const router = useRouter();
-  const { user, role, loading: authLoading } = useAuth();
+  const { user, role, loading: authLoading, isPremium } = useAuth();
   const [reports, setReports] = useState<any[]>([]);
   const [selectedReportId, setSelectedReportId] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
+  const isAdmin = user?.email === 'deny.wismoyo@gmail.com' || role?.startsWith("admin");
+  const hasAccess = isAdmin || isPremium;
+
   useEffect(() => {
     let unsubscribe: () => void;
 
-    if (!authLoading && role && role.startsWith("admin")) {
+    if (!authLoading && hasAccess) {
         const q = query(collection(db, "cryptoLiquidity"), orderBy("createdAt", "desc"), limit(14));
         unsubscribe = onSnapshot(q, (snapshot) => {
            const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -42,17 +46,32 @@ export default function LiquidityHeatmapPage() {
     return () => {
       if (unsubscribe) unsubscribe();
     };
-  }, [authLoading, role]);
+  }, [authLoading, hasAccess]);
 
   if (authLoading || loading) {
     return <div className="flex justify-center items-center h-screen bg-slate-950"><Loader2 className="animate-spin h-10 w-10 text-cyan-500" /></div>;
   }
 
-  if (!user || !role?.startsWith("admin")) {
-    return <div className="p-8 text-center bg-slate-950 min-h-screen text-white">Akses ditolak. Halaman khusus Executive.</div>;
-  }
+  let latestReport = reports.find(r => r.id === selectedReportId) || reports[0];
 
-  const latestReport = reports.find(r => r.id === selectedReportId) || reports[0];
+  // Dummy mock data for Free Tier blurred view
+  if (!hasAccess && !latestReport) {
+     latestReport = {
+        id: "dummy-123",
+        createdAt: new Date(),
+        coins: [
+           {
+              symbol: "ETH",
+              currentPrice: "$3,100.00",
+              heatmapIntensity: "High",
+              longLiquidationArea: "$3,000 - $3,050",
+              shortLiquidationArea: "$3,200 - $3,250",
+              aiLiquidityAnalysis: "Terdapat konsentrasi tinggi posisi long dengan leverage yang rentan terkena stop-loss hunting di area $3,050. Market maker kemungkinan besar akan memicu likuidasi di area tersebut sebelum melanjutkan tren naik.",
+              quantitativeMetrics: { longShortRatio: "2.5", openInterestChange: "+15%" }
+           }
+        ]
+     };
+  }
 
   if (!latestReport) {
     return <div className="p-8 text-center bg-slate-950 min-h-screen text-white">Belum ada data Liquidity Heatmap.</div>;
@@ -62,7 +81,12 @@ export default function LiquidityHeatmapPage() {
   const createdAt = latestReport.createdAt?.toDate ? latestReport.createdAt.toDate() : new Date();
 
   return (
-    <div className="w-full relative">
+    <PremiumLockedWrapper 
+      hasAccess={hasAccess} 
+      title="Liquidity Heatmap" 
+      description="Peta likuiditas market untuk mengetahui area target harga dan manipulasi bandar eksklusif untuk pengguna Premium."
+    >
+      <div className="w-full relative min-h-screen bg-slate-950">
       
       {/* HEADER SECTION */}
       <div className="bg-slate-950/40 backdrop-blur-md border-b border-white/5 mb-6">
@@ -190,8 +214,8 @@ export default function LiquidityHeatmapPage() {
                 </Card>
             ))}
          </div>
-
       </div>
     </div>
+    </PremiumLockedWrapper>
   );
 }

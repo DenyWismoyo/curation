@@ -36,4 +36,11 @@ const getAdminDb = () => {
   return getFirestore(admin.app(), "curation");
 };
 
-export { getAdminDb };
+const getAdminAuth = () => {
+  if (!admin.apps.length) {
+    throw new Error("Firebase Admin SDK tidak terinisialisasi. Periksa kredensial .env.");
+  }
+  return admin.auth();
+};
+
+export { getAdminDb, getAdminAuth };

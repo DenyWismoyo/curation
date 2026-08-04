@@ -45,8 +45,8 @@ export function BottomNav() {
   const { user, role, logout } = useAuth()
   const [drawerOpen, setDrawerOpen] = useState(false)
 
-  // Sembunyikan di halaman admin / assessor / curator
-  const hiddenRoutes = ['/admin', '/assessor', '/curator']
+  // Sembunyikan di halaman admin / assessor / curator / crypto-report / premium
+  const hiddenRoutes = ['/admin', '/assessor', '/curator', '/crypto-report', '/premium']
   const shouldHide = hiddenRoutes.some((r) => pathname?.startsWith(r))
 
   const { pendingAssessmentsCount: pendingAssessments, unreadCount } = useUserActivity()

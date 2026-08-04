@@ -18,7 +18,8 @@ import {
   LogOut,
   ChevronLeft,
   Globe,
-  Zap
+  Zap,
+  Lock
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
@@ -36,19 +37,22 @@ const NAV_LINKS = [
 export function CryptoNavbar() {
   const pathname = usePathname()
   const router = useRouter()
-  const { user, logout } = useAuth()
+  const { user, role, logout, isPremium: authIsPremium } = useAuth()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [activeScalps, setActiveScalps] = useState(0)
   const [hasDanger, setHasDanger] = useState(false)
 
-  const isAdmin = user?.email === 'deny.wismoyo@gmail.com' || (user as any)?.role === 'admin_csrs';
+  const isAdmin = user?.email === 'deny.wismoyo@gmail.com' || role?.startsWith('admin');
+  const isPremium = authIsPremium || false;
+  const hasAccess = isAdmin || isPremium;
+
   const dynamicNavLinks = [...NAV_LINKS];
   if (isAdmin) {
     dynamicNavLinks.push({ href: '/crypto-report/realtime-radar', label: 'Realtime Radar', icon: Zap });
   }
 
   React.useEffect(() => {
-    if (!user) return;
+    if (!user || !hasAccess) return;
     
     // Fetch active scalps
     const qScalps = query(collection(db, "cryptoActiveTrades"), where("status", "==", "PENDING"));
@@ -70,13 +74,17 @@ export function CryptoNavbar() {
        unsubScalps();
        unsubDanger();
     }
-  }, [user]);
+  }, [user, hasAccess]);
 
   const isActive = (href: string) => {
     if (href === '/crypto-report') {
         return pathname === '/crypto-report'
     }
     return pathname?.startsWith(href)
+  }
+
+  const handleNavClick = (e: React.MouseEvent, href: string) => {
+    setMobileMenuOpen(false);
   }
 
   const handleLogout = async () => {
@@ -113,6 +121,7 @@ export function CryptoNavbar() {
                 <Link
                   key={link.href}
                   href={link.href}
+                  onClick={(e) => handleNavClick(e, link.href)}
                   className={`relative px-4 py-2 rounded-xl text-xs lg:text-sm font-bold transition-all flex items-center gap-2 ${
                     active ? 'text-white' : 'text-slate-400 hover:text-white hover:bg-white/5'
                   }`}
@@ -133,6 +142,9 @@ export function CryptoNavbar() {
                   )}
                   {link.label === 'Danger Zone' && hasDanger && (
                      <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                  )}
+                  {link.href !== '/crypto-report' && link.href !== '/crypto-report/news' && !hasAccess && (
+                     <Lock className="w-3.5 h-3.5 ml-1 text-slate-500 opacity-60" />
                   )}
                 </Link>
               )
@@ -198,23 +210,32 @@ export function CryptoNavbar() {
                 const Icon = link.icon
                 const active = isActive(link.href)
                 return (
-                  <Link
-                    key={link.href}
+                  <Link 
+                    key={link.href} 
                     href={link.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-bold transition-all ${
-                      active ? 'bg-purple-500/20 text-white border border-purple-500/30' : 'text-slate-400 hover:bg-white/5 hover:text-white'
+                    onClick={(e) => handleNavClick(e, link.href)}
+                    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${
+                      active 
+                        ? 'bg-white/10 text-white shadow-inner border border-white/5' 
+                        : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
                     }`}
                   >
-                    <Icon size={18} className={active ? 'text-purple-400' : 'text-slate-500'} />
+                    <Icon className={`w-4 h-4 ${active ? 'text-indigo-400' : ''}`} />
                     <span className="flex-1">{link.label}</span>
+                    
+                    {/* Lencana indikator khusus */}
                     {link.label === 'Scalping' && activeScalps > 0 && (
-                       <span className="bg-emerald-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full">
-                          {activeScalps} LIVE
-                       </span>
+                      <span className="ml-1 flex items-center justify-center w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-400 text-[10px] border border-indigo-500/30">
+                        {activeScalps}
+                      </span>
                     )}
                     {link.label === 'Danger Zone' && hasDanger && (
-                       <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                      <span className="ml-1 w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+                    )}
+
+                    {/* Ikon Gembok untuk Free Tier */}
+                    {link.href !== '/crypto-report' && link.href !== '/crypto-report/news' && !hasAccess && (
+                      <Lock className="w-3.5 h-3.5 ml-1 text-slate-500 opacity-60" />
                     )}
                   </Link>
                 )

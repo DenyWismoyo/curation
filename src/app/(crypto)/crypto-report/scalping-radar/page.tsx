@@ -9,55 +9,117 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, ArrowLeft, Zap, Target, ShieldAlert, ChevronRight, Activity, BarChart3, Clock, AlertTriangle } from "lucide-react";
+import { PremiumLockedWrapper } from "@/components/crypto/PremiumLockedWrapper";
 
 export default function ScalpingRadarPage() {
   const router = useRouter();
-  const { user, role, loading: authLoading } = useAuth();
-  const [latestReport, setLatestReport] = useState<any>(null);
+  const { user, role, loading: authLoading, isPremium } = useAuth();
+  const [reports, setReports] = useState<any[]>([]);
+  const [selectedReportId, setSelectedReportId] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    let unsubscribe: () => void;
+  const isAdmin = user?.email === 'deny.wismoyo@gmail.com' || role?.startsWith("admin");
+  const hasAccess = isAdmin || isPremium;
 
-    if (!authLoading && role && role.startsWith("admin")) {
-        const q = query(collection(db, "cryptoReports"), orderBy("createdAt", "desc"), limit(1));
-        unsubscribe = onSnapshot(q, (snapshot) => {
-           if (!snapshot.empty) {
-               setLatestReport({ id: snapshot.docs[0].id, ...snapshot.docs[0].data() });
-           }
-           setLoading(false);
-        }, (err) => {
-           console.error("Failed to fetch latest report:", err);
-           setLoading(false);
-        });
-    } else if (!authLoading) {
-        setLoading(false);
-    }
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchData = async () => {
+        if (authLoading) return;
+        
+        if (!hasAccess) {
+            if (isMounted) setLoading(false);
+            return;
+        }
+
+        try {
+            const token = await user?.getIdToken();
+            if (!token) throw new Error("No token");
+
+            const res = await fetch('/api/crypto/reports', {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            if (!res.ok) {
+                const errJson = await res.json().catch(() => ({}));
+                throw new Error(`Failed to fetch: ${res.status} ${errJson.details || res.statusText}`);
+            }
+
+            const json = await res.json();
+            if (isMounted && json.data) {
+                const parsedData = json.data.map((item: any) => ({
+                    ...item,
+                    createdAt: {
+                       toDate: () => new Date(item.createdAt)
+                    }
+                }));
+                setReports(parsedData);
+                if (parsedData.length > 0) {
+                    setSelectedReportId(prev => prev ? prev : parsedData[0].id);
+                }
+            }
+        } catch (err) {
+            console.error("Failed to fetch latest report:", err);
+        } finally {
+            if (isMounted) setLoading(false);
+        }
+    };
+
+    fetchData();
 
     return () => {
-      if (unsubscribe) unsubscribe();
+      isMounted = false;
     };
-  }, [authLoading, role]);
+  }, [authLoading, hasAccess, user]);
 
   if (authLoading || loading) {
     return <div className="flex justify-center items-center h-screen bg-slate-950"><Loader2 className="animate-spin h-10 w-10 text-orange-500" /></div>;
   }
 
-  if (!user || !role?.startsWith("admin")) {
-    return <div className="p-8 text-center bg-slate-950 min-h-screen text-white">Akses ditolak. Halaman khusus Executive.</div>;
+  let latestReport = reports.find(r => r.id === selectedReportId) || reports[0];
+
+  // Dummy mock data for Free Tier blurred view
+  if (!hasAccess && !latestReport) {
+     latestReport = {
+        id: "dummy-123",
+        createdAt: new Date(),
+        rawScalpingData: [
+           {
+              symbol: "SOL",
+              price: "$145.20",
+              action: "Buy",
+              timeframe: "1h",
+              target: "$152.00",
+              stopLoss: "$140.00",
+              riskRewardRatio: 1.5,
+              successProbability: "75%",
+              reason: "Terdeteksi pola bullish pennant pada timeframe 1 jam disertai lonjakan volume pembelian agresif.",
+              status: "ACTIVE"
+           }
+        ]
+     };
   }
 
   if (!latestReport) {
     return <div className="p-8 text-center bg-slate-950 min-h-screen text-white">Belum ada data Scalping Radar.</div>;
   }
 
+  const scalpingData = latestReport.rawScalpingData || [];
   const data = latestReport.reportData;
-  const scalps = data.scalpingOpportunities || [];
+  const scalps = data?.scalpingOpportunities || [];
   const createdAt = latestReport.createdAt?.toDate ? latestReport.createdAt.toDate() : new Date();
 
   return (
-    <div className="w-full relative">
+    <PremiumLockedWrapper 
+      hasAccess={hasAccess} 
+      title="Scalping Radar" 
+      description="Rekomendasi teknikal harian dan deteksi aset kripto potensial. Eksklusif untuk pengguna Premium."
+    >
+      <div className="w-full relative min-h-screen bg-slate-950">
       
       {/* HEADER SECTION */}
       <div className="bg-slate-950/40 backdrop-blur-md border-b border-white/5 mb-6">
@@ -74,11 +136,27 @@ export default function ScalpingRadarPage() {
                 <p className="text-xs font-medium text-slate-500">Multi-Agent AI Vetted Signals</p>
              </div>
           </div>
-          <div className="text-right hidden md:block">
-             <div className="text-xs text-slate-500 font-bold uppercase tracking-widest">Last Update</div>
-             <div className="text-sm font-medium text-slate-300 flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-orange-500" /> {createdAt.toLocaleString("id-ID")} WIB
+          <div className="text-right flex flex-col items-end gap-2">
+             <div className="text-xs text-slate-500 font-bold uppercase tracking-widest flex items-center gap-1.5 hidden md:flex">
+                <Clock className="w-3.5 h-3.5 text-orange-500" /> Riwayat Scan
              </div>
+             
+             <Select value={selectedReportId} onValueChange={setSelectedReportId}>
+               <SelectTrigger className="w-[180px] sm:w-[220px] h-9 bg-slate-900 border-slate-800 text-slate-300 focus:ring-0 focus:ring-offset-0 rounded-xl">
+                  <SelectValue placeholder="Pilih Waktu" />
+               </SelectTrigger>
+               <SelectContent className="bg-slate-900 border-slate-800 text-slate-300 rounded-xl max-h-[300px]">
+                  {reports.map(r => {
+                     const d = r.createdAt?.toDate ? r.createdAt.toDate() : new Date(r.createdAt);
+                     const isLatest = r.id === reports[0]?.id;
+                     return (
+                        <SelectItem key={r.id} value={r.id} className="text-xs sm:text-sm cursor-pointer py-2">
+                           {d.toLocaleDateString("id-ID", { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })} WIB {isLatest && "(Terbaru)"}
+                        </SelectItem>
+                     )
+                  })}
+               </SelectContent>
+             </Select>
           </div>
         </div>
       </div>
@@ -231,8 +309,9 @@ export default function ScalpingRadarPage() {
                </Card>
              ))
            )}
-        </div>
+         </div>
       </div>
     </div>
+    </PremiumLockedWrapper>
   );
 }

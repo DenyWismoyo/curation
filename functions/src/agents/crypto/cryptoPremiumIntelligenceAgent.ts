@@ -9,7 +9,7 @@ import { withRetry } from "../../utils/retry";
 const deepseekApiKeySecret = defineSecret("DEEPSEEK_API_KEY");
 
 import { calculateATR, calculateOBV } from "./utils/indicators";
-import { fetchBinanceOpenInterest } from "./cryptoOrchestrator";
+import { fetchBinanceOpenInterest, fetchFearAndGreedIndex } from "./cryptoOrchestrator";
 
 export const cryptoPremiumIntelligenceAgent = onSchedule(
   {
@@ -42,47 +42,61 @@ export const cryptoPremiumIntelligenceAgent = onSchedule(
 
       const coinMetrics = [];
 
-      for (const symbol of topCoins) {
-         try {
-             const klines1dRes = await axios.get(`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=1d&limit=30`);
-             const klines = klines1dRes.data;
-             const closes = klines.map((k: any) => parseFloat(k[4]));
-             const volumes = klines.map((k: any) => parseFloat(k[5]));
-             
-             const currentPrice = closes[closes.length - 1];
-             const currentVolume = volumes[volumes.length - 1];
-             
-             const last7Volumes = volumes.slice(-8, -1);
-             const avg7dVolume = last7Volumes.length > 0 ? (last7Volumes.reduce((a: number, b: number) => a + b, 0) / last7Volumes.length) : 1;
-             
-             const volumeSpikeRatio = currentVolume / (avg7dVolume || 1);
-             const atr = calculateATR(klines, 14);
-             const volatilityPct = (atr / currentPrice) * 100;
-             
-             const priceChangePct = ((currentPrice - closes[closes.length - 2]) / closes[closes.length - 2]) * 100;
+      let fearGreedValue = "N/A";
+      try {
+         const fg = await fetchFearAndGreedIndex();
+         if (fg && fg.current) fearGreedValue = fg.current.value;
+      } catch (e) {
+         console.warn("Failed to fetch fear and greed");
+      }
 
-             // Map back to klines object for OBV
-             const klineObjs = klines.map((k: any) => ({ close: k[4], volume: k[5] }));
-             const obv = calculateOBV(klineObjs);
-             const obvDivergence = (obv[obv.length - 1] > obv[obv.length - 2] && priceChangePct < 0) ? "BULLISH_DIV" : 
-                                   (obv[obv.length - 1] < obv[obv.length - 2] && priceChangePct > 0) ? "BEARISH_DIV" : "NONE";
+      const chunkSize = 5;
+      const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
-             const openInterest = await fetchBinanceOpenInterest(symbol);
+      for (let i = 0; i < topCoins.length; i += chunkSize) {
+         const chunk = topCoins.slice(i, i + chunkSize);
+         await Promise.all(chunk.map(async (symbol) => {
+             try {
+                 const klines1dRes = await axios.get(`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=1d&limit=30`);
+                 const klines = klines1dRes.data;
+                 const closes = klines.map((k: any) => parseFloat(k[4]));
+                 const volumes = klines.map((k: any) => parseFloat(k[5]));
+                 
+                 const currentPrice = closes[closes.length - 1];
+                 const currentVolume = volumes[volumes.length - 1];
+                 
+                 const last7Volumes = volumes.slice(-8, -1);
+                 const avg7dVolume = last7Volumes.length > 0 ? (last7Volumes.reduce((a: number, b: number) => a + b, 0) / last7Volumes.length) : 1;
+                 
+                 const volumeSpikeRatio = currentVolume / (avg7dVolume || 1);
+                 const atr = calculateATR(klines, 14);
+                 const volatilityPct = (atr / currentPrice) * 100;
+                 
+                 const priceChangePct = ((currentPrice - closes[closes.length - 2]) / closes[closes.length - 2]) * 100;
 
-             coinMetrics.push({
-                 symbol,
-                 price: currentPrice,
-                 volumeSpikeRatio: volumeSpikeRatio.toFixed(2),
-                 volatilityPct: volatilityPct.toFixed(2),
-                 priceChangePct: priceChangePct.toFixed(2),
-                 obvDivergence,
-                 openInterest,
-                 atr: atr.toFixed(4)
-             });
-         } catch (e) {
-             console.error(`Failed to fetch metrics for ${symbol}`, e);
-         }
-         await new Promise(r => setTimeout(r, 100));
+                 // Map back to klines object for OBV
+                 const klineObjs = klines.map((k: any) => ({ close: k[4], volume: k[5] }));
+                 const obv = calculateOBV(klineObjs);
+                 const obvDivergence = (obv[obv.length - 1] > obv[obv.length - 2] && priceChangePct < 0) ? "BULLISH_DIV" : 
+                                       (obv[obv.length - 1] < obv[obv.length - 2] && priceChangePct > 0) ? "BEARISH_DIV" : "NONE";
+
+                 const openInterest = await fetchBinanceOpenInterest(symbol);
+
+                 coinMetrics.push({
+                     symbol,
+                     price: currentPrice,
+                     volumeSpikeRatio: volumeSpikeRatio.toFixed(2),
+                     volatilityPct: volatilityPct.toFixed(2),
+                     priceChangePct: priceChangePct.toFixed(2),
+                     obvDivergence,
+                     openInterest,
+                     atr: atr.toFixed(4)
+                 });
+             } catch (e) {
+                 console.error(`Failed to fetch metrics for ${symbol}`, e);
+             }
+         }));
+         if (i + chunkSize < topCoins.length) await delay(300);
       }
 
       const apiKey = deepseekApiKeySecret.value();
@@ -100,6 +114,9 @@ Gunakan nada yang analitis, kuantitatif, dingin, dan tanpa emosi.
 ALUR BERPIKIR (MULTI-TIMEFRAME & MACRO AWARENESS):
 - Selalu pertimbangkan apakah anomali volume 1-Hari ini sejalan dengan tren makro pasar.
 - Jangan tertipu oleh "Volume Spike" yang ternyata adalah buangan (Distribution) dari Whale. Perhatikan "obvDivergence" dan arah harga ("priceChangePct").
+
+KONTEKS MAKRO SAAT INI: Fear & Greed = ${fearGreedValue}. 
+Ini WAJIB menjadi faktor penentu tingkat konviksi di setiap kategori. Jika F&G < 30 (Ketakutan), hindari Smart Money yang agresif ke atas.
 
 Berikut adalah matriks data dari Top 40 aset kripto berdasarkan anomali volume, volatilitas (ATR), persentase perubahan harga, divergensi OBV, dan Open Interest:
 ${JSON.stringify(coinMetrics, null, 2)}
@@ -145,6 +162,7 @@ Skema JSON yang harus dikembalikan:
     {
       "symbol": "BTCUSDT",
       "currentPrice": "harga",
+      "dangerHorizon": "Timeframe bahaya: '24-48 jam' / '3-7 hari' / '2 minggu'. Tentukan berdasarkan kapan token unlock terjadi atau seberapa cepat OBV divergence biasanya beresolusi.",
       "dangerReason": "Alasan fundamental/teknikal potensi dump (Maks 2 kalimat)",
       "action": "AVOID | SHORT",
       "quantitativeMetrics": { "drawdownPct": "-15.2", "volumeChangePct": "-40.5", "unlockDate": "2024-12-01" }

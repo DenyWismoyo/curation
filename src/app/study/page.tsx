@@ -51,7 +51,7 @@ const getErrorMessage = (error: unknown, fallback: string): string => {
 };
 
 export default function StudyWorkspacePage() {
-  const { user, role, loading, loginWithGoogle, loginWithEmail } = useAuth();
+  const { user, role, isPremium, loading, loginWithGoogle, loginWithEmail } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -68,7 +68,7 @@ export default function StudyWorkspacePage() {
   const [sourceNote, setSourceNote] = useState('');
   const [sources, setSources] = useState<any[]>([]);
 
-  const hasStudyAccess = role ? ALLOWED_ROLES.has(role) : false;
+  const hasStudyAccess = (role ? ALLOWED_ROLES.has(role) : false) || isPremium;
   const canManageProjects = role ? MANAGER_ROLES.has(role) : false;
 
   useEffect(() => {
@@ -289,10 +289,15 @@ export default function StudyWorkspacePage() {
       <div className="min-h-screen bg-[#f5f3ee] px-4 py-12">
         <div className="max-w-3xl mx-auto rounded-[2rem] bg-white shadow-xl ring-1 ring-stone-200 p-8">
           <div className="inline-flex items-center gap-2 rounded-full bg-amber-100 text-amber-900 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.22em]">
-            <ShieldCheck className="w-4 h-4" /> Role Required
+            <ShieldCheck className="w-4 h-4" /> Akses Premium
           </div>
           <h1 className="text-3xl font-black text-slate-900 mt-4">Akses workspace studi belum aktif</h1>
-          <p className="text-slate-600 font-medium mt-3 leading-relaxed">Workspace ini hanya dapat dipakai oleh akun dengan role `study_author`, `study_reviewer`, `admin_csrs`, atau `admin_omnifit`. Provisioning role bisa dilakukan lewat manajemen akses user yang sudah ada.</p>
+          <p className="text-slate-600 font-medium mt-3 leading-relaxed mb-6">Fitur Study Analytics dan Knowledge Base ini eksklusif untuk pelanggan Premium. Dapatkan insight bisnis B2B mendalam dengan berlangganan sekarang.</p>
+          <Link href="/premium">
+            <button className="h-11 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-sm">
+              Upgrade Premium
+            </button>
+          </Link>
         </div>
       </div>
     );

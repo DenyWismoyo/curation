@@ -6,6 +6,7 @@ import OpenAI from "openai";
 import axios from "axios";
 import { gatherCryptoMarketData } from "./cryptoOrchestrator";
 import { withRetry } from "../../utils/retry";
+import { calculateRSI, calculateStochRSI } from "./utils/indicators";
 
 const deepseekApiKeySecret = defineSecret("DEEPSEEK_API_KEY");
 
@@ -30,7 +31,7 @@ export const generateRealtimeScalping = onCall({
   const db = getFirestore(admin.app(), "curation");
   
   try {
-    const marketData = await gatherCryptoMarketData(false, false);
+    const marketData = await gatherCryptoMarketData(false, false, db);
     const { fearAndGreed, latestNews, scalpingCandidatesData } = marketData;
     const fearGreedValue = fearAndGreed?.current?.value || "UNKNOWN";
 
@@ -51,7 +52,7 @@ export const generateRealtimeScalping = onCall({
     const agent1Prompt = `Anda adalah Quant AI (Agent 1).
 Tugas Anda HANYA membedah teknikal dari data koin berikut dan memilih TOP 3 terbaik berdasarkan setupScore dan setupReasoning.
 PERHATIKAN KONTEKS MAKRO SAAT INI: Fear & Greed Index berada di angka ${fearGreedValue}. JANGAN menyarankan setup LONG agresif jika makro sedang ketakutan ekstrim (< 30).
-Berikan output JSON ketat: { "draftScalpingOpportunities": [ { "symbol": "...", "technicalThesis": "..." } ] }
+Berikan output JSON ketat: { "draftScalpingOpportunities": [ { "symbol": "...", "setupType": "Breakout / Bounce / Continuation / Reversal", "timeframeDominant": "15m / 1H", "technicalThesis": "...", "counterArgument": "Satu skenario gagal yang paling mungkin" } ] }
 
 Data Koin:
 ${JSON.stringify(safeScalpingCandidates, null, 2)}`;
@@ -96,7 +97,7 @@ Output Anda WAJIB berupa JSON rapi tanpa markdown block:
       "direction": "LONG/SHORT",
       "entryPrice": "angka",
       "targetPrice": "angka",
-      "stopLoss": "angka",
+      "stopLossPrice": "angka",
       "leverage": "Rekomendasi leverage (Max 10x)",
       "confidenceScore": "HIGH / MEDIUM",
       "momentum": "Alasan singkat mengapa masuk sekarang"
@@ -113,7 +114,7 @@ ${JSON.stringify(safeScalpingCandidates.map(c => ({ symbol: c.symbol, currentPri
 `;
 
     const result2 = await withRetry(() => deepseekClient.chat.completions.create({
-      model: "deepseek-chat", messages: [{ role: "user", content: agent2Prompt }]
+      model: "deepseek-reasoner", messages: [{ role: "user", content: agent2Prompt }]
     }));
 
     let finalReport;
@@ -121,6 +122,33 @@ ${JSON.stringify(safeScalpingCandidates.map(c => ({ symbol: c.symbol, currentPri
       const cleanJson2 = (result2.choices[0].message.content || "{}").replace(/```json/g, '').replace(/```/g, '').trim();
       finalReport = JSON.parse(cleanJson2);
     } catch (e) { throw new HttpsError("internal", "Agent 2 output invalid JSON"); }
+
+    if (finalReport.scalpingOpportunities && finalReport.scalpingOpportunities.length > 0) {
+      finalReport.scalpingOpportunities = finalReport.scalpingOpportunities.filter((bestScalp: any) => {
+            const entryPrice = parseFloat(bestScalp.entryPrice);
+            const targetPrice = parseFloat(bestScalp.targetPrice);
+            const slPrice = parseFloat(bestScalp.stopLossPrice);
+            
+            if (isNaN(entryPrice) || isNaN(targetPrice) || isNaN(slPrice)) return false;
+            
+            const rr = Math.abs(targetPrice - entryPrice) / Math.abs(slPrice - entryPrice);
+            if (rr < 1.8) {
+               console.warn(`Skipping ${bestScalp.symbol}: R:R ratio ${rr.toFixed(2)} < 1.8`);
+               return false;
+            }
+            
+            const isLong = bestScalp.direction === "LONG";
+            if (isLong && (targetPrice <= entryPrice || slPrice >= entryPrice)) {
+               console.warn(`Skipping LONG ${bestScalp.symbol}: Target/SL direction invalid`);
+               return false;
+            }
+            if (!isLong && (targetPrice >= entryPrice || slPrice <= entryPrice)) {
+               console.warn(`Skipping SHORT ${bestScalp.symbol}: Target/SL direction invalid`);
+               return false;
+            }
+            return true;
+      });
+    }
 
     const docRef = await db.collection("adminRealtimeScalping").add({
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -254,53 +282,3 @@ Output HARUS JSON murni tanpa markdown:
   }
 });
 
-const calculateRSI = (closes: number[], period = 14): number | undefined => {
-  if (closes.length <= period) return undefined;
-  let gains = 0, losses = 0;
-  for (let i = 1; i <= period; i++) {
-    const change = closes[i] - closes[i - 1];
-    if (change > 0) gains += change; else losses -= change;
-  }
-  let avgGain = gains / period; let avgLoss = losses / period;
-  for (let i = period + 1; i < closes.length; i++) {
-    const change = closes[i] - closes[i - 1];
-    const gain = change > 0 ? change : 0;
-    const loss = change < 0 ? -change : 0;
-    avgGain = (avgGain * (period - 1) + gain) / period;
-    avgLoss = (avgLoss * (period - 1) + loss) / period;
-  }
-  if (avgLoss === 0) return 100;
-  return 100 - (100 / (1 + (avgGain / avgLoss)));
-};
-
-const calculateStochRSI = (closes: number[], period = 14, smoothK = 3, smoothD = 3) => {
-  const rsiValues = [];
-  if (closes.length <= period * 2) return undefined;
-  for (let i = 0; i <= closes.length - period; i++) {
-    const window = closes.slice(i, i + period * 2);
-    const rsi = calculateRSI(window, period);
-    if (rsi !== undefined) rsiValues.push(rsi);
-  }
-  if (rsiValues.length < period) return undefined;
-  const stochRSI = [];
-  for (let i = period - 1; i < rsiValues.length; i++) {
-    const windowRSI = rsiValues.slice(i - period + 1, i + 1);
-    const minRSI = Math.min(...windowRSI);
-    const maxRSI = Math.max(...windowRSI);
-    const currentRSI = rsiValues[i];
-    let stoch = 0;
-    if (maxRSI !== minRSI) stoch = ((currentRSI - minRSI) / (maxRSI - minRSI)) * 100;
-    stochRSI.push(stoch);
-  }
-  if (stochRSI.length < smoothK) return undefined;
-  const kValues = [];
-  for (let i = smoothK - 1; i < stochRSI.length; i++) {
-    let sum = 0;
-    for (let j = 0; j < smoothK; j++) sum += stochRSI[i - j];
-    kValues.push(sum / smoothK);
-  }
-  if (kValues.length < smoothD) return undefined;
-  let sumD = 0;
-  for (let i = 0; i < smoothD; i++) sumD += kValues[kValues.length - 1 - i];
-  return { k: kValues[kValues.length - 1], d: sumD / smoothD };
-};

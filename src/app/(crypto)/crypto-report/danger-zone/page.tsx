@@ -11,48 +11,92 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, ArrowLeft, Flame, AlertTriangle, ShieldAlert, Clock, Skull } from "lucide-react";
+import { PremiumLockedWrapper } from "@/components/crypto/PremiumLockedWrapper";
 
 export default function DangerZonePage() {
   const router = useRouter();
-  const { user, role, loading: authLoading } = useAuth();
+  const { user, role, loading: authLoading, isPremium } = useAuth();
   const [reports, setReports] = useState<any[]>([]);
   const [selectedReportId, setSelectedReportId] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    let unsubscribe: () => void;
+  const isAdmin = user?.email === 'deny.wismoyo@gmail.com' || role?.startsWith("admin");
+  const hasAccess = isAdmin || isPremium;
 
-    if (!authLoading && role && role.startsWith("admin")) {
-        const q = query(collection(db, "cryptoDangerZone"), orderBy("createdAt", "desc"), limit(14));
-        unsubscribe = onSnapshot(q, (snapshot) => {
-           const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-           setReports(data);
-           if (data.length > 0) {
-               setSelectedReportId(prev => prev ? prev : data[0].id);
-           }
-           setLoading(false);
-        }, (err) => {
-           console.error("Failed to fetch latest danger zone data:", err);
-           setLoading(false);
-        });
-    } else if (!authLoading) {
-        setLoading(false);
-    }
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchData = async () => {
+        if (authLoading) return;
+        
+        if (!hasAccess) {
+            if (isMounted) setLoading(false);
+            return;
+        }
+
+        try {
+            const token = await user?.getIdToken();
+            if (!token) throw new Error("No token");
+
+            const res = await fetch('/api/crypto/danger-zone', {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            if (!res.ok) {
+                const errJson = await res.json().catch(() => ({}));
+                throw new Error(`Failed to fetch: ${res.status} ${errJson.details || res.statusText}`);
+            }
+
+            const json = await res.json();
+            if (isMounted && json.data) {
+                const parsedData = json.data.map((item: any) => ({
+                    ...item,
+                    createdAt: new Date(item.createdAt)
+                }));
+                setReports(parsedData);
+                if (parsedData.length > 0) {
+                    setSelectedReportId(prev => prev ? prev : parsedData[0].id);
+                }
+            }
+        } catch (err) {
+            console.error("Failed to fetch latest danger zone data:", err);
+        } finally {
+            if (isMounted) setLoading(false);
+        }
+    };
+
+    fetchData();
 
     return () => {
-      if (unsubscribe) unsubscribe();
+      isMounted = false;
     };
-  }, [authLoading, role]);
+  }, [authLoading, hasAccess, user]);
 
   if (authLoading || loading) {
     return <div className="flex justify-center items-center h-screen bg-black"><Loader2 className="animate-spin h-10 w-10 text-red-600" /></div>;
   }
 
-  if (!user || !role?.startsWith("admin")) {
-    return <div className="p-8 text-center bg-black min-h-screen text-white">Akses ditolak. Halaman khusus Executive.</div>;
-  }
+  let latestReport = reports.find(r => r.id === selectedReportId) || reports[0];
 
-  const latestReport = reports.find(r => r.id === selectedReportId) || reports[0];
+  // Dummy mock data for Free Tier blurred view
+  if (!hasAccess && !latestReport) {
+     latestReport = {
+        id: "dummy-123",
+        createdAt: new Date(),
+        coins: [
+           {
+              symbol: "PEPE",
+              currentPrice: "$0.0000085",
+              riskLevel: "CRITICAL",
+              dangerType: "PUMP & DUMP",
+              aiDangerAnalysis: "Terdeteksi pola wash-trading terkoordinasi di bursa tier-2 dengan volume palsu sebesar 65%. Kemungkinan besar akan terjadi aksi jual agresif dalam 24 jam ke depan.",
+              quantitativeMetrics: { washTradingProbability: "85%", suspiciousVolumeRatio: "3.5x", volatilityIndex: "Extreme" }
+           }
+        ]
+     };
+  }
 
   if (!latestReport) {
     return <div className="p-8 text-center bg-black min-h-screen text-white">Belum ada data Danger Zone.</div>;
@@ -62,7 +106,12 @@ export default function DangerZonePage() {
   const createdAt = latestReport.createdAt?.toDate ? latestReport.createdAt.toDate() : new Date();
 
   return (
-    <div className="w-full relative">
+    <PremiumLockedWrapper 
+      hasAccess={hasAccess} 
+      title="Danger Zone" 
+      description="Ketahui aset kripto mana yang terdeteksi sedang dimanipulasi atau berisiko tinggi. Eksklusif untuk pengguna Premium."
+    >
+      <div className="w-full relative min-h-screen bg-black">
       
       {/* HEADER SECTION */}
       <div className="bg-slate-950/40 backdrop-blur-md border-b border-white/5 mb-6">
@@ -174,8 +223,8 @@ export default function DangerZonePage() {
                 </Card>
             )})}
          </div>
-
       </div>
     </div>
+    </PremiumLockedWrapper>
   );
 }

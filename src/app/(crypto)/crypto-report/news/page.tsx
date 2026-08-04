@@ -1,28 +1,66 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { collection, query, orderBy, limit, onSnapshot } from "firebase/firestore";
-import { db } from "@/lib/firebase";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Globe, TrendingUp, TrendingDown, Minus, ExternalLink, Clock, Newspaper } from "lucide-react";
+import { Loader2, Globe, TrendingUp, TrendingDown, Minus, ExternalLink, Clock, Newspaper, ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
 
 export default function CryptoNewsPage() {
+  const router = useRouter();
+  const { user, role, loading: authLoading } = useAuth();
   const [newsReports, setNewsReports] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const q = query(collection(db, "cryptoNews"), orderBy("createdAt", "desc"), limit(10));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setNewsReports(data);
-      setLoading(false);
-    });
+    let isMounted = true;
 
-    return () => unsubscribe();
-  }, []);
+    async function fetchNews() {
+      if (authLoading) return;
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+      
+      try {
+        const token = await user.getIdToken();
+        const res = await fetch('/api/crypto/news', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        
+        if (!res.ok) {
+           const errJson = await res.json().catch(() => ({}));
+           throw new Error(`Failed to fetch: ${res.status} ${errJson.details || res.statusText}`);
+        }
+        
+        const json = await res.json();
+        if (isMounted && json.data) {
+          // Parse string ISO date back to Date object for UI compatibility
+          const parsedData = json.data.map((item: any) => ({
+            ...item,
+            createdAt: new Date(item.createdAt)
+          }));
+          setNewsReports(parsedData);
+        }
+      } catch (error) {
+        console.error("Failed to fetch news:", error);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    }
 
-  if (loading) {
+    fetchNews();
+
+    return () => {
+       isMounted = false;
+    };
+  }, [authLoading, user]);
+
+  if (authLoading || loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
         <Loader2 className="w-10 h-10 animate-spin text-indigo-500 mb-4" />
@@ -48,13 +86,23 @@ export default function CryptoNewsPage() {
   return (
     <div className="min-h-screen bg-slate-50/50 dark:bg-slate-950/50 pb-20 pt-24 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto space-y-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-black text-slate-900 dark:text-white flex items-center gap-3">
-              <Globe className="w-8 h-8 text-blue-500" />
-              News & Alpha
-            </h1>
-            <p className="text-slate-500 font-medium mt-2">Rangkuman berita aktual terkini oleh Crypto AI Editor.</p>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => router.back()}
+                className="text-slate-500 hover:text-slate-900 dark:hover:text-white rounded-full transition-all"
+            >
+                <ArrowLeft className="w-5 h-5" />
+            </Button>
+            <div>
+              <h1 className="text-3xl font-black text-slate-900 dark:text-white flex items-center gap-3">
+                <Globe className="w-8 h-8 text-blue-500" />
+                News & Alpha
+              </h1>
+              <p className="text-slate-500 font-medium mt-2">Rangkuman berita aktual terkini oleh Crypto AI Editor.</p>
+            </div>
           </div>
         </div>
 
@@ -63,7 +111,7 @@ export default function CryptoNewsPage() {
           const isBearish = report.marketSentiment === "BEARISH";
           const sentimentColor = isBullish ? "bg-emerald-500" : isBearish ? "bg-rose-500" : "bg-slate-500";
           const Icon = isBullish ? TrendingUp : isBearish ? TrendingDown : Minus;
-          const createdAt = report.createdAt?.toDate ? report.createdAt.toDate() : new Date();
+          const createdAt = report.createdAt instanceof Date ? report.createdAt : new Date(report.createdAt);
 
           return (
             <Card key={report.id} className="overflow-hidden border-slate-200/60 dark:border-slate-800/60 shadow-lg">

@@ -212,6 +212,26 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
   }, [templates]);
 
   // ── Handlers ────────────────────────────────────────────────────────────────
+  const handleStartPremium = () => {
+    if (!user) {
+      toast.info("Silakan login untuk mengakses fitur Premium.");
+      setAuthMode('login');
+      onLogin();
+      return;
+    }
+    router.push('/premium');
+  };
+
+  const handleStartStudy = () => {
+    if (!user) {
+      toast.info("Silakan login untuk mengakses fitur Study.");
+      setAuthMode('login');
+      onLogin();
+      return;
+    }
+    router.push('/study');
+  };
+
   const handleShareOmnifit = async () => {
     try {
       const result = await shareOrCopy({ title: 'Omnifit - Smart Assessment System', text: 'Coba Omnifit untuk asesmen AI personal, komunitas, dan bisnis.', url: 'https://omnifit.cloud' });
@@ -806,6 +826,47 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                   </Link>
                 </m.div>
               )}
+
+              {/* KARTU KETIGA: PREMIUM EXTRA */}
+              <div className="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl hover:shadow-indigo-900/20 transition-all duration-300 relative group mt-8">
+                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="p-8 md:p-10 flex flex-col h-full relative z-10">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-14 h-14 rounded-2xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 border border-indigo-500/30">
+                      <Sparkles size={28} />
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-black text-white">Premium Extra</h3>
+                      <p className="text-slate-400 text-sm">Crypto Intelligence & AI Analytics</p>
+                    </div>
+                  </div>
+
+                  <p className="text-slate-300 leading-relaxed mb-8 flex-1">
+                    Akses eksklusif ke sistem kecerdasan buatan penganalisis sentimen makro Crypto, berita terkini, dan panduan analitik pasar yang komprehensif.
+                  </p>
+
+                  <div className="space-y-3 mb-8">
+                    <div className="flex items-center gap-3 text-sm text-slate-300">
+                      <div className="w-5 h-5 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400"><Lock size={12} /></div>
+                      Crypto Realtime Radar & Scalping
+                    </div>
+                    <div className="flex items-center gap-3 text-sm text-slate-300">
+                      <div className="w-5 h-5 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400"><Lock size={12} /></div>
+                      Crypto Market Outlook & Trends
+                    </div>
+                    <div className="flex items-center gap-3 text-sm text-slate-300">
+                      <div className="w-5 h-5 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400"><Lock size={12} /></div>
+                      Akses Copilot Chat Tak Terbatas
+                    </div>
+                  </div>
+
+                  <Button onClick={handleStartPremium} className="w-full h-14 rounded-xl text-base font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-[0_0_20px_rgba(79,70,229,0.3)] transition-all flex items-center justify-between px-6 group/btn">
+                    <span>Lihat Paket Premium</span>
+                    <ArrowRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
+                  </Button>
+                </div>
+              </div>
+
             </div>
           </div>
         </section>

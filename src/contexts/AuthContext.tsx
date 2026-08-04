@@ -20,6 +20,7 @@ import { ensureReferralVisitorId, getStoredReferralAttribution } from '@/lib/ref
 interface AuthContextType {
   user: User | null;
   role: 'user' | 'admin_omnifit' | 'admin_csrs' | 'assessor' | 'curator' | 'study_author' | 'study_reviewer' | null;
+  isPremium: boolean;
   b2bPersonas: string[];
   allowedOrganizations: string[];
   b2bOrganizationIds: string[];
@@ -50,6 +51,7 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [role, setRole] = useState<'user' | 'admin_omnifit' | 'admin_csrs' | 'assessor' | 'curator' | 'study_author' | 'study_reviewer' | null>(null);
+  const [isPremium, setIsPremium] = useState<boolean>(false);
   const [b2bPersonas, setB2bPersonas] = useState<string[]>([]);
   const [allowedOrganizations, setAllowedOrganizations] = useState<string[]>([]);
   const [b2bOrganizationIds, setB2bOrganizationIds] = useState<string[]>([]);
@@ -165,13 +167,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           const userRef = doc(db, 'users', currentUser.uid);
           unsubscribeSnapshot = onSnapshot(userRef, (userSnap) => {
             if (userSnap.exists()) {
-              setAssessmentQuota(userSnap.data().assessmentQuota || 0);
+              const data = userSnap.data();
+              setAssessmentQuota(data.assessmentQuota || 0);
+              
+              let hasValidPremium = data.isPremium === true;
+              if (hasValidPremium && data.premiumValidUntil) {
+                const validUntilDate = new Date(data.premiumValidUntil);
+                if (new Date() > validUntilDate) {
+                  hasValidPremium = false;
+                }
+              }
+              
+              const premiumCheck = currentUser.email === 'deny.wismoyo@gmail.com' || currentRole === 'admin_csrs' || hasValidPremium;
+              setIsPremium(premiumCheck);
             } else {
               setAssessmentQuota(0);
+              const premiumCheck = currentUser.email === 'deny.wismoyo@gmail.com' || currentRole === 'admin_csrs';
+              setIsPremium(premiumCheck);
             }
           }, (error) => {
             console.warn('onSnapshot quota error:', error);
             setAssessmentQuota(0);
+            setIsPremium(currentUser.email === 'deny.wismoyo@gmail.com' || currentRole === 'admin_csrs');
           });
 
         } catch (error) {
@@ -181,6 +198,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setAllowedOrganizations([]);
           setB2bOrganizationIds([]);
           setAssessmentQuota(0);
+          setIsPremium(false);
         }
       } else {
         setRole(null);
@@ -188,6 +206,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setAllowedOrganizations([]);
         setB2bOrganizationIds([]);
         setAssessmentQuota(0);
+        setIsPremium(false);
       }
       setLoading(false);
     });
@@ -260,7 +279,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, role, b2bPersonas, allowedOrganizations, b2bOrganizationIds, assessmentQuota, loading, loginWithGoogle, registerWithEmail, loginWithEmail, resetPassword, logout }}>
+    <AuthContext.Provider value={{ user, role, isPremium, b2bPersonas, allowedOrganizations, b2bOrganizationIds, assessmentQuota, loading, loginWithGoogle, registerWithEmail, loginWithEmail, resetPassword, logout }}>
       {children}
     </AuthContext.Provider>
   );

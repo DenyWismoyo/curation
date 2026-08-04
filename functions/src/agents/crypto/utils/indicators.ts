@@ -50,12 +50,12 @@ export const calculateATR = (klines: any[], period = 14): number => {
   return sum / period;
 };
 
-export const calculateVWAP = (klines: any[], anchoredDaily = true): number | undefined => {
+export const calculateVWAP = (klines: any[], anchor: 'daily' | 'weekly' | 'none' = 'daily'): number | undefined => {
   if (klines.length === 0) return undefined;
   
   let cumulativeVP = 0;
   let cumulativeVolume = 0;
-  let currentDay = -1;
+  let currentPeriod = "";
   
   for (const kline of klines) {
     const high = parseFloat(kline.high || kline[2]);
@@ -63,13 +63,25 @@ export const calculateVWAP = (klines: any[], anchoredDaily = true): number | und
     const close = parseFloat(kline.close || kline[4]);
     const volume = parseFloat(kline.volume || kline[5]);
     
-    if (anchoredDaily) {
-       // kline[0] is usually timestamp, kline.openTime is string
+    if (anchor !== 'none') {
        const ts = kline.openTime ? new Date(kline.openTime).getTime() : parseInt(kline[0]);
        if (!isNaN(ts)) {
-          const day = new Date(ts).getUTCDate();
-          if (day !== currentDay) {
-             currentDay = day;
+          const date = new Date(ts);
+          
+          let periodId = "";
+          if (anchor === 'daily') {
+             // Accurate UTC day anchor: YYYY-MM-DD
+             periodId = `${date.getUTCFullYear()}-${date.getUTCMonth()}-${date.getUTCDate()}`;
+          } else if (anchor === 'weekly') {
+             // Weekly anchor (starts Monday)
+             const day = date.getUTCDay();
+             const diff = date.getUTCDate() - day + (day === 0 ? -6 : 1);
+             const monday = new Date(date.setUTCDate(diff));
+             periodId = `W-${monday.getUTCFullYear()}-${monday.getUTCMonth()}-${monday.getUTCDate()}`;
+          }
+          
+          if (periodId !== "" && periodId !== currentPeriod) {
+             currentPeriod = periodId;
              cumulativeVP = 0;
              cumulativeVolume = 0;
           }
@@ -105,21 +117,44 @@ export const calculateOBV = (klines: any[]): number[] => {
   return obv;
 };
 
+export const calculateRSIArray = (closes: number[], period = 14): number[] => {
+  if (closes.length <= period) return [];
+  const rsiArray: number[] = [];
+  
+  let gains = 0, losses = 0;
+  for (let i = 1; i <= period; i++) {
+    const change = closes[i] - closes[i - 1];
+    if (change > 0) gains += change;
+    else losses -= change;
+  }
+  let avgGain = gains / period;
+  let avgLoss = losses / period;
+  
+  if (avgLoss === 0) rsiArray.push(100);
+  else rsiArray.push(100 - (100 / (1 + (avgGain / avgLoss))));
+
+  for (let i = period + 1; i < closes.length; i++) {
+    const change = closes[i] - closes[i - 1];
+    const gain = change > 0 ? change : 0;
+    const loss = change < 0 ? -change : 0;
+    avgGain = (avgGain * (period - 1) + gain) / period;
+    avgLoss = (avgLoss * (period - 1) + loss) / period;
+    
+    if (avgLoss === 0) rsiArray.push(100);
+    else rsiArray.push(100 - (100 / (1 + (avgGain / avgLoss))));
+  }
+  return rsiArray;
+};
+
 export const calculateStochRSI = (klines: any[] | number[], period = 14, smoothK = 3, smoothD = 3): { k: number, d: number } | undefined => {
-  const rsiValues = [];
   const closes = typeof klines[0] === 'number' 
     ? (klines as number[]) 
     : (klines as any[]).map(k => parseFloat(k.close || k[4]));
 
   if (closes.length <= period * 2) return undefined;
 
-  // Calculate raw RSI for the series
-  for (let i = 0; i <= closes.length - period; i++) {
-    const window = closes.slice(i, i + period * 2);
-    const rsi = calculateRSI(window, period);
-    if (rsi !== undefined) rsiValues.push(rsi);
-  }
-
+  // Calculate full RSI array (Standard industry calculation)
+  const rsiValues = calculateRSIArray(closes, period);
   if (rsiValues.length < period) return undefined;
 
   const stochRSI = [];

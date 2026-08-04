@@ -416,6 +416,19 @@ export const mayarWebhook = onRequest({
             hasPaidForPremiumConsultation: true
           });
 
+        } else if (freshTxData.packageId === 'CRYPTO_PREMIUM_MONTHLY') {
+          // Berikan akses Premium dengan masa aktif 30 hari (1 bulan)
+          const validUntil = new Date();
+          validUntil.setDate(validUntil.getDate() + 30);
+          
+          const userRef = db.collection("users").doc(freshTxData.userId);
+          trx.set(userRef, {
+            isPremium: true,
+            premiumValidUntil: validUntil.toISOString()
+          }, { merge: true });
+
+          console.log(`[WEBHOOK] ✅ Akses Premium diberikan ke user ${freshTxData.userId} hingga ${validUntil.toISOString()}`);
+          
         } else if (freshTxData.packageId) {
           // Paket modul individual — grant token B2C
           const b2cRef = db.collection("corporate_tokens").doc("B2C");
