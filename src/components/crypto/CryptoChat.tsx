@@ -13,17 +13,38 @@ import { useAuth } from '@/contexts/AuthContext';
 import ReactMarkdown from 'react-markdown';
 
 interface CryptoChatProps {
-  isOpen: boolean;
-  onClose: () => void;
-  reportContext: any;
+  isOpen?: boolean;
+  onClose?: () => void;
+  reportContext?: any;
 }
 
-export default function CryptoChat({ isOpen, onClose, reportContext }: CryptoChatProps) {
+export default function CryptoChat({ isOpen: controlledIsOpen, onClose, reportContext: controlledContext }: CryptoChatProps = { isOpen: false, onClose: () => {}, reportContext: null }) {
   const { user } = useAuth();
+  const [isOpen, setIsOpen] = useState(controlledIsOpen);
   const [messages, setMessages] = useState<any[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [reportContext, setReportContext] = useState<any>(controlledContext);
+  
+  useEffect(() => {
+    setIsOpen(controlledIsOpen);
+  }, [controlledIsOpen]);
+  
+  useEffect(() => {
+    setReportContext(controlledContext);
+  }, [controlledContext]);
+
+  useEffect(() => {
+    const handleOpenChat = (e: any) => {
+       setIsOpen(true);
+       if (e.detail?.context) {
+          setReportContext(e.detail.context);
+       }
+    };
+    window.addEventListener('open-crypto-chat', handleOpenChat);
+    return () => window.removeEventListener('open-crypto-chat', handleOpenChat);
+  }, []);
   
   // History & Suggestions State
   const [view, setView] = useState<'chat' | 'history'>('chat');
@@ -184,15 +205,27 @@ export default function CryptoChat({ isOpen, onClose, reportContext }: CryptoCha
   };
 
   const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
     if (!open) {
-       onClose();
+       onClose?.();
     }
   };
 
   return (
+    <>
+    {/* Floating Trigger Button */}
+    <div className="fixed bottom-6 right-6 z-40">
+      <Button 
+        onClick={() => setIsOpen(true)}
+        className="w-14 h-14 rounded-full bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-500/30 flex items-center justify-center p-0 transition-transform hover:scale-110"
+      >
+        <Bot className="w-6 h-6 text-white" />
+      </Button>
+    </div>
+
     <Sheet open={isOpen} onOpenChange={handleOpenChange}>
-      <SheetContent side="right" className="w-full sm:w-[450px] p-0 flex flex-col bg-slate-50 dark:bg-slate-950 border-l border-indigo-200 dark:border-indigo-900 shadow-2xl">
-        <SheetHeader className="px-6 py-4 bg-indigo-600 dark:bg-indigo-900 border-b border-indigo-700 text-white space-y-0.5 relative z-10 shadow-md">
+      <SheetContent side="right" className="w-full sm:w-[450px] p-0 flex flex-col bg-slate-50 bg-slate-950 border-l border-indigo-800 shadow-2xl">
+        <SheetHeader className="px-6 py-4 bg-indigo-600 bg-indigo-900 border-b border-indigo-700 text-white space-y-0.5 relative z-10 shadow-md">
           <div className="flex justify-between items-start">
             <SheetTitle className="text-white flex items-center gap-2 text-xl tracking-tight">
                <Bot className="w-6 h-6 text-indigo-200" />
@@ -226,9 +259,9 @@ export default function CryptoChat({ isOpen, onClose, reportContext }: CryptoCha
                           <div 
                             key={session.id} 
                             onClick={() => loadChat(session.id)}
-                            className="p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl hover:border-indigo-400 hover:shadow-md cursor-pointer transition-all"
+                            className="p-3 bg-slate-900 border border-slate-800 rounded-xl hover:border-indigo-400 hover:shadow-md cursor-pointer transition-all"
                           >
-                             <div className="font-semibold text-sm text-slate-800 dark:text-slate-200 truncate">{session.title}</div>
+                             <div className="font-semibold text-sm text-slate-200 truncate">{session.title}</div>
                              <div className="text-xs text-slate-500 mt-1 flex items-center justify-between">
                                 <span>{session.messages?.length || 0} Pesan</span>
                                 <span>{session.updatedAt?.toDate ? session.updatedAt.toDate().toLocaleDateString('id-ID') : ''}</span>
@@ -243,10 +276,10 @@ export default function CryptoChat({ isOpen, onClose, reportContext }: CryptoCha
                <ScrollArea className="h-full px-6 py-4" ref={scrollRef}>
                  {messages.length === 0 ? (
                    <div className="flex flex-col items-center justify-center h-full text-center text-slate-400 mt-10">
-                     <div className="w-16 h-16 bg-indigo-100 dark:bg-indigo-900/50 rounded-full flex items-center justify-center mb-4">
+                     <div className="w-16 h-16 bg-indigo-900/50 rounded-full flex items-center justify-center mb-4">
                         <Bot className="w-8 h-8 text-indigo-500" />
                      </div>
-                     <h4 className="font-bold text-slate-700 dark:text-slate-300 mb-1">Copilot Siap</h4>
+                     <h4 className="font-bold text-slate-300 mb-1">Copilot Siap</h4>
                      <p className="text-sm max-w-[250px] mb-8">Ketik pesan Anda di bawah atau pilih topik panas hari ini.</p>
                      
                      {/* Suggestions UI */}
@@ -258,14 +291,14 @@ export default function CryptoChat({ isOpen, onClose, reportContext }: CryptoCha
                            </div>
                         ) : suggestions.length > 0 ? (
                            <>
-                             <div className="flex items-center text-xs font-semibold text-slate-500 dark:text-slate-400 mb-2 w-full px-2">
+                             <div className="flex items-center text-xs font-semibold text-slate-500 text-slate-400 mb-2 w-full px-2">
                                <Sparkles className="w-3.5 h-3.5 mr-1 text-amber-500" /> Topik Hangat
                              </div>
                              {suggestions.map((sug, idx) => (
                                <button 
                                  key={idx}
                                  onClick={() => handleSubmit(undefined, sug)}
-                                 className="w-full text-left p-3 rounded-xl text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-indigo-400 dark:hover:border-indigo-600 hover:shadow-sm transition-all text-slate-700 dark:text-slate-300"
+                                 className="w-full text-left p-3 rounded-xl text-sm bg-slate-900 border border-slate-800 hover:border-indigo-400 hover:border-indigo-600 hover:shadow-sm transition-all text-slate-300"
                                >
                                  {sug}
                                </button>
@@ -281,7 +314,7 @@ export default function CryptoChat({ isOpen, onClose, reportContext }: CryptoCha
                          <div className={`max-w-[85%] rounded-2xl p-4 text-sm shadow-sm ${
                            m.role === 'user' 
                              ? 'bg-indigo-600 text-white rounded-br-sm' 
-                             : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-bl-sm text-slate-800 dark:text-slate-200'
+                             : 'bg-slate-900 border border-slate-800 rounded-bl-sm text-slate-200'
                          }`}>
                            <div className={`flex items-center gap-1.5 mb-2 text-[10px] uppercase font-bold tracking-wider ${m.role === 'user' ? 'text-indigo-200' : 'text-slate-500'}`}>
                              {m.role === 'user' ? <User className="w-3.5 h-3.5" /> : <Bot className="w-3.5 h-3.5" />}
@@ -291,7 +324,7 @@ export default function CryptoChat({ isOpen, onClose, reportContext }: CryptoCha
                              {m.role === 'user' ? (
                                 <div className="whitespace-pre-wrap leading-relaxed">{m.content}</div>
                              ) : (
-                                <div className="prose prose-sm dark:prose-invert max-w-none prose-p:leading-relaxed prose-pre:bg-slate-900 prose-pre:text-slate-50">
+                                <div className="prose prose-sm prose-invert max-w-none prose-p:leading-relaxed prose-pre:bg-slate-900 prose-pre:text-slate-50">
                                    <ReactMarkdown>
                                      {m.content}
                                    </ReactMarkdown>
@@ -303,7 +336,7 @@ export default function CryptoChat({ isOpen, onClose, reportContext }: CryptoCha
                      ))}
                      {isLoading && (
                        <div className="flex justify-start">
-                         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl rounded-bl-sm p-4 text-sm flex items-center gap-3 shadow-sm text-slate-500">
+                         <div className="bg-slate-900 border border-slate-800 rounded-2xl rounded-bl-sm p-4 text-sm flex items-center gap-3 shadow-sm text-slate-500">
                            <Bot className="w-4 h-4 animate-bounce text-indigo-500" /> 
                            <span className="animate-pulse font-medium">Copilot sedang menganalisa...</span>
                          </div>
@@ -314,7 +347,7 @@ export default function CryptoChat({ isOpen, onClose, reportContext }: CryptoCha
                </ScrollArea>
                
                <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-slate-50 via-slate-50 to-transparent dark:from-slate-950 dark:via-slate-950 pt-10">
-                  <form onSubmit={handleSubmit} className="flex items-center gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-full p-1.5 shadow-lg">
+                  <form onSubmit={handleSubmit} className="flex items-center gap-2 bg-slate-900 border border-slate-800 rounded-full p-1.5 shadow-lg">
                     <Input 
                       value={input} 
                       onChange={(e) => setInput(e.target.value)} 
@@ -332,5 +365,6 @@ export default function CryptoChat({ isOpen, onClose, reportContext }: CryptoCha
         </div>
       </SheetContent>
     </Sheet>
+    </>
   );
 }

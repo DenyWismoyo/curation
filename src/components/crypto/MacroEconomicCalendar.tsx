@@ -68,7 +68,7 @@ export default function MacroEconomicCalendar() {
       case "high": return "bg-rose-500 text-white border-rose-500 shadow-rose-500/20";
       case "medium": return "bg-orange-500 text-white border-orange-500 shadow-orange-500/20";
       case "low": return "bg-yellow-400 text-slate-800 border-yellow-400 shadow-yellow-400/20";
-      default: return "bg-slate-200 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-400";
+      default: return "bg-slate-200 text-slate-600 border-slate-200 bg-slate-800 text-slate-400";
     }
   };
 
@@ -92,7 +92,7 @@ export default function MacroEconomicCalendar() {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center p-20 text-rose-500 bg-rose-50 dark:bg-rose-950/20 rounded-3xl border border-rose-100 dark:border-rose-900/50">
+      <div className="flex flex-col items-center justify-center p-20 text-rose-500 bg-rose-50 bg-rose-950/20 rounded-3xl border border-rose-100 border-rose-900/50">
         <AlertCircle className="w-12 h-12 mb-4 opacity-50" />
         <h3 className="font-bold text-lg mb-1">Gagal Memuat Kalender</h3>
         <p className="text-sm">{error}</p>
@@ -126,15 +126,15 @@ export default function MacroEconomicCalendar() {
       </Card>
 
       {/* Calendar Table */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+      <div className="bg-slate-900 rounded-3xl border border-slate-800 shadow-sm overflow-hidden">
          {events.map((dayGroup, idx) => (
-           <div key={idx} className="border-b border-slate-100 dark:border-slate-800 last:border-0">
+           <div key={idx} className="border-b border-slate-800 last:border-0">
              
              {/* Day Header */}
-             <div className="bg-slate-50 dark:bg-slate-950/50 px-6 py-4 flex items-center justify-between sticky top-0 z-10 border-y border-slate-100 dark:border-slate-800/50 first:border-t-0">
-               <h3 className="font-bold text-slate-800 dark:text-slate-200">{dayGroup.dateStr}</h3>
+             <div className="bg-slate-50 bg-slate-950/50 px-6 py-4 flex items-center justify-between sticky top-0 z-10 border-y border-slate-800/50 first:border-t-0">
+               <h3 className="font-bold text-slate-200">{dayGroup.dateStr}</h3>
                {dayGroup.rawDate.toDateString() === new Date().toDateString() && (
-                 <Badge className="bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 border-0">HARI INI</Badge>
+                 <Badge className="bg-indigo-100 text-indigo-700 bg-indigo-900/30 text-indigo-300 border-0">HARI INI</Badge>
                )}
              </div>
 
@@ -145,11 +145,11 @@ export default function MacroEconomicCalendar() {
                  const isPast = new Date(event.date) < new Date();
                  
                  return (
-                   <div key={eIdx} className={`p-4 sm:px-6 flex flex-col sm:flex-row sm:items-center gap-4 transition-colors hover:bg-slate-50/50 dark:hover:bg-slate-800/20 ${isPast ? 'opacity-60' : ''}`}>
+                   <div key={eIdx} className={`p-4 sm:px-6 flex flex-col sm:flex-row sm:items-center gap-4 transition-colors hover:bg-slate-50/50 hover:bg-slate-800/20 ${isPast ? 'opacity-60' : ''}`}>
                      
                      <div className="flex items-center gap-4 sm:w-48 shrink-0">
-                       <span className="font-medium text-slate-600 dark:text-slate-400 w-16">{timeStr}</span>
-                       <Badge className="bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700 uppercase">{event.country}</Badge>
+                       <span className="font-medium text-slate-400 w-16">{timeStr}</span>
+                       <Badge className="bg-slate-100 text-slate-600 bg-slate-800 text-slate-300 border-slate-800 uppercase">{event.country}</Badge>
                      </div>
 
                      <div className="flex-1 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6">
@@ -157,24 +157,24 @@ export default function MacroEconomicCalendar() {
                          <Badge className={`${getImpactColor(event.impact)} text-[10px] w-14 justify-center shadow-sm`}>
                            {getImpactLabel(event.impact)}
                          </Badge>
-                         <span className={`font-semibold text-sm sm:text-base ${event.impact === 'High' ? 'text-slate-900 dark:text-white' : 'text-slate-700 dark:text-slate-300'}`}>
+                         <span className={`font-semibold text-sm sm:text-base ${event.impact === 'High' ? 'text-white' : 'text-slate-300'}`}>
                            {event.title}
                          </span>
                        </div>
 
                        {event.impact !== "Holiday" && (
-                         <div className="flex items-center gap-4 text-sm mt-2 sm:mt-0 sm:w-64 shrink-0 bg-slate-50 dark:bg-slate-800/50 p-2 rounded-lg border border-slate-100 dark:border-slate-800">
+                         <div className="flex items-center gap-4 text-sm mt-2 sm:mt-0 sm:w-64 shrink-0 bg-slate-800/50 p-2 rounded-lg border border-slate-800">
                            <div className="flex flex-col w-1/3">
                              <span className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Act</span>
-                             <span className="font-bold text-slate-900 dark:text-white">{event.actual || "-"}</span>
+                             <span className="font-bold text-white">{event.actual || "-"}</span>
                            </div>
-                           <div className="flex flex-col w-1/3 border-l border-slate-200 dark:border-slate-700 pl-3">
+                           <div className="flex flex-col w-1/3 border-l border-slate-800 pl-3">
                              <span className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Fcst</span>
-                             <span className="text-slate-600 dark:text-slate-300">{event.forecast || "-"}</span>
+                             <span className="text-slate-600 text-slate-300">{event.forecast || "-"}</span>
                            </div>
-                           <div className="flex flex-col w-1/3 border-l border-slate-200 dark:border-slate-700 pl-3">
+                           <div className="flex flex-col w-1/3 border-l border-slate-800 pl-3">
                              <span className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Prev</span>
-                             <span className="text-slate-500 dark:text-slate-400">{event.previous || "-"}</span>
+                             <span className="text-slate-500 text-slate-400">{event.previous || "-"}</span>
                            </div>
                          </div>
                        )}

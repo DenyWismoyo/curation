@@ -111,13 +111,13 @@ export default function CryptoLiveTicker() {
   }, []);
 
   return (
-    <div className="w-full backdrop-blur-xl bg-white/40 dark:bg-slate-950/40 border border-white/40 dark:border-slate-800/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.12)] py-2.5 px-5 flex items-center justify-between lg:justify-start gap-6 overflow-hidden rounded-2xl mb-8 relative">
+    <div className="w-full backdrop-blur-xl bg-slate-900/50 border border-slate-800 shadow-sm py-2.5 px-5 flex items-center justify-between lg:justify-start gap-6 overflow-hidden rounded-2xl mb-8 relative">
       {/* Decorative gradient blur */}
-      <div className="absolute -left-20 -top-20 w-40 h-40 bg-indigo-500/20 dark:bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute -left-20 -top-20 w-40 h-40 bg-indigo-500/20 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
 
-      <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-xs font-black uppercase tracking-widest shrink-0 relative z-10">
+      <div className="flex items-center gap-2 text-slate-500 text-slate-400 text-xs font-black uppercase tracking-widest shrink-0 relative z-10">
         <div className="relative flex items-center justify-center">
-           <Activity className="w-4 h-4 text-indigo-600 dark:text-indigo-400 relative z-10" />
+           <Activity className="w-4 h-4 text-indigo-400 relative z-10" />
            <div className="absolute inset-0 bg-indigo-500/40 rounded-full blur-sm animate-pulse"></div>
         </div>
         <span>Live Market</span>
@@ -126,16 +126,16 @@ export default function CryptoLiveTicker() {
       <div className="flex items-center gap-8 overflow-x-auto no-scrollbar flex-1 relative z-10 [mask-image:linear-gradient(to_right,black_90%,transparent_100%)]">
         {Object.values(tickers).map((ticker) => (
           <div key={ticker.symbol} className="flex items-center gap-2.5 shrink-0 group transition-transform hover:scale-105 cursor-default">
-            <span className="font-bold text-sm text-slate-900 dark:text-white drop-shadow-sm">{ticker.symbol}</span>
+            <span className="font-bold text-sm text-white drop-shadow-sm">{ticker.symbol}</span>
             <span 
               className={`font-mono text-sm font-semibold transition-colors duration-300 drop-shadow-sm ${
-                ticker.flash === "up" ? "text-emerald-600 dark:text-emerald-400" : 
-                ticker.flash === "down" ? "text-rose-600 dark:text-rose-400" : "text-slate-600 dark:text-slate-300"
+                ticker.flash === "up" ? "text-emerald-400" : 
+                ticker.flash === "down" ? "text-rose-400" : "text-slate-600 text-slate-300"
               }`}
             >
               ${ticker.price}
             </span>
-            <span className={`flex items-center text-xs font-black px-1.5 py-0.5 rounded-md transition-colors ${ticker.isUp ? "bg-emerald-100/50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400" : "bg-rose-100/50 text-rose-700 dark:bg-rose-500/10 dark:text-rose-400"}`}>
+            <span className={`flex items-center text-xs font-black px-1.5 py-0.5 rounded-md transition-colors ${ticker.isUp ? "bg-emerald-100/50 text-emerald-700 bg-emerald-500/10 text-emerald-400" : "bg-rose-100/50 text-rose-700 bg-rose-500/10 text-rose-400"}`}>
               {ticker.isUp ? <ArrowUpRight className="w-3 h-3 mr-0.5" /> : <ArrowDownRight className="w-3 h-3 mr-0.5" />}
               {ticker.change}%
             </span>

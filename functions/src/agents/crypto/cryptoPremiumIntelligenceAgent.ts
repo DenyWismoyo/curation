@@ -41,7 +41,7 @@ export const cryptoPremiumIntelligenceAgent = onSchedule(
   },
   async (event) => {
     try {
-      const db = getFirestore();
+      const db = getFirestore(admin.app(), "curation");
       
       const tickerRes = await axios.get("https://api.binance.com/api/v3/ticker/24hr");
       let allTickers = tickerRes.data.filter((t: any) => t.symbol.endsWith("USDT") && parseFloat(t.quoteVolume) > 20000000);

@@ -56,10 +56,10 @@ export default function DangerZonePage() {
   const createdAt = latestReport.createdAt?.toDate ? latestReport.createdAt.toDate() : new Date();
 
   return (
-    <div className="min-h-screen bg-black bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-red-950/40 via-black to-black text-slate-200 selection:bg-red-500/30 font-sans">
+    <div className="w-full relative">
       
       {/* HEADER SECTION */}
-      <div className="sticky top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-red-900/30 shadow-2xl">
+      <div className="bg-slate-950/40 backdrop-blur-md border-b border-white/5 mb-6">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
             <div className="flex items-center gap-4">
                 <Button 

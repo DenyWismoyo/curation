@@ -57,10 +57,10 @@ export default function ScalpingRadarPage() {
   const createdAt = latestReport.createdAt?.toDate ? latestReport.createdAt.toDate() : new Date();
 
   return (
-    <div className="min-h-screen bg-slate-950 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black text-slate-200 selection:bg-orange-500/30 font-sans">
+    <div className="w-full relative">
       
-      {/* HEADER NAVBAR */}
-      <div className="sticky top-0 z-50 bg-slate-950/60 backdrop-blur-xl border-b border-white/5">
+      {/* HEADER SECTION */}
+      <div className="bg-slate-950/40 backdrop-blur-md border-b border-white/5 mb-6">
         <div className="max-w-6xl mx-auto px-4 md:px-8 h-20 flex items-center justify-between">
           <div className="flex items-center gap-4">
              <Button onClick={() => router.back()} variant="ghost" size="icon" className="text-slate-400 hover:text-white hover:bg-slate-800 rounded-full">

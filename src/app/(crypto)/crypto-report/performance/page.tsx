@@ -95,7 +95,7 @@ export default function CryptoPerformancePage() {
             <ArrowLeft className="w-5 h-5" />
         </Button>
         <div>
-          <h1 className="text-3xl font-black text-slate-800 dark:text-slate-100 flex items-center gap-3">
+          <h1 className="text-3xl font-black text-slate-800 text-slate-100 flex items-center gap-3">
             <Activity className="w-8 h-8 text-indigo-500" /> Scalping Analytics
           </h1>
           <p className="text-slate-500 font-medium mt-1">Dashboard evaluasi akurasi sinyal AI Screener</p>
@@ -110,21 +110,21 @@ export default function CryptoPerformancePage() {
           </CardContent>
         </Card>
         
-        <Card className="bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30">
+        <Card className="bg-emerald-50 bg-emerald-950/20 border-emerald-100 border-emerald-900/30">
           <CardContent className="p-8 flex flex-col justify-center h-full">
-            <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold mb-2">
+            <div className="flex items-center gap-2 text-emerald-400 font-bold mb-2">
                <Target className="w-5 h-5" /> Total WIN
             </div>
-            <div className="text-4xl font-black text-slate-800 dark:text-slate-100">{globalStats.totalWins} <span className="text-lg text-slate-400 font-medium">sinyal</span></div>
+            <div className="text-4xl font-black text-slate-800 text-slate-100">{globalStats.totalWins} <span className="text-lg text-slate-400 font-medium">sinyal</span></div>
           </CardContent>
         </Card>
 
-        <Card className="bg-rose-50 dark:bg-rose-950/20 border-rose-100 dark:border-rose-900/30">
+        <Card className="bg-rose-50 bg-rose-950/20 border-rose-100 border-rose-900/30">
           <CardContent className="p-8 flex flex-col justify-center h-full">
-            <div className="flex items-center gap-2 text-rose-600 dark:text-rose-400 font-bold mb-2">
+            <div className="flex items-center gap-2 text-rose-400 font-bold mb-2">
                <ShieldAlert className="w-5 h-5" /> Total LOSS
             </div>
-            <div className="text-4xl font-black text-slate-800 dark:text-slate-100">{globalStats.totalLosses} <span className="text-lg text-slate-400 font-medium">sinyal</span></div>
+            <div className="text-4xl font-black text-slate-800 text-slate-100">{globalStats.totalLosses} <span className="text-lg text-slate-400 font-medium">sinyal</span></div>
           </CardContent>
         </Card>
       </div>
@@ -134,26 +134,26 @@ export default function CryptoPerformancePage() {
       </h2>
 
       {history.length === 0 ? (
-         <div className="text-center py-20 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 text-slate-500">
+         <div className="text-center py-20 bg-slate-800/50 rounded-2xl border border-dashed border-slate-800 text-slate-500">
             Belum ada riwayat evaluasi sinyal.
          </div>
       ) : (
-         <div className="bg-white dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+         <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
                <table className="w-full text-left border-collapse">
                   <thead>
-                     <tr className="bg-slate-50 dark:bg-slate-900/50 text-slate-500 text-xs uppercase tracking-wider">
-                        <th className="p-4 font-bold border-b border-slate-200 dark:border-slate-800">Tanggal</th>
-                        <th className="p-4 font-bold border-b border-slate-200 dark:border-slate-800">Pair</th>
-                        <th className="p-4 font-bold border-b border-slate-200 dark:border-slate-800">Status</th>
-                        <th className="p-4 font-bold border-b border-slate-200 dark:border-slate-800">Keterangan</th>
+                     <tr className="bg-slate-800/50 text-slate-500 text-xs uppercase tracking-wider">
+                        <th className="p-4 font-bold border-b border-slate-800">Tanggal</th>
+                        <th className="p-4 font-bold border-b border-slate-800">Pair</th>
+                        <th className="p-4 font-bold border-b border-slate-800">Status</th>
+                        <th className="p-4 font-bold border-b border-slate-800">Keterangan</th>
                      </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
                      {history.map((item, i) => (
-                        <tr key={i} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/30 transition-colors">
+                        <tr key={i} className="hover:bg-slate-50/50 hover:bg-slate-900/30 transition-colors">
                            <td className="p-4 text-sm text-slate-500 whitespace-nowrap">{item.date}</td>
-                           <td className="p-4 font-bold text-slate-900 dark:text-slate-100">{item.symbol}</td>
+                           <td className="p-4 font-bold text-slate-900 text-slate-100">{item.symbol}</td>
                            <td className="p-4">
                               {item.status === 'WIN' ? (
                                  <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-0">WIN</Badge>
@@ -163,7 +163,7 @@ export default function CryptoPerformancePage() {
                                  <Badge variant="outline" className="text-amber-600 border-amber-300">PENDING</Badge>
                               )}
                            </td>
-                           <td className="p-4 text-sm text-slate-600 dark:text-slate-400 max-w-md">{item.reason}</td>
+                           <td className="p-4 text-sm text-slate-400 max-w-md">{item.reason}</td>
                         </tr>
                      ))}
                   </tbody>

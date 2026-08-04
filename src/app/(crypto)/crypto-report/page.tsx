@@ -18,7 +18,7 @@ import CryptoLiveTicker from "@/components/crypto/CryptoLiveTicker";
 import CryptoAlertsWidget from "@/components/crypto/CryptoAlertsWidget";
 import CryptoCalendar from "@/components/crypto/CryptoCalendar";
 import MacroEconomicCalendar from "@/components/crypto/MacroEconomicCalendar";
-import { useFCMToken } from "@/hooks/useFCMToken";
+
 
 let cachedReports: any[] = [];
 let isReportsCached = false;
@@ -32,7 +32,6 @@ export default function CryptoReportPage() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatContext, setChatContext] = useState<any>(null);
 
-  const { fcmToken, notificationPermissionStatus, requestPermissionAndGetToken, loading: fcmLoading } = useFCMToken();
 
   useEffect(() => {
     let unsubscribe: () => void;
@@ -91,129 +90,13 @@ export default function CryptoReportPage() {
      setIsChatOpen(true);
   };
 
-  const renderActionButtons = (isMobile = false) => (
-    <>
-      {notificationPermissionStatus !== 'granted' && (
-        <Button 
-          onClick={requestPermissionAndGetToken}
-          disabled={fcmLoading}
-          variant="outline"
-          className={`rounded-xl px-4 py-2.5 h-auto text-sm font-semibold bg-white dark:bg-slate-900 border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-all ${!isMobile ? 'shrink-0' : 'w-full justify-start'}`}
-        >
-          {fcmLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Bell className="w-4 h-4 mr-2" />}
-          Notifikasi
-        </Button>
-      )}
-      {notificationPermissionStatus === 'granted' && (
-        <Button 
-          disabled
-          variant="outline"
-          className={`rounded-xl px-4 py-2.5 h-auto text-sm font-semibold bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 opacity-100 ${!isMobile ? 'shrink-0' : 'w-full justify-start'}`}
-        >
-          <BellRing className="w-4 h-4 mr-2" />
-          Notifikasi Aktif
-        </Button>
-      )}
-      <Link href="/crypto-report/smart-money" className={!isMobile ? 'shrink-0' : 'w-full'}>
-        <Button 
-          className={`w-full rounded-xl px-4 py-2.5 h-auto text-sm font-semibold bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-md shadow-purple-500/20 hover:shadow-purple-500/40 transition-all ${isMobile ? 'justify-start' : 'hover:-translate-y-0.5'}`}
-        >
-          <Eye className="w-4 h-4 mr-2" />
-          Smart Money
-        </Button>
-      </Link>
-      <Link href="/crypto-report/liquidity" className={!isMobile ? 'shrink-0' : 'w-full'}>
-        <Button 
-          className={`w-full rounded-xl px-4 py-2.5 h-auto text-sm font-semibold bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white shadow-md shadow-blue-500/20 hover:shadow-blue-500/40 transition-all ${isMobile ? 'justify-start' : 'hover:-translate-y-0.5'}`}
-        >
-          <Radar className="w-4 h-4 mr-2" />
-          Liquidity Heatmap
-        </Button>
-      </Link>
-      <Link href="/crypto-report/danger-zone" className={!isMobile ? 'shrink-0' : 'w-full'}>
-        <Button 
-          className={`w-full rounded-xl px-4 py-2.5 h-auto text-sm font-semibold bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-700 hover:to-rose-800 text-white shadow-md shadow-red-500/20 hover:shadow-red-500/40 transition-all ${isMobile ? 'justify-start' : 'hover:-translate-y-0.5'}`}
-        >
-          <Flame className="w-4 h-4 mr-2" />
-          Danger Zone
-        </Button>
-      </Link>
-      <Link href="/crypto-report/hidden-gems" className={!isMobile ? 'shrink-0' : 'w-full'}>
-        <Button 
-          className={`w-full rounded-xl px-4 py-2.5 h-auto text-sm font-semibold bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-md shadow-emerald-500/20 hover:shadow-emerald-500/40 transition-all ${isMobile ? 'justify-start' : 'hover:-translate-y-0.5'}`}
-        >
-          <Diamond className="w-4 h-4 mr-2 fill-current" />
-          Hidden Gems
-        </Button>
-      </Link>
-      <Link href="/crypto-report/scalping-radar" className={!isMobile ? 'shrink-0' : 'w-full'}>
-        <Button 
-          className={`w-full rounded-xl px-4 py-2.5 h-auto text-sm font-semibold bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white shadow-md shadow-orange-500/20 hover:shadow-orange-500/40 transition-all ${isMobile ? 'justify-start' : 'hover:-translate-y-0.5'}`}
-        >
-          <Zap className="w-4 h-4 mr-2 fill-current" />
-          Scalping Radar
-        </Button>
-      </Link>
-      <Button 
-        onClick={() => setIsChatOpen(true)}
-        className={`rounded-xl px-5 py-2.5 h-auto text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-600/20 hover:shadow-indigo-600/40 transition-all ${!isMobile ? 'shrink-0 hover:-translate-y-0.5' : 'w-full justify-start mt-2'}`}
-      >
-        <Bot className="w-4 h-4 mr-2" />
-        Hedge Fund Copilot
-      </Button>
-    </>
-  );
+
 
   return (
     <div className="min-h-screen bg-slate-50/50 dark:bg-slate-950/50 pb-20">
       <div className="w-full mx-auto py-8 px-4 sm:px-6 lg:px-8">
         
-        {/* HEADER DASHBOARD */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-10 bg-white dark:bg-slate-900 p-6 md:p-8 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800">
-          <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-indigo-100 dark:bg-indigo-900/50 rounded-2xl">
-                <Activity className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
-              </div>
-              <div>
-                <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">Market Intelligence</h1>
-                <p className="text-muted-foreground text-sm md:text-base mt-1">
-                  Analisis sentimen pasar kripto komprehensif, diperbarui setiap 4 jam.
-                </p>
-              </div>
-            </div>
-          </div>
-          
-          
-          {/* Desktop View */}
-          <div className="hidden sm:flex overflow-x-auto no-scrollbar gap-3 sm:flex-wrap items-center">
-             <CryptoAlertsWidget />
-             {renderActionButtons(false)}
-          </div>
 
-          {/* Mobile View */}
-          <div className="flex sm:hidden items-center justify-between gap-3 w-full mt-2">
-             <CryptoAlertsWidget />
-             <Sheet>
-               <SheetTrigger asChild>
-                 <Button variant="outline" size="icon" className="rounded-xl shrink-0 border-indigo-200 text-indigo-600 bg-indigo-50/50 dark:bg-indigo-950/30 dark:border-indigo-800 dark:text-indigo-400">
-                   <Menu className="w-5 h-5" />
-                 </Button>
-               </SheetTrigger>
-               <SheetContent side="bottom" className="rounded-t-3xl border-t border-slate-200 dark:border-slate-800 pb-10 max-h-[85vh] overflow-y-auto">
-                 <SheetHeader className="mb-6 text-left">
-                   <SheetTitle className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-                     <Activity className="w-5 h-5 text-indigo-500" />
-                     Menu Intelijen
-                   </SheetTitle>
-                 </SheetHeader>
-                 <div className="flex flex-col gap-3">
-                   {renderActionButtons(true)}
-                 </div>
-               </SheetContent>
-             </Sheet>
-          </div>
-        </div>
 
         <CryptoLiveTicker />
 
@@ -272,12 +155,12 @@ export default function CryptoReportPage() {
                    </Button>
                  </Link>
                  <div className="w-full overflow-x-auto no-scrollbar pb-1">
-                   <TabsList className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-md border border-white/40 dark:border-slate-800/60 shadow-[0_4px_12px_rgb(0,0,0,0.02)] p-1.5 h-auto inline-flex justify-start rounded-xl">
+                   <TabsList className="bg-transparent border-0 p-0 h-auto inline-flex justify-start gap-2">
                      {dateKeys.map(date => (
                      <TabsTrigger 
                        key={date} 
                        value={date}
-                       className="rounded-lg px-5 py-2 text-sm font-semibold whitespace-nowrap data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 data-[state=active]:text-indigo-600 dark:data-[state=active]:text-indigo-400 data-[state=active]:shadow-sm transition-all"
+                       className="rounded-full px-5 py-2.5 text-sm font-semibold whitespace-nowrap bg-slate-900/50 hover:bg-slate-800 text-slate-400 data-[state=active]:bg-indigo-600 data-[state=active]:text-white shadow-none transition-all border border-slate-800 data-[state=active]:border-indigo-500"
                      >
                        {date}
                      </TabsTrigger>
@@ -294,15 +177,15 @@ export default function CryptoReportPage() {
               return (
               <TabsContent key={date} value={date} className="mt-0 focus-visible:outline-none focus-visible:ring-0">
                 <Tabs defaultValue={defaultHourTab} className="w-full">
-                  <div className="mb-6 flex items-center gap-3 bg-white/30 dark:bg-slate-900/30 p-2 rounded-xl border border-white/30 dark:border-slate-800/50 backdrop-blur-md overflow-x-auto no-scrollbar shadow-[0_4px_12px_rgb(0,0,0,0.02)]">
-                     <span className="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-2 flex items-center gap-1.5 shrink-0"><Clock className="w-3.5 h-3.5"/> Waktu:</span>
-                     <TabsList className="bg-transparent border-0 h-auto inline-flex justify-start gap-1.5 p-0">
+                  <div className="mb-6 flex items-center gap-3 overflow-x-auto no-scrollbar py-2">
+                     <span className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5 shrink-0"><Clock className="w-3.5 h-3.5"/> Waktu Laporan:</span>
+                     <TabsList className="bg-transparent p-0 flex flex-wrap gap-2 border-0">
                        {reportsForDate.map((r: any) => {
-                         const d = r.createdAt?.toDate ? r.createdAt.toDate() : new Date();
-                         const timeStr = d.toLocaleTimeString("id-ID", { hour: '2-digit', minute: '2-digit' }) + " WIB";
+                         const t = r.createdAt?.toDate ? r.createdAt.toDate() : new Date(r.createdAt);
+                         const timeStr = t.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
                          return (
-                           <TabsTrigger key={r.id} value={r.id} className="rounded-lg px-4 py-1.5 text-xs font-bold whitespace-nowrap bg-white/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 data-[state=active]:bg-indigo-600 dark:data-[state=active]:bg-indigo-500 data-[state=active]:text-white shadow-none transition-all border border-transparent data-[state=active]:shadow-md">
-                             {timeStr}
+                           <TabsTrigger key={r.id} value={r.id} className="rounded-full px-4 py-1.5 text-xs font-bold whitespace-nowrap bg-slate-900/40 hover:bg-slate-800 text-slate-400 data-[state=active]:bg-slate-800 data-[state=active]:text-indigo-400 shadow-none transition-all border border-slate-800/60 data-[state=active]:border-indigo-500/40 data-[state=active]:shadow-sm">
+                             {timeStr} WIB
                            </TabsTrigger>
                          );
                        })}
@@ -317,10 +200,10 @@ export default function CryptoReportPage() {
 
                     return (
                       <TabsContent key={report.id} value={report.id} className="mt-0 outline-none">
-                        <Card className={`overflow-hidden border-0 shadow-xl transition-all duration-300 ${isLatest ? 'bg-white/80 dark:bg-slate-900/80 ring-2 ring-indigo-500/50' : 'bg-white/60 dark:bg-slate-900/60'} backdrop-blur-xl`}>
+                        <Card className={`overflow-hidden border-0 shadow-none bg-transparent transition-all duration-300`}>
                           
                           {/* CARD HEADER */}
-                          <div className="p-6 md:p-8 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-start justify-between gap-4 bg-gradient-to-br from-transparent to-slate-50/50 dark:to-slate-900/50 relative">
+                          <div className="py-4 md:py-6 flex flex-col sm:flex-row sm:items-start justify-between gap-4 relative">
                             {isLatest && (
                                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
                             )}
@@ -356,17 +239,15 @@ export default function CryptoReportPage() {
                           </div>
 
                           {/* CARD CONTENT */}
-                          <div className="p-6 md:p-8 space-y-8">
+                          <div className="py-4 space-y-8">
                             
                             {/* EXECUTIVE DAILY BRIEFING (Exclusive for 7 AM) */}
                             {report.isDaily && (data.dailyRecap || data.dailyProjection || data.dailyCalendarSummary) && (
-                              <div className="mb-8 relative rounded-3xl overflow-hidden shadow-2xl border border-white/20 dark:border-slate-700/30">
-                                {/* Background Glow */}
-                                <div className="absolute inset-0 bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-950"></div>
-                                <div className="absolute -top-40 -right-40 w-80 h-80 bg-amber-500/20 rounded-full blur-[100px] pointer-events-none"></div>
-                                <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-indigo-500/20 rounded-full blur-[100px] pointer-events-none"></div>
+                              <div className="mb-8 relative">
+                                <div className="absolute top-0 right-0 w-80 h-80 bg-amber-500/5 rounded-full blur-[100px] pointer-events-none"></div>
+                                <div className="absolute bottom-0 left-0 w-80 h-80 bg-indigo-500/5 rounded-full blur-[100px] pointer-events-none"></div>
                                 
-                                <div className="relative z-10 p-6 md:p-8">
+                                <div className="relative z-10 py-2">
                                    <div className="flex items-center gap-4 mb-6">
                                       <div className="p-3 bg-amber-500/20 rounded-2xl border border-amber-500/30 text-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.2)] shrink-0">
                                          <Sunrise className="w-7 h-7" />
@@ -377,9 +258,9 @@ export default function CryptoReportPage() {
                                       </div>
                                    </div>
                                    
-                                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                   <div className="grid grid-cols-1 gap-6 md:gap-8">
                                       {data.dailyRecap && (
-                                         <div className="bg-slate-800/50 backdrop-blur-md rounded-2xl p-5 border border-slate-700/50">
+                                         <div className="relative">
                                             <h4 className="flex items-center gap-2 text-indigo-300 font-bold text-sm uppercase tracking-widest mb-3">
                                                <RotateCcw className="w-4 h-4"/> Recap Kemarin
                                             </h4>
@@ -390,8 +271,8 @@ export default function CryptoReportPage() {
                                       )}
                                       
                                       {data.dailyProjection && (
-                                         <div className="bg-amber-950/30 backdrop-blur-md rounded-2xl p-5 border border-amber-900/50 relative overflow-hidden">
-                                            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl"></div>
+                                         <div className="relative pt-4 border-t border-slate-700/50">
+                                            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
                                             <h4 className="flex items-center gap-2 text-amber-400 font-bold text-sm uppercase tracking-widest mb-3 relative z-10">
                                                <Sun className="w-4 h-4"/> Insight Hari Ini
                                             </h4>
@@ -402,7 +283,7 @@ export default function CryptoReportPage() {
                                       )}
                                       
                                       {data.dailyCalendarSummary && (
-                                         <div className="lg:col-span-2 bg-gradient-to-r from-indigo-950/50 to-slate-900/50 backdrop-blur-md rounded-2xl p-5 border border-indigo-900/50">
+                                         <div className="pt-4 border-t border-slate-700/50">
                                             <h4 className="flex items-center gap-2 text-indigo-300 font-bold text-sm uppercase tracking-widest mb-3">
                                                <CalendarDays className="w-4 h-4"/> Kalender Makro & Naratif
                                             </h4>
@@ -444,29 +325,29 @@ export default function CryptoReportPage() {
                                
                                {/* Macro Insight (spans across) */}
                                {data.macroInsight && (
-                                 <div className="col-span-2 md:col-span-4 bg-slate-100/50 dark:bg-slate-900/50 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
-                                   <div className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-2">Macro Insight</div>
-                                   <p className="text-sm font-medium text-slate-700 dark:text-slate-300 leading-relaxed">{data.macroInsight}</p>
+                                 <div className="col-span-2 md:col-span-4 py-4 md:py-6">
+                                   <div className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-2 flex items-center gap-2"><Globe className="w-3 h-3"/> Macro Insight</div>
+                                   <p className="text-sm md:text-base font-medium text-slate-300 leading-relaxed">{data.macroInsight}</p>
                                  </div>
                                )}
                             </div>
 
                             {/* SUMMARY & PROJECTION */}
-                            <div className="flex flex-col gap-6">
-                              <div className="bg-slate-50 dark:bg-slate-900/50 p-5 rounded-2xl border border-slate-100 dark:border-slate-800">
+                            <div className="flex flex-col gap-6 md:gap-8">
+                              <div className="py-2">
                                 <h4 className="font-bold text-sm text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
                                    Ringkasan
                                 </h4>
-                                <div className="prose prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed">
+                                <div className="prose prose-sm md:prose-base prose-invert max-w-none text-slate-300 leading-relaxed">
                                   <ReactMarkdown>{data.summary || "Tidak ada ringkasan."}</ReactMarkdown>
                                 </div>
                               </div>
 
-                              <div className="bg-slate-50 dark:bg-slate-900/50 p-5 rounded-2xl border border-slate-100 dark:border-slate-800">
+                              <div className="py-2">
                                 <h4 className="font-bold text-sm text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
                                    Proyeksi
                                 </h4>
-                                <div className="prose prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed">
+                                <div className="prose prose-sm md:prose-base prose-invert max-w-none text-slate-300 leading-relaxed">
                                   <ReactMarkdown>{data.projection || "Tidak ada proyeksi."}</ReactMarkdown>
                                 </div>
                               </div>
