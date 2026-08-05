@@ -59,6 +59,20 @@ function ScoreBadge({ score, status, isAdaptive }: { score?: number, status: str
   return <span className="text-xs text-slate-400 font-bold">Proses...</span>
 }
 
+const asSafeText = (value: unknown, fallback = '-'): string => {
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+  if (!value) return fallback;
+
+  if (typeof value === 'object') {
+    const maybeName = (value as any).name || (value as any).label || (value as any).title || (value as any).value || (value as any).trackName;
+    if (typeof maybeName === 'string' && maybeName.trim().length > 0) return maybeName;
+    return fallback;
+  }
+  
+  return fallback;
+};
+
 export default function ProgressPage() {
   const { user, loading } = useAuth()
   const router = useRouter()
@@ -220,7 +234,7 @@ export default function ProgressPage() {
                     <div className="flex justify-between items-start mb-3">
                       {rec.trackType && (
                         <span className="text-[9px] font-black text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md ring-1 ring-indigo-100 uppercase tracking-widest">
-                          {rec.trackType}
+                          {asSafeText(rec.trackType, 'Evaluasi')}
                         </span>
                       )}
                       <span className="flex items-center gap-1.5 text-[10px] text-slate-400 font-bold">
@@ -228,7 +242,7 @@ export default function ProgressPage() {
                       </span>
                     </div>
                     <h4 className="font-black text-slate-900 text-sm mb-4 line-clamp-2 leading-snug group-hover:text-indigo-600 transition-colors flex-1">
-                      {rec.namaUsaha || rec.businessName || 'Asesmen Tanpa Nama'}
+                      {asSafeText(rec.namaUsaha || rec.businessName, 'Asesmen Tanpa Nama')}
                     </h4>
                     <div className="flex items-center justify-between pt-3 border-t border-slate-100 mt-auto">
                       <div className="flex items-center gap-2">

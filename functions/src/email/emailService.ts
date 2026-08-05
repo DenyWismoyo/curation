@@ -16,9 +16,9 @@ export const sendAssessmentEmail = async (
   data: EmailData
 ) => {
   try {
-    // PEMBARUAN: Konfigurasi SMTP Hostinger
+    // PEMBARUAN: Konfigurasi SMTP Google (Gmail / Google Workspace)
     const transporter = nodemailer.createTransport({
-      host: "smtp.hostinger.com",
+      host: "smtp.gmail.com",
       port: 465,
       secure: true, // Gunakan true untuk port 465
       auth: {
@@ -29,7 +29,7 @@ export const sendAssessmentEmail = async (
 
     const mailOptions = {
       // REBRANDING: Nama Pengirim Email
-      from: `"Omnifit Notification" <${smtpEmail}>`,
+      from: `"Omnifit Notification" <support@omnifit.cloud>`,
       to: data.targetEmail,
       subject: `Laporan Hasil Asesmen AI: ${data.namaUsaha}`,
       html: `

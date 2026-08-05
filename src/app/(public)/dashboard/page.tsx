@@ -37,6 +37,20 @@ interface AssessmentHistory {
   createdAt: any;
 }
 
+const asSafeText = (value: unknown, fallback = '-'): string => {
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+  if (!value) return fallback;
+
+  if (typeof value === 'object') {
+    const maybeName = (value as any).name || (value as any).label || (value as any).title || (value as any).value || (value as any).trackName;
+    if (typeof maybeName === 'string' && maybeName.trim().length > 0) return maybeName;
+    return fallback;
+  }
+  
+  return fallback;
+};
+
 export default function CustomerDashboard() {
   const { user, loading } = useAuth();
   const router = useRouter();
@@ -249,7 +263,7 @@ export default function CustomerDashboard() {
                     {/* TRACK + TANGGAL */}
                     <div className="flex justify-between items-start mb-6">
                       <span className="text-[9px] font-black uppercase tracking-widest text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md">
-                        {ass.trackType}
+                        {asSafeText(ass.trackType, 'Evaluasi')}
                       </span>
                       <span className="text-[10px] font-bold text-slate-400 flex items-center gap-1.5">
                         <Clock size={12} />
@@ -260,7 +274,7 @@ export default function CustomerDashboard() {
                     </div>
 
                     <h3 className="text-lg font-black text-slate-900 mb-8 group-hover:text-indigo-600 transition-colors line-clamp-2 leading-snug">
-                      {ass.namaUsaha}
+                      {asSafeText(ass.namaUsaha, 'Asesmen Tanpa Nama')}
                     </h3>
 
                     {/* STAT MINI */}
@@ -270,7 +284,7 @@ export default function CustomerDashboard() {
                           Skor Kinerja
                         </p>
                         <p className="text-2xl font-black text-slate-900">
-                          {ass.score}
+                          {asSafeText(ass.score, '0')}
                           <span className="text-sm text-slate-400">/100</span>
                         </p>
                       </div>
@@ -279,7 +293,7 @@ export default function CustomerDashboard() {
                           Status Level
                         </p>
                         <p className="text-xs font-bold text-emerald-600 leading-snug">
-                          {ass.readinessLevel}
+                          {asSafeText(ass.readinessLevel, 'Diproses')}
                         </p>
                       </div>
                     </div>

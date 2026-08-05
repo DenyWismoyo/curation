@@ -11,7 +11,7 @@ import {
   LayoutDashboard, ClipboardCheck, KeyRound, Mail, Lock,
   User as UserIcon, LibraryBig, MapPinned, Share2,
   ShieldCheck, Sparkles, BriefcaseBusiness, TrendingUp,
-  Users, Star, Zap,
+  Users, Star, Zap, X,
 } from 'lucide-react';
 import {
   EcosystemIcon, AdminShieldIcon, DocExportIcon,
@@ -158,6 +158,8 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
   const { registerWithEmail, loginWithEmail, resetPassword } = useAuth();
 
   const [isCapabilitiesModalOpen, setIsCapabilitiesModalOpen] = useState(false);
+  const [isDraftsModalOpen, setIsDraftsModalOpen] = useState(false);
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
   const [drafts, setDrafts] = useState<DraftItem[]>([]);
   const [isFetchingData, setIsFetchingData] = useState(false);
 
@@ -286,7 +288,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
     e.preventDefault();
     setAuthLoading(true);
     try {
-      if (authMode === 'register') { await registerWithEmail(email, password, name); toast.success('Pendaftaran berhasil!'); }
+      if (authMode === 'register') { await registerWithEmail(email, password, name, { tosAccepted: true, privacyAccepted: true }); toast.success('Pendaftaran berhasil!'); }
       else { await loginWithEmail(email, password); toast.success('Berhasil masuk!'); }
       setAuthMode('options'); setEmail(''); setPassword(''); setName('');
     } catch (error: any) {
@@ -719,87 +721,28 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                 </div>
               )}
 
-              {/* ── LOGGED IN: Drafts ─────────────────────────────────────────── */}
-              {user && !isFetchingData && drafts.length > 0 && (
-                <m.div variants={stagger} initial="hidden" animate="visible" className="mb-8">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-sm font-black text-slate-900 flex items-center gap-2">
-                      <DocExportIcon className="h-4 w-4 text-amber-500" />
-                      Draf Belum Selesai
-                    </h3>
-                    <span className="text-[10px] font-black text-amber-600 bg-amber-50 px-2.5 py-1 rounded-md ring-1 ring-amber-200">
-                      {drafts.length} tersimpan
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {drafts.map((draft, idx) => (
-                      <m.div
-                        key={draft.templateId || idx}
-                        variants={cardVariant}
-                        whileHover={{ y: -2 }}
-                        onClick={() => handleResumeDraft(draft)}
-                        className="bg-white p-5 rounded-[1.5rem] ring-1 ring-slate-200/60 shadow-sm cursor-pointer group hover:ring-amber-300 hover:shadow-md transition-all flex flex-col min-h-[120px]"
-                      >
-                        <span className="text-[9px] font-black uppercase tracking-widest text-amber-700 bg-amber-50 px-2.5 py-1 rounded-md ring-1 ring-amber-100 w-fit mb-3">
-                          Tersimpan Lokal
-                        </span>
-                        <h4 className="font-black text-slate-900 text-sm group-hover:text-amber-600 line-clamp-2 transition-colors flex-1 mb-3">
-                          {asSafeText(draft.trackName, 'Draft Tanpa Nama')}
-                        </h4>
-                        <p className="text-[11px] font-bold text-slate-400 group-hover:text-amber-500 flex items-center gap-1.5 transition-colors mt-auto">
-                          {isCheckingToken && selectedDraftTemplate === draft.templateId ? (
-                            <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Memvalidasi...</>
-                          ) : (
-                            <>Lanjutkan <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" /></>
-                          )}
-                        </p>
-                      </m.div>
-                    ))}
-                  </div>
-                </m.div>
-              )}
-
-              {/* ── LOGGED IN: History ────────────────────────────────────────── */}
-              {user && !isFetchingData && history.length > 0 && (
-                <m.div variants={stagger} initial="hidden" animate="visible">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-sm font-black text-slate-900 flex items-center gap-2">
-                      <History className="h-4 w-4 text-slate-400" />
-                      Riwayat Kurasi Anda
-                    </h3>
-                    <div className="flex items-center gap-1.5 px-2.5 py-1 bg-white rounded-lg ring-1 ring-slate-200 shadow-sm">
-                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Live Sync</span>
+              {/* ── LOGGED IN: Quick Actions ───────────────────────────────────── */}
+              {user && !isFetchingData && (
+                <div className="grid grid-cols-2 gap-4 mb-8">
+                  <button onClick={() => setIsDraftsModalOpen(true)} className="flex items-center gap-3 bg-white p-4 rounded-[1.5rem] ring-1 ring-slate-200/60 shadow-sm hover:ring-amber-300 transition-all">
+                    <div className="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center text-amber-500">
+                      <DocExportIcon className="w-5 h-5" />
                     </div>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {history.map((item, idx) => (
-                      <m.div
-                        key={item.id || idx}
-                        variants={cardVariant}
-                        whileHover={{ y: -2 }}
-                        onClick={() => onLoadHistory(item)}
-                        className="bg-white p-5 rounded-[1.5rem] ring-1 ring-slate-200/60 shadow-sm cursor-pointer group hover:ring-indigo-300 hover:shadow-md transition-all flex flex-col min-h-[140px]"
-                      >
-                        <span className="text-[9px] font-black uppercase tracking-widest text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-md ring-1 ring-indigo-100 w-fit mb-3">
-                          {asSafeText(item.trackType, 'Evaluasi')}
-                        </span>
-                        <h4 className="font-black text-slate-900 text-sm group-hover:text-indigo-600 line-clamp-2 transition-colors flex-1 mb-4">
-                          {asSafeText(item.namaUsaha, 'Tanpa Nama')}
-                        </h4>
-                        <div className="flex items-center justify-between pt-3 border-t border-slate-100 mt-auto">
-                          <div className="flex items-center gap-2">
-                            <div className="p-1.5 bg-slate-50 rounded-lg ring-1 ring-slate-200 group-hover:ring-indigo-200 group-hover:bg-indigo-50 transition-colors">
-                              <BrainIcon size={13} className="text-slate-400 group-hover:text-indigo-500 transition-colors" />
-                            </div>
-                            <p className="text-xs font-bold text-slate-600">Skor: {asSafeNumber(item.score, 0)}</p>
-                          </div>
-                          <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-indigo-500 transition-colors" />
-                        </div>
-                      </m.div>
-                    ))}
-                  </div>
-                </m.div>
+                    <div>
+                      <div className="text-sm font-black text-slate-900">Draf ({drafts.length})</div>
+                      <div className="text-[11px] text-slate-400">Lanjutkan pengerjaan</div>
+                    </div>
+                  </button>
+                  <button onClick={() => setIsHistoryModalOpen(true)} className="flex items-center gap-3 bg-white p-4 rounded-[1.5rem] ring-1 ring-slate-200/60 shadow-sm hover:ring-indigo-300 transition-all">
+                    <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-500">
+                      <History className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-black text-slate-900">Riwayat ({history.length})</div>
+                      <div className="text-[11px] text-slate-400">Lihat hasil terdahulu</div>
+                    </div>
+                  </button>
+                </div>
               )}
 
               {/* ── LOGGED IN: Empty state (no drafts, no history) ────────────── */}
@@ -826,47 +769,6 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                   </Link>
                 </m.div>
               )}
-
-              {/* KARTU KETIGA: PREMIUM EXTRA */}
-              <div className="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl hover:shadow-indigo-900/20 transition-all duration-300 relative group mt-8">
-                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <div className="p-8 md:p-10 flex flex-col h-full relative z-10">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-14 h-14 rounded-2xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 border border-indigo-500/30">
-                      <Sparkles size={28} />
-                    </div>
-                    <div>
-                      <h3 className="text-2xl font-black text-white">Premium Extra</h3>
-                      <p className="text-slate-400 text-sm">Crypto Intelligence & AI Analytics</p>
-                    </div>
-                  </div>
-
-                  <p className="text-slate-300 leading-relaxed mb-8 flex-1">
-                    Akses eksklusif ke sistem kecerdasan buatan penganalisis sentimen makro Crypto, berita terkini, dan panduan analitik pasar yang komprehensif.
-                  </p>
-
-                  <div className="space-y-3 mb-8">
-                    <div className="flex items-center gap-3 text-sm text-slate-300">
-                      <div className="w-5 h-5 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400"><Lock size={12} /></div>
-                      Crypto Realtime Radar & Scalping
-                    </div>
-                    <div className="flex items-center gap-3 text-sm text-slate-300">
-                      <div className="w-5 h-5 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400"><Lock size={12} /></div>
-                      Crypto Market Outlook & Trends
-                    </div>
-                    <div className="flex items-center gap-3 text-sm text-slate-300">
-                      <div className="w-5 h-5 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400"><Lock size={12} /></div>
-                      Akses Copilot Chat Tak Terbatas
-                    </div>
-                  </div>
-
-                  <Button onClick={handleStartPremium} className="w-full h-14 rounded-xl text-base font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-[0_0_20px_rgba(79,70,229,0.3)] transition-all flex items-center justify-between px-6 group/btn">
-                    <span>Lihat Paket Premium</span>
-                    <ArrowRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
-                  </Button>
-                </div>
-              </div>
-
             </div>
           </div>
         </section>
@@ -878,6 +780,124 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
         onClose={() => setIsCapabilitiesModalOpen(false)}
         isLoggedIn={!!user}
       />
+
+      {/* MODAL UNTUK DRAFT */}
+      <AnimatePresence>
+        {isDraftsModalOpen && (
+          <>
+            <m.div
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm"
+              onClick={() => setIsDraftsModalOpen(false)}
+            />
+            <m.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="fixed left-1/2 top-1/2 z-50 w-[92%] max-w-3xl max-h-[85vh] flex flex-col -translate-x-1/2 -translate-y-1/2 bg-white rounded-3xl shadow-2xl ring-1 ring-slate-200 overflow-hidden"
+            >
+              <div className="p-5 md:p-6 border-b border-slate-100 flex items-center justify-between bg-white shrink-0">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center text-amber-500">
+                    <DocExportIcon className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-base md:text-lg font-black text-slate-900">Draf Belum Selesai</h2>
+                    <p className="text-xs text-slate-500">{drafts.length} draf tersimpan lokal</p>
+                  </div>
+                </div>
+                <button onClick={() => setIsDraftsModalOpen(false)} className="p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 rounded-xl transition-colors"><X size={20} /></button>
+              </div>
+              <div className="p-5 md:p-6 overflow-y-auto bg-slate-50/50 flex-1">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {drafts.map((draft, idx) => (
+                    <div
+                      key={draft.templateId || idx}
+                      onClick={() => {
+                        setIsDraftsModalOpen(false);
+                        handleResumeDraft(draft);
+                      }}
+                      className="bg-white p-5 rounded-[1.5rem] ring-1 ring-slate-200/60 shadow-sm cursor-pointer group hover:ring-amber-300 hover:shadow-md transition-all flex flex-col min-h-[120px]"
+                    >
+                      <span className="text-[9px] font-black uppercase tracking-widest text-amber-700 bg-amber-50 px-2.5 py-1 rounded-md ring-1 ring-amber-100 w-fit mb-3">
+                        Tersimpan Lokal
+                      </span>
+                      <h4 className="font-black text-slate-900 text-sm group-hover:text-amber-600 line-clamp-2 transition-colors flex-1 mb-3">
+                        {asSafeText(draft.trackName, 'Draft Tanpa Nama')}
+                      </h4>
+                      <p className="text-[11px] font-bold text-slate-400 group-hover:text-amber-500 flex items-center gap-1.5 transition-colors mt-auto">
+                        {isCheckingToken && selectedDraftTemplate === draft.templateId ? (
+                          <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Memvalidasi...</>
+                        ) : (
+                          <>Lanjutkan <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" /></>
+                        )}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </m.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* MODAL UNTUK HISTORY */}
+      <AnimatePresence>
+        {isHistoryModalOpen && (
+          <>
+            <m.div
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm"
+              onClick={() => setIsHistoryModalOpen(false)}
+            />
+            <m.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="fixed left-1/2 top-1/2 z-50 w-[92%] max-w-3xl max-h-[85vh] flex flex-col -translate-x-1/2 -translate-y-1/2 bg-white rounded-3xl shadow-2xl ring-1 ring-slate-200 overflow-hidden"
+            >
+              <div className="p-5 md:p-6 border-b border-slate-100 flex items-center justify-between bg-white shrink-0">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-500">
+                    <History className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-base md:text-lg font-black text-slate-900">Riwayat Kurasi</h2>
+                    <p className="text-xs text-slate-500">{history.length} riwayat tersimpan</p>
+                  </div>
+                </div>
+                <button onClick={() => setIsHistoryModalOpen(false)} className="p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 rounded-xl transition-colors"><X size={20} /></button>
+              </div>
+              <div className="p-5 md:p-6 overflow-y-auto bg-slate-50/50 flex-1">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {history.map((item, idx) => (
+                    <div
+                      key={item.id || idx}
+                      onClick={() => {
+                        setIsHistoryModalOpen(false);
+                        onLoadHistory(item);
+                      }}
+                      className="bg-white p-5 rounded-[1.5rem] ring-1 ring-slate-200/60 shadow-sm cursor-pointer group hover:ring-indigo-300 hover:shadow-md transition-all flex flex-col min-h-[140px]"
+                    >
+                      <span className="text-[9px] font-black uppercase tracking-widest text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-md ring-1 ring-indigo-100 w-fit mb-3">
+                        {asSafeText(item.trackType, 'Evaluasi')}
+                      </span>
+                      <h4 className="font-black text-slate-900 text-sm group-hover:text-indigo-600 line-clamp-2 transition-colors flex-1 mb-4">
+                        {asSafeText(item.namaUsaha, 'Tanpa Nama')}
+                      </h4>
+                      <div className="flex items-center justify-between pt-3 border-t border-slate-100 mt-auto">
+                        <div className="flex items-center gap-2">
+                          <div className="p-1.5 bg-slate-50 rounded-lg ring-1 ring-slate-200 group-hover:ring-indigo-200 group-hover:bg-indigo-50 transition-colors">
+                            <BrainIcon size={13} className="text-slate-400 group-hover:text-indigo-500 transition-colors" />
+                          </div>
+                          <p className="text-xs font-bold text-slate-600">Skor: {asSafeNumber(item.score, 0)}</p>
+                        </div>
+                        <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-indigo-500 transition-colors" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </m.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* ── Draft Validation Modal ────────────────────────────────────────────── */}
       <DraftValidationModal 

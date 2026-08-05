@@ -150,8 +150,14 @@ export default function LoginPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  
+  // Compliance states
+  const [tosAccepted, setTosAccepted] = useState(false);
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
+  const [cryptoRiskAccepted, setCryptoRiskAccepted] = useState(false);
 
   const nextPath = useMemo(() => getNextPath(), []);
+  const isCryptoRoute = useMemo(() => nextPath.includes('/crypto'), [nextPath]);
 
   useEffect(() => {
     if (!loading && user) router.replace(nextPath);
@@ -181,9 +187,19 @@ export default function LoginPage() {
     setWorking(true);
     try {
       if (mode === 'register') {
-        await registerWithEmail(email, password, name);
-        toast.success('Akun berhasil dibuat! Selamat datang.');
-        router.replace(nextPath);
+        if (!tosAccepted || !privacyAccepted) {
+          toast.error('Anda harus menyetujui Syarat & Ketentuan serta Kebijakan Privasi.');
+          setWorking(false);
+          return;
+        }
+        if (isCryptoRoute && !cryptoRiskAccepted) {
+          toast.error('Anda harus menyetujui Pernyataan Risiko Kripto untuk melanjutkan.');
+          setWorking(false);
+          return;
+        }
+        await registerWithEmail(email, password, name, { tosAccepted, privacyAccepted, cryptoRiskAccepted: isCryptoRoute ? cryptoRiskAccepted : undefined });
+        toast.success('Akun berhasil dibuat! Silakan cek email Anda untuk verifikasi.');
+        router.replace(isCryptoRoute ? '/verify-email' : nextPath);
       } else if (mode === 'login') {
         await loginWithEmail(email, password);
         toast.success('Berhasil masuk.');
@@ -341,6 +357,46 @@ export default function LoginPage() {
               >
                 Lupa kata sandi?
               </button>
+            </div>
+          )}
+
+          {mode === 'register' && (
+            <div className="space-y-3 mt-4 mb-2 p-3 bg-slate-50/50 rounded-xl border border-slate-100">
+              <label className="flex items-start gap-3 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={tosAccepted}
+                  onChange={(e) => setTosAccepted(e.target.checked)}
+                  className="mt-0.5 w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 transition-all cursor-pointer"
+                />
+                <span className="text-[11px] text-slate-600 leading-snug">
+                  Saya setuju dengan <Link href="/legal/tos" target="_blank" className="font-bold text-indigo-600 hover:underline">Syarat & Ketentuan</Link> yang berlaku.
+                </span>
+              </label>
+              <label className="flex items-start gap-3 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={privacyAccepted}
+                  onChange={(e) => setPrivacyAccepted(e.target.checked)}
+                  className="mt-0.5 w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 transition-all cursor-pointer"
+                />
+                <span className="text-[11px] text-slate-600 leading-snug">
+                  Saya menyetujui <Link href="/legal/privacy" target="_blank" className="font-bold text-indigo-600 hover:underline">Kebijakan Privasi</Link> pengelolaan data saya.
+                </span>
+              </label>
+              {isCryptoRoute && (
+                <label className="flex items-start gap-3 cursor-pointer group pt-2 border-t border-slate-200">
+                  <input
+                    type="checkbox"
+                    checked={cryptoRiskAccepted}
+                    onChange={(e) => setCryptoRiskAccepted(e.target.checked)}
+                    className="mt-0.5 w-4 h-4 rounded border-slate-300 text-rose-500 focus:ring-rose-500 transition-all cursor-pointer"
+                  />
+                  <span className="text-[11px] text-rose-700 leading-snug font-medium">
+                    Saya menyadari risiko tinggi investasi aset kripto. <Link href="/legal/crypto-risk" target="_blank" className="font-bold hover:underline">Baca Pernyataan Risiko</Link>.
+                  </span>
+                </label>
+              )}
             </div>
           )}
 

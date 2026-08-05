@@ -10,7 +10,8 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   updateProfile,
-  sendPasswordResetEmail
+  sendPasswordResetEmail,
+  sendEmailVerification
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
@@ -27,7 +28,7 @@ interface AuthContextType {
   assessmentQuota: number;
   loading: boolean;
   loginWithGoogle: () => Promise<void>;
-  registerWithEmail: (email: string, password: string, name: string) => Promise<void>;
+  registerWithEmail: (email: string, password: string, name: string, consentData: { tosAccepted: boolean, privacyAccepted: boolean, cryptoRiskAccepted?: boolean }) => Promise<void>;
   loginWithEmail: (email: string, password: string) => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -226,7 +227,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   // Fungsi Baru: Daftar dengan Email & Password
-  const registerWithEmail = async (email: string, password: string, name: string) => {
+  const registerWithEmail = async (email: string, password: string, name: string, consentData: { tosAccepted: boolean, privacyAccepted: boolean, cryptoRiskAccepted?: boolean }) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       
@@ -235,13 +236,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         displayName: name
       });
 
+      // Send Email Verification
+      await sendEmailVerification(userCredential.user);
+
       // Simpan langsung ke Firestore agar data nama sinkron sejak awal
       const userRef = doc(db, 'users', userCredential.user.uid);
+      const userAgent = typeof window !== 'undefined' ? window.navigator.userAgent : 'Unknown';
+      
       await setDoc(userRef, {
         email: userCredential.user.email,
         displayName: name,
         role: 'user',
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        consentLog: {
+          ...consentData,
+          timestamp: new Date().toISOString(),
+          userAgent
+        }
       }, { merge: true });
 
     } catch (error) {

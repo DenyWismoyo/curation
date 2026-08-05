@@ -3,10 +3,10 @@ import { onSchedule } from "firebase-functions/v2/scheduler";
 import { defineSecret } from "firebase-functions/params";
 import * as admin from "firebase-admin";
 import { getFirestore } from "firebase-admin/firestore";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import OpenAI from "openai";
 import * as nodemailer from "nodemailer";
 
-const geminiApiKeySecret = defineSecret("GEMINI_API_KEY");
+const deepseekApiKeySecret = defineSecret("DEEPSEEK_API_KEY");
 const smtpEmailSecret = defineSecret("SMTP_EMAIL");
 const smtpPasswordSecret = defineSecret("SMTP_PASSWORD");
 
@@ -26,25 +26,28 @@ export const weeklyActionPlanNudge = onSchedule({
     schedule: "0 8 * * 1", // Cron format: Tiap Senin jam 8 pagi
     timeZone: "Asia/Jakarta",
     region: "asia-southeast2",
-    secrets: [geminiApiKeySecret, smtpEmailSecret, smtpPasswordSecret],
+    secrets: [deepseekApiKeySecret, smtpEmailSecret, smtpPasswordSecret],
     timeoutSeconds: 540,
     memory: "1GiB"
   },
   async (event) => {
     const db = getFirestore(admin.app(), "curation");
-    const API_KEY = geminiApiKeySecret.value();
+    const DEEPSEEK_API_KEY = deepseekApiKeySecret.value();
     const smtpEmail = smtpEmailSecret.value();
     const smtpPassword = smtpPasswordSecret.value();
-    const genAI = new GoogleGenerativeAI(API_KEY);
+    const openai = new OpenAI({
+      baseURL: 'https://api.deepseek.com',
+      apiKey: DEEPSEEK_API_KEY
+    });
 
     try {
       const assessmentsRef = db.collection("assessments");
       const snapshot = await assessmentsRef.where("status", "==", "COMPLETED").get();
       if (snapshot.empty) return;
 
-      // PEMBARUAN: Konfigurasi SMTP Hostinger
+      // PEMBARUAN: Konfigurasi SMTP Google (Gmail / Google Workspace)
       const transporter = nodemailer.createTransport({
-        host: "smtp.hostinger.com",
+        host: "smtp.gmail.com",
         port: 465,
         secure: true,
         auth: { 
@@ -93,7 +96,7 @@ export const weeklyActionPlanNudge = onSchedule({
         const task1CalUrl = task1 ? createGoogleCalendarUrl(task1.task, task1.contextualTip || '') : '';
         const task2CalUrl = task2 ? createGoogleCalendarUrl(task2.task, task2.contextualTip || '') : '';
         
-        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
         
         // [PERBAIKAN 2]: Menghapus backtick (```) di poin nomor 6 agar 
         // tidak mengacaukan pembacaan string (template literal) oleh VS Code
@@ -122,8 +125,11 @@ export const weeklyActionPlanNudge = onSchedule({
           6. OUTPUT HANYA KODE HTML MURNI. JANGAN menggunakan format markdown block.
         `;
         
-        const aiResult = await model.generateContent(prompt);
-        let htmlBody = aiResult.response.text().trim();
+        const response = await openai.chat.completions.create({
+          model: "deepseek-chat",
+          messages: [{ role: "user", content: prompt }],
+        });
+        let htmlBody = response.choices[0].message.content?.trim() || "";
         
         // Cek dan bersihkan jika AI masih mengirimkan format markdown
         if (htmlBody.startsWith('\`\`\`')) {
@@ -134,7 +140,7 @@ export const weeklyActionPlanNudge = onSchedule({
             await transporter.sendMail({
                 // [PERBAIKAN 3]: Gunakan string concatenation standar 
                 // agar terhindar dari conflict template literal di pengirim email
-                from: '"Omnifit Coach" <' + smtpEmail + '>',
+                from: '"Omnifit Coach" <support@omnifit.cloud>',
                 to: data.userEmail,
                 subject: `Fokus Eksekusi Minggu Ini: ${data.namaUsaha}`, // Perbaikan syntax penutup backtick disini
                 html: htmlBody,
@@ -151,8 +157,11 @@ export const weeklyActionPlanNudge = onSchedule({
               - Tugas 2: ${task2?.task || '-'}
               Maksimal 50 kata.
             `;
-            const waAiResult = await model.generateContent(waPrompt);
-            const waText = waAiResult.response.text().trim();
+            const waResponse = await openai.chat.completions.create({
+              model: "deepseek-chat",
+              messages: [{ role: "user", content: waPrompt }],
+            });
+            const waText = waResponse.choices[0].message.content?.trim() || "";
             
             console.log(`\n==============================================`);
             console.log(`[WHATSAPP NUDGE MOCK] MENGIRIM KE: ${userPhone}`);
