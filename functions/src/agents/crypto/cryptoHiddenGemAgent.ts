@@ -108,12 +108,28 @@ export const cryptoHiddenGemAgent = onSchedule(
          // Delay between chunks to avoid rate limits
          await new Promise(r => setTimeout(r, 200));
       }
+      // Filter out recent recommendations (last 3 days)
+      const threeDaysAgo = new Date();
+      threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+      const timestamp3DaysAgo = admin.firestore.Timestamp.fromDate(threeDaysAgo);
+      let recentGems: string[] = [];
+      try {
+         const recentDocs = await db.collection("cryptoHiddenGems").where("createdAt", ">=", timestamp3DaysAgo).get();
+         recentDocs.forEach(doc => {
+            const gems = doc.data().hiddenGems || [];
+            gems.forEach((g: any) => recentGems.push(g.symbol));
+         });
+      } catch (e) {
+         console.warn("Failed to fetch recent hidden gems for deduplication", e);
+      }
+      
+      const filteredOversoldCandidates = oversoldCandidates.filter(c => !recentGems.includes(c.symbol));
 
-      if (oversoldCandidates.length === 0) {
-          console.log("No oversold candidates found today.");
+      if (filteredOversoldCandidates.length === 0) {
+          console.log("No new oversold candidates found today (all were recently recommended).");
           await db.collection("cryptoHiddenGems").add({
               createdAt: admin.firestore.FieldValue.serverTimestamp(),
-              marketCondition: "Tidak ada koin dengan kriteria oversold harian (RSI 1D/4H) yang terdeteksi. Pasar cenderung stabil, berada dalam fase distribusi, atau overbought.",
+              marketCondition: "Tidak ada koin baru dengan kriteria oversold harian (RSI 1D/4H) yang terdeteksi, atau kandidat yang ada sudah direkomendasikan dalam 3 hari terakhir.",
               hiddenGems: [],
               rawCandidates: []
           });
@@ -162,7 +178,7 @@ PERINGATAN: Jika Tren BTC sedang BEARISH, sangat berbahaya untuk mencari reversa
 Gunakan BERITA PASAR di atas sebagai SATU-SATUNYA referensi fundamental (katalis). Jangan mengarang partnership atau event yang tidak ada di berita tersebut.
 
 Berikut adalah daftar koin kripto yang saat ini berada di area jenuh jual (Oversold) berdasarkan RSI (Relative Strength Index) harian dan 4 jam:
-${JSON.stringify(oversoldCandidates, null, 2)}
+${JSON.stringify(filteredOversoldCandidates, null, 2)}
 
 TUGAS ANDA:
 1. Analisis koin-koin di atas berdasarkan naratif fundamental terkini, potensi ekosistemnya, dan kondisi makro pasar (BTC Trend).
@@ -200,7 +216,7 @@ Skema JSON yang harus dikembalikan:
 `;
 
       const result = await withRetry(() => deepseekClient.chat.completions.create({
-        model: "deepseek-reasoner", // Menggunakan model Reasoner Pro v4 sesuai permintaan
+        model: "deepseek-chat", // Ganti ke deepseek-chat agar lebih cepat
         messages: [{ role: "user", content: prompt }],
       }));
 

@@ -10,14 +10,15 @@ import { withRetry } from "../../utils/retry";
 
 const deepseekApiKeySecret = defineSecret("DEEPSEEK_API_KEY");
 const geminiApiKeySecret = defineSecret("GEMINI_API_KEY");
+const telegramBotTokenSecret = defineSecret("TELEGRAM_BOT_SECRET");
 
 export const cryptoCronAgent = onSchedule(
   {
     schedule: "0 3,7,11,15,19,23 * * *",
     timeZone: "Asia/Jakarta", 
-    secrets: [deepseekApiKeySecret, geminiApiKeySecret],
+    secrets: [deepseekApiKeySecret, geminiApiKeySecret, telegramBotTokenSecret],
     region: "asia-southeast2",
-    timeoutSeconds: 300,
+    timeoutSeconds: 540,
     memory: "512MiB",
   },
   async (event) => {
@@ -28,7 +29,7 @@ export const cryptoCronAgent = onSchedule(
     const isDaily = date.getHours() === 7 || date.getUTCHours() === 0;
     // Siklus Mingguan: Senin jam 07:00 WIB (00:00 UTC)
     const isWeekly = date.getUTCDay() === 1 && date.getUTCHours() === 0;
-    const isMonthly = date.getUTCDate() === 1 && date.getUTCHours() === 0;
+    const isMonthly = date.getDate() === 1 && date.getHours() === 7;
 
     const { fearAndGreed, globalMarket, latestNews, stablecoinGrowth, dexVolumeGrowth, marketData, scalpingCandidatesData, weeklyMarketData, monthlyMarketData } = await gatherCryptoMarketData(isWeekly, isMonthly, db);
     
@@ -43,11 +44,16 @@ export const cryptoCronAgent = onSchedule(
         safeScalpingCandidates = [];
     }
     
-    // Fetch Macro Economic Calendar
+    // Fetch Macro Economic Calendar from Firestore (saved by MacroAgent)
     let macroCalendar = [];
     try {
-      const calRes = await fetch("https://nfs.faireconomy.media/ff_calendar_thisweek.json");
-      if (calRes.ok) macroCalendar = await calRes.json();
+      const calSnap = await db.collection("cryptoMacroCalendar").doc("latest").get();
+      if (calSnap.exists) {
+         macroCalendar = calSnap.data()?.data || [];
+      } else {
+         const calRes = await fetch("https://nfs.faireconomy.media/ff_calendar_thisweek.json");
+         if (calRes.ok) macroCalendar = await calRes.json();
+      }
     } catch (e) {
       console.error("Gagal mengambil Macro Calendar:", e);
     }
@@ -89,9 +95,9 @@ export const cryptoCronAgent = onSchedule(
           let currentPrice = 0;
           
           try {
-            // Ambil Klines histori 12 jam ke belakang (720 menit)
+            // Ambil Klines histori 12 jam ke belakang (144 * 5 menit = 720 menit)
             // Karena cron berjalan tiap 4 jam, ini cukup untuk memantau pergerakan terbaru
-            const klinesRes = await axios.get(`https://api.binance.com/api/v3/klines?symbol=${trade.symbol}&interval=1m&limit=720`);
+            const klinesRes = await axios.get(`https://api.binance.com/api/v3/klines?symbol=${trade.symbol}&interval=5m&limit=144`);
             const allKlines = klinesRes.data;
             
             if (allKlines && allKlines.length > 0) {
@@ -291,7 +297,7 @@ Output Anda WAJIB berupa JSON rapi tanpa markdown block (seperti \`\`\`json):
 
     let learningMemories = "";
     try {
-       const memSnap = await db.collection("cryptoLearningMemory").orderBy("createdAt", "desc").limit(3).get();
+       const memSnap = await db.collection("cryptoLearningMemory").orderBy("createdAt", "desc").limit(10).get();
        const memories: string[] = [];
        memSnap.forEach(d => memories.push(d.data().correction));
        if (memories.length > 0) {
@@ -393,7 +399,7 @@ ${JSON.stringify(safeScalpingCandidates, null, 2)}`;
         const enrichedUserPrompt = userPrompt + `\n\nDraft Scalping dari Quant AI (Agent 1):\n${JSON.stringify(draftScalping, null, 2)}\n\nTugas Anda (Agent 2) adalah me-review draft di atas. Buang yang berisiko tinggi terhadap berita makro/fundamental hari ini, dan hasilkan 'scalpingOpportunities' final.`;
 
         const response = await withRetry(() => client.chat.completions.create({
-          model: "deepseek-reasoner",
+          model: "deepseek-chat", // Downgraded from reasoner for speed
           messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: enrichedUserPrompt }
@@ -416,7 +422,21 @@ ${JSON.stringify(safeScalpingCandidates, null, 2)}`;
         finalContent = finalContent.replace(/^\`\`\`(json)?/gi, "").replace(/\`\`\`$/g, "").trim();
       }
       
-      const parsed = JSON.parse(finalContent);
+      let parsed: any = {};
+      try {
+        parsed = JSON.parse(finalContent);
+      } catch (parseErr) {
+        console.error("Failed to parse JSON from AI, attempting recovery", parseErr, finalContent);
+        // Fallback dummy parsed data to prevent crash
+        parsed = {
+           marketSentiment: "UNKNOWN",
+           marketRegime: "UNKNOWN",
+           macroInsight: "System failed to parse AI response.",
+           summary: "System failed to parse AI response.",
+           projection: "System failed to parse AI response.",
+           scalpingOpportunities: []
+        };
+      }
       
       // Inject struktur evaluasi murni ke hasil parsed agar frontend bisa merendernya
       if (finalEvaluatedScalps && finalEvaluatedScalps.length > 0) {
@@ -541,7 +561,7 @@ ${JSON.stringify(safeScalpingCandidates, null, 2)}`;
 
         // 4. Telegram Auto-Broadcast
         try {
-           const telegramToken = process.env.TELEGRAM_BOT_TOKEN;
+           const telegramToken = telegramBotTokenSecret.value() || process.env.TELEGRAM_BOT_TOKEN;
            const telegramChats = (process.env.TELEGRAM_AUTHORIZED_CHATS || "").split(",").filter((c: string) => c.trim() !== "");
            
            if (telegramToken && telegramChats.length > 0) {
@@ -565,7 +585,7 @@ ${JSON.stringify(safeScalpingCandidates, null, 2)}`;
       // 5. Telegram Daily Digest Broadcast (independent of scalping opportunities)
       if (isDaily && parsed.dailyRecap && parsed.dailyProjection) {
          try {
-            const telegramToken = process.env.TELEGRAM_BOT_TOKEN;
+            const telegramToken = telegramBotTokenSecret.value() || process.env.TELEGRAM_BOT_TOKEN;
             const telegramChats = (process.env.TELEGRAM_AUTHORIZED_CHATS || "").split(",").filter((c: string) => c.trim() !== "");
             
             if (telegramToken && telegramChats.length > 0) {
@@ -581,6 +601,17 @@ ${JSON.stringify(safeScalpingCandidates, null, 2)}`;
          } catch (tgErr) {
             console.error("Failed to send Telegram Daily Digest Broadcast:", tgErr);
          }
+      }
+
+      // 6. Write to System Health Check
+      try {
+         await db.collection("cryptoSystemHealth").doc("cron").set({
+             lastRunSuccess: admin.firestore.FieldValue.serverTimestamp(),
+             type: isMonthly ? "monthly" : isWeekly ? "weekly" : isDaily ? "daily" : "hourly",
+             status: "ok"
+         }, { merge: true });
+      } catch (healthErr) {
+         console.error("Failed to write system health", healthErr);
       }
 
       console.log("cryptoCronAgent finished successfully.");

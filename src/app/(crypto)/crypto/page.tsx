@@ -108,18 +108,7 @@ export default function PremiumSubscriptionPage() {
         <div className="fixed top-[-20%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-indigo-600/5 blur-[120px] pointer-events-none -z-10" />
         <div className="fixed top-[40%] right-[-10%] w-[40vw] h-[40vw] rounded-full bg-purple-600/5 blur-[120px] pointer-events-none -z-10" />
 
-        {/* Navigation */}
-        <div className="w-full px-4 sm:px-8 py-4 flex items-center justify-between border-b border-white/5 sticky top-0 bg-[#020617]/80 backdrop-blur-md z-50">
-          <div className="flex items-center gap-2 cursor-pointer group" onClick={() => router.push('/')}>
-            <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
-              <LineChart size={16} className="text-white" />
-            </div>
-            <span className="font-black text-lg tracking-tight text-white">Crypto Insight</span>
-          </div>
-          <Button variant="outline" className="border-white/10 text-white bg-white/5 hover:bg-white/10" onClick={() => router.push('/crypto-report')}>
-            Ke Dashboard <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
-        </div>
+
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-24 relative z-10">
           

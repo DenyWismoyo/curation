@@ -18,7 +18,7 @@ export const cryptoCopilotChat = onCall({
     throw new HttpsError("unauthenticated", "Akses ditolak. Silakan login sebagai admin.");
   }
   
-  const { message, history, context } = request.data;
+  const { message, history, context, moduleContext } = request.data;
 
   if (!message) {
     throw new HttpsError("invalid-argument", "Pesan wajib diisi.");
@@ -37,6 +37,15 @@ export const cryptoCopilotChat = onCall({
        }
     } catch (e) {
        console.log("No global stats found yet.");
+    }
+    let latestNewsSummary = "Tidak ada berita terbaru.";
+    try {
+       const newsSnap = await db.collection("cryptoNews").orderBy("createdAt", "desc").limit(1).get();
+       if (!newsSnap.empty) {
+         latestNewsSummary = newsSnap.docs[0].data().headlineSummary || "Tidak ada ringkasan berita.";
+       }
+    } catch (e) {
+       console.log("No news found.");
     }
 
     const deepseekClient = new OpenAI({
@@ -109,8 +118,22 @@ export const cryptoCopilotChat = onCall({
       (Jika user menanyakan akurasi Anda, gunakan data di atas untuk menjawab dengan persentase yang pasti).
 
       Konteks Laporan Market Saat Ini:
-      ${context ? JSON.stringify(context, null, 2) : "Tidak ada konteks."}
+      ${context ? JSON.stringify(context, null, 2) : "Tidak ada konteks laporan."}
+      
+      Berita Utama Hari Ini:
+      ${latestNewsSummary}
+      
       ${pastContext}
+
+      ${moduleContext ? `
+      [KONTEKS SESI BELAJAR SAAT INI]
+      User sedang membaca modul "${moduleContext.moduleTitle}" di level ${moduleContext.currentLevel}.
+      
+      Potongan konten modul (untuk referensi):
+      ${moduleContext.moduleContent}
+      
+      Tugas Tambahan Anda: Jawab pertanyaan terkait konten ini dengan bahasa yang ramah dan edukatif. 
+      Gunakan contoh dari pasar kripto Indonesia jika relevan. Kutip bagian dari konten modul jika membantu penjelasan.` : ''}
 
       Jawablah pertanyaan user dengan mengacu pada konteks laporan di atas. 
       Jika user bertanya panduan portofolio, analisis koin tersebut berdasarkan data di atas, dan berikan edukasi alokasi ukuran posisi (Position Sizing) yang ketat.
@@ -313,7 +336,7 @@ export const cryptoCopilotSuggestions = onCall({
     throw new HttpsError("unauthenticated", "Akses ditolak.");
   }
   
-  const { context } = request.data;
+  const { context, moduleContext } = request.data;
   
   try {
     const apiKey = deepseekApiKeySecret.value();
@@ -331,8 +354,9 @@ export const cryptoCopilotSuggestions = onCall({
       Kembalikan HANYA array JSON berisi 3 string. Tanpa markdown, tanpa teks tambahan.
       Contoh format output: ["Bagaimana arah tren BTC hari ini?", "Koin apa yang berpotensi volatil hari ini?", "Apa sentimen pasar keseluruhan?"]
       
-      Konteks Laporan:
-      ${context ? JSON.stringify(context) : "Tidak ada konteks."}
+      Konteks Ekstra:
+      ${context ? JSON.stringify(context) : "Tidak ada laporan market."}
+      ${moduleContext ? `User sedang belajar modul: ${moduleContext.moduleTitle}. Buatkan setidaknya 1 pertanyaan terkait modul ini.` : ''}
     `;
 
     try {

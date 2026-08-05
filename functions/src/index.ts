@@ -16,6 +16,12 @@ import { buildAssessmentPrompt, getSystemPrompt } from './prompt/promptTemplate'
 export { generatePDFReport } from './general/documentGenerator'
 export { matchBusinessWithIndustry } from './general/vectorService'
 export { generateScenePrompt, generateFullStoryboard } from './agents/storyboard/videoPromptAgent'
+export { 
+  saveCryptoQuizResult, 
+  enrichCryptoModuleMetadata, 
+  generateCryptoModuleAssessment 
+} from './agents/crypto/cryptoAcademyAgent'
+export { generateCryptoCertificate } from './agents/crypto/cryptoCertificateAgent'
 
 export {
   createPaymentInvoice,

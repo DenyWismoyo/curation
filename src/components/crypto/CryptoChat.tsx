@@ -10,6 +10,7 @@ import { getFunctions, httpsCallable } from 'firebase/functions';
 import { collection, query, where, orderBy, getDocs, addDoc, updateDoc, doc, serverTimestamp, getDoc } from 'firebase/firestore';
 import { app, db } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
+import { usePathname, useParams } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { PremiumLockedScreen } from '@/components/crypto/PremiumLockedScreen';
@@ -32,6 +33,34 @@ export default function CryptoChat({ isOpen: controlledIsOpen, onClose, reportCo
   const isAdmin = user?.email === 'deny.wismoyo@gmail.com' || (user as any)?.role?.startsWith('admin');
   const isPremium = (user as any)?.isPremium || false;
   const hasAccess = isAdmin || isPremium;
+
+  const pathname = usePathname();
+  const params = useParams();
+  const [moduleContext, setModuleContext] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchModuleContext = async () => {
+      if (pathname?.includes('/crypto-academy/') && params.module) {
+        try {
+          const docSnap = await getDoc(doc(db, "cryptoEducation", params.module as string));
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            setModuleContext({
+              moduleId: params.module,
+              moduleTitle: data.title,
+              moduleContent: (data.content || "").substring(0, 3000),
+              currentLevel: data.level
+            });
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      } else {
+        setModuleContext(null);
+      }
+    };
+    fetchModuleContext();
+  }, [pathname, params]);
 
   useEffect(() => {
     setIsOpen(controlledIsOpen);
@@ -78,7 +107,7 @@ export default function CryptoChat({ isOpen: controlledIsOpen, onClose, reportCo
      try {
        const functions = getFunctions(app, 'asia-southeast2');
        const getSuggestions = httpsCallable(functions, 'cryptoCopilotSuggestions');
-       const res: any = await getSuggestions({ context: reportContext });
+       const res: any = await getSuggestions({ context: reportContext, moduleContext });
        if (res.data?.success && res.data.suggestions) {
          setSuggestions(res.data.suggestions);
        }
@@ -177,6 +206,7 @@ export default function CryptoChat({ isOpen: controlledIsOpen, onClose, reportCo
         message: userMsg,
         history: historyForApi,
         context: reportContext,
+        moduleContext: moduleContext,
       });
 
       if (response.data?.success) {

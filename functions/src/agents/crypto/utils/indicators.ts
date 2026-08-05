@@ -196,7 +196,7 @@ export const calculateStochRSI = (klines: any[] | number[], period = 14, smoothK
   return { k, d };
 };
 
-export const calculateVolumeProfilePOC = (klines: any[], bins = 10): number | undefined => {
+export const calculateVolumeProfilePOC = (klines: any[], bins = 50): number | undefined => {
   if (klines.length === 0) return undefined;
 
   let minPrice = Infinity;

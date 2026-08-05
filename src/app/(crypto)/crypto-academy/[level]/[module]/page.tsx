@@ -2,11 +2,16 @@
 
 import React, { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore'
+import { doc, getDoc, setDoc, serverTimestamp, collection, query, where, orderBy, getDocs } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { useAuth } from '@/contexts/AuthContext'
 import { Loader2, ArrowLeft, CheckCircle, Sparkles } from 'lucide-react'
 import { MarkdownContent } from '@/components/domain/public/MarkdownContent'
+import { CryptoModuleQuizModal } from '@/components/crypto/CryptoModuleQuizModal'
+import { CryptoTableOfContents } from '@/components/crypto/CryptoTableOfContents'
+import { CryptoLearningRecommendations } from '@/components/crypto/CryptoLearningRecommendations'
+import { CryptoLearningPath } from '@/components/crypto/CryptoLearningPath'
+import { Progress } from '@/components/ui/progress'
 
 interface CryptoModule {
   id: string
@@ -26,6 +31,12 @@ export default function CryptoAcademyModulePage() {
   const [loading, setLoading] = useState(true)
   const [marking, setMarking] = useState(false)
   const [completed, setCompleted] = useState(false)
+  const [scrollProgress, setScrollProgress] = useState(0)
+  const [siblingModules, setSiblingModules] = useState<CryptoModule[]>([])
+  const [nextModuleId, setNextModuleId] = useState<string | undefined>(undefined)
+
+  const [quizOpen, setQuizOpen] = useState(false)
+  const [quizResult, setQuizResult] = useState<any>(null)
 
   const moduleId = params.module as string
   const levelName = decodeURIComponent(params.level as string)
@@ -45,8 +56,30 @@ export default function CryptoAcademyModulePage() {
         setLoading(false)
       }
     }
+    const fetchSiblingModules = async () => {
+      try {
+        const q = query(
+          collection(db, 'cryptoEducation'),
+          where('level', '==', levelName),
+          orderBy('moduleOrder', 'asc')
+        )
+        const snapshot = await getDocs(q)
+        const mods = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as CryptoModule))
+        setSiblingModules(mods)
+        
+        // Find next module
+        const currentIndex = mods.findIndex(m => m.id === moduleId)
+        if (currentIndex !== -1 && currentIndex < mods.length - 1) {
+          setNextModuleId(mods[currentIndex + 1].id)
+        }
+      } catch (error) {
+        console.error('Error fetching sibling modules:', error)
+      }
+    }
+    
     fetchModule()
-  }, [moduleId])
+    fetchSiblingModules()
+  }, [moduleId, levelName])
 
   useEffect(() => {
     if (!user || !moduleId) return
@@ -58,6 +91,17 @@ export default function CryptoAcademyModulePage() {
     }
     fetchProgress()
   }, [user, moduleId])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = (window.scrollY / totalHeight) * 100;
+      setScrollProgress(progress);
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleMarkCompleted = async () => {
     if (!user || !moduleId) return
@@ -78,8 +122,42 @@ export default function CryptoAcademyModulePage() {
 
   const handleTakeQuiz = () => {
     if (!moduleData?.assessmentTemplateId) return
-    // Route to the existing assessment engine
-    router.push(`/assessment/${moduleData.assessmentTemplateId}?source=academy&moduleId=${moduleId}`)
+    setQuizOpen(true)
+  }
+
+  const handleQuizComplete = async (resultData: any) => {
+    setQuizOpen(false)
+    setMarking(true)
+    try {
+      const { httpsCallable } = await import('firebase/functions');
+      const { functions } = await import('@/lib/firebase');
+      const saveQuiz = httpsCallable(functions, 'saveCryptoQuizResult');
+      
+      const passed = (resultData.score || 0) >= 70;
+      
+      const res = await saveQuiz({
+        moduleId,
+        score: resultData.score || 0,
+        quizResultId: resultData.id || null,
+        passed,
+        timeSpentSeconds: 0
+      }) as any;
+      
+      setCompleted(passed);
+      
+      setQuizResult({
+        score: resultData.score || 0,
+        passed,
+        xpEarned: res.data?.xpEarned || 0,
+        newBadges: res.data?.newBadges || [],
+        recommendations: resultData.actionPlan?.map((p: any) => p.title) || [],
+      });
+      
+    } catch (error) {
+      console.error('Error saving quiz result:', error)
+    } finally {
+      setMarking(false)
+    }
   }
 
   if (loading) {
@@ -105,8 +183,12 @@ export default function CryptoAcademyModulePage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 pb-32">
-      <button 
+    <>
+      <div className="fixed top-0 left-0 right-0 z-50">
+        <Progress value={scrollProgress} className="h-1.5 rounded-none bg-slate-800" />
+      </div>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 pb-32">
+        <button 
         onClick={() => router.push('/crypto-academy')}
         className="flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-slate-200 transition-colors mb-8"
       >
@@ -122,44 +204,75 @@ export default function CryptoAcademyModulePage() {
         </h1>
       </div>
 
-      <div className="prose prose-invert prose-lg max-w-none prose-headings:text-white prose-p:text-slate-300 prose-a:text-purple-400 prose-strong:text-slate-100">
-        <MarkdownContent content={moduleData.content} />
-      </div>
 
-      <div className="mt-16 pt-8 border-t border-slate-800 flex flex-col md:flex-row items-center justify-between gap-6 bg-slate-900/50 p-6 rounded-[2rem]">
-        <div>
-          <h3 className="text-xl font-black text-white mb-2">Selesai membaca?</h3>
-          <p className="text-slate-400 text-sm">
-            {moduleData.assessmentTemplateId 
-              ? 'Lanjutkan ke kuis interaktif untuk menguji pemahaman Anda dan menandai modul ini sebagai selesai.' 
-              : 'Tandai modul ini sebagai selesai untuk melanjutkan ke materi berikutnya.'}
-          </p>
+      <div className="flex flex-col lg:flex-row gap-12">
+        {/* Konten Utama */}
+        <div id="module-content" className="flex-1 prose prose-invert prose-lg max-w-none prose-headings:text-white prose-p:text-slate-300 prose-a:text-purple-400 prose-strong:text-slate-100">
+          <MarkdownContent content={moduleData.content} />
         </div>
-
-        <div className="shrink-0 w-full md:w-auto flex flex-col gap-3">
-          {moduleData.assessmentTemplateId ? (
-            <button 
-              onClick={handleTakeQuiz}
-              className="w-full md:w-auto h-12 px-8 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-black text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-purple-900/20"
-            >
-              <Sparkles className="w-4 h-4" /> Mulai Kuis Interaktif
-            </button>
-          ) : (
-            <button 
-              onClick={handleMarkCompleted}
-              disabled={completed || marking}
-              className={`w-full md:w-auto h-12 px-8 rounded-xl font-black text-sm flex items-center justify-center gap-2 transition-all ${
-                completed 
-                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' 
-                  : 'bg-slate-800 hover:bg-slate-700 text-white border border-slate-700'
-              }`}
-            >
-              {marking ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
-              {completed ? 'Modul Diselesaikan' : 'Tandai Selesai'}
-            </button>
-          )}
+        
+        {/* Sidebar Table of Contents & Learning Path */}
+        <div className="hidden lg:block w-64 shrink-0 space-y-6">
+          <CryptoTableOfContents />
+          <CryptoLearningPath currentModuleId={moduleId} level={levelName} />
         </div>
       </div>
+
+      <div className="mt-16 pt-8 border-t border-slate-800 bg-slate-900/50 p-6 rounded-[2rem] text-center">
+        {!quizResult ? (
+          <>
+            <h3 className="text-xl font-bold text-white mb-2">Selesai Belajar?</h3>
+            <p className="text-slate-400 mb-6 max-w-xl mx-auto">
+              Tandai modul ini sebagai selesai untuk melanjutkan perjalanan belajarmu, atau kerjakan kuis evaluasi.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              {moduleData.assessmentTemplateId ? (
+                <button
+                  onClick={handleTakeQuiz}
+                  disabled={marking}
+                  className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-bold px-8 py-3 rounded-full hover:from-purple-400 hover:to-indigo-400 transition-all shadow-lg hover:shadow-purple-500/25 disabled:opacity-50"
+                >
+                  {marking ? <Loader2 className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5" />}
+                  {completed ? 'Ulangi Kuis' : 'Mulai Kuis Evaluasi'}
+                </button>
+              ) : (
+                <button
+                  onClick={handleMarkCompleted}
+                  disabled={marking || completed}
+                  className="flex items-center gap-2 bg-slate-800 text-white font-bold px-8 py-3 rounded-full border border-slate-700 hover:bg-slate-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {marking ? <Loader2 className="w-5 h-5 animate-spin" /> : <CheckCircle className="w-5 h-5" />}
+                  {completed ? 'Telah Diselesaikan' : 'Tandai Selesai'}
+                </button>
+              )}
+            </div>
+          </>
+        ) : (
+          <div className="text-left max-w-2xl mx-auto">
+            <CryptoLearningRecommendations
+              score={quizResult.score}
+              passed={quizResult.passed}
+              xpEarned={quizResult.xpEarned}
+              newBadges={quizResult.newBadges}
+              recommendations={quizResult.recommendations}
+              nextModuleId={nextModuleId}
+              onClose={() => setQuizResult(null)}
+            />
+          </div>
+        )}
+      </div>
+
+      {quizOpen && moduleData.assessmentTemplateId && (
+        <CryptoModuleQuizModal
+          templateId={moduleData.assessmentTemplateId}
+          moduleId={moduleData.id}
+          moduleTitle={moduleData.title}
+          moduleLevel={moduleData.level}
+          onComplete={handleQuizComplete}
+          onClose={() => setQuizOpen(false)}
+        />
+      )}
     </div>
+    </>
   )
 }

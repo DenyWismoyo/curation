@@ -91,8 +91,14 @@ export default function CryptoReportPage() {
 
     fetchData();
 
+    // Auto-refresh every 5 minutes
+    const intervalId = setInterval(() => {
+        fetchData();
+    }, 5 * 60 * 1000);
+
     return () => {
       isMounted = false;
+      clearInterval(intervalId);
     };
   }, [authLoading, user]);
 

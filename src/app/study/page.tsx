@@ -67,6 +67,9 @@ export default function StudyWorkspacePage() {
   const [description, setDescription] = useState('');
   const [researchQuestion, setResearchQuestion] = useState('');
   const [targetPages, setTargetPages] = useState(100);
+  const [writingTone, setWritingTone] = useState<'academic' | 'consultative' | 'investigative'>('academic');
+  const [isCryptoMode, setIsCryptoMode] = useState(false);
+  
   const [submittingProject, setSubmittingProject] = useState(false);
   const [uploadingSource, setUploadingSource] = useState(false);
   const [startingPipeline, setStartingPipeline] = useState(false);
@@ -153,13 +156,17 @@ export default function StudyWorkspacePage() {
         description,
         researchQuestion,
         targetPages,
+        writingTone,
       });
       const data = response.data as { projectId: string };
       setSelectedProjectId(data.projectId);
       setTitle('');
       setDescription('');
-      setResearchQuestion('');
-      setTargetPages(100);
+      if (!isCryptoMode) {
+        setResearchQuestion('');
+        setTargetPages(100);
+        setWritingTone('academic');
+      }
     } catch (projectError: unknown) {
       console.error('Gagal membuat project study:', projectError);
       setError(getErrorMessage(projectError, 'Gagal membuat project kajian.'));
@@ -422,13 +429,48 @@ export default function StudyWorkspacePage() {
               </div>
 
               <form onSubmit={handleCreateProject} className="space-y-3">
+                <div className="flex items-center gap-2 p-3 bg-amber-50 rounded-xl border border-amber-200 mb-2">
+                  <input 
+                    type="checkbox" 
+                    id="cryptoMode" 
+                    checked={isCryptoMode} 
+                    onChange={(e) => {
+                      setIsCryptoMode(e.target.checked);
+                      if (e.target.checked) {
+                        setResearchQuestion("Bagaimana cara terbaik menjelaskan [TOPIK] kepada trader crypto pemula Indonesia?");
+                        setTargetPages(15);
+                        setWritingTone("consultative");
+                      } else {
+                        setResearchQuestion("");
+                        setTargetPages(100);
+                        setWritingTone("academic");
+                      }
+                    }}
+                    className="w-4 h-4 rounded text-amber-600 focus:ring-amber-500 cursor-pointer"
+                  />
+                  <label htmlFor="cryptoMode" className="text-sm font-bold text-amber-900 flex items-center gap-1 cursor-pointer select-none">
+                    <Sparkles className="w-4 h-4 text-amber-500" /> Aktifkan Mode Pembuatan Crypto Academy
+                  </label>
+                </div>
+
                 <input value={title} onChange={(event) => setTitle(event.target.value)} required placeholder="Judul kajian" className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm" />
                 <textarea value={description} onChange={(event) => setDescription(event.target.value)} placeholder="Deskripsi singkat konteks kajian" className="w-full min-h-[88px] rounded-xl border border-slate-200 px-3 py-3 text-sm" />
                 <textarea value={researchQuestion} onChange={(event) => setResearchQuestion(event.target.value)} required placeholder="Pertanyaan riset utama" className="w-full min-h-[120px] rounded-xl border border-slate-200 px-3 py-3 text-sm" />
-                <label className="block">
-                  <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Target halaman awal</span>
-                  <input value={targetPages} onChange={(event) => setTargetPages(Number(event.target.value || 100))} min={10} max={200} type="number" className="mt-1 w-full h-11 rounded-xl border border-slate-200 px-3 text-sm" />
-                </label>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  <label className="block">
+                    <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Gaya Penulisan</span>
+                    <select value={writingTone} onChange={(e) => setWritingTone(e.target.value as any)} className="mt-1 w-full h-11 rounded-xl border border-slate-200 px-3 text-sm bg-white">
+                      <option value="academic">Akademis (Formal)</option>
+                      <option value="consultative">Konsultatif (Mudah Dipahami)</option>
+                      <option value="investigative">Investigatif (Mendalam)</option>
+                    </select>
+                  </label>
+                  <label className="block">
+                    <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Target halaman</span>
+                    <input value={targetPages} onChange={(event) => setTargetPages(Number(event.target.value || 100))} min={5} max={200} type="number" className="mt-1 w-full h-11 rounded-xl border border-slate-200 px-3 text-sm" />
+                  </label>
+                </div>
                 <button type="submit" disabled={submittingProject} className="w-full h-11 rounded-xl bg-stone-900 hover:bg-amber-700 text-white font-black text-sm flex items-center justify-center gap-2 disabled:opacity-60">
                   {submittingProject ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />} Buat Project Kajian
                 </button>

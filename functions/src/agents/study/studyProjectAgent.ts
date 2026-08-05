@@ -493,6 +493,9 @@ export const publishStudyToCryptoAcademy = onCall({
     const content = chapterData.revisedContent || chapterData.content || ""; 
     const moduleRef = db.collection("cryptoEducation").doc();
     
+    const wordCount = content.split(/\s+/).length;
+    const estimatedMinutes = Math.max(1, Math.ceil(wordCount / 200));
+    
     batch.set(moduleRef, {
       moduleId: moduleRef.id,
       studyProjectId: parsed.data.projectId,
@@ -504,6 +507,17 @@ export const publishStudyToCryptoAcademy = onCall({
       assessmentTemplateId: parsed.data.assessmentTemplateId || null,
       publishedAt: now,
       publishedByUid: uid,
+      // Metadata baru untuk Crypto Academy v2
+      description: "",
+      estimatedMinutes: estimatedMinutes,
+      tags: [],
+      difficulty: "beginner",
+      prerequisites: [],
+      coverEmoji: "📚",
+      keyLearnings: [],
+      isPublished: true,
+      version: 1,
+      updatedAt: now,
     });
     order++;
   }

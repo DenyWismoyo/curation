@@ -7,12 +7,13 @@ import OpenAI from "openai";
 import { withRetry } from "../../utils/retry";
 
 const deepseekApiKeySecret = defineSecret("DEEPSEEK_API_KEY");
+const telegramBotTokenSecret = defineSecret("TELEGRAM_BOT_SECRET");
 
 export const cryptoMacroAgent = onSchedule(
   {
     schedule: "0 * * * *", // Setiap jam (hourly)
     timeZone: "Asia/Jakarta", 
-    secrets: [deepseekApiKeySecret],
+    secrets: [deepseekApiKeySecret, telegramBotTokenSecret],
     region: "asia-southeast2",
     timeoutSeconds: 300,
     memory: "256MiB",
@@ -28,6 +29,15 @@ export const cryptoMacroAgent = onSchedule(
       const calRes = await fetch("https://nfs.faireconomy.media/ff_calendar_thisweek.json");
       if (!calRes.ok) throw new Error("Gagal mengambil kalender makro");
       const macroCalendar = await calRes.json();
+      
+      try {
+        await db.collection("cryptoMacroCalendar").doc("latest").set({
+           data: macroCalendar,
+           updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+      } catch (e) {
+        console.warn("Failed to save calendar to Firestore", e);
+      }
 
       // 2. Filter event penting yang relevan dengan crypto (USD, EUR, CNY, dll) & berdampak "High" 
       // yang terjadi dalam waktu < 65 menit ke depan.
@@ -133,7 +143,7 @@ Format JSON Wajib:
 
       // Telegram Auto-Broadcast
       try {
-         const telegramToken = process.env.TELEGRAM_BOT_TOKEN;
+         const telegramToken = telegramBotTokenSecret.value();
          const telegramChats = (process.env.TELEGRAM_AUTHORIZED_CHATS || "").split(",").filter((c: string) => c.trim() !== "");
          
          if (telegramToken && telegramChats.length > 0) {

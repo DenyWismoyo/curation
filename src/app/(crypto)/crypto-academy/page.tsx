@@ -15,6 +15,11 @@ interface CryptoModule {
   title: string
   assessmentTemplateId?: string
   content?: string
+  description?: string
+  estimatedMinutes?: number
+  difficulty?: string
+  keyLearnings?: string[]
+  prerequisites?: string[]
 }
 
 interface UserProgress {
@@ -166,11 +171,22 @@ export default function CryptoAcademyPage() {
                         }`}
                       >
                         <div className="flex justify-between items-start mb-4">
-                          <span className={`px-2 py-1 text-[10px] font-black uppercase tracking-wider rounded-md border ${
-                            isCompleted ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-slate-800 text-slate-400 border-slate-700'
-                          }`}>
-                            Bab {mod.moduleOrder}
-                          </span>
+                          <div className="flex gap-2">
+                            <span className={`px-2 py-1 text-[10px] font-black uppercase tracking-wider rounded-md border ${
+                              isCompleted ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-slate-800 text-slate-400 border-slate-700'
+                            }`}>
+                              Bab {mod.moduleOrder}
+                            </span>
+                            {mod.difficulty && (
+                              <span className={`px-2 py-1 text-[10px] font-black uppercase tracking-wider rounded-md border ${
+                                mod.difficulty === 'beginner' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 
+                                mod.difficulty === 'intermediate' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' : 
+                                'bg-rose-500/10 text-rose-400 border-rose-500/20'
+                              }`}>
+                                {mod.difficulty}
+                              </span>
+                            )}
+                          </div>
                           {isCompleted && (
                             <CheckCircle className="w-5 h-5 text-emerald-500" />
                           )}
@@ -183,17 +199,33 @@ export default function CryptoAcademyPage() {
                         </h3>
 
                         {/* Content summary snippet */}
-                        {mod.content && (
-                          <p className="text-xs text-slate-500 line-clamp-2 mt-2 leading-relaxed">
-                            {mod.content.replace(/#.*?\n/g, '').replace(/\[SRC.*?\]/g, '').substring(0, 100)}...
-                          </p>
+                        <p className="text-xs text-slate-500 line-clamp-2 mt-2 leading-relaxed h-8">
+                          {mod.description || (mod.content ? mod.content.replace(/#.*?\n/g, '').replace(/\[SRC.*?\]/g, '').substring(0, 100) + '...' : '')}
+                        </p>
+
+                        {mod.keyLearnings && mod.keyLearnings.length > 0 && (
+                          <ul className="mt-3 space-y-1">
+                            {mod.keyLearnings.slice(0, 2).map((learning, idx) => (
+                              <li key={idx} className="text-[10px] text-slate-400 flex items-start gap-1.5">
+                                <span className="text-purple-500 mt-0.5">•</span>
+                                <span className="line-clamp-1">{learning}</span>
+                              </li>
+                            ))}
+                          </ul>
                         )}
 
-                        <div className="mt-6 flex items-center justify-between text-xs font-bold text-slate-500 group-hover:text-purple-400 transition-colors">
-                          <span className="flex items-center gap-1.5">
-                            {mod.assessmentTemplateId && <Sparkles className="w-3 h-3 text-amber-500" />}
-                            {mod.assessmentTemplateId ? 'Interaktif & Kuis' : 'Artikel'}
-                          </span>
+                        <div className="mt-5 pt-4 border-t border-slate-800/50 flex items-center justify-between text-xs font-bold text-slate-500 group-hover:text-purple-400 transition-colors">
+                          <div className="flex items-center gap-3">
+                            <span className="flex items-center gap-1.5">
+                              {mod.assessmentTemplateId && <Sparkles className="w-3 h-3 text-amber-500" />}
+                              {mod.assessmentTemplateId ? 'Kuis' : 'Artikel'}
+                            </span>
+                            {mod.estimatedMinutes && (
+                              <span className="text-slate-600 font-medium">
+                                • {mod.estimatedMinutes} mnt
+                              </span>
+                            )}
+                          </div>
                           <ChevronRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
                         </div>
                       </motion.div>

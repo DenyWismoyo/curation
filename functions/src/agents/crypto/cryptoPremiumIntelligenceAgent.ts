@@ -34,7 +34,7 @@ export const cryptoPremiumIntelligenceAgent = onSchedule(
       try {
          const unlocksRes = await axios.get("https://api.llama.fi/unlocks");
          if (unlocksRes.data) {
-             tokenUnlocks = unlocksRes.data;
+             tokenUnlocks = unlocksRes.data.filter((u: any) => topCoins.includes(u.token + "USDT") || topCoins.includes(u.symbol + "USDT"));
          }
       } catch (e) {
          console.warn("Failed to fetch token unlocks");
@@ -172,7 +172,7 @@ Skema JSON yang harus dikembalikan:
 `;
 
       const result = await withRetry(() => deepseekClient.chat.completions.create({
-        model: "deepseek-reasoner",
+        model: "deepseek-chat",
         messages: [{ role: "user", content: prompt }],
       }));
 
@@ -200,6 +200,26 @@ Skema JSON yang harus dikembalikan:
       batch.set(dzRef, { createdAt: serverTime, coins: parsedData.dangerZone || [] });
 
       await batch.commit();
+
+      // Cleanup old data (> 3 days)
+      const threeDaysAgo = new Date();
+      threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+      const timestamp3DaysAgo = admin.firestore.Timestamp.fromDate(threeDaysAgo);
+      
+      const collectionsToClean = ["cryptoSmartMoney", "cryptoLiquidity", "cryptoDangerZone"];
+      for (const coll of collectionsToClean) {
+         try {
+            const oldDocs = await db.collection(coll).where("createdAt", "<", timestamp3DaysAgo).get();
+            if (!oldDocs.empty) {
+               const cleanupBatch = db.batch();
+               oldDocs.forEach(doc => cleanupBatch.delete(doc.ref));
+               await cleanupBatch.commit();
+               console.log(`Cleaned up ${oldDocs.size} old documents from ${coll}`);
+            }
+         } catch(e) {
+            console.error(`Failed to cleanup ${coll}`, e);
+         }
+      }
 
       console.log("Premium Intelligence Reports generated successfully.");
     } catch (error) {

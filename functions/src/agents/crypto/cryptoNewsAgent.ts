@@ -9,7 +9,7 @@ const deepseekApiKeySecret = defineSecret("DEEPSEEK_API_KEY");
 
 const fetchRss = async (url: string) => {
   try {
-    const res = await fetch(url);
+    const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
     if (!res.ok) return [];
     const text = await res.text();
     
@@ -156,6 +156,22 @@ ATURAN KERAS (TIDAK BOLEH DILANGGAR):
           headlineSummary: parsedData.headlineSummary || "",
           newsItems: parsedData.topNews || []
       });
+
+      // Cleanup old data (> 7 days)
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      const timestamp7DaysAgo = admin.firestore.Timestamp.fromDate(sevenDaysAgo);
+      try {
+         const oldDocs = await db.collection("cryptoNews").where("createdAt", "<", timestamp7DaysAgo).get();
+         if (!oldDocs.empty) {
+            const cleanupBatch = db.batch();
+            oldDocs.forEach(doc => cleanupBatch.delete(doc.ref));
+            await cleanupBatch.commit();
+            console.log(`Cleaned up ${oldDocs.size} old news documents.`);
+         }
+      } catch (e) {
+         console.error("Failed to cleanup old news", e);
+      }
 
       console.log("Crypto News Report generated successfully.");
     } catch (error) {

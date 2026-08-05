@@ -65,6 +65,7 @@ const adminMenuGroups: AdminMenuGroup[] = [
       { name: 'Template Form', path: '/admin/templates', icon: Settings },
       { name: 'Artikel & Wawasan', path: '/admin/articles', icon: Newspaper },
       { name: 'Roadmap & Rencana', path: '/admin/roadmap', icon: MapPinned },
+      { name: 'Crypto Academy', path: '/admin/crypto-academy', icon: Newspaper, badge: 'Modul', badgeVariant: 'indigo' },
     ],
   },
   {

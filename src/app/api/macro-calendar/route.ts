@@ -2,12 +2,9 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    // Cache di-set ke 4 jam (14400 detik)
-    // Kalender eventnya memang mingguan, TAPI nilai "Actual" (hasil rilis data seperti inflasi) 
-    // akan ter-update seketika saat jam rilis. Jika cache 1 minggu, kita tidak akan pernah 
-    // melihat angka rilis aslinya hingga minggu depan. 4 Jam adalah keseimbangan sempurna!
+    // Cache di-set ke 5 menit (300 detik) agar nilai "Actual" terupdate cepat
     const res = await fetch("https://nfs.faireconomy.media/ff_calendar_thisweek.json", {
-      next: { revalidate: 14400 }
+      next: { revalidate: 300 }
     });
     
     if (!res.ok) {
@@ -19,7 +16,7 @@ export async function GET() {
     return NextResponse.json(data, {
       headers: {
         "Access-Control-Allow-Origin": "*",
-        "Cache-Control": "public, s-maxage=14400, stale-while-revalidate=7200"
+        "Cache-Control": "public, s-maxage=300, stale-while-revalidate=60"
       }
     });
   } catch (error: any) {

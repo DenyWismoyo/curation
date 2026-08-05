@@ -79,7 +79,18 @@ const calculateIndicators = (klinesData: any[]): Partial<CryptoMarketData> => {
     if (adxData.length > 0) adxResult = adxData[adxData.length - 1];
   }
 
-  return { rsi14, macd: macdResult as any, ema50, ema200, bb: bb as any, atr, vwap, obv, adx: adxResult as any, poc };
+  return { 
+    rsi14: rsi14 ?? null, 
+    macd: macdResult as any, 
+    ema50, 
+    ema200, 
+    bb: bb as any, 
+    atr, 
+    vwap: vwap ?? null, 
+    obv: obv ?? null, 
+    adx: adxResult as any, 
+    poc: poc ?? null 
+  };
 };
 
 // Algoritma Screener 4.0 (Multi-Factor Scoring Model)
@@ -218,7 +229,7 @@ const calculateSetupScore = (coin: CryptoMarketData): { score: number, direction
 
 export const fetchTrendingCoins = async (): Promise<string[]> => {
   try {
-    const res = await fetch("https://api.coingecko.com/api/v3/search/trending");
+    const res = await fetch("https://api.coingecko.com/api/v3/search/trending", { signal: AbortSignal.timeout(5000) });
     if (!res.ok) return [];
     const data = await res.json();
     return data.coins.slice(0, 3).map((item: any) => item.item.symbol.toUpperCase());
@@ -230,7 +241,7 @@ export const fetchTrendingCoins = async (): Promise<string[]> => {
 
 export const fetchFearAndGreedIndex = async (): Promise<any> => {
   try {
-    const res = await fetch("https://api.alternative.me/fng/?limit=7");
+    const res = await fetch("https://api.alternative.me/fng/?limit=7", { signal: AbortSignal.timeout(5000) });
     if (!res.ok) return null;
     const data = await res.json();
     return {
@@ -245,7 +256,7 @@ export const fetchFearAndGreedIndex = async (): Promise<any> => {
 
 export const fetchGlobalMarketInfo = async (): Promise<any> => {
   try {
-    const res = await fetch("https://api.coingecko.com/api/v3/global");
+    const res = await fetch("https://api.coingecko.com/api/v3/global", { signal: AbortSignal.timeout(5000) });
     if (!res.ok) return null;
     const data = await res.json();
     return data.data || null;
@@ -257,7 +268,7 @@ export const fetchGlobalMarketInfo = async (): Promise<any> => {
 
 export const fetchCryptoNews = async (): Promise<string[]> => {
   try {
-    const res = await fetch("https://www.coindesk.com/arc/outboundfeeds/rss/");
+    const res = await fetch("https://www.coindesk.com/arc/outboundfeeds/rss/", { signal: AbortSignal.timeout(5000) });
     if (!res.ok) return [];
     const text = await res.text();
     const matches = text.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/g);
@@ -272,7 +283,7 @@ export const fetchCryptoNews = async (): Promise<string[]> => {
 export const fetchBinanceFundingRate = async (symbol: string): Promise<number | null> => {
   try {
     const pair = symbol.endsWith("USDT") ? symbol : `${symbol}USDT`;
-    const res = await fetch(`https://fapi.binance.com/fapi/v1/premiumIndex?symbol=${pair}`);
+    const res = await fetch(`https://fapi.binance.com/fapi/v1/premiumIndex?symbol=${pair}`, { signal: AbortSignal.timeout(5000) });
     if (!res.ok) return null;
     const data = await res.json();
     return data.lastFundingRate ? parseFloat(data.lastFundingRate) : null;
@@ -284,7 +295,7 @@ export const fetchBinanceFundingRate = async (symbol: string): Promise<number | 
 export const fetchBinanceLongShortRatio = async (symbol: string): Promise<number | null> => {
   try {
     const pair = symbol.endsWith("USDT") ? symbol : `${symbol}USDT`;
-    const res = await fetch(`https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=${pair}&period=4h&limit=1`);
+    const res = await fetch(`https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=${pair}&period=4h&limit=1`, { signal: AbortSignal.timeout(5000) });
     if (!res.ok) return null;
     const data = await res.json();
     return data.length > 0 ? parseFloat(data[0].longShortRatio) : null;
@@ -296,7 +307,7 @@ export const fetchBinanceLongShortRatio = async (symbol: string): Promise<number
 export const fetchBinanceOpenInterest = async (symbol: string): Promise<number | null> => {
   try {
     const pair = symbol.endsWith("USDT") ? symbol : `${symbol}USDT`;
-    const res = await fetch(`https://fapi.binance.com/fapi/v1/openInterest?symbol=${pair}`);
+    const res = await fetch(`https://fapi.binance.com/fapi/v1/openInterest?symbol=${pair}`, { signal: AbortSignal.timeout(5000) });
     if (!res.ok) return null;
     const data = await res.json();
     return data.openInterest ? parseFloat(data.openInterest) : null;
@@ -307,7 +318,7 @@ export const fetchBinanceOpenInterest = async (symbol: string): Promise<number |
 
 export const fetchStablecoinGrowth = async (): Promise<any> => {
   try {
-    const res = await fetch("https://stablecoins.llama.fi/stablecoincharts/all");
+    const res = await fetch("https://stablecoins.llama.fi/stablecoincharts/all", { signal: AbortSignal.timeout(5000) });
     if (!res.ok) return null;
     const data = await res.json();
     if (Array.isArray(data) && data.length >= 2) {
@@ -327,7 +338,7 @@ export const fetchStablecoinGrowth = async (): Promise<any> => {
 
 export const fetchDexVolumeGrowth = async (): Promise<any> => {
   try {
-    const res = await fetch("https://api.llama.fi/overview/dexs?excludeTotalDataChart=true&excludeTotalDataChartBreakdown=true&dataType=dailyVolume");
+    const res = await fetch("https://api.llama.fi/overview/dexs?excludeTotalDataChart=true&excludeTotalDataChartBreakdown=true&dataType=dailyVolume", { signal: AbortSignal.timeout(5000) });
     if (!res.ok) return null;
     const data = await res.json();
     return {
@@ -344,7 +355,7 @@ export const fetchBybitKlineFallback = async (symbol: string, interval = "240", 
     let pair = `${symbol}USDT`;
     // Bybit interval: 1,3,5,15,30,60,120,240,360,720,D,M,W
     const bybitInterval = interval === "4h" ? "240" : interval === "1h" ? "60" : interval === "1w" ? "W" : interval === "15m" ? "15" : interval === "1m" ? "1" : "240";
-    const res = await fetch(`https://api.bybit.com/v5/market/kline?category=linear&symbol=${pair}&interval=${bybitInterval}&limit=${limit}`);
+    const res = await fetch(`https://api.bybit.com/v5/market/kline?category=linear&symbol=${pair}&interval=${bybitInterval}&limit=${limit}`, { signal: AbortSignal.timeout(5000) });
     if (!res.ok) return null;
     const data = await res.json();
     if (!data.result || !data.result.list) return null;
@@ -377,7 +388,7 @@ export const fetchBybitKlineFallback = async (symbol: string, interval = "240", 
 export const fetchBinanceKline = async (symbol: string, interval = "4h", limit = 6): Promise<CryptoMarketData | null> => {
   try {
     let pair = `${symbol}USDT`;
-    const res = await fetch(`https://api.binance.com/api/v3/klines?symbol=${pair}&interval=${interval}&limit=${limit}`);
+    const res = await fetch(`https://api.binance.com/api/v3/klines?symbol=${pair}&interval=${interval}&limit=${limit}`, { signal: AbortSignal.timeout(5000) });
     if (!res.ok) {
        console.warn(`Binance kline failed for ${pair}, falling back to Bybit`);
        return fetchBybitKlineFallback(symbol, interval, limit);
@@ -399,7 +410,7 @@ export const fetchBinanceKline = async (symbol: string, interval = "4h", limit =
 
 export const fetchScalpingCandidates = async (): Promise<{ symbol: string; change: string; volume: string }[]> => {
   try {
-    const res = await fetch("https://api.binance.com/api/v3/ticker/24hr");
+    const res = await fetch("https://api.binance.com/api/v3/ticker/24hr", { signal: AbortSignal.timeout(5000) });
     if (!res.ok) return [];
     const data = await res.json();
     const usdtPairs = data.filter((item: any) => {
@@ -419,7 +430,7 @@ export const fetchScalpingCandidates = async (): Promise<{ symbol: string; chang
        const scoreB = parseFloat(b.quoteVolume) * Math.abs(parseFloat(b.priceChangePercent));
        return scoreB - scoreA;
     });
-    return sorted.slice(0, 30).map((item: any) => ({ // Top 30 most active liquid coins
+    return sorted.slice(0, 15).map((item: any) => ({ // Top 30 most active liquid coins
       symbol: item.symbol, change: item.priceChangePercent, volume: item.quoteVolume
     }));
   } catch (error) {
@@ -438,7 +449,7 @@ export const gatherCryptoMarketData = async (isWeekly = false, isMonthly = false
   weeklyMarketData?: CryptoMarketData[];
   monthlyMarketData?: CryptoMarketData[];
 }> => {
-   const baseCoins = ["BTC", "ETH"];
+   const baseCoins = ["BTC", "ETH", "SOL", "BNB", "XRP"];
    const trendingCoins = await fetchTrendingCoins();
    const allCoins = Array.from(new Set([...baseCoins, ...trendingCoins]));
    
