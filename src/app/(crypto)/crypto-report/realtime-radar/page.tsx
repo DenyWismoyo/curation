@@ -87,7 +87,7 @@ export default function RealtimeRadarPage() {
             <Zap className="text-yellow-400" size={32} />
             Realtime Radar <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-md ml-2">ADMIN ONLY</span>
           </h1>
-          <p className="text-slate-400 mt-2">On-demand AI generation untuk Scalping & Hidden Gems tanpa menunggu jadwal Cron.</p>
+          <p className="text-slate-400 mt-2">On-demand AI generation untuk Volatility Scanner & Hidden Gems tanpa menunggu jadwal Cron.</p>
         </div>
         <Button onClick={() => { setSelectedScalpingId(scalpingReports[0]?.id || ''); setSelectedGemId(gemReports[0]?.id || ''); }} variant="outline" className="border-white/10 text-white bg-white/5">
            <RefreshCw size={16} className="mr-2" /> Reset View to Latest
@@ -111,7 +111,7 @@ export default function RealtimeRadarPage() {
         <div className="bg-slate-900/50 border border-white/10 rounded-2xl p-6 backdrop-blur-xl">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <Zap className="text-yellow-400" size={20} /> Scalping Radar
+              <Zap className="text-yellow-400" size={20} /> Volatility Scanner
             </h2>
             <div className="flex items-center gap-2">
               <select 
@@ -134,7 +134,7 @@ export default function RealtimeRadarPage() {
           {latestScalping ? (
             <div className="space-y-4">
                <div className="bg-slate-950 p-4 rounded-xl border border-white/5">
-                 <h3 className="font-bold text-white mb-2">{latestScalping.title || 'Laporan Scalping'}</h3>
+                 <h3 className="font-bold text-white mb-2">{latestScalping.title || 'Laporan Volatilitas'}</h3>
                  <p className="text-sm text-slate-400">Sentiment: <span className="text-white font-bold">{latestScalping.sentiment}</span></p>
                  <p className="text-sm text-slate-400">Regime: <span className="text-white font-bold">{latestScalping.marketRegime}</span></p>
                  <p className="text-sm text-slate-300 mt-2 italic">"{latestScalping.macroInsight}"</p>
@@ -158,7 +158,7 @@ export default function RealtimeRadarPage() {
                </div>
             </div>
           ) : (
-            <div className="text-center py-12 text-slate-500">Belum ada data realtime scalping.</div>
+            <div className="text-center py-12 text-slate-500">Belum ada data realtime volatilitas.</div>
           )}
         </div>
 

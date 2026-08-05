@@ -10,7 +10,7 @@ import {
   AlertTriangle, ArrowRight, Brain, Clock, Zap, Target, BookOpen, Layers, BarChart3, 
   HelpCircle, ChevronDown, ChevronUp, Cpu, X, Eye, Rocket, GraduationCap, LineChart, Globe
 } from 'lucide-react';
-import { LazyMotion, domAnimation, m } from 'framer-motion';
+import { LazyMotion, domAnimation, m, Variants } from 'framer-motion';
 import { functions } from '@/lib/firebase';
 import { httpsCallable } from 'firebase/functions';
 import { toast } from 'sonner';
@@ -43,6 +43,7 @@ export default function PremiumSubscriptionPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [selectedPackage, setSelectedPackage] = useState<'MONTHLY' | 'QUARTERLY' | 'YEARLY'>('MONTHLY');
 
   const handleSubscribe = async () => {
     if (!user) {
@@ -50,13 +51,27 @@ export default function PremiumSubscriptionPage() {
       return;
     }
     
+    let packageId = 'CRYPTO_PREMIUM_MONTHLY';
+    let packageName = 'Premium Pass - Akses Penuh Kecerdasan Kripto';
+    let finalPrice = 249000;
+
+    if (selectedPackage === 'QUARTERLY') {
+      packageId = 'CRYPTO_PREMIUM_QUARTERLY';
+      packageName = 'Premium Pass (3 Bulan)';
+      finalPrice = 649000;
+    } else if (selectedPackage === 'YEARLY') {
+      packageId = 'CRYPTO_PREMIUM_YEARLY';
+      packageName = 'Premium Pass (1 Tahun)';
+      finalPrice = 1990000;
+    }
+
     setLoading(true);
     try {
       const createInvoice = httpsCallable(functions, 'createPaymentInvoice');
       const response = await createInvoice({
-        packageId: 'CRYPTO_PREMIUM_MONTHLY',
-        packageName: 'Premium Pass - Akses Penuh Kecerdasan Kripto',
-        finalPrice: 249000,
+        packageId,
+        packageName,
+        finalPrice,
         userEmail: user.email,
         userName: user.displayName || 'Pengguna',
       });
@@ -79,7 +94,7 @@ export default function PremiumSubscriptionPage() {
   const hasAccess = isPremium || isAdmin;
 
   // Animation variants
-  const fadeIn = {
+  const fadeIn: Variants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
   };
@@ -97,15 +112,13 @@ export default function PremiumSubscriptionPage() {
         <div className="w-full px-4 sm:px-8 py-4 flex items-center justify-between border-b border-white/5 sticky top-0 bg-[#020617]/80 backdrop-blur-md z-50">
           <div className="flex items-center gap-2 cursor-pointer group" onClick={() => router.push('/')}>
             <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
-              <Sparkles size={16} className="text-white" />
+              <LineChart size={16} className="text-white" />
             </div>
-            <span className="font-black text-lg tracking-tight text-white">Omnifit Premium</span>
+            <span className="font-black text-lg tracking-tight text-white">Crypto Insight</span>
           </div>
-          {hasAccess && (
-            <Button variant="outline" className="border-white/10 text-white bg-white/5 hover:bg-white/10" onClick={() => router.push('/crypto-report')}>
-              Ke Dashboard <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          )}
+          <Button variant="outline" className="border-white/10 text-white bg-white/5 hover:bg-white/10" onClick={() => router.push('/crypto-report')}>
+            Ke Dashboard <ArrowRight className="w-4 h-4 ml-2" />
+          </Button>
         </div>
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-24 relative z-10">
@@ -125,13 +138,13 @@ export default function PremiumSubscriptionPage() {
               Dapatkan keunggulan <i>unfair advantage</i> di pasar kripto. Akses analisis sentimen real-time, pergerakan paus (smart money), dan AI Copilot yang bekerja 24/7 untuk Anda.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button onClick={() => router.push('/crypto-report')} className="h-12 px-8 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold shadow-lg shadow-indigo-500/25">
+                Buka Dashboard Crypto <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
               <Button onClick={() => {
                 document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
-              }} className="h-12 px-8 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold shadow-lg shadow-indigo-500/25">
-                Lihat Penawaran <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-              <Button onClick={() => router.push('/crypto-report')} variant="outline" className="h-12 px-8 rounded-xl border-slate-700 bg-slate-800/50 hover:bg-slate-800 text-white font-bold">
-                Coba Versi Gratis
+              }} variant="outline" className="h-12 px-8 rounded-xl border-slate-700 bg-slate-800/50 hover:bg-slate-800 text-white font-bold">
+                Lihat Keanggotaan Premium
               </Button>
             </div>
           </m.div>
@@ -363,11 +376,57 @@ export default function PremiumSubscriptionPage() {
                 
                 <div className="mb-8 relative z-10">
                   <h3 className="text-2xl font-bold text-indigo-400 mb-2">Premium Pass</h3>
-                  <div className="flex flex-col">
-                    <span className="text-slate-500 line-through text-sm font-medium mb-1">Rp 499.000</span>
-                    <div className="text-4xl font-black text-white mb-2">Rp 249.000 <span className="text-lg text-slate-500 font-medium">/ bulan</span></div>
+                  
+                  {/* Package Selector */}
+                  <div className="flex bg-slate-950/80 p-1.5 rounded-xl border border-indigo-900/30 mb-6 gap-1 relative z-10">
+                    <button 
+                      onClick={() => setSelectedPackage('MONTHLY')}
+                      className={`flex-1 py-2 text-xs sm:text-sm font-bold rounded-lg transition-all ${selectedPackage === 'MONTHLY' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'}`}
+                    >
+                      1 Bulan
+                    </button>
+                    <button 
+                      onClick={() => setSelectedPackage('QUARTERLY')}
+                      className={`flex-1 py-2 text-xs sm:text-sm font-bold rounded-lg transition-all ${selectedPackage === 'QUARTERLY' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'}`}
+                    >
+                      3 Bulan
+                    </button>
+                    <button 
+                      onClick={() => setSelectedPackage('YEARLY')}
+                      className={`flex-1 py-2 text-xs sm:text-sm font-bold rounded-lg transition-all relative ${selectedPackage === 'YEARLY' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'}`}
+                    >
+                      1 Tahun
+                      <span className="absolute -top-3 -right-2 bg-emerald-500 text-white text-[9px] px-1.5 py-0.5 rounded-md font-black shadow-lg animate-pulse border border-emerald-400">BEST VALUE</span>
+                    </button>
                   </div>
-                  <p className="text-slate-400 text-sm">Akses penuh ke semua analisis on-chain & AI.</p>
+
+                  <div className="flex flex-col min-h-[100px] justify-end">
+                    {selectedPackage === 'MONTHLY' && (
+                      <>
+                        <span className="text-slate-500 line-through text-sm font-medium mb-1">Rp 499.000</span>
+                        <div className="text-4xl font-black text-white mb-2">Rp 249.000 <span className="text-lg text-slate-500 font-medium">/ bln</span></div>
+                      </>
+                    )}
+                    {selectedPackage === 'QUARTERLY' && (
+                      <>
+                        <span className="text-slate-500 line-through text-sm font-medium mb-1">Rp 747.000</span>
+                        <div className="text-4xl font-black text-white mb-1">Rp 649.000 <span className="text-lg text-slate-500 font-medium">/ 3 bln</span></div>
+                        <div className="text-emerald-400 text-sm font-bold mb-2 flex items-center gap-1.5">
+                          <CheckCircle2 className="w-4 h-4" /> Hemat Rp 98.000 <span className="text-slate-400 text-xs font-normal">(Rp 216.333/bln)</span>
+                        </div>
+                      </>
+                    )}
+                    {selectedPackage === 'YEARLY' && (
+                      <>
+                        <span className="text-slate-500 line-through text-sm font-medium mb-1">Rp 2.988.000</span>
+                        <div className="text-4xl font-black text-white mb-1">Rp 1.990.000 <span className="text-lg text-slate-500 font-medium">/ thn</span></div>
+                        <div className="text-emerald-400 text-sm font-bold mb-2 flex items-center gap-1.5">
+                          <CheckCircle2 className="w-4 h-4" /> Hemat Rp 998.000 <span className="text-slate-400 text-xs font-normal">(Rp 165.833/bln)</span>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                  <p className="text-slate-400 text-sm mt-2">Akses penuh ke semua analisis on-chain & AI.</p>
                 </div>
                 <div className="space-y-4 flex-1 mb-8 relative z-10">
                   <div className="flex gap-3 text-sm text-white font-medium"><Check size={18} className="text-emerald-400 shrink-0" /> Histori Penuh Laporan AI (30 Laporan)</div>

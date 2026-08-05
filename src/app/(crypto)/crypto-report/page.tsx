@@ -24,6 +24,7 @@ import TemporalComparisonWidget from "@/components/crypto/TemporalComparisonWidg
 import WeeklyMonthlyOutlookWidget from "@/components/crypto/WeeklyMonthlyOutlookWidget";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PremiumLockedWrapper } from "@/components/crypto/PremiumLockedWrapper";
+import CryptoDisclaimer from "@/components/shared/CryptoDisclaimer";
 
 export default function CryptoReportPage() {
   const { user, role, isPremium, loading: authLoading } = useAuth();
@@ -185,7 +186,7 @@ export default function CryptoReportPage() {
                   </h3>
                   <p className="text-sm text-slate-400 mt-1">Beberapa fitur lanjutan telah dikunci (blur). Upgrade ke Premium untuk membuka semua fitur analitik tingkat lanjut.</p>
                 </div>
-                <Link href="/premium">
+                <Link href="/crypto">
                   <Button className="bg-indigo-600 hover:bg-indigo-700">Upgrade Premium</Button>
                 </Link>
               </div>
@@ -273,7 +274,7 @@ export default function CryptoReportPage() {
                  </h2>
                  <Link href="/crypto-report/performance">
                    <Button variant="outline" size="sm" className="hidden sm:flex text-indigo-600 border-indigo-200 hover:bg-indigo-50 dark:text-indigo-400 dark:border-indigo-900/50 dark:hover:bg-indigo-900/30">
-                     <TrendingUp className="w-4 h-4 mr-2" /> Scalping Analytics
+                     <TrendingUp className="w-4 h-4 mr-2" /> Volatility Analytics
                    </Button>
                  </Link>
                </div>
@@ -281,7 +282,7 @@ export default function CryptoReportPage() {
                <div className="flex flex-col gap-2">
                  <Link href="/crypto-report/performance" className="sm:hidden">
                    <Button variant="outline" size="sm" className="w-full text-indigo-600 border-indigo-200 hover:bg-indigo-50 dark:text-indigo-400 dark:border-indigo-900/50 dark:hover:bg-indigo-900/30">
-                     <TrendingUp className="w-4 h-4 mr-2" /> Scalping Analytics
+                     <TrendingUp className="w-4 h-4 mr-2" /> Volatility Analytics
                    </Button>
                  </Link>
                  
@@ -486,7 +487,7 @@ export default function CryptoReportPage() {
                             {data.scalpingOpportunities && data.scalpingOpportunities.length > 0 && (
                               <div>
                                 <h4 className="font-black text-lg mb-4 flex items-center gap-2 text-orange-600 dark:text-orange-400">
-                                  <Zap className="w-5 h-5 fill-current" /> Scalping Radar
+                                  <Zap className="w-5 h-5 fill-current" /> Volatility Scanner
                                 </h4>
                                 <div className="space-y-3">
                                   {data.scalpingOpportunities.map((scalp: any, i: number) => (
@@ -605,7 +606,7 @@ export default function CryptoReportPage() {
                                <div className="bg-slate-900 text-white p-5 rounded-2xl relative overflow-hidden">
                                  <div className="absolute right-0 top-0 p-4 opacity-5"><Target className="w-32 h-32"/></div>
                                  <h4 className="font-bold text-sm uppercase tracking-widest text-slate-400 mb-3 flex items-center gap-2">
-                                   Jurnal Evaluasi AI
+                                   Jurnal Analisis AI
                                  </h4>
                                  <div className="space-y-2 relative z-10">
                                    {data.previousScalpingEvaluation.map((evalItem: any, idx: number) => {
@@ -657,6 +658,7 @@ export default function CryptoReportPage() {
             )}
           </TabsContent>
         </Tabs>
+        <CryptoDisclaimer />
       </div>
 
       {/* Global Copilot Sheet */}

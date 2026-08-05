@@ -81,7 +81,7 @@ export default function RiwayatTransaksiPage() {
     sessionStorage.setItem('active_token', tokenCode);
     sessionStorage.setItem('active_allowed_templates', JSON.stringify([packageId]));
     sessionStorage.setItem('active_model', 'flash');
-    router.push('/assessment');
+    router.push('/assessment/select');
   };
 
   const formatRupiah = (angka: number) =>

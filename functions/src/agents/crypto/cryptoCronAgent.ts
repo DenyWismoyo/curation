@@ -172,8 +172,8 @@ export const cryptoCronAgent = onSchedule(
         const winRate = totalFinished > 0 ? ((totalWins / totalFinished) * 100).toFixed(2) + "%" : "N/A";
 
         previousScalpingStatus = `
-Evaluasi Kinerja Scalping (Otomatis Dihitung oleh Sistem dari Active Trades):
-- Total Sinyal Dievaluasi: ${pendingTrades.length}
+Evaluasi Akurasi Prediksi Momentum (Otomatis Dihitung oleh Sistem dari Active Trades):
+- Total Prediksi Dievaluasi: ${pendingTrades.length}
 - WIN BARU (Hit Target): ${totalWins}
 - LOSS BARU (Hit Stoploss): ${totalLosses}
 - MASIH PENDING (Floating): ${totalPending}
@@ -182,7 +182,7 @@ Evaluasi Kinerja Scalping (Otomatis Dihitung oleh Sistem dari Active Trades):
 Rincian Evaluasi:
 ${JSON.stringify(finalEvaluatedScalps, null, 2)}
 
-(Tugas Anda: Analisis secara singkat mengapa sinyal WIN berhasil dan mengapa LOSS gagal berdasarkan pergerakan market terbaru di bagian 'selfCorrection'. JANGAN hitung ulang Win Rate, gunakan data di atas.)`;
+(Tugas Anda: Analisis secara singkat mengapa prediksi WIN berhasil dan mengapa LOSS gagal berdasarkan pergerakan market terbaru di bagian 'selfCorrection'. JANGAN hitung ulang Win Rate, gunakan data di atas.)`;
         
         if (totalWins > 0 || totalLosses > 0) {
            await db.collection("cryptoPerformanceMetrics").doc("global_stats").set({
@@ -205,24 +205,24 @@ ${JSON.stringify(finalEvaluatedScalps, null, 2)}
 Tugas Anda adalah merangkum sentimen pasar dari K-lines, Fear & Greed Index, dan Berita Utama, serta membuat proyeksi 4 jam ke depan.
 
 ALUR BERPIKIR WAJIB (CHAIN OF THOUGHT):
-Sebelum menentukan rekomendasi akhir, pikirkan langkah-langkah berikut:
+Sebelum menentukan analisis akhir, pikirkan langkah-langkah berikut:
 1. Fase Makro: Evaluasi Fear & Greed, berita, dan data aliran dana. Tentukan apakah pasar sedang akumulasi, distribusi, atau panik.
 2. Fase BTC: Gunakan Bitcoin sebagai barometer utama. Apakah tren BTC mendukung pergerakan altcoin?
-3. Fase Seleksi Scalping: Cross-check rekomendasi scalping dari Quant AI dengan kondisi makro. Buang posisi LONG jika makro/BTC sangat buruk.
+3. Fase Seleksi Momentum: Cross-check analisis probabilitas momentum dari Quant AI dengan kondisi makro. Buang analisis LONG jika makro/BTC sangat buruk.
 
-ATURAN KERAS UNTUK SCALPING OPPORTUNITIES (TIDAK BOLEH DILANGGAR):
+ATURAN KERAS UNTUK ANALISIS VOLATILITAS (TIDAK BOLEH DILANGGAR):
 1. Minimum Risk:Reward Ratio = 1:2 (Jarak Target minimal 2x lebih besar dari jarak Stop Loss).
 2. Stop Loss WAJIB berbasis ATR: SL = entryPrice ± (1.5 × ATR). JANGAN gunakan persentase sembarangan!
-3. JANGAN rekomendasikan LONG jika marketRegime = "BEARISH" atau sentimen = "BEARISH".
+3. JANGAN keluarkan analisis LONG jika marketRegime = "BEARISH" atau sentimen = "BEARISH".
 4. Entry price HARUS sangat dekat dengan harga terkini (current price di data kline terakhir).
-5. Maksimal hanya berikan 2 sinyal scalping. Kualitas lebih penting dari kuantitas.
+5. Maksimal hanya berikan 2 hasil scan probabilitas momentum. Kualitas lebih penting dari kuantitas.
 6. Minimum confidenceScore untuk masuk: HIGH atau MEDIUM saja. Jika tidak yakin, KOSONGKAN array scalpingOpportunities.
 7. Field \`poc\` (Volume Point of Control) menunjukkan level harga dengan volume terbanyak. Jika harga > POC, itu adalah support kuat. Jika harga < POC, itu adalah resistance. Gunakan ini sebagai referensi support/resistance di analisis Anda.
-8. DRAWDOWN PROTECTION: Jika pada evaluasi sebelumnya Win Rate < 40% atau LOSS > 2, maka hanya boleh mengeluarkan MAKSIMAL 1 sinyal scalping (Mode Konservatif).
+8. DRAWDOWN PROTECTION: Jika pada evaluasi sebelumnya Win Rate < 40% atau LOSS > 2, maka hanya boleh mengeluarkan MAKSIMAL 1 analisis probabilitas momentum (Mode Konservatif).
 
 Output Anda WAJIB berupa JSON rapi tanpa markdown block (seperti \`\`\`json):
 {
-  "title": "Judul laporan (misal: Rekap Pasar & Sinyal Trading)",
+  "title": "Judul laporan (misal: Rekap Pasar & Analisis Tren)",
   "sentiment": "BULLISH / BEARISH / NEUTRAL",
   "marketRegime": "Fase pasar (Bullish Trend / Bearish Trend / Choppy / High Volatility)",
   "macroInsight": "Analisis mendalam (2-3 kalimat): Apakah ini fase akumulasi/distribusi? Apa sentimen institusional dari berita/F&G?",
@@ -230,7 +230,7 @@ Output Anda WAJIB berupa JSON rapi tanpa markdown block (seperti \`\`\`json):
   "summary": "Ringkasan komprehensif (markdown) mencakup: Kondisi makro, analisis tren BTC, dan dampaknya ke altcoin.",
   "projection": "Proyeksi 4 jam ke depan (markdown)",
   "accuracyScore": "Tingkat akurasi dari tebakan sebelumnya (0-100), atau null jika belum ada data sebelumnya",
-  "selfCorrection": "Format WAJIB: '[BENAR/SALAH] untuk [SYMBOL] karena [ALASAN TEKNIKAL SPESIFIK]'. Contoh: 'BENAR untuk BTCUSDT — bounced dari EMA50 seperti diprediksi. SALAH untuk ETHUSDT — dump tak terduga akibat berita FED hawkish 2 jam setelah sinyal.' Jika tidak ada data sebelumnya, isi: null.",
+  "selfCorrection": "Format WAJIB: '[BENAR/SALAH] untuk [SYMBOL] karena [ALASAN TEKNIKAL SPESIFIK]'. Contoh: 'BENAR untuk BTCUSDT — bounced dari EMA50 seperti diprediksi. SALAH untuk ETHUSDT — dump tak terduga akibat berita FED hawkish 2 jam setelah analisis.' Jika tidak ada data sebelumnya, isi: null.",
   "btcDominance": "Persentase dominasi BTC terkini, misal: '55.2%'",
   "globalMarketCap": "Global Market Cap kripto, misal: '$2.1T'",
   "fearGreedTrend": "Tren Fear & Greed 7 hari terakhir (meningkat/menurun/stabil)",
@@ -243,7 +243,7 @@ Output Anda WAJIB berupa JSON rapi tanpa markdown block (seperti \`\`\`json):
      {
        "symbol": "BTCUSDT",
        "analysis": "Analisis singkat & teknikal",
-       "recommendation": "HOLD/BUY/SELL",
+       "recommendation": "Bullish Bias / Bearish Bias / Neutral Bias",
        "supportLevel": "Angka spesifik atau range",
        "resistanceLevel": "Angka spesifik",
        "stopLossPrice": 64000.5,
@@ -327,7 +327,7 @@ Data Altcoin Volatil (Kandidat Scalping, Candlestick 15-Menit Terakhir):
 ${JSON.stringify(safeScalpingCandidates, null, 2)}
 
 Proyeksi Anda Sebelumnya (Untuk Evaluasi Akurasi, bandingkan dengan harga terkini!):
-${previousReport ? JSON.stringify(previousReport.projection) + "\\nSinyal Koin Sebelumnya: " + JSON.stringify(previousReport.coinsAnalysis) : "Tidak ada data sebelumnya."}
+${previousReport ? JSON.stringify(previousReport.projection) + "\\nAnalisis Koin Sebelumnya: " + JSON.stringify(previousReport.coinsAnalysis) : "Tidak ada data sebelumnya."}
 
 PENTING: Untuk 'scalpingOpportunities', WAJIB perhatikan 'setupDirection' dari Data Koin. Jika 'SHORT', maka TargetPrice HARUS LEBIH KECIL dari EntryPrice, dan StopLoss HARUS LEBIH BESAR. 
 Gunakan nilai ATR (Average True Range) yang tersedia di data koin untuk menentukan jarak Stop Loss agar terhindar dari volatilitas liar (Whipsaw)!
@@ -480,7 +480,7 @@ ${JSON.stringify(safeScalpingCandidates, null, 2)}`;
               // 2. Simpan ke riwayat peringatan (Notification Center UI)
               const dirBadge = bestScalp.direction === "SHORT" ? "🔴 SHORT" : "🟢 LONG";
               await db.collection("cryptoAlerts").add({
-                 title: `Peluang Scalping [${dirBadge}]: ${bestScalp.symbol}`,
+                 title: `Peluang Volatilitas [${dirBadge}]: ${bestScalp.symbol}`,
                  body: `Target: ${bestScalp.targetPrice} | Stop Loss: ${bestScalp.stopLossPrice}\n${bestScalp.momentum}`,
                  symbol: bestScalp.symbol,
                  direction: bestScalp.direction || "LONG",
@@ -504,7 +504,7 @@ ${JSON.stringify(safeScalpingCandidates, null, 2)}`;
                  await admin.messaging().sendEachForMulticast({
                     tokens: tokens,
                     notification: {
-                       title: `🚨 Peluang Scalping [${dirBadge}]: ${bestScalp.symbol}`,
+                       title: `🚨 Peluang Volatilitas [${dirBadge}]: ${bestScalp.symbol}`,
                        body: `Target: ${bestScalp.targetPrice} | Stop Loss: ${bestScalp.stopLossPrice}\n${bestScalp.momentum}`
                     }
                  });
@@ -524,7 +524,7 @@ ${JSON.stringify(safeScalpingCandidates, null, 2)}`;
               for (const chatId of telegramChats) {
                  for (const bestScalp of parsed.scalpingOpportunities) {
                     const dirBadge = bestScalp.direction === "SHORT" ? "🔴 SHORT" : "🟢 LONG";
-                    const msg = `🚨 *NEW SCALPING SIGNAL* 🚨\n\n${dirBadge}: *${bestScalp.symbol}*\nEntry: ${bestScalp.entryPrice}\nTarget: ${bestScalp.targetPrice}\nSL: ${bestScalp.stopLossPrice}\n\n_Analisis:_ ${bestScalp.momentum}`;
+                    const msg = `🚨 *NEW VOLATILITY SCAN* 🚨\n\n${dirBadge}: *${bestScalp.symbol}*\nEntry: ${bestScalp.entryPrice}\nTarget: ${bestScalp.targetPrice}\nSL: ${bestScalp.stopLossPrice}\n\n_Analisis:_ ${bestScalp.momentum}`;
                     await axios.post(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
                        chat_id: chatId,
                        text: msg,

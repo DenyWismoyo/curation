@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, ArrowLeft, Zap, Target, ShieldAlert, ChevronRight, Activity, BarChart3, Clock, AlertTriangle } from "lucide-react";
 import { PremiumLockedWrapper } from "@/components/crypto/PremiumLockedWrapper";
+import CryptoDisclaimer from "@/components/shared/CryptoDisclaimer";
 
 export default function ScalpingRadarPage() {
   const router = useRouter();
@@ -105,7 +106,7 @@ export default function ScalpingRadarPage() {
   }
 
   if (!latestReport) {
-    return <div className="p-8 text-center bg-slate-950 min-h-screen text-white">Belum ada data Scalping Radar.</div>;
+    return <div className="p-8 text-center bg-slate-950 min-h-screen text-white">Belum ada data Volatility Scanner.</div>;
   }
 
   const scalpingData = latestReport.rawScalpingData || [];
@@ -116,8 +117,8 @@ export default function ScalpingRadarPage() {
   return (
     <PremiumLockedWrapper 
       hasAccess={hasAccess} 
-      title="Scalping Radar" 
-      description="Rekomendasi teknikal harian dan deteksi aset kripto potensial. Eksklusif untuk pengguna Premium."
+      title="Volatility Scanner" 
+      description="Analisis momentum harian dan deteksi volatilitas aset kripto potensial. Eksklusif untuk pengguna Premium."
     >
       <div className="w-full relative min-h-screen bg-slate-950">
       
@@ -131,9 +132,9 @@ export default function ScalpingRadarPage() {
              <div>
                 <div className="flex items-center gap-2">
                    <Zap className="w-5 h-5 text-orange-500 fill-orange-500" />
-                   <h1 className="font-black text-xl text-white tracking-tight">Scalping Command Center</h1>
+                   <h1 className="font-black text-xl text-white tracking-tight">Volatility Command Center</h1>
                 </div>
-                <p className="text-xs font-medium text-slate-500">Multi-Agent AI Vetted Signals</p>
+                <p className="text-xs font-medium text-slate-500">Multi-Agent AI Vetted Analysis</p>
              </div>
           </div>
           <div className="text-right flex flex-col items-end gap-2">
@@ -173,10 +174,10 @@ export default function ScalpingRadarPage() {
                 HIGH CONVICTION SETUPS
              </Badge>
              <h2 className="text-3xl md:text-5xl font-black text-white leading-tight mb-4 tracking-tight">
-               AI-Verified <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-rose-500">Scalping Radar</span>
+               AI-Verified <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-rose-500">Volatility Scanner</span>
              </h2>
              <p className="text-slate-400 max-w-2xl text-lg leading-relaxed mb-8">
-               Sinyal di bawah ini telah melewati penjurian matematika ketat (Screener 3.0) dan divalidasi silang oleh Agen Risiko AI terhadap berita makro terbaru.
+               Data scan di bawah ini telah melewati penjurian matematika ketat (Screener 3.0) dan divalidasi silang oleh Agen Risiko AI terhadap kondisi makro terbaru.
              </p>
              
              <div className="flex flex-wrap items-center gap-4">
@@ -310,6 +311,7 @@ export default function ScalpingRadarPage() {
              ))
            )}
          </div>
+         <CryptoDisclaimer />
       </div>
     </div>
     </PremiumLockedWrapper>

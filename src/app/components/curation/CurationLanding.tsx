@@ -219,7 +219,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
       onLogin();
       return;
     }
-    router.push('/premium');
+    router.push('/crypto');
   };
 
   const handleStartStudy = () => {

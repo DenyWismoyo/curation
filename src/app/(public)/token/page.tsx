@@ -81,7 +81,7 @@ export default function TokenPage() {
       }
 
       // Redirect ke halaman asesmen
-      router.push('/assessment');
+      router.push('/assessment/select');
 
     } catch (error) {
       console.error("Error validating token:", error);

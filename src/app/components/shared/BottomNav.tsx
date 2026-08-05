@@ -46,7 +46,7 @@ export function BottomNav() {
   const [drawerOpen, setDrawerOpen] = useState(false)
 
   // Sembunyikan di halaman admin / assessor / curator / crypto-report / premium
-  const hiddenRoutes = ['/admin', '/assessor', '/curator', '/crypto-report', '/premium']
+  const hiddenRoutes = ['/admin', '/assessor', '/curator', '/crypto-report', '/crypto']
   const shouldHide = hiddenRoutes.some((r) => pathname?.startsWith(r))
 
   const { pendingAssessmentsCount: pendingAssessments, unreadCount } = useUserActivity()
@@ -56,7 +56,9 @@ export function BottomNav() {
     setDrawerOpen(false)
   }, [pathname])
 
-  if (shouldHide) return null
+  // Hide on Landing Hub which has its own standalone design
+  const isLandingHub = pathname === '/'
+  if (shouldHide || isLandingHub) return null
 
   const navItems: NavItem[] = [
     {

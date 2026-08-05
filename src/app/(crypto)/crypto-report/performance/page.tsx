@@ -120,9 +120,9 @@ export default function CryptoPerformancePage() {
         </Button>
         <div>
           <h1 className="text-3xl font-black text-slate-800 text-slate-100 flex items-center gap-3">
-            <Activity className="w-8 h-8 text-indigo-500" /> Scalping Analytics
+            <Activity className="w-8 h-8 text-indigo-500" /> Volatility Analytics
           </h1>
-          <p className="text-slate-500 font-medium mt-1">Dashboard evaluasi akurasi sinyal AI Screener</p>
+          <p className="text-slate-500 font-medium mt-1">Dashboard evaluasi akurasi analisis probabilitas momentum AI</p>
         </div>
       </div>
 
@@ -139,7 +139,7 @@ export default function CryptoPerformancePage() {
             <div className="flex items-center gap-2 text-emerald-400 font-bold mb-2">
                <Target className="w-5 h-5" /> Total WIN
             </div>
-            <div className="text-4xl font-black text-slate-800 text-slate-100">{globalStats.totalWins} <span className="text-lg text-slate-400 font-medium">sinyal</span></div>
+            <div className="text-4xl font-black text-slate-800 text-slate-100">{globalStats.totalWins} <span className="text-lg text-slate-400 font-medium">analisis</span></div>
           </CardContent>
         </Card>
 
@@ -148,7 +148,7 @@ export default function CryptoPerformancePage() {
             <div className="flex items-center gap-2 text-rose-400 font-bold mb-2">
                <ShieldAlert className="w-5 h-5" /> Total LOSS
             </div>
-            <div className="text-4xl font-black text-slate-800 text-slate-100">{globalStats.totalLosses} <span className="text-lg text-slate-400 font-medium">sinyal</span></div>
+            <div className="text-4xl font-black text-slate-800 text-slate-100">{globalStats.totalLosses} <span className="text-lg text-slate-400 font-medium">analisis</span></div>
           </CardContent>
         </Card>
       </div>
@@ -178,7 +178,7 @@ export default function CryptoPerformancePage() {
 
       <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-bold flex items-center gap-2 text-white">
-            <TrendingUp className="w-5 h-5 text-indigo-500" /> Riwayat Sinyal Terakhir
+            <TrendingUp className="w-5 h-5 text-indigo-500" /> Riwayat Analisis Terakhir
           </h2>
           <div className="flex gap-2">
               <Button size="sm" variant={filter === "ALL" ? "default" : "outline"} onClick={() => setFilter("ALL")}>Semua</Button>
@@ -190,7 +190,7 @@ export default function CryptoPerformancePage() {
 
       {history.length === 0 ? (
          <div className="text-center py-20 bg-slate-800/50 rounded-2xl border border-dashed border-slate-800 text-slate-500">
-            Belum ada riwayat evaluasi sinyal.
+            Belum ada riwayat evaluasi analisis.
          </div>
       ) : (
          <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-sm">

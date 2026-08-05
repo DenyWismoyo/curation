@@ -331,16 +331,21 @@ export const mayarWebhook = onRequest({
       return;
     }
 
-    const currentStatus = String(mayarTx.status || payload.status || "").toUpperCase();
+    const currentStatus = String(mayarTx.status || "").toUpperCase();
     const transactionStatus = String(mayarTx.transactionStatus || "").toUpperCase();
+    const eventType = String(payload.event || "").toLowerCase();
 
     const isPaymentSuccess =
       ['SUCCESS', 'SETTLED', 'PAID', 'COMPLETED'].includes(currentStatus) ||
       ['PAID', 'SETTLED', 'SUCCESS'].includes(transactionStatus);
 
-    if (!isPaymentSuccess) {
+    // PENAMBALAN BUG KRITIS: Pastikan eventType mencerminkan keberhasilan pembayaran (bukan sekadar pembuatan link)
+    // Jika Mayar tidak mengirim eventType, kita fallback ke isPaymentSuccess
+    const isSuccessEvent = !eventType || eventType.includes('success') || eventType.includes('paid') || eventType.includes('settled') || eventType.includes('completed');
+
+    if (!isPaymentSuccess || !isSuccessEvent) {
       // Bukan event sukses, log dan abaikan tanpa error
-      console.log(`[WEBHOOK] Event diabaikan. Status: ${currentStatus} / ${transactionStatus}`);
+      console.log(`[WEBHOOK] Event diabaikan. Status: ${currentStatus} / ${transactionStatus} | Event: ${eventType}`);
       res.status(200).send({ status: "ignored", message: "Non-payment event received" });
       return;
     }
@@ -416,10 +421,18 @@ export const mayarWebhook = onRequest({
             hasPaidForPremiumConsultation: true
           });
 
-        } else if (freshTxData.packageId === 'CRYPTO_PREMIUM_MONTHLY') {
-          // Berikan akses Premium dengan masa aktif 30 hari (1 bulan)
+        } else if (
+          freshTxData.packageId === 'CRYPTO_PREMIUM_MONTHLY' || 
+          freshTxData.packageId === 'CRYPTO_PREMIUM_QUARTERLY' || 
+          freshTxData.packageId === 'CRYPTO_PREMIUM_YEARLY'
+        ) {
+          // Tentukan durasi berdasarkan packageId
+          let daysToAdd = 30; // Default 1 Bulan
+          if (freshTxData.packageId === 'CRYPTO_PREMIUM_QUARTERLY') daysToAdd = 90;
+          if (freshTxData.packageId === 'CRYPTO_PREMIUM_YEARLY') daysToAdd = 365;
+
           const validUntil = new Date();
-          validUntil.setDate(validUntil.getDate() + 30);
+          validUntil.setDate(validUntil.getDate() + daysToAdd);
           
           const userRef = db.collection("users").doc(freshTxData.userId);
           trx.set(userRef, {
@@ -427,7 +440,7 @@ export const mayarWebhook = onRequest({
             premiumValidUntil: validUntil.toISOString()
           }, { merge: true });
 
-          console.log(`[WEBHOOK] ✅ Akses Premium diberikan ke user ${freshTxData.userId} hingga ${validUntil.toISOString()}`);
+          console.log(`[WEBHOOK] ✅ Akses Premium diberikan ke user ${freshTxData.userId} hingga ${validUntil.toISOString()} (${daysToAdd} hari)`);
           
         } else if (freshTxData.packageId) {
           // Paket modul individual — grant token B2C

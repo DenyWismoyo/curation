@@ -12,6 +12,7 @@ import { Loader2, ArrowLeft, Target, ShieldAlert, Clock, TrendingUp, Zap, Histor
 import CryptoCandlestick from "@/components/crypto/CryptoCandlestick";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+import CryptoDisclaimer from "@/components/shared/CryptoDisclaimer";
 
 export default function CoinHistoryPage() {
   const { user, role, loading: authLoading } = useAuth();
@@ -135,7 +136,7 @@ export default function CoinHistoryPage() {
                  Riwayat Aset: <span className="text-indigo-400">{symbol}</span>
                </h1>
                <p className="text-muted-foreground text-sm md:text-base mt-1">
-                 Jejak rekam analisis dan sinyal trading dari Hedge Fund Copilot untuk koin ini.
+                 Jejak rekam analisis dari Hedge Fund Copilot untuk koin ini.
                </p>
              </div>
           </div>
@@ -196,7 +197,7 @@ export default function CoinHistoryPage() {
                          <div className="relative z-10">
                             <div className="flex flex-wrap items-center gap-3 mb-2">
                                <Badge variant="outline" className={`text-[10px] uppercase font-black tracking-widest ${badgeColor} shadow-sm`}>
-                                 {isScalp ? "SCALPING RADAR" : item.data.recommendation || "ANALYSIS"}
+                                 {isScalp ? "VOLATILITY SCANNER" : item.data.recommendation || "ANALYSIS"}
                                </Badge>
                                <span className="text-xs text-slate-500 text-slate-400 font-medium flex items-center gap-1.5 bg-slate-900/60 px-2 py-0.5 rounded-full border border-slate-800/50 shadow-sm">
                                   <Clock className="w-3 h-3" />
@@ -260,6 +261,7 @@ export default function CoinHistoryPage() {
              })}
            </div>
         )}
+        <CryptoDisclaimer />
       </div>
     </div>
   );

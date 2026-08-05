@@ -628,12 +628,12 @@ service cloud.firestore {
     
     // ATURAN BARU UNTUK CRYPTO REPORTS & ALERTS
     match /cryptoReports/{document=**} {
-      allow read: if false; // Akses via API Route backend
+      allow read: if isAuthenticated(); // Allowed for all authenticated users to read (frontend filters premium)
       allow write: if false; // Hanya Cloud Functions (Backend) yang boleh menulis
     }
     
     match /cryptoNews/{document=**} {
-      allow read: if false; // Akses via API Route backend
+      allow read: if isAuthenticated(); 
       allow write: if false; 
     }
     
@@ -643,12 +643,12 @@ service cloud.firestore {
     }
 
     match /cryptoHiddenGems/{document=**} {
-      allow read: if false; // Akses via API Route backend
+      allow read: if isAuthenticated(); 
       allow write: if false; 
     }
     
     match /cryptoSmartMoney/{document=**} {
-      allow read: if false; // Akses via API Route backend
+      allow read: if isAuthenticated(); 
       allow write: if false;
     }
     
@@ -661,22 +661,22 @@ service cloud.firestore {
     }
     
     match /cryptoLiquidity/{document=**} {
-      allow read: if hasCryptoAccess();
+      allow read: if isAuthenticated();
       allow write: if false;
     }
     
     match /cryptoDangerZone/{document=**} {
-      allow read: if false; // Akses via API Route backend
+      allow read: if isAuthenticated(); 
       allow write: if false;
     }
     
     match /cryptoPerformanceMetrics/{document=**} {
-      allow read: if hasCryptoAccess();
+      allow read: if isAuthenticated();
       allow write: if false;
     }
     
     match /cryptoActiveTrades/{document=**} {
-      allow read: if hasCryptoAccess();
+      allow read: if isAuthenticated();
       allow write: if false;
     }
     

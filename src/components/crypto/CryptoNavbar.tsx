@@ -159,8 +159,8 @@ export function CryptoNavbar() {
             size="sm"
             asChild
             className="hidden sm:flex text-slate-400 hover:text-white hover:bg-white/10 font-bold"
-          >
-            <Link href="/dashboard"><ChevronLeft size={16} className="mr-1" /> Main App</Link>
+            >
+            <Link href="/crypto"><ChevronLeft size={16} className="mr-1" /> Main App</Link>
           </Button>
 
           {user ? (
@@ -244,7 +244,7 @@ export function CryptoNavbar() {
               <div className="h-px bg-white/10 my-4" />
               
               <Link
-                href="/dashboard"
+                href="/crypto"
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-bold text-slate-400 hover:bg-white/5 hover:text-white transition-all"
               >

@@ -374,7 +374,7 @@ export default function StudyWorkspacePage() {
           </div>
           <h1 className="text-3xl font-black text-slate-900 mt-4">Akses workspace studi belum aktif</h1>
           <p className="text-slate-600 font-medium mt-3 leading-relaxed mb-6">Fitur Study Analytics dan Knowledge Base ini eksklusif untuk pelanggan Premium. Dapatkan insight bisnis B2B mendalam dengan berlangganan sekarang.</p>
-          <Link href="/premium">
+          <Link href="/crypto">
             <button className="h-11 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-sm">
               Upgrade Premium
             </button>

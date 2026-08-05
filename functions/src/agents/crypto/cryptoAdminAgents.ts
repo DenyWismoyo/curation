@@ -69,22 +69,22 @@ ${JSON.stringify(safeScalpingCandidates, null, 2)}`;
 
     // AI 2: Executive Summary
     const agent2Prompt = `Anda adalah Konsultan Ahli dan Analis Keuangan Kripto Institusional.
-Tugas Anda merangkum sentimen pasar dan menyusun laporan Realtime Scalping.
+Tugas Anda merangkum sentimen pasar dan menyusun laporan Realtime Volatility Scanner.
 
 ALUR BERPIKIR WAJIB (CHAIN OF THOUGHT):
 1. Fase Makro: Evaluasi Fear & Greed (${fearGreedValue}), berita.
-2. Fase Seleksi: Cross-check rekomendasi scalping dari Quant AI dengan kondisi makro.
+2. Fase Seleksi: Cross-check hasil analisis probabilitas momentum dari Quant AI dengan kondisi makro.
 
-ATURAN KERAS UNTUK SCALPING OPPORTUNITIES:
+ATURAN KERAS UNTUK ANALISIS VOLATILITAS:
 1. Minimum Risk:Reward Ratio = 1:2.
 2. Stop Loss WAJIB berbasis ATR: SL = entryPrice ± (1.5 × ATR).
-3. JANGAN rekomendasikan LONG jika makro BEARISH.
+3. JANGAN keluarkan analisis LONG jika makro BEARISH.
 4. Entry price HARUS dekat dengan harga terkini.
-5. Maksimal 2 sinyal scalping.
+5. Maksimal 2 hasil scan probabilitas momentum jangka pendek.
 
 Output Anda WAJIB berupa JSON rapi tanpa markdown block:
 {
-  "title": "Realtime Radar Scalping",
+  "title": "Realtime Volatility Scanner",
   "sentiment": "BULLISH / BEARISH / NEUTRAL",
   "marketRegime": "Fase pasar (Bullish Trend / Bearish Trend / Choppy / High Volatility)",
   "macroInsight": "Analisis mendalam (2-3 kalimat)",
@@ -98,7 +98,7 @@ Output Anda WAJIB berupa JSON rapi tanpa markdown block:
       "entryPrice": "angka",
       "targetPrice": "angka",
       "stopLossPrice": "angka",
-      "leverage": "Rekomendasi leverage (Max 10x)",
+      "leverage": "Simulasi Parameter Risiko (Max 10x)",
       "confidenceScore": "HIGH / MEDIUM",
       "momentum": "Alasan singkat mengapa masuk sekarang"
     }
@@ -106,7 +106,7 @@ Output Anda WAJIB berupa JSON rapi tanpa markdown block:
 }
 
 Data Berita: ${JSON.stringify(latestNews)}
-Draft Scalping dari Agent 1:
+Draft Analisis dari Agent 1:
 ${JSON.stringify(draftScalping.draftScalpingOpportunities)}
 
 Data Harga Terkini (PENTING untuk Entry Price):
@@ -236,7 +236,7 @@ export const generateRealtimeHiddenGem = onCall({
     const deepseekClient = new OpenAI({ baseURL: 'https://api.deepseek.com', apiKey: apiKey });
 
     const prompt = `Anda adalah "Hedge Fund AI Analyst" yang mencari "Hidden Gem".
-KONTEKS MAKRO: Tren BTC 7 Hari Terakhir: ${btcMacroTrend} (${btcChangePct}). PERINGATAN: Jika Tren BTC BEARISH, rekomendasi harus sangat konservatif.
+KONTEKS MAKRO: Tren BTC 7 Hari Terakhir: ${btcMacroTrend} (${btcChangePct}). PERINGATAN: Jika Tren BTC BEARISH, analisis harus sangat konservatif.
 Kandidat Oversold:
 ${JSON.stringify(oversoldCandidates, null, 2)}
 

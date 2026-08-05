@@ -158,7 +158,7 @@ Tren BTC dalam 7 Hari Terakhir: ${btcMacroTrend} (${btcChangePct})
 Kondisi Makro & Naratif:
 ${newsContext}
 
-PERINGATAN: Jika Tren BTC sedang BEARISH, sangat berbahaya untuk mencari reversal pada altcoin. Rekomendasi Anda harus sangat konservatif jika makro sedang buruk.
+PERINGATAN: Jika Tren BTC sedang BEARISH, sangat berbahaya untuk mencari reversal pada altcoin. Analisis Anda harus sangat konservatif jika makro sedang buruk.
 Gunakan BERITA PASAR di atas sebagai SATU-SATUNYA referensi fundamental (katalis). Jangan mengarang partnership atau event yang tidak ada di berita tersebut.
 
 Berikut adalah daftar koin kripto yang saat ini berada di area jenuh jual (Oversold) berdasarkan RSI (Relative Strength Index) harian dan 4 jam:
@@ -171,7 +171,7 @@ TUGAS ANDA:
 4. Berikan alasan tajam bergaya hedge fund, sebutkan katalisnya secara spesifik.
 5. Tentukan target reversal (harga Take Profit medium-term) dan area invalidasi (Stop Loss) yang rasional berdasarkan kondisi harganya saat ini.
 
-PEDOMAN TARGET PRICE: targetPrice adalah level target pembalikan dalam rentang 3-7 hari trading ke depan (bukan scalping intraday, bukan hold bulanan). Tentukan berdasarkan level resistance terdekat yang signifikan di chart harian.
+PEDOMAN TARGET PRICE: targetPrice adalah proyeksi target pembalikan dalam rentang 3-7 hari ke depan (bukan target instan intraday). Tentukan berdasarkan level resistance terdekat yang signifikan di chart harian.
 PEDOMAN VOLUME: Field "volumeSpikeRatio" menunjukkan volume 4H terkini vs rata-rata 7 hari. Nilai >1.5 mengindikasikan minat beli genuine (reversal lebih meyakinkan). Nilai <0.8 adalah tanda "dead cat bounce" — HINDARI koin ini walau RSI-nya oversold.
 
 ATURAN KERAS (TIDAK BOLEH DILANGGAR):

@@ -44,7 +44,7 @@ export function PremiumLockedScreen({
         
         <div className="space-y-3">
           <Button 
-            onClick={() => router.push('/premium')} 
+            onClick={() => router.push('/crypto')} 
             className="w-full h-12 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(79,70,229,0.2)] transition-all"
           >
             Lihat Penawaran Premium

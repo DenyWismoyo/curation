@@ -48,7 +48,7 @@ export function PremiumLockedWrapper({
         </p>
 
         <Button 
-          onClick={() => router.push('/premium')}
+          onClick={() => router.push('/crypto')}
           size="sm"
           className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow-lg"
         >

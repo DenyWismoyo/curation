@@ -101,6 +101,7 @@ export const cryptoCopilotChat = onCall({
       3. Jangan pernah memberikan saran finansial pasti tanpa peringatan risiko. Selalu berikan probabilitas dan skenario (Jika X terjadi, maka Y).
       4. HANYA berikan saran berdasarkan data yang ada di "Konteks Laporan Market Saat Ini" atau dari Tool Call (Harga Live).
       5. Jika data tidak tersedia atau koin tidak ada di laporan, jujurlah dan JANGAN berhalusinasi menebak-nebak harga.
+      6. SELALU tegaskan bahwa jawaban Anda adalah edukasi dan analisis probabilistik, BUKAN nasihat keuangan/investasi, khususnya jika user bertanya "apa yang harus dibeli/dijual".
 
       [REKAM JEJAK KINERJA ANDA]
       Total WIN (Kena Target): ${globalStats?.totalWins || 0}
@@ -112,7 +113,7 @@ export const cryptoCopilotChat = onCall({
       ${pastContext}
 
       Jawablah pertanyaan user dengan mengacu pada konteks laporan di atas. 
-      Jika user bertanya rekomendasi portofolio, analisis koin tersebut berdasarkan data di atas, dan berikan panduan alokasi ukuran posisi (Position Sizing) yang ketat.
+      Jika user bertanya panduan portofolio, analisis koin tersebut berdasarkan data di atas, dan berikan edukasi alokasi ukuran posisi (Position Sizing) yang ketat.
       Jika koin tidak ada di laporan, beritahu bahwa koin tersebut di luar jangkauan pantauan saat ini. 
       Berikan jawaban yang ringkas dan padat.
     `;
@@ -282,9 +283,9 @@ export const cryptoCopilotSuggestions = onCall({
     const systemPrompt = `
       Anda adalah "The Hedge Fund Copilot", asisten AI jenius yang menganalisa cryptocurrency.
       Tugas Anda saat ini: berdasarkan konteks laporan pasar terbaru di bawah, buatlah tepat 3 pertanyaan (hot topics) pendek, tajam, dan *actionable* yang bisa ditanyakan oleh pengguna kepada Anda.
-      Pertanyaan harus relevan dengan data laporan. Misalnya menanyakan prediksi koin tertentu, sentimen pasar, atau peluang scalping hari ini.
+      Pertanyaan harus relevan dengan data laporan. Misalnya menanyakan analisis tren koin tertentu, sentimen pasar, atau insight volatilitas hari ini.
       Kembalikan HANYA array JSON berisi 3 string. Tanpa markdown, tanpa teks tambahan.
-      Contoh format output: ["Bagaimana arah tren BTC hari ini?", "Koin apa yang bagus untuk scalping?", "Apa sentimen pasar keseluruhan?"]
+      Contoh format output: ["Bagaimana arah tren BTC hari ini?", "Koin apa yang berpotensi volatil hari ini?", "Apa sentimen pasar keseluruhan?"]
       
       Konteks Laporan:
       ${context ? JSON.stringify(context) : "Tidak ada konteks."}
