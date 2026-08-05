@@ -444,3 +444,83 @@ export const approveStudyOutline = onCall({
 
   return { success: true };
 });
+
+const publishStudyToCryptoAcademySchema = z.object({
+  projectId: z.string().trim().min(1).max(128),
+  level: z.string().trim().min(1).max(128),
+  assessmentTemplateId: z.string().trim().max(128).optional(),
+});
+
+export const publishStudyToCryptoAcademy = onCall({
+  region: "asia-southeast2",
+  memory: "256MiB",
+  cors: true,
+}, async (request) => {
+  if (!request.auth) {
+    throw new HttpsError("unauthenticated", "Anda harus login.");
+  }
+
+  const parsed = publishStudyToCryptoAcademySchema.safeParse(request.data || {});
+  if (!parsed.success) {
+    throw new HttpsError("invalid-argument", "Payload persetujuan publikasi tidak valid.");
+  }
+
+  const uid = request.auth.uid;
+  const email = normalizeEmail(request.auth.token.email);
+  const { projectRef, projectData } = await assertStudyOperator(uid, email, parsed.data.projectId);
+  
+  if (!projectRef || !projectData) {
+    throw new HttpsError("not-found", "Project kajian tidak ditemukan.");
+  }
+
+  if (projectData.status !== "READY_FOR_REVIEW" && projectData.status !== "COMPLETED") {
+    throw new HttpsError("failed-precondition", "Project harus berstatus READY_FOR_REVIEW atau COMPLETED.");
+  }
+
+  const chaptersSnap = await projectRef.collection("chapters").orderBy("order", "asc").get();
+  if (chaptersSnap.empty) {
+    throw new HttpsError("failed-precondition", "Project tidak memiliki bab untuk dipublikasikan.");
+  }
+
+  const db = getDb();
+  const batch = db.batch();
+  const now = admin.firestore.FieldValue.serverTimestamp();
+
+  let order = 1;
+  for (const doc of chaptersSnap.docs) {
+    const chapterData = doc.data();
+    // Gunakan revisedContent jika ada, jika tidak gunakan content biasa. Jika kosong gunakan string kosong.
+    const content = chapterData.revisedContent || chapterData.content || ""; 
+    const moduleRef = db.collection("cryptoEducation").doc();
+    
+    batch.set(moduleRef, {
+      moduleId: moduleRef.id,
+      studyProjectId: parsed.data.projectId,
+      studyChapterId: doc.id,
+      level: parsed.data.level,
+      moduleOrder: order,
+      title: chapterData.title || `Modul ${order}`,
+      content: content,
+      assessmentTemplateId: parsed.data.assessmentTemplateId || null,
+      publishedAt: now,
+      publishedByUid: uid,
+    });
+    order++;
+  }
+
+  // Tambahkan audit log
+  batch.set(projectRef.collection("audits").doc(), {
+    action: "published_to_crypto_academy",
+    actorUid: uid,
+    actorEmail: email,
+    createdAt: now,
+    details: {
+      level: parsed.data.level,
+      modulesCount: chaptersSnap.size,
+    }
+  });
+
+  await batch.commit();
+
+  return { success: true, publishedModulesCount: chaptersSnap.size };
+});

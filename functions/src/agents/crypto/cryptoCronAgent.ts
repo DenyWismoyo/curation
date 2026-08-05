@@ -289,11 +289,23 @@ Output Anda WAJIB berupa JSON rapi tanpa markdown block (seperti \`\`\`json):
   ] // HANYA diisi jika siklus bulanan, jika tidak biarkan array kosong []
 }`;
 
+    let learningMemories = "";
+    try {
+       const memSnap = await db.collection("cryptoLearningMemory").orderBy("createdAt", "desc").limit(3).get();
+       const memories: string[] = [];
+       memSnap.forEach(d => memories.push(d.data().correction));
+       if (memories.length > 0) {
+          learningMemories = `\nPELAJARAN DARI KESALAHAN MASA LALU (WAJIB DIINGAT & JANGAN DIULANGI):\n` + memories.map(m => `- ${m}`).join("\n") + "\n";
+       }
+    } catch (e) {
+       console.log("No learning memory found");
+    }
+
     const userPrompt = `
 Konteks Waktu Saat Ini: ${date.toISOString()}
 Siklus Harian?: ${isDaily ? "YA (Isi field daily)" : "TIDAK"}
 Siklus Mingguan?: ${isWeekly ? "YA (Isi field weekly dan weeklyWatchlist, lihat data mingguan!)" : "TIDAK"}
-
+${learningMemories}
 ${previousScalpingStatus ? previousScalpingStatus : "Tidak ada data scalping sebelumnya untuk dievaluasi."}
 
 Berita Fundamental:
@@ -458,6 +470,18 @@ ${JSON.stringify(safeScalpingCandidates, null, 2)}`;
         rawMonthlyData: monthlyMarketData || null,
         rawFundamental: { fearAndGreed, globalMarket, latestNews, stablecoinGrowth, dexVolumeGrowth, macroCalendar }
       });
+
+      // Self-Improving Loop: Simpan insight selfCorrection ke memori jangka panjang
+      if (parsed.selfCorrection && parsed.selfCorrection !== "null" && typeof parsed.selfCorrection === "string") {
+         try {
+            await db.collection("cryptoLearningMemory").add({
+               correction: parsed.selfCorrection,
+               createdAt: admin.firestore.FieldValue.serverTimestamp()
+            });
+         } catch (e) {
+            console.error("Failed to save learning memory", e);
+         }
+      }
       
       // Simpan Riwayat Peringatan & Kirim Push Notification ke Admin
       if (parsed.scalpingOpportunities && parsed.scalpingOpportunities.length > 0) {
@@ -536,6 +560,27 @@ ${JSON.stringify(safeScalpingCandidates, null, 2)}`;
         } catch (tgErr) {
            console.error("Failed to send Telegram Broadcast:", tgErr);
         }
+      }
+
+      // 5. Telegram Daily Digest Broadcast (independent of scalping opportunities)
+      if (isDaily && parsed.dailyRecap && parsed.dailyProjection) {
+         try {
+            const telegramToken = process.env.TELEGRAM_BOT_TOKEN;
+            const telegramChats = (process.env.TELEGRAM_AUTHORIZED_CHATS || "").split(",").filter((c: string) => c.trim() !== "");
+            
+            if (telegramToken && telegramChats.length > 0) {
+               for (const chatId of telegramChats) {
+                  const digestMsg = `🌅 *DAILY CRYPTO DIGEST* 🌅\n\n*Recap 24 Jam:*\n${parsed.dailyRecap}\n\n*Proyeksi Hari Ini:*\n${parsed.dailyProjection}\n\n_(Gunakan /laporan untuk melihat detail 4 Jam ke depan)_`;
+                  await axios.post(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
+                     chat_id: chatId,
+                     text: digestMsg,
+                     parse_mode: "Markdown"
+                  }).catch(e => console.error(`Telegram Daily Digest send error to ${chatId}:`, e.message));
+               }
+            }
+         } catch (tgErr) {
+            console.error("Failed to send Telegram Daily Digest Broadcast:", tgErr);
+         }
       }
 
       console.log("cryptoCronAgent finished successfully.");

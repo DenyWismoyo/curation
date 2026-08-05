@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import ReactMarkdown from "react-markdown";
-import { Loader2, Activity, Bot, TrendingUp, Zap, Calendar, Clock, Target, ShieldAlert, BarChart3, LineChart, Anchor, Bell, BellRing, Globe, Sunrise, RotateCcw, Sun, CalendarDays, Diamond, Eye, Radar, Flame, Menu, Lock } from "lucide-react";
+import { Loader2, Activity, Bot, TrendingUp, Zap, Calendar, Clock, Target, ShieldAlert, BarChart3, LineChart, Anchor, Bell, BellRing, Globe, Sunrise, RotateCcw, Sun, CalendarDays, Diamond, Eye, Radar, Flame, Menu, Lock, GraduationCap, ChevronRight } from "lucide-react";
 import CryptoChat from "@/components/crypto/CryptoChat";
 import CryptoCandlestick from "@/components/crypto/CryptoCandlestick";
 import CryptoLiveTicker from "@/components/crypto/CryptoLiveTicker";
@@ -214,6 +214,36 @@ export default function CryptoReportPage() {
             <MarketHeatmapWidget 
                marketData={reports[0]?.rawScalpingData} 
             />
+
+            {/* CRYPTO ACADEMY BANNER */}
+            <Link href="/crypto-academy">
+              <div className="group relative overflow-hidden bg-gradient-to-r from-indigo-900/80 to-purple-900/80 border border-indigo-500/30 rounded-2xl p-6 sm:p-8 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:shadow-[0_0_30px_rgba(99,102,241,0.15)] transition-all">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/10 blur-[50px] group-hover:bg-purple-500/20 transition-all pointer-events-none"></div>
+                
+                <div className="flex items-center gap-5 relative z-10">
+                  <div className="w-14 h-14 bg-indigo-500/20 border border-indigo-500/30 rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-indigo-900/20 group-hover:scale-105 transition-transform">
+                    <GraduationCap className="w-7 h-7 text-indigo-400" />
+                  </div>
+                  <div>
+                    <div className="inline-flex items-center gap-2 rounded-full bg-indigo-500/20 px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-indigo-300 mb-2 border border-indigo-500/20">
+                      Baru
+                    </div>
+                    <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight mb-1">
+                      Crypto Academy
+                    </h3>
+                    <p className="text-sm text-indigo-200 font-medium">
+                      Pelajari fundamental kripto, analisis teknikal, dan SMC.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="relative z-10 shrink-0 w-full sm:w-auto">
+                  <Button className="w-full sm:w-auto bg-white hover:bg-slate-100 text-indigo-900 font-bold border-0 shadow-xl group-hover:shadow-indigo-500/25 transition-all">
+                    Mulai Belajar <ChevronRight className="w-4 h-4 ml-1" />
+                  </Button>
+                </div>
+              </div>
+            </Link>
 
             {/* QUICK INTELLIGENCE CARDS */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 mt-4">

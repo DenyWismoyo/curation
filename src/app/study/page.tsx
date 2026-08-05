@@ -75,6 +75,10 @@ export default function StudyWorkspacePage() {
   const [sources, setSources] = useState<any[]>([]);
   const [driveUrl, setDriveUrl] = useState('');
   const [importingDrive, setImportingDrive] = useState(false);
+  
+  const [publishingToAcademy, setPublishingToAcademy] = useState(false);
+  const [academyLevel, setAcademyLevel] = useState('Level 1: Pemula');
+  const [academyAssessmentId, setAcademyAssessmentId] = useState('');
 
   const hasStudyAccess = (role ? ALLOWED_ROLES.has(role) : false) || isPremium;
   const canManageProjects = role ? MANAGER_ROLES.has(role) : false;
@@ -317,6 +321,27 @@ export default function StudyWorkspacePage() {
       setError(getErrorMessage(err, 'Gagal menyetujui outline.'));
     } finally {
       setApprovingOutline(false);
+    }
+  };
+
+  const handlePublishToAcademy = async () => {
+    if (!selectedProjectId) return;
+    setError('');
+    setPublishingToAcademy(true);
+
+    try {
+      const callable = httpsCallable(functions, 'publishStudyToCryptoAcademy');
+      await callable({ 
+        projectId: selectedProjectId,
+        level: academyLevel,
+        assessmentTemplateId: academyAssessmentId || undefined,
+      });
+      alert('Berhasil mempublikasikan ke Crypto Academy!');
+    } catch (err: unknown) {
+      console.error('Gagal mempublikasikan:', err);
+      setError(getErrorMessage(err, 'Gagal mempublikasikan ke Crypto Academy.'));
+    } finally {
+      setPublishingToAcademy(false);
     }
   };
 
@@ -580,6 +605,35 @@ export default function StudyWorkspacePage() {
                   </div>
                 </div>
               </div>
+
+              {(selectedProject.status === "READY_FOR_REVIEW" || selectedProject.status === "COMPLETED") && isCurrentProjectManager && (
+                <div className="mt-5 rounded-2xl bg-amber-50 ring-1 ring-amber-200 p-4 space-y-3">
+                  <p className="font-black uppercase tracking-[0.18em] text-[11px] text-amber-900">Publish ke Crypto Academy</p>
+                  <p className="text-sm text-amber-900">Kajian ini sudah selesai dan siap dijadikan materi Crypto Academy.</p>
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+                    <label className="flex-1">
+                      <span className="text-[11px] font-black uppercase tracking-[0.2em] text-amber-800">Pilih Level</span>
+                      <select value={academyLevel} onChange={(e) => setAcademyLevel(e.target.value)} className="mt-1 h-10 w-full rounded-xl border border-amber-300 bg-white px-3 text-sm">
+                        <option value="Level 1: Pemula">Level 1: Pemula (Crypto 101)</option>
+                        <option value="Level 2: Menengah">Level 2: Menengah (Teknikal Trader)</option>
+                        <option value="Level 3: Lanjutan">Level 3: Lanjutan (SMC/ICT)</option>
+                        <option value="Level 4: Profesional">Level 4: Profesional (Kuantitatif)</option>
+                      </select>
+                    </label>
+                    <label className="flex-1">
+                      <span className="text-[11px] font-black uppercase tracking-[0.2em] text-amber-800">Template Kuis (Opsional)</span>
+                      <input type="text" placeholder="ID Template Assessment" value={academyAssessmentId} onChange={(e) => setAcademyAssessmentId(e.target.value)} className="mt-1 h-10 w-full rounded-xl border border-amber-300 bg-white px-3 text-sm" />
+                    </label>
+                    <button 
+                      onClick={handlePublishToAcademy}
+                      disabled={publishingToAcademy}
+                      className="h-10 px-6 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-black text-sm flex items-center justify-center gap-2 transition-colors disabled:opacity-60"
+                    >
+                      {publishingToAcademy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />} Publish Module
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {selectedProject.reviewSummary ? (
                 <div className="mt-5 rounded-2xl bg-violet-50 ring-1 ring-violet-200 p-4 text-sm text-violet-950 space-y-2">

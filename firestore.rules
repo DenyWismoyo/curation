@@ -680,6 +680,19 @@ service cloud.firestore {
       allow write: if false;
     }
     
+    match /cryptoEducation/{document=**} {
+      allow read: if isAuthenticated();
+      allow write: if isSuperAdmin() || isAdminCSRS();
+    }
+    
+    match /userProgress/{userId} {
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+      
+      match /{document=**} {
+        allow read, write: if isAuthenticated() && request.auth.uid == userId;
+      }
+    }
+    
     match /cryptoCopilotChats/{chatId} {
       allow read, write: if isAuthenticated() && (resource == null || resource.data.userId == request.auth.uid || isSuperAdmin() || isAdminCSRS() || isAdminOmnifit());
       

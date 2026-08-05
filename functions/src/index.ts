@@ -112,6 +112,7 @@ export {
   assignStudyProjectReviewers,
   startStudyProjectPipeline,
   approveStudyOutline,
+  publishStudyToCryptoAcademy,
 } from './agents/study/studyProjectAgent'
 export { requestChapterRevision, generateRevisionMaterials } from './agents/study/chapterRevisionAgent'
 export { exportStudyDocument } from './agents/study/exportService'
@@ -120,6 +121,7 @@ export { studyChapterOrchestrator } from './pipelines/study/chapterOrchestrator'
 export { cryptoCronAgent } from './agents/crypto/cryptoCronAgent'
 export { cryptoHiddenGemAgent } from './agents/crypto/cryptoHiddenGemAgent'
 export { cryptoPremiumIntelligenceAgent } from "./agents/crypto/cryptoPremiumIntelligenceAgent";
+export { cryptoMacroAgent } from "./agents/crypto/cryptoMacroAgent";
 export { telegramWebhook } from "./agents/telegram/telegramBot";
 export { cryptoCopilotChat, cryptoCopilotSuggestions } from './agents/crypto/cryptoCopilotAgent'
 export { cryptoNewsAgent } from './agents/crypto/cryptoNewsAgent'

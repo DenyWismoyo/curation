@@ -23,7 +23,7 @@ export default function CryptoPerformancePage() {
     const fetchData = async () => {
       if (authLoading) return;
       
-      if (!role || !role.startsWith("admin")) {
+      if (!role || ((role as string) !== "admin_csrs" && (role as string) !== "admin")) {
         setLoading(false);
         return;
       }
@@ -77,7 +77,7 @@ export default function CryptoPerformancePage() {
     return <div className="flex justify-center items-center h-screen"><Loader2 className="animate-spin h-10 w-10 text-indigo-500" /></div>;
   }
 
-  if (!role || !role.startsWith("admin")) {
+  if (!role || ((role as string) !== "admin_csrs" && (role as string) !== "admin")) {
     return (
       <div className="flex flex-col items-center justify-center h-screen text-slate-500">
         <ShieldAlert className="w-12 h-12 mb-4 opacity-50" />
@@ -111,6 +111,22 @@ export default function CryptoPerformancePage() {
   const avgProfit = winCount > 0 ? (totalProfit / winCount).toFixed(2) : "0.00";
   const avgLoss = lossCount > 0 ? (totalLoss / lossCount).toFixed(2) : "0.00";
   const profitFactor = totalLoss > 0 ? (totalProfit / totalLoss).toFixed(2) : "N/A";
+
+  // Calculate Breakdown per Koin
+  const coinStats: Record<string, { win: number; loss: number; total: number }> = {};
+  history.forEach(t => {
+     if (t.status === 'WIN' || t.status === 'LOSS') {
+        const coin = t.symbol.replace("USDT", "");
+        if (!coinStats[coin]) coinStats[coin] = { win: 0, loss: 0, total: 0 };
+        coinStats[coin].total++;
+        if (t.status === 'WIN') coinStats[coin].win++;
+        if (t.status === 'LOSS') coinStats[coin].loss++;
+     }
+  });
+  
+  const topCoins = Object.entries(coinStats)
+     .sort((a, b) => b[1].total - a[1].total)
+     .slice(0, 6);
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-5xl mt-16">
@@ -174,6 +190,35 @@ export default function CryptoPerformancePage() {
             <div className="text-3xl font-black text-indigo-400">{profitFactor}</div>
           </CardContent>
         </Card>
+      </div>
+
+      <div className="mb-10">
+         <h2 className="text-xl font-bold flex items-center gap-2 text-white mb-6">
+            <Target className="w-5 h-5 text-emerald-500" /> Breakdown Akurasi per Koin
+         </h2>
+         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {topCoins.length === 0 ? (
+               <div className="col-span-4 text-slate-500 text-sm italic">Belum ada data cukup untuk breakdown koin.</div>
+            ) : (
+               topCoins.map(([coin, stats], idx) => {
+                  const coinWinRate = ((stats.win / stats.total) * 100).toFixed(0);
+                  return (
+                     <Card key={idx} className="bg-slate-900 border-slate-800 p-4">
+                        <div className="flex justify-between items-center mb-2">
+                           <span className="font-black text-white">{coin}</span>
+                           <Badge className="bg-indigo-500/10 text-indigo-400 border-0">{stats.total} Trades</Badge>
+                        </div>
+                        <div className="flex items-end gap-2">
+                           <span className={`text-2xl font-black ${parseFloat(coinWinRate) >= 60 ? 'text-emerald-400' : parseFloat(coinWinRate) >= 40 ? 'text-amber-400' : 'text-rose-400'}`}>
+                              {coinWinRate}%
+                           </span>
+                           <span className="text-slate-500 text-xs mb-1">Win Rate</span>
+                        </div>
+                     </Card>
+                  )
+               })
+            )}
+         </div>
       </div>
 
       <div className="flex justify-between items-center mb-6">

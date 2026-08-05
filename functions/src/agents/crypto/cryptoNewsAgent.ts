@@ -108,7 +108,7 @@ PENTING — DE-DUPLIKASI: Jika ada beberapa berita yang melaporkan event yang SA
 
 ATURAN KERAS (TIDAK BOLEH DILANGGAR):
 - Output Anda HARUS murni JSON valid. JANGAN membungkus JSON dengan markdown block (\`\`\`json). JANGAN menambahkan teks pengantar atau penutup.
-- INSTRUKSI OUTPUT: Semua field "title", "summary", "impactAnalysis", dan "headlineSummary" WAJIB ditulis dalam Bahasa Indonesia yang ringkas, tajam, dan mudah dipahami.
+- INSTRUKSI OUTPUT: Semua field "title", "summary", "impactAnalysis", "historicalCorrelation", dan "headlineSummary" WAJIB ditulis dalam Bahasa Indonesia yang ringkas, tajam, dan mudah dipahami.
 
 {
   "marketSentiment": "BULLISH | BEARISH | NEUTRAL | MIXED",
@@ -120,8 +120,12 @@ ATURAN KERAS (TIDAK BOLEH DILANGGAR):
       "title": "Judul Berita (dibuat lebih clicky/menarik)",
       "summary": "Ringkasan tajam 1-2 kalimat dari isi berita.",
       "impact": "BULLISH | BEARISH | NEUTRAL",
+      "impactLevel": "HIGH | MEDIUM | LOW", // Berdasarkan skala dampaknya terhadap pasar secara keseluruhan
       "impactScore": 8, // Angka 1-10
       "impactAnalysis": "Actionable insight: Apa yang harus dilakukan trader dengan berita ini? (1-2 kalimat)",
+      "affectedCoins": ["BTC", "ETH"], // Array maksimal 3 koin yang paling terdampak
+      "sentimentScore": 75, // Angka dari -100 (Sangat Bearish) hingga +100 (Sangat Bullish)
+      "historicalCorrelation": "Korelasi historis singkat (contoh: 'Berita sejenis X di masa lalu menyebabkan harga BTC naik rata-rata 3.2%')",
       "originalLink": "URL sumber berita asli"
     }
   ] // Pilih HANYA 6-8 berita paling penting/berdampak. Prioritaskan berita yang berdampak LANGSUNG pada harga BTC, ETH, atau altcoin utama. Buang berita terlalu umum/tidak berdampak harga.

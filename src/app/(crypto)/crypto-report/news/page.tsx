@@ -150,10 +150,33 @@ export default function CryptoNewsPage() {
                     
                     return (
                       <div key={idx} className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col transition-all hover:shadow-md">
-                        <div className="flex items-center gap-2 mb-3">
+                        <div className="flex items-center flex-wrap gap-2 mb-3">
                            <Badge variant="outline" className={`${impactColor} ${impactBg} border-0 text-[10px] font-black uppercase tracking-widest shadow-none`}>
                              {item.impact}
                            </Badge>
+                           {item.impactLevel && (
+                             <Badge variant="outline" className={`border-0 text-[10px] font-black uppercase tracking-widest shadow-none ${
+                               item.impactLevel === 'HIGH' ? 'bg-rose-500/10 text-rose-500' :
+                               item.impactLevel === 'MEDIUM' ? 'bg-amber-500/10 text-amber-500' :
+                               'bg-emerald-500/10 text-emerald-500'
+                             }`}>
+                               {item.impactLevel} IMPACT
+                             </Badge>
+                           )}
+                           {item.affectedCoins && item.affectedCoins.map((coin: string, i: number) => (
+                             <Badge key={i} variant="outline" className="border-0 bg-indigo-500/10 text-indigo-500 text-[10px] font-black uppercase tracking-widest shadow-none">
+                               #{coin}
+                             </Badge>
+                           ))}
+                           {item.sentimentScore !== undefined && (
+                             <Badge variant="outline" className={`border-0 text-[10px] font-black tracking-widest shadow-none ${
+                               item.sentimentScore > 0 ? 'bg-emerald-500/10 text-emerald-600' : 
+                               item.sentimentScore < 0 ? 'bg-rose-500/10 text-rose-600' : 
+                               'bg-slate-500/10 text-slate-600'
+                             }`}>
+                               SCORE: {item.sentimentScore > 0 ? '+' : ''}{item.sentimentScore}
+                             </Badge>
+                           )}
                         </div>
                         <h4 className="font-black text-slate-900 dark:text-white text-lg mb-2 leading-snug">
                            {item.title}
@@ -162,9 +185,17 @@ export default function CryptoNewsPage() {
                            {item.summary}
                         </p>
                         
-                        <div className="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-100 dark:border-slate-800 text-xs text-slate-500 font-medium italic mb-4">
+                        <div className="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-100 dark:border-slate-800 text-xs text-slate-500 font-medium italic mb-2">
+                           <span className="font-bold block mb-1 text-slate-600 dark:text-slate-300">Actionable Insight:</span>
                            {item.impactAnalysis}
                         </div>
+
+                        {item.historicalCorrelation && (
+                           <div className="bg-indigo-50 dark:bg-indigo-950/30 p-3 rounded-xl border border-indigo-100 dark:border-indigo-900/50 text-xs text-indigo-600 dark:text-indigo-400 font-medium italic mb-4">
+                             <span className="font-bold block mb-1">Historical Data:</span>
+                             {item.historicalCorrelation}
+                           </div>
+                        )}
                         
                         <div className="mt-auto pt-2 border-t border-slate-100 dark:border-slate-800 flex justify-end">
                            <a href={item.originalLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">

@@ -114,6 +114,7 @@ export const cryptoCopilotChat = onCall({
 
       Jawablah pertanyaan user dengan mengacu pada konteks laporan di atas. 
       Jika user bertanya panduan portofolio, analisis koin tersebut berdasarkan data di atas, dan berikan edukasi alokasi ukuran posisi (Position Sizing) yang ketat.
+      Jika user meminta untuk melakukan simulasi profit (misal: "Jika saya beli BTC di 60.000..."), SELALU gunakan tool \`simulate_backtest\`.
       Jika koin tidak ada di laporan, beritahu bahwa koin tersebut di luar jangkauan pantauan saat ini. 
       Berikan jawaban yang ringkas dan padat.
     `;
@@ -165,6 +166,22 @@ export const cryptoCopilotChat = onCall({
               stopLossPrice: { type: "number", description: "Harga saat stop loss dipicu" }
             },
             required: ["capital", "riskPercentage", "entryPrice", "stopLossPrice"]
+          }
+        }
+      },
+      {
+        type: "function" as const,
+        function: {
+          name: "simulate_backtest",
+          description: "Menghitung persentase keuntungan (PnL) jika pengguna membeli atau menjual koin di harga tertentu di masa lalu, dengan membandingkannya terhadap harga live saat ini.",
+          parameters: {
+            type: "object",
+            properties: {
+              symbol: { type: "string", description: "Simbol pasangan koin (contoh: BTCUSDT)" },
+              entryPrice: { type: "number", description: "Harga masuk (entry) historis" },
+              direction: { type: "string", description: "Arah posisi: 'LONG' atau 'SHORT'" }
+            },
+            required: ["symbol", "entryPrice", "direction"]
           }
         }
       }
@@ -221,6 +238,33 @@ export const cryptoCopilotChat = onCall({
                    tool_call_id: toolCall.id,
                    content: `Risk Amount: $${riskAmount.toFixed(2)}. Position Size: ${positionSizeCoins.toFixed(4)} Koin atau setara $${positionSizeUsdt.toFixed(2)}. Leverage efektif (jika diperlukan): ${(positionSizeUsdt / capital).toFixed(2)}x. Beritahu rincian ini secara profesional ke user.`
                 });
+             } else if (toolCall.function?.name === "simulate_backtest") {
+                 try {
+                     const { symbol, entryPrice, direction } = args;
+                     const res = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${symbol.toUpperCase()}`);
+                     if (!res.ok) throw new Error("Gagal mengambil harga");
+                     const data = await res.json();
+                     const currentPrice = parseFloat(data.price);
+                     
+                     let pnlPercent = 0;
+                     if (direction.toUpperCase() === 'LONG') {
+                         pnlPercent = ((currentPrice - entryPrice) / entryPrice) * 100;
+                     } else {
+                         pnlPercent = ((entryPrice - currentPrice) / entryPrice) * 100;
+                     }
+                     
+                     messages.push({
+                        role: "tool",
+                        tool_call_id: toolCall.id,
+                        content: `Simulasi Backtest untuk ${symbol} ${direction}:\nHarga Entry: $${entryPrice}\nHarga Saat Ini: $${currentPrice}\nPnL Saat Ini: ${pnlPercent > 0 ? '+' : ''}${pnlPercent.toFixed(2)}%\nSampaikan hasil ini kepada pengguna beserta analisis singkat mengenai volatilitas yang terjadi.`
+                     });
+                 } catch (e) {
+                     messages.push({
+                        role: "tool",
+                        tool_call_id: toolCall.id,
+                        content: `Gagal melakukan simulasi backtest karena harga tidak dapat diambil.`
+                     });
+                 }
              }
           }
         }
