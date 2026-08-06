@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Scene } from "@/lib/storyboard/storyboard.service";
+import { Scene } from "@/services/storyboard/storyboard.service";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";

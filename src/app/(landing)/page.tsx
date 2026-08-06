@@ -9,10 +9,10 @@ import {
   ShieldCheck, Loader2, CheckCircle2, X, AlertTriangle, Eye, Diamond,
   Activity, Bot, Lock
 } from 'lucide-react';
-import { SafeLogo } from '@/components/shared/SafeLogo';
+import { SafeLogo } from '@/components/layout/SafeLogo';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { functions } from '@/lib/firebase';
+import { functions } from '@/lib/firebase/firebase';
 import { httpsCallable } from 'firebase/functions';
 import { toast } from 'sonner';
 

@@ -7,9 +7,11 @@ import { UserActivityProvider } from '@/contexts/UserActivityContext';
 import { Toaster } from 'sonner';
 
 // IMPORT KOMPONEN PWA PROMPT
-import { PWAInstallPrompt } from '@/components/shared';
+import { PWAInstallPrompt } from '@/components/common/PWAInstallPrompt';;
 // IMPORT BOTTOM NAVIGATION MOBILE
-import { BottomNav } from '@/components/shared';
+import { BottomNav } from '@/components/layout/BottomNav';
+// IMPORT THEME PROVIDER
+import { ThemeProvider } from '@/components/theme-provider';
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -87,17 +89,24 @@ export default function RootLayout({
           selection:text-primary
         `}
       >
-        <AuthProvider>
-          <UserActivityProvider>
-            {children}
-            
-            <Toaster position="top-right" richColors />
-            <PWAInstallPrompt />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthProvider>
+            <UserActivityProvider>
+              {children}
+              
+              <Toaster position="top-right" richColors />
+              <PWAInstallPrompt />
 
-            {/* BOTTOM NAVIGATION MOBILE (PWA) */}
-            <BottomNav />
-          </UserActivityProvider>
-        </AuthProvider>
+              {/* BOTTOM NAVIGATION MOBILE (PWA) */}
+              <BottomNav />
+            </UserActivityProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

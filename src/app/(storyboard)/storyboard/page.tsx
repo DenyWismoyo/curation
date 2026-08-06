@@ -8,14 +8,14 @@ import {
   updateScene, 
   generatePromptForScene, 
   Scene 
-} from "@/lib/storyboard/storyboard.service";
+} from "@/services/storyboard/storyboard.service";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus, Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
-import { auth } from "@/lib/firebase";
+import { auth } from "@/lib/firebase/firebase";
 
 export default function StoryboardPage() {
   // Input untuk AI auto-generate

@@ -2,10 +2,10 @@
 
 import React, { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { auth } from '@/lib/firebase';
+import { auth } from '@/lib/firebase/firebase';
 import { applyActionCode, confirmPasswordReset, verifyPasswordResetCode } from 'firebase/auth';
 import { GlassCardLayout } from '@/components/domain/public';
-import { SafeLogo } from '@/components/shared/SafeLogo';
+import { SafeLogo } from '@/components/layout/SafeLogo';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Loader2, MailCheck, ShieldCheck, AlertTriangle, Eye, EyeOff, Lock, CheckCircle2 } from 'lucide-react';

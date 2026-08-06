@@ -1,12 +1,11 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Loader2, Globe, TrendingUp, TrendingDown, Minus, ExternalLink, Clock, Newspaper, ArrowLeft } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/components/ui/button";
+import { Loader2, Globe, TrendingUp, TrendingDown, Minus, ExternalLink, Clock, Newspaper, ArrowLeft } from "lucide-react";
+import { CryptoCard, CryptoBadge, CryptoPageHeader, CryptoLoadingState, CryptoEmptyState, CryptoButton } from "@/features/crypto/components/ui/CryptoUIKit";
+
+import { useRouter } from "next/navigation";
 
 export default function CryptoNewsPage() {
   const router = useRouter();
@@ -62,49 +61,52 @@ export default function CryptoNewsPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen">
-        <Loader2 className="w-10 h-10 animate-spin text-indigo-500 mb-4" />
-        <p className="text-muted-foreground font-medium">Memuat berita terbaru...</p>
+      <div className="flex justify-center items-center min-h-screen bg-slate-50 dark:bg-slate-950">
+        <CryptoLoadingState type="spinner" message="Memuat berita terbaru..." />
       </div>
     );
   }
 
   if (newsReports.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen px-4">
-        <Card className="border-dashed bg-transparent shadow-none border-2 max-w-lg w-full">
-          <CardContent className="py-20 text-center text-muted-foreground flex flex-col items-center">
-            <Newspaper className="w-12 h-12 mb-4 opacity-20" />
-            <p className="text-lg font-bold text-slate-700 dark:text-slate-300">Belum ada berita yang di-generate.</p>
-            <p className="text-sm mt-2">Agen AI berita belum berjalan.</p>
-          </CardContent>
-        </Card>
+      <div className="p-8 flex justify-center items-center min-h-screen bg-slate-50 dark:bg-slate-950">
+        <CryptoEmptyState 
+           icon={<Newspaper className="w-8 h-8" />}
+           title="Belum Ada Berita"
+           description="Agen AI berita belum berjalan atau tidak ada berita terbaru."
+        />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50/50 dark:bg-slate-950/50 pb-20 pt-24 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto space-y-8">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={() => router.back()}
-                className="text-slate-500 hover:text-slate-900 dark:hover:text-white rounded-full transition-all"
-            >
-                <ArrowLeft className="w-5 h-5" />
-            </Button>
-            <div>
-              <h1 className="text-3xl font-black text-slate-900 dark:text-white flex items-center gap-3">
-                <Globe className="w-8 h-8 text-blue-500" />
-                News & Alpha
-              </h1>
-              <p className="text-slate-500 font-medium mt-2">Rangkuman berita aktual terkini oleh Crypto AI Editor.</p>
-            </div>
-          </div>
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20 px-4 sm:px-6 lg:px-8">
+      
+      {/* HEADER SECTION */}
+      <div className="bg-slate-50 dark:bg-slate-950/40 backdrop-blur-md border-b border-white/5 mb-6 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto py-4">
+           <CryptoButton 
+               variant="ghost" 
+               size="sm" 
+               onClick={() => router.back()}
+               className="mb-6 -ml-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white"
+           >
+               <ArrowLeft className="w-4 h-4 mr-2" /> Kembali ke Laporan
+           </CryptoButton>
+           
+           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+               <CryptoPageHeader 
+                   title="News & Alpha"
+                   subtitle="Rangkuman berita aktual terkini oleh Crypto AI Editor."
+                   icon={<Globe className="text-blue-500" />}
+                   badge="AI Curation"
+                   badgeVariant="info"
+               />
+           </div>
         </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto space-y-8">
 
         {newsReports.map((report) => {
           const isBullish = report.marketSentiment === "BULLISH";
@@ -114,29 +116,29 @@ export default function CryptoNewsPage() {
           const createdAt = report.createdAt instanceof Date ? report.createdAt : new Date(report.createdAt);
 
           return (
-            <Card key={report.id} className="overflow-hidden border-slate-200/60 dark:border-slate-800/60 shadow-lg">
-              <div className="bg-slate-900 text-white p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
+            <CryptoCard key={report.id} variant="default" className="overflow-hidden">
+              <div className="bg-white/60 dark:bg-slate-900/60 p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden border-b border-slate-200 dark:border-slate-800">
                 <div className="absolute right-0 top-0 p-8 opacity-5">
                   <Globe className="w-48 h-48" />
                 </div>
                 
                 <div className="relative z-10 flex-1">
                   <div className="flex items-center gap-3 mb-4">
-                    <Badge className={`${sentimentColor} text-white px-3 py-1 font-black shadow-sm uppercase tracking-widest text-xs flex items-center gap-1.5 border-0`}>
+                    <CryptoBadge variant={isBullish ? 'bullish' : isBearish ? 'danger' : 'neutral'} className="uppercase tracking-widest flex items-center gap-1.5">
                       <Icon className="w-3.5 h-3.5" /> {report.marketSentiment} MARKET
-                    </Badge>
-                    <span className="text-xs text-slate-400 font-bold uppercase tracking-widest flex items-center gap-1">
+                    </CryptoBadge>
+                    <span className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest flex items-center gap-1">
                       <Clock className="w-3.5 h-3.5" /> 
                       {createdAt.toLocaleDateString("id-ID", { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })} WIB
                     </span>
                   </div>
-                  <h2 className="text-xl md:text-2xl font-black leading-tight text-white mb-2">
+                  <h2 className="text-xl md:text-2xl font-black leading-tight text-slate-900 dark:text-white mb-2">
                     {report.headlineSummary}
                   </h2>
                 </div>
               </div>
 
-              <div className="p-6 md:p-8 bg-slate-50 dark:bg-slate-950">
+              <div className="p-6 md:p-8">
                 <h3 className="font-bold text-sm uppercase tracking-widest text-slate-500 mb-6 flex items-center gap-2">
                   <Newspaper className="w-4 h-4" /> Top News Highlights
                 </h3>
@@ -145,60 +147,52 @@ export default function CryptoNewsPage() {
                   {report.newsItems?.map((item: any, idx: number) => {
                     const impactBullish = item.impact === "BULLISH";
                     const impactBearish = item.impact === "BEARISH";
-                    const impactColor = impactBullish ? "text-emerald-600 dark:text-emerald-400" : impactBearish ? "text-rose-600 dark:text-rose-400" : "text-slate-600 dark:text-slate-400";
+                    const impactColor = impactBullish ? "text-emerald-600 dark:text-emerald-400" : impactBearish ? "text-rose-600 dark:text-rose-400" : "text-slate-500 dark:text-slate-400";
                     const impactBg = impactBullish ? "bg-emerald-100 dark:bg-emerald-500/10" : impactBearish ? "bg-rose-100 dark:bg-rose-500/10" : "bg-slate-100 dark:bg-slate-800/50";
                     
                     return (
-                      <div key={idx} className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col transition-all hover:shadow-md">
+                      <div key={idx} className="bg-white/40 dark:bg-slate-900/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col transition-all hover:border-slate-300 dark:border-slate-700">
                         <div className="flex items-center flex-wrap gap-2 mb-3">
-                           <Badge variant="outline" className={`${impactColor} ${impactBg} border-0 text-[10px] font-black uppercase tracking-widest shadow-none`}>
+                           <CryptoBadge variant={impactBullish ? 'bullish' : impactBearish ? 'danger' : 'neutral'} className="text-[10px]">
                              {item.impact}
-                           </Badge>
+                           </CryptoBadge>
                            {item.impactLevel && (
-                             <Badge variant="outline" className={`border-0 text-[10px] font-black uppercase tracking-widest shadow-none ${
-                               item.impactLevel === 'HIGH' ? 'bg-rose-500/10 text-rose-500' :
-                               item.impactLevel === 'MEDIUM' ? 'bg-amber-500/10 text-amber-500' :
-                               'bg-emerald-500/10 text-emerald-500'
-                             }`}>
+                             <CryptoBadge variant={item.impactLevel === 'HIGH' ? 'danger' : item.impactLevel === 'MEDIUM' ? 'neutral' : 'bullish'} className="text-[10px]">
                                {item.impactLevel} IMPACT
-                             </Badge>
+                             </CryptoBadge>
                            )}
                            {item.affectedCoins && item.affectedCoins.map((coin: string, i: number) => (
-                             <Badge key={i} variant="outline" className="border-0 bg-indigo-500/10 text-indigo-500 text-[10px] font-black uppercase tracking-widest shadow-none">
+                             <CryptoBadge key={i} variant="info" className="text-[10px]">
                                #{coin}
-                             </Badge>
+                             </CryptoBadge>
                            ))}
                            {item.sentimentScore !== undefined && (
-                             <Badge variant="outline" className={`border-0 text-[10px] font-black tracking-widest shadow-none ${
-                               item.sentimentScore > 0 ? 'bg-emerald-500/10 text-emerald-600' : 
-                               item.sentimentScore < 0 ? 'bg-rose-500/10 text-rose-600' : 
-                               'bg-slate-500/10 text-slate-600'
-                             }`}>
+                             <CryptoBadge variant={item.sentimentScore > 0 ? 'bullish' : item.sentimentScore < 0 ? 'danger' : 'neutral'} className="text-[10px]">
                                SCORE: {item.sentimentScore > 0 ? '+' : ''}{item.sentimentScore}
-                             </Badge>
+                             </CryptoBadge>
                            )}
                         </div>
                         <h4 className="font-black text-slate-900 dark:text-white text-lg mb-2 leading-snug">
                            {item.title}
                         </h4>
-                        <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-4 flex-1">
+                        <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-4 flex-1">
                            {item.summary}
                         </p>
                         
-                        <div className="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-100 dark:border-slate-800 text-xs text-slate-500 font-medium italic mb-2">
+                        <div className="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800/60 text-xs text-slate-500 dark:text-slate-400 font-medium italic mb-2">
                            <span className="font-bold block mb-1 text-slate-600 dark:text-slate-300">Actionable Insight:</span>
                            {item.impactAnalysis}
                         </div>
 
                         {item.historicalCorrelation && (
-                           <div className="bg-indigo-50 dark:bg-indigo-950/30 p-3 rounded-xl border border-indigo-100 dark:border-indigo-900/50 text-xs text-indigo-600 dark:text-indigo-400 font-medium italic mb-4">
+                           <div className="bg-indigo-950/20 p-3 rounded-xl border border-indigo-900/30 text-xs text-indigo-400 font-medium italic mb-4">
                              <span className="font-bold block mb-1">Historical Data:</span>
                              {item.historicalCorrelation}
                            </div>
                         )}
                         
-                        <div className="mt-auto pt-2 border-t border-slate-100 dark:border-slate-800 flex justify-end">
-                           <a href={item.originalLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">
+                        <div className="mt-auto pt-4 border-t border-slate-200 dark:border-slate-800 flex justify-end">
+                           <a href={item.originalLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-400 hover:text-blue-300 transition-colors">
                              Baca Selengkapnya <ExternalLink className="w-3.5 h-3.5" />
                            </a>
                         </div>
@@ -207,7 +201,7 @@ export default function CryptoNewsPage() {
                   })}
                 </div>
               </div>
-            </Card>
+            </CryptoCard>
           );
         })}
       </div>

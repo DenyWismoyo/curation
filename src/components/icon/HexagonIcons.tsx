@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconProps } from '@/types/curation';
+import { IconProps } from '@/features/assessment/types/assessment.types';
 
 // 1. Hexagon Outline (Kuning)
 export const HexagonOutlineIcon: React.FC<IconProps> = ({ size = 24, className = "", ...props }) => {

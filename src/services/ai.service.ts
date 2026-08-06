@@ -1,7 +1,7 @@
 // src/services/ai.service.ts
 import { getFunctions, httpsCallable } from 'firebase/functions';
-import { app } from '@/lib/firebase';
-import { CurationFormData, AIResult, AiPromptConfig } from '@/types/curation';
+import { app } from '@/lib/firebase/firebase';
+import { CurationFormData, AIResult, AiPromptConfig } from '@/features/assessment/types/assessment.types';
 
 export async function processAIAssessment(
   formData: CurationFormData, 

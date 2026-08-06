@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { collection, query, orderBy, limit, getDocs, onSnapshot } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { db } from "@/lib/firebase/firebase";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -12,19 +12,19 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import ReactMarkdown from "react-markdown";
 import { Loader2, Activity, Bot, TrendingUp, Zap, Calendar, Clock, Target, ShieldAlert, BarChart3, LineChart, Anchor, Bell, BellRing, Globe, Sunrise, RotateCcw, Sun, CalendarDays, Diamond, Eye, Radar, Flame, Menu, Lock, GraduationCap, ChevronRight } from "lucide-react";
-import CryptoChat from "@/components/crypto/CryptoChat";
-import CryptoCandlestick from "@/components/crypto/CryptoCandlestick";
-import CryptoLiveTicker from "@/components/crypto/CryptoLiveTicker";
-import CryptoAlertsWidget from "@/components/crypto/CryptoAlertsWidget";
-import CryptoCalendar from "@/components/crypto/CryptoCalendar";
-import MacroEconomicCalendar from "@/components/crypto/MacroEconomicCalendar";
-import MarketPulseWidget from "@/components/crypto/MarketPulseWidget";
-import MarketHeatmapWidget from "@/components/crypto/MarketHeatmapWidget";
-import TemporalComparisonWidget from "@/components/crypto/TemporalComparisonWidget";
-import WeeklyMonthlyOutlookWidget from "@/components/crypto/WeeklyMonthlyOutlookWidget";
+import CryptoChat from "@/features/crypto/components/chat/CryptoChat";
+import CryptoCandlestick from "@/features/crypto/components/charts/CryptoCandlestick";
+import CryptoLiveTicker from "@/features/crypto/components/shared/CryptoLiveTicker";
+import CryptoAlertsWidget from "@/features/crypto/components/alerts/CryptoAlertsWidget";
+import CryptoCalendar from "@/features/crypto/components/dashboard/CryptoCalendar";
+import MacroEconomicCalendar from "@/features/crypto/components/dashboard/MacroEconomicCalendar";
+import MarketPulseWidget from "@/features/crypto/components/dashboard/MarketPulseWidget";
+import MarketHeatmapWidget from "@/features/crypto/components/dashboard/MarketHeatmapWidget";
+import TemporalComparisonWidget from "@/features/crypto/components/dashboard/TemporalComparisonWidget";
+import WeeklyMonthlyOutlookWidget from "@/features/crypto/components/dashboard/WeeklyMonthlyOutlookWidget";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { PremiumLockedWrapper } from "@/components/crypto/PremiumLockedWrapper";
-import CryptoDisclaimer from "@/components/shared/CryptoDisclaimer";
+import { PremiumLockedWrapper } from "@/features/crypto/components/alerts/PremiumLockedWrapper";
+import CryptoDisclaimer from "@/features/crypto/components/shared/CryptoDisclaimer";
 
 export default function CryptoReportPage() {
   const { user, role, isPremium, loading: authLoading } = useAuth();
@@ -148,33 +148,25 @@ export default function CryptoReportPage() {
 
         <Tabs defaultValue="ai-reports" className="w-full">
           <div className="w-full overflow-x-auto no-scrollbar mb-8 pb-2">
-            <TabsList className="bg-slate-200/50 dark:bg-slate-900/50 p-1.5 rounded-2xl inline-flex min-w-max">
-              <TabsTrigger 
-                value="ai-reports"
-                className="rounded-xl px-5 py-2.5 text-sm sm:text-base font-bold data-[state=active]:bg-white data-[state=active]:text-indigo-600 data-[state=active]:shadow dark:data-[state=active]:bg-slate-800 dark:data-[state=active]:text-indigo-400 transition-all border-0"
+            <TabsList className="bg-slate-100/80 dark:bg-slate-900/50 p-1.5 rounded-2xl inline-flex min-w-max border border-slate-200 dark:border-slate-800/50">
+              <TabsTrigger value="ai-reports" className="rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold data-[state=active]:bg-white data-[state=active]:text-indigo-600 dark:data-[state=active]:bg-slate-800 dark:data-[state=active]:text-indigo-400 data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-slate-200/50 dark:data-[state=active]:border-slate-700/50 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all border border-transparent"
               >
-              <Bot className="w-5 h-5 mr-2" />
+              <Bot className="w-4 h-4 mr-2" />
               AI Market Reports
             </TabsTrigger>
-              <TabsTrigger 
-                value="macro-calendar"
-                className="rounded-xl px-5 py-2.5 text-sm sm:text-base font-bold data-[state=active]:bg-white data-[state=active]:text-indigo-600 data-[state=active]:shadow dark:data-[state=active]:bg-slate-800 dark:data-[state=active]:text-indigo-400 transition-all border-0"
+              <TabsTrigger value="macro-calendar" className="rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold data-[state=active]:bg-white data-[state=active]:text-indigo-600 dark:data-[state=active]:bg-slate-800 dark:data-[state=active]:text-indigo-400 data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-slate-200/50 dark:data-[state=active]:border-slate-700/50 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all border border-transparent"
               >
-              <Globe className="w-5 h-5 mr-2" />
+              <Globe className="w-4 h-4 mr-2" />
               Global Economic Calendar
             </TabsTrigger>
-              <TabsTrigger 
-                value="temporal"
-                className="rounded-xl px-5 py-2.5 text-sm sm:text-base font-bold data-[state=active]:bg-white data-[state=active]:text-indigo-600 data-[state=active]:shadow dark:data-[state=active]:bg-slate-800 dark:data-[state=active]:text-indigo-400 transition-all border-0"
+              <TabsTrigger value="temporal" className="rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold data-[state=active]:bg-white data-[state=active]:text-indigo-600 dark:data-[state=active]:bg-slate-800 dark:data-[state=active]:text-indigo-400 data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-slate-200/50 dark:data-[state=active]:border-slate-700/50 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all border border-transparent"
               >
-              <RotateCcw className="w-5 h-5 mr-2" />
+              <RotateCcw className="w-4 h-4 mr-2" />
               Kemarin vs Hari Ini
             </TabsTrigger>
-              <TabsTrigger 
-                value="outlook"
-                className="rounded-xl px-5 py-2.5 text-sm sm:text-base font-bold data-[state=active]:bg-white data-[state=active]:text-indigo-600 data-[state=active]:shadow dark:data-[state=active]:bg-slate-800 dark:data-[state=active]:text-indigo-400 transition-all border-0"
+              <TabsTrigger value="outlook" className="rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold data-[state=active]:bg-white data-[state=active]:text-indigo-600 dark:data-[state=active]:bg-slate-800 dark:data-[state=active]:text-indigo-400 data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-slate-200/50 dark:data-[state=active]:border-slate-700/50 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all border border-transparent"
               >
-                <CalendarDays className="w-5 h-5 mr-2" />
+                <CalendarDays className="w-4 h-4 mr-2" />
                 Outlook (Weekly/Monthly)
               </TabsTrigger>
             </TabsList>
@@ -250,57 +242,6 @@ export default function CryptoReportPage() {
                 </div>
               </div>
             </Link>
-
-            {/* QUICK INTELLIGENCE CARDS */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 mt-4">
-               <Link href="/crypto-report/smart-money">
-                 <Card className="bg-purple-950/10 border-purple-900/20 hover:bg-purple-900/30 transition-colors cursor-pointer group h-full">
-                   <CardContent className="p-4 flex flex-col items-center text-center justify-center h-full">
-                      <div className="p-3 bg-purple-500/10 rounded-full mb-3 group-hover:scale-110 transition-transform">
-                         <Eye className="w-6 h-6 text-purple-500" />
-                      </div>
-                      <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-1">Smart Money</h4>
-                      <p className="text-xs text-slate-500">Deteksi akumulasi paus</p>
-                   </CardContent>
-                 </Card>
-               </Link>
-               
-               <Link href="/crypto-report/liquidity">
-                 <Card className="bg-cyan-950/10 border-cyan-900/20 hover:bg-cyan-900/30 transition-colors cursor-pointer group h-full">
-                   <CardContent className="p-4 flex flex-col items-center text-center justify-center h-full">
-                      <div className="p-3 bg-cyan-500/10 rounded-full mb-3 group-hover:scale-110 transition-transform">
-                         <Radar className="w-6 h-6 text-cyan-500" />
-                      </div>
-                      <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-1">Liquidity</h4>
-                      <p className="text-xs text-slate-500">Radar stop-loss area</p>
-                   </CardContent>
-                 </Card>
-               </Link>
-               
-               <Link href="/crypto-report/danger-zone">
-                 <Card className="bg-rose-950/10 border-rose-900/20 hover:bg-rose-900/30 transition-colors cursor-pointer group h-full">
-                   <CardContent className="p-4 flex flex-col items-center text-center justify-center h-full">
-                      <div className="p-3 bg-rose-500/10 rounded-full mb-3 group-hover:scale-110 transition-transform">
-                         <Flame className="w-6 h-6 text-rose-500" />
-                      </div>
-                      <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-1">Danger Zone</h4>
-                      <p className="text-xs text-slate-500">High risk & unlock</p>
-                   </CardContent>
-                 </Card>
-               </Link>
-               
-               <Link href="/crypto-report/hidden-gems">
-                 <Card className="bg-emerald-950/10 border-emerald-900/20 hover:bg-emerald-900/30 transition-colors cursor-pointer group h-full">
-                   <CardContent className="p-4 flex flex-col items-center text-center justify-center h-full">
-                      <div className="p-3 bg-emerald-500/10 rounded-full mb-3 group-hover:scale-110 transition-transform">
-                         <Diamond className="w-6 h-6 text-emerald-500" />
-                      </div>
-                      <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-1">Hidden Gems</h4>
-                      <p className="text-xs text-slate-500">Oversold reversal</p>
-                   </CardContent>
-                 </Card>
-               </Link>
-            </div>
             
             <div className="w-full">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
@@ -430,7 +371,7 @@ export default function CryptoReportPage() {
                                             <h4 className="flex items-center gap-2 text-indigo-300 font-bold text-sm uppercase tracking-widest mb-3">
                                                <RotateCcw className="w-4 h-4"/> Recap Kemarin
                                             </h4>
-                                            <div className="prose prose-sm prose-invert max-w-none text-slate-300 leading-relaxed">
+                                            <div className="prose prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed">
                                               <ReactMarkdown>{data.dailyRecap}</ReactMarkdown>
                                             </div>
                                          </div>
@@ -442,7 +383,7 @@ export default function CryptoReportPage() {
                                             <h4 className="flex items-center gap-2 text-amber-400 font-bold text-sm uppercase tracking-widest mb-3 relative z-10">
                                                <Sun className="w-4 h-4"/> Insight Hari Ini
                                             </h4>
-                                            <div className="prose prose-sm prose-invert max-w-none text-slate-300 leading-relaxed relative z-10">
+                                            <div className="prose prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed relative z-10">
                                               <ReactMarkdown>{data.dailyProjection}</ReactMarkdown>
                                             </div>
                                          </div>
@@ -453,7 +394,7 @@ export default function CryptoReportPage() {
                                             <h4 className="flex items-center gap-2 text-indigo-300 font-bold text-sm uppercase tracking-widest mb-3">
                                                <CalendarDays className="w-4 h-4"/> Kalender Makro & Naratif
                                             </h4>
-                                            <div className="prose prose-sm prose-invert max-w-none text-slate-300 leading-relaxed">
+                                            <div className="prose prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed">
                                               <ReactMarkdown>{data.dailyCalendarSummary}</ReactMarkdown>
                                             </div>
                                          </div>
@@ -493,7 +434,7 @@ export default function CryptoReportPage() {
                                {data.macroInsight && (
                                  <div className="col-span-2 md:col-span-4 py-4 md:py-6">
                                    <div className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-2 flex items-center gap-2"><Globe className="w-3 h-3"/> Macro Insight</div>
-                                   <p className="text-sm md:text-base font-medium text-slate-300 leading-relaxed">{data.macroInsight}</p>
+                                   <p className="text-sm md:text-base font-medium text-slate-700 dark:text-slate-300 leading-relaxed">{data.macroInsight}</p>
                                  </div>
                                )}
                             </div>
@@ -504,16 +445,16 @@ export default function CryptoReportPage() {
                                 <h4 className="font-bold text-sm text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
                                    Ringkasan
                                 </h4>
-                                <div className="prose prose-sm md:prose-base prose-invert max-w-none text-slate-300 leading-relaxed">
+                                <div className="prose prose-sm md:prose-base dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed">
                                   <ReactMarkdown>{data.summary || "Tidak ada ringkasan."}</ReactMarkdown>
                                 </div>
                               </div>
 
                               <div className="py-2">
-                                <h4 className="font-bold text-sm text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                                <h4 className="font-bold text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
                                    Proyeksi
                                 </h4>
-                                <div className="prose prose-sm md:prose-base prose-invert max-w-none text-slate-300 leading-relaxed">
+                                <div className="prose prose-sm md:prose-base dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed">
                                   <ReactMarkdown>{data.projection || "Tidak ada proyeksi."}</ReactMarkdown>
                                 </div>
                               </div>

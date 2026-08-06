@@ -2,9 +2,9 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { collection, query, where, onSnapshot, orderBy, limit } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { db } from '@/lib/firebase/firebase';
 import { useAuth } from '@/contexts/AuthContext';
-import { NotificationItem } from '@/app/components/shared/NotificationBell';
+import { NotificationItem } from '@/components/common/NotificationBell';
 
 interface UserActivityContextType {
   notifications: NotificationItem[];

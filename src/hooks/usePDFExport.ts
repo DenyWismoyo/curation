@@ -1,7 +1,7 @@
 // src/hooks/usePDFExport.ts
 import { useState } from 'react';
 import { getFunctions, httpsCallable } from 'firebase/functions';
-import { app } from '@/lib/firebase';
+import { app } from '@/lib/firebase/firebase';
 
 export function usePDFExport() {
   const [isExporting, setIsExporting] = useState(false);

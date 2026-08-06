@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getAdminDb, getAdminAuth } from '@/lib/firebase-admin';
-import { rateLimit } from '@/lib/rate-limit';
+import { getAdminDb, getAdminAuth } from '@/lib/firebase/firebase-admin';
+import { rateLimit } from '@/lib/utils/rate-limit';
 
 export async function GET(request: Request) {
   try {

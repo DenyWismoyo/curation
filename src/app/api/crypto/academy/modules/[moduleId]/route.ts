@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getAdminDb, getAdminAuth } from '@/lib/firebase-admin';
+import { getAdminDb, getAdminAuth } from '@/lib/firebase/firebase-admin';
 
 export async function GET(request: Request, { params }: { params: Promise<{ moduleId: string }> }) {
   try {

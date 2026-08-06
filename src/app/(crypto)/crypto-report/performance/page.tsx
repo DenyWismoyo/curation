@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { collection, query, orderBy, limit, getDocs, doc, getDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { db } from "@/lib/firebase/firebase";
 import { useAuth } from "@/contexts/AuthContext";
 import { Loader2, TrendingUp, Target, ShieldAlert, Activity, ArrowLeft } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -143,48 +143,48 @@ export default function CryptoPerformancePage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        <Card className="bg-indigo-600 border-none shadow-lg text-white">
+        <Card className="bg-indigo-600 border-none shadow-lg text-slate-900 dark:text-white">
           <CardContent className="p-8">
             <div className="text-indigo-200 text-sm font-bold uppercase tracking-wider mb-2">Win Rate</div>
             <div className="text-5xl font-black">{winRate}%</div>
           </CardContent>
         </Card>
         
-        <Card className="bg-emerald-50 bg-emerald-950/20 border-emerald-100 border-emerald-900/30">
+        <Card className="bg-emerald-50 bg-emerald-100 dark:bg-emerald-950/20 border-emerald-100 border-emerald-300 dark:border-emerald-900/30">
           <CardContent className="p-8 flex flex-col justify-center h-full">
             <div className="flex items-center gap-2 text-emerald-400 font-bold mb-2">
                <Target className="w-5 h-5" /> Total WIN
             </div>
-            <div className="text-4xl font-black text-slate-800 text-slate-100">{globalStats.totalWins} <span className="text-lg text-slate-400 font-medium">analisis</span></div>
+            <div className="text-4xl font-black text-slate-800 text-slate-100">{globalStats.totalWins} <span className="text-lg text-slate-500 dark:text-slate-400 font-medium">analisis</span></div>
           </CardContent>
         </Card>
 
-        <Card className="bg-rose-50 bg-rose-950/20 border-rose-100 border-rose-900/30">
+        <Card className="bg-rose-50 bg-rose-100 dark:bg-rose-950/20 border-rose-100 border-rose-900/30">
           <CardContent className="p-8 flex flex-col justify-center h-full">
             <div className="flex items-center gap-2 text-rose-400 font-bold mb-2">
                <ShieldAlert className="w-5 h-5" /> Total LOSS
             </div>
-            <div className="text-4xl font-black text-slate-800 text-slate-100">{globalStats.totalLosses} <span className="text-lg text-slate-400 font-medium">analisis</span></div>
+            <div className="text-4xl font-black text-slate-800 text-slate-100">{globalStats.totalLosses} <span className="text-lg text-slate-500 dark:text-slate-400 font-medium">analisis</span></div>
           </CardContent>
         </Card>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        <Card className="bg-slate-900 border-slate-800">
+        <Card className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">
           <CardContent className="p-6">
             <div className="text-slate-500 text-xs font-bold uppercase tracking-wider mb-2">Avg Profit</div>
             <div className="text-3xl font-black text-emerald-400">+{avgProfit}%</div>
           </CardContent>
         </Card>
         
-        <Card className="bg-slate-900 border-slate-800">
+        <Card className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">
           <CardContent className="p-6">
             <div className="text-slate-500 text-xs font-bold uppercase tracking-wider mb-2">Avg Loss</div>
             <div className="text-3xl font-black text-rose-400">-{avgLoss}%</div>
           </CardContent>
         </Card>
 
-        <Card className="bg-slate-900 border-slate-800">
+        <Card className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">
           <CardContent className="p-6">
             <div className="text-slate-500 text-xs font-bold uppercase tracking-wider mb-2">Profit Factor</div>
             <div className="text-3xl font-black text-indigo-400">{profitFactor}</div>
@@ -193,7 +193,7 @@ export default function CryptoPerformancePage() {
       </div>
 
       <div className="mb-10">
-         <h2 className="text-xl font-bold flex items-center gap-2 text-white mb-6">
+         <h2 className="text-xl font-bold flex items-center gap-2 text-slate-900 dark:text-white mb-6">
             <Target className="w-5 h-5 text-emerald-500" /> Breakdown Akurasi per Koin
          </h2>
          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -203,9 +203,9 @@ export default function CryptoPerformancePage() {
                topCoins.map(([coin, stats], idx) => {
                   const coinWinRate = ((stats.win / stats.total) * 100).toFixed(0);
                   return (
-                     <Card key={idx} className="bg-slate-900 border-slate-800 p-4">
+                     <Card key={idx} className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 p-4">
                         <div className="flex justify-between items-center mb-2">
-                           <span className="font-black text-white">{coin}</span>
+                           <span className="font-black text-slate-900 dark:text-white">{coin}</span>
                            <Badge className="bg-indigo-500/10 text-indigo-400 border-0">{stats.total} Trades</Badge>
                         </div>
                         <div className="flex items-end gap-2">
@@ -222,7 +222,7 @@ export default function CryptoPerformancePage() {
       </div>
 
       <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold flex items-center gap-2 text-white">
+          <h2 className="text-xl font-bold flex items-center gap-2 text-slate-900 dark:text-white">
             <TrendingUp className="w-5 h-5 text-indigo-500" /> Riwayat Analisis Terakhir
           </h2>
           <div className="flex gap-2">
@@ -234,24 +234,24 @@ export default function CryptoPerformancePage() {
       </div>
 
       {history.length === 0 ? (
-         <div className="text-center py-20 bg-slate-800/50 rounded-2xl border border-dashed border-slate-800 text-slate-500">
+         <div className="text-center py-20 bg-slate-200 dark:bg-slate-800/50 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 text-slate-500">
             Belum ada riwayat evaluasi analisis.
          </div>
       ) : (
-         <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-sm">
+         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
                <table className="w-full text-left border-collapse">
                   <thead>
-                     <tr className="bg-slate-800/50 text-slate-500 text-xs uppercase tracking-wider">
-                        <th className="p-4 font-bold border-b border-slate-800">Tanggal</th>
-                        <th className="p-4 font-bold border-b border-slate-800">Pair</th>
-                        <th className="p-4 font-bold border-b border-slate-800">Status</th>
-                        <th className="p-4 font-bold border-b border-slate-800">Keterangan</th>
+                     <tr className="bg-slate-200 dark:bg-slate-800/50 text-slate-500 text-xs uppercase tracking-wider">
+                        <th className="p-4 font-bold border-b border-slate-200 dark:border-slate-800">Tanggal</th>
+                        <th className="p-4 font-bold border-b border-slate-200 dark:border-slate-800">Pair</th>
+                        <th className="p-4 font-bold border-b border-slate-200 dark:border-slate-800">Status</th>
+                        <th className="p-4 font-bold border-b border-slate-200 dark:border-slate-800">Keterangan</th>
                      </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
                      {filteredHistory.map((item, i) => (
-                        <tr key={i} className={`hover:bg-slate-50/50 hover:bg-slate-900/30 transition-colors ${item.status === 'WIN' ? 'bg-emerald-950/10' : item.status === 'LOSS' ? 'bg-rose-950/10' : ''}`}>
+                        <tr key={i} className={`hover:bg-slate-50/50 hover:bg-slate-100/50 dark:bg-slate-900/30 transition-colors ${item.status === 'WIN' ? 'bg-emerald-100 dark:bg-emerald-950/10' : item.status === 'LOSS' ? 'bg-rose-100 dark:bg-rose-950/10' : ''}`}>
                            <td className="p-4 text-sm text-slate-500 whitespace-nowrap">{item.date}</td>
                            <td className="p-4 font-bold text-slate-900 text-slate-100">{item.symbol}</td>
                            <td className="p-4">
@@ -260,12 +260,12 @@ export default function CryptoPerformancePage() {
                               ) : item.status === 'LOSS' ? (
                                  <Badge className="bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 border-0 font-black">LOSS {item.pnlPercent ? `(${item.pnlPercent}%)` : ''}</Badge>
                               ) : item.status === 'EXPIRED' ? (
-                                 <Badge className="bg-slate-500/20 text-slate-400 border-0 font-black">EXPIRED {item.pnlPercent ? `(${item.pnlPercent > 0 ? '+' : ''}${item.pnlPercent}%)` : ''}</Badge>
+                                 <Badge className="bg-slate-500/20 text-slate-500 dark:text-slate-400 border-0 font-black">EXPIRED {item.pnlPercent ? `(${item.pnlPercent > 0 ? '+' : ''}${item.pnlPercent}%)` : ''}</Badge>
                               ) : (
                                  <Badge variant="outline" className="text-amber-600 border-amber-300">PENDING</Badge>
                               )}
                            </td>
-                           <td className="p-4 text-sm text-slate-400 max-w-md">{item.reason}</td>
+                           <td className="p-4 text-sm text-slate-500 dark:text-slate-400 max-w-md">{item.reason}</td>
                         </tr>
                      ))}
                   </tbody>

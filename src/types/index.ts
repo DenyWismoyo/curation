@@ -1,1 +1,1 @@
-export * from './curation';
+export * from '../features/assessment/types/assessment.types';

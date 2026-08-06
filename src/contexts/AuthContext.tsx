@@ -15,8 +15,8 @@ import {
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
-import { auth, googleProvider, db, functions } from '@/lib/firebase';
-import { ensureReferralVisitorId, getStoredReferralAttribution } from '@/lib/referralAttribution';
+import { auth, googleProvider, db, functions } from '@/lib/firebase/firebase';
+import { ensureReferralVisitorId, getStoredReferralAttribution } from '@/features/assessment/services/referralAttribution';
 
 interface AuthContextType {
   user: User | null;

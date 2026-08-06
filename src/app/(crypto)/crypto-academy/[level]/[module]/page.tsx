@@ -3,14 +3,14 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { doc, getDoc, setDoc, serverTimestamp, collection, query, where, orderBy, getDocs } from 'firebase/firestore'
-import { db } from '@/lib/firebase'
+import { db } from '@/lib/firebase/firebase'
 import { useAuth } from '@/contexts/AuthContext'
 import { Loader2, ArrowLeft, CheckCircle, Sparkles } from 'lucide-react'
 import { MarkdownContent } from '@/components/domain/public/MarkdownContent'
-import { CryptoModuleQuizModal } from '@/components/crypto/CryptoModuleQuizModal'
-import { CryptoTableOfContents } from '@/components/crypto/CryptoTableOfContents'
-import { CryptoLearningRecommendations } from '@/components/crypto/CryptoLearningRecommendations'
-import { CryptoLearningPath } from '@/components/crypto/CryptoLearningPath'
+import { CryptoModuleQuizModal } from '@/features/crypto/components/academy/CryptoModuleQuizModal'
+import { CryptoTableOfContents } from '@/features/crypto/components/navigation/CryptoTableOfContents'
+import { CryptoLearningRecommendations } from '@/features/crypto/components/academy/CryptoLearningRecommendations'
+import { CryptoLearningPath } from '@/features/crypto/components/academy/CryptoLearningPath'
 import { Progress } from '@/components/ui/progress'
 
 interface CryptoModule {
@@ -130,7 +130,7 @@ export default function CryptoAcademyModulePage() {
     setMarking(true)
     try {
       const { httpsCallable } = await import('firebase/functions');
-      const { functions } = await import('@/lib/firebase');
+      const { functions } = await import('@/lib/firebase/firebase');
       const saveQuiz = httpsCallable(functions, 'saveCryptoQuizResult');
       
       const passed = (resultData.score || 0) >= 70;
@@ -162,7 +162,7 @@ export default function CryptoAcademyModulePage() {
 
   if (loading) {
     return (
-      <div className="min-h-[60vh] flex flex-col justify-center items-center text-slate-400">
+      <div className="min-h-[60vh] flex flex-col justify-center items-center text-slate-500 dark:text-slate-400">
         <Loader2 className="w-8 h-8 animate-spin mb-4 text-purple-500" />
         <p className="font-bold text-xs uppercase tracking-widest text-slate-500">
           Memuat Modul...
@@ -174,7 +174,7 @@ export default function CryptoAcademyModulePage() {
   if (!moduleData) {
     return (
       <div className="min-h-[60vh] flex flex-col justify-center items-center">
-        <p className="text-slate-400 font-medium">Modul tidak ditemukan.</p>
+        <p className="text-slate-500 dark:text-slate-400 font-medium">Modul tidak ditemukan.</p>
         <button onClick={() => router.push('/crypto-academy')} className="mt-4 text-purple-400 hover:text-purple-300 font-bold">
           Kembali ke Academy
         </button>
@@ -185,21 +185,21 @@ export default function CryptoAcademyModulePage() {
   return (
     <>
       <div className="fixed top-0 left-0 right-0 z-50">
-        <Progress value={scrollProgress} className="h-1.5 rounded-none bg-slate-800" />
+        <Progress value={scrollProgress} className="h-1.5 rounded-none bg-slate-100 dark:bg-slate-800" />
       </div>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 pb-32">
         <button 
         onClick={() => router.push('/crypto-academy')}
-        className="flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-slate-200 transition-colors mb-8"
+        className="flex items-center gap-2 text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-slate-200 transition-colors mb-8"
       >
         <ArrowLeft className="w-4 h-4" /> Kembali ke Kurikulum
       </button>
 
       <div className="mb-10">
-        <div className="inline-flex items-center gap-2 rounded-full bg-slate-800 border border-slate-700 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-slate-300 mb-4">
+        <div className="inline-flex items-center gap-2 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-4">
           {levelName} • Modul {moduleData.moduleOrder}
         </div>
-        <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight">
+        <h1 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
           {moduleData.title}
         </h1>
       </div>
@@ -207,7 +207,7 @@ export default function CryptoAcademyModulePage() {
 
       <div className="flex flex-col lg:flex-row gap-12">
         {/* Konten Utama */}
-        <div id="module-content" className="flex-1 prose prose-invert prose-lg max-w-none prose-headings:text-white prose-p:text-slate-300 prose-a:text-purple-400 prose-strong:text-slate-100">
+        <div id="module-content" className="flex-1 prose prose-invert prose-lg max-w-none prose-headings:text-slate-900 dark:text-white prose-p:text-slate-600 dark:text-slate-300 prose-a:text-purple-400 prose-strong:text-slate-100">
           <MarkdownContent content={moduleData.content} />
         </div>
         
@@ -218,11 +218,11 @@ export default function CryptoAcademyModulePage() {
         </div>
       </div>
 
-      <div className="mt-16 pt-8 border-t border-slate-800 bg-slate-900/50 p-6 rounded-[2rem] text-center">
+      <div className="mt-16 pt-8 border-t border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 p-6 rounded-[2rem] text-center">
         {!quizResult ? (
           <>
-            <h3 className="text-xl font-bold text-white mb-2">Selesai Belajar?</h3>
-            <p className="text-slate-400 mb-6 max-w-xl mx-auto">
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Selesai Belajar?</h3>
+            <p className="text-slate-500 dark:text-slate-400 mb-6 max-w-xl mx-auto">
               Tandai modul ini sebagai selesai untuk melanjutkan perjalanan belajarmu, atau kerjakan kuis evaluasi.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4">
@@ -230,7 +230,7 @@ export default function CryptoAcademyModulePage() {
                 <button
                   onClick={handleTakeQuiz}
                   disabled={marking}
-                  className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-bold px-8 py-3 rounded-full hover:from-purple-400 hover:to-indigo-400 transition-all shadow-lg hover:shadow-purple-500/25 disabled:opacity-50"
+                  className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-indigo-500 text-slate-900 dark:text-white font-bold px-8 py-3 rounded-full hover:from-purple-400 hover:to-indigo-400 transition-all shadow-lg hover:shadow-purple-500/25 disabled:opacity-50"
                 >
                   {marking ? <Loader2 className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5" />}
                   {completed ? 'Ulangi Kuis' : 'Mulai Kuis Evaluasi'}
@@ -239,7 +239,7 @@ export default function CryptoAcademyModulePage() {
                 <button
                   onClick={handleMarkCompleted}
                   disabled={marking || completed}
-                  className="flex items-center gap-2 bg-slate-800 text-white font-bold px-8 py-3 rounded-full border border-slate-700 hover:bg-slate-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-bold px-8 py-3 rounded-full border border-slate-300 dark:border-slate-700 hover:bg-slate-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {marking ? <Loader2 className="w-5 h-5 animate-spin" /> : <CheckCircle className="w-5 h-5" />}
                   {completed ? 'Telah Diselesaikan' : 'Tandai Selesai'}

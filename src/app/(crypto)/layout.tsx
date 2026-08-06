@@ -1,11 +1,12 @@
 import React from 'react'
 import { Suspense } from 'react'
-import { CryptoNavbar } from '@/components/crypto/CryptoNavbar'
-import CryptoAlertsWidget from '@/components/crypto/CryptoAlertsWidget'
-import CryptoChat from '@/components/crypto/CryptoChat'
-import { CryptoGuard } from '@/components/crypto/CryptoGuard'
+import { CryptoNavbar } from '@/features/crypto/components/navigation/CryptoNavbar'
+import { CryptoBottomNav } from '@/features/crypto/components/navigation/CryptoBottomNav'
+import CryptoAlertsWidget from '@/features/crypto/components/alerts/CryptoAlertsWidget'
+import CryptoChat from '@/features/crypto/components/chat/CryptoChat'
+import { CryptoGuard } from '@/features/crypto/components/shared/CryptoGuard'
 
-import CryptoTrialBanner from '@/components/crypto/CryptoTrialBanner'
+import CryptoTrialBanner from '@/features/crypto/components/shared/CryptoTrialBanner'
 
 export default function CryptoLayout({
   children,
@@ -13,7 +14,7 @@ export default function CryptoLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="dark min-h-screen bg-slate-950 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black text-slate-200 selection:bg-purple-500/30 font-sans">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans">
       <CryptoGuard>
         {/* Trial Banner */}
         <CryptoTrialBanner />
@@ -21,10 +22,13 @@ export default function CryptoLayout({
         {/* Crypto Navbar (Top navigation dedicated to Crypto features) */}
         <CryptoNavbar />
 
-        {/* Main Content Area - offset by navbar height (pt-16 sm:pt-20). Removed heavy bottom padding for mobile. */}
-        <main className="pt-16 sm:pt-20 min-h-screen relative pb-6">
+        {/* Main Content Area - offset by navbar height (pt-16 sm:pt-20). Added bottom padding for mobile nav. */}
+        <main className="pt-16 sm:pt-20 min-h-screen relative pb-24 md:pb-6">
           {children}
         </main>
+
+        {/* Mobile Bottom Navigation */}
+        <CryptoBottomNav />
 
         {/* Global Crypto Widgets */}
         <Suspense fallback={null}>

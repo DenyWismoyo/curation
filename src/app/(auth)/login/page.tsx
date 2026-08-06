@@ -4,7 +4,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
-import { SafeLogo } from '@/components/shared/SafeLogo';
+import { SafeLogo } from '@/components/layout/SafeLogo';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';

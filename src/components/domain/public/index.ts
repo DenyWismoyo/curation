@@ -17,3 +17,13 @@ export { GlassCardLayout } from './GlassCardLayout';
 export { PageLoading, PageSkeleton } from './PageLoading';
 export { ScoreLineChart } from './ScoreLineChart';
 export { AssessmentStatusBadge } from './AssessmentStatusBadge';
+
+// UI Design System Exports
+export {
+  AppModal,
+  AppTabs,
+  StatusBadge,
+  SectionLabel,
+  AppSpinner,
+  PageAuthGate,
+} from '@/components/ui/design-system';

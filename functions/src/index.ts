@@ -8,20 +8,20 @@ import { GoogleAIFileManager } from '@google/generative-ai/server'
 import * as os from 'os'
 import * as path from 'path'
 import * as fs from 'fs'
-import { buildAssessmentPrompt, getSystemPrompt } from './prompt/promptTemplate'
+import { buildAssessmentPrompt, getSystemPrompt } from './prompts/promptTemplate'
 
 // ============================================================================
 // EXPORT FUNGSI MODULAR
 // ============================================================================
-export { generatePDFReport } from './general/documentGenerator'
-export { matchBusinessWithIndustry } from './general/vectorService'
-export { generateScenePrompt, generateFullStoryboard } from './agents/storyboard/videoPromptAgent'
+export { generatePDFReport } from './infrastructure/pdf/documentGenerator'
+export { matchBusinessWithIndustry } from './infrastructure/vector/vectorService'
+export { generateScenePrompt, generateFullStoryboard } from './domains/storyboard/agents/videoPromptAgent'
 export { 
   saveCryptoQuizResult, 
   enrichCryptoModuleMetadata, 
   generateCryptoModuleAssessment 
-} from './agents/crypto/cryptoAcademyAgent'
-export { generateCryptoCertificate } from './agents/crypto/cryptoCertificateAgent'
+} from './domains/crypto/agents/cryptoAcademyAgent'
+export { generateCryptoCertificate } from './domains/crypto/agents/cryptoCertificateAgent'
 
 export {
   createPaymentInvoice,
@@ -29,36 +29,36 @@ export {
   mayarWebhook,
   redeemAssessmentQuota,
   checkTokenValidity,
-} from './general/paymentService'
-export { chatWithOmniAi } from './general/omniAiService'
-export { analyzeEvidence } from './general/evidenceService'
+} from './infrastructure/payment/paymentService'
+export { chatWithOmniAi } from './infrastructure/ai/omniAiService'
+export { analyzeEvidence } from './domains/assessment/services/evidenceService'
 export {
   generateActionPlanChecklist,
   generateSubTaskChecklist,
   generatePersonalActionPlan,
-} from './actionPlanService'
+} from './domains/assessment/services/actionPlanService'
 export {
   generateTemplateSellingPoints,
   generatePromptAnchors,
-} from './outputService'
-export { weeklyActionPlanNudge, cryptoTrialExpiryNudge } from './email/nudgeService'
+} from './domains/assessment/services/outputService'
+export { weeklyActionPlanNudge, cryptoTrialExpiryNudge } from './infrastructure/email/nudgeService'
 export {
   generateAdaptiveQuestions,
   evaluateMacroBranching,
   manualTriggerRAGSeed,
-} from './general/adaptiveValidationService'
-export { enhanceFieldLogic, enhanceStepLogic } from './fieldEnhancerService'
+} from './domains/assessment/services/adaptiveValidationService'
+export { enhanceFieldLogic, enhanceStepLogic } from './domains/assessment/services/fieldEnhancerService'
 // TAMBAHKAN EXPORT FUNGSI BARU DI SINI:
 export {
   generateAssessmentCacheKey,
   getCachedAssessmentResult,
   setCachedAssessmentResult,
-} from './general/cacheService'
-export { scheduledCacheCleanup } from './general/cacheCleanupService'
-export { generateAdvancedPrompts } from './promptEnhancerService'
-export { analyzeMicroIdea } from './general/microSimulatorService'
-export { processVoiceInput } from './general/voiceService'
-export { formBuilderOrchestrator } from './pipelines/formBuilder/orchestrator'
+} from './infrastructure/storage/cacheService'
+export { scheduledCacheCleanup } from './infrastructure/storage/cacheCleanupService'
+export { generateAdvancedPrompts } from './domains/assessment/services/promptEnhancerService'
+export { analyzeMicroIdea } from './domains/assessment/services/microSimulatorService'
+export { processVoiceInput } from './infrastructure/voice/voiceService'
+export { formBuilderOrchestrator } from './domains/form-builder/pipelines/orchestrator'
 
 // ============================================================================
 // DATABASE & AUTH SYNC TRIGGERS
@@ -69,23 +69,23 @@ export { syncUserClaims } from './triggers/userClaimsSync'
 // ============================================================================
 // AI ASSESSMENT AGENTS
 // ============================================================================
-export { processCurationAssessment } from './agents/assessment/gatewayAgent'
-export { assessmentOrchestrator } from './pipelines/assessment/orchestrator'
-export { actionPlanCopilotChat } from './agents/assessment/copilotAgent'
-export { adminGenerateMockData } from './agents/assessment/mockDataAgent'
-export { premiumConsultationChat } from './agents/assessment/premiumConsultationAgent'
-export { assessmentAnalyticsAgent } from './agents/analytics/analyticsAgent'
+export { processCurationAssessment } from './domains/assessment/agents/gatewayAgent'
+export { assessmentOrchestrator } from './domains/assessment/pipelines/orchestrator'
+export { actionPlanCopilotChat } from './domains/assessment/agents/copilotAgent'
+export { adminGenerateMockData } from './domains/assessment/agents/mockDataAgent'
+export { premiumConsultationChat } from './domains/assessment/agents/premiumConsultationAgent'
+export { assessmentAnalyticsAgent } from './domains/analytics/agents/analyticsAgent'
 export {
   generateCopywriting,
   reviseSlidePrompt,
   reviseCopywriting,
-} from './agents/promo/copywriterAgent'
-export { renderSingleSlide } from './agents/promo/imageRendererAgent'
-export { generateArticleFromTemplate } from './agents/promo/articleAgent'
-export { batchGenerateSmartPricing } from './agents/promo/pricingAgent'
-export { generateProgramIdentity } from './agents/promo/identityAgent'
-export { generateTemplateIdentityInspirations } from './agents/promo/templateIdentityInspirationAgent'
-export { generateArticleImage } from './agents/promo/articleImageAgent'
+} from './domains/promo/agents/copywriterAgent'
+export { renderSingleSlide } from './domains/promo/agents/imageRendererAgent'
+export { generateArticleFromTemplate } from './domains/promo/agents/articleAgent'
+export { batchGenerateSmartPricing } from './domains/promo/agents/pricingAgent'
+export { generateProgramIdentity } from './domains/promo/agents/identityAgent'
+export { generateTemplateIdentityInspirations } from './domains/promo/agents/templateIdentityInspirationAgent'
+export { generateArticleImage } from './domains/promo/agents/articleImageAgent'
 export {
   createOrGetAffiliateProfile,
   attachAffiliateToTransaction,
@@ -94,24 +94,24 @@ export {
   adminMarkAffiliateCommissionPaid,
   getAffiliateProgramConfigPublic,
   adminUpdateAffiliateProgramConfig,
-} from './agents/affiliate/affiliateAgent'
-export { affiliateCommissionAgent } from './agents/affiliate/commissionAgent'
+} from './domains/affiliate/agents/affiliateAgent'
+export { affiliateCommissionAgent } from './domains/affiliate/agents/commissionAgent'
 export {
   upsertReferralAttribution,
   bindReferralAttributionToUser,
-} from './agents/affiliate/attributionAgent'
-export { generateAdaptiveOnboardingPlan } from './agents/onboarding/adaptiveOnboardingAgent'
+} from './domains/affiliate/agents/attributionAgent'
+export { generateAdaptiveOnboardingPlan } from './domains/onboarding/agents/adaptiveOnboardingAgent'
 export {
   adminUpsertB2BOrganization,
   adminListB2BOrganizations,
   adminSetB2BUserAccess,
   adminRevokeB2BUserAccess,
-} from './agents/b2b/organizationAgent'
-export { getB2BOrganizationAnalytics } from './agents/b2b/b2bAnalyticsService'
+} from './domains/b2b/agents/organizationAgent'
+export { getB2BOrganizationAnalytics } from './domains/b2b/agents/b2bAnalyticsService'
 export {
   b2bAddInteractionLog,
   b2bGenerateInteractionSummary,
-} from './agents/b2b/interactionAgent'
+} from './domains/b2b/agents/interactionAgent'
 export {
   createStudyProject,
   registerStudySource,
@@ -119,20 +119,20 @@ export {
   startStudyProjectPipeline,
   approveStudyOutline,
   publishStudyToCryptoAcademy,
-} from './agents/study/studyProjectAgent'
-export { requestChapterRevision, generateRevisionMaterials } from './agents/study/chapterRevisionAgent'
-export { exportStudyDocument } from './agents/study/exportService'
-export { studyProjectOrchestrator } from './pipelines/study/orchestrator'
-export { studyChapterOrchestrator } from './pipelines/study/chapterOrchestrator'
-export { cryptoCronAgent } from './agents/crypto/cryptoCronAgent'
-export { cryptoHiddenGemAgent } from './agents/crypto/cryptoHiddenGemAgent'
-export { cryptoPremiumIntelligenceAgent } from "./agents/crypto/cryptoPremiumIntelligenceAgent";
-export { cryptoMacroAgent } from "./agents/crypto/cryptoMacroAgent";
-export { telegramWebhook } from "./agents/telegram/telegramBot";
-export { cryptoCopilotChat, cryptoCopilotSuggestions } from './agents/crypto/cryptoCopilotAgent'
-export { cryptoNewsAgent } from './agents/crypto/cryptoNewsAgent'
-export { generateRealtimeScalping, generateRealtimeHiddenGem } from './agents/crypto/cryptoAdminAgents'
-export { activateCryptoTrial } from './agents/crypto/cryptoTrialAgent'
+} from './domains/study/agents/studyProjectAgent'
+export { requestChapterRevision, generateRevisionMaterials } from './domains/study/agents/chapterRevisionAgent'
+export { exportStudyDocument } from './domains/study/agents/exportService'
+export { studyProjectOrchestrator } from './domains/study/pipelines/orchestrator'
+export { studyChapterOrchestrator } from './domains/study/pipelines/chapterOrchestrator'
+export { cryptoCronAgent } from './domains/crypto/agents/cryptoCronAgent'
+export { cryptoHiddenGemAgent } from './domains/crypto/agents/cryptoHiddenGemAgent'
+export { cryptoPremiumIntelligenceAgent } from "./domains/crypto/agents/cryptoPremiumIntelligenceAgent";
+export { cryptoMacroAgent } from "./domains/crypto/agents/cryptoMacroAgent";
+export { telegramWebhook } from "./domains/telegram/agents/telegramBot";
+export { cryptoCopilotChat, cryptoCopilotSuggestions } from './domains/crypto/agents/cryptoCopilotAgent'
+export { cryptoNewsAgent } from './domains/crypto/agents/cryptoNewsAgent'
+export { generateRealtimeScalping, generateRealtimeHiddenGem } from './domains/crypto/agents/cryptoAdminAgents'
+export { activateCryptoTrial } from './domains/crypto/agents/cryptoTrialAgent'
 
 // ============================================================================
 // INISIALISASI FIREBASE
@@ -145,7 +145,7 @@ const smtpEmailSecret = defineSecret('SMTP_EMAIL')
 const smtpPasswordSecret = defineSecret('SMTP_PASSWORD')
 
 // // ============================================================================
-// CLOUD FUNCTION: ASESMEN AI UTAMA (MULTI-AGENT ARCHITECTURE)
-// ============================================================================
-// NOTE: Fungsi monolitik processCurationAssessment telah dihapus.
-// Logika utama kini dijalankan oleh gatewayAgent.ts dan pipeline multi-agent.
+// // CLOUD FUNCTION: ASESMEN AI UTAMA (MULTI-AGENT ARCHITECTURE)
+// // ============================================================================
+// // NOTE: Fungsi monolitik processCurationAssessment telah dihapus.
+// // Logika utama kini dijalankan oleh gatewayAgent.ts dan pipeline multi-agent.

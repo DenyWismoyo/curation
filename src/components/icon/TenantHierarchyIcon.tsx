@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconProps } from '@/types/curation';
+import { IconProps } from '@/features/assessment/types/assessment.types';
 
 export const TenantHierarchyIcon: React.FC<IconProps> = ({ 
   size = 24, 

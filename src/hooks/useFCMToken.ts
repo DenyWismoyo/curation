@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { getMessaging, getToken } from 'firebase/messaging';
-import { app, db } from '@/lib/firebase';
+import { app, db } from '@/lib/firebase/firebase';
 import { collection, doc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 const VAPID_KEY = "BMzKXg4c63luj9oFncwZ3DuHZb7I3iu6gWSurF651YhmyBy64YyxSJmQt4TyKGj4og_WfC1vyzgBRcWusJn059E";
