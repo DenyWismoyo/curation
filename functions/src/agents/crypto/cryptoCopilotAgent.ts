@@ -214,7 +214,7 @@ export const cryptoCopilotChat = onCall({
 
     try {
       const result = await withRetry(() => deepseekClient.chat.completions.create({
-        model: "deepseek-chat", // standard model
+        model: "deepseek-reasoner", // standard model
         messages: messages,
         tools: tools,
         tool_choice: "auto",
@@ -294,7 +294,7 @@ export const cryptoCopilotChat = onCall({
 
         // Second call to get final answer
         const secondResponse = await withRetry(() => deepseekClient.chat.completions.create({
-          model: "deepseek-chat",
+          model: "deepseek-reasoner",
           messages: messages,
           temperature: 0.7,
         }));
@@ -361,7 +361,7 @@ export const cryptoCopilotSuggestions = onCall({
 
     try {
       const result = await withRetry(() => deepseekClient.chat.completions.create({
-        model: "deepseek-chat",
+        model: "deepseek-reasoner",
         messages: [{ role: "system", content: systemPrompt }],
         temperature: 0.7,
       }));

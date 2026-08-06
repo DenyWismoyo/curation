@@ -437,7 +437,8 @@ export const mayarWebhook = onRequest({
           const userRef = db.collection("users").doc(freshTxData.userId);
           trx.set(userRef, {
             isPremium: true,
-            premiumValidUntil: validUntil.toISOString()
+            premiumValidUntil: validUntil.toISOString(),
+            isTrial: false
           }, { merge: true });
 
           console.log(`[WEBHOOK] ✅ Akses Premium diberikan ke user ${freshTxData.userId} hingga ${validUntil.toISOString()} (${daysToAdd} hari)`);

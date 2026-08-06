@@ -399,7 +399,7 @@ ${JSON.stringify(safeScalpingCandidates, null, 2)}`;
         const enrichedUserPrompt = userPrompt + `\n\nDraft Scalping dari Quant AI (Agent 1):\n${JSON.stringify(draftScalping, null, 2)}\n\nTugas Anda (Agent 2) adalah me-review draft di atas. Buang yang berisiko tinggi terhadap berita makro/fundamental hari ini, dan hasilkan 'scalpingOpportunities' final.`;
 
         const response = await withRetry(() => client.chat.completions.create({
-          model: "deepseek-chat", // Downgraded from reasoner for speed
+          model: "deepseek-reasoner", // Menggunakan reasoner
           messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: enrichedUserPrompt }

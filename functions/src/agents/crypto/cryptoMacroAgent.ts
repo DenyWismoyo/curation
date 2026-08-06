@@ -96,7 +96,7 @@ Format JSON Wajib:
       `;
 
       const result = await withRetry(() => client.chat.completions.create({
-        model: "deepseek-chat",
+        model: "deepseek-reasoner",
         messages: [{ role: "user", content: prompt }],
       }));
 

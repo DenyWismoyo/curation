@@ -5,6 +5,8 @@ import CryptoAlertsWidget from '@/components/crypto/CryptoAlertsWidget'
 import CryptoChat from '@/components/crypto/CryptoChat'
 import { CryptoGuard } from '@/components/crypto/CryptoGuard'
 
+import CryptoTrialBanner from '@/components/crypto/CryptoTrialBanner'
+
 export default function CryptoLayout({
   children,
 }: {
@@ -13,6 +15,9 @@ export default function CryptoLayout({
   return (
     <div className="dark min-h-screen bg-slate-950 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black text-slate-200 selection:bg-purple-500/30 font-sans">
       <CryptoGuard>
+        {/* Trial Banner */}
+        <CryptoTrialBanner />
+        
         {/* Crypto Navbar (Top navigation dedicated to Crypto features) */}
         <CryptoNavbar />
 

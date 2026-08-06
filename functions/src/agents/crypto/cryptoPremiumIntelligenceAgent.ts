@@ -172,7 +172,7 @@ Skema JSON yang harus dikembalikan:
 `;
 
       const result = await withRetry(() => deepseekClient.chat.completions.create({
-        model: "deepseek-chat",
+        model: "deepseek-reasoner",
         messages: [{ role: "user", content: prompt }],
       }));
 

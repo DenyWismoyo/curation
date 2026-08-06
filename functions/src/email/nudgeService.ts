@@ -173,8 +173,92 @@ export const weeklyActionPlanNudge = onSchedule({
       
       await Promise.all(batchPromises);
       console.log(`Proses Weekly Nudge & Calendar Integration Selesai.`);
-    } catch (error: any) {
-      console.error("Gagal menjalankan Weekly Nudge:", error);
+    } catch (error) {
+      console.error("[NUDGE CRON] Error executing weeklyActionPlanNudge:", error);
     }
-  }
-);
+});
+
+// ============================================================================
+// CRON JOB: CRYPTO TRIAL EXPIRY NUDGE (Berjalan setiap hari jam 10:00 Pagi)
+// Mengirim email H-1 sebelum trial habis
+// ============================================================================
+export const cryptoTrialExpiryNudge = onSchedule({
+    schedule: "0 10 * * *", // Cron format: Tiap hari jam 10 pagi
+    timeZone: "Asia/Jakarta",
+    region: "asia-southeast2",
+    secrets: [smtpEmailSecret, smtpPasswordSecret],
+    timeoutSeconds: 540,
+    memory: "512MiB"
+  },
+  async (event) => {
+    const db = getFirestore(admin.app(), "curation");
+    const smtpEmail = smtpEmailSecret.value();
+    const smtpPassword = smtpPasswordSecret.value();
+
+    try {
+      const now = new Date();
+      // Target: Trial yang kedaluwarsa besok (H-1)
+      const tomorrowStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+      const tomorrowEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 2);
+
+      const usersRef = db.collection("users");
+      const snapshot = await usersRef
+        .where("isTrial", "==", true)
+        .where("trialExpiresAt", ">=", tomorrowStart.toISOString())
+        .where("trialExpiresAt", "<", tomorrowEnd.toISOString())
+        .get();
+
+      if (snapshot.empty) return;
+
+      const transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
+        auth: { 
+          user: smtpEmail, 
+          pass: smtpPassword 
+        },
+      });
+
+      const batchPromises = snapshot.docs.map(async (userDoc) => {
+        const uData = userDoc.data() as any;
+        const userEmail = uData.email;
+        if (!userEmail) return;
+
+        const emailHtml = `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+            <h2 style="color: #4f46e5;">Halo ${uData.displayName || 'Trader'},</h2>
+            <p>Masa coba gratis akses Premium Crypto Anda akan <strong>segera berakhir besok</strong>.</p>
+            <p>Jangan sampai kehilangan akses ke intelijen pasar AI, peringatan dini Danger Zone, dan radar Market Maker (Whale).</p>
+            <div style="margin: 30px 0; text-align: center;">
+              <a href="https://omnifit.cloud/crypto" style="background-color: #10b981; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">Upgrade Premium Sekarang</a>
+            </div>
+            <p style="font-size: 14px; color: #666;">
+              Tetap untung dan hindari loss beruntun dengan dukungan analis AI 24/7.
+            </p>
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
+            <p style="font-size: 12px; color: #999;">Omnifit Crypto Intelligence</p>
+          </div>
+        `;
+
+        const mailOptions = {
+          from: '"Omnifit Crypto AI" <support@omnifit.cloud>',
+          to: userEmail,
+          subject: "Akses Trial Premium Anda Akan Berakhir Besok! ⏰",
+          html: emailHtml,
+        };
+
+        try {
+          await transporter.sendMail(mailOptions);
+          console.log(`[TRIAL NUDGE] Sent expiry reminder to ${userEmail}`);
+        } catch (err) {
+          console.error(`[TRIAL NUDGE] Failed to send to ${userEmail}:`, err);
+        }
+      });
+
+      await Promise.all(batchPromises);
+
+    } catch (error) {
+      console.error("[TRIAL NUDGE] Error executing cryptoTrialExpiryNudge:", error);
+    }
+});

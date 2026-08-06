@@ -41,7 +41,7 @@ export {
   generateTemplateSellingPoints,
   generatePromptAnchors,
 } from './outputService'
-export { weeklyActionPlanNudge } from './email/nudgeService'
+export { weeklyActionPlanNudge, cryptoTrialExpiryNudge } from './email/nudgeService'
 export {
   generateAdaptiveQuestions,
   evaluateMacroBranching,
@@ -132,6 +132,7 @@ export { telegramWebhook } from "./agents/telegram/telegramBot";
 export { cryptoCopilotChat, cryptoCopilotSuggestions } from './agents/crypto/cryptoCopilotAgent'
 export { cryptoNewsAgent } from './agents/crypto/cryptoNewsAgent'
 export { generateRealtimeScalping, generateRealtimeHiddenGem } from './agents/crypto/cryptoAdminAgents'
+export { activateCryptoTrial } from './agents/crypto/cryptoTrialAgent'
 
 // ============================================================================
 // INISIALISASI FIREBASE

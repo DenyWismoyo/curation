@@ -1,9 +1,11 @@
 "use client";
 
-import React from "react";
-import { Lock, Sparkles } from "lucide-react";
+import React, { useState } from "react";
+import { Lock, Sparkles, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
+import { CryptoTrialModal } from "./CryptoTrialModal";
 
 interface PremiumLockedWrapperProps {
   children: React.ReactNode;
@@ -21,6 +23,8 @@ export function PremiumLockedWrapper({
   className = ""
 }: PremiumLockedWrapperProps) {
   const router = useRouter();
+  const { cryptoTrialUsed } = useAuth();
+  const [trialModalOpen, setTrialModalOpen] = useState(false);
 
   if (hasAccess) {
     return <>{children}</>;
@@ -48,13 +52,29 @@ export function PremiumLockedWrapper({
         </p>
 
         <Button 
-          onClick={() => router.push('/crypto')}
+          onClick={() => {
+            if (!cryptoTrialUsed) {
+              setTrialModalOpen(true);
+            } else {
+              router.push('/crypto');
+            }
+          }}
           size="sm"
-          className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow-lg"
+          className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow-lg flex items-center justify-center gap-1.5 px-4"
         >
-          Lihat Penawaran
+          {!cryptoTrialUsed ? (
+            <>Coba Gratis <Zap className="w-3 h-3 fill-emerald-400 text-emerald-400" /></>
+          ) : (
+            'Lihat Penawaran'
+          )}
         </Button>
       </div>
+
+      <CryptoTrialModal 
+        isOpen={trialModalOpen}
+        setIsOpen={setTrialModalOpen}
+        featureName={title}
+      />
     </div>
   );
 }

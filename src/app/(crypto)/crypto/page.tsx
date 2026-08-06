@@ -39,7 +39,7 @@ const FAQS = [
 ];
 
 export default function PremiumSubscriptionPage() {
-  const { user, isPremium, role } = useAuth();
+  const { user, isPremium, role, cryptoTrialUsed } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -86,6 +86,26 @@ export default function PremiumSubscriptionPage() {
     } catch (error: any) {
       console.error('Error creating payment:', error);
       toast.error(error.message || 'Terjadi kesalahan saat memproses pembayaran.');
+      setLoading(false);
+    }
+  };
+
+  const handleTrial = async () => {
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      const activateCryptoTrial = httpsCallable(functions, 'activateCryptoTrial');
+      await activateCryptoTrial();
+      
+      toast.success('Akses Trial 3 Hari Berhasil Diaktifkan!');
+      // Biarkan onSnapshot AuthContext merefresh state secara otomatis
+    } catch (error: any) {
+      console.error('Error activating trial:', error);
+      toast.error(error.message || 'Gagal mengaktifkan trial.');
       setLoading(false);
     }
   };
@@ -326,12 +346,12 @@ export default function PremiumSubscriptionPage() {
               <p className="text-slate-400">Akses instan setelah pembayaran. Batalkan kapan saja.</p>
             </div>
 
-            <div className="grid lg:grid-cols-2 gap-8 items-stretch max-w-5xl mx-auto">
+            <div className="grid lg:grid-cols-3 gap-6 items-stretch max-w-6xl mx-auto">
               
               {/* FREE TIER */}
               <m.div 
                 initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn}
-                className="bg-slate-900/50 border border-slate-800 rounded-3xl p-8 flex flex-col"
+                className="bg-slate-900/50 border border-slate-800 rounded-3xl p-6 flex flex-col"
               >
                 <div className="mb-8">
                   <h3 className="text-2xl font-bold text-white mb-2">Market Explorer</h3>
@@ -351,10 +371,49 @@ export default function PremiumSubscriptionPage() {
                 </Button>
               </m.div>
 
+              {/* TRIAL TIER */}
+              <m.div 
+                initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ delay: 0.1 }} variants={fadeIn}
+                className="relative bg-slate-900/80 border border-emerald-500/30 rounded-3xl p-6 flex flex-col shadow-xl shadow-emerald-900/10"
+              >
+                <div className="absolute top-0 right-6 -translate-y-1/2">
+                  <div className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[10px] font-black uppercase tracking-widest py-1 px-3 rounded-full shadow-lg">
+                    1X SEUMUR HIDUP
+                  </div>
+                </div>
+                <div className="mb-8">
+                  <h3 className="text-2xl font-bold text-emerald-400 mb-2">Trial 3 Hari</h3>
+                  <div className="text-4xl font-black text-white mb-2">Rp 0 <span className="text-lg text-slate-500 font-medium">/ 3 hari</span></div>
+                  <p className="text-slate-400 text-sm">Rasakan kekuatan AI Hedge Fund secara penuh tanpa kartu kredit.</p>
+                </div>
+                <div className="space-y-4 flex-1 mb-8">
+                  <div className="flex gap-3 text-sm text-white font-medium"><Check size={18} className="text-emerald-400 shrink-0" /> Full Akses Laporan AI (3 Hari)</div>
+                  <div className="flex gap-3 text-sm text-white font-medium"><Check size={18} className="text-emerald-400 shrink-0" /> Real-time News</div>
+                  <div className="flex gap-3 text-sm text-white font-medium"><Check size={18} className="text-emerald-400 shrink-0" /> Global Economic Calendar</div>
+                  <div className="flex gap-3 text-sm text-white font-medium"><Check size={18} className="text-emerald-400 shrink-0" /> AI Copilot Chat (Tanya Apapun)</div>
+                  <div className="flex gap-3 text-sm text-white font-medium"><Check size={18} className="text-emerald-400 shrink-0" /> Hidden Gems Scan</div>
+                  <div className="flex gap-3 text-sm text-white font-medium"><Check size={18} className="text-emerald-400 shrink-0" /> Peringatan Danger Zone</div>
+                </div>
+                
+                {cryptoTrialUsed ? (
+                  <Button disabled variant="outline" className="w-full border-slate-700 bg-slate-800/50 text-slate-400 h-12 rounded-xl">
+                    Trial Telah Digunakan
+                  </Button>
+                ) : (
+                  <Button 
+                    onClick={handleTrial} 
+                    disabled={loading || hasAccess}
+                    className="w-full h-12 rounded-xl font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition-all shadow-[0_0_15px_rgba(16,185,129,0.2)]"
+                  >
+                    {loading ? <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Memproses...</> : hasAccess ? 'Anda Sudah Premium' : 'Coba Gratis 3 Hari'}
+                  </Button>
+                )}
+              </m.div>
+
               {/* PREMIUM TIER */}
               <m.div 
                 initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ delay: 0.2 }} variants={fadeIn}
-                className="relative bg-slate-900 border border-indigo-500/50 rounded-3xl p-8 flex flex-col shadow-2xl shadow-indigo-900/20"
+                className="relative bg-slate-900 border border-indigo-500/50 rounded-3xl p-6 flex flex-col shadow-2xl shadow-indigo-900/20"
               >
                 <div className="absolute top-0 right-8 -translate-y-1/2">
                   <div className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-xs font-bold uppercase tracking-wider py-1 px-4 rounded-full shadow-lg">

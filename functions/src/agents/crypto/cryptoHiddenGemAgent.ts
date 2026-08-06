@@ -216,7 +216,7 @@ Skema JSON yang harus dikembalikan:
 `;
 
       const result = await withRetry(() => deepseekClient.chat.completions.create({
-        model: "deepseek-chat", // Ganti ke deepseek-chat agar lebih cepat
+        model: "deepseek-reasoner", // Menggunakan reasoner untuk analisa mendalam
         messages: [{ role: "user", content: prompt }],
       }));
 

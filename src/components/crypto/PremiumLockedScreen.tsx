@@ -1,10 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Lock, Sparkles } from 'lucide-react';
+import { Lock, Sparkles, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useAuth } from '@/contexts/AuthContext';
+import { CryptoTrialModal } from './CryptoTrialModal';
 
 interface PremiumLockedScreenProps {
   title?: string;
@@ -16,6 +18,8 @@ export function PremiumLockedScreen({
   description = "Halaman ini berisi analitik AI tingkat lanjut yang khusus tersedia untuk pelanggan Premium." 
 }: PremiumLockedScreenProps) {
   const router = useRouter();
+  const { cryptoTrialUsed } = useAuth();
+  const [trialModalOpen, setTrialModalOpen] = useState(false);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[70vh] px-4 w-full relative overflow-hidden bg-slate-950">
@@ -44,10 +48,20 @@ export function PremiumLockedScreen({
         
         <div className="space-y-3">
           <Button 
-            onClick={() => router.push('/crypto')} 
-            className="w-full h-12 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(79,70,229,0.2)] transition-all"
+            onClick={() => {
+              if (!cryptoTrialUsed) {
+                setTrialModalOpen(true);
+              } else {
+                router.push('/crypto');
+              }
+            }} 
+            className="w-full h-12 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(79,70,229,0.2)] transition-all flex items-center justify-center gap-2"
           >
-            Lihat Penawaran Premium
+            {!cryptoTrialUsed ? (
+              <>Coba Gratis 3 Hari <Zap className="w-4 h-4 fill-emerald-400 text-emerald-400" /></>
+            ) : (
+              'Lihat Penawaran Premium'
+            )}
           </Button>
           <Button 
             onClick={() => router.back()} 
@@ -58,6 +72,12 @@ export function PremiumLockedScreen({
           </Button>
         </div>
       </motion.div>
+
+      <CryptoTrialModal 
+        isOpen={trialModalOpen}
+        setIsOpen={setTrialModalOpen}
+        featureName={title}
+      />
     </div>
   );
 }

@@ -22,6 +22,9 @@ interface AuthContextType {
   user: User | null;
   role: 'user' | 'admin_omnifit' | 'admin_csrs' | 'assessor' | 'curator' | 'study_author' | 'study_reviewer' | null;
   isPremium: boolean;
+  isTrial: boolean;
+  trialExpiresAt: Date | null;
+  cryptoTrialUsed: boolean;
   b2bPersonas: string[];
   allowedOrganizations: string[];
   b2bOrganizationIds: string[];
@@ -53,6 +56,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [role, setRole] = useState<'user' | 'admin_omnifit' | 'admin_csrs' | 'assessor' | 'curator' | 'study_author' | 'study_reviewer' | null>(null);
   const [isPremium, setIsPremium] = useState<boolean>(false);
+  const [isTrial, setIsTrial] = useState<boolean>(false);
+  const [trialExpiresAt, setTrialExpiresAt] = useState<Date | null>(null);
+  const [cryptoTrialUsed, setCryptoTrialUsed] = useState<boolean>(false);
   const [b2bPersonas, setB2bPersonas] = useState<string[]>([]);
   const [allowedOrganizations, setAllowedOrganizations] = useState<string[]>([]);
   const [b2bOrganizationIds, setB2bOrganizationIds] = useState<string[]>([]);
@@ -181,15 +187,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               
               const premiumCheck = currentUser.email === 'deny.wismoyo@gmail.com' || currentRole === 'admin_csrs' || hasValidPremium;
               setIsPremium(premiumCheck);
+              setIsTrial(data.isTrial === true && hasValidPremium); // IsTrial only true if still valid
+              setTrialExpiresAt(data.trialExpiresAt ? new Date(data.trialExpiresAt) : null);
+              setCryptoTrialUsed(data.cryptoTrialUsed === true);
             } else {
               setAssessmentQuota(0);
               const premiumCheck = currentUser.email === 'deny.wismoyo@gmail.com' || currentRole === 'admin_csrs';
               setIsPremium(premiumCheck);
+              setIsTrial(false);
+              setTrialExpiresAt(null);
+              setCryptoTrialUsed(false);
             }
           }, (error) => {
             console.warn('onSnapshot quota error:', error);
             setAssessmentQuota(0);
             setIsPremium(currentUser.email === 'deny.wismoyo@gmail.com' || currentRole === 'admin_csrs');
+            setIsTrial(false);
+            setTrialExpiresAt(null);
+            setCryptoTrialUsed(false);
           });
 
         } catch (error) {
@@ -200,6 +215,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setB2bOrganizationIds([]);
           setAssessmentQuota(0);
           setIsPremium(false);
+          setIsTrial(false);
+          setTrialExpiresAt(null);
+          setCryptoTrialUsed(false);
         }
       } else {
         setRole(null);
@@ -208,6 +226,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setB2bOrganizationIds([]);
         setAssessmentQuota(0);
         setIsPremium(false);
+        setIsTrial(false);
+        setTrialExpiresAt(null);
+        setCryptoTrialUsed(false);
       }
       setLoading(false);
     });
@@ -290,7 +311,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, role, isPremium, b2bPersonas, allowedOrganizations, b2bOrganizationIds, assessmentQuota, loading, loginWithGoogle, registerWithEmail, loginWithEmail, resetPassword, logout }}>
+    <AuthContext.Provider value={{ user, role, isPremium, isTrial, trialExpiresAt, cryptoTrialUsed, b2bPersonas, allowedOrganizations, b2bOrganizationIds, assessmentQuota, loading, loginWithGoogle, registerWithEmail, loginWithEmail, resetPassword, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -58,7 +58,7 @@ Data Koin:
 ${JSON.stringify(safeScalpingCandidates, null, 2)}`;
 
     const result1 = await withRetry(() => deepseekClient.chat.completions.create({
-      model: "deepseek-chat", messages: [{ role: "user", content: agent1Prompt }]
+      model: "deepseek-reasoner", messages: [{ role: "user", content: agent1Prompt }]
     }));
     
     let draftScalping = { draftScalpingOpportunities: [] };
@@ -261,7 +261,7 @@ Output HARUS JSON murni tanpa markdown:
 }`;
 
     const result = await withRetry(() => deepseekClient.chat.completions.create({
-      model: "deepseek-chat", messages: [{ role: "user", content: prompt }]
+      model: "deepseek-reasoner", messages: [{ role: "user", content: prompt }]
     }));
 
     let finalReport;
