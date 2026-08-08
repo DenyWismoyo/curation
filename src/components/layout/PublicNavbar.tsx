@@ -133,25 +133,6 @@ export function PublicNavbar() {
             <NavigationMenu>
               <NavigationMenuList>
 
-                {/* Direct links dari config */}
-                {NAVBAR_GROUPS.direct.map((item) => (
-                  <NavigationMenuItem key={item.key}>
-                    <NavigationMenuLink asChild>
-                      <Link
-                        href={item.href}
-                        className={`group relative flex h-10 items-center justify-center rounded-xl bg-transparent px-4 py-1.5 text-xs font-bold transition-all ${
-                          isActive(item.href)
-                            ? 'text-foreground card-solid dark:card-solid/15 shadow-sm ring-1 ring-slate-200 dark:ring-white/10'
-                            : 'text-muted-foreground hover:text-foreground hover:card-solid dark:text-slate-400 dark:hover:text-white dark:hover:card-solid/5'
-                        }`}
-                      >
-                        <item.icon size={14} className="mr-1.5 text-indigo-500" />
-                        {item.label}
-                      </Link>
-                    </NavigationMenuLink>
-                  </NavigationMenuItem>
-                ))}
-
                 {/* Mega Menu: Asesmen & Produk */}
                 <NavigationMenuItem>
                   <NavigationMenuTrigger className="group relative flex h-10 items-center justify-center rounded-xl bg-transparent px-4 py-1.5 text-xs font-bold transition-all text-muted-foreground hover:text-foreground hover:card-solid dark:text-slate-400 dark:hover:text-white dark:hover:card-solid/5 outline-none data-[state=open]:card-solid dark:data-[state=open]:card-solid/10 data-[state=open]:text-foreground dark:data-[state=open]:text-white">
