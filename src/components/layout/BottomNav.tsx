@@ -81,10 +81,11 @@ export function BottomNav() {
         >
           <div className="flex items-stretch justify-around relative bg-muted text-muted-foreground/60 p-0.5 rounded-xl">
             {visibleNavItems.map((item) => {
-              const active = isActive(item.href)
-              const isProfileTab = item.href === ROUTES.PROFIL
-              const hasNotif = isProfileTab && (unreadCount > 0 || pendingAssessments > 0)
-              const totalBadge = unreadCount + pendingAssessments
+              const itemHref = (user && item.href === ROUTES.HOME) ? ROUTES.DASHBOARD : item.href;
+              const active = isActive(itemHref);
+              const isProfileTab = item.href === ROUTES.PROFIL;
+              const hasNotif = isProfileTab && (unreadCount > 0 || pendingAssessments > 0);
+              const totalBadge = unreadCount + pendingAssessments;
 
               // Tab Profil → buka drawer
               if (isProfileTab) {
@@ -142,11 +143,10 @@ export function BottomNav() {
                 )
               }
 
-              // Tab biasa → navigasi
               return (
                 <Link
                   key={item.key}
-                  href={item.href}
+                  href={itemHref}
                   className={`flex flex-col items-center justify-center gap-1 py-1.5 px-3 flex-1 relative transition-all duration-200 min-h-[52px] rounded-xl font-bold text-xs ${
                     active ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
                   }`}

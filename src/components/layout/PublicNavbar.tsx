@@ -11,6 +11,7 @@ import { motion } from 'framer-motion'
 import {
   User, KeyRound, LogOut, ChevronDown,
   Receipt, LogIn, Search, Sparkles, Handshake,
+  FolderKanban
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import {
@@ -100,8 +101,8 @@ export function PublicNavbar() {
   // ── Filter menu authenticated (auth-required items) ──────
   const authNavItems = filterNavItems(
     [
-      { key: 'dashboard', label: 'Brankas', href: ROUTES.DASHBOARD, icon: require('lucide-react').FolderKanban, requiresAuth: true },
-      { key: 'progress', label: 'Progres', href: ROUTES.PROGRESS, icon: require('lucide-react').TrendingUp, requiresAuth: true },
+      { key: 'dashboard', label: 'Brankas Modul', href: ROUTES.DASHBOARD, icon: FolderKanban, requiresAuth: true, accent: { text: 'text-purple-600', bg: 'bg-purple-50', ring: 'ring-purple-100' } },
+      { key: 'progress', label: 'Progres Asesmen', href: ROUTES.PROGRESS, icon: require('lucide-react').TrendingUp, requiresAuth: true, accent: { text: 'text-emerald-600', bg: 'bg-emerald-50', ring: 'ring-emerald-100' } },
     ],
     { role, isLoggedIn: !!user, isPremium }
   )
@@ -118,7 +119,7 @@ export function PublicNavbar() {
       <header className="hidden md:flex fixed top-0 left-0 right-0 h-20 card-solid/80 backdrop-blur-xl border-b border-border z-50 items-center justify-between px-6 lg:px-12">
         {/* Brand */}
         <div className="flex items-center gap-6 lg:gap-8">
-          <Link href={ROUTES.HOME} className="flex items-center gap-3 group">
+          <Link href={user ? ROUTES.DASHBOARD : ROUTES.HOME} className="flex items-center gap-3 group">
             <div className="w-10 h-10 rounded-xl card-solid flex items-center justify-center shadow-sm ring-1 ring-border group-hover:ring-indigo-200 dark:ring-indigo-500/20 transition-all overflow-hidden p-1">
               <SafeLogo src="/logo.png" alt="Omnifit" width={24} height={24} className="object-contain w-full h-full" />
             </div>
@@ -179,24 +180,21 @@ export function PublicNavbar() {
                   </NavigationMenuContent>
                 </NavigationMenuItem>
 
-                {/* Auth-only direct links */}
-                {user && authNavItems.map((item) => (
-                  <NavigationMenuItem key={item.key}>
-                    <NavigationMenuLink asChild>
-                      <Link
-                        href={item.href}
-                        className={`group relative flex h-10 items-center justify-center rounded-xl bg-transparent px-4 py-1.5 text-xs font-bold transition-all ${
-                          isActive(item.href)
-                            ? 'text-foreground card-solid dark:card-solid/15 shadow-sm ring-1 ring-slate-200 dark:ring-white/10'
-                            : 'text-muted-foreground hover:text-foreground hover:card-solid dark:text-slate-400 dark:hover:text-white dark:hover:card-solid/5'
-                        }`}
-                      >
-                        <item.icon size={14} className={`mr-1.5 ${isActive(item.href) ? 'text-indigo-500' : 'text-slate-400'}`} />
-                        {item.label}
-                      </Link>
-                    </NavigationMenuLink>
+                {/* Auth-only grouped menu */}
+                {user && authNavItems.length > 0 && (
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="group relative flex h-10 items-center justify-center rounded-xl bg-transparent px-4 py-1.5 text-xs font-bold transition-all text-muted-foreground hover:text-foreground hover:card-solid dark:text-slate-400 dark:hover:text-white dark:hover:card-solid/5 outline-none data-[state=open]:card-solid dark:data-[state=open]:card-solid/10 data-[state=open]:text-foreground dark:data-[state=open]:text-white">
+                      <FolderKanban size={14} className="mr-1.5 text-emerald-500" /> Progres & Brankas
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <div className="grid gap-2 p-4 w-[280px] grid-cols-1">
+                        {authNavItems.map((item) => (
+                          <MegaMenuItem key={item.key} item={item} />
+                        ))}
+                      </div>
+                    </NavigationMenuContent>
                   </NavigationMenuItem>
-                ))}
+                )}
               </NavigationMenuList>
             </NavigationMenu>
           </nav>

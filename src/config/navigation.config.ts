@@ -195,18 +195,18 @@ export const DRAWER_NAV_ITEMS: NavItem[] = [
 
 // ── 3. DESKTOP NAVBAR — group berdasarkan mega menu
 export const NAVBAR_GROUPS = {
-  /** Menu langsung (tanpa dropdown) */
-  direct: [
+  direct: [] satisfies NavItem[],
+
+  /** Mega Menu: "Asesmen & Produk" */
+  assessmentMenu: [
     {
       key: 'fitur',
       label: 'Fitur Aplikasi',
       href: ROUTES.FITUR,
       icon: Layers,
+      badge: 'Baru',
+      accent: { text: 'text-rose-600', bg: 'bg-rose-50', ring: 'ring-rose-100' },
     },
-  ] satisfies NavItem[],
-
-  /** Mega Menu: "Asesmen & Produk" */
-  assessmentMenu: [
     {
       key: 'katalog',
       label: 'Katalog Modul',
