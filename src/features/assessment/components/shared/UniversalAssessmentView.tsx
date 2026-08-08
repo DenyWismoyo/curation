@@ -67,7 +67,7 @@ const InsightAccordion = ({ id, title, icon: Icon, content }: any) => {
           <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isOpen ? 'bg-indigo-100 text-indigo-600 dark:text-indigo-400' : 'bg-muted text-muted-foreground text-muted-foreground'}`}>
             <Icon size={18} />
           </div>
-          <h4 className={`text-sm font-black uppercase tracking-widest ${isOpen ? 'text-indigo-900' : 'text-slate-700'}`}>{title}</h4>
+          <h4 className={`text-sm font-black uppercase tracking-widest ${isOpen ? 'text-indigo-900' : 'text-slate-700 dark:text-slate-300'}`}>{title}</h4>
         </div>
         <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
@@ -311,7 +311,7 @@ export function UniversalAssessmentView({
               )}
             </div>
           ) : (
-            <div className="bg-muted text-muted-foreground p-5 rounded-2xl ring-1 ring-border min-h-[90px] text-sm text-slate-700 whitespace-pre-wrap font-medium leading-relaxed">
+            <div className="bg-muted text-muted-foreground p-5 rounded-2xl ring-1 ring-border min-h-[90px] text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap font-medium leading-relaxed">
               {curatorData.curatorNotes || <span className="italic text-slate-400">Belum ada catatan utama dari lapangan.</span>}
             </div>
           )}
@@ -452,7 +452,7 @@ export function UniversalAssessmentView({
                   className="bg-indigo-50 dark:bg-indigo-500/10/40 border-indigo-100 text-sm min-h-[90px] rounded-xl"
                 />
               ) : (
-                <div className="bg-muted text-muted-foreground p-4 rounded-xl text-sm font-medium text-slate-700 min-h-[60px]">
+                <div className="bg-muted text-muted-foreground p-4 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 min-h-[60px]">
                   {curatorData.metricsNotes || <span className="italic text-slate-400">Belum ada penyesuaian nilai pilar.</span>}
                 </div>
               )}
@@ -484,7 +484,7 @@ export function UniversalAssessmentView({
                      {block?.metrics?.map((metric: any, mIdx: number) => (
                        <div key={mIdx}>
                          <p className="text-[10px] uppercase text-slate-400 font-bold mb-1">{metric?.label}</p>
-                         <div className="text-[13px] font-medium text-slate-700">
+                         <div className="text-[13px] font-medium text-slate-700 dark:text-slate-300">
                            <TextToBullets text={metric?.value} colorClass={textColor} />
                          </div>
                        </div>
@@ -505,7 +505,7 @@ export function UniversalAssessmentView({
                           className="bg-indigo-50 dark:bg-indigo-500/10/40 border-indigo-100 text-xs h-24 rounded-xl" 
                         />
                       ) : (
-                        <div className="bg-muted text-muted-foreground p-3 rounded-xl text-xs font-medium text-slate-700 min-h-[60px]">
+                        <div className="bg-muted text-muted-foreground p-3 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 min-h-[60px]">
                           {curatorData.customBlockNotes?.[block.title] || <span className="italic text-slate-400">Belum ditanggapi.</span>}
                         </div>
                       )}
@@ -576,7 +576,7 @@ export function UniversalAssessmentView({
                   className="bg-indigo-50 dark:bg-indigo-500/10/40 border-indigo-100 text-sm min-h-[80px] rounded-xl"
                 />
               ) : (
-                <div className="bg-muted text-muted-foreground p-3 rounded-xl text-sm font-medium text-slate-700 min-h-[50px]">
+                <div className="bg-muted text-muted-foreground p-3 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 min-h-[50px]">
                   {curatorData.swotNotes || <span className="italic text-slate-400">Belum ada validasi matriks SWOT.</span>}
                 </div>
               )}
@@ -848,7 +848,7 @@ export function UniversalAssessmentView({
                   <div className={`absolute -left-[11px] top-1.5 w-5 h-5 rounded-full ring-4 ${markerColor}`} />
                   <div className="bg-muted text-muted-foreground p-5 rounded-2xl ring-1 ring-border hover:card-solid hover:shadow-lg hover:shadow-indigo-500/5 transition-all">
                     <span className="inline-block text-[11px] font-black uppercase tracking-widest px-3 py-1.5 bg-indigo-100 text-indigo-700 dark:text-indigo-300 rounded-lg mb-3">{step?.timeframe || "Timeframe"}</span>
-                    <div className="text-sm text-slate-700 font-bold leading-relaxed">
+                    <div className="text-sm text-slate-700 dark:text-slate-300 font-bold leading-relaxed">
                       <TextToBullets text={step?.task} colorClass="text-indigo-400" />
                     </div>
                   </div>
@@ -909,7 +909,7 @@ export function UniversalAssessmentView({
           <div className="md:hidden flex items-center card-solid border border-border/80 shadow-sm rounded-2xl p-1.5 pr-4">
             <Sheet>
               <SheetTrigger asChild>
-                <button className="flex items-center justify-center w-11 h-11 bg-secondary text-secondary-foreground/80 text-slate-700 rounded-xl hover:bg-slate-200 transition-colors shrink-0">
+                <button className="flex items-center justify-center w-11 h-11 bg-secondary text-secondary-foreground/80 text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-200 transition-colors shrink-0">
                   <Menu size={20} />
                 </button>
               </SheetTrigger>

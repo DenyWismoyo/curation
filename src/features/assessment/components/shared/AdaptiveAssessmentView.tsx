@@ -121,7 +121,7 @@ function AdaptiveExploreTab({ aiResult }: { aiResult: any }) {
           <div className="bg-muted text-muted-foreground rounded-2xl ring-1 ring-border/70 p-4 sm:p-5 space-y-3">
             <div className="space-y-3 max-h-[380px] overflow-y-auto pr-1">
               {messages.map((msg, idx) => (
-                <div key={`${msg.role}-${idx}`} className={`rounded-2xl p-3.5 text-sm leading-relaxed ${msg.role === 'assistant' ? 'card-solid ring-1 ring-border text-slate-700' : 'bg-indigo-600 text-white ml-4'}`}>
+                <div key={`${msg.role}-${idx}`} className={`rounded-2xl p-3.5 text-sm leading-relaxed ${msg.role === 'assistant' ? 'card-solid ring-1 ring-border text-slate-700 dark:text-slate-300' : 'bg-indigo-600 text-white ml-4'}`}>
                   {msg.text}
                   {msg.role === 'assistant' && (
                     <div className="mt-3">
@@ -146,7 +146,7 @@ function AdaptiveExploreTab({ aiResult }: { aiResult: any }) {
                   if (e.key === 'Enter') submitQuestion(input);
                 }}
                 placeholder="Tulis pertanyaan Anda..."
-                className="flex-1 h-11 rounded-xl border border-border card-solid px-3 text-sm text-slate-700 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-indigo-200 dark:ring-indigo-500/20"
+                className="flex-1 h-11 rounded-xl border border-border card-solid px-3 text-sm text-slate-700 dark:text-slate-300 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-indigo-200 dark:ring-indigo-500/20"
               />
               <button
                 type="button"
@@ -169,7 +169,7 @@ function AdaptiveExploreTab({ aiResult }: { aiResult: any }) {
                     <button
                       type="button"
                       onClick={() => submitQuestion(task)}
-                      className="flex-1 text-left px-3 py-2 rounded-xl bg-muted text-muted-foreground hover:bg-secondary text-secondary-foreground ring-1 ring-border text-sm font-semibold text-slate-700 transition-colors"
+                      className="flex-1 text-left px-3 py-2 rounded-xl bg-muted text-muted-foreground hover:bg-secondary text-secondary-foreground ring-1 ring-border text-sm font-semibold text-slate-700 dark:text-slate-300 transition-colors"
                     >
                       {task}
                     </button>
@@ -193,7 +193,7 @@ function AdaptiveExploreTab({ aiResult }: { aiResult: any }) {
                     if (e.key === 'Enter') addCustomTask();
                   }}
                   placeholder="Tambah task custom..."
-                  className="flex-1 h-10 rounded-xl border border-border px-3 text-sm text-slate-700 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-indigo-200 dark:ring-indigo-500/20"
+                  className="flex-1 h-10 rounded-xl border border-border px-3 text-sm text-slate-700 dark:text-slate-300 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-indigo-200 dark:ring-indigo-500/20"
                 />
                 <button
                   type="button"
@@ -230,7 +230,7 @@ function AdaptiveExploreTab({ aiResult }: { aiResult: any }) {
                     }
                   }}
                   placeholder="Tambah rencana manual..."
-                  className="flex-1 h-10 rounded-xl border border-border px-3 text-sm text-slate-700 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-emerald-200 dark:ring-emerald-500/20"
+                  className="flex-1 h-10 rounded-xl border border-border px-3 text-sm text-slate-700 dark:text-slate-300 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-emerald-200 dark:ring-emerald-500/20"
                 />
                 <button
                   type="button"
