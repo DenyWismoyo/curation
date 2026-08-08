@@ -78,6 +78,15 @@ export default function RiwayatTransaksiPage() {
   };
 
   const handleStartAssessment = (tokenCode: string, packageId: string) => {
+    if (packageId.startsWith('BUNDLE_')) {
+      router.push('/katalog?from_brankas=1');
+      return;
+    }
+    if (packageId === 'CRYPTO_PREMIUM_MONTHLY') {
+      router.push('/crypto-report');
+      return;
+    }
+
     sessionStorage.setItem('active_token', tokenCode);
     sessionStorage.setItem('active_allowed_templates', JSON.stringify([packageId]));
     sessionStorage.setItem('active_model', 'flash');
@@ -202,7 +211,7 @@ export default function RiwayatTransaksiPage() {
                           disabled={!tx.tokenCode}
                           className="w-full h-11 rounded-xl text-xs group"
                         >
-                          Gunakan Modul{' '}
+                          {tx.packageId.startsWith('BUNDLE_') ? 'Tukarkan di Katalog' : tx.packageId === 'CRYPTO_PREMIUM_MONTHLY' ? 'Lihat Laporan' : 'Gunakan Modul'}{' '}
                           <ExternalLink
                             size={14}
                             className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"

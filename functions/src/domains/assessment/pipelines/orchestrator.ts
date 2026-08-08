@@ -167,8 +167,7 @@ export const assessmentOrchestrator = onDocumentCreated({
 
     if (isAdaptive) {
       console.log(`[Orchestrator] Running Adaptive Assessment Agent for ${assessmentId}`);
-      const DEEPSEEK_KEY = deepseekApiKeySecret.value();
-      const adaptiveResult = await executeAdaptiveAssessment(assessmentId, data, DEEPSEEK_KEY);
+      const adaptiveResult = await executeAdaptiveAssessment(assessmentId, data, API_KEY);
       
       data.aiResult = {
         ...data.aiResult,

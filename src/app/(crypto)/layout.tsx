@@ -2,7 +2,7 @@ import React from 'react'
 import { Suspense } from 'react'
 import { CryptoNavbar } from '@/features/crypto/components/navigation/CryptoNavbar'
 import { CryptoBottomNav } from '@/features/crypto/components/navigation/CryptoBottomNav'
-import CryptoAlertsWidget from '@/features/crypto/components/alerts/CryptoAlertsWidget'
+
 import CryptoChat from '@/features/crypto/components/chat/CryptoChat'
 import { CryptoGuard } from '@/features/crypto/components/shared/CryptoGuard'
 
@@ -32,7 +32,6 @@ export default function CryptoLayout({
 
         {/* Global Crypto Widgets */}
         <Suspense fallback={null}>
-            <CryptoAlertsWidget />
             <CryptoChat />
         </Suspense>
       </CryptoGuard>

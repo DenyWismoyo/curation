@@ -142,32 +142,10 @@ export const generateAdaptiveQuestions = onCall({
         console.warn("Pencarian Vektor dilewati:", vectorErr.message);
       }
 
-      const deepseekApiKey = deepseekApiKeySecret.value();
-
       const candidateQuestionSample = candidateQuestions.slice(0, 8);
-      const deepseekSystemInstruction = `
-    Anda adalah ${persona}.
-    Tugas: merancang pertanyaan kuesioner dinamis untuk satu seksi assessment.
-    Prioritas kualitas:
-    1. Pertanyaan harus tajam, relevan, dan tidak mengulang informasi yang sudah ada.
-    2. DILARANG menggunakan tipe input "select" (dropdown). Fokuskan 80% pada "radio" (pilihan tunggal) atau "checkbox" (pilihan ganda), dan 20% pada "text"/"textarea" untuk probing.
-    3. Jangan gunakan showIf, branching, atau logika pertanyaan bersyarat apa pun.
-    4. Gunakan options berbobot untuk tipe "radio" dan "checkbox". Pastikan bobot terdistribusi dengan baik pada skala 0 hingga 100.
-    5. Tandai 1-2 pertanyaan paling krusial dengan weightMultiplier 2, 3, atau 5.
-    6. Tulis aiReasoning yang menjelaskan kenapa pertanyaan ini penting dan hubungannya dengan metrik target.
-    7. WAJIB patuhi gaya bahasa berikut (berlaku untuk pertanyaan dan pilihan jawaban): ${adaptiveToneGuidance}
-    8. Gunakan kata-kata pertanyaan yang sederhana, jelas, dan mudah dipahami pengguna non-teknis.
-       Hindari jargon teknis, istilah abstrak, dan kalimat panjang berlapis.
-    Nilai untuk properti "type" HANYA boleh: "radio", "checkbox", "text", "textarea", atau "file".
-    Output wajib: JSON object murni dengan key "fields" berisi array FormField.
-    `;
-
-      const buildAdaptiveQuestionPrompt = (instructions: string) => `
-    ${instructions}
-    `;
 
       const model = genAI.getGenerativeModel({
-        model: "gemini-3.1-flash-lite", 
+        model: "gemini-3.5-flash-lite", 
         systemInstruction: `Anda adalah ${persona}. Tugas Anda merancang instrumen pertanyaan kuesioner dinamis secara real-time. Output WAJIB berupa array JSON berisi objek 'FormField'.`,
         generationConfig: {
           temperature: 0.7,
@@ -273,51 +251,21 @@ ${dynamicRules}
         `;
       }
 
-      const deepseekClient = new OpenAI({
-        baseURL: 'https://api.deepseek.com',
-        apiKey: deepseekApiKey,
-      });
-
-      const deepseekPrompt = buildAdaptiveQuestionPrompt(`
-          Konteks Program Asesmen: ${trackName}
-          Judul Seksi: "${stepTitle}"
-          Target Metrik Seksi Ini: [${targetMetrics?.join(', ') || 'Metrik Umum'}]
-          ${candidateQuestions.length >= 5 ? `BERIKUT ADALAH KANDIDAT PERTANYAAN: ${JSON.stringify(candidateQuestionSample)}` : ''}
-          Data Peserta Sebelumnya: ${contextString}
-          ${dynamicRules}
-      `);
-
       let dynamicFields: any[] = [];
       try {
-        const response = await deepseekClient.chat.completions.create({
-          model: 'deepseek-v4-flash',
-          messages: [
-            {
-              role: 'system',
-              content: deepseekSystemInstruction,
-            },
-            { role: 'user', content: deepseekPrompt },
-          ],
-          response_format: { type: 'json_object' },
-          temperature: 0.65,
-        });
-
-        let rawText = response.choices[0]?.message?.content || '[]';
-        if (rawText.startsWith('```')) rawText = rawText.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
-
-        const parsedDeepseek = JSON.parse(rawText);
-        dynamicFields = Array.isArray(parsedDeepseek)
-          ? parsedDeepseek
-          : Array.isArray(parsedDeepseek.fields)
-            ? parsedDeepseek.fields
-            : [];
-      } catch (deepseekErr: any) {
-        console.warn('[AdaptiveWizard] DeepSeek gagal, fallback ke Gemini untuk menjaga pengalaman user.', deepseekErr?.message || deepseekErr);
-
         const result = await model.generateContent(prompt);
         let rawText = result.response.text().trim();
         if (rawText.startsWith('```')) rawText = rawText.replace(/^```(json)?/gi, '').replace(/```$/g, '').trim();
-        dynamicFields = JSON.parse(rawText);
+
+        const parsedGemini = JSON.parse(rawText);
+        dynamicFields = Array.isArray(parsedGemini)
+          ? parsedGemini
+          : Array.isArray(parsedGemini.fields)
+            ? parsedGemini.fields
+            : [];
+      } catch (err: any) {
+        console.warn('[AdaptiveWizard] Gemini gagal menghasilkan pertanyaan dinamis.', err?.message || err);
+        throw err;
       }
 
       const flattenedFields = Array.isArray(dynamicFields)
@@ -380,7 +328,7 @@ export const evaluateMacroBranching = onCall({
   if (currentTotalSteps >= maxAdaptiveSections) return { requiresNewSection: false };
 
   const model = genAI.getGenerativeModel({
-    model: "gemini-3.1-flash-lite", 
+    model: "gemini-3.5-flash-lite", 
     systemInstruction: `Anda adalah Asesor Ahli. Karena target asesmen ini adalah ${maxAdaptiveSections} seksi dan saat ini baru tercapai ${currentTotalSteps} seksi, Anda WAJIB MENGHASILKAN 1 SEKSI INVESTIGASI TAMBAHAN. Anda dilarang menghentikan asesmen (requiresNewSection WAJIB true). Fokuslah mendalami area yang paling berisiko, lemah, atau menarik dari jawaban sebelumnya.`,
     generationConfig: {
       temperature: 0.3,

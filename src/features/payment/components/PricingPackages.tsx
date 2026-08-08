@@ -109,6 +109,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
   const [storedAffiliateCode, setStoredAffiliateCode] = useState<string>('');
   const [attributionVisitorId, setAttributionVisitorId] = useState<string>('');
   const [attributionModel, setAttributionModel] = useState(DEFAULT_ATTRIBUTION_MODEL);
+  const [isFromBrankas, setIsFromBrankas] = useState(false);
 
   useEffect(() => {
     const stored = getStoredReferralAttribution();
@@ -116,6 +117,10 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
     setStoredAffiliateCode(stored?.affiliateCode || '');
     setAttributionVisitorId(visitorId || '');
     setAttributionModel(stored?.attributionModel || DEFAULT_ATTRIBUTION_MODEL);
+
+    if (typeof window !== 'undefined') {
+      setIsFromBrankas(new URLSearchParams(window.location.search).get('from_brankas') === '1');
+    }
   }, []);
 
   useEffect(() => {
@@ -204,7 +209,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
 
         sessionStorage.setItem('active_token', data.tokenCode);
         sessionStorage.setItem('active_allowed_templates', JSON.stringify([pkg.id]));
-        window.location.href = '/assessment';
+        window.location.href = '/assessment/select';
         return;
       } catch (error: any) {
         toast.dismiss('redeem_process');
@@ -220,7 +225,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
       const autoToken = `FREE-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
       sessionStorage.setItem('active_token', autoToken);
       sessionStorage.setItem('active_allowed_templates', JSON.stringify([pkg.id]));
-      window.location.href = '/assessment';
+      window.location.href = '/assessment/select';
     } else {
       setIsProcessingPayment(true);
       toast.loading("Mempersiapkan transaksi Anda...", { id: 'qris_process' });
@@ -720,7 +725,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                   ) : (
                     <>
                       {checkoutPackage.id !== 'BUNDLE_3' && checkoutPackage.id !== 'BUNDLE_5' && assessmentQuota > 0 && checkoutPriceInfo.original > 0
-                        ? "Gunakan 1 Kuota"
+                        ? (isFromBrankas ? "Buka Akses Modul" : "Gunakan 1 Kuota")
                         : "Lanjut Bayar"
                       }
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />

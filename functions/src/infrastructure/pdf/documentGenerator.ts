@@ -5,6 +5,7 @@ import { getFirestore } from "firebase-admin/firestore";
 import React from "react";
 import ReactPDF from "@react-pdf/renderer";
 import { UniversalPDFDocument } from "./templates/UniversalPDFDocument";
+import { AdaptivePDFDocument } from "./templates/AdaptivePDFDocument";
 
 /**
  * FUNGSI 1: DIPANGGIL OLEH FRONTEND (USER / ADMIN / CURATOR)
@@ -72,7 +73,10 @@ export const generatePDFReport = onCall(
       // 2. JIKA KOSONG / KADALUARSA / FORCE REGENERATE -> RENDER ULANG
       console.log(`[RENDERING] Membuat PDF baru untuk ${assessmentId} (${role})`);
       
-      const documentElement = React.createElement(UniversalPDFDocument, {
+      const isAdaptive = payload.aiResult?.isAdaptiveAssessment === true;
+      const DocumentComponent = isAdaptive ? AdaptivePDFDocument : UniversalPDFDocument;
+
+      const documentElement = React.createElement(DocumentComponent, {
         role: role,
         trackType: payload.trackType,
         formData: payload.formData,
@@ -135,7 +139,10 @@ export const generateInternalPDF = async (assessmentId: string, docData: any, ro
   try {
     console.log(`[BACKGROUND TASK] Mulai pre-computing PDF untuk ${assessmentId} (${role})`);
     
-    const documentElement = React.createElement(UniversalPDFDocument, {
+    const isAdaptive = docData.aiResult?.isAdaptiveAssessment === true;
+    const DocumentComponent = isAdaptive ? AdaptivePDFDocument : UniversalPDFDocument;
+
+    const documentElement = React.createElement(DocumentComponent, {
       // REBRANDING: Menambahkan support untuk admin_omnifit
       role: role as 'user'  | 'admin_csrs' | 'curator',
       trackType: docData.trackType || "Evaluasi Umum",

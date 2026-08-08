@@ -111,10 +111,19 @@ export default function CustomerDashboard() {
   };
 
   const handleStartAssessment = (tokenCode: string, packageId: string) => {
+    if (packageId.startsWith('BUNDLE_')) {
+      router.push('/katalog?from_brankas=1');
+      return;
+    }
+    if (packageId === 'CRYPTO_PREMIUM_MONTHLY') {
+      router.push('/crypto-report');
+      return;
+    }
+
     sessionStorage.setItem('active_token', tokenCode);
     sessionStorage.setItem('active_allowed_templates', JSON.stringify([packageId]));
     sessionStorage.setItem('active_model', 'flash');
-    router.push('/assessment');
+    router.push('/assessment/select');
   };
 
   if (loading || isFetching) {
@@ -229,7 +238,8 @@ export default function CustomerDashboard() {
                       disabled={!tx.tokenCode}
                       className="w-full h-11 text-xs"
                     >
-                      <AiSparkIcon size={14} className="mr-2" /> Gunakan Sekarang
+                      <AiSparkIcon size={14} className="mr-2" /> 
+                      {tx.packageId.startsWith('BUNDLE_') ? 'Tukarkan di Katalog' : tx.packageId === 'CRYPTO_PREMIUM_MONTHLY' ? 'Lihat Laporan' : 'Gunakan Sekarang'}
                     </Button>
                   </motion.div>
                 ))}

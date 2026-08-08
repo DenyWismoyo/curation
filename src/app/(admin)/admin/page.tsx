@@ -227,8 +227,11 @@ function AdminDashboardContent() {
                 total > 0
                   ? Math.round(
                       items.reduce(
-                        (acc, curr) =>
-                          acc + (curr.curatorAssessment?.verifiedScore || curr.score || 0),
+                        (acc, curr) => {
+                          const s = curr.curatorAssessment?.verifiedScore ?? curr.score ?? curr.aiResult?.totalScore ?? 0;
+                          const num = Number(s);
+                          return acc + (isNaN(num) ? 0 : num);
+                        },
                         0
                       ) / total
                     )
@@ -397,16 +400,16 @@ function AdminDashboardContent() {
                         <TableRow key={item.id} className="group hover:bg-muted text-muted-foreground/80 transition-colors">
                           <TableCell>
                             <div className="font-black text-foreground text-sm group-hover:text-indigo-600 dark:text-indigo-400 transition-colors">
-                              {item.namaUsaha}
+                              {typeof item.namaUsaha === 'object' ? JSON.stringify(item.namaUsaha) : String(item.namaUsaha || 'Tanpa Nama')}
                             </div>
                             <div className="text-[11px] text-slate-400 font-medium mt-0.5">
-                              {item.email}
+                              {typeof item.email === 'object' ? JSON.stringify(item.email) : String(item.email || '-')}
                             </div>
                           </TableCell>
 
                           <TableCell>
                             <Badge variant="secondary" className="text-[10px] font-bold">
-                              {item.trackType}
+                              {typeof item.trackType === 'object' ? JSON.stringify(item.trackType) : String(item.trackType || '-')}
                             </Badge>
                           </TableCell>
 
@@ -418,7 +421,7 @@ function AdminDashboardContent() {
                                   : 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 ring-indigo-200 dark:ring-indigo-500/20'
                               }`}
                             >
-                              {finalScore}
+                              {typeof finalScore === 'object' ? '...' : String(finalScore)}
                             </span>
                           </TableCell>
 
@@ -426,14 +429,14 @@ function AdminDashboardContent() {
                             {item.analyticsSummary ? (
                               <div className="space-y-1">
                                 <div className="text-xs font-black text-foreground">
-                                  {analyticsScore ?? '-'} / 100
+                                  {typeof analyticsScore === 'object' ? '...' : String(analyticsScore ?? '-')} / 100
                                 </div>
                                 <div className="flex items-center gap-1.5">
                                   <Badge variant="indigo" className="text-[9px] px-1.5 py-0">
-                                    {analyticsBand || '-'}
+                                    {typeof analyticsBand === 'object' ? '...' : String(analyticsBand || '-')}
                                   </Badge>
                                   <span className="text-[9px] font-bold text-slate-400 uppercase">
-                                    {analyticsVersion || '-'}
+                                    {typeof analyticsVersion === 'object' ? '...' : String(analyticsVersion || '-')}
                                   </span>
                                 </div>
                               </div>

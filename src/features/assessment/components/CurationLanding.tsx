@@ -271,6 +271,7 @@ export function CurationLanding({
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false)
   const [drafts, setDrafts] = useState<DraftItem[]>([])
   const [isFetchingData, setIsFetchingData] = useState(false)
+  const [hasActiveToken, setHasActiveToken] = useState(false)
 
   // Auth form state
   const [authMode, setAuthMode] = useState<
@@ -297,6 +298,9 @@ export function CurationLanding({
     if (typeof window === 'undefined') return
     const buyId = new URLSearchParams(window.location.search).get('buy')
     if (buyId) router.push(`/katalog?buy=${buyId}`)
+      
+    const token = sessionStorage.getItem('active_token')
+    if (token) setHasActiveToken(true)
   }, [router])
 
   // Fetch local drafts using templates prop
@@ -1159,15 +1163,27 @@ export function CurationLanding({
                         jejak analitik di sini.
                       </p>
                     </div>
-                    <Link href="/katalog">
-                      <Button
-                        variant="brand"
-                        className="h-11 px-6 rounded-xl text-sm mt-2"
-                      >
-                        Pilih Modul Asesmen{' '}
-                        <ArrowRight className="w-4 h-4 ml-2" />
-                      </Button>
-                    </Link>
+                    {hasActiveToken ? (
+                      <Link href="/assessment/select">
+                        <Button
+                          variant="brand"
+                          className="h-11 px-6 rounded-xl text-sm mt-2"
+                        >
+                          Lanjutkan Asesmen Tertunda{' '}
+                          <ArrowRight className="w-4 h-4 ml-2" />
+                        </Button>
+                      </Link>
+                    ) : (
+                      <Link href="/katalog">
+                        <Button
+                          variant="brand"
+                          className="h-11 px-6 rounded-xl text-sm mt-2"
+                        >
+                          Pilih Modul Asesmen{' '}
+                          <ArrowRight className="w-4 h-4 ml-2" />
+                        </Button>
+                      </Link>
+                    )}
                   </m.div>
                 )}
             </div>

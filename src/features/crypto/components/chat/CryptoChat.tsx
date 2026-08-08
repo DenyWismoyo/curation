@@ -247,10 +247,20 @@ export default function CryptoChat({ isOpen: controlledIsOpen, onClose, reportCo
     }
   };
 
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const handleTouchStart = (e: React.TouchEvent) => setTouchStart(e.targetTouches[0].clientX);
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStart === null) return;
+    if (e.targetTouches[0].clientX - touchStart > 75) {
+      handleOpenChange(false);
+      setTouchStart(null);
+    }
+  };
+
   return (
     <>
     {/* Floating Trigger Button */}
-    <div className="fixed bottom-6 right-6 z-40">
+    <div className="fixed bottom-[90px] md:bottom-6 right-6 z-40">
       <Button 
         onClick={() => setIsOpen(true)}
         className="w-14 h-14 rounded-full bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-500/30 flex items-center justify-center p-0 transition-transform hover:scale-110"
@@ -260,7 +270,12 @@ export default function CryptoChat({ isOpen: controlledIsOpen, onClose, reportCo
     </div>
 
     <Sheet open={isOpen} onOpenChange={handleOpenChange}>
-      <SheetContent side="right" className="w-full sm:w-[450px] p-0 flex flex-col bg-background text-foreground border-l border-indigo-800 shadow-2xl">
+      <SheetContent 
+        side="right" 
+        className="w-full sm:w-[450px] p-0 flex flex-col bg-background text-foreground border-l border-indigo-800 shadow-2xl"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+      >
         <SheetHeader className="px-6 py-4 bg-indigo-950/50 border-b border-indigo-900/50 text-foreground space-y-0.5 relative z-10 shadow-md backdrop-blur-md">
           <div className="flex justify-between items-start">
             <SheetTitle className="text-foreground flex items-center gap-2 text-xl tracking-tight">
@@ -274,7 +289,7 @@ export default function CryptoChat({ isOpen: controlledIsOpen, onClose, reportCo
                <Button variant="ghost" size="icon" className="text-foreground hover:card-solid/20 h-8 w-8 rounded-full" onClick={() => setView(view === 'chat' ? 'history' : 'chat')} title="Riwayat">
                   {view === 'chat' ? <Clock className="w-4 h-4" /> : <MessageSquare className="w-4 h-4" />}
                </Button>
-               <Button variant="ghost" size="icon" className="text-foreground hover:card-solid/20 h-8 w-8 rounded-full ml-1" onClick={onClose}>
+               <Button variant="ghost" size="icon" className="text-foreground hover:card-solid/20 h-8 w-8 rounded-full ml-1" onClick={() => handleOpenChange(false)}>
                   <X className="w-4 h-4" />
                </Button>
             </div>

@@ -58,7 +58,7 @@ export function CryptoBottomNav() {
                   key={item.href}
                   href={item.href}
                   className={`flex flex-col items-center justify-center gap-1 py-1.5 px-3 flex-1 relative transition-all duration-200 min-h-[52px] rounded-xl font-bold text-xs ${
-                    active ? 'text-white' : 'text-slate-400 hover:text-slate-200'
+                    active ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   {active && (
@@ -90,7 +90,7 @@ export function CryptoBottomNav() {
             <button
                 onClick={() => setDrawerOpen(true)}
                 className={`flex flex-col items-center justify-center gap-1 py-1.5 px-3 flex-1 relative transition-all duration-200 min-h-[52px] rounded-xl font-bold text-xs ${
-                  drawerOpen ? 'text-white' : 'text-slate-400 hover:text-slate-200'
+                  drawerOpen ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 {drawerOpen && (
@@ -125,7 +125,7 @@ export function CryptoBottomNav() {
 
           {/* Drag handle */}
           <div className="flex justify-center pt-3 pb-1">
-            <div className="w-12 h-1.5 bg-slate-200/80 dark:bg-slate-700/80 rounded-full" />
+            <div className="w-12 h-1.5 bg-muted-foreground/30 rounded-full" />
           </div>
 
           {/* User identity */}

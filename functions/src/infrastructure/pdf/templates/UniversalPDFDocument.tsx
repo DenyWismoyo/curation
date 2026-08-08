@@ -9,10 +9,10 @@ import path from 'path';
 Font.register({
   family: 'Inter',
   fonts: [
-    { src: path.join(__dirname, '../fonts/Inter-Regular.ttf'), fontWeight: 400 },
-    { src: path.join(__dirname, '../fonts/Inter-Medium.ttf'), fontWeight: 500 },
-    { src: path.join(__dirname, '../fonts/Inter-Bold.ttf'), fontWeight: 700 },
-    { src: path.join(__dirname, '../fonts/Inter-Black.ttf'), fontWeight: 900 }
+    { src: path.join(__dirname, '../../../fonts/Inter-Regular.ttf'), fontWeight: 400 },
+    { src: path.join(__dirname, '../../../fonts/Inter-Medium.ttf'), fontWeight: 500 },
+    { src: path.join(__dirname, '../../../fonts/Inter-Bold.ttf'), fontWeight: 700 },
+    { src: path.join(__dirname, '../../../fonts/Inter-Black.ttf'), fontWeight: 900 }
   ]
 });
 
@@ -249,10 +249,10 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
               )}
             </View>
             
-            {aiResult.fileAnalysisInsights.keyFindingsFromFiles && (
+            {Array.isArray(aiResult.fileAnalysisInsights.keyFindingsFromFiles) && (
               <View style={{ marginTop: 16 }}> {/* PERBAIKAN: Tambah Margin Top agar tidak sesak */}
                 <Text style={styles.label}>Key Findings</Text>
-                {aiResult.fileAnalysisInsights?.keyFindingsFromFiles?.map((find: string, idx: number) => (
+                {aiResult.fileAnalysisInsights.keyFindingsFromFiles.map((find: string, idx: number) => (
                   <View key={idx} style={styles.bulletRow}><Text style={styles.bulletDot}>■</Text><Text style={styles.bulletText}>{renderTextWithBoldPdf(find)}</Text></View>
                 ))}
               </View>
@@ -266,14 +266,14 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
           </View>
         )}
 
-        {includeCustomBlocks && aiResult?.customAnalysisBlocks && aiResult.customAnalysisBlocks.length > 0 && (
+        {includeCustomBlocks && Array.isArray(aiResult?.customAnalysisBlocks) && aiResult.customAnalysisBlocks.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Specific Parameters</Text>
             <View style={styles.grid2Col}>
-              {aiResult.customAnalysisBlocks?.map((block: any, bIdx: number) => (
+              {aiResult.customAnalysisBlocks.map((block: any, bIdx: number) => (
                 <View key={bIdx} style={isCuratorWorksheet ? styles.colFull : styles.colHalf} wrap={false}>
                   <Text style={[styles.label, { color: '#000000', fontSize: 9 }]}>{block.title}</Text>
-                  {block?.metrics?.map((m: any, mIdx: number) => (
+                  {Array.isArray(block?.metrics) && block.metrics.map((m: any, mIdx: number) => (
                     <View key={mIdx} style={{ marginBottom: 12, marginTop: 4 }}>
                       <Text style={styles.label}>{m.label}</Text>
                       {renderBullets(m.value)}
@@ -297,7 +297,7 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
         
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Performance Metrics</Text>
-          {aiResult?.metrics?.map((metric: any, idx: number) => (
+          {Array.isArray(aiResult?.metrics) && aiResult.metrics.map((metric: any, idx: number) => (
             <View key={idx} style={styles.metricRow} wrap={false}>
               <View style={styles.metricScoreBox}>
                 <Text style={styles.metricScore}>{metric.score}</Text>
@@ -315,7 +315,7 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
           <Text style={styles.sectionTitle}>Capability Matrix (SWOT)</Text>
           <View style={styles.grid2Col}>
             {['strengths', 'weaknesses', 'opportunities', 'threats'].map((swotKey, idx) => {
-              const items = aiResult?.swotAnalysis?.[swotKey] || [];
+              const items = Array.isArray(aiResult?.swotAnalysis?.[swotKey]) ? aiResult.swotAnalysis[swotKey] : [];
               if (items.length === 0) return null;
               
               const title = swotKey === 'strengths' ? 'Strengths' : swotKey === 'weaknesses' ? 'Weaknesses' : swotKey === 'opportunities' ? 'Opportunities' : 'Threats';
@@ -346,17 +346,17 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
         <SecurityWatermark />
         <PageHeader subtitle="Strategy & Risks" />
 
-        {aiResult?.riskAssessment?.criticalRisks && aiResult.riskAssessment.criticalRisks.length > 0 && (
+        {Array.isArray(aiResult?.riskAssessment?.criticalRisks) && aiResult.riskAssessment.criticalRisks.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Risk & Mitigation Map</Text>
-            {aiResult.riskAssessment?.criticalRisks?.map((risk: string, idx: number) => (
+            {aiResult.riskAssessment.criticalRisks.map((risk: string, idx: number) => (
               <View key={idx} style={{ marginBottom: 16, paddingBottom: 16, borderBottom: '1pt solid #F5F5F5' }} wrap={false}>
                 <Text style={styles.label}>Identified Risks</Text>
                 {renderBullets(risk)}
                 
                 <View style={{ marginTop: 8 }}>
                   <Text style={styles.label}>Mitigation Strategies</Text>
-                  {renderBullets(aiResult.riskAssessment.mitigationStrategies?.[idx] || '-')}
+                  {renderBullets(Array.isArray(aiResult.riskAssessment.mitigationStrategies) ? aiResult.riskAssessment.mitigationStrategies[idx] || '-' : '-')}
                 </View>
                 
                 {isCuratorWorksheet && <View style={styles.worksheetArea}><Text style={styles.worksheetLabel}>Tanggapan Kurator:</Text></View>}
@@ -373,17 +373,17 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
             <Text style={{ fontSize: 16, fontWeight: 900, color: '#000000', marginTop: 4 }}>{aiResult?.incubationRoute}</Text>
           </View>
 
-          {aiResult?.recommendations?.map((rec: any, idx: number) => (
+          {Array.isArray(aiResult?.recommendations) && aiResult.recommendations.map((rec: any, idx: number) => (
             <View key={idx} style={{ marginBottom: 16 }} wrap={false}>
               <Text style={[styles.label, { color: '#000000' }]}>{rec.title}</Text>
               {renderBullets(rec.content)}
             </View>
           ))}
           
-          {aiResult?.nextActionSteps && aiResult.nextActionSteps.length > 0 && (
+          {Array.isArray(aiResult?.nextActionSteps) && aiResult.nextActionSteps.length > 0 && (
              <View style={{ marginTop: 24 }}>
                <Text style={[styles.label, { marginBottom: 16, borderBottom: '1pt solid #E5E5E5', paddingBottom: 8 }]}>Execution Timeline (Action Plan)</Text>
-               {aiResult.nextActionSteps?.map((step: any, idx: number) => (
+               {aiResult.nextActionSteps.map((step: any, idx: number) => (
                  <View key={idx} style={{ flexDirection: 'row', marginBottom: 12 }} wrap={false}>
                    <View style={{ width: 80, borderRight: '1pt solid #000000', paddingRight: 12, marginRight: 12 }}>
                      <Text style={{ fontSize: 8, fontWeight: 900, color: '#000000', textTransform: 'uppercase' }}>{step.timeframe}</Text>
@@ -423,7 +423,16 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
             <Text style={styles.sectionTitle}>Raw Input Data</Text>
             {Object.entries(formData || {}).map(([key, value], idx) => {
                if (!value || key === 'aiResult' || key === 'token') return null;
-               const displayValue = Array.isArray(value) ? value.join(', ') : String(value);
+               
+               let displayValue = '-';
+               if (Array.isArray(value)) {
+                 displayValue = value.join(', ');
+               } else if (typeof value === 'object') {
+                 try { displayValue = JSON.stringify(value); } catch(e) { displayValue = 'Object'; }
+               } else {
+                 displayValue = String(value);
+               }
+
                return (
                  <View key={idx} style={{ flexDirection: 'row', borderBottom: '1pt solid #F5F5F5', paddingVertical: 8 }} wrap={false}>
                    <Text style={{ width: '40%', fontSize: 8, fontWeight: 700, color: '#666666', textTransform: 'uppercase', paddingRight: 12 }}>{key.replace(/([A-Z])/g, ' $1')}</Text>

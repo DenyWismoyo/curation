@@ -54,7 +54,7 @@ export default function CheckoutQrisPage() {
             if (data.packageId === 'CRYPTO_PREMIUM_MONTHLY') {
               window.location.href = '/crypto-report';
             } else {
-              window.location.href = '/assessment';
+              window.location.href = '/assessment/select';
             }
           }, 2000);
         }

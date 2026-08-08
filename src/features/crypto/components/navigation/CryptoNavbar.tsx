@@ -21,6 +21,7 @@ import {
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
 import { ThemeToggleCompact } from '@/components/ui/ThemeToggleCompact'
+import CryptoAlertsWidget from '@/features/crypto/components/alerts/CryptoAlertsWidget'
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
@@ -245,6 +246,7 @@ export function CryptoNavbar() {
 
       {/* ── Area Kanan (User Dropdown) ────────────────────── */}
       <div className="flex items-center gap-2">
+        <CryptoAlertsWidget />
         <ThemeToggleCompact />
         {user ? (
           <div className="flex items-center gap-3 pl-3 border-l border-border">

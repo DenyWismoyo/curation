@@ -49,9 +49,10 @@ export const cryptoCopilotChat = onCall({
     }
 
     const deepseekClient = new OpenAI({
-      baseURL: 'https://api.deepseek.com',
-      apiKey: apiKey,
+      baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
+      apiKey: geminiApiKeySecret.value(),
     });
+
 
     // RAG Context memory (extract symbols from message)
     const symbolsMatch = message.match(/\b[A-Z]{2,5}\b/g);
@@ -214,7 +215,7 @@ export const cryptoCopilotChat = onCall({
 
     try {
       const result = await withRetry(() => deepseekClient.chat.completions.create({
-        model: "deepseek-reasoner", // standard model
+        model: "gemini-3.5-flash-lite", // using gemini 3.5 flash lite via openai compat
         messages: messages,
         tools: tools,
         tool_choice: "auto",
@@ -292,9 +293,8 @@ export const cryptoCopilotChat = onCall({
           }
         }
 
-        // Second call to get final answer
         const secondResponse = await withRetry(() => deepseekClient.chat.completions.create({
-          model: "deepseek-reasoner",
+          model: "gemini-3.5-flash-lite",
           messages: messages,
           temperature: 0.7,
         }));
@@ -339,12 +339,9 @@ export const cryptoCopilotSuggestions = onCall({
   const { context, moduleContext } = request.data;
   
   try {
-    const apiKey = deepseekApiKeySecret.value();
-    if (!apiKey) throw new HttpsError("internal", "API Key tidak dikonfigurasi.");
-
     const deepseekClient = new OpenAI({
-      baseURL: 'https://api.deepseek.com',
-      apiKey: apiKey,
+      baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
+      apiKey: geminiApiKeySecret.value(),
     });
 
     const systemPrompt = `
@@ -361,7 +358,7 @@ export const cryptoCopilotSuggestions = onCall({
 
     try {
       const result = await withRetry(() => deepseekClient.chat.completions.create({
-        model: "deepseek-reasoner",
+        model: "gemini-3.5-flash-lite",
         messages: [{ role: "system", content: systemPrompt }],
         temperature: 0.7,
       }));

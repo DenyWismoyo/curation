@@ -1,4 +1,4 @@
-import OpenAI from 'openai'
+import { GoogleGenerativeAI } from '@google/generative-ai'
 import { withRetry } from '../../../shared/utils/retry'
 import { z } from 'zod'
 
@@ -208,16 +208,13 @@ export const normalizeAdaptiveAssessmentPayload = (payload: any) => {
 export const executeAdaptiveAssessment = async (
   assessmentId: string,
   data: any,
-  DEEPSEEK_API_KEY: string
+  GEMINI_API_KEY: string
 ): Promise<any> => {
   const formData = data.formData || {}
   const aiPromptConfig = data.aiPromptConfig || {}
   const adaptiveToneGuidance = resolveAdaptiveToneGuidance(aiPromptConfig)
 
-  const openai = new OpenAI({
-    baseURL: 'https://api.deepseek.com',
-    apiKey: DEEPSEEK_API_KEY,
-  })
+  const genAI = new GoogleGenerativeAI(GEMINI_API_KEY)
 
   const prompt = `Sebagai AI Personal Assessment Expert, evaluasi data formulir berikut khusus untuk target audiens individu/kustomer.
 Tugas Anda adalah menghasilkan laporan versi "LITE" yang sangat suportif, aplikatif, memotivasi, dan tidak terlalu teknis. DILARANG menggunakan istilah korporat B2B yang rumit.
@@ -278,20 +275,18 @@ OUTPUT WAJIB BERUPA JSON MURNI YANG VALID. Contoh Struktur:
 `
 
   const result = await withRetry(async () => {
-    const response = await openai.chat.completions.create({
-      model: 'deepseek-v4-flash',
-      messages: [
-        {
-          role: 'system',
-          content: `Anda adalah AI Personal Assessment Expert. Kembalikan JSON murni saja. Jangan sertakan penjelasan, markdown, atau teks di luar JSON. Semua field wajib konsisten dengan skema, dan field yang tidak tersedia harus memakai array kosong, objek kosong, atau string default yang aman. WAJIB patuhi tone bahasa berikut: ${adaptiveToneGuidance}`,
-        },
-        { role: 'user', content: prompt },
-      ],
-      response_format: { type: 'json_object' },
-      temperature: 0.2,
+    const model = genAI.getGenerativeModel({
+      model: "gemini-3.5-flash-lite",
+      generationConfig: {
+        temperature: 0.2,
+        responseMimeType: "application/json",
+      },
+      systemInstruction: `Anda adalah AI Personal Assessment Expert. Kembalikan JSON murni saja. Jangan sertakan penjelasan, markdown, atau teks di luar JSON. Semua field wajib konsisten dengan skema, dan field yang tidak tersedia harus memakai array kosong, objek kosong, atau string default yang aman. WAJIB patuhi tone bahasa berikut: ${adaptiveToneGuidance}`,
     })
 
-    let text = response.choices[0].message.content || '{}'
+    const response = await model.generateContent(prompt)
+    let text = response.response.text() || '{}'
+
     if (text.startsWith('```')) {
       text = text
         .replace(/^```(json)?/gi, '')

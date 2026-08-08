@@ -77,28 +77,7 @@ function MegaMenuItem({ item, onClose }: { item: NavItem; onClose?: () => void }
   )
 }
 
-// ── Sub-komponen: Direct link di nav pill ────────────────────
-function DirectNavLink({ item, isActive }: { item: NavItem; isActive: boolean }) {
-  return (
-    <Link
-      href={item.href}
-      className={`relative px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-        isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
-      }`}
-    >
-      {isActive && (
-        <motion.div
-          layoutId="navbar-active"
-          className="absolute inset-0 card-solid shadow-sm ring-1 ring-border rounded-xl -z-10"
-          transition={{ type: 'spring', stiffness: 500, damping: 40 }}
-        />
-      )}
-      <item.icon size={14} className={isActive ? 'text-slate-700' : 'text-slate-400'} />
-      {item.label}
-    </Link>
-  )
-}
-
+// Komponen removed to match Crypto UI
 // ── Komponen utama ────────────────────────────────────────────
 export function PublicNavbar() {
   const pathname = usePathname()
@@ -159,8 +138,10 @@ export function PublicNavbar() {
                     <NavigationMenuLink asChild>
                       <Link
                         href={item.href}
-                        className={`group inline-flex h-10 w-max items-center justify-center rounded-xl bg-transparent px-4 py-2 text-xs font-bold transition-colors hover:bg-secondary text-secondary-foreground hover:text-foreground focus:bg-secondary text-secondary-foreground focus:text-foreground focus:outline-none ${
-                          isActive(item.href) ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300' : 'text-muted-foreground'
+                        className={`group relative flex h-10 items-center justify-center rounded-xl bg-transparent px-4 py-1.5 text-xs font-bold transition-all ${
+                          isActive(item.href)
+                            ? 'text-foreground card-solid dark:card-solid/15 shadow-sm ring-1 ring-slate-200 dark:ring-white/10'
+                            : 'text-muted-foreground hover:text-foreground hover:card-solid dark:text-slate-400 dark:hover:text-white dark:hover:card-solid/5'
                         }`}
                       >
                         <item.icon size={14} className="mr-1.5 text-indigo-500" />
@@ -172,7 +153,7 @@ export function PublicNavbar() {
 
                 {/* Mega Menu: Asesmen & Produk */}
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="rounded-xl text-xs font-bold text-muted-foreground hover:text-foreground">
+                  <NavigationMenuTrigger className="group relative flex h-10 items-center justify-center rounded-xl bg-transparent px-4 py-1.5 text-xs font-bold transition-all text-muted-foreground hover:text-foreground hover:card-solid dark:text-slate-400 dark:hover:text-white dark:hover:card-solid/5 outline-none data-[state=open]:card-solid dark:data-[state=open]:card-solid/10 data-[state=open]:text-foreground dark:data-[state=open]:text-white">
                     <Sparkles size={14} className="mr-1.5 text-indigo-500" /> Asesmen & Produk
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
@@ -186,7 +167,7 @@ export function PublicNavbar() {
 
                 {/* Mega Menu: Ekosistem & Solusi */}
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="rounded-xl text-xs font-bold text-muted-foreground hover:text-foreground">
+                  <NavigationMenuTrigger className="group relative flex h-10 items-center justify-center rounded-xl bg-transparent px-4 py-1.5 text-xs font-bold transition-all text-muted-foreground hover:text-foreground hover:card-solid dark:text-slate-400 dark:hover:text-white dark:hover:card-solid/5 outline-none data-[state=open]:card-solid dark:data-[state=open]:card-solid/10 data-[state=open]:text-foreground dark:data-[state=open]:text-white">
                     <Handshake size={14} className="mr-1.5 text-blue-500" /> Ekosistem & Solusi
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
@@ -198,13 +179,26 @@ export function PublicNavbar() {
                   </NavigationMenuContent>
                 </NavigationMenuItem>
 
+                {/* Auth-only direct links */}
+                {user && authNavItems.map((item) => (
+                  <NavigationMenuItem key={item.key}>
+                    <NavigationMenuLink asChild>
+                      <Link
+                        href={item.href}
+                        className={`group relative flex h-10 items-center justify-center rounded-xl bg-transparent px-4 py-1.5 text-xs font-bold transition-all ${
+                          isActive(item.href)
+                            ? 'text-foreground card-solid dark:card-solid/15 shadow-sm ring-1 ring-slate-200 dark:ring-white/10'
+                            : 'text-muted-foreground hover:text-foreground hover:card-solid dark:text-slate-400 dark:hover:text-white dark:hover:card-solid/5'
+                        }`}
+                      >
+                        <item.icon size={14} className={`mr-1.5 ${isActive(item.href) ? 'text-indigo-500' : 'text-slate-400'}`} />
+                        {item.label}
+                      </Link>
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
+                ))}
               </NavigationMenuList>
             </NavigationMenu>
-
-            {/* Auth-only direct links */}
-            {user && authNavItems.map((item) => (
-              <DirectNavLink key={item.key} item={item} isActive={isActive(item.href)} />
-            ))}
           </nav>
         </div>
 
@@ -238,7 +232,7 @@ export function PublicNavbar() {
                   <DropdownMenuTrigger asChild>
                     <Button
                       variant="ghost"
-                      className="flex items-center gap-2.5 p-1.5 pr-3 h-auto rounded-[1rem] hover:bg-muted text-muted-foreground hover:ring-1 hover:ring-slate-200 transition-all"
+                      className="flex items-center gap-2.5 p-1.5 pr-3 h-auto rounded-[1rem] hover:bg-secondary text-secondary-foreground dark:hover:card-solid/5 hover:ring-1 hover:ring-slate-200 dark:hover:ring-white/10 transition-all"
                     >
                       {user.photoURL ? (
                         // eslint-disable-next-line @next/next/no-img-element

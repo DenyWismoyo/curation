@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase/firebase";
-import { BellRing, ExternalLink, Zap } from "lucide-react";
+import { BellRing, ExternalLink, Zap, X } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CryptoCard, CryptoBadge, CryptoButton, CryptoEmptyState, CryptoLoadingState } from "../ui/CryptoUIKit";
@@ -33,22 +33,40 @@ export default function CryptoAlertsWidget() {
     }
   }, [isOpen]);
 
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const handleTouchStart = (e: React.TouchEvent) => setTouchStart(e.targetTouches[0].clientX);
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStart === null) return;
+    if (e.targetTouches[0].clientX - touchStart > 75) {
+      setIsOpen(false);
+      setTouchStart(null);
+    }
+  };
+
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <div className="fixed bottom-[5.5rem] right-6 z-40">
-          <button className="flex items-center justify-center relative rounded-full card-solid shadow-lg shadow-slate-900/50 hover:bg-secondary text-secondary-foreground dark:hover:bg-secondary text-secondary-foreground transition-transform hover:scale-110 w-12 h-12 border border-slate-200 dark:border-slate-800">
-            <BellRing className="w-5 h-5 text-muted-foreground" />
-            <span className="absolute top-0 right-0 w-3 h-3 bg-rose-500 rounded-full border-2 border-slate-200 dark:border-slate-900 animate-pulse"></span>
-          </button>
-        </div>
+        <button className="relative flex items-center justify-center w-10 h-10 rounded-xl hover:bg-secondary text-secondary-foreground text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors">
+          <BellRing className="w-5 h-5" />
+          <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full animate-pulse ring-2 ring-background"></span>
+        </button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-full sm:w-[400px] p-0 flex flex-col bg-background text-foreground border-l border-slate-200 dark:border-slate-800 shadow-2xl">
+      <SheetContent 
+        side="right" 
+        className="w-full sm:w-[400px] p-0 flex flex-col bg-background text-foreground border-l border-slate-200 dark:border-slate-800 shadow-2xl"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+      >
         <SheetHeader className="px-6 py-5 card-solid border-b border-slate-200 dark:border-slate-800 relative z-10 shadow-sm">
-          <SheetTitle className="flex items-center gap-2 text-xl font-black tracking-tight text-foreground">
-             <BellRing className="w-5 h-5 text-indigo-500" />
-             Notification Center
-          </SheetTitle>
+          <div className="flex justify-between items-start">
+            <SheetTitle className="flex items-center gap-2 text-xl font-black tracking-tight text-foreground">
+               <BellRing className="w-5 h-5 text-indigo-500" />
+               Notification Center
+            </SheetTitle>
+            <button onClick={() => setIsOpen(false)} className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
           <SheetDescription className="text-muted-foreground text-muted-foreground text-sm">
             Riwayat peringatan sinyal scalping "Siap Meledak".
           </SheetDescription>
