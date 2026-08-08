@@ -95,7 +95,7 @@ export default function StudyProjectViewer() {
 
   if (loading || (!projectData && hasAccess)) {
     return (
-      <div className="min-h-screen bg-[#f5f3ee] flex items-center justify-center text-slate-600">
+      <div className="min-h-screen bg-[#f5f3ee] flex items-center justify-center text-muted-foreground">
         <Loader2 className="w-5 h-5 animate-spin" />
       </div>
     );
@@ -239,14 +239,14 @@ export default function StudyProjectViewer() {
 
   return (
     <div className="min-h-screen bg-[#f5f3ee] flex flex-col">
-      <header className="bg-white border-b border-stone-200 px-6 py-4 flex items-center justify-between shrink-0">
+      <header className="card-solid border-b border-stone-200 px-6 py-4 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-4">
           <button onClick={() => router.push('/study')} className="p-2 hover:bg-stone-100 rounded-full text-stone-600 transition-colors">
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
-            <h1 className="text-lg font-black text-slate-900">{projectData?.title || 'Loading...'}</h1>
-            <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mt-0.5">Document Viewer • {projectData?.status}</p>
+            <h1 className="text-lg font-black text-foreground">{projectData?.title || 'Loading...'}</h1>
+            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mt-0.5">Document Viewer • {projectData?.status}</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -271,13 +271,13 @@ export default function StudyProjectViewer() {
           </div>
           <div className="p-3 space-y-1">
             {projectData?.status === 'FAILED' && projectData?.orchestration?.errors && projectData.orchestration.errors.length > 0 && (
-              <div className="mb-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs">
+              <div className="mb-4 p-3 rounded-xl bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 text-rose-800 text-xs">
                 <div className="font-bold flex items-center gap-1.5 mb-2 uppercase tracking-wider text-[10px]">
                   <AlertTriangle className="w-3 h-3" /> Error Log
                 </div>
                 <div className="space-y-2 max-h-40 overflow-y-auto">
                   {projectData.orchestration.errors.map((err: any, idx: number) => (
-                    <div key={idx} className="bg-white p-2 rounded-lg border border-rose-100">
+                    <div key={idx} className="card-solid p-2 rounded-lg border border-rose-100">
                       <p className="font-bold text-[10px] uppercase text-rose-500">{err.phase}</p>
                       <p className="mt-1 font-mono text-[9px] leading-tight break-words">{err.message}</p>
                       {err.createdAt && <p className="mt-1 text-[8px] text-rose-400">{new Date(err.createdAt).toLocaleString()}</p>}
@@ -290,26 +290,26 @@ export default function StudyProjectViewer() {
               <button
                 key={chapter.id}
                 onClick={() => setActiveChapterId(chapter.id)}
-                className={`w-full text-left p-3 rounded-xl transition-all ${activeChapterId === chapter.id ? 'bg-white ring-1 ring-stone-300 shadow-sm' : 'hover:bg-stone-100 text-stone-600'}`}
+                className={`w-full text-left p-3 rounded-xl transition-all ${activeChapterId === chapter.id ? 'card-solid ring-1 ring-stone-300 shadow-sm' : 'hover:bg-stone-100 text-stone-600'}`}
               >
                 <div className="flex items-start gap-2">
                   <FileText className={`w-4 h-4 mt-0.5 shrink-0 ${activeChapterId === chapter.id ? 'text-violet-700' : 'text-stone-400'}`} />
                   <div>
-                    <p className={`text-sm font-bold leading-snug ${activeChapterId === chapter.id ? 'text-slate-900' : ''}`}>{chapter.chapterNumber === 0 ? '' : `${chapter.chapterNumber}. `}{chapter.title}</p>
+                    <p className={`text-sm font-bold leading-snug ${activeChapterId === chapter.id ? 'text-foreground' : ''}`}>{chapter.chapterNumber === 0 ? '' : `${chapter.chapterNumber}. `}{chapter.title}</p>
                     {chapter.currentAction ? (
                       <div className="flex items-center gap-1.5 mt-1.5">
-                        <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-sky-700 bg-sky-100 px-1.5 py-0.5 rounded animate-pulse">
+                        <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-sky-700 dark:text-sky-300 bg-sky-100 px-1.5 py-0.5 rounded animate-pulse">
                           <Loader2 className="w-3 h-3 animate-spin" /> {chapter.currentAction}
                         </span>
                       </div>
                     ) : chapter.auditStatus ? (
                       <div className="flex items-center gap-1.5 mt-1.5">
                         {chapter.auditStatus === 'APPROVED' ? (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded">
+                          <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-emerald-700 dark:text-emerald-300 bg-emerald-100 px-1.5 py-0.5 rounded">
                             <CheckCircle2 className="w-3 h-3" /> Approved
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded">
+                          <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-300 bg-amber-100 px-1.5 py-0.5 rounded">
                             <AlertTriangle className="w-3 h-3" /> Needs Review
                           </span>
                         )}
@@ -326,16 +326,16 @@ export default function StudyProjectViewer() {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 overflow-y-auto bg-white">
+        <div className="flex-1 overflow-y-auto card-solid">
           {activeChapter ? (
             <div className="max-w-4xl mx-auto p-8 lg:p-12">
               <div className="mb-8 pb-8 border-b border-stone-200">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-3xl font-black text-slate-900 leading-tight">{activeChapter.title}</h2>
+                  <h2 className="text-3xl font-black text-foreground leading-tight">{activeChapter.title}</h2>
                   <button 
                     onClick={() => setShowRevisionModal(true)}
                     disabled={['REVISING', 'REVISION_REQUESTED'].includes(activeChapter.draftStatus)}
-                    className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-stone-50 text-stone-700 text-sm font-bold rounded-xl border border-stone-200 shadow-sm disabled:opacity-50"
+                    className="flex items-center gap-2 px-4 py-2 card-solid hover:bg-stone-50 text-stone-700 text-sm font-bold rounded-xl border border-stone-200 shadow-sm disabled:opacity-50"
                   >
                     {['REVISING', 'REVISION_REQUESTED'].includes(activeChapter.draftStatus) ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />} 
                     {['REVISING', 'REVISION_REQUESTED'].includes(activeChapter.draftStatus) ? 'Revising...' : 'Minta Revisi'}
@@ -344,20 +344,20 @@ export default function StudyProjectViewer() {
                 
                 {/* Audit Findings Panel */}
                 {activeChapter.auditFindings && activeChapter.auditFindings.length > 0 && (
-                  <div className="mt-6 bg-amber-50 rounded-2xl ring-1 ring-amber-200 p-5">
+                  <div className="mt-6 bg-amber-50 dark:bg-amber-500/10 rounded-2xl ring-1 ring-amber-200 dark:ring-amber-500/20 p-5">
                     <h3 className="text-xs font-black uppercase tracking-widest text-amber-900 flex items-center gap-2">
                       <AlertTriangle className="w-4 h-4" /> Temuan Auditor
                     </h3>
                     <div className="mt-4 space-y-3">
                       {activeChapter.auditFindings.map((finding, idx) => (
-                        <div key={idx} className="bg-white rounded-xl p-3 shadow-sm ring-1 ring-amber-100">
+                        <div key={idx} className="card-solid rounded-xl p-3 shadow-sm ring-1 ring-amber-100">
                           <div className="flex items-center gap-2 mb-1">
-                            <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${finding.severity === 'high' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700'}`}>
+                            <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${finding.severity === 'high' ? 'bg-rose-100 text-rose-700 dark:text-rose-300' : 'bg-amber-100 text-amber-700 dark:text-amber-300'}`}>
                               {finding.severity}
                             </span>
-                            <p className="text-sm font-bold text-slate-900">{processSourceText(finding.issue)}</p>
+                            <p className="text-sm font-bold text-foreground">{processSourceText(finding.issue)}</p>
                           </div>
-                          <p className="text-xs text-slate-600">{processSourceText(finding.recommendation)}</p>
+                          <p className="text-xs text-muted-foreground">{processSourceText(finding.recommendation)}</p>
                         </div>
                       ))}
                     </div>
@@ -388,8 +388,8 @@ export default function StudyProjectViewer() {
                             {idx + 1}
                           </span>
                           <div>
-                            <p className="font-bold text-slate-800 leading-snug">{cit.claim}</p>
-                            <div className="mt-2 text-stone-500 text-xs border-l-2 border-violet-200 pl-3 italic bg-white p-2 rounded-r-lg">
+                            <p className="font-bold text-foreground leading-snug">{cit.claim}</p>
+                            <div className="mt-2 text-stone-500 text-xs border-l-2 border-violet-200 pl-3 italic card-solid p-2 rounded-r-lg">
                               "{cit.supportingSnippet}"
                             </div>
                             <p className="text-[10px] uppercase font-bold text-stone-400 mt-2 tracking-wider">
@@ -413,9 +413,9 @@ export default function StudyProjectViewer() {
       
       {showRevisionModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] flex flex-col">
+          <div className="card-solid rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] flex flex-col">
             <div className="px-6 py-4 border-b border-stone-200 flex justify-between items-center bg-stone-50 shrink-0">
-              <h3 className="font-black text-slate-900">Minta Revisi Bab</h3>
+              <h3 className="font-black text-foreground">Minta Revisi Bab</h3>
               <button onClick={() => setShowRevisionModal(false)} className="text-stone-400 hover:text-stone-700">
                 <X className="w-5 h-5" />
               </button>
@@ -439,8 +439,8 @@ export default function StudyProjectViewer() {
                       <div key={idx} className="flex flex-col bg-stone-50 rounded-xl border border-stone-200 overflow-hidden">
                         <div className="flex items-center justify-between p-2.5">
                           <div className="flex items-center gap-2 overflow-hidden">
-                            {src.type === 'url' ? <Globe className="w-4 h-4 text-sky-600 shrink-0" /> : src.type === 'file' ? <FileUp className="w-4 h-4 text-rose-600 shrink-0" /> : <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />}
-                            <p className="text-xs font-bold text-slate-800 truncate">
+                            {src.type === 'url' ? <Globe className="w-4 h-4 text-sky-600 dark:text-sky-400 shrink-0" /> : src.type === 'file' ? <FileUp className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" /> : <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />}
+                            <p className="text-xs font-bold text-foreground truncate">
                               {src.type === 'url' ? src.url : src.type === 'file' ? src.fileName : src.title}
                             </p>
                           </div>
@@ -450,7 +450,7 @@ export default function StudyProjectViewer() {
                         </div>
                         {src.type === 'ai_search' && src.aiMaterial && (
                           <div className="px-3 pb-3">
-                            <div className="p-2.5 bg-white border border-stone-100 rounded-lg max-h-[120px] overflow-y-auto text-[10px] text-stone-600 whitespace-pre-wrap font-mono">
+                            <div className="p-2.5 card-solid border border-stone-100 rounded-lg max-h-[120px] overflow-y-auto text-[10px] text-stone-600 whitespace-pre-wrap font-mono">
                               {src.aiMaterial}
                             </div>
                           </div>
@@ -491,7 +491,7 @@ export default function StudyProjectViewer() {
               </div>
               
               {revisionError && (
-                <div className="p-3 rounded-lg bg-rose-50 text-rose-700 text-sm">
+                <div className="p-3 rounded-lg bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-300 text-sm">
                   {revisionError}
                 </div>
               )}

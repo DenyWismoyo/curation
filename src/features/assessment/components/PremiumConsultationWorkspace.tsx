@@ -173,51 +173,51 @@ export function PremiumConsultationWorkspace({ assessmentId }: { assessmentId: s
 
   if (!assessmentData) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-muted text-muted-foreground">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row">
+    <div className="min-h-screen bg-muted text-muted-foreground flex flex-col md:flex-row">
       {/* PAYWALL OVERLAY */}
       {!assessmentData.hasPaidForPremiumConsultation && (
         <div className="absolute inset-0 z-50 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-8 shadow-2xl text-center relative overflow-hidden">
+          <div className="card-solid rounded-3xl max-w-lg w-full p-8 shadow-2xl text-center relative overflow-hidden">
             <div className="absolute right-0 top-0 opacity-5 pointer-events-none transform translate-x-10 -translate-y-10">
                <Sparkles size={160} />
             </div>
             
-            <div className="w-16 h-16 bg-gradient-to-br from-indigo-100 to-purple-100 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-inner ring-1 ring-indigo-200">
+            <div className="w-16 h-16 bg-gradient-to-br from-indigo-100 to-purple-100 text-indigo-600 dark:text-indigo-400 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-inner ring-1 ring-indigo-200 dark:ring-indigo-500/20">
               <Sparkles size={32} />
             </div>
             
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 mb-2 tracking-tight">Konsultasi AI Premium</h2>
-            <p className="text-slate-500 font-medium mb-6 text-sm">
+            <h2 className="text-2xl sm:text-3xl font-black text-foreground mb-2 tracking-tight">Konsultasi AI Premium</h2>
+            <p className="text-muted-foreground font-medium mb-6 text-sm">
               Buka potensi penuh dari hasil asesmen Anda dengan asisten AI pakar yang dipersonalisasi.
             </p>
             
-            <div className="text-left space-y-4 mb-8 bg-slate-50 p-5 rounded-2xl ring-1 ring-slate-100">
+            <div className="text-left space-y-4 mb-8 bg-muted text-muted-foreground p-5 rounded-2xl ring-1 ring-border">
               <div className="flex items-start gap-3">
-                <div className="bg-indigo-100 text-indigo-600 p-2 rounded-xl shrink-0"><Lock size={16} /></div>
+                <div className="bg-indigo-100 text-indigo-600 dark:text-indigo-400 p-2 rounded-xl shrink-0"><Lock size={16} /></div>
                 <div>
-                  <h4 className="font-bold text-slate-800 text-sm">Akses Data Rahasia (Hidden Metrics)</h4>
-                  <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">AI akan membongkar <em>internal reasoning</em> dan anomali data yang tidak ditampilkan di laporan publik Anda.</p>
+                  <h4 className="font-bold text-foreground text-sm">Akses Data Rahasia (Hidden Metrics)</h4>
+                  <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">AI akan membongkar <em>internal reasoning</em> dan anomali data yang tidak ditampilkan di laporan publik Anda.</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <div className="bg-indigo-100 text-indigo-600 p-2 rounded-xl shrink-0"><Target size={16} /></div>
+                <div className="bg-indigo-100 text-indigo-600 dark:text-indigo-400 p-2 rounded-xl shrink-0"><Target size={16} /></div>
                 <div>
-                  <h4 className="font-bold text-slate-800 text-sm">Auto-Generate Action Plan</h4>
-                  <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">Susun rencana aksi (<em>To-Do List</em>) yang spesifik dan bertarget langsung ke dasbor Anda dari hasil obrolan.</p>
+                  <h4 className="font-bold text-foreground text-sm">Auto-Generate Action Plan</h4>
+                  <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">Susun rencana aksi (<em>To-Do List</em>) yang spesifik dan bertarget langsung ke dasbor Anda dari hasil obrolan.</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <div className="bg-indigo-100 text-indigo-600 p-2 rounded-xl shrink-0"><Zap size={16} /></div>
+                <div className="bg-indigo-100 text-indigo-600 dark:text-indigo-400 p-2 rounded-xl shrink-0"><Zap size={16} /></div>
                 <div>
-                  <h4 className="font-bold text-slate-800 text-sm">Model AI Super Pintar</h4>
-                  <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">Ditenagai DeepSeek premium dengan persona khusus dari hasil asesmen agar respons lebih tajam, personal, dan actionable.</p>
+                  <h4 className="font-bold text-foreground text-sm">Model AI Super Pintar</h4>
+                  <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">Ditenagai DeepSeek premium dengan persona khusus dari hasil asesmen agar respons lebih tajam, personal, dan actionable.</p>
                 </div>
               </div>
             </div>
@@ -232,7 +232,7 @@ export function PremiumConsultationWorkspace({ assessmentId }: { assessmentId: s
               </Button>
             </div>
             
-            <button onClick={() => router.push(`/result/${assessmentId}`)} className="text-sm font-bold text-slate-400 hover:text-slate-600 transition-colors">
+            <button onClick={() => router.push(`/result/${assessmentId}`)} className="text-sm font-bold text-slate-400 hover:text-muted-foreground transition-colors">
               Nanti saja, kembali ke laporan utama
             </button>
           </div>
@@ -240,8 +240,8 @@ export function PremiumConsultationWorkspace({ assessmentId }: { assessmentId: s
       )}
 
       {/* LEFT PANEL: Context & Action Plan */}
-      <div className="w-full md:w-[400px] lg:w-[450px] bg-white border-r border-slate-200 flex flex-col h-[40vh] md:h-screen overflow-y-auto custom-scrollbar shrink-0">
-        <div className="p-6 border-b border-slate-100 bg-slate-900 text-white">
+      <div className="w-full md:w-[400px] lg:w-[450px] card-solid border-r border-border flex flex-col h-[40vh] md:h-screen overflow-y-auto custom-scrollbar shrink-0">
+        <div className="p-6 border-b border-border bg-slate-900 text-white">
           <button 
             onClick={() => router.push(`/result/${assessmentId}`)}
             className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm font-bold mb-6"
@@ -254,7 +254,7 @@ export function PremiumConsultationWorkspace({ assessmentId }: { assessmentId: s
           </h2>
           <p className="text-slate-400 text-sm font-medium">Bahas hasil asesmen Anda secara intensif dengan Omni AI Expert.</p>
           <div className="mt-4 grid grid-cols-1 gap-2">
-            <div className="bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-xs">
+            <div className="card-solid/10 border border-white/20 rounded-xl px-3 py-2 text-xs">
               <p className="text-slate-300 font-semibold">DeepSeek Persona</p>
               <p className="text-white font-bold mt-0.5">
                 {persona?.personaCore?.communicationStyle || 'Sedang disiapkan saat chat pertama...'}
@@ -272,43 +272,43 @@ export function PremiumConsultationWorkspace({ assessmentId }: { assessmentId: s
         
         <div className="p-6 flex-1">
           <div className="mb-6">
-            <h3 className="text-xs font-black uppercase text-slate-500 tracking-widest mb-3 flex items-center gap-2">
+            <h3 className="text-xs font-black uppercase text-muted-foreground tracking-widest mb-3 flex items-center gap-2">
               <AdminShieldIcon size={16} className="text-indigo-500"/> Subjek Asesmen
             </h3>
-            <div className="bg-indigo-50 p-4 rounded-xl ring-1 ring-indigo-100">
+            <div className="bg-indigo-50 dark:bg-indigo-500/10 p-4 rounded-xl ring-1 ring-indigo-100">
               <p className="font-bold text-indigo-900">{assessmentData.namaUsaha}</p>
               <div className="flex items-center gap-2 mt-2">
-                <span className="text-3xl font-black text-indigo-600">{assessmentData.score}</span>
-                <span className="bg-indigo-200/50 text-indigo-700 text-xs font-bold px-2 py-1 rounded">Skor Kesiapan</span>
+                <span className="text-3xl font-black text-indigo-600 dark:text-indigo-400">{assessmentData.score}</span>
+                <span className="bg-indigo-200/50 text-indigo-700 dark:text-indigo-300 text-xs font-bold px-2 py-1 rounded">Skor Kesiapan</span>
               </div>
             </div>
           </div>
 
           <div>
-            <h3 className="text-xs font-black uppercase text-slate-500 tracking-widest mb-3 flex items-center gap-2">
+            <h3 className="text-xs font-black uppercase text-muted-foreground tracking-widest mb-3 flex items-center gap-2">
               <Brain size={16} className="text-emerald-500"/> Action Plan Terintegrasi
             </h3>
-            <p className="text-xs text-slate-500 mb-4">Langkah konkret yang telah disarankan oleh AI.</p>
+            <p className="text-xs text-muted-foreground mb-4">Langkah konkret yang telah disarankan oleh AI.</p>
             
             <div className="space-y-3">
               {assessmentData.aiResult?.nextActionSteps?.map((step: any, idx: number) => (
-                <div key={idx} className="bg-white ring-1 ring-slate-200 p-3 rounded-xl shadow-sm flex flex-col gap-2">
+                <div key={idx} className="card-solid ring-1 ring-border p-3 rounded-xl shadow-sm flex flex-col gap-2">
                   <div className="flex items-center gap-2">
                     <CheckCircle size={14} className="text-slate-300" />
                     <p className="text-sm font-bold text-slate-700 leading-tight flex-1">{step.task}</p>
                   </div>
                   <div className="flex items-center gap-1.5 ml-5.5">
                     <Clock size={12} className="text-emerald-500" />
-                    <span className="text-[10px] font-black uppercase tracking-wider text-emerald-600">{step.timeframe}</span>
+                    <span className="text-[10px] font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400">{step.timeframe}</span>
                     {step.source === 'Premium Consultation' && (
-                      <span className="text-[10px] font-black uppercase tracking-wider bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded ml-auto">Premium</span>
+                      <span className="text-[10px] font-black uppercase tracking-wider bg-indigo-100 text-indigo-600 dark:text-indigo-400 px-1.5 py-0.5 rounded ml-auto">Premium</span>
                     )}
                   </div>
                 </div>
               ))}
               {(!assessmentData.aiResult?.nextActionSteps || assessmentData.aiResult.nextActionSteps.length === 0) && (
-                <div className="text-center p-6 border-2 border-dashed border-slate-200 rounded-xl">
-                  <p className="text-sm font-medium text-slate-500">Belum ada Action Plan. Minta AI untuk membuatkannya.</p>
+                <div className="text-center p-6 border-2 border-dashed border-border rounded-xl">
+                  <p className="text-sm font-medium text-muted-foreground">Belum ada Action Plan. Minta AI untuk membuatkannya.</p>
                 </div>
               )}
             </div>
@@ -317,18 +317,18 @@ export function PremiumConsultationWorkspace({ assessmentId }: { assessmentId: s
       </div>
 
       {/* RIGHT PANEL: Chat Workspace */}
-      <div className="flex-1 flex flex-col h-[60vh] md:h-screen relative bg-slate-50/50">
+      <div className="flex-1 flex flex-col h-[60vh] md:h-screen relative bg-muted text-muted-foreground/50">
         <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-6 custom-scrollbar">
           {messages.length === 0 && (
             <div className="h-full flex flex-col items-center justify-center text-center max-w-md mx-auto">
-              <div className="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center mb-4 shadow-inner">
+              <div className="w-16 h-16 bg-indigo-100 text-indigo-600 dark:text-indigo-400 rounded-2xl flex items-center justify-center mb-4 shadow-inner">
                 <Sparkles size={28} />
               </div>
-              <h3 className="text-xl font-black text-slate-900 mb-2">Mulai Sesi Konsultasi</h3>
-              <p className="text-slate-500 text-sm font-medium">Saya telah mempelajari seluruh data asesmen dan anomali internal Anda. Apa yang ingin Anda diskusikan pertama kali?</p>
+              <h3 className="text-xl font-black text-foreground mb-2">Mulai Sesi Konsultasi</h3>
+              <p className="text-muted-foreground text-sm font-medium">Saya telah mempelajari seluruh data asesmen dan anomali internal Anda. Apa yang ingin Anda diskusikan pertama kali?</p>
               <div className="flex flex-wrap justify-center gap-2 mt-6">
-                <button onClick={() => handleSendMessage("Berdasarkan data asesmen saya, apa risiko terbesar yang paling mendesak untuk diselesaikan?")} className="text-xs font-bold bg-white ring-1 ring-slate-200 px-4 py-2 rounded-full text-indigo-600 hover:bg-indigo-50 transition-colors">Risiko Terbesar?</button>
-                <button onClick={() => handleSendMessage("Tolong buatkan Action Plan untuk bulan depan.")} className="text-xs font-bold bg-white ring-1 ring-slate-200 px-4 py-2 rounded-full text-indigo-600 hover:bg-indigo-50 transition-colors">Buat Action Plan</button>
+                <button onClick={() => handleSendMessage("Berdasarkan data asesmen saya, apa risiko terbesar yang paling mendesak untuk diselesaikan?")} className="text-xs font-bold card-solid ring-1 ring-border px-4 py-2 rounded-full text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:bg-indigo-500/10 transition-colors">Risiko Terbesar?</button>
+                <button onClick={() => handleSendMessage("Tolong buatkan Action Plan untuk bulan depan.")} className="text-xs font-bold card-solid ring-1 ring-border px-4 py-2 rounded-full text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:bg-indigo-500/10 transition-colors">Buat Action Plan</button>
               </div>
             </div>
           )}
@@ -340,7 +340,7 @@ export function PremiumConsultationWorkspace({ assessmentId }: { assessmentId: s
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-sm ${isUser ? 'bg-slate-900 text-white' : 'bg-indigo-600 text-white'}`}>
                   {isUser ? <span className="text-xs font-bold">You</span> : <Sparkles size={14} />}
                 </div>
-                <div className={`px-5 py-4 rounded-2xl shadow-sm text-[14px] leading-relaxed ${isUser ? 'bg-slate-900 text-white rounded-tr-sm' : 'bg-white border border-slate-200 text-slate-700 rounded-tl-sm'}`}>
+                <div className={`px-5 py-4 rounded-2xl shadow-sm text-[14px] leading-relaxed ${isUser ? 'bg-slate-900 text-white rounded-tr-sm' : 'card-solid border border-border text-slate-700 rounded-tl-sm'}`}>
                   {renderMarkdown(msg.content)}
                 </div>
               </div>
@@ -350,7 +350,7 @@ export function PremiumConsultationWorkspace({ assessmentId }: { assessmentId: s
           {isTyping && (
             <div className="flex items-start gap-3 max-w-[85%]">
               <div className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center shrink-0 shadow-sm"><Sparkles size={14} /></div>
-              <div className="px-5 py-4 rounded-2xl bg-white border border-slate-200 rounded-tl-sm flex gap-2 items-center h-[52px]">
+              <div className="px-5 py-4 rounded-2xl card-solid border border-border rounded-tl-sm flex gap-2 items-center h-[52px]">
                 <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
                 <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
                 <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
@@ -360,13 +360,13 @@ export function PremiumConsultationWorkspace({ assessmentId }: { assessmentId: s
           <div ref={messagesEndRef} />
         </div>
 
-        <div className="p-4 bg-white border-t border-slate-200 shrink-0">
+        <div className="p-4 card-solid border-t border-border shrink-0">
           <form onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }} className="relative max-w-4xl mx-auto flex items-center group">
             <Input
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               placeholder="Diskusikan strategi, minta saran, atau perintahkan membuat task..."
-              className="pr-14 h-14 bg-slate-50 border-slate-200 focus-visible:ring-indigo-500 rounded-2xl font-medium shadow-inner text-sm w-full"
+              className="pr-14 h-14 bg-muted text-muted-foreground border-border focus-visible:ring-indigo-500 rounded-2xl font-medium shadow-inner text-sm w-full"
               disabled={isTyping || (assessmentData?.hasPaidForPremiumConsultation && (remainingCredits !== null && remainingCredits <= 0))}
             />
             <Button
@@ -379,7 +379,7 @@ export function PremiumConsultationWorkspace({ assessmentId }: { assessmentId: s
             </Button>
           </form>
           {assessmentData?.hasPaidForPremiumConsultation && remainingCredits !== null && remainingCredits <= 0 && (
-            <p className="text-xs text-rose-600 font-semibold mt-2 text-center">
+            <p className="text-xs text-rose-600 dark:text-rose-400 font-semibold mt-2 text-center">
               Credit premium habis. Silakan top-up paket premium untuk lanjut chat.
             </p>
           )}

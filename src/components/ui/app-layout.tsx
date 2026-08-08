@@ -31,7 +31,7 @@ export function AppPageHeader({
   return (
     <div className={cn("flex flex-col gap-4 mb-6 sm:mb-8", className)}>
       {breadcrumbs && (
-        <div className="text-sm font-semibold text-slate-500 mb-2 flex items-center gap-2">
+        <div className="text-sm font-semibold text-muted-foreground mb-2 flex items-center gap-2">
           {breadcrumbs}
         </div>
       )}
@@ -41,18 +41,18 @@ export function AppPageHeader({
           {(onBack !== undefined || showBackButton) && (
             <button
               onClick={handleBack}
-              className="w-10 h-10 mt-1 sm:mt-0 flex items-center justify-center rounded-xl bg-white ring-1 ring-slate-200/60 shadow-sm text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 hover:ring-indigo-200 transition-all shrink-0"
+              className="w-10 h-10 mt-1 sm:mt-0 flex items-center justify-center rounded-xl card-solid ring-1 ring-border shadow-sm text-muted-foreground hover:text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:bg-indigo-500/10 hover:ring-indigo-200 dark:ring-indigo-500/20 transition-all shrink-0"
               title="Kembali"
             >
               <ChevronLeft size={20} />
             </button>
           )}
           <div>
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-tight">
+            <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight leading-tight">
               {title}
             </h1>
             {subtitle && (
-              <div className="text-sm text-slate-500 font-medium mt-1">
+              <div className="text-sm text-muted-foreground font-medium mt-1">
                 {subtitle}
               </div>
             )}

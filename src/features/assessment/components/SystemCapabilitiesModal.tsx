@@ -35,9 +35,9 @@ export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false }:
       title: "Pengguna Mandiri",
       subtitle: "Pelaku UMKM, Startup, & Individu",
       icon: EcosystemIcon,
-      color: "text-sky-600",
-      bg: "bg-sky-50",
-      ring: "ring-sky-200",
+      color: "text-sky-600 dark:text-sky-400",
+      bg: "bg-sky-50 dark:bg-sky-500/10",
+      ring: "ring-sky-200 dark:ring-sky-500/20",
       activeBg: "bg-sky-600",
       problemTitle: "Tantangan Evaluasi Konvensional",
       problems: [
@@ -59,9 +59,9 @@ export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false }:
       title: "Tim Ahli & Profesional",
       subtitle: "Asesor, Konselor, & Fasilitator",
       icon: AILensIcon,
-      color: "text-emerald-600",
-      bg: "bg-emerald-50",
-      ring: "ring-emerald-200",
+      color: "text-emerald-600 dark:text-emerald-400",
+      bg: "bg-emerald-50 dark:bg-emerald-500/10",
+      ring: "ring-emerald-200 dark:ring-emerald-500/20",
       activeBg: "bg-emerald-600",
       problemTitle: "Beban Administratif Pendekatan Manual",
       problems: [
@@ -83,9 +83,9 @@ export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false }:
       title: "Korporasi & Institusi",
       subtitle: "Pemerintah, HR Enterprise, & Lembaga",
       icon: AdminShieldIcon,
-      color: "text-indigo-600",
-      bg: "bg-indigo-50",
-      ring: "ring-indigo-200",
+      color: "text-indigo-600 dark:text-indigo-400",
+      bg: "bg-indigo-50 dark:bg-indigo-500/10",
+      ring: "ring-indigo-200 dark:ring-indigo-500/20",
       activeBg: "bg-indigo-600",
       problemTitle: "Inefisiensi Birokrasi Skala Besar",
       problems: [
@@ -115,21 +115,21 @@ export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false }:
         animate={{ opacity: 1, y: 0 }} 
         exit={{ opacity: 0, y: '100%' }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="fixed inset-0 z-[150] bg-slate-50 flex flex-col w-full h-[100dvh] overflow-hidden"
+        className="fixed inset-0 z-[150] bg-muted text-muted-foreground flex flex-col w-full h-[100dvh] overflow-hidden"
       >
-        <div className="bg-white h-16 sm:h-20 px-4 sm:px-8 border-b border-slate-200 flex items-center justify-between shrink-0 shadow-sm z-20">
+        <div className="card-solid h-16 sm:h-20 px-4 sm:px-8 border-b border-border flex items-center justify-between shrink-0 shadow-sm z-20">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-indigo-600 text-white rounded-lg flex items-center justify-center shrink-0">
               <TechCardIcon className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight leading-none">Tentang Omnifit</h2>
-              <p className="text-[10px] sm:text-xs text-slate-500 font-bold hidden sm:block mt-1">Solusi & Kapabilitas Ekosistem</p>
+              <h2 className="text-lg sm:text-xl font-black text-foreground tracking-tight leading-none">Tentang Omnifit</h2>
+              <p className="text-[10px] sm:text-xs text-muted-foreground font-bold hidden sm:block mt-1">Solusi & Kapabilitas Ekosistem</p>
             </div>
           </div>
           <button 
             onClick={onClose} 
-            className="w-10 h-10 flex items-center justify-center text-slate-500 hover:bg-slate-100 rounded-full transition-colors shrink-0"
+            className="w-10 h-10 flex items-center justify-center text-muted-foreground hover:bg-secondary text-secondary-foreground rounded-full transition-colors shrink-0"
             title="Tutup Halaman"
           >
             <X className="w-6 h-6" />
@@ -140,15 +140,15 @@ export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false }:
           <div className="max-w-[1200px] mx-auto w-full pb-20 space-y-6 lg:space-y-10">
             
             <div className="text-center max-w-3xl mx-auto space-y-3 mb-8 pt-4">
-              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 tracking-tight text-balance">
+              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black text-foreground tracking-tight text-balance">
                 Masa Depan Evaluasi & Kurasi Data
               </h3>
-              <p className="text-sm sm:text-base font-medium text-slate-600 leading-relaxed text-balance">
-                Platform asesmen cerdas yang dirancang untuk beradaptasi dengan segala bentuk kebutuhan evaluasi. Kami memproses informasi secara <span className="font-bold text-indigo-600">real-time</span> untuk menghasilkan wawasan analitik sekelas konsultan ahli — cepat, presisi, dan bebas birokrasi.
+              <p className="text-sm sm:text-base font-medium text-muted-foreground leading-relaxed text-balance">
+                Platform asesmen cerdas yang dirancang untuk beradaptasi dengan segala bentuk kebutuhan evaluasi. Kami memproses informasi secara <span className="font-bold text-indigo-600 dark:text-indigo-400">real-time</span> untuk menghasilkan wawasan analitik sekelas konsultan ahli — cepat, presisi, dan bebas birokrasi.
               </p>
             </div>
             
-            <div className="bg-white p-2 sm:p-3 rounded-[2rem] sm:rounded-full ring-1 ring-slate-200 shadow-sm mx-auto max-w-4xl grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <div className="card-solid p-2 sm:p-3 rounded-[2rem] sm:rounded-full ring-1 ring-border shadow-sm mx-auto max-w-4xl grid grid-cols-1 sm:grid-cols-3 gap-2">
               {(Object.keys(platformClusters) as Array<keyof typeof platformClusters>).map((key) => {
                 const cluster = platformClusters[key];
                 const isActive = activeCluster === key;
@@ -161,7 +161,7 @@ export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false }:
                     className={`flex flex-col items-center justify-center text-center p-3 sm:py-4 rounded-3xl sm:rounded-full transition-all ${
                       isActive 
                         ? `bg-slate-900 text-white shadow-lg scale-100 sm:scale-105 z-10` 
-                        : `bg-transparent hover:bg-slate-50 text-slate-600`
+                        : `bg-transparent hover:bg-muted text-muted-foreground text-muted-foreground`
                     }`}
                   >
                     <div className="flex items-center gap-2 mb-1">
@@ -185,19 +185,19 @@ export function SystemCapabilitiesModal({ isOpen, onClose, isLoggedIn = false }:
                 transition={{ duration: 0.3 }}
                 className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 pt-4"
               >
-                <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-[2rem] ring-1 ring-rose-200 shadow-sm flex flex-col relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-rose-50 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-all group-hover:scale-150 group-hover:bg-rose-100"></div>
+                <div className="card-solid p-6 sm:p-8 lg:p-10 rounded-[2rem] ring-1 ring-rose-200 dark:ring-rose-500/20 shadow-sm flex flex-col relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-rose-50 dark:bg-rose-500/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-all group-hover:scale-150 group-hover:bg-rose-100 dark:hover:bg-rose-500/20"></div>
                   
                   <div className="inline-flex items-center gap-3 mb-8 relative z-10">
-                    <div className="p-3 bg-rose-100 text-rose-600 rounded-2xl"><AlertTriangle className="w-6 h-6"/></div>
-                    <h3 className="text-xl sm:text-2xl font-black text-slate-900 leading-tight">{activeClusterData.problemTitle}</h3>
+                    <div className="p-3 bg-rose-100 text-rose-600 dark:text-rose-400 rounded-2xl"><AlertTriangle className="w-6 h-6"/></div>
+                    <h3 className="text-xl sm:text-2xl font-black text-foreground leading-tight">{activeClusterData.problemTitle}</h3>
                   </div>
 
                   <ul className="space-y-6 flex-1 relative z-10">
                     {activeClusterData.problems.map((problem, i) => (
                       <li key={i} className="flex items-start gap-4">
                         <XOctagon className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
-                        <span className="text-sm font-medium text-slate-600 leading-relaxed">{problem}</span>
+                        <span className="text-sm font-medium text-muted-foreground leading-relaxed">{problem}</span>
                       </li>
                     ))}
                   </ul>

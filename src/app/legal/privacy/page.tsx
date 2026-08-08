@@ -5,27 +5,27 @@ import { Button } from "@/components/ui/button";
 
 export default function PrivacyPolicyPage() {
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20">
+    <div className="min-h-screen bg-background text-foreground pb-20">
       <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         
         <Link href="/">
-          <Button variant="ghost" className="mb-8 text-slate-500 hover:text-indigo-600">
+          <Button variant="ghost" className="mb-8 text-muted-foreground hover:text-indigo-600 dark:text-indigo-400">
             <ArrowLeft className="w-4 h-4 mr-2" /> Kembali ke Beranda
           </Button>
         </Link>
         
-        <div className="bg-white dark:bg-slate-900 p-8 md:p-12 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800">
+        <div className="card-solid p-8 md:p-12 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800">
           <div className="flex items-center gap-4 mb-8 border-b border-slate-100 dark:border-slate-800 pb-8">
             <div className="p-4 bg-emerald-100 dark:bg-emerald-900/50 rounded-2xl">
               <Shield className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
             </div>
             <div>
-              <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white">Kebijakan Privasi</h1>
-              <p className="text-slate-500 mt-2">Terakhir Diperbarui: 5 Agustus 2026</p>
+              <h1 className="text-3xl md:text-4xl font-black text-foreground">Kebijakan Privasi</h1>
+              <p className="text-muted-foreground mt-2">Terakhir Diperbarui: 5 Agustus 2026</p>
             </div>
           </div>
           
-          <div className="prose prose-slate dark:prose-invert max-w-none text-slate-600 dark:text-slate-300">
+          <div className="prose prose-slate dark:prose-invert max-w-none text-muted-foreground">
             <p>
               Privasi Anda sangat penting bagi kami. Kebijakan Privasi ini menjelaskan bagaimana Omnifit AI ("Platform", "kami", "kita") mengumpulkan, menggunakan, dan melindungi Data Pribadi Anda saat menggunakan layanan kami, serta hak-hak Anda berdasarkan Undang-Undang Perlindungan Data Pribadi (UU PDP) Indonesia.
             </p>

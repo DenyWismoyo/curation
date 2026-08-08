@@ -73,13 +73,13 @@ export function CryptoLearningPath({ currentModuleId, level }: CryptoLearningPat
   }
 
   return (
-    <div className="bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-xl p-4">
+    <div className="card-solid/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-xl p-4">
       <h3 className="text-sm font-black uppercase tracking-wider text-slate-400 mb-4">
         Jalur Belajar
       </h3>
       <div className="space-y-0 relative">
         {/* Vertical line connecting nodes */}
-        <div className="absolute left-3 top-4 bottom-4 w-px bg-slate-100 dark:bg-slate-800 z-0"></div>
+        <div className="absolute left-3 top-4 bottom-4 w-px bg-secondary text-secondary-foreground z-0"></div>
         
         {modules.map((mod, idx) => {
           const isCurrent = mod.id === currentModuleId;
@@ -94,12 +94,12 @@ export function CryptoLearningPath({ currentModuleId, level }: CryptoLearningPat
                 <div className={`w-6 h-6 rounded-full flex items-center justify-center border ring-4 ring-slate-950 transition-colors ${
                   isCurrent ? 'bg-purple-600 border-purple-400' : 
                   isCompleted ? 'bg-emerald-600 border-emerald-400' :
-                  'bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-700'
+                  'bg-secondary text-secondary-foreground border-slate-300 dark:border-slate-700'
                 }`}>
                   {isCompleted ? (
                     <CheckCircle className="w-3.5 h-3.5 text-white" />
                   ) : isLocked ? (
-                    <Lock className="w-3 h-3 text-slate-500" />
+                    <Lock className="w-3 h-3 text-muted-foreground" />
                   ) : isCurrent ? (
                     <BookOpen className="w-3 h-3 text-white" />
                   ) : (

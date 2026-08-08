@@ -243,12 +243,12 @@ export default function AffiliatePortalPage() {
     return (
       <PageShell size="sm" className="flex items-center justify-center min-h-screen">
         <ContentCard className="text-center space-y-5 max-w-sm mx-auto">
-          <div className="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center mx-auto ring-1 ring-indigo-100">
-            <HandCoins size={24} className="text-indigo-600" />
+          <div className="w-14 h-14 bg-indigo-50 dark:bg-indigo-500/10 rounded-2xl flex items-center justify-center mx-auto ring-1 ring-indigo-100">
+            <HandCoins size={24} className="text-indigo-600 dark:text-indigo-400" />
           </div>
           <div>
-            <h1 className="text-xl font-black text-slate-900">Portal Affiliate</h1>
-            <p className="text-sm text-slate-500 font-medium mt-1">
+            <h1 className="text-xl font-black text-foreground">Portal Affiliate</h1>
+            <p className="text-sm text-muted-foreground font-medium mt-1">
               Masuk ke akun Anda untuk mengakses tautan referral dan data komisi.
             </p>
           </div>
@@ -267,10 +267,10 @@ export default function AffiliatePortalPage() {
   // ── Helpers ───────────────────────────────────────────────────────────────────
   const statusColor = (s?: string) => {
     const v = (s || '').toUpperCase()
-    if (v === 'APPROVED') return 'bg-emerald-50 text-emerald-700 ring-emerald-200'
-    if (v === 'PENDING') return 'bg-amber-50 text-amber-700 ring-amber-200'
-    if (v === 'PAID') return 'bg-indigo-50 text-indigo-700 ring-indigo-200'
-    return 'bg-slate-100 text-slate-600 ring-slate-200'
+    if (v === 'APPROVED') return 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 ring-emerald-200 dark:ring-emerald-500/20'
+    if (v === 'PENDING') return 'bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-300 ring-amber-200 dark:ring-amber-500/20'
+    if (v === 'PAID') return 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 ring-indigo-200 dark:ring-indigo-500/20'
+    return 'bg-secondary text-secondary-foreground text-muted-foreground ring-slate-200'
   }
 
   // ── Render ────────────────────────────────────────────────────────────────────
@@ -280,12 +280,12 @@ export default function AffiliatePortalPage() {
       <PageHeader
         title="Portal Affiliate"
         subtitle="Kelola tautan referral, lengkapi data payout, dan pantau komisi terbaru."
-        icon={<HandCoins size={24} className="text-indigo-600" />}
+        icon={<HandCoins size={24} className="text-indigo-600 dark:text-indigo-400" />}
         onBack={() => router.back()}
         actions={
           <Link
             href="/affiliate/program"
-            className="inline-flex items-center gap-2 h-10 px-4 rounded-xl bg-white ring-1 ring-slate-200 hover:ring-indigo-300 hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 text-xs font-bold transition-all"
+            className="inline-flex items-center gap-2 h-10 px-4 rounded-xl card-solid ring-1 ring-border hover:ring-indigo-300 hover:bg-indigo-50 dark:bg-indigo-500/10 text-slate-700 hover:text-indigo-700 dark:text-indigo-300 text-xs font-bold transition-all"
           >
             <BookOpen className="w-4 h-4" />
             Panduan Program
@@ -322,46 +322,46 @@ export default function AffiliatePortalPage() {
           <StatCard
             label="Total Referral"
             value={totals.totalReferrals}
-            icon={<div className="w-9 h-9 bg-emerald-50 rounded-xl flex items-center justify-center ring-1 ring-emerald-100 mb-2"><Users size={16} className="text-emerald-600" /></div>}
+            icon={<div className="w-9 h-9 bg-emerald-50 dark:bg-emerald-500/10 rounded-xl flex items-center justify-center ring-1 ring-emerald-100 mb-2"><Users size={16} className="text-emerald-600 dark:text-emerald-400" /></div>}
           />
           <StatCard
             label="Omzet Referral"
             value={<span className="text-xl">{formatRupiah(totals.referredRevenue)}</span>}
-            icon={<div className="w-9 h-9 bg-blue-50 rounded-xl flex items-center justify-center ring-1 ring-blue-100 mb-2"><TrendingUp size={16} className="text-blue-600" /></div>}
+            icon={<div className="w-9 h-9 bg-blue-50 dark:bg-blue-500/10 rounded-xl flex items-center justify-center ring-1 ring-blue-100 mb-2"><TrendingUp size={16} className="text-blue-600 dark:text-blue-400" /></div>}
           />
           <StatCard
             label="Komisi Pending"
             value={<span className="text-xl">{formatRupiah(totals.pendingCommission)}</span>}
-            icon={<div className="w-9 h-9 bg-amber-50 rounded-xl flex items-center justify-center ring-1 ring-amber-100 mb-2"><BadgeDollarSign size={16} className="text-amber-600" /></div>}
+            icon={<div className="w-9 h-9 bg-amber-50 dark:bg-amber-500/10 rounded-xl flex items-center justify-center ring-1 ring-amber-100 mb-2"><BadgeDollarSign size={16} className="text-amber-600 dark:text-amber-400" /></div>}
           />
           <StatCard
             label="Komisi Dibayar"
             value={<span className="text-xl">{formatRupiah(totals.paidCommission)}</span>}
-            icon={<div className="w-9 h-9 bg-indigo-50 rounded-xl flex items-center justify-center ring-1 ring-indigo-100 mb-2"><Wallet size={16} className="text-indigo-600" /></div>}
+            icon={<div className="w-9 h-9 bg-indigo-50 dark:bg-indigo-500/10 rounded-xl flex items-center justify-center ring-1 ring-indigo-100 mb-2"><Wallet size={16} className="text-indigo-600 dark:text-indigo-400" /></div>}
           />
         </div>
 
         {/* ── REFERRAL LINK CARD ────────────────────────────────────────── */}
         <ContentCard>
           <div className="flex items-center gap-2 mb-4">
-            <div className="w-8 h-8 bg-indigo-50 rounded-xl flex items-center justify-center ring-1 ring-indigo-100">
-              <Link2 size={15} className="text-indigo-600" />
+            <div className="w-8 h-8 bg-indigo-50 dark:bg-indigo-500/10 rounded-xl flex items-center justify-center ring-1 ring-indigo-100">
+              <Link2 size={15} className="text-indigo-600 dark:text-indigo-400" />
             </div>
-            <h2 className="text-sm font-black text-slate-900">Kode & Tautan Referral</h2>
+            <h2 className="text-sm font-black text-foreground">Kode & Tautan Referral</h2>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Kode */}
-            <div className="bg-slate-50 rounded-2xl p-4 ring-1 ring-slate-100">
+            <div className="bg-muted text-muted-foreground rounded-2xl p-4 ring-1 ring-border">
               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Kode Affiliate</p>
-              <p className="text-2xl font-black text-slate-900 font-mono tracking-wider">{affiliateCode || '-'}</p>
+              <p className="text-2xl font-black text-foreground font-mono tracking-wider">{affiliateCode || '-'}</p>
             </div>
 
             {/* Link */}
-            <div className="bg-slate-50 rounded-2xl p-4 ring-1 ring-slate-100">
+            <div className="bg-muted text-muted-foreground rounded-2xl p-4 ring-1 ring-border">
               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Referral Link</p>
               <div className="flex items-center gap-2">
-                <p className="text-xs font-mono text-slate-600 truncate flex-1">{referralLink || '-'}</p>
+                <p className="text-xs font-mono text-muted-foreground truncate flex-1">{referralLink || '-'}</p>
                 <CopyButton text={referralLink} />
               </div>
             </div>
@@ -371,10 +371,10 @@ export default function AffiliatePortalPage() {
         {/* ── PAYOUT FORM ───────────────────────────────────────────────── */}
         <ContentCard>
           <div className="flex items-center gap-2 mb-5">
-            <div className="w-8 h-8 bg-amber-50 rounded-xl flex items-center justify-center ring-1 ring-amber-100">
-              <Wallet size={15} className="text-amber-600" />
+            <div className="w-8 h-8 bg-amber-50 dark:bg-amber-500/10 rounded-xl flex items-center justify-center ring-1 ring-amber-100">
+              <Wallet size={15} className="text-amber-600 dark:text-amber-400" />
             </div>
-            <h2 className="text-sm font-black text-slate-900">Data Payout Komisi</h2>
+            <h2 className="text-sm font-black text-foreground">Data Payout Komisi</h2>
           </div>
 
           <div className="space-y-4">
@@ -408,7 +408,7 @@ export default function AffiliatePortalPage() {
             </div>
 
             {payoutMethod === 'ewallet' && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-slate-50 rounded-2xl ring-1 ring-slate-100">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-muted text-muted-foreground rounded-2xl ring-1 ring-border">
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">No. Telepon E-Wallet</label>
                   <Input value={payoutPhone} onChange={e => setPayoutPhone(e.target.value)} placeholder="0812xxxxxx" className="h-11 rounded-xl" />
@@ -434,7 +434,7 @@ export default function AffiliatePortalPage() {
             )}
 
             {/* Confirmation checkbox */}
-            <label className="flex items-start gap-3 p-4 rounded-2xl bg-amber-50 ring-1 ring-amber-200 cursor-pointer">
+            <label className="flex items-start gap-3 p-4 rounded-2xl bg-amber-50 dark:bg-amber-500/10 ring-1 ring-amber-200 dark:ring-amber-500/20 cursor-pointer">
               <input
                 type="checkbox"
                 checked={payoutDataConfirmed}
@@ -464,10 +464,10 @@ export default function AffiliatePortalPage() {
         {/* ── COMMISSION HISTORY ────────────────────────────────────────── */}
         <ContentCard>
           <div className="flex items-center gap-2 mb-5">
-            <div className="w-8 h-8 bg-slate-50 rounded-xl flex items-center justify-center ring-1 ring-slate-100">
-              <Clock3 size={15} className="text-slate-500" />
+            <div className="w-8 h-8 bg-muted text-muted-foreground rounded-xl flex items-center justify-center ring-1 ring-border">
+              <Clock3 size={15} className="text-muted-foreground" />
             </div>
-            <h2 className="text-sm font-black text-slate-900">Riwayat Komisi Terbaru</h2>
+            <h2 className="text-sm font-black text-foreground">Riwayat Komisi Terbaru</h2>
           </div>
 
           {commissions.length === 0 ? (
@@ -480,7 +480,7 @@ export default function AffiliatePortalPage() {
             <div className="overflow-x-auto -mx-6 px-6">
               <table className="w-full text-sm min-w-[560px]">
                 <thead>
-                  <tr className="text-left text-[10px] uppercase tracking-widest text-slate-400 border-b border-slate-100">
+                  <tr className="text-left text-[10px] uppercase tracking-widest text-slate-400 border-b border-border">
                     <th className="py-3 pr-4 font-black">Tanggal</th>
                     <th className="py-3 pr-4 font-black">Modul</th>
                     <th className="py-3 pr-4 font-black">Nilai Tx</th>
@@ -490,17 +490,17 @@ export default function AffiliatePortalPage() {
                 </thead>
                 <tbody className="divide-y divide-slate-50">
                   {commissions.map(row => (
-                    <tr key={row.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="py-3.5 pr-4 text-slate-500 text-xs font-medium whitespace-nowrap">
+                    <tr key={row.id} className="hover:bg-muted text-muted-foreground/50 transition-colors">
+                      <td className="py-3.5 pr-4 text-muted-foreground text-xs font-medium whitespace-nowrap">
                         {formatDate(row.createdAt)}
                       </td>
-                      <td className="py-3.5 pr-4 font-bold text-slate-800 max-w-[180px] truncate">
+                      <td className="py-3.5 pr-4 font-bold text-foreground max-w-[180px] truncate">
                         {row.packageName || '-'}
                       </td>
-                      <td className="py-3.5 pr-4 text-slate-600 font-medium">
+                      <td className="py-3.5 pr-4 text-muted-foreground font-medium">
                         {formatRupiah(Number(row.transactionAmount || 0))}
                       </td>
-                      <td className="py-3.5 pr-4 font-black text-indigo-700">
+                      <td className="py-3.5 pr-4 font-black text-indigo-700 dark:text-indigo-300">
                         {formatRupiah(Number(row.commissionAmount || 0))}
                       </td>
                       <td className="py-3.5">
@@ -540,7 +540,7 @@ function CopyButton({ text }: { text: string }) {
     <button
       onClick={handleCopy}
       className={`h-8 w-8 flex items-center justify-center rounded-lg ring-1 transition-all shrink-0 ${
-        copied ? 'bg-emerald-100 text-emerald-600 ring-emerald-200' : 'bg-white text-slate-400 hover:text-indigo-600 ring-slate-200'
+        copied ? 'bg-emerald-100 text-emerald-600 dark:text-emerald-400 ring-emerald-200 dark:ring-emerald-500/20' : 'card-solid text-slate-400 hover:text-indigo-600 dark:text-indigo-400 ring-slate-200'
       }`}
       title="Salin link"
     >

@@ -147,7 +147,7 @@ export default function ExplorePage() {
               className="pl-11 h-12 rounded-xl font-medium"
             />
           </div>
-          <div className="flex gap-2 overflow-x-auto custom-scrollbar bg-white p-1.5 rounded-xl border border-slate-200 w-fit max-w-full">
+          <div className="flex gap-2 overflow-x-auto custom-scrollbar card-solid p-1.5 rounded-xl border border-border w-fit max-w-full">
             {CATEGORIES.map((category) => (
               <button
                 key={category}
@@ -155,7 +155,7 @@ export default function ExplorePage() {
                 className={`px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap ${
                   activeCategory === category
                     ? 'bg-slate-900 text-white shadow-sm'
-                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                    : 'text-muted-foreground hover:bg-secondary text-secondary-foreground hover:text-foreground'
                 }`}
               >
                 {category}
@@ -166,18 +166,18 @@ export default function ExplorePage() {
 
         {loading ? (
           <div className="py-24 flex flex-col justify-center items-center text-slate-400">
-            <Loader2 className="w-8 h-8 animate-spin mb-4 text-indigo-600" />
-            <p className="font-bold text-xs uppercase tracking-widest text-slate-500">
+            <Loader2 className="w-8 h-8 animate-spin mb-4 text-indigo-600 dark:text-indigo-400" />
+            <p className="font-bold text-xs uppercase tracking-widest text-muted-foreground">
               Memuat Wawasan...
             </p>
           </div>
         ) : filteredArticles.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-xl border border-slate-200 shadow-sm">
+          <div className="text-center py-20 card-solid rounded-xl border border-border shadow-sm">
             <Search size={40} className="mx-auto text-slate-300 mb-4" />
-            <h3 className="text-lg font-bold text-slate-900 tracking-tight">
+            <h3 className="text-lg font-bold text-foreground tracking-tight">
               Artikel tidak ditemukan
             </h3>
-            <p className="text-slate-500 font-medium mt-1">
+            <p className="text-muted-foreground font-medium mt-1">
               Coba gunakan kata kunci pencarian yang lain.
             </p>
           </div>
@@ -189,13 +189,13 @@ export default function ExplorePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 onClick={() => router.push(`/explore/${featuredArticle.id}`)}
-                className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 group mb-12 cursor-pointer relative flex flex-col"
+                className="card-solid rounded-xl border border-border p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 group mb-12 cursor-pointer relative flex flex-col"
               >
                 <button
                   onClick={(e) =>
                     handleCopyLink(e, featuredArticle.id, featuredArticle.title)
                   }
-                  className={`absolute top-6 sm:top-8 right-6 sm:right-8 z-20 p-2.5 rounded-lg shadow-sm border transition-all ${copiedId === featuredArticle.id ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}
+                  className={`absolute top-6 sm:top-8 right-6 sm:right-8 z-20 p-2.5 rounded-lg shadow-sm border transition-all ${copiedId === featuredArticle.id ? 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400' : 'card-solid border-border text-muted-foreground hover:bg-muted text-muted-foreground hover:text-foreground'}`}
                   title="Bagikan Tautan"
                 >
                   {copiedId === featuredArticle.id ? (
@@ -205,7 +205,7 @@ export default function ExplorePage() {
                   )}
                 </button>
 
-                <div className="w-full aspect-[2/1] bg-slate-50 rounded-lg relative overflow-hidden border border-slate-100 mb-6 sm:mb-8">
+                <div className="w-full aspect-[2/1] bg-muted text-muted-foreground rounded-lg relative overflow-hidden border border-border mb-6 sm:mb-8">
                   {featuredArticle.imageUrl ? (
                     <img
                       src={featuredArticle.imageUrl}
@@ -224,10 +224,10 @@ export default function ExplorePage() {
 
                 <div className="px-2 sm:px-6 pb-4 max-w-4xl mx-auto w-full text-center">
                   <div className="flex items-center justify-center gap-3 mb-4">
-                    <span className="px-3 py-1 bg-slate-100 text-slate-700 text-[10px] font-bold uppercase tracking-widest rounded border border-slate-200">
+                    <span className="px-3 py-1 bg-secondary text-secondary-foreground text-slate-700 text-[10px] font-bold uppercase tracking-widest rounded border border-border">
                       {featuredArticle.category}
                     </span>
-                    <span className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
+                    <span className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
                       <Calendar size={14} />{' '}
                       {new Date(featuredArticle.createdAt).toLocaleDateString(
                         'id-ID',
@@ -236,20 +236,20 @@ export default function ExplorePage() {
                     </span>
                   </div>
 
-                  <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-[1.15] mb-4 group-hover:text-indigo-600 transition-colors text-balance mx-auto">
+                  <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-foreground tracking-tight leading-[1.15] mb-4 group-hover:text-indigo-600 dark:text-indigo-400 transition-colors text-balance mx-auto">
                     {featuredArticle.title}
                   </h2>
 
-                  <p className="text-base sm:text-lg text-slate-600 font-medium leading-relaxed mb-8 max-w-3xl mx-auto line-clamp-3">
+                  <p className="text-base sm:text-lg text-muted-foreground font-medium leading-relaxed mb-8 max-w-3xl mx-auto line-clamp-3">
                     {featuredArticle.excerpt}
                   </p>
 
-                  <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 pt-6 border-t border-slate-100 w-full max-w-xl mx-auto">
-                    <span className="flex items-center gap-1.5 text-sm font-medium text-slate-500">
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 pt-6 border-t border-border w-full max-w-xl mx-auto">
+                    <span className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
                       <Clock size={16} /> Estimasi baca{' '}
                       {featuredArticle.readTime}
                     </span>
-                    <span className="flex items-center gap-2 text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors px-4 py-2 rounded-lg hover:bg-slate-50">
+                    <span className="flex items-center gap-2 text-sm font-bold text-foreground group-hover:text-indigo-600 dark:text-indigo-400 transition-colors px-4 py-2 rounded-lg hover:bg-muted text-muted-foreground">
                       Mulai Membaca{' '}
                       <ArrowRight
                         size={16}
@@ -273,13 +273,13 @@ export default function ExplorePage() {
                     transition={{ duration: 0.2, delay: idx * 0.05 }}
                     key={article.id}
                     onClick={() => router.push(`/explore/${article.id}`)}
-                    className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 group cursor-pointer flex flex-col relative overflow-hidden"
+                    className="card-solid rounded-xl border border-border shadow-sm hover:shadow-md transition-all duration-200 group cursor-pointer flex flex-col relative overflow-hidden"
                   >
                     <button
                       onClick={(e) =>
                         handleCopyLink(e, article.id, article.title)
                       }
-                      className={`absolute top-3 right-3 z-20 p-2 rounded-lg shadow-sm border transition-all ${copiedId === article.id ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-white/90 backdrop-blur-sm border-slate-200 text-slate-500 hover:bg-white hover:text-slate-900'}`}
+                      className={`absolute top-3 right-3 z-20 p-2 rounded-lg shadow-sm border transition-all ${copiedId === article.id ? 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400' : 'card-solid/90 backdrop-blur-sm border-border text-muted-foreground hover:card-solid hover:text-foreground'}`}
                       title="Bagikan Tautan"
                     >
                       {copiedId === article.id ? (
@@ -289,7 +289,7 @@ export default function ExplorePage() {
                       )}
                     </button>
 
-                    <div className="w-full aspect-[2/1] bg-slate-50 relative overflow-hidden border-b border-slate-100 shrink-0">
+                    <div className="w-full aspect-[2/1] bg-muted text-muted-foreground relative overflow-hidden border-b border-border shrink-0">
                       {article.imageUrl ? (
                         <img
                           src={article.imageUrl}
@@ -305,27 +305,27 @@ export default function ExplorePage() {
 
                     <div className="p-4 sm:p-5 flex-1 flex flex-col">
                       <div className="flex items-center gap-3 mb-3">
-                        <span className="px-2 py-0.5 bg-slate-50 text-slate-600 text-[10px] font-bold uppercase tracking-wider rounded border border-slate-200">
+                        <span className="px-2 py-0.5 bg-muted text-muted-foreground text-muted-foreground text-[10px] font-bold uppercase tracking-wider rounded border border-border">
                           {article.category}
                         </span>
                       </div>
 
-                      <h3 className="text-base font-bold text-slate-900 tracking-tight leading-snug mb-2 group-hover:text-indigo-600 transition-colors line-clamp-2 text-balance">
+                      <h3 className="text-base font-bold text-foreground tracking-tight leading-snug mb-2 group-hover:text-indigo-600 dark:text-indigo-400 transition-colors line-clamp-2 text-balance">
                         {article.title}
                       </h3>
 
-                      <p className="text-sm text-slate-600 font-medium leading-relaxed mb-6 line-clamp-3">
+                      <p className="text-sm text-muted-foreground font-medium leading-relaxed mb-6 line-clamp-3">
                         {article.excerpt}
                       </p>
 
-                      <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-4">
-                        <span className="text-[11px] font-medium text-slate-500">
+                      <div className="mt-auto flex items-center justify-between border-t border-border pt-4">
+                        <span className="text-[11px] font-medium text-muted-foreground">
                           {new Date(article.createdAt).toLocaleDateString(
                             'id-ID',
                             { day: 'numeric', month: 'short', year: 'numeric' }
                           )}
                         </span>
-                        <div className="flex items-center text-slate-400 group-hover:text-indigo-600 transition-colors">
+                        <div className="flex items-center text-slate-400 group-hover:text-indigo-600 dark:text-indigo-400 transition-colors">
                           <ArrowRight
                             size={16}
                             className="group-hover:translate-x-1 transition-transform"

@@ -33,21 +33,21 @@ export default function WeeklyMonthlyOutlookWidget({ reportData }: WeeklyMonthly
         <section>
           <div className="flex items-center gap-3 mb-6">
              <CalendarDays className="w-6 h-6 text-indigo-500" />
-             <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Outlook Mingguan</h2>
+             <h2 className="text-2xl font-black text-foreground tracking-tight">Outlook Mingguan</h2>
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
              <CryptoCard variant="elevated" className="lg:col-span-2 p-6 md:p-8">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none"></div>
-                <h3 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">Macro Strategy & Narrative</h3>
-                <div className="prose prose-sm md:prose-base prose-invert max-w-none text-slate-600 dark:text-slate-300 leading-relaxed relative z-10">
+                <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-4">Macro Strategy & Narrative</h3>
+                <div className="prose prose-sm md:prose-base prose-invert max-w-none text-muted-foreground leading-relaxed relative z-10">
                    <ReactMarkdown>{weeklyStrategy}</ReactMarkdown>
                 </div>
              </CryptoCard>
              
              {weeklyWatchlist.length > 0 && (
                <div className="space-y-4">
-                  <h3 className="text-sm font-bold text-slate-500 uppercase tracking-widest px-2">Watchlist Mingguan</h3>
+                  <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-widest px-2">Watchlist Mingguan</h3>
                   {weeklyWatchlist.map((item: any, idx: number) => {
                      const isBuy = item.action.includes("BUY");
                      const isSell = item.action.includes("SELL");
@@ -58,17 +58,17 @@ export default function WeeklyMonthlyOutlookWidget({ reportData }: WeeklyMonthly
                      return (
                        <CryptoCard key={idx} variant="subtle" className="p-4">
                              <div className="flex justify-between items-start mb-3">
-                                <span className="font-black text-lg text-slate-900 dark:text-white">{item.symbol}</span>
+                                <span className="font-black text-lg text-foreground">{item.symbol}</span>
                                 <CryptoBadge variant={isBuy ? "bullish" : isSell ? "danger" : "neutral"}>
                                    {item.action}
                                 </CryptoBadge>
                              </div>
-                             <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-3">
+                             <p className="text-xs text-muted-foreground leading-relaxed mb-3">
                                 {item.reason}
                              </p>
-                             <div className="flex gap-4 text-xs font-mono bg-slate-50 dark:bg-slate-950 p-2 rounded-lg border border-slate-200 dark:border-slate-800">
-                                <div><span className="text-slate-600">Entry:</span> <span className="text-indigo-400">{item.entryPrice}</span></div>
-                                <div><span className="text-slate-600">Target:</span> <span className="text-emerald-400">{item.targetPrice}</span></div>
+                             <div className="flex gap-4 text-xs font-mono bg-background text-foreground p-2 rounded-lg border border-slate-200 dark:border-slate-800">
+                                <div><span className="text-muted-foreground">Entry:</span> <span className="text-indigo-400">{item.entryPrice}</span></div>
+                                <div><span className="text-muted-foreground">Target:</span> <span className="text-emerald-400">{item.targetPrice}</span></div>
                              </div>
                        </CryptoCard>
                      )
@@ -84,28 +84,28 @@ export default function WeeklyMonthlyOutlookWidget({ reportData }: WeeklyMonthly
         <section>
           <div className="flex items-center gap-3 mb-6 pt-8 border-t border-slate-200 dark:border-slate-800/50">
              <CalendarClock className="w-6 h-6 text-fuchsia-500" />
-             <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Outlook Bulanan</h2>
+             <h2 className="text-2xl font-black text-foreground tracking-tight">Outlook Bulanan</h2>
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
              <CryptoCard variant="elevated" className="lg:col-span-2 p-6 md:p-8">
                 <div className="absolute top-0 left-0 w-64 h-64 bg-fuchsia-500/5 rounded-full blur-3xl pointer-events-none"></div>
-                <h3 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">Monthly Trend Forecast</h3>
-                <div className="prose prose-sm md:prose-base prose-invert max-w-none text-slate-600 dark:text-slate-300 leading-relaxed relative z-10">
+                <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-4">Monthly Trend Forecast</h3>
+                <div className="prose prose-sm md:prose-base prose-invert max-w-none text-muted-foreground leading-relaxed relative z-10">
                    <ReactMarkdown>{monthlyOutlook}</ReactMarkdown>
                 </div>
              </CryptoCard>
              
              {monthlyKeyLevels.length > 0 && (
                <div className="space-y-4">
-                  <h3 className="text-sm font-bold text-slate-500 uppercase tracking-widest px-2">Level Kritis Bulanan</h3>
+                  <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-widest px-2">Level Kritis Bulanan</h3>
                   {monthlyKeyLevels.map((item: any, idx: number) => (
                      <CryptoCard key={idx} variant="subtle" className="p-4">
                            <div className="flex items-center gap-2 mb-3">
                               <AlertTriangle className="w-4 h-4 text-amber-500" />
-                              <span className="font-black text-slate-900 dark:text-white">{item.symbol}</span>
+                              <span className="font-black text-foreground">{item.symbol}</span>
                            </div>
-                           <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-4">
+                           <p className="text-xs text-muted-foreground leading-relaxed mb-4">
                               {item.narrative}
                            </p>
                            <div className="space-y-2 text-xs font-mono">

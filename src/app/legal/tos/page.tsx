@@ -5,27 +5,27 @@ import { Button } from "@/components/ui/button";
 
 export default function TermsOfServicePage() {
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20">
+    <div className="min-h-screen bg-background text-foreground pb-20">
       <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         
         <Link href="/">
-          <Button variant="ghost" className="mb-8 text-slate-500 hover:text-indigo-600">
+          <Button variant="ghost" className="mb-8 text-muted-foreground hover:text-indigo-600 dark:text-indigo-400">
             <ArrowLeft className="w-4 h-4 mr-2" /> Kembali ke Beranda
           </Button>
         </Link>
         
-        <div className="bg-white dark:bg-slate-900 p-8 md:p-12 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800">
+        <div className="card-solid p-8 md:p-12 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800">
           <div className="flex items-center gap-4 mb-8 border-b border-slate-100 dark:border-slate-800 pb-8">
             <div className="p-4 bg-indigo-100 dark:bg-indigo-900/50 rounded-2xl">
               <FileText className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
             </div>
             <div>
-              <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white">Syarat & Ketentuan</h1>
-              <p className="text-slate-500 mt-2">Terakhir Diperbarui: 5 Agustus 2026</p>
+              <h1 className="text-3xl md:text-4xl font-black text-foreground">Syarat & Ketentuan</h1>
+              <p className="text-muted-foreground mt-2">Terakhir Diperbarui: 5 Agustus 2026</p>
             </div>
           </div>
           
-          <div className="prose prose-slate dark:prose-invert max-w-none text-slate-600 dark:text-slate-300">
+          <div className="prose prose-slate dark:prose-invert max-w-none text-muted-foreground">
             <p>
               Selamat datang di Omnifit AI (selanjutnya disebut "Platform", "kami", "kita"). Dengan mengakses dan menggunakan Platform ini, Anda ("Pengguna") setuju untuk terikat oleh Syarat dan Ketentuan ("TOS") berikut ini. Jika Anda tidak setuju dengan ketentuan ini, Anda dilarang menggunakan atau mengakses Platform ini.
             </p>

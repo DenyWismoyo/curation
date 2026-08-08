@@ -139,7 +139,7 @@ export default function CryptoReportPage() {
 
 
   return (
-    <div className="min-h-screen bg-slate-50/50 dark:bg-slate-950/50 pb-20">
+    <div className="min-h-screen bg-muted text-muted-foreground/50 dark:bg-slate-950/50 pb-20">
       <div className="w-full mx-auto py-8 px-4 sm:px-6 lg:px-8">
         
 
@@ -148,23 +148,23 @@ export default function CryptoReportPage() {
 
         <Tabs defaultValue="ai-reports" className="w-full">
           <div className="w-full overflow-x-auto no-scrollbar mb-8 pb-2">
-            <TabsList className="bg-slate-100/80 dark:bg-slate-900/50 p-1.5 rounded-2xl inline-flex min-w-max border border-slate-200 dark:border-slate-800/50">
-              <TabsTrigger value="ai-reports" className="rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold data-[state=active]:bg-white data-[state=active]:text-indigo-600 dark:data-[state=active]:bg-slate-800 dark:data-[state=active]:text-indigo-400 data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-slate-200/50 dark:data-[state=active]:border-slate-700/50 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all border border-transparent"
+            <TabsList className="bg-secondary text-secondary-foreground/80 dark:bg-slate-900/50 p-1.5 rounded-2xl inline-flex min-w-max border border-slate-200 dark:border-slate-800/50">
+              <TabsTrigger value="ai-reports" className="rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold data-[state=active]:card-solid data-[state=active]:text-indigo-600 dark:data-[state=active]:bg-slate-800 dark:data-[state=active]:text-indigo-400 data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 dark:data-[state=active]:border-slate-700/50 text-muted-foreground hover:text-foreground dark:hover:text-white transition-all border border-transparent"
               >
               <Bot className="w-4 h-4 mr-2" />
               AI Market Reports
             </TabsTrigger>
-              <TabsTrigger value="macro-calendar" className="rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold data-[state=active]:bg-white data-[state=active]:text-indigo-600 dark:data-[state=active]:bg-slate-800 dark:data-[state=active]:text-indigo-400 data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-slate-200/50 dark:data-[state=active]:border-slate-700/50 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all border border-transparent"
+              <TabsTrigger value="macro-calendar" className="rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold data-[state=active]:card-solid data-[state=active]:text-indigo-600 dark:data-[state=active]:bg-slate-800 dark:data-[state=active]:text-indigo-400 data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 dark:data-[state=active]:border-slate-700/50 text-muted-foreground hover:text-foreground dark:hover:text-white transition-all border border-transparent"
               >
               <Globe className="w-4 h-4 mr-2" />
               Global Economic Calendar
             </TabsTrigger>
-              <TabsTrigger value="temporal" className="rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold data-[state=active]:bg-white data-[state=active]:text-indigo-600 dark:data-[state=active]:bg-slate-800 dark:data-[state=active]:text-indigo-400 data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-slate-200/50 dark:data-[state=active]:border-slate-700/50 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all border border-transparent"
+              <TabsTrigger value="temporal" className="rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold data-[state=active]:card-solid data-[state=active]:text-indigo-600 dark:data-[state=active]:bg-slate-800 dark:data-[state=active]:text-indigo-400 data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 dark:data-[state=active]:border-slate-700/50 text-muted-foreground hover:text-foreground dark:hover:text-white transition-all border border-transparent"
               >
               <RotateCcw className="w-4 h-4 mr-2" />
               Kemarin vs Hari Ini
             </TabsTrigger>
-              <TabsTrigger value="outlook" className="rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold data-[state=active]:bg-white data-[state=active]:text-indigo-600 dark:data-[state=active]:bg-slate-800 dark:data-[state=active]:text-indigo-400 data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-slate-200/50 dark:data-[state=active]:border-slate-700/50 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all border border-transparent"
+              <TabsTrigger value="outlook" className="rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold data-[state=active]:card-solid data-[state=active]:text-indigo-600 dark:data-[state=active]:bg-slate-800 dark:data-[state=active]:text-indigo-400 data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 dark:data-[state=active]:border-slate-700/50 text-muted-foreground hover:text-foreground dark:hover:text-white transition-all border border-transparent"
               >
                 <CalendarDays className="w-4 h-4 mr-2" />
                 Outlook (Weekly/Monthly)
@@ -236,7 +236,7 @@ export default function CryptoReportPage() {
                 </div>
 
                 <div className="relative z-10 shrink-0 w-full sm:w-auto">
-                  <Button className="w-full sm:w-auto bg-white hover:bg-slate-100 text-indigo-900 font-bold border-0 shadow-xl group-hover:shadow-indigo-500/25 transition-all">
+                  <Button className="w-full sm:w-auto card-solid hover:bg-secondary text-secondary-foreground text-indigo-900 font-bold border-0 shadow-xl group-hover:shadow-indigo-500/25 transition-all">
                     Mulai Belajar <ChevronRight className="w-4 h-4 ml-1" />
                   </Button>
                 </div>
@@ -246,11 +246,11 @@ export default function CryptoReportPage() {
             <div className="w-full">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                <div className="flex items-center gap-4">
-                 <h2 className="text-xl font-bold flex items-center gap-2 text-slate-800 dark:text-slate-200">
+                 <h2 className="text-xl font-bold flex items-center gap-2 text-foreground">
                    <Calendar className="w-5 h-5 text-indigo-500" /> Riwayat Laporan
                  </h2>
                  <Link href="/crypto-report/performance">
-                   <Button variant="outline" size="sm" className="hidden sm:flex text-indigo-600 border-indigo-200 hover:bg-indigo-50 dark:text-indigo-400 dark:border-indigo-900/50 dark:hover:bg-indigo-900/30">
+                   <Button variant="outline" size="sm" className="hidden sm:flex text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-500/20 hover:bg-indigo-50 dark:text-indigo-400 dark:border-indigo-900/50 dark:hover:bg-indigo-900/30">
                      <TrendingUp className="w-4 h-4 mr-2" /> Volatility Analytics
                    </Button>
                  </Link>
@@ -258,14 +258,14 @@ export default function CryptoReportPage() {
                
                <div className="flex flex-col gap-2">
                  <Link href="/crypto-report/performance" className="sm:hidden">
-                   <Button variant="outline" size="sm" className="w-full text-indigo-600 border-indigo-200 hover:bg-indigo-50 dark:text-indigo-400 dark:border-indigo-900/50 dark:hover:bg-indigo-900/30">
+                   <Button variant="outline" size="sm" className="w-full text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-500/20 hover:bg-indigo-50 dark:text-indigo-400 dark:border-indigo-900/50 dark:hover:bg-indigo-900/30">
                      <TrendingUp className="w-4 h-4 mr-2" /> Volatility Analytics
                    </Button>
                  </Link>
                  
                  <Select value={selectedDate} onValueChange={setSelectedDate}>
-                   <SelectTrigger className="w-40 rounded-xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 focus:ring-0 focus:ring-offset-0 font-bold">
-                     <Calendar className="w-4 h-4 mr-2 text-slate-500" />
+                   <SelectTrigger className="w-40 rounded-xl card-solid border-slate-200 dark:border-slate-800 focus:ring-0 focus:ring-offset-0 font-bold">
+                     <Calendar className="w-4 h-4 mr-2 text-muted-foreground" />
                      <SelectValue placeholder="Pilih Tanggal" />
                    </SelectTrigger>
                    <SelectContent className="rounded-xl border-slate-200 dark:border-slate-800">
@@ -284,13 +284,13 @@ export default function CryptoReportPage() {
               return (
                 <Tabs defaultValue={defaultHourTab} className="w-full">
                   <div className="mb-6 flex items-center gap-3 overflow-x-auto no-scrollbar py-2">
-                     <span className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5 shrink-0"><Clock className="w-3.5 h-3.5"/> Waktu Laporan:</span>
+                     <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5 shrink-0"><Clock className="w-3.5 h-3.5"/> Waktu Laporan:</span>
                      <TabsList className="bg-transparent p-0 flex flex-wrap gap-2 border-0">
                        {reportsForDate.map((r: any) => {
                          const t = r.createdAt?.toDate ? r.createdAt.toDate() : new Date(r.createdAt);
                          const timeStr = t.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
                            return (
-                             <TabsTrigger key={r.id} value={r.id} className="rounded-full px-4 py-1.5 text-xs font-bold whitespace-nowrap bg-transparent hover:bg-slate-800 text-slate-500 data-[state=active]:bg-indigo-500/10 data-[state=active]:text-indigo-400 shadow-none transition-all border-0">
+                             <TabsTrigger key={r.id} value={r.id} className="rounded-full px-4 py-1.5 text-xs font-bold whitespace-nowrap bg-transparent hover:bg-slate-800 text-muted-foreground data-[state=active]:bg-indigo-500/10 data-[state=active]:text-indigo-400 shadow-none transition-all border-0">
                                {timeStr} WIB
                              </TabsTrigger>
                            );
@@ -300,7 +300,7 @@ export default function CryptoReportPage() {
 
                   {reportsForDate.map((report: any, idx: number) => {
                     const data = report.reportData || {};
-                    const sentimentColor = data.sentiment === "BULLISH" ? "bg-emerald-500" : data.sentiment === "BEARISH" ? "bg-rose-500" : "bg-slate-500";
+                    const sentimentColor = data.sentiment === "BULLISH" ? "bg-emerald-500" : data.sentiment === "BEARISH" ? "bg-rose-500" : "bg-muted text-muted-foreground0";
                     const createdAt = report.createdAt?.toDate ? report.createdAt.toDate() : new Date();
                     const isLatest = selectedDate === dateKeys[0] && idx === 0;
 
@@ -319,10 +319,10 @@ export default function CryptoReportPage() {
                                  {isLatest && <Badge className="bg-indigo-500 hover:bg-indigo-600 text-white border-0 text-[10px] uppercase tracking-widest px-2 py-0.5">TERBARU</Badge>}
                                  {report.isDaily && <Badge className="bg-blue-500 hover:bg-blue-600 text-white border-0 text-[10px] uppercase tracking-widest px-2 py-0.5">DAILY RECAP</Badge>}
                               </div>
-                              <h3 className="font-black text-2xl md:text-3xl tracking-tight text-slate-900 dark:text-white mb-2 leading-tight">
+                              <h3 className="font-black text-2xl md:text-3xl tracking-tight text-foreground mb-2 leading-tight">
                                 {data.title || "Laporan Pasar"}
                               </h3>
-                              <p className="text-sm font-medium text-slate-500 flex items-center gap-1.5">
+                              <p className="text-sm font-medium text-muted-foreground flex items-center gap-1.5">
                                 <Clock className="w-4 h-4" />
                                 Pukul {createdAt.toLocaleTimeString("id-ID", { hour: '2-digit', minute: '2-digit' })} WIB
                               </p>
@@ -338,7 +338,7 @@ export default function CryptoReportPage() {
                                  variant="outline" 
                                  size="sm" 
                                  onClick={() => openCopilotForReport(data)}
-                                 className="text-xs bg-white dark:bg-slate-800 border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50"
+                                 className="text-xs card-solid dark:bg-slate-800 border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:bg-indigo-500/10"
                               >
                                  <Bot className="w-3.5 h-3.5 mr-1.5" /> Tanya Laporan Ini
                               </Button>
@@ -408,15 +408,15 @@ export default function CryptoReportPage() {
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                {/* Fear & Greed */}
                                {report.rawFundamental?.fearAndGreed && (
-                                 <div className="bg-white/80 dark:bg-slate-950/80 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                                   <div className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-1 flex items-center gap-1"><LineChart className="w-3 h-3"/> Fear & Greed</div>
-                                   <div className="font-black text-xl text-slate-800 dark:text-slate-200">{report.rawFundamental.fearAndGreed?.current?.value || report.rawFundamental.fearAndGreed?.value} - {report.rawFundamental.fearAndGreed?.current?.value_classification || report.rawFundamental.fearAndGreed?.value_classification}</div>
+                                 <div className="card-solid/80 dark:bg-slate-950/80 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                                   <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-1 flex items-center gap-1"><LineChart className="w-3 h-3"/> Fear & Greed</div>
+                                   <div className="font-black text-xl text-foreground">{report.rawFundamental.fearAndGreed?.current?.value || report.rawFundamental.fearAndGreed?.value} - {report.rawFundamental.fearAndGreed?.current?.value_classification || report.rawFundamental.fearAndGreed?.value_classification}</div>
                                  </div>
                                )}
                                
                                {/* Market Regime */}
                                {data.marketRegime && (
-                                 <div className="bg-indigo-50/80 dark:bg-indigo-950/30 p-4 rounded-2xl border border-indigo-200 dark:border-indigo-900/50 shadow-sm">
+                                 <div className="bg-indigo-50 dark:bg-indigo-500/10/80 dark:bg-indigo-950/30 p-4 rounded-2xl border border-indigo-200 dark:border-indigo-900/50 shadow-sm">
                                    <div className="text-[10px] uppercase tracking-widest text-indigo-500 font-bold mb-1 flex items-center gap-1"><Activity className="w-3 h-3"/> Market Regime</div>
                                    <div className="font-black text-lg text-indigo-700 dark:text-indigo-400">{data.marketRegime}</div>
                                  </div>
@@ -424,7 +424,7 @@ export default function CryptoReportPage() {
 
                                {/* Whale Activity */}
                                {data.whaleActivity && (
-                                 <div className="bg-blue-50/80 dark:bg-blue-950/30 p-4 rounded-2xl border border-blue-200 dark:border-blue-900/50 shadow-sm">
+                                 <div className="bg-blue-50 dark:bg-blue-500/10/80 dark:bg-blue-950/30 p-4 rounded-2xl border border-blue-200 dark:border-blue-900/50 shadow-sm">
                                    <div className="text-[10px] uppercase tracking-widest text-blue-500 font-bold mb-1 flex items-center gap-1"><Anchor className="w-3 h-3"/> Whale Activity</div>
                                    <div className="font-black text-lg text-blue-700 dark:text-blue-400">{data.whaleActivity}</div>
                                  </div>
@@ -433,7 +433,7 @@ export default function CryptoReportPage() {
                                {/* Macro Insight (spans across) */}
                                {data.macroInsight && (
                                  <div className="col-span-2 md:col-span-4 py-4 md:py-6">
-                                   <div className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-2 flex items-center gap-2"><Globe className="w-3 h-3"/> Macro Insight</div>
+                                   <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-2 flex items-center gap-2"><Globe className="w-3 h-3"/> Macro Insight</div>
                                    <p className="text-sm md:text-base font-medium text-slate-700 dark:text-slate-300 leading-relaxed">{data.macroInsight}</p>
                                  </div>
                                )}
@@ -451,7 +451,7 @@ export default function CryptoReportPage() {
                               </div>
 
                               <div className="py-2">
-                                <h4 className="font-bold text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                                <h4 className="font-bold text-sm text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-2">
                                    Proyeksi
                                 </h4>
                                 <div className="prose prose-sm md:prose-base dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed">
@@ -468,26 +468,26 @@ export default function CryptoReportPage() {
                                 </h4>
                                 <div className="space-y-3">
                                   {data.scalpingOpportunities.map((scalp: any, i: number) => (
-                                    <div key={i} className="group relative bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm border border-white/40 dark:border-slate-800/60 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-5 overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
+                                    <div key={i} className="group relative card-solid/40 dark:bg-slate-900/40 backdrop-blur-sm border border-white/40 dark:border-slate-800/60 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-5 overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
                                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-orange-400 to-rose-500"></div>
                                        <div className="absolute -right-10 -top-10 w-32 h-32 bg-orange-500/10 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
 
                                        <div className="flex-1 relative z-10">
                                           <div className="flex items-center gap-3 mb-1.5">
-                                             <Link href={`/crypto-report/${scalp.symbol}`} className="font-black text-lg text-slate-900 dark:text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-orange-500 group-hover:to-rose-500 transition-all">
+                                             <Link href={`/crypto-report/${scalp.symbol}`} className="font-black text-lg text-foreground group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-orange-500 group-hover:to-rose-500 transition-all">
                                                 {scalp.symbol}
                                              </Link>
                                              <div className="relative flex items-center justify-center">
-                                                <Badge variant="outline" className="text-[9px] uppercase font-bold tracking-widest text-orange-600 border-orange-300/50 bg-orange-100/50 dark:bg-orange-500/10 dark:text-orange-400 dark:border-orange-500/30 shadow-sm relative z-10">HOT</Badge>
+                                                <Badge variant="outline" className="text-[9px] uppercase font-bold tracking-widest text-orange-600 dark:text-orange-400 border-orange-300/50 bg-orange-100/50 dark:bg-orange-500/10 dark:text-orange-400 dark:border-orange-500/30 shadow-sm relative z-10">HOT</Badge>
                                                 <div className="absolute inset-0 bg-orange-500/40 blur-md rounded-full animate-pulse"></div>
                                              </div>
                                           </div>
-                                          <p className="text-sm text-slate-600 dark:text-slate-400 mt-1 mb-2 leading-relaxed">{scalp.momentum}</p>
+                                          <p className="text-sm text-muted-foreground dark:text-slate-400 mt-1 mb-2 leading-relaxed">{scalp.momentum}</p>
                                        </div>
                                        
-                                       <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-xs shrink-0 bg-white/60 dark:bg-slate-950/60 p-3 rounded-xl border border-slate-100 dark:border-slate-800 shadow-inner relative z-10">
-                                          <div className="text-slate-500">Entry: <span className="font-bold text-slate-900 dark:text-white text-sm">{scalp.entryPrice || scalp.entryZone}</span></div>
-                                          <div className="text-slate-500">Alokasi: <span className="font-bold text-indigo-600 dark:text-indigo-400 text-sm">{scalp.allocationPercentage || '-'}</span></div>
+                                       <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-xs shrink-0 card-solid/60 dark:bg-slate-950/60 p-3 rounded-xl border border-slate-100 dark:border-slate-800 shadow-inner relative z-10">
+                                          <div className="text-muted-foreground">Entry: <span className="font-bold text-foreground text-sm">{scalp.entryPrice || scalp.entryZone}</span></div>
+                                          <div className="text-muted-foreground">Alokasi: <span className="font-bold text-indigo-600 dark:text-indigo-400 text-sm">{scalp.allocationPercentage || '-'}</span></div>
                                           <div className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-semibold mt-1"><Target className="w-3.5 h-3.5"/> {scalp.targetPrice || scalp.target}</div>
                                           <div className="text-rose-600 dark:text-rose-400 flex items-center gap-1 font-semibold mt-1"><ShieldAlert className="w-3.5 h-3.5"/> {scalp.stopLossPrice || scalp.stopLoss}</div>
                                        </div>
@@ -500,32 +500,32 @@ export default function CryptoReportPage() {
                             {/* COIN ANALYSIS (NEW LIST LAYOUT) */}
                             {data.coinsAnalysis && data.coinsAnalysis.length > 0 && (
                               <div>
-                                 <h4 className="font-black text-lg mb-4 flex items-center gap-2 text-slate-800 dark:text-slate-200">
+                                 <h4 className="font-black text-lg mb-4 flex items-center gap-2 text-foreground">
                                   <TrendingUp className="w-5 h-5 text-indigo-500" /> Analisis Teknikal
                                  </h4>
                                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                                    {data.coinsAnalysis.map((coin: any, i: number) => {
                                      const isBuy = coin.recommendation === "BUY";
                                      const isSell = coin.recommendation === "SELL";
-                                     const recColor = isBuy ? "from-emerald-500/10 to-transparent border-emerald-200/50 dark:border-emerald-900/50" 
-                                       : isSell ? "from-rose-500/10 to-transparent border-rose-200/50 dark:border-rose-900/50" 
-                                       : "from-slate-500/10 to-transparent border-slate-200/50 dark:border-slate-800/50";
+                                     const recColor = isBuy ? "from-emerald-500/10 to-transparent border-emerald-200 dark:border-emerald-500/20/50 dark:border-emerald-900/50" 
+                                       : isSell ? "from-rose-500/10 to-transparent border-rose-200 dark:border-rose-500/20/50 dark:border-rose-900/50" 
+                                       : "from-slate-500/10 to-transparent border-border/50 dark:border-slate-800/50";
                                      
                                      const strokeColor = isBuy ? "#10b981" : isSell ? "#f43f5e" : "#64748b";
                                      const klinesData = report.rawMarketData?.find((md: any) => md.symbol === coin.symbol)?.klines || [];
                                      const gradientLine = isBuy ? 'bg-gradient-to-b from-emerald-400 to-emerald-600' : isSell ? 'bg-gradient-to-b from-rose-400 to-rose-600' : 'bg-gradient-to-b from-slate-400 to-slate-600';
 
                                      return (
-                                       <div key={i} className={`group flex flex-col xl:flex-row xl:items-stretch justify-between gap-5 rounded-2xl border bg-gradient-to-br bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm ${recColor} overflow-hidden shadow-sm p-5 md:p-6 relative transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5`}>
+                                       <div key={i} className={`group flex flex-col xl:flex-row xl:items-stretch justify-between gap-5 rounded-2xl border bg-gradient-to-br card-solid/40 dark:bg-slate-900/40 backdrop-blur-sm ${recColor} overflow-hidden shadow-sm p-5 md:p-6 relative transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5`}>
                                           <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${gradientLine}`}></div>
                                           
                                           {/* Left Section: Info & Text */}
                                           <div className="flex-1 flex flex-col justify-center pl-2 relative z-10">
                                              <div className="flex items-center gap-3 mb-3">
-                                                <Link href={`/crypto-report/${coin.symbol}`} className={`font-black text-xl text-slate-900 dark:text-white transition-all ${isBuy ? 'group-hover:text-emerald-500' : isSell ? 'group-hover:text-rose-500' : 'group-hover:text-slate-500'}`}>
+                                                <Link href={`/crypto-report/${coin.symbol}`} className={`font-black text-xl text-foreground transition-all ${isBuy ? 'group-hover:text-emerald-500' : isSell ? 'group-hover:text-rose-500' : 'group-hover:text-muted-foreground'}`}>
                                                   {coin.symbol}
                                                 </Link>
-                                                <Badge variant="outline" className={`text-[11px] font-black tracking-widest uppercase bg-white/60 dark:bg-slate-950/60 border-current shadow-sm ${isBuy ? 'text-emerald-600 dark:text-emerald-400' : isSell ? 'text-rose-600 dark:text-rose-400' : 'text-slate-600 dark:text-slate-400'}`}>
+                                                <Badge variant="outline" className={`text-[11px] font-black tracking-widest uppercase card-solid/60 dark:bg-slate-950/60 border-current shadow-sm ${isBuy ? 'text-emerald-600 dark:text-emerald-400' : isSell ? 'text-rose-600 dark:text-rose-400' : 'text-muted-foreground dark:text-slate-400'}`}>
                                                   {coin.recommendation}
                                                 </Badge>
                                                 {(() => {
@@ -533,7 +533,7 @@ export default function CryptoReportPage() {
                                                   if (rawData?.rsi14) {
                                                     const rsi = Math.round(rawData.rsi14);
                                                     return (
-                                                      <Badge variant="outline" className={`text-[10px] uppercase font-bold tracking-widest ${rsi <= 30 ? 'bg-emerald-100/50 text-emerald-800 border-emerald-300/50 dark:bg-emerald-500/10 dark:text-emerald-400' : rsi >= 70 ? 'bg-rose-100/50 text-rose-800 border-rose-300/50 dark:bg-rose-500/10 dark:text-rose-400' : 'bg-slate-100/50 text-slate-700 dark:bg-slate-800/50 dark:text-slate-300'}`}>
+                                                      <Badge variant="outline" className={`text-[10px] uppercase font-bold tracking-widest ${rsi <= 30 ? 'bg-emerald-100/50 text-emerald-800 border-emerald-300/50 dark:bg-emerald-500/10 dark:text-emerald-400' : rsi >= 70 ? 'bg-rose-100/50 text-rose-800 border-rose-300/50 dark:bg-rose-500/10 dark:text-rose-400' : 'bg-secondary text-secondary-foreground/50 text-slate-700 dark:bg-slate-800/50 dark:text-slate-300'}`}>
                                                         RSI: {rsi}
                                                       </Badge>
                                                     );
@@ -547,11 +547,11 @@ export default function CryptoReportPage() {
                                           </div>
 
                                           {/* Right Section: Metrics & Chart */}
-                                          <div className="flex flex-col sm:flex-row xl:flex-col items-center xl:items-end justify-center gap-4 xl:w-[22rem] shrink-0 border-t xl:border-t-0 xl:border-l border-slate-200/50 dark:border-slate-700/50 pt-5 xl:pt-0 xl:pl-5">
+                                          <div className="flex flex-col sm:flex-row xl:flex-col items-center xl:items-end justify-center gap-4 xl:w-[22rem] shrink-0 border-t xl:border-t-0 xl:border-l border-border/50 dark:border-slate-700/50 pt-5 xl:pt-0 xl:pl-5">
                                              {(coin.supportLevel || coin.resistanceLevel || coin.targetPrice || coin.stopLossPrice) && (
-                                                <div className="grid grid-cols-2 gap-3 text-xs w-full bg-white/70 dark:bg-slate-950/70 p-4 rounded-xl border border-slate-200/50 dark:border-slate-800/50 shadow-inner text-left relative z-10">
-                                                   {coin.supportLevel && <div className="text-slate-500">Sup: <span className="font-bold text-slate-900 dark:text-white">{coin.supportLevel}</span></div>}
-                                                   {coin.resistanceLevel && <div className="text-slate-500">Res: <span className="font-bold text-slate-900 dark:text-white">{coin.resistanceLevel}</span></div>}
+                                                <div className="grid grid-cols-2 gap-3 text-xs w-full card-solid/70 dark:bg-slate-950/70 p-4 rounded-xl border border-border/50 dark:border-slate-800/50 shadow-inner text-left relative z-10">
+                                                   {coin.supportLevel && <div className="text-muted-foreground">Sup: <span className="font-bold text-foreground">{coin.supportLevel}</span></div>}
+                                                   {coin.resistanceLevel && <div className="text-muted-foreground">Res: <span className="font-bold text-foreground">{coin.resistanceLevel}</span></div>}
                                                    {coin.targetPrice && <div className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-semibold"><Target className="w-3.5 h-3.5"/> TP: {coin.targetPrice}</div>}
                                                    {coin.stopLossPrice && <div className="text-rose-600 dark:text-rose-400 flex items-center gap-1 font-semibold"><ShieldAlert className="w-3.5 h-3.5"/> SL: {coin.stopLossPrice}</div>}
                                                 </div>
@@ -560,7 +560,7 @@ export default function CryptoReportPage() {
                                              {klinesData.length > 0 && (
                                                 <div className="w-full mt-auto relative z-10">
                                                    <div className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1.5 text-center xl:text-right">Tren 4 Jam</div>
-                                                   <div className="w-full shadow-[0_4px_12px_rgb(0,0,0,0.03)] rounded-xl overflow-hidden border border-slate-100/50 dark:border-slate-800/50">
+                                                   <div className="w-full shadow-[0_4px_12px_rgb(0,0,0,0.03)] rounded-xl overflow-hidden border border-border/50 dark:border-slate-800/50">
                                                      <CryptoCandlestick 
                                                         symbol={coin.symbol}
                                                         klines={klinesData} 
@@ -592,7 +592,7 @@ export default function CryptoReportPage() {
                                       return (
                                         <div key={idx} className="flex items-start justify-between text-xs border-b border-slate-800 pb-2 last:border-0 last:pb-0">
                                            <span className="font-bold text-slate-300 w-20 shrink-0">{evalItem.symbol}</span>
-                                           <span className="text-slate-500 line-clamp-1 flex-1 px-2">{evalItem.reason}</span>
+                                           <span className="text-muted-foreground line-clamp-1 flex-1 px-2">{evalItem.reason}</span>
                                            <span className={`font-black tracking-wider ${statusColor}`}>{evalItem.status}</span>
                                         </div>
                                       );
@@ -623,7 +623,7 @@ export default function CryptoReportPage() {
             {reports.length > 0 ? (
                <TemporalComparisonWidget reportData={reports[0]?.reportData} />
             ) : (
-               <div className="flex justify-center p-12 text-slate-500">Belum ada data laporan terbaru.</div>
+               <div className="flex justify-center p-12 text-muted-foreground">Belum ada data laporan terbaru.</div>
             )}
           </TabsContent>
 
@@ -631,7 +631,7 @@ export default function CryptoReportPage() {
             {reports.length > 0 ? (
                <WeeklyMonthlyOutlookWidget reportData={reports.find(r => r.isWeekly || r.isMonthly)?.reportData || reports[0]?.reportData} />
             ) : (
-               <div className="flex justify-center p-12 text-slate-500">Belum ada data laporan terbaru.</div>
+               <div className="flex justify-center p-12 text-muted-foreground">Belum ada data laporan terbaru.</div>
             )}
           </TabsContent>
         </Tabs>

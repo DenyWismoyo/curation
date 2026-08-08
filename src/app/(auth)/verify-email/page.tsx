@@ -83,12 +83,12 @@ function VerifyEmailContent() {
   return (
     <GlassCardLayout>
       <div className="flex flex-col items-center text-center">
-        <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-6 shadow-sm">
+        <div className="w-16 h-16 bg-emerald-100 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mb-6 shadow-sm">
           <MailCheck size={32} />
         </div>
         
-        <h1 className="text-2xl font-black text-slate-900 mb-2">Verifikasi Email Anda</h1>
-        <p className="text-sm text-slate-500 font-medium mb-6 leading-relaxed">
+        <h1 className="text-2xl font-black text-foreground mb-2">Verifikasi Email Anda</h1>
+        <p className="text-sm text-muted-foreground font-medium mb-6 leading-relaxed">
           Kami telah mengirimkan email verifikasi ke <strong className="text-slate-700">{user.email}</strong>. 
           Silakan klik tautan di email tersebut untuk mengaktifkan akun Anda secara penuh dan mengakses fitur eksklusif.
         </p>
@@ -107,14 +107,14 @@ function VerifyEmailContent() {
             onClick={handleResend} 
             disabled={sending}
             variant="outline"
-            className="w-full h-12 rounded-xl border-slate-200 text-slate-600 hover:bg-slate-50 font-bold"
+            className="w-full h-12 rounded-xl border-border text-muted-foreground hover:bg-muted text-muted-foreground font-bold"
           >
             {sending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
             Kirim Ulang Email
           </Button>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-slate-100 w-full flex justify-center">
+        <div className="mt-8 pt-6 border-t border-border w-full flex justify-center">
           <button 
             onClick={handleLogout}
             className="text-xs font-bold text-slate-400 hover:text-rose-500 transition-colors flex items-center gap-1"

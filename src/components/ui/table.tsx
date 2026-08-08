@@ -5,7 +5,7 @@ const Table = React.forwardRef<
   HTMLTableElement,
   React.HTMLAttributes<HTMLTableElement>
 >(({ className, ...props }, ref) => (
-  <div className="relative w-full overflow-auto rounded-2xl border border-slate-100 bg-white shadow-xs">
+  <div className="relative w-full overflow-auto rounded-2xl border border-border card-solid shadow-xs">
     <table
       ref={ref}
       className={cn("w-full caption-bottom text-sm font-medium", className)}
@@ -19,7 +19,7 @@ const TableHeader = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
-  <thead ref={ref} className={cn("bg-slate-50/80 border-b border-slate-100", className)} {...props} />
+  <thead ref={ref} className={cn("bg-muted text-muted-foreground/80 border-b border-border", className)} {...props} />
 ))
 TableHeader.displayName = "TableHeader"
 
@@ -42,7 +42,7 @@ const TableFooter = React.forwardRef<
   <tfoot
     ref={ref}
     className={cn(
-      "border-t border-slate-100 bg-slate-50/50 font-bold text-slate-800 [&>tr]:last:border-b-0",
+      "border-t border-border bg-muted text-muted-foreground/50 font-bold text-foreground [&>tr]:last:border-b-0",
       className
     )}
     {...props}
@@ -57,7 +57,7 @@ const TableRow = React.forwardRef<
   <tr
     ref={ref}
     className={cn(
-      "border-b border-slate-50 transition-colors hover:bg-slate-50/70 data-[state=selected]:bg-indigo-50/50",
+      "border-b border-slate-50 transition-colors hover:bg-muted text-muted-foreground/70 data-[state=selected]:bg-indigo-50 dark:bg-indigo-500/10/50",
       className
     )}
     {...props}

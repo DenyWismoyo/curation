@@ -126,10 +126,10 @@ export default function PremiumSubscriptionPage() {
           <Badge variant="outline" className="mb-6 py-1.5 px-4 rounded-full border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 uppercase tracking-widest text-xs font-bold gap-2">
             <Sparkles size={14} /> Berhenti menebak, mulai menganalisa
           </Badge>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black mb-6 leading-tight tracking-tight text-slate-900 dark:text-white">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black mb-6 leading-tight tracking-tight text-foreground">
             Bukan Sekadar Dashboard. Ini adalah <span className="text-indigo-600 dark:text-indigo-400">AI Hedge Fund Pribadi Anda.</span>
           </h1>
-          <p className="text-lg text-slate-600 dark:text-slate-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg text-muted-foreground dark:text-slate-400 mb-10 max-w-2xl mx-auto leading-relaxed">
             Dapatkan keunggulan <i>unfair advantage</i> di pasar kripto. Akses analisis sentimen real-time, pergerakan paus (smart money), dan AI Copilot yang bekerja 24/7 untuk Anda.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -147,8 +147,8 @@ export default function PremiumSubscriptionPage() {
         {/* 2. KEUNGGULAN (Why Choose Us) */}
         <m.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeIn} className="mb-24">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-4">Mengapa Kami Berbeda?</h2>
-            <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">Platform lain hanya memberi Anda data mentah. Kami memberikan Anda <b>interpretasi dan tindakan</b>.</p>
+            <h2 className="text-3xl font-black text-foreground mb-4">Mengapa Kami Berbeda?</h2>
+            <p className="text-muted-foreground dark:text-slate-400 max-w-2xl mx-auto">Platform lain hanya memberi Anda data mentah. Kami memberikan Anda <b>interpretasi dan tindakan</b>.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
@@ -166,9 +166,9 @@ export default function PremiumSubscriptionPage() {
               }
             ].map((item, i) => (
               <ContentCard key={i} className="text-center flex flex-col items-center p-8 border-slate-200 dark:border-slate-800">
-                <div className="w-14 h-14 bg-slate-100 dark:bg-slate-900 rounded-2xl flex items-center justify-center border border-slate-200 dark:border-slate-800 mb-6">{item.icon}</div>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-3">{item.title}</h3>
-                <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{item.desc}</p>
+                <div className="w-14 h-14 bg-secondary text-secondary-foreground dark:bg-slate-900 rounded-2xl flex items-center justify-center border border-slate-200 dark:border-slate-800 mb-6">{item.icon}</div>
+                <h3 className="text-lg font-bold text-foreground mb-3">{item.title}</h3>
+                <p className="text-sm text-muted-foreground dark:text-slate-400 leading-relaxed">{item.desc}</p>
               </ContentCard>
             ))}
           </div>
@@ -176,11 +176,11 @@ export default function PremiumSubscriptionPage() {
 
         {/* 3. UNDER THE HOOD (Mesin Intelijen) */}
         <m.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeIn} className="mb-24">
-          <ContentCard className="p-8 md:p-12 border-indigo-100 dark:border-indigo-900/50 bg-indigo-50/50 dark:bg-indigo-950/20">
+          <ContentCard className="p-8 md:p-12 border-indigo-100 dark:border-indigo-900/50 bg-indigo-50 dark:bg-indigo-500/10/50 dark:bg-indigo-950/20">
             <div className="text-center mb-12">
               <Badge variant="secondary" className="mb-4">Arsitektur Cron Jobs 24/7</Badge>
-              <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-4">Bagaimana Mesin Intelijen Bekerja?</h2>
-              <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">4 Agen AI Otonom kami menscan ratusan indikator di balik layar saat Anda tidur.</p>
+              <h2 className="text-3xl font-black text-foreground mb-4">Bagaimana Mesin Intelijen Bekerja?</h2>
+              <p className="text-muted-foreground dark:text-slate-400 max-w-2xl mx-auto">4 Agen AI Otonom kami menscan ratusan indikator di balik layar saat Anda tidur.</p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -190,16 +190,16 @@ export default function PremiumSubscriptionPage() {
                 { icon: <Activity size={20} />, title: "Agent 3: Smart Money & Risk", tag: "Harian 07:15 WIB", desc: "Mendeteksi anomali volume raksasa dan mencatat aset dalam Danger Zone (risiko distribusi)." },
                 { icon: <Bot size={20} />, title: "Agent 4: AI Copilot", tag: "On-Demand (Chat)", desc: "Menjawab pertanyaan Anda berdasarkan konteks laporan terbaru. Tidak hanya sekadar ChatGPT." },
               ].map((agent, idx) => (
-                <div key={idx} className="flex gap-4 items-start p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                  <div className="mt-1 w-10 h-10 shrink-0 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                <div key={idx} className="flex gap-4 items-start p-5 card-solid rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                  <div className="mt-1 w-10 h-10 shrink-0 bg-secondary text-secondary-foreground rounded-xl flex items-center justify-center text-indigo-600 dark:text-indigo-400">
                     {agent.icon}
                   </div>
                   <div>
-                    <h4 className="text-slate-900 dark:text-white font-bold text-base flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
+                    <h4 className="text-foreground font-bold text-base flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
                       {agent.title} 
                       <Badge variant="secondary" className="w-fit text-[10px]">{agent.tag}</Badge>
                     </h4>
-                    <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{agent.desc}</p>
+                    <p className="text-sm text-muted-foreground dark:text-slate-400 leading-relaxed">{agent.desc}</p>
                   </div>
                 </div>
               ))}
@@ -210,18 +210,18 @@ export default function PremiumSubscriptionPage() {
         {/* 6. PRICING & COMPARISON */}
         <div id="pricing" className="mb-24 pt-10">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-4">Pilih Keunggulan Anda</h2>
-            <p className="text-slate-600 dark:text-slate-400">Akses instan setelah pembayaran. Batalkan kapan saja.</p>
+            <h2 className="text-3xl font-black text-foreground mb-4">Pilih Keunggulan Anda</h2>
+            <p className="text-muted-foreground dark:text-slate-400">Akses instan setelah pembayaran. Batalkan kapan saja.</p>
           </div>
 
           <div className="grid lg:grid-cols-3 gap-6 items-stretch max-w-6xl mx-auto">
             {/* FREE TIER */}
             <m.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn}>
-              <ContentCard className="p-8 flex flex-col h-full border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
+              <ContentCard className="p-8 flex flex-col h-full border-slate-200 dark:border-slate-800 bg-background text-foreground">
                 <div className="mb-8">
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Market Explorer</h3>
-                  <div className="text-4xl font-black text-slate-900 dark:text-white mb-2">Rp 0 <span className="text-lg text-slate-500 font-medium">/ selamanya</span></div>
-                  <p className="text-slate-600 dark:text-slate-400 text-sm">Coba fitur dasar tanpa risiko.</p>
+                  <h3 className="text-xl font-bold text-foreground mb-2">Market Explorer</h3>
+                  <div className="text-4xl font-black text-foreground mb-2">Rp 0 <span className="text-lg text-muted-foreground font-medium">/ selamanya</span></div>
+                  <p className="text-muted-foreground dark:text-slate-400 text-sm">Coba fitur dasar tanpa risiko.</p>
                 </div>
                 <div className="space-y-4 flex-1 mb-8">
                   <div className="flex gap-3 text-sm text-slate-700 dark:text-slate-300"><Check size={18} className="text-emerald-500 shrink-0" /> AI Market Report (Hanya 3 terlama)</div>
@@ -239,20 +239,20 @@ export default function PremiumSubscriptionPage() {
 
             {/* TRIAL TIER */}
             <m.div initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ delay: 0.1 }} variants={fadeIn}>
-              <ContentCard variant="highlighted" className="p-8 flex flex-col h-full border-emerald-200 dark:border-emerald-900/50 bg-emerald-50/50 dark:bg-emerald-950/20 relative">
+              <ContentCard variant="highlighted" className="p-8 flex flex-col h-full border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-500/10/50 dark:bg-emerald-950/20 relative">
                 <Badge className="absolute top-4 right-4 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-400 border-0 hover:bg-emerald-200">1X SEUMUR HIDUP</Badge>
                 <div className="mb-8 mt-4">
                   <h3 className="text-xl font-bold text-emerald-600 dark:text-emerald-400 mb-2">Trial 3 Hari</h3>
-                  <div className="text-4xl font-black text-slate-900 dark:text-white mb-2">Rp 0 <span className="text-lg text-slate-500 font-medium">/ 3 hari</span></div>
-                  <p className="text-slate-600 dark:text-slate-400 text-sm">Rasakan kekuatan AI Hedge Fund secara penuh tanpa kartu kredit.</p>
+                  <div className="text-4xl font-black text-foreground mb-2">Rp 0 <span className="text-lg text-muted-foreground font-medium">/ 3 hari</span></div>
+                  <p className="text-muted-foreground dark:text-slate-400 text-sm">Rasakan kekuatan AI Hedge Fund secara penuh tanpa kartu kredit.</p>
                 </div>
                 <div className="space-y-4 flex-1 mb-8">
-                  <div className="flex gap-3 text-sm font-medium text-slate-900 dark:text-white"><Check size={18} className="text-emerald-600 dark:text-emerald-400 shrink-0" /> Full Akses Laporan AI (3 Hari)</div>
-                  <div className="flex gap-3 text-sm font-medium text-slate-900 dark:text-white"><Check size={18} className="text-emerald-600 dark:text-emerald-400 shrink-0" /> Real-time News</div>
-                  <div className="flex gap-3 text-sm font-medium text-slate-900 dark:text-white"><Check size={18} className="text-emerald-600 dark:text-emerald-400 shrink-0" /> Global Economic Calendar</div>
-                  <div className="flex gap-3 text-sm font-medium text-slate-900 dark:text-white"><Check size={18} className="text-emerald-600 dark:text-emerald-400 shrink-0" /> AI Copilot Chat (Tanya Apapun)</div>
-                  <div className="flex gap-3 text-sm font-medium text-slate-900 dark:text-white"><Check size={18} className="text-emerald-600 dark:text-emerald-400 shrink-0" /> Hidden Gems Scan</div>
-                  <div className="flex gap-3 text-sm font-medium text-slate-900 dark:text-white"><Check size={18} className="text-emerald-600 dark:text-emerald-400 shrink-0" /> Peringatan Danger Zone</div>
+                  <div className="flex gap-3 text-sm font-medium text-foreground"><Check size={18} className="text-emerald-600 dark:text-emerald-400 shrink-0" /> Full Akses Laporan AI (3 Hari)</div>
+                  <div className="flex gap-3 text-sm font-medium text-foreground"><Check size={18} className="text-emerald-600 dark:text-emerald-400 shrink-0" /> Real-time News</div>
+                  <div className="flex gap-3 text-sm font-medium text-foreground"><Check size={18} className="text-emerald-600 dark:text-emerald-400 shrink-0" /> Global Economic Calendar</div>
+                  <div className="flex gap-3 text-sm font-medium text-foreground"><Check size={18} className="text-emerald-600 dark:text-emerald-400 shrink-0" /> AI Copilot Chat (Tanya Apapun)</div>
+                  <div className="flex gap-3 text-sm font-medium text-foreground"><Check size={18} className="text-emerald-600 dark:text-emerald-400 shrink-0" /> Hidden Gems Scan</div>
+                  <div className="flex gap-3 text-sm font-medium text-foreground"><Check size={18} className="text-emerald-600 dark:text-emerald-400 shrink-0" /> Peringatan Danger Zone</div>
                 </div>
                 
                 {cryptoTrialUsed ? (
@@ -273,29 +273,29 @@ export default function PremiumSubscriptionPage() {
 
             {/* PREMIUM TIER */}
             <m.div initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ delay: 0.2 }} variants={fadeIn}>
-              <ContentCard className="p-8 flex flex-col h-full border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-900 relative shadow-xl shadow-indigo-100 dark:shadow-none">
+              <ContentCard className="p-8 flex flex-col h-full border-indigo-200 dark:border-indigo-800 card-solid relative shadow-xl shadow-indigo-100 dark:shadow-none">
                 <Badge className="absolute top-4 right-4 bg-indigo-600 text-white hover:bg-indigo-700">POPULER</Badge>
                 
                 <div className="mb-6 mt-4">
                   <h3 className="text-xl font-bold text-indigo-600 dark:text-indigo-400 mb-4">Premium Pass</h3>
                   
                   {/* Package Selector */}
-                  <div className="flex bg-slate-100 dark:bg-slate-50 dark:bg-slate-950 p-1.5 rounded-xl border border-slate-200 dark:border-slate-800 mb-6 gap-1">
+                  <div className="flex bg-secondary text-secondary-foreground dark:bg-background text-foreground p-1.5 rounded-xl border border-slate-200 dark:border-slate-800 mb-6 gap-1">
                     <button 
                       onClick={() => setSelectedPackage('MONTHLY')}
-                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${selectedPackage === 'MONTHLY' ? 'bg-white dark:bg-slate-800 shadow text-indigo-600 dark:text-indigo-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${selectedPackage === 'MONTHLY' ? 'card-solid dark:bg-slate-800 shadow text-indigo-600 dark:text-indigo-400' : 'text-muted-foreground hover:text-slate-700 dark:hover:text-slate-300'}`}
                     >
                       1 Bulan
                     </button>
                     <button 
                       onClick={() => setSelectedPackage('QUARTERLY')}
-                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${selectedPackage === 'QUARTERLY' ? 'bg-white dark:bg-slate-800 shadow text-indigo-600 dark:text-indigo-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${selectedPackage === 'QUARTERLY' ? 'card-solid dark:bg-slate-800 shadow text-indigo-600 dark:text-indigo-400' : 'text-muted-foreground hover:text-slate-700 dark:hover:text-slate-300'}`}
                     >
                       3 Bulan
                     </button>
                     <button 
                       onClick={() => setSelectedPackage('YEARLY')}
-                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all relative ${selectedPackage === 'YEARLY' ? 'bg-white dark:bg-slate-800 shadow text-indigo-600 dark:text-indigo-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all relative ${selectedPackage === 'YEARLY' ? 'card-solid dark:bg-slate-800 shadow text-indigo-600 dark:text-indigo-400' : 'text-muted-foreground hover:text-slate-700 dark:hover:text-slate-300'}`}
                     >
                       1 Tahun
                     </button>
@@ -305,13 +305,13 @@ export default function PremiumSubscriptionPage() {
                     {selectedPackage === 'MONTHLY' && (
                       <>
                         <span className="text-slate-400 line-through text-sm font-medium mb-1">Rp 499.000</span>
-                        <div className="text-4xl font-black text-slate-900 dark:text-white mb-2">Rp 249.000 <span className="text-lg text-slate-500 font-medium">/ bln</span></div>
+                        <div className="text-4xl font-black text-foreground mb-2">Rp 249.000 <span className="text-lg text-muted-foreground font-medium">/ bln</span></div>
                       </>
                     )}
                     {selectedPackage === 'QUARTERLY' && (
                       <>
                         <span className="text-slate-400 line-through text-sm font-medium mb-1">Rp 747.000</span>
-                        <div className="text-4xl font-black text-slate-900 dark:text-white mb-1">Rp 649.000 <span className="text-lg text-slate-500 font-medium">/ 3 bln</span></div>
+                        <div className="text-4xl font-black text-foreground mb-1">Rp 649.000 <span className="text-lg text-muted-foreground font-medium">/ 3 bln</span></div>
                         <div className="text-emerald-600 dark:text-emerald-400 text-xs font-bold mb-2 flex items-center gap-1.5">
                           <CheckCircle2 className="w-3.5 h-3.5" /> Hemat Rp 98.000
                         </div>
@@ -320,23 +320,23 @@ export default function PremiumSubscriptionPage() {
                     {selectedPackage === 'YEARLY' && (
                       <>
                         <span className="text-slate-400 line-through text-sm font-medium mb-1">Rp 2.988.000</span>
-                        <div className="text-4xl font-black text-slate-900 dark:text-white mb-1">Rp 1.990.000 <span className="text-lg text-slate-500 font-medium">/ thn</span></div>
+                        <div className="text-4xl font-black text-foreground mb-1">Rp 1.990.000 <span className="text-lg text-muted-foreground font-medium">/ thn</span></div>
                         <div className="text-emerald-600 dark:text-emerald-400 text-xs font-bold mb-2 flex items-center gap-1.5">
                           <CheckCircle2 className="w-3.5 h-3.5" /> Hemat Rp 998.000
                         </div>
                       </>
                     )}
                   </div>
-                  <p className="text-slate-600 dark:text-slate-400 text-sm mt-2">Akses penuh ke semua analisis on-chain & AI.</p>
+                  <p className="text-muted-foreground dark:text-slate-400 text-sm mt-2">Akses penuh ke semua analisis on-chain & AI.</p>
                 </div>
 
                 <div className="space-y-4 flex-1 mb-8">
-                  <div className="flex gap-3 text-sm font-medium text-slate-900 dark:text-white"><Check size={18} className="text-indigo-600 dark:text-indigo-400 shrink-0" /> Histori Penuh Laporan AI</div>
-                  <div className="flex gap-3 text-sm font-medium text-slate-900 dark:text-white"><Check size={18} className="text-indigo-600 dark:text-indigo-400 shrink-0" /> Unlimited AI Copilot Chat</div>
-                  <div className="flex gap-3 text-sm font-medium text-slate-900 dark:text-white"><Check size={18} className="text-indigo-600 dark:text-indigo-400 shrink-0" /> Hidden Gems (Daily Scan)</div>
-                  <div className="flex gap-3 text-sm font-medium text-slate-900 dark:text-white"><Check size={18} className="text-indigo-600 dark:text-indigo-400 shrink-0" /> Smart Money & Liquidity Zone</div>
-                  <div className="flex gap-3 text-sm font-medium text-slate-900 dark:text-white"><Check size={18} className="text-indigo-600 dark:text-indigo-400 shrink-0" /> Danger Zone Alerts</div>
-                  <div className="flex gap-3 text-sm font-medium text-slate-900 dark:text-white"><Check size={18} className="text-indigo-600 dark:text-indigo-400 shrink-0" /> Push Notifications Sinyal</div>
+                  <div className="flex gap-3 text-sm font-medium text-foreground"><Check size={18} className="text-indigo-600 dark:text-indigo-400 shrink-0" /> Histori Penuh Laporan AI</div>
+                  <div className="flex gap-3 text-sm font-medium text-foreground"><Check size={18} className="text-indigo-600 dark:text-indigo-400 shrink-0" /> Unlimited AI Copilot Chat</div>
+                  <div className="flex gap-3 text-sm font-medium text-foreground"><Check size={18} className="text-indigo-600 dark:text-indigo-400 shrink-0" /> Hidden Gems (Daily Scan)</div>
+                  <div className="flex gap-3 text-sm font-medium text-foreground"><Check size={18} className="text-indigo-600 dark:text-indigo-400 shrink-0" /> Smart Money & Liquidity Zone</div>
+                  <div className="flex gap-3 text-sm font-medium text-foreground"><Check size={18} className="text-indigo-600 dark:text-indigo-400 shrink-0" /> Danger Zone Alerts</div>
+                  <div className="flex gap-3 text-sm font-medium text-foreground"><Check size={18} className="text-indigo-600 dark:text-indigo-400 shrink-0" /> Push Notifications Sinyal</div>
                 </div>
                 
                 <Button 
@@ -347,7 +347,7 @@ export default function PremiumSubscriptionPage() {
                   {loading ? <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Memproses...</> : hasAccess && !isAdmin ? 'Berlangganan Aktif' : 'Ambil Harga Promo'}
                 </Button>
                 
-                <div className="mt-4 flex items-center justify-center gap-2 text-xs text-slate-500 font-medium">
+                <div className="mt-4 flex items-center justify-center gap-2 text-xs text-muted-foreground font-medium">
                   <ShieldCheck size={14} /> Pembayaran aman terenkripsi via Mayar.id
                 </div>
               </ContentCard>
@@ -363,13 +363,13 @@ export default function PremiumSubscriptionPage() {
               <ContentCard key={idx} className="p-0 overflow-hidden">
                 <button 
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                  className="w-full text-left px-6 py-4 flex items-center justify-between font-medium text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-white/50 dark:bg-slate-900/50 transition-colors"
+                  className="w-full text-left px-6 py-4 flex items-center justify-between font-medium text-foreground dark:text-slate-100 hover:bg-muted text-muted-foreground dark:hover:card-solid/50 dark:bg-slate-900/50 transition-colors"
                 >
                   {faq.q}
-                  {openFaq === idx ? <ChevronUp size={18} className="text-slate-500 shrink-0 ml-4" /> : <ChevronDown size={18} className="text-slate-500 shrink-0 ml-4" />}
+                  {openFaq === idx ? <ChevronUp size={18} className="text-muted-foreground shrink-0 ml-4" /> : <ChevronDown size={18} className="text-muted-foreground shrink-0 ml-4" />}
                 </button>
                 {openFaq === idx && (
-                  <div className="px-6 pb-5 pt-1 text-sm text-slate-600 dark:text-slate-400 leading-relaxed border-t border-slate-100 dark:border-slate-800">
+                  <div className="px-6 pb-5 pt-1 text-sm text-muted-foreground dark:text-slate-400 leading-relaxed border-t border-slate-100 dark:border-slate-800">
                     {faq.a}
                   </div>
                 )}
@@ -383,7 +383,7 @@ export default function PremiumSubscriptionPage() {
           <Badge variant="outline" className="mb-4 text-amber-600 dark:text-amber-500 border-amber-200 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-900/10 gap-2">
             <AlertTriangle className="w-4 h-4" /> DISCLAIMER & PERINGATAN RISIKO
           </Badge>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-500 leading-relaxed max-w-3xl mx-auto">
+          <p className="text-xs sm:text-sm text-muted-foreground dark:text-muted-foreground leading-relaxed max-w-3xl mx-auto">
             Omnifit Premium (Crypto Intelligence Hub) adalah platform penyedia data analitik dan alat bantu edukasi, <strong>bukan penasihat keuangan (financial advisor)</strong>. Semua laporan, analisis sentimen, proyeksi harga, dan notifikasi yang dihasilkan oleh AI kami bertujuan untuk informasi semata dan tidak dapat dianggap sebagai saran investasi, ajakan membeli, atau menjual aset kripto tertentu.
           </p>
         </m.div>

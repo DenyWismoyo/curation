@@ -354,7 +354,7 @@ export default function StudyWorkspacePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f5f3ee] flex items-center justify-center text-slate-600">
+      <div className="min-h-screen bg-[#f5f3ee] flex items-center justify-center text-muted-foreground">
         <div className="flex items-center gap-2 text-sm font-bold">
           <Loader2 className="w-4 h-4 animate-spin" /> Menyiapkan workspace kajian...
         </div>
@@ -365,9 +365,9 @@ export default function StudyWorkspacePage() {
   if (!user) {
     return (
       <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_#f0eadf,_#f7f4ee_50%,_#ece6da)] px-4 py-10 flex items-center justify-center">
-        <div className="w-full max-w-md rounded-[2rem] bg-white ring-1 ring-stone-200 shadow-2xl overflow-hidden">
+        <div className="w-full max-w-md rounded-[2rem] card-solid ring-1 ring-stone-200 shadow-2xl overflow-hidden">
           <div className="p-7 bg-stone-900 text-white">
-            <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.22em]">
+            <div className="inline-flex items-center gap-2 rounded-full card-solid/10 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.22em]">
               <BookOpenText className="w-4 h-4" /> Study Workspace
             </div>
             <h1 className="text-2xl font-black mt-4">Login Portal Kajian</h1>
@@ -377,18 +377,18 @@ export default function StudyWorkspacePage() {
           <div className="p-7 space-y-4">
             <form onSubmit={handleEmailLogin} className="space-y-3">
               <label className="block">
-                <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Email</span>
-                <input value={email} onChange={(event) => setEmail(event.target.value)} type="email" className="mt-1 h-11 w-full rounded-xl border border-slate-200 px-3 text-sm" />
+                <span className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground">Email</span>
+                <input value={email} onChange={(event) => setEmail(event.target.value)} type="email" className="mt-1 h-11 w-full rounded-xl border border-border px-3 text-sm" />
               </label>
               <label className="block">
-                <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Password</span>
-                <input value={password} onChange={(event) => setPassword(event.target.value)} type="password" className="mt-1 h-11 w-full rounded-xl border border-slate-200 px-3 text-sm" />
+                <span className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground">Password</span>
+                <input value={password} onChange={(event) => setPassword(event.target.value)} type="password" className="mt-1 h-11 w-full rounded-xl border border-border px-3 text-sm" />
               </label>
-              {error ? <div className="rounded-xl bg-rose-50 text-rose-700 text-sm p-3 ring-1 ring-rose-200">{error}</div> : null}
+              {error ? <div className="rounded-xl bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-300 text-sm p-3 ring-1 ring-rose-200 dark:ring-rose-500/20">{error}</div> : null}
               <button type="submit" className="w-full h-11 rounded-xl bg-stone-900 hover:bg-amber-700 text-white font-black text-sm">Login via Email</button>
             </form>
 
-            <button type="button" onClick={loginWithGoogle} className="w-full h-11 rounded-xl bg-white text-slate-700 border border-slate-200 font-black text-sm">
+            <button type="button" onClick={loginWithGoogle} className="w-full h-11 rounded-xl card-solid text-slate-700 border border-border font-black text-sm">
               Login via Google
             </button>
           </div>
@@ -400,12 +400,12 @@ export default function StudyWorkspacePage() {
   if (!hasStudyAccess) {
     return (
       <div className="min-h-screen bg-[#f5f3ee] px-4 py-12">
-        <div className="max-w-3xl mx-auto rounded-[2rem] bg-white shadow-xl ring-1 ring-stone-200 p-8">
+        <div className="max-w-3xl mx-auto rounded-[2rem] card-solid shadow-xl ring-1 ring-stone-200 p-8">
           <div className="inline-flex items-center gap-2 rounded-full bg-amber-100 text-amber-900 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.22em]">
             <ShieldCheck className="w-4 h-4" /> Akses Premium
           </div>
-          <h1 className="text-3xl font-black text-slate-900 mt-4">Akses workspace studi belum aktif</h1>
-          <p className="text-slate-600 font-medium mt-3 leading-relaxed mb-6">Fitur Study Analytics dan Knowledge Base ini eksklusif untuk pelanggan Premium. Dapatkan insight bisnis B2B mendalam dengan berlangganan sekarang.</p>
+          <h1 className="text-3xl font-black text-foreground mt-4">Akses workspace studi belum aktif</h1>
+          <p className="text-muted-foreground font-medium mt-3 leading-relaxed mb-6">Fitur Study Analytics dan Knowledge Base ini eksklusif untuk pelanggan Premium. Dapatkan insight bisnis B2B mendalam dengan berlangganan sekarang.</p>
           <Link href="/crypto">
             <button className="h-11 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-sm">
               Upgrade Premium
@@ -419,17 +419,17 @@ export default function StudyWorkspacePage() {
   return (
     <div className="min-h-screen bg-[#f5f3ee] px-4 py-8 lg:px-8">
       <div className="max-w-7xl mx-auto grid grid-cols-1 xl:grid-cols-[420px_minmax(0,1fr)] gap-6">
-        <section className="rounded-[2rem] bg-white ring-1 ring-stone-200 shadow-sm p-6 space-y-5 h-fit">
+        <section className="rounded-[2rem] card-solid ring-1 ring-stone-200 shadow-sm p-6 space-y-5 h-fit">
           {canManageProjects ? (
             <>
               <div>
-                <p className="text-[11px] font-black uppercase tracking-[0.22em] text-amber-700">Blueprint Kajian</p>
-                <h1 className="text-2xl font-black text-slate-900 mt-2">Buat Project Baru</h1>
-                <p className="text-sm text-slate-500 font-medium mt-2">Pipeline sekarang mencakup extraction, chunking, outline, drafting bab, dan audit otomatis awal.</p>
+                <p className="text-[11px] font-black uppercase tracking-[0.22em] text-amber-700 dark:text-amber-300">Blueprint Kajian</p>
+                <h1 className="text-2xl font-black text-foreground mt-2">Buat Project Baru</h1>
+                <p className="text-sm text-muted-foreground font-medium mt-2">Pipeline sekarang mencakup extraction, chunking, outline, drafting bab, dan audit otomatis awal.</p>
               </div>
 
               <form onSubmit={handleCreateProject} className="space-y-3">
-                <div className="flex items-center gap-2 p-3 bg-amber-50 rounded-xl border border-amber-200 mb-2">
+                <div className="flex items-center gap-2 p-3 bg-amber-50 dark:bg-amber-500/10 rounded-xl border border-amber-200 dark:border-amber-500/20 mb-2">
                   <input 
                     type="checkbox" 
                     id="cryptoMode" 
@@ -446,29 +446,29 @@ export default function StudyWorkspacePage() {
                         setWritingTone("academic");
                       }
                     }}
-                    className="w-4 h-4 rounded text-amber-600 focus:ring-amber-500 cursor-pointer"
+                    className="w-4 h-4 rounded text-amber-600 dark:text-amber-400 focus:ring-amber-500 cursor-pointer"
                   />
                   <label htmlFor="cryptoMode" className="text-sm font-bold text-amber-900 flex items-center gap-1 cursor-pointer select-none">
                     <Sparkles className="w-4 h-4 text-amber-500" /> Aktifkan Mode Pembuatan Crypto Academy
                   </label>
                 </div>
 
-                <input value={title} onChange={(event) => setTitle(event.target.value)} required placeholder="Judul kajian" className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm" />
-                <textarea value={description} onChange={(event) => setDescription(event.target.value)} placeholder="Deskripsi singkat konteks kajian" className="w-full min-h-[88px] rounded-xl border border-slate-200 px-3 py-3 text-sm" />
-                <textarea value={researchQuestion} onChange={(event) => setResearchQuestion(event.target.value)} required placeholder="Pertanyaan riset utama" className="w-full min-h-[120px] rounded-xl border border-slate-200 px-3 py-3 text-sm" />
+                <input value={title} onChange={(event) => setTitle(event.target.value)} required placeholder="Judul kajian" className="w-full h-11 rounded-xl border border-border px-3 text-sm" />
+                <textarea value={description} onChange={(event) => setDescription(event.target.value)} placeholder="Deskripsi singkat konteks kajian" className="w-full min-h-[88px] rounded-xl border border-border px-3 py-3 text-sm" />
+                <textarea value={researchQuestion} onChange={(event) => setResearchQuestion(event.target.value)} required placeholder="Pertanyaan riset utama" className="w-full min-h-[120px] rounded-xl border border-border px-3 py-3 text-sm" />
                 
                 <div className="grid grid-cols-2 gap-3">
                   <label className="block">
-                    <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Gaya Penulisan</span>
-                    <select value={writingTone} onChange={(e) => setWritingTone(e.target.value as any)} className="mt-1 w-full h-11 rounded-xl border border-slate-200 px-3 text-sm bg-white">
+                    <span className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground">Gaya Penulisan</span>
+                    <select value={writingTone} onChange={(e) => setWritingTone(e.target.value as any)} className="mt-1 w-full h-11 rounded-xl border border-border px-3 text-sm card-solid">
                       <option value="academic">Akademis (Formal)</option>
                       <option value="consultative">Konsultatif (Mudah Dipahami)</option>
                       <option value="investigative">Investigatif (Mendalam)</option>
                     </select>
                   </label>
                   <label className="block">
-                    <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Target halaman</span>
-                    <input value={targetPages} onChange={(event) => setTargetPages(Number(event.target.value || 100))} min={5} max={200} type="number" className="mt-1 w-full h-11 rounded-xl border border-slate-200 px-3 text-sm" />
+                    <span className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground">Target halaman</span>
+                    <input value={targetPages} onChange={(event) => setTargetPages(Number(event.target.value || 100))} min={5} max={200} type="number" className="mt-1 w-full h-11 rounded-xl border border-border px-3 text-sm" />
                   </label>
                 </div>
                 <button type="submit" disabled={submittingProject} className="w-full h-11 rounded-xl bg-stone-900 hover:bg-amber-700 text-white font-black text-sm flex items-center justify-center gap-2 disabled:opacity-60">
@@ -478,13 +478,13 @@ export default function StudyWorkspacePage() {
             </>
           ) : (
             <div className="space-y-3">
-              <p className="text-[11px] font-black uppercase tracking-[0.22em] text-blue-700">Reviewer Workspace</p>
-              <h1 className="text-2xl font-black text-slate-900">Dashboard Review Kajian</h1>
-              <p className="text-sm text-slate-500 font-medium leading-relaxed">Akun `study_reviewer` dapat membaca project yang sudah dimasukkan ke `memberIds`, meninjau status audit, dan memfokuskan review manual pada bab yang sudah ditandai sistem.</p>
+              <p className="text-[11px] font-black uppercase tracking-[0.22em] text-blue-700 dark:text-blue-300">Reviewer Workspace</p>
+              <h1 className="text-2xl font-black text-foreground">Dashboard Review Kajian</h1>
+              <p className="text-sm text-muted-foreground font-medium leading-relaxed">Akun `study_reviewer` dapat membaca project yang sudah dimasukkan ke `memberIds`, meninjau status audit, dan memfokuskan review manual pada bab yang sudah ditandai sistem.</p>
             </div>
           )}
 
-          {error ? <div className="rounded-xl bg-rose-50 text-rose-700 text-sm p-3 ring-1 ring-rose-200">{error}</div> : null}
+          {error ? <div className="rounded-xl bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-300 text-sm p-3 ring-1 ring-rose-200 dark:ring-rose-500/20">{error}</div> : null}
 
           <div className="rounded-2xl bg-stone-50 p-4 ring-1 ring-stone-200 text-xs text-stone-600 leading-relaxed">
             <p className="font-black uppercase tracking-[0.14em] text-stone-900 mb-2">State Machine Studi</p>
@@ -493,13 +493,13 @@ export default function StudyWorkspacePage() {
         </section>
 
         <section className="space-y-6">
-          <div className="rounded-[2rem] bg-white ring-1 ring-stone-200 shadow-sm p-6">
+          <div className="rounded-[2rem] card-solid ring-1 ring-stone-200 shadow-sm p-6">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
               <div>
-                <p className="text-[11px] font-black uppercase tracking-[0.22em] text-emerald-700">Study Projects</p>
-                <h2 className="text-2xl font-black text-slate-900 mt-2">Workspace Aktif</h2>
+                <p className="text-[11px] font-black uppercase tracking-[0.22em] text-emerald-700 dark:text-emerald-300">Study Projects</p>
+                <h2 className="text-2xl font-black text-foreground mt-2">Workspace Aktif</h2>
               </div>
-              <select value={selectedProjectId} onChange={(event) => setSelectedProjectId(event.target.value)} className="h-11 rounded-xl border border-slate-200 px-3 text-sm min-w-[240px]">
+              <select value={selectedProjectId} onChange={(event) => setSelectedProjectId(event.target.value)} className="h-11 rounded-xl border border-border px-3 text-sm min-w-[240px]">
                 <option value="">Pilih project</option>
                 {projects.map((project) => (
                   <option key={project.id} value={project.id}>{project.title}</option>
@@ -510,9 +510,9 @@ export default function StudyWorkspacePage() {
             {selectedProject ? (
               <>
                 {selectedProject.status && !["DRAFT", "READY_FOR_REVIEW", "FAILED", "COMPLETED"].includes(selectedProject.status) ? (
-                  <div className="mt-6 p-4 rounded-2xl bg-emerald-50 ring-1 ring-emerald-200 flex items-start gap-4 animate-pulse">
+                  <div className="mt-6 p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 ring-1 ring-emerald-200 dark:ring-emerald-500/20 flex items-start gap-4 animate-pulse">
                     <div className="p-2 bg-emerald-100 rounded-xl">
-                      <Loader2 className="w-5 h-5 text-emerald-700 animate-spin" />
+                      <Loader2 className="w-5 h-5 text-emerald-700 dark:text-emerald-300 animate-spin" />
                     </div>
                     <div>
                       <p className="text-sm font-black text-emerald-900 uppercase tracking-wide">Pipeline Aktif: {selectedProject.status}</p>
@@ -520,7 +520,7 @@ export default function StudyWorkspacePage() {
                         Sedang mengerjakan: <span className="font-mono bg-emerald-200/50 px-1.5 py-0.5 rounded text-emerald-900">{selectedProject.orchestration?.phase || "Inisialisasi..."}</span>
                       </p>
                       {selectedProject.orchestration?.completedPhases && selectedProject.orchestration.completedPhases.length > 0 && (
-                        <p className="text-[11px] text-emerald-600 mt-2 font-bold uppercase tracking-wider">
+                        <p className="text-[11px] text-emerald-600 dark:text-emerald-400 mt-2 font-bold uppercase tracking-wider">
                           Selesai: {selectedProject.orchestration.completedPhases.length} tahap
                         </p>
                       )}
@@ -531,18 +531,18 @@ export default function StudyWorkspacePage() {
                 <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="rounded-2xl bg-stone-50 ring-1 ring-stone-200 p-4">
                     <p className="text-[11px] font-black uppercase tracking-[0.18em] text-stone-500">Status</p>
-                    <p className="text-lg font-black text-slate-900 mt-2">{selectedProject.status}</p>
-                    <p className="text-xs text-slate-500 mt-1">Phase: {selectedProject.orchestration?.phase || '-'}</p>
+                    <p className="text-lg font-black text-foreground mt-2">{selectedProject.status}</p>
+                    <p className="text-xs text-muted-foreground mt-1">Phase: {selectedProject.orchestration?.phase || '-'}</p>
                   </div>
                   <div className="rounded-2xl bg-stone-50 ring-1 ring-stone-200 p-4">
                     <p className="text-[11px] font-black uppercase tracking-[0.18em] text-stone-500">Sources</p>
-                    <p className="text-lg font-black text-slate-900 mt-2">{selectedProject.sourceStats?.total || 0}</p>
-                    <p className="text-xs text-slate-500 mt-1">Indexed: {selectedProject.sourceStats?.indexed || 0}</p>
+                    <p className="text-lg font-black text-foreground mt-2">{selectedProject.sourceStats?.total || 0}</p>
+                    <p className="text-xs text-muted-foreground mt-1">Indexed: {selectedProject.sourceStats?.indexed || 0}</p>
                   </div>
                   <div className="rounded-2xl bg-stone-50 ring-1 ring-stone-200 p-4">
                     <p className="text-[11px] font-black uppercase tracking-[0.18em] text-stone-500">Outline</p>
-                    <p className="text-lg font-black text-slate-900 mt-2">{selectedProject.outline?.chapters?.length || 0} bab</p>
-                    <p className="text-xs text-slate-500 mt-1">Review: {selectedProject.reviewStatus || 'DRAFTING'}</p>
+                    <p className="text-lg font-black text-foreground mt-2">{selectedProject.outline?.chapters?.length || 0} bab</p>
+                    <p className="text-xs text-muted-foreground mt-1">Review: {selectedProject.reviewStatus || 'DRAFTING'}</p>
                   </div>
                 </div>
               </>
@@ -552,27 +552,27 @@ export default function StudyWorkspacePage() {
           </div>
 
           {isCurrentProjectManager ? (
-            <div className="rounded-[2rem] bg-white ring-1 ring-stone-200 shadow-sm p-6 space-y-5">
+            <div className="rounded-[2rem] card-solid ring-1 ring-stone-200 shadow-sm p-6 space-y-5">
               <div>
-                <p className="text-[11px] font-black uppercase tracking-[0.22em] text-sky-700">Knowledge Base</p>
-                <h2 className="text-2xl font-black text-slate-900 mt-2">Upload Sumber Kajian</h2>
+                <p className="text-[11px] font-black uppercase tracking-[0.22em] text-sky-700 dark:text-sky-300">Knowledge Base</p>
+                <h2 className="text-2xl font-black text-foreground mt-2">Upload Sumber Kajian</h2>
               </div>
 
-              <textarea value={sourceNote} onChange={(event) => setSourceNote(event.target.value)} placeholder="Opsional: catatan ringkas kenapa sumber ini relevan" className="w-full min-h-[96px] rounded-xl border border-slate-200 px-3 py-3 text-sm" />
-              <label className="flex items-center justify-center gap-2 rounded-2xl border border-dashed border-slate-300 bg-stone-50 px-4 py-8 text-sm font-bold text-stone-700 cursor-pointer hover:border-amber-500 hover:text-amber-700 transition-colors">
+              <textarea value={sourceNote} onChange={(event) => setSourceNote(event.target.value)} placeholder="Opsional: catatan ringkas kenapa sumber ini relevan" className="w-full min-h-[96px] rounded-xl border border-border px-3 py-3 text-sm" />
+              <label className="flex items-center justify-center gap-2 rounded-2xl border border-dashed border-border bg-stone-50 px-4 py-8 text-sm font-bold text-stone-700 cursor-pointer hover:border-amber-500 hover:text-amber-700 dark:text-amber-300 transition-colors">
                 {uploadingSource ? <Loader2 className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4" />} Upload PDF/DOCX/TXT/CSV/XLSX pendukung
                 <input type="file" multiple className="hidden" onChange={handleUploadSource} disabled={!selectedProjectId || uploadingSource} />
               </label>
 
               <div className="flex flex-col gap-2 mt-4">
-                <p className="text-[11px] font-black uppercase tracking-[0.15em] text-slate-500">Atau Import dari Google Drive</p>
+                <p className="text-[11px] font-black uppercase tracking-[0.15em] text-muted-foreground">Atau Import dari Google Drive</p>
                 <div className="flex gap-2">
                   <input 
                     type="url" 
                     value={driveUrl} 
                     onChange={(e) => setDriveUrl(e.target.value)} 
                     placeholder="https://docs.google.com/document/d/..." 
-                    className="flex-1 h-11 rounded-xl border border-slate-200 px-3 text-sm" 
+                    className="flex-1 h-11 rounded-xl border border-border px-3 text-sm" 
                   />
                   <button 
                     type="button" 
@@ -590,15 +590,15 @@ export default function StudyWorkspacePage() {
               </button>
               
               {sources.length > 0 && (
-                <div className="mt-8 border-t border-slate-200 pt-6">
-                  <h3 className="text-sm font-black uppercase tracking-widest text-slate-500 mb-4">Daftar Sumber Kajian ({sources.length})</h3>
+                <div className="mt-8 border-t border-border pt-6">
+                  <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-4">Daftar Sumber Kajian ({sources.length})</h3>
                   <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2">
                     {sources.map((src) => (
                       <div key={src.id} className="flex flex-col bg-stone-50 rounded-xl border border-stone-200 p-3">
                         <div className="flex flex-wrap items-center justify-between gap-2">
                           <div className="flex items-center gap-2">
-                            {src.kind === 'url' ? <Globe className="w-4 h-4 text-sky-600 shrink-0" /> : src.kind === 'file' ? <FileUp className="w-4 h-4 text-rose-600 shrink-0" /> : <Database className="w-4 h-4 text-amber-500 shrink-0" />}
-                            <p className="text-xs font-bold text-slate-800 break-all line-clamp-2">
+                            {src.kind === 'url' ? <Globe className="w-4 h-4 text-sky-600 dark:text-sky-400 shrink-0" /> : src.kind === 'file' ? <FileUp className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" /> : <Database className="w-4 h-4 text-amber-500 shrink-0" />}
+                            <p className="text-xs font-bold text-foreground break-all line-clamp-2">
                               {src.title}
                             </p>
                           </div>
@@ -609,7 +609,7 @@ export default function StudyWorkspacePage() {
                           )}
                         </div>
                         {src.summaryHint && (
-                          <div className="mt-2 p-2 bg-white border border-stone-100 rounded-lg max-h-[80px] overflow-y-auto text-[10px] text-stone-600 font-mono line-clamp-3">
+                          <div className="mt-2 p-2 card-solid border border-stone-100 rounded-lg max-h-[80px] overflow-y-auto text-[10px] text-stone-600 font-mono line-clamp-3">
                             {src.summaryHint}
                           </div>
                         )}
@@ -625,11 +625,11 @@ export default function StudyWorkspacePage() {
           ) : null}
 
           {selectedProject?.outline?.chapters?.length ? (
-            <div className="rounded-[2rem] bg-white ring-1 ring-stone-200 shadow-sm p-6">
+            <div className="rounded-[2rem] card-solid ring-1 ring-stone-200 shadow-sm p-6">
               <div>
                 <p className="text-[11px] font-black uppercase tracking-[0.22em] text-violet-700">Generated Outline</p>
                 <div className="flex items-center justify-between mt-2">
-                  <h2 className="text-2xl font-black text-slate-900">Rencana Bab</h2>
+                  <h2 className="text-2xl font-black text-foreground">Rencana Bab</h2>
                   <div className="flex items-center gap-2">
                     {selectedProject.status === "REVIEWING_OUTLINE" && isCurrentProjectManager && (
                       <button 
@@ -649,13 +649,13 @@ export default function StudyWorkspacePage() {
               </div>
 
               {(selectedProject.status === "READY_FOR_REVIEW" || selectedProject.status === "COMPLETED") && isCurrentProjectManager && (
-                <div className="mt-5 rounded-2xl bg-amber-50 ring-1 ring-amber-200 p-4 space-y-3">
+                <div className="mt-5 rounded-2xl bg-amber-50 dark:bg-amber-500/10 ring-1 ring-amber-200 dark:ring-amber-500/20 p-4 space-y-3">
                   <p className="font-black uppercase tracking-[0.18em] text-[11px] text-amber-900">Publish ke Crypto Academy</p>
                   <p className="text-sm text-amber-900">Kajian ini sudah selesai dan siap dijadikan materi Crypto Academy.</p>
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
                     <label className="flex-1">
                       <span className="text-[11px] font-black uppercase tracking-[0.2em] text-amber-800">Pilih Level</span>
-                      <select value={academyLevel} onChange={(e) => setAcademyLevel(e.target.value)} className="mt-1 h-10 w-full rounded-xl border border-amber-300 bg-white px-3 text-sm">
+                      <select value={academyLevel} onChange={(e) => setAcademyLevel(e.target.value)} className="mt-1 h-10 w-full rounded-xl border border-amber-300 card-solid px-3 text-sm">
                         <option value="Level 1: Pemula">Level 1: Pemula (Crypto 101)</option>
                         <option value="Level 2: Menengah">Level 2: Menengah (Teknikal Trader)</option>
                         <option value="Level 3: Lanjutan">Level 3: Lanjutan (SMC/ICT)</option>
@@ -664,7 +664,7 @@ export default function StudyWorkspacePage() {
                     </label>
                     <label className="flex-1">
                       <span className="text-[11px] font-black uppercase tracking-[0.2em] text-amber-800">Template Kuis (Opsional)</span>
-                      <input type="text" placeholder="ID Template Assessment" value={academyAssessmentId} onChange={(e) => setAcademyAssessmentId(e.target.value)} className="mt-1 h-10 w-full rounded-xl border border-amber-300 bg-white px-3 text-sm" />
+                      <input type="text" placeholder="ID Template Assessment" value={academyAssessmentId} onChange={(e) => setAcademyAssessmentId(e.target.value)} className="mt-1 h-10 w-full rounded-xl border border-amber-300 card-solid px-3 text-sm" />
                     </label>
                     <button 
                       onClick={handlePublishToAcademy}
@@ -698,7 +698,7 @@ export default function StudyWorkspacePage() {
                 {selectedProject.outline.chapters.map((chapter, index) => (
                   <div key={chapter.chapterId} className="rounded-2xl bg-stone-50 ring-1 ring-stone-200 p-4">
                     <p className="text-[11px] font-black uppercase tracking-[0.18em] text-stone-500">Bab {index + 1}</p>
-                    <p className="text-base font-black text-slate-900 mt-2 flex items-start gap-2"><FileText className="w-4 h-4 mt-0.5 text-violet-700" /> {chapter.title}</p>
+                    <p className="text-base font-black text-foreground mt-2 flex items-start gap-2"><FileText className="w-4 h-4 mt-0.5 text-violet-700" /> {chapter.title}</p>
                   </div>
                 ))}
               </div>

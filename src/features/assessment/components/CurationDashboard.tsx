@@ -104,7 +104,7 @@ export function CurationDashboard({
 
   const headerActionsContent = (
     <>
-      <Button variant="ghost" onClick={onRestart} className="gap-2 text-slate-500 hover:text-slate-900 active:scale-95 w-full sm:w-auto">
+      <Button variant="ghost" onClick={onRestart} className="gap-2 text-muted-foreground hover:text-foreground active:scale-95 w-full sm:w-auto">
         <RotateCcw className="h-4 w-4" /> Mulai Ulang
       </Button>
       
@@ -112,7 +112,7 @@ export function CurationDashboard({
         {/* TOMBOL AI AUTO-DRAFT WORD (DINONAKTIFKAN SEMENTARA - TAHAP PENGEMBANGAN) */}
         <Button 
           disabled
-          className="gap-2 font-bold rounded-xl h-10 px-4 shadow-inner w-full sm:w-auto text-slate-400 bg-slate-200/60 border border-slate-200 cursor-not-allowed"
+          className="gap-2 font-bold rounded-xl h-10 px-4 shadow-inner w-full sm:w-auto text-slate-400 bg-slate-200/60 border border-border cursor-not-allowed"
         >
           <AiSparkIcon size={16} className="grayscale opacity-50" />
           AI Auto-Draft (Tahap Pengembangan)
@@ -128,7 +128,7 @@ export function CurationDashboard({
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 py-8 px-4 sm:py-12 sm:px-6 lg:px-12 animate-in fade-in duration-700">
+    <div className="min-h-screen bg-muted text-muted-foreground py-8 px-4 sm:py-12 sm:px-6 lg:px-12 animate-in fade-in duration-700">
       {isAdaptive ? (
         <AdaptiveAssessmentView
           formData={formData}

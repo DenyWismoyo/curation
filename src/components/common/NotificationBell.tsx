@@ -22,19 +22,19 @@ export interface NotificationItem {
 }
 
 const iconMap: Record<NotificationItem['type'], React.ReactNode> = {
-  assessment_complete: <Sparkles size={14} className="text-indigo-600" />,
-  payment_success: <ShieldCheck size={14} className="text-emerald-600" />,
+  assessment_complete: <Sparkles size={14} className="text-indigo-600 dark:text-indigo-400" />,
+  payment_success: <ShieldCheck size={14} className="text-emerald-600 dark:text-emerald-400" />,
   badge_earned: <Trophy size={14} className="text-amber-500" />,
   weekly_nudge: <Clock size={14} className="text-blue-500" />,
-  system: <Bell size={14} className="text-slate-500" />,
+  system: <Bell size={14} className="text-muted-foreground" />,
 };
 
 const bgMap: Record<NotificationItem['type'], string> = {
-  assessment_complete: 'bg-indigo-50',
-  payment_success: 'bg-emerald-50',
-  badge_earned: 'bg-amber-50',
-  weekly_nudge: 'bg-blue-50',
-  system: 'bg-slate-50',
+  assessment_complete: 'bg-indigo-50 dark:bg-indigo-500/10',
+  payment_success: 'bg-emerald-50 dark:bg-emerald-500/10',
+  badge_earned: 'bg-amber-50 dark:bg-amber-500/10',
+  weekly_nudge: 'bg-blue-50 dark:bg-blue-500/10',
+  system: 'bg-muted text-muted-foreground',
 };
 
 interface NotificationBellProps {
@@ -111,10 +111,10 @@ export function NotificationBell({ className = '' }: NotificationBellProps) {
       {/* Bell Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative w-10 h-10 flex items-center justify-center rounded-xl bg-white hover:bg-slate-50 ring-1 ring-slate-200 transition-colors"
+        className="relative w-10 h-10 flex items-center justify-center rounded-xl card-solid hover:bg-muted text-muted-foreground ring-1 ring-border transition-colors"
         aria-label="Notifikasi"
       >
-        <Bell size={18} className={unreadCount > 0 ? 'text-indigo-600' : 'text-slate-500'} />
+        <Bell size={18} className={unreadCount > 0 ? 'text-indigo-600 dark:text-indigo-400' : 'text-muted-foreground'} />
         <AnimatePresence>
           {unreadCount > 0 && (
             <motion.div
@@ -137,13 +137,13 @@ export function NotificationBell({ className = '' }: NotificationBellProps) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.96 }}
             transition={{ duration: 0.18, ease: 'easeOut' }}
-            className="absolute right-0 top-12 w-80 max-h-[480px] bg-white/95 backdrop-blur-xl rounded-[1.5rem] shadow-2xl shadow-slate-900/10 ring-1 ring-slate-200 overflow-hidden z-50"
+            className="absolute right-0 top-12 w-80 max-h-[480px] card-solid/95 backdrop-blur-xl rounded-[1.5rem] shadow-2xl shadow-slate-900/10 ring-1 ring-border overflow-hidden z-50"
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-border">
               <div className="flex items-center gap-2">
-                <Bell size={16} className="text-indigo-600" />
-                <h3 className="text-sm font-black text-slate-900">Notifikasi</h3>
+                <Bell size={16} className="text-indigo-600 dark:text-indigo-400" />
+                <h3 className="text-sm font-black text-foreground">Notifikasi</h3>
                 {unreadCount > 0 && (
                   <span className="bg-indigo-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full">
                     {unreadCount} baru
@@ -154,14 +154,14 @@ export function NotificationBell({ className = '' }: NotificationBellProps) {
                 {unreadCount > 0 && (
                   <button
                     onClick={markAllRead}
-                    className="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-indigo-50 transition-colors"
+                    className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-indigo-50 dark:bg-indigo-500/10 transition-colors"
                   >
                     <CheckCheck size={12} /> Baca Semua
                   </button>
                 )}
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
+                  className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-secondary text-secondary-foreground text-slate-400 hover:text-muted-foreground transition-colors"
                 >
                   <X size={14} />
                 </button>
@@ -172,10 +172,10 @@ export function NotificationBell({ className = '' }: NotificationBellProps) {
             <div className="overflow-y-auto max-h-[380px]">
               {notifications.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
-                  <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center mb-3 ring-1 ring-slate-100">
+                  <div className="w-12 h-12 rounded-2xl bg-muted text-muted-foreground flex items-center justify-center mb-3 ring-1 ring-border">
                     <Bell size={20} className="text-slate-300" />
                   </div>
-                  <p className="text-sm font-bold text-slate-500">Belum ada notifikasi</p>
+                  <p className="text-sm font-bold text-muted-foreground">Belum ada notifikasi</p>
                   <p className="text-xs text-slate-400 mt-1">Notifikasi asesmen dan pembaruan akan muncul di sini</p>
                 </div>
               ) : (
@@ -184,21 +184,21 @@ export function NotificationBell({ className = '' }: NotificationBellProps) {
                     <button
                       key={notif.id}
                       onClick={() => handleNotifClick(notif)}
-                      className={`w-full text-left px-5 py-4 hover:bg-slate-50 transition-colors flex gap-3 ${!notif.isRead ? 'bg-indigo-50/30' : ''}`}
+                      className={`w-full text-left px-5 py-4 hover:bg-muted text-muted-foreground transition-colors flex gap-3 ${!notif.isRead ? 'bg-indigo-50 dark:bg-indigo-500/10/30' : ''}`}
                     >
                       <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${bgMap[notif.type]}`}>
                         {iconMap[notif.type]}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2">
-                          <p className={`text-xs leading-snug ${!notif.isRead ? 'font-bold text-slate-900' : 'font-medium text-slate-700'}`}>
+                          <p className={`text-xs leading-snug ${!notif.isRead ? 'font-bold text-foreground' : 'font-medium text-slate-700'}`}>
                             {notif.title}
                           </p>
                           {!notif.isRead && (
                             <div className="w-2 h-2 rounded-full bg-indigo-600 shrink-0 mt-1" />
                           )}
                         </div>
-                        <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed line-clamp-2">
+                        <p className="text-[11px] text-muted-foreground mt-0.5 leading-relaxed line-clamp-2">
                           {notif.message}
                         </p>
                         <p className="text-[10px] text-slate-400 mt-1.5">

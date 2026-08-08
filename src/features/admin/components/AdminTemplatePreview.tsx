@@ -118,29 +118,29 @@ export function AdminTemplatePreview({ template }: { template: FormTemplate }) {
   }
 
   return (
-    <div className="bg-white rounded-3xl ring-1 ring-slate-200 shadow-sm overflow-hidden flex flex-col md:flex-row min-h-[600px]">
+    <div className="card-solid rounded-3xl ring-1 ring-border shadow-sm overflow-hidden flex flex-col md:flex-row min-h-[600px]">
       
       {/* SIDEBAR NAVIGATION */}
-      <div className="w-full md:w-64 bg-slate-50 border-r border-slate-200 p-6 flex flex-col gap-6 shrink-0">
+      <div className="w-full md:w-64 bg-muted text-muted-foreground border-r border-border p-6 flex flex-col gap-6 shrink-0">
         <div>
-          <h3 className="font-black text-slate-900 flex items-center gap-2 mb-1">
-            <Eye className="w-5 h-5 text-indigo-600" /> Mode Preview
+          <h3 className="font-black text-foreground flex items-center gap-2 mb-1">
+            <Eye className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /> Mode Preview
           </h3>
-          <p className="text-xs text-slate-500 font-medium">Uji coba interaksi form dan cek parameter AI.</p>
+          <p className="text-xs text-muted-foreground font-medium">Uji coba interaksi form dan cek parameter AI.</p>
         </div>
 
         <div className="flex flex-col gap-2">
           <Button 
             variant={viewMode === 'form' ? 'default' : 'outline'} 
             onClick={() => setViewMode('form')}
-            className={`justify-start rounded-2xl h-11 cursor-pointer transition-all ${viewMode === 'form' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20' : 'text-slate-600 bg-white border-slate-200 hover:bg-slate-50 hover:text-indigo-600'}`}
+            className={`justify-start rounded-2xl h-11 cursor-pointer transition-all ${viewMode === 'form' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20' : 'text-muted-foreground card-solid border-border hover:bg-muted text-muted-foreground hover:text-indigo-600 dark:text-indigo-400'}`}
           >
             <LayoutGrid className="w-4 h-4 mr-3 opacity-70" /> Simulasi Formulir
           </Button>
           <Button 
             variant={viewMode === 'ai' ? 'default' : 'outline'} 
             onClick={() => setViewMode('ai')}
-            className={`justify-start rounded-2xl h-11 cursor-pointer transition-all ${viewMode === 'ai' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20' : 'text-slate-600 bg-white border-slate-200 hover:bg-slate-50 hover:text-indigo-600'}`}
+            className={`justify-start rounded-2xl h-11 cursor-pointer transition-all ${viewMode === 'ai' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20' : 'text-muted-foreground card-solid border-border hover:bg-muted text-muted-foreground hover:text-indigo-600 dark:text-indigo-400'}`}
           >
             <Bot className="w-4 h-4 mr-3 opacity-70" /> Ringkasan Prompt AI
           </Button>
@@ -148,17 +148,17 @@ export function AdminTemplatePreview({ template }: { template: FormTemplate }) {
 
         {/* Hanya tampilkan Navigasi Step jika berada di mode Formulir */}
         {viewMode === 'form' && totalSteps > 0 && (
-          <div className="mt-auto pt-6 border-t border-slate-200 space-y-3">
-            <div className="flex items-center justify-between text-xs font-bold text-slate-500">
+          <div className="mt-auto pt-6 border-t border-border space-y-3">
+            <div className="flex items-center justify-between text-xs font-bold text-muted-foreground">
               <span className="uppercase tracking-widest text-[10px]">Progres Form</span>
               <span>{Math.round((currentStep / totalSteps) * 100)}%</span>
             </div>
             <Progress value={(currentStep / totalSteps) * 100} className="h-2 bg-slate-200" />
-            <div className="flex items-center justify-between gap-2 bg-white ring-1 ring-slate-200 rounded-xl p-1 shadow-sm">
+            <div className="flex items-center justify-between gap-2 card-solid ring-1 ring-border rounded-xl p-1 shadow-sm">
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="ghost" size="sm" onClick={() => setCurrentStep(prev => Math.max(1, prev - 1))} disabled={currentStep === 1} className="px-3 hover:bg-slate-100 rounded-lg text-slate-500"><ChevronLeft className="w-4 h-4" /></Button>
+                    <Button variant="ghost" size="sm" onClick={() => setCurrentStep(prev => Math.max(1, prev - 1))} disabled={currentStep === 1} className="px-3 hover:bg-secondary text-secondary-foreground rounded-lg text-muted-foreground"><ChevronLeft className="w-4 h-4" /></Button>
                   </TooltipTrigger>
                   <TooltipContent><p>Langkah Sebelumnya</p></TooltipContent>
                 </Tooltip>
@@ -167,7 +167,7 @@ export function AdminTemplatePreview({ template }: { template: FormTemplate }) {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="ghost" size="sm" onClick={() => setCurrentStep(prev => Math.min(totalSteps, prev + 1))} disabled={currentStep === totalSteps} className="px-3 hover:bg-slate-100 rounded-lg text-slate-500"><ArrowRight className="w-4 h-4" /></Button>
+                    <Button variant="ghost" size="sm" onClick={() => setCurrentStep(prev => Math.min(totalSteps, prev + 1))} disabled={currentStep === totalSteps} className="px-3 hover:bg-secondary text-secondary-foreground rounded-lg text-muted-foreground"><ArrowRight className="w-4 h-4" /></Button>
                   </TooltipTrigger>
                   <TooltipContent><p>Langkah Berikutnya</p></TooltipContent>
                 </Tooltip>
@@ -178,7 +178,7 @@ export function AdminTemplatePreview({ template }: { template: FormTemplate }) {
       </div>
 
       {/* MAIN CONTENT AREA */}
-      <div className="flex-1 p-6 md:p-8 lg:p-10 overflow-y-auto bg-slate-50/50 custom-scrollbar relative">
+      <div className="flex-1 p-6 md:p-8 lg:p-10 overflow-y-auto bg-muted text-muted-foreground/50 custom-scrollbar relative">
         
         {/* VIEW 1: SIMULASI FORMULIR */}
         {viewMode === 'form' && (
@@ -190,10 +190,10 @@ export function AdminTemplatePreview({ template }: { template: FormTemplate }) {
             </div>
           ) : (
             <div className="max-w-4xl mx-auto space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-200 pb-5">
+              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-border pb-5">
                 <div>
-                  <h2 className="text-2xl font-black text-slate-900">Simulasi Formulir</h2>
-                  <p className="text-sm text-slate-500 font-medium">Pratinjau antarmuka pendaftaran untuk peserta (End-User).</p>
+                  <h2 className="text-2xl font-black text-foreground">Simulasi Formulir</h2>
+                  <p className="text-sm text-muted-foreground font-medium">Pratinjau antarmuka pendaftaran untuk peserta (End-User).</p>
                 </div>
                 <Button 
                   onClick={handleExportFormPDF}
@@ -205,18 +205,18 @@ export function AdminTemplatePreview({ template }: { template: FormTemplate }) {
                 </Button>
               </div>
 
-              <div className="bg-white rounded-3xl ring-1 ring-slate-200 shadow-md p-6 md:p-10 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-bl-full -z-0 opacity-50 pointer-events-none"></div>
+              <div className="card-solid rounded-3xl ring-1 ring-border shadow-md p-6 md:p-10 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 dark:bg-indigo-500/10 rounded-bl-full -z-0 opacity-50 pointer-events-none"></div>
 
                 <div className="relative z-10">
                   <div className="mb-10">
-                    <div className="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg mb-3 ring-1 ring-indigo-100">
+                    <div className="inline-flex items-center gap-2 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg mb-3 ring-1 ring-indigo-100">
                       <Sparkles size={12} />
                       Langkah {currentStep} dari {totalSteps}
                     </div>
-                    <h2 className="text-3xl font-black text-slate-900 leading-tight">{currentStepData.title}</h2>
+                    <h2 className="text-3xl font-black text-foreground leading-tight">{currentStepData.title}</h2>
                     {currentStepData.description && (
-                      <p className="text-slate-500 text-sm md:text-base mt-2 leading-relaxed font-medium">
+                      <p className="text-muted-foreground text-sm md:text-base mt-2 leading-relaxed font-medium">
                         {currentStepData.description}
                       </p>
                     )}
@@ -234,7 +234,7 @@ export function AdminTemplatePreview({ template }: { template: FormTemplate }) {
                     ))}
                   </div>
 
-                  <div className="pt-10 mt-10 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div className="pt-10 mt-10 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
                     <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
                       Preview {currentStep === totalSteps ? 'Selesai' : 'Berjalan'}
                     </p>
@@ -255,10 +255,10 @@ export function AdminTemplatePreview({ template }: { template: FormTemplate }) {
         {/* VIEW 2: RINGKASAN PROMPT AI (TERMINAL VIEW DIUPDATE) */}
         {viewMode === 'ai' && (
           <div className="max-w-4xl mx-auto space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-200 pb-4">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-border pb-4">
               <div>
-                <h2 className="text-2xl font-black text-slate-900">Kompilasi Instruksi AI</h2>
-                <p className="text-sm text-slate-500 font-medium">Pratinjau parameter yang akan dikirim ke mesin LLM.</p>
+                <h2 className="text-2xl font-black text-foreground">Kompilasi Instruksi AI</h2>
+                <p className="text-sm text-muted-foreground font-medium">Pratinjau parameter yang akan dikirim ke mesin LLM.</p>
               </div>
               <Button 
                 onClick={handleExportAIPDF}

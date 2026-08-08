@@ -26,23 +26,23 @@ export function B2BParticipantProfile({
   const customActionPlan = aiResultPayload.customActionPlan || [];
 
   return (
-    <div className="bg-white rounded-3xl ring-1 ring-slate-200 overflow-hidden flex flex-col h-full shadow-xl">
+    <div className="card-solid rounded-3xl ring-1 ring-border overflow-hidden flex flex-col h-full shadow-xl">
       {/* Simple Header */}
-      <div className="bg-white p-4 border-b border-slate-200 flex items-center justify-between">
+      <div className="card-solid p-4 border-b border-border flex items-center justify-between">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors"
+          className="flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-foreground transition-colors"
         >
           <ChevronLeft className="w-4 h-4" /> Kembali ke Pipeline
         </button>
         <div className="flex gap-2">
-          <a href={`/result/${participant.id}`} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition-colors">
+          <a href={`/result/${participant.id}`} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-3 py-1.5 rounded-lg hover:bg-indigo-100 dark:hover:bg-indigo-500/20 transition-colors">
             Full Result <ExternalLink className="w-3 h-3" />
           </a>
         </div>
       </div>
 
-      <div className="p-6 overflow-y-auto flex-1 bg-slate-50">
+      <div className="p-6 overflow-y-auto flex-1 bg-muted text-muted-foreground">
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
 
           {/* Left Column: Simplified Highlight View */}
@@ -53,7 +53,7 @@ export function B2BParticipantProfile({
               <div className="absolute top-0 right-0 opacity-10 transform translate-x-4 -translate-y-4 pointer-events-none">
                 <Sparkles size={120} />
               </div>
-              <div className="flex flex-col items-center justify-center shrink-0 w-32 h-32 bg-white/10 rounded-full ring-4 ring-white/20 relative z-10">
+              <div className="flex flex-col items-center justify-center shrink-0 w-32 h-32 card-solid/10 rounded-full ring-4 ring-white/20 relative z-10">
                 <span className="text-4xl font-black">{Math.min(score, 100)}</span>
                 <span className="text-[10px] uppercase font-bold tracking-widest opacity-80 mt-1">Skor AI</span>
               </div>

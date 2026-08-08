@@ -58,9 +58,9 @@ export default function CuratorLoginPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-emerald-950 to-slate-900 p-4 flex items-center justify-center">
-      <div className="w-full max-w-md rounded-[2rem] bg-white shadow-2xl ring-1 ring-slate-200 overflow-hidden">
+      <div className="w-full max-w-md rounded-[2rem] card-solid shadow-2xl ring-1 ring-border overflow-hidden">
         <div className="p-7 bg-slate-900 text-white">
-          <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.22em]">
+          <div className="inline-flex items-center gap-2 rounded-full card-solid/10 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.22em]">
             <BriefcaseBusiness className="w-4 h-4" /> Curator Access
           </div>
           <h1 className="text-2xl font-black mt-4">Login Portal Kurator</h1>
@@ -70,31 +70,31 @@ export default function CuratorLoginPage() {
         <div className="p-7 space-y-4">
           <form onSubmit={handleEmailLogin} className="space-y-3">
             <label className="block">
-              <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Email</span>
+              <span className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground">Email</span>
               <input
                 type="email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                className="mt-1 h-11 w-full rounded-xl border border-slate-200 px-3 text-sm"
+                className="mt-1 h-11 w-full rounded-xl border border-border px-3 text-sm"
                 placeholder="nama@perusahaan.com"
                 autoComplete="email"
               />
             </label>
 
             <label className="block">
-              <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Password</span>
+              <span className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground">Password</span>
               <input
                 type="password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                className="mt-1 h-11 w-full rounded-xl border border-slate-200 px-3 text-sm"
+                className="mt-1 h-11 w-full rounded-xl border border-border px-3 text-sm"
                 placeholder="Masukkan password"
                 autoComplete="current-password"
               />
             </label>
 
             {error && (
-              <div className="rounded-xl bg-rose-50 text-rose-700 text-sm p-3 ring-1 ring-rose-200">
+              <div className="rounded-xl bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-300 text-sm p-3 ring-1 ring-rose-200 dark:ring-rose-500/20">
                 {error}
               </div>
             )}
@@ -112,15 +112,15 @@ export default function CuratorLoginPage() {
             type="button"
             onClick={handleGoogleLogin}
             disabled={submitting}
-            className="w-full h-11 rounded-xl bg-white text-slate-700 border border-slate-200 font-black text-sm flex items-center justify-center gap-2 disabled:opacity-60"
+            className="w-full h-11 rounded-xl card-solid text-slate-700 border border-border font-black text-sm flex items-center justify-center gap-2 disabled:opacity-60"
           >
             {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Mail className="w-4 h-4" />} Login via Google
           </button>
 
-          <div className="rounded-xl bg-slate-50 p-4 ring-1 ring-slate-200 text-xs text-slate-600 leading-relaxed">
-            <p className="font-black text-slate-800 uppercase tracking-[0.14em] mb-1 flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5" /> Kebijakan Akses</p>
+          <div className="rounded-xl bg-muted text-muted-foreground p-4 ring-1 ring-border text-xs text-muted-foreground leading-relaxed">
+            <p className="font-black text-foreground uppercase tracking-[0.14em] mb-1 flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5" /> Kebijakan Akses</p>
             <p>Akun harus memiliki role curator/assessor/admin serta organization scope aktif untuk melihat member B2B.</p>
-            <Link href="/admin/b2b-access" className="text-indigo-600 font-bold mt-2 inline-block">Minta aktivasi akses ke Admin B2B</Link>
+            <Link href="/admin/b2b-access" className="text-indigo-600 dark:text-indigo-400 font-bold mt-2 inline-block">Minta aktivasi akses ke Admin B2B</Link>
           </div>
         </div>
       </div>

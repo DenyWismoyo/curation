@@ -2,12 +2,12 @@ import React from 'react';
 
 export default function PolicyPage() {
   return (
-    <div className="min-h-screen bg-[#FAFAFA] px-6 py-10 lg:px-12">
-      <article className="max-w-4xl mx-auto bg-white rounded-3xl ring-1 ring-slate-200 shadow-sm p-6 md:p-10 space-y-6">
+    <div className="min-h-screen bg-background text-foreground px-6 py-10 lg:px-12">
+      <article className="max-w-4xl mx-auto card-solid rounded-3xl ring-1 ring-border shadow-sm p-6 md:p-10 space-y-6">
         <header className="space-y-2">
-          <p className="text-xs uppercase tracking-widest font-black text-indigo-600">Syarat dan Kebijakan</p>
-          <h1 className="text-3xl md:text-4xl font-black text-slate-900">Syarat Penggunaan Omnifit</h1>
-          <p className="text-sm text-slate-500 font-medium">Terakhir diperbarui: 27 Juli 2026</p>
+          <p className="text-xs uppercase tracking-widest font-black text-indigo-600 dark:text-indigo-400">Syarat dan Kebijakan</p>
+          <h1 className="text-3xl md:text-4xl font-black text-foreground">Syarat Penggunaan Omnifit</h1>
+          <p className="text-sm text-muted-foreground font-medium">Terakhir diperbarui: 27 Juli 2026</p>
         </header>
 
         <section className="space-y-3 text-slate-700 leading-relaxed">
@@ -15,7 +15,7 @@ export default function PolicyPage() {
         </section>
 
         <section className="space-y-2">
-          <h2 className="text-xl font-black text-slate-900">Penggunaan Layanan</h2>
+          <h2 className="text-xl font-black text-foreground">Penggunaan Layanan</h2>
           <ul className="space-y-2 text-slate-700">
             <li>Pengguna wajib memberikan data yang benar dan tidak menyesatkan.</li>
             <li>Pengguna dilarang menyalahgunakan sistem untuk aktivitas ilegal atau merugikan pihak lain.</li>
@@ -24,7 +24,7 @@ export default function PolicyPage() {
         </section>
 
         <section className="space-y-2">
-          <h2 className="text-xl font-black text-slate-900">Konten dan Hasil Asesmen</h2>
+          <h2 className="text-xl font-black text-foreground">Konten dan Hasil Asesmen</h2>
           <ul className="space-y-2 text-slate-700">
             <li>Hasil asesmen bersifat dukungan pengambilan keputusan, bukan pengganti keputusan profesional final.</li>
             <li>Pengguna bertanggung jawab atas penggunaan hasil asesmen di luar platform.</li>
@@ -32,12 +32,12 @@ export default function PolicyPage() {
         </section>
 
         <section className="space-y-2">
-          <h2 className="text-xl font-black text-slate-900">Pembayaran dan Layanan Berbayar</h2>
+          <h2 className="text-xl font-black text-foreground">Pembayaran dan Layanan Berbayar</h2>
           <p className="text-slate-700">Untuk modul berbayar, harga, benefit, dan ketentuan akses mengikuti informasi terbaru di halaman katalog atau checkout.</p>
         </section>
 
         <section className="space-y-2">
-          <h2 className="text-xl font-black text-slate-900">Perubahan Kebijakan</h2>
+          <h2 className="text-xl font-black text-foreground">Perubahan Kebijakan</h2>
           <p className="text-slate-700">Kami dapat memperbarui kebijakan ini sewaktu-waktu. Versi terbaru akan ditampilkan di halaman ini.</p>
         </section>
       </article>

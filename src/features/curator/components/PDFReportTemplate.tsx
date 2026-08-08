@@ -68,7 +68,7 @@ export function CuratorExportPDF({ assessmentId, templateVersion = 1, trackType,
         disabled={isExporting}
         variant="outline"
         title="Render Ulang PDF Baru dengan Perubahan Terbaru"
-        className="h-10 px-3 rounded-xl border-emerald-200 text-emerald-600 hover:bg-emerald-50"
+        className="h-10 px-3 rounded-xl border-emerald-200 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:bg-emerald-500/10"
       >
         <RefreshCw className={`w-4 h-4 ${isExporting ? 'animate-spin' : ''}`} />
       </Button>

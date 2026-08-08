@@ -86,7 +86,7 @@ export function TabAdaptive({ template, onChange }: TabAdaptiveProps) {
                   className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${formMode === mode.id ? 'border-indigo-500 bg-indigo-500/10' : 'border-slate-800 bg-slate-900/50 hover:border-slate-700'}`}
                 >
                   <h4 className={`text-sm font-bold ${formMode === mode.id ? 'text-indigo-400' : 'text-slate-300'}`}>{mode.label}</h4>
-                  <p className="text-[11px] text-slate-500 mt-1">{mode.desc}</p>
+                  <p className="text-[11px] text-muted-foreground mt-1">{mode.desc}</p>
                 </div>
               ))}
             </div>
@@ -125,7 +125,7 @@ export function TabAdaptive({ template, onChange }: TabAdaptiveProps) {
               max={15}
               className="w-full sm:w-32 bg-slate-950 border border-slate-800 text-white rounded-xl px-4 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
             />
-            <p className="text-[11px] text-slate-500 mt-1">Sistem akan berhenti menghasilkan seksi baru jika form telah mencapai batas ini (default: 7).</p>
+            <p className="text-[11px] text-muted-foreground mt-1">Sistem akan berhenti menghasilkan seksi baru jika form telah mencapai batas ini (default: 7).</p>
           </div>
         </div>
       </div>

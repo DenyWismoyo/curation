@@ -50,7 +50,7 @@ export function CryptoTrialModal({ isOpen, setIsOpen, featureName }: CryptoTrial
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-md border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-0 overflow-hidden">
+      <DialogContent className="sm:max-w-md border-slate-200 dark:border-slate-800 bg-background text-foreground p-0 overflow-hidden">
         
         {/* Banner Image / Graphic */}
         <div className="h-40 bg-gradient-to-br from-indigo-100 dark:from-indigo-900/50 to-slate-200 dark:to-slate-900 relative flex items-center justify-center border-b border-slate-200 dark:border-slate-800">
@@ -58,13 +58,13 @@ export function CryptoTrialModal({ isOpen, setIsOpen, featureName }: CryptoTrial
           <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/20 blur-[50px]"></div>
           
           <div className="relative z-10 flex flex-col items-center gap-3">
-            <div className="w-16 h-16 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl flex items-center justify-center shadow-2xl relative">
-              <Lock className="w-8 h-8 text-slate-500 dark:text-slate-400" />
+            <div className="w-16 h-16 card-solid border border-slate-200 dark:border-slate-800 rounded-2xl flex items-center justify-center shadow-2xl relative">
+              <Lock className="w-8 h-8 text-muted-foreground" />
               <div className="absolute -top-2 -right-2 bg-indigo-500 w-6 h-6 rounded-full flex items-center justify-center border-2 border-slate-200 dark:border-slate-900">
-                <Sparkles className="w-3 h-3 text-slate-900 dark:text-white" />
+                <Sparkles className="w-3 h-3 text-foreground" />
               </div>
             </div>
-            <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-200 dark:border-slate-800 px-3 py-1 rounded-full text-xs font-medium text-slate-600 dark:text-slate-300 flex items-center gap-1.5">
+            <div className="card-solid/80 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-200 dark:border-slate-800 px-3 py-1 rounded-full text-xs font-medium text-muted-foreground flex items-center gap-1.5">
               <Clock className="w-3 h-3 text-indigo-400" /> Penawaran Terbatas
             </div>
           </div>
@@ -72,22 +72,22 @@ export function CryptoTrialModal({ isOpen, setIsOpen, featureName }: CryptoTrial
 
         <div className="p-6">
           <DialogHeader className="mb-6">
-            <DialogTitle className="text-xl font-bold text-center text-slate-900 dark:text-white mb-2">
+            <DialogTitle className="text-xl font-bold text-center text-foreground mb-2">
               Buka Kunci {featureName}
             </DialogTitle>
-            <DialogDescription className="text-center text-slate-500 dark:text-slate-400">
+            <DialogDescription className="text-center text-muted-foreground">
               Dapatkan akses langsung ke analisis AI premium, sinyal institusi, dan fitur intelijen pasar lainnya.
             </DialogDescription>
           </DialogHeader>
 
           {cryptoTrialUsed ? (
             <div className="space-y-4">
-              <div className="p-4 rounded-xl bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 text-center text-sm text-slate-500 dark:text-slate-400">
+              <div className="p-4 rounded-xl card-solid/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 text-center text-sm text-muted-foreground">
                 Masa coba gratis Anda telah berakhir. Upgrade sekarang untuk melanjutkan akses premium.
               </div>
               <Button 
                 onClick={() => router.push('/crypto')}
-                className="w-full h-12 bg-indigo-600 hover:bg-indigo-500 text-slate-900 dark:text-white font-bold"
+                className="w-full h-12 bg-indigo-600 hover:bg-indigo-500 text-foreground font-bold"
               >
                 Lihat Paket Premium
               </Button>
@@ -106,14 +106,14 @@ export function CryptoTrialModal({ isOpen, setIsOpen, featureName }: CryptoTrial
                 <Button 
                   onClick={() => router.push('/crypto')}
                   variant="outline"
-                  className="h-12 border-slate-300 dark:border-slate-700 bg-transparent hover:bg-slate-100 dark:hover:bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
+                  className="h-12 border-slate-300 dark:border-slate-700 bg-transparent hover:bg-secondary text-secondary-foreground dark:hover:bg-secondary text-secondary-foreground text-muted-foreground"
                 >
                   Lihat Harga
                 </Button>
                 <Button 
                   onClick={handleTrial}
                   disabled={loading}
-                  className="h-12 bg-emerald-600 hover:bg-emerald-500 text-slate-900 dark:text-white font-bold shadow-[0_0_15px_rgba(16,185,129,0.2)]"
+                  className="h-12 bg-emerald-600 hover:bg-emerald-500 text-foreground font-bold shadow-[0_0_15px_rgba(16,185,129,0.2)]"
                 >
                   {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Aktifkan Trial'}
                 </Button>

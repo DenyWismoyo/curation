@@ -21,9 +21,9 @@ const renderMarkdownText = (str: string) => {
   const parts = str.split(/(\*\*.*?\*\*|\*.*?\*)/g);
   return parts.map((part, index) => {
     if (part.startsWith('**') && part.endsWith('**')) {
-      return <strong key={index} className="font-black text-indigo-600">{part.slice(2, -2)}</strong>;
+      return <strong key={index} className="font-black text-indigo-600 dark:text-indigo-400">{part.slice(2, -2)}</strong>;
     } else if (part.startsWith('*') && part.endsWith('*')) {
-      return <strong key={index} className="font-bold text-indigo-600">{part.slice(1, -1)}</strong>;
+      return <strong key={index} className="font-bold text-indigo-600 dark:text-indigo-400">{part.slice(1, -1)}</strong>;
     }
     return part;
   });
@@ -103,29 +103,29 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
       case 'text':
         return (
           <div className="flex flex-col">
-            <Input type="text" placeholder={field.placeholder || 'Ketik di sini...'} value={value || ''} onChange={(e) => onChange(e.target.value)} className="h-12 bg-slate-50 border-slate-200 focus-visible:ring-indigo-500 rounded-xl transition-all font-medium text-slate-700" />
+            <Input type="text" placeholder={field.placeholder || 'Ketik di sini...'} value={value || ''} onChange={(e) => onChange(e.target.value)} className="h-12 bg-muted text-muted-foreground border-border focus-visible:ring-indigo-500 rounded-xl transition-all font-medium text-slate-700" />
             <VoiceInputRecorder onTranscription={(text) => onChange(text)} contextPrompt={`Pertanyaan: ${field.label}. Deskripsi: ${field.description || ''}`} />
           </div>
         );
       case 'number':
         return (
-          <Input type="number" placeholder={field.placeholder || '0'} value={value || ''} onChange={(e) => onChange(e.target.value)} className="h-12 bg-slate-50 border-slate-200 focus-visible:ring-indigo-500 rounded-xl transition-all font-medium text-slate-700" />
+          <Input type="number" placeholder={field.placeholder || '0'} value={value || ''} onChange={(e) => onChange(e.target.value)} className="h-12 bg-muted text-muted-foreground border-border focus-visible:ring-indigo-500 rounded-xl transition-all font-medium text-slate-700" />
         );
       case 'textarea':
         return (
           <div className="flex flex-col">
-            <Textarea placeholder={field.placeholder || 'Ketik penjelasan detail di sini...'} value={value || ''} onChange={(e) => onChange(e.target.value)} className="bg-slate-50 border-slate-200 focus-visible:ring-indigo-500 rounded-xl min-h-[100px] resize-y transition-all font-medium text-slate-700" />
+            <Textarea placeholder={field.placeholder || 'Ketik penjelasan detail di sini...'} value={value || ''} onChange={(e) => onChange(e.target.value)} className="bg-muted text-muted-foreground border-border focus-visible:ring-indigo-500 rounded-xl min-h-[100px] resize-y transition-all font-medium text-slate-700" />
             <VoiceInputRecorder onTranscription={(text) => onChange(text)} contextPrompt={`Pertanyaan: ${field.label}. Deskripsi: ${field.description || ''}`} />
           </div>
         );
       case 'date':
         return (
-          <Input type="date" value={value || ''} onChange={(e) => onChange(e.target.value)} className="h-12 bg-slate-50 border-slate-200 focus-visible:ring-indigo-500 rounded-xl transition-all font-medium text-slate-700 w-full" />
+          <Input type="date" value={value || ''} onChange={(e) => onChange(e.target.value)} className="h-12 bg-muted text-muted-foreground border-border focus-visible:ring-indigo-500 rounded-xl transition-all font-medium text-slate-700 w-full" />
         );
       case 'select':
         return (
           <div className="relative">
-            <select value={value || ''} onChange={(e) => onChange(e.target.value)} className="w-full h-12 bg-slate-50 border border-slate-200 text-slate-700 font-medium rounded-xl px-4 appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all cursor-pointer">
+            <select value={value || ''} onChange={(e) => onChange(e.target.value)} className="w-full h-12 bg-muted text-muted-foreground border border-border text-slate-700 font-medium rounded-xl px-4 appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all cursor-pointer">
               <option value="" disabled>-- Pilih salah satu opsi --</option>
               {field.options?.map((opt, idx) => {
                 const optLabel = getOptionLabel(opt);
@@ -143,8 +143,8 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
             {field.options?.map((opt, idx) => {
               const optLabel = getOptionLabel(opt);
               return (
-                <label key={idx} className={`flex items-start gap-3 p-3.5 rounded-xl border transition-all cursor-pointer ${value === optLabel ? 'border-indigo-500 bg-indigo-50/50 text-indigo-900 shadow-sm' : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-600'}`}>
-                  <div className={`mt-0.5 w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${value === optLabel ? 'border-indigo-600' : 'border-slate-300'}`}>
+                <label key={idx} className={`flex items-start gap-3 p-3.5 rounded-xl border transition-all cursor-pointer ${value === optLabel ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-500/10/50 text-indigo-900 shadow-sm' : 'border-border card-solid hover:bg-muted text-muted-foreground text-muted-foreground'}`}>
+                  <div className={`mt-0.5 w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${value === optLabel ? 'border-indigo-600' : 'border-border'}`}>
                     {value === optLabel && <div className="w-2.5 h-2.5 bg-indigo-600 rounded-full" />}
                   </div>
                   <input type="radio" name={field.id} value={optLabel} checked={value === optLabel} onChange={(e) => onChange(e.target.value)} className="hidden" />
@@ -162,8 +162,8 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
               const optLabel = getOptionLabel(opt);
               const isChecked = checkedValues.includes(optLabel);
               return (
-                <label key={idx} className={`flex items-start gap-3 p-3.5 rounded-xl border transition-all cursor-pointer ${isChecked ? 'border-indigo-500 bg-indigo-50/50 text-indigo-900 shadow-sm' : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-600'}`}>
-                  <div className={`mt-0.5 w-5 h-5 rounded border flex items-center justify-center shrink-0 ${isChecked ? 'bg-indigo-600 border-indigo-600 text-white' : 'border-slate-300'}`}>
+                <label key={idx} className={`flex items-start gap-3 p-3.5 rounded-xl border transition-all cursor-pointer ${isChecked ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-500/10/50 text-indigo-900 shadow-sm' : 'border-border card-solid hover:bg-muted text-muted-foreground text-muted-foreground'}`}>
+                  <div className={`mt-0.5 w-5 h-5 rounded border flex items-center justify-center shrink-0 ${isChecked ? 'bg-indigo-600 border-indigo-600 text-white' : 'border-border'}`}>
                     {isChecked && <Check size={14} strokeWidth={3} />}
                   </div>
                   <input type="checkbox" value={optLabel} checked={isChecked} onChange={(e) => handleCheckboxChange(optLabel, e.target.checked)} className="hidden" />
@@ -246,17 +246,17 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
           <div className="mt-1">
             {hasFile ? (
               <div className="space-y-3">
-                <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex items-center justify-between shadow-sm">
+                <div className="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 rounded-2xl p-4 flex items-center justify-between shadow-sm">
                   <div className="flex items-center gap-3 overflow-hidden">
-                    <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center shrink-0">
+                    <div className="w-10 h-10 bg-emerald-100 text-emerald-600 dark:text-emerald-400 rounded-xl flex items-center justify-center shrink-0">
                       <DocExportIcon size={20} />
                     </div>
                     <div className="truncate">
                       <p className="text-sm font-bold text-emerald-900 truncate">{displayFileName || 'Dokumen Terlampir'}</p>
                       {displayURL ? (
-                        <a href={displayURL} target="_blank" rel="noreferrer" className="text-xs text-emerald-600 font-medium hover:underline">✅ Tersimpan di cloud — Klik untuk lihat</a>
+                        <a href={displayURL} target="_blank" rel="noreferrer" className="text-xs text-emerald-600 dark:text-emerald-400 font-medium hover:underline">✅ Tersimpan di cloud — Klik untuk lihat</a>
                       ) : (
-                        <p className="text-xs text-amber-600 font-medium">⏳ Mengunggah...</p>
+                        <p className="text-xs text-amber-600 dark:text-amber-400 font-medium">⏳ Mengunggah...</p>
                       )}
                     </div>
                   </div>
@@ -269,19 +269,19 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
                           if (legacyFileValue) analyzeFile(legacyFileValue);
                         }} 
                         disabled={isAnalyzing || !legacyFileValue}
-                        className="px-3 py-1.5 bg-white border border-emerald-200 text-emerald-700 hover:bg-emerald-100 rounded-lg text-xs font-bold transition-colors flex items-center gap-1 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-3 py-1.5 card-solid border border-emerald-200 dark:border-emerald-500/20 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 rounded-lg text-xs font-bold transition-colors flex items-center gap-1 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {isAnalyzing ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} className="text-amber-500" />}
                         {isAnalyzing ? 'Menganalisis...' : 'Analisis Ulang AI'}
                       </button>
                     )}
-                    <button type="button" onClick={() => { onChange(null); setAnalysisResult(null); }} className="p-2 hover:bg-rose-100 text-slate-400 hover:text-rose-600 rounded-full transition-colors shrink-0"><X size={18} /></button>
+                    <button type="button" onClick={() => { onChange(null); setAnalysisResult(null); }} className="p-2 hover:bg-rose-100 dark:hover:bg-rose-500/20 text-slate-400 hover:text-rose-600 dark:text-rose-400 rounded-full transition-colors shrink-0"><X size={18} /></button>
                   </div>
                 </div>
 
                 {analysisResult && (
-                  <div className="bg-amber-50 border border-amber-200 p-4 rounded-xl text-amber-900 text-sm shadow-inner relative">
-                    <div className="flex items-center gap-2 mb-2 font-black text-amber-700">
+                  <div className="bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 p-4 rounded-xl text-amber-900 text-sm shadow-inner relative">
+                    <div className="flex items-center gap-2 mb-2 font-black text-amber-700 dark:text-amber-300">
                       <Sparkles size={16} /> Hasil Analisis Bukti
                     </div>
                     <div className="prose prose-sm prose-amber max-w-none leading-relaxed">
@@ -293,18 +293,18 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
             ) : (
               <div
                 className={`relative border-2 border-dashed rounded-2xl p-8 text-center transition-all flex flex-col items-center justify-center gap-2 ${
-                  isUploading ? 'border-indigo-400 bg-indigo-50 cursor-wait' :
-                  dragActive ? 'border-indigo-500 bg-indigo-50 cursor-copy' : 
-                  'border-slate-300 bg-slate-50 hover:bg-slate-100 cursor-pointer'
+                  isUploading ? 'border-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 cursor-wait' :
+                  dragActive ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-500/10 cursor-copy' : 
+                  'border-border bg-muted text-muted-foreground hover:bg-secondary text-secondary-foreground cursor-pointer'
                 }`}
                 onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={!isUploading ? handleDrop : undefined}
                 onClick={!isUploading ? () => fileInputRef.current?.click() : undefined}
               >
-                <div className="w-12 h-12 bg-white rounded-full shadow-sm ring-1 ring-slate-200 flex items-center justify-center text-indigo-500 mb-2">
+                <div className="w-12 h-12 card-solid rounded-full shadow-sm ring-1 ring-border flex items-center justify-center text-indigo-500 mb-2">
                   {isUploading ? <Loader2 size={24} className="animate-spin text-indigo-500" /> : <DocExportIcon size={24} />}
                 </div>
                 <p className="text-sm font-bold text-slate-700">
-                  {isUploading ? 'Mengunggah ke cloud...' : <><span className="text-indigo-600">Klik untuk unggah</span> atau seret file ke sini</>}
+                  {isUploading ? 'Mengunggah ke cloud...' : <><span className="text-indigo-600 dark:text-indigo-400">Klik untuk unggah</span> atau seret file ke sini</>}
                 </p>
                 <p className="text-xs font-medium text-slate-400 mt-1 uppercase tracking-wider">Mendukung format: {field.fileAccept ? field.fileAccept.replace(/,/g, ', ') : 'Semua Format'}</p>
                 <input ref={fileInputRef} type="file" accept={field.fileAccept} className="hidden" disabled={isUploading} onChange={(e) => { if (e.target.files && e.target.files[0]) handleFileUpload(e.target.files[0]); }} />
@@ -320,12 +320,12 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
 
   return (
     <div className={`space-y-2 ${field.gridSpan === 2 ? 'sm:col-span-2' : ''}`}>
-      <label className="text-sm font-bold text-slate-800 flex items-start gap-1">
+      <label className="text-sm font-bold text-foreground flex items-start gap-1">
         <span className="flex-1 leading-snug">{renderMarkdownText(field.label)}</span>
         {field.required && <span className="text-rose-500 text-lg leading-none shrink-0">*</span>}
       </label>
       {field.description && (
-        <p className="text-xs text-slate-500 font-medium -mt-1 mb-2 leading-relaxed">{renderMarkdownText(field.description)}</p>
+        <p className="text-xs text-muted-foreground font-medium -mt-1 mb-2 leading-relaxed">{renderMarkdownText(field.description)}</p>
       )}
       {renderField()}
     </div>

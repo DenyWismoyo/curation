@@ -67,15 +67,15 @@ export function DraftValidationModal({ isOpen, onClose, userQuota, templateId, o
             initial={{ opacity: 0, scale: 0.95, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            className="fixed left-1/2 top-1/2 z-50 w-[92%] max-w-md -translate-x-1/2 -translate-y-1/2 bg-white rounded-3xl p-6 md:p-8 shadow-2xl ring-1 ring-slate-200"
+            className="fixed left-1/2 top-1/2 z-50 w-[92%] max-w-md -translate-x-1/2 -translate-y-1/2 card-solid rounded-3xl p-6 md:p-8 shadow-2xl ring-1 ring-border"
           >
             <div className="flex flex-col items-center text-center">
-              <div className="w-16 h-16 bg-rose-50 rounded-2xl flex items-center justify-center ring-1 ring-rose-100 mb-5 shadow-inner">
+              <div className="w-16 h-16 bg-rose-50 dark:bg-rose-500/10 rounded-2xl flex items-center justify-center ring-1 ring-rose-100 mb-5 shadow-inner">
                 <Lock className="w-8 h-8 text-rose-500" />
               </div>
               
-              <h2 className="text-xl font-black text-slate-900 mb-2">Akses Draf Terkunci!</h2>
-              <p className="text-sm text-slate-500 font-medium leading-relaxed mb-6">
+              <h2 className="text-xl font-black text-foreground mb-2">Akses Draf Terkunci!</h2>
+              <p className="text-sm text-muted-foreground font-medium leading-relaxed mb-6">
                 Token yang Anda gunakan untuk draf ini telah terpakai pada riwayat asesmen lain. Tapi jangan khawatir, <strong className="text-slate-700">progres jawaban Anda tetap aman</strong>. Lanjutkan analisis draf ini sekarang dengan menukarkan kuota asesmen atau menggunakan token baru.
               </p>
 
@@ -98,7 +98,7 @@ export function DraftValidationModal({ isOpen, onClose, userQuota, templateId, o
                 <Button 
                   onClick={handleBuyToken}
                   variant="outline"
-                  className="w-full h-12 rounded-xl font-bold text-slate-700 hover:text-indigo-600 hover:bg-indigo-50 hover:ring-indigo-200 transition-all"
+                  className="w-full h-12 rounded-xl font-bold text-slate-700 hover:text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:bg-indigo-500/10 hover:ring-indigo-200 dark:ring-indigo-500/20 transition-all"
                 >
                   <KeyRound className="w-4 h-4 mr-2" />
                   Masukkan Kode Token Baru
@@ -106,7 +106,7 @@ export function DraftValidationModal({ isOpen, onClose, userQuota, templateId, o
               </div>
 
               {userQuota < 1 && (
-                <div className="mt-4 flex items-center justify-center gap-1.5 text-xs font-bold text-rose-500 bg-rose-50 px-3 py-1.5 rounded-lg">
+                <div className="mt-4 flex items-center justify-center gap-1.5 text-xs font-bold text-rose-500 bg-rose-50 dark:bg-rose-500/10 px-3 py-1.5 rounded-lg">
                   <AlertCircle className="w-4 h-4" />
                   Anda tidak memiliki kuota asesmen tersisa.
                 </div>

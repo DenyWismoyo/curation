@@ -163,48 +163,48 @@ function AdminDashboardContent() {
                 CSRS Admin Dashboard
               </Badge>
               <span className="text-slate-300">•</span>
-              <span className="text-xs font-bold text-slate-500">Overview Real-time</span>
+              <span className="text-xs font-bold text-muted-foreground">Overview Real-time</span>
             </div>
-            <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+            <h1 className="text-3xl font-black text-foreground tracking-tight">
               Manajemen Data Asesmen
             </h1>
-            <p className="text-slate-500 mt-1 font-medium max-w-2xl text-sm leading-relaxed">
+            <p className="text-muted-foreground mt-1 font-medium max-w-2xl text-sm leading-relaxed">
               Direktori pendaftar terorganisir otomatis berdasarkan Program Korporat, Token Akses, dan Jalur Publik.
             </p>
           </div>
 
           {/* QUICK SUMMARY CARDS */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div className="bg-white p-4 rounded-2xl ring-1 ring-slate-200/80 shadow-xs flex flex-col justify-between">
+            <div className="card-solid p-4 rounded-2xl ring-1 ring-border/80 shadow-xs flex flex-col justify-between">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Total Entitas</span>
-                <div className="p-1.5 bg-indigo-50 text-indigo-600 rounded-lg"><Users size={16} /></div>
+                <div className="p-1.5 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-lg"><Users size={16} /></div>
               </div>
-              <p className="text-2xl font-black text-slate-900">{totalEntitas}</p>
+              <p className="text-2xl font-black text-foreground">{totalEntitas}</p>
             </div>
 
-            <div className="bg-white p-4 rounded-2xl ring-1 ring-slate-200/80 shadow-xs flex flex-col justify-between">
+            <div className="card-solid p-4 rounded-2xl ring-1 ring-border/80 shadow-xs flex flex-col justify-between">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Program</span>
-                <div className="p-1.5 bg-sky-50 text-sky-600 rounded-lg"><FolderOpen size={16} /></div>
+                <div className="p-1.5 bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 rounded-lg"><FolderOpen size={16} /></div>
               </div>
-              <p className="text-2xl font-black text-slate-900">{totalPrograms}</p>
+              <p className="text-2xl font-black text-foreground">{totalPrograms}</p>
             </div>
 
-            <div className="bg-white p-4 rounded-2xl ring-1 ring-slate-200/80 shadow-xs flex flex-col justify-between">
+            <div className="card-solid p-4 rounded-2xl ring-1 ring-border/80 shadow-xs flex flex-col justify-between">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Terverifikasi</span>
-                <div className="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg"><CheckCircle2 size={16} /></div>
+                <div className="p-1.5 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg"><CheckCircle2 size={16} /></div>
               </div>
-              <p className="text-2xl font-black text-emerald-600">{totalValidated}</p>
+              <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400">{totalValidated}</p>
             </div>
 
-            <div className="bg-white p-4 rounded-2xl ring-1 ring-slate-200/80 shadow-xs flex flex-col justify-between">
+            <div className="card-solid p-4 rounded-2xl ring-1 ring-border/80 shadow-xs flex flex-col justify-between">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Draf Kurator</span>
-                <div className="p-1.5 bg-amber-50 text-amber-600 rounded-lg"><Clock size={16} /></div>
+                <div className="p-1.5 bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-lg"><Clock size={16} /></div>
               </div>
-              <p className="text-2xl font-black text-amber-600">{totalDraft}</p>
+              <p className="text-2xl font-black text-amber-600 dark:text-amber-400">{totalDraft}</p>
             </div>
           </div>
         </div>
@@ -213,7 +213,7 @@ function AdminDashboardContent() {
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-black uppercase tracking-wider text-slate-400 flex items-center gap-2">
-              <Layers size={16} className="text-indigo-600" /> Direktori Program Korporat ({totalPrograms})
+              <Layers size={16} className="text-indigo-600 dark:text-indigo-400" /> Direktori Program Korporat ({totalPrograms})
             </h2>
           </div>
 
@@ -243,7 +243,7 @@ function AdminDashboardContent() {
                     router.push(`?folder=${encodeURIComponent(programName)}`)
                     setSearchTerm('')
                   }}
-                  className="p-6 bg-white rounded-3xl border-0 ring-1 ring-slate-200/80 shadow-xs hover:shadow-xl hover:ring-indigo-400/60 transition-all duration-300 cursor-pointer group flex flex-col justify-between h-full relative overflow-hidden"
+                  className="p-6 card-solid rounded-3xl border-0 ring-1 ring-border/80 shadow-xs hover:shadow-xl hover:ring-indigo-400/60 transition-all duration-300 cursor-pointer group flex flex-col justify-between h-full relative overflow-hidden"
                 >
                   <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 rounded-bl-full pointer-events-none group-hover:scale-110 transition-transform duration-500"></div>
 
@@ -252,8 +252,8 @@ function AdminDashboardContent() {
                       <div
                         className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-300 ${
                           isPublic
-                            ? 'bg-slate-100 text-slate-600 group-hover:bg-slate-900 group-hover:text-white'
-                            : 'bg-indigo-50 text-indigo-600 ring-1 ring-indigo-100 group-hover:bg-gradient-to-br group-hover:from-indigo-600 group-hover:to-indigo-700 group-hover:text-white group-hover:shadow-md group-hover:shadow-indigo-600/30'
+                            ? 'bg-secondary text-secondary-foreground text-muted-foreground group-hover:bg-slate-900 group-hover:text-white'
+                            : 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 ring-1 ring-indigo-100 group-hover:bg-gradient-to-br group-hover:from-indigo-600 group-hover:to-indigo-700 group-hover:text-white group-hover:shadow-md group-hover:shadow-indigo-600/30'
                         }`}
                       >
                         {isPublic ? <FolderOpen size={24} /> : <Building2 size={24} />}
@@ -266,7 +266,7 @@ function AdminDashboardContent() {
                       </Badge>
                     </div>
 
-                    <h3 className="text-lg font-black text-slate-900 leading-snug mb-1 line-clamp-2 group-hover:text-indigo-600 transition-colors">
+                    <h3 className="text-lg font-black text-foreground leading-snug mb-1 line-clamp-2 group-hover:text-indigo-600 dark:text-indigo-400 transition-colors">
                       {programName}
                     </h3>
                     <p className="text-xs font-bold text-slate-400 mb-6 flex items-center gap-1.5">
@@ -274,24 +274,24 @@ function AdminDashboardContent() {
                     </p>
                   </div>
 
-                  <div className="pt-4 border-t border-slate-100 grid grid-cols-3 gap-2 text-center mt-auto">
-                    <div className="bg-slate-50 rounded-xl p-2 group-hover:bg-slate-100/60 transition-colors">
+                  <div className="pt-4 border-t border-border grid grid-cols-3 gap-2 text-center mt-auto">
+                    <div className="bg-muted text-muted-foreground rounded-xl p-2 group-hover:bg-secondary text-secondary-foreground/60 transition-colors">
                       <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
                         Valid
                       </p>
-                      <p className="text-sm font-black text-emerald-600">{validated}</p>
+                      <p className="text-sm font-black text-emerald-600 dark:text-emerald-400">{validated}</p>
                     </div>
-                    <div className="bg-slate-50 rounded-xl p-2 group-hover:bg-slate-100/60 transition-colors">
+                    <div className="bg-muted text-muted-foreground rounded-xl p-2 group-hover:bg-secondary text-secondary-foreground/60 transition-colors">
                       <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
                         Draf
                       </p>
                       <p className="text-sm font-black text-amber-500">{draft}</p>
                     </div>
-                    <div className="bg-indigo-50/70 rounded-xl p-2 ring-1 ring-indigo-100 group-hover:bg-indigo-100/70 transition-colors">
+                    <div className="bg-indigo-50 dark:bg-indigo-500/10/70 rounded-xl p-2 ring-1 ring-indigo-100 group-hover:bg-indigo-100 dark:hover:bg-indigo-500/20/70 transition-colors">
                       <p className="text-[9px] font-black text-indigo-400 uppercase tracking-widest">
                         Skor Rata
                       </p>
-                      <p className="text-sm font-black text-indigo-700">{avgScore}</p>
+                      <p className="text-sm font-black text-indigo-700 dark:text-indigo-300">{avgScore}</p>
                     </div>
                   </div>
                 </Card>
@@ -309,7 +309,7 @@ function AdminDashboardContent() {
   return (
     <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
       {/* HEADER FOLDER AKTIF */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-5 rounded-3xl ring-1 ring-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 card-solid p-5 rounded-3xl ring-1 ring-border/80 shadow-xs">
         <div className="flex items-center gap-3.5">
           <Button
             variant="ghost"
@@ -317,7 +317,7 @@ function AdminDashboardContent() {
               router.push('/admin')
               setSearchTerm('')
             }}
-            className="w-10 h-10 p-0 rounded-xl bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 text-slate-600 shrink-0 transition-colors"
+            className="w-10 h-10 p-0 rounded-xl bg-secondary text-secondary-foreground hover:bg-indigo-50 dark:bg-indigo-500/10 hover:text-indigo-600 dark:text-indigo-400 text-muted-foreground shrink-0 transition-colors"
             title="Kembali ke Daftar Folder"
           >
             <ChevronLeft size={20} />
@@ -326,7 +326,7 @@ function AdminDashboardContent() {
             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
               Direktori Program Aktif
             </p>
-            <h1 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight leading-tight truncate mt-0.5">
+            <h1 className="text-lg sm:text-xl font-black text-foreground tracking-tight leading-tight truncate mt-0.5">
               {activeProgramFolder}
             </h1>
           </div>
@@ -340,40 +340,40 @@ function AdminDashboardContent() {
               placeholder="Cari entitas, email, track..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9 h-10 bg-slate-50/80 rounded-xl border-slate-200 focus-visible:ring-indigo-500 text-xs font-medium"
+              className="pl-9 h-10 bg-muted text-muted-foreground/80 rounded-xl border-border focus-visible:ring-indigo-500 text-xs font-medium"
             />
           </div>
         </div>
       </div>
 
       {/* FILTER TABS & DATATABLE CONTAINER */}
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-6 space-y-4">
+      <div className="card-solid rounded-3xl border border-border/80 shadow-xs p-6 space-y-4">
         <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="w-full">
           <div className="flex items-center justify-between gap-4 mb-4">
-            <TabsList className="bg-slate-100/80 p-1 rounded-2xl border-0">
-              <TabsTrigger value="all" className="rounded-xl text-xs font-bold px-4 data-[state=active]:bg-white data-[state=active]:shadow-xs">
+            <TabsList className="bg-secondary text-secondary-foreground/80 p-1 rounded-2xl border-0">
+              <TabsTrigger value="all" className="rounded-xl text-xs font-bold px-4 data-[state=active]:card-solid data-[state=active]:shadow-xs">
                 Semua ({groupedPrograms[activeProgramFolder]?.length || 0})
               </TabsTrigger>
-              <TabsTrigger value="validated" className="rounded-xl text-xs font-bold px-4 data-[state=active]:bg-white data-[state=active]:shadow-xs">
+              <TabsTrigger value="validated" className="rounded-xl text-xs font-bold px-4 data-[state=active]:card-solid data-[state=active]:shadow-xs">
                 Selesai Validasi
               </TabsTrigger>
-              <TabsTrigger value="draft" className="rounded-xl text-xs font-bold px-4 data-[state=active]:bg-white data-[state=active]:shadow-xs">
+              <TabsTrigger value="draft" className="rounded-xl text-xs font-bold px-4 data-[state=active]:card-solid data-[state=active]:shadow-xs">
                 Draf Kurator
               </TabsTrigger>
             </TabsList>
           </div>
 
           <TabsContent value={activeTab} className="m-0">
-            <div className="rounded-2xl border border-slate-200/70 overflow-hidden">
+            <div className="rounded-2xl border border-border/70 overflow-hidden">
               <Table>
-                <TableHeader className="bg-slate-50/80">
-                  <TableRow className="border-b border-slate-200/70">
-                    <TableHead className="font-black text-xs uppercase tracking-wider text-slate-500">Identitas Usaha</TableHead>
-                    <TableHead className="font-black text-xs uppercase tracking-wider text-slate-500">Kategori / Modul</TableHead>
-                    <TableHead className="font-black text-xs uppercase tracking-wider text-slate-500 text-center">Skor Akhir</TableHead>
-                    <TableHead className="font-black text-xs uppercase tracking-wider text-slate-500">Analitik AI</TableHead>
-                    <TableHead className="font-black text-xs uppercase tracking-wider text-slate-500">Status Validasi</TableHead>
-                    <TableHead className="font-black text-xs uppercase tracking-wider text-slate-500 text-center">Aksi</TableHead>
+                <TableHeader className="bg-muted text-muted-foreground/80">
+                  <TableRow className="border-b border-border/70">
+                    <TableHead className="font-black text-xs uppercase tracking-wider text-muted-foreground">Identitas Usaha</TableHead>
+                    <TableHead className="font-black text-xs uppercase tracking-wider text-muted-foreground">Kategori / Modul</TableHead>
+                    <TableHead className="font-black text-xs uppercase tracking-wider text-muted-foreground text-center">Skor Akhir</TableHead>
+                    <TableHead className="font-black text-xs uppercase tracking-wider text-muted-foreground">Analitik AI</TableHead>
+                    <TableHead className="font-black text-xs uppercase tracking-wider text-muted-foreground">Status Validasi</TableHead>
+                    <TableHead className="font-black text-xs uppercase tracking-wider text-muted-foreground text-center">Aksi</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -394,9 +394,9 @@ function AdminDashboardContent() {
                       const analyticsVersion = item.analyticsSummary?.version
 
                       return (
-                        <TableRow key={item.id} className="group hover:bg-slate-50/80 transition-colors">
+                        <TableRow key={item.id} className="group hover:bg-muted text-muted-foreground/80 transition-colors">
                           <TableCell>
-                            <div className="font-black text-slate-900 text-sm group-hover:text-indigo-600 transition-colors">
+                            <div className="font-black text-foreground text-sm group-hover:text-indigo-600 dark:text-indigo-400 transition-colors">
                               {item.namaUsaha}
                             </div>
                             <div className="text-[11px] text-slate-400 font-medium mt-0.5">
@@ -414,8 +414,8 @@ function AdminDashboardContent() {
                             <span
                               className={`inline-flex items-center justify-center w-9 h-9 rounded-xl font-black text-sm ring-1 shadow-2xs ${
                                 isCuratorValidated
-                                  ? 'bg-emerald-50 text-emerald-700 ring-emerald-200'
-                                  : 'bg-indigo-50 text-indigo-700 ring-indigo-200'
+                                  ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 ring-emerald-200 dark:ring-emerald-500/20'
+                                  : 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 ring-indigo-200 dark:ring-indigo-500/20'
                               }`}
                             >
                               {finalScore}
@@ -425,7 +425,7 @@ function AdminDashboardContent() {
                           <TableCell>
                             {item.analyticsSummary ? (
                               <div className="space-y-1">
-                                <div className="text-xs font-black text-slate-800">
+                                <div className="text-xs font-black text-foreground">
                                   {analyticsScore ?? '-'} / 100
                                 </div>
                                 <div className="flex items-center gap-1.5">

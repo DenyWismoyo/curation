@@ -73,7 +73,7 @@ export default function HiddenGemsPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-slate-50 dark:bg-slate-950">
+      <div className="flex justify-center items-center min-h-screen bg-background text-foreground">
         <CryptoLoadingState type="spinner" message="Mencari Mutiara Tersembunyi..." />
       </div>
     );
@@ -81,7 +81,7 @@ export default function HiddenGemsPage() {
 
   if (!user || !role?.startsWith("admin")) {
     return (
-      <div className="p-8 flex justify-center items-center min-h-screen bg-slate-50 dark:bg-slate-950">
+      <div className="p-8 flex justify-center items-center min-h-screen bg-background text-foreground">
         <CryptoEmptyState 
            icon={<Diamond className="w-8 h-8" />}
            title="Akses Ditolak"
@@ -95,7 +95,7 @@ export default function HiddenGemsPage() {
 
   if (!latestReport) {
     return (
-      <div className="p-8 flex justify-center items-center min-h-screen bg-slate-50 dark:bg-slate-950">
+      <div className="p-8 flex justify-center items-center min-h-screen bg-background text-foreground">
         <CryptoEmptyState 
            icon={<Diamond className="w-8 h-8" />}
            title="Belum Ada Data"
@@ -112,13 +112,13 @@ export default function HiddenGemsPage() {
     <div className="w-full relative">
       
       {/* HEADER SECTION */}
-      <div className="bg-slate-50 dark:bg-slate-950/40 backdrop-blur-md border-b border-white/5 mb-6">
+      <div className="bg-background text-foreground backdrop-blur-md border-b border-white/5 mb-6">
         <div className="max-w-6xl mx-auto px-4 md:px-8 py-4">
            <CryptoButton 
                variant="ghost" 
                size="sm" 
                onClick={() => router.back()}
-               className="mb-6 -ml-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white"
+               className="mb-6 -ml-2 text-muted-foreground hover:text-foreground"
            >
                <ArrowLeft className="w-4 h-4 mr-2" /> Kembali ke Laporan
            </CryptoButton>
@@ -133,20 +133,20 @@ export default function HiddenGemsPage() {
                />
 
                <div className="flex flex-col items-end gap-2 shrink-0">
-                   <div className="text-xs text-slate-500 font-bold uppercase tracking-widest flex items-center gap-1.5">
+                   <div className="text-xs text-muted-foreground font-bold uppercase tracking-widest flex items-center gap-1.5">
                       <Clock className="w-3.5 h-3.5 text-emerald-500" /> Riwayat Scan
                    </div>
                    
                    <Select value={selectedReportId} onValueChange={setSelectedReportId}>
-                     <SelectTrigger className="w-[200px] h-9 text-xs bg-white/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800/80 text-slate-600 dark:text-slate-300 focus:ring-0 focus:ring-offset-0 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-100 dark:bg-slate-800 transition-colors">
+                     <SelectTrigger className="w-[200px] h-9 text-xs card-solid/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800/80 text-muted-foreground focus:ring-0 focus:ring-offset-0 rounded-xl hover:bg-secondary text-secondary-foreground dark:hover:bg-secondary text-secondary-foreground transition-colors">
                         <SelectValue placeholder="Pilih Waktu" />
                      </SelectTrigger>
-                     <SelectContent className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 rounded-xl shadow-xl shadow-black/50">
+                     <SelectContent className="card-solid border-slate-200 dark:border-slate-800 text-muted-foreground rounded-xl shadow-xl shadow-black/50">
                         {reports.map(r => {
                            const d = r.createdAt?.toDate ? r.createdAt.toDate() : new Date(r.createdAt);
                            const isLatest = r.id === reports[0]?.id;
                            return (
-                              <SelectItem key={r.id} value={r.id} className="text-xs cursor-pointer focus:bg-slate-100 dark:bg-slate-800 focus:text-slate-900 dark:text-white">
+                              <SelectItem key={r.id} value={r.id} className="text-xs cursor-pointer focus:bg-secondary text-secondary-foreground focus:text-foreground">
                                  {d.toLocaleDateString("id-ID", { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })} WIB {isLatest && "(Terbaru)"}
                               </SelectItem>
                            )
@@ -161,7 +161,7 @@ export default function HiddenGemsPage() {
       <div className="max-w-6xl mx-auto px-4 md:px-8 py-10 space-y-12">
         
         {/* HERO SECTION */}
-        <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-emerald-500/20 bg-slate-50 dark:bg-black">
+        <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-emerald-500/20 bg-muted text-muted-foreground dark:bg-black">
           <div className="absolute inset-0 bg-gradient-to-br from-emerald-950/40 via-black to-slate-200 dark:to-slate-900"></div>
           <div className="absolute -top-40 -right-40 w-96 h-96 bg-emerald-600/10 rounded-full blur-[120px]"></div>
           
@@ -169,21 +169,21 @@ export default function HiddenGemsPage() {
              <CryptoBadge variant="bullish" className="mb-6">
                 SWING TRADING OPPORTUNITIES
              </CryptoBadge>
-             <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white leading-tight mb-4 tracking-tight">
+             <h2 className="text-3xl md:text-5xl font-black text-foreground leading-tight mb-4 tracking-tight">
                Oversold <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">Hidden Gems</span>
              </h2>
-             <p className="text-slate-500 dark:text-slate-400 max-w-2xl text-lg leading-relaxed mb-8">
+             <p className="text-muted-foreground max-w-2xl text-lg leading-relaxed mb-8">
                Koin dengan RSI harian/H4 terendah yang dianalisis secara fundamental oleh DeepSeek-Reasoner untuk potensi pembalikan arah (reversal) menengah.
              </p>
              
-             <div className="bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 backdrop-blur-sm max-w-3xl">
+             <div className="card-solid/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 backdrop-blur-sm max-w-3xl">
                 <div className="flex items-start gap-4">
                    <div className="bg-emerald-500/20 p-3 rounded-xl">
                       <Activity className="w-6 h-6 text-emerald-400" />
                    </div>
                    <div>
-                      <h4 className="text-slate-900 dark:text-white font-bold mb-1">Market Condition Summary</h4>
-                      <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">{latestReport.marketCondition || "Tidak ada ringkasan kondisi pasar."}</p>
+                      <h4 className="text-foreground font-bold mb-1">Market Condition Summary</h4>
+                      <p className="text-muted-foreground text-sm leading-relaxed">{latestReport.marketCondition || "Tidak ada ringkasan kondisi pasar."}</p>
                    </div>
                 </div>
              </div>
@@ -194,7 +194,7 @@ export default function HiddenGemsPage() {
         <div className="space-y-6">
           <div className="flex items-center gap-3 mb-6">
              <Diamond className="w-6 h-6 text-emerald-500" />
-             <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Top Gems Today</h3>
+             <h3 className="text-2xl font-black text-foreground tracking-tight">Top Gems Today</h3>
           </div>
 
           {gems.length === 0 ? (
@@ -209,11 +209,11 @@ export default function HiddenGemsPage() {
              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {gems.map((gem: any, idx: number) => (
                   <CryptoCard key={idx} variant="glow-emerald" className="overflow-hidden flex flex-col group shadow-xl">
-                    <div className="p-6 border-b border-slate-200 dark:border-slate-800/60 bg-white/50 dark:bg-slate-900/50 flex justify-between items-start">
+                    <div className="p-6 border-b border-slate-200 dark:border-slate-800/60 card-solid/50 dark:bg-slate-900/50 flex justify-between items-start">
                        <div>
                           <div className="flex items-center gap-2 mb-1">
-                            <span className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{gem.symbol.replace("USDT", "")}</span>
-                            <span className="text-xs font-bold text-slate-500">/USDT</span>
+                            <span className="text-2xl font-black text-foreground tracking-tight">{gem.symbol.replace("USDT", "")}</span>
+                            <span className="text-xs font-bold text-muted-foreground">/USDT</span>
                           </div>
                           <div className="text-xl font-bold text-emerald-400">
                              ${gem.currentPrice}
@@ -241,8 +241,8 @@ export default function HiddenGemsPage() {
                             )}
                          </div>
                          )}
-                         <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">DeepSeek Reasoning</div>
-                         <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                         <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">DeepSeek Reasoning</div>
+                         <p className="text-sm text-muted-foreground leading-relaxed">
                             {gem.reasoning}
                          </p>
                        </div>

@@ -25,10 +25,10 @@ export function CryptoGuard({ children }: { children: React.ReactNode }) {
 
   if (loading || isChecking) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 text-slate-200">
+      <div className="min-h-screen flex items-center justify-center bg-background text-foreground text-slate-200">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
-          <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Memeriksa akses...</p>
+          <p className="text-sm font-medium text-muted-foreground">Memeriksa akses...</p>
         </div>
       </div>
     );

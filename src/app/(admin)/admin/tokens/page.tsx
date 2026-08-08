@@ -447,16 +447,16 @@ export default function TokenManagerPage() {
               Token Control Center
             </Badge>
           </div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-3xl font-black text-foreground tracking-tight">
             Akses & Kuota Token
           </h1>
-          <p className="text-slate-500 mt-1 font-medium max-w-2xl text-sm leading-relaxed">
+          <p className="text-muted-foreground mt-1 font-medium max-w-2xl text-sm leading-relaxed">
             Kelola kuota kurasi untuk peserta (batch) dan berikan akses untuk para kurator secara terpusat.
           </p>
         </div>
 
         <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val as any)}>
-          <TabsList className="bg-white border border-slate-200/80 p-1 rounded-2xl shadow-xs">
+          <TabsList className="card-solid border border-border/80 p-1 rounded-2xl shadow-xs">
             <TabsTrigger value="peserta" className="rounded-xl px-5 py-2 text-xs font-bold gap-2">
               <Users className="w-4 h-4" /> Peserta ({batches.length})
             </TabsTrigger>
@@ -470,16 +470,16 @@ export default function TokenManagerPage() {
       {activeTab === 'peserta' && (
         <div className="space-y-6 animate-in fade-in duration-300">
           {/* FORM GENERATE BATCH */}
-          <Card className="p-6 sm:p-8 bg-white rounded-3xl shadow-xs border-none ring-1 ring-slate-200/80 flex flex-col gap-6">
+          <Card className="p-6 sm:p-8 card-solid rounded-3xl shadow-xs border-none ring-1 ring-border/80 flex flex-col gap-6">
             <div className="flex flex-col md:flex-row items-end gap-5">
               <div className="space-y-2 flex-1 w-full">
-                <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest">
+                <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
                   Pilih Tenant / Organisasi B2B
                 </label>
                 <select
                   value={selectedOrganizationId}
                   onChange={(e) => setSelectedOrganizationId(e.target.value)}
-                  className="w-full h-12 rounded-xl bg-slate-50/80 font-bold px-3 border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none"
+                  className="w-full h-12 rounded-xl bg-muted text-muted-foreground/80 font-bold px-3 border border-border focus:ring-2 focus:ring-indigo-500 outline-none"
                 >
                   <option value="" disabled>-- Pilih Organisasi --</option>
                   {organizations.map((org) => (
@@ -490,18 +490,18 @@ export default function TokenManagerPage() {
                 </select>
               </div>
               <div className="space-y-2 w-full md:w-64">
-                <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest">
+                <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
                   Nama Program / Batch
                 </label>
                 <Input
                   value={programName}
                   onChange={(e) => setProgramName(e.target.value)}
                   placeholder="Contoh: Batch 1"
-                  className="h-12 rounded-xl bg-slate-50/80 font-bold"
+                  className="h-12 rounded-xl bg-muted text-muted-foreground/80 font-bold"
                 />
               </div>
               <div className="space-y-2 w-full md:w-32">
-                <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest">
+                <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
                   Jumlah Token
                 </label>
                 <Input
@@ -510,14 +510,14 @@ export default function TokenManagerPage() {
                   onChange={(e) => setQty(Number(e.target.value))}
                   min={1}
                   max={5000}
-                  className="h-12 rounded-xl bg-slate-50/80 font-bold text-center"
+                  className="h-12 rounded-xl bg-muted text-muted-foreground/80 font-bold text-center"
                 />
               </div>
             </div>
 
             {/* FILTER MODUL ASESMEN */}
-            <div className="pt-4 border-t border-slate-100 space-y-3">
-              <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center justify-between">
+            <div className="pt-4 border-t border-border space-y-3">
+              <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest flex items-center justify-between">
                 <span>1. Batasi Akses Form Modul Asesmen</span>
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -526,13 +526,13 @@ export default function TokenManagerPage() {
                     key={tpl.id}
                     className={`flex items-center gap-3 p-3 rounded-2xl border-2 cursor-pointer transition-all ${
                       selectedTemplates.includes(tpl.id)
-                        ? 'border-indigo-600 bg-indigo-50/50 shadow-2xs'
-                        : 'border-slate-100 bg-slate-50/50 hover:border-indigo-200'
+                        ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-500/10/50 shadow-2xs'
+                        : 'border-border bg-muted text-muted-foreground/50 hover:border-indigo-200 dark:border-indigo-500/20'
                     }`}
                   >
                     <input
                       type="checkbox"
-                      className="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500"
+                      className="w-4 h-4 text-indigo-600 dark:text-indigo-400 rounded border-border focus:ring-indigo-500"
                       checked={selectedTemplates.includes(tpl.id)}
                       onChange={(e) => {
                         if (e.target.checked) setSelectedTemplates([...selectedTemplates, tpl.id])
@@ -552,8 +552,8 @@ export default function TokenManagerPage() {
             </div>
 
             {/* FILTER DOKUMEN WORD */}
-            <div className="pt-4 border-t border-slate-100 space-y-3">
-              <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center justify-between">
+            <div className="pt-4 border-t border-border space-y-3">
+              <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest flex items-center justify-between">
                 <span>2. Batasi Akses Template Dokumen AI (Word)</span>
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -562,13 +562,13 @@ export default function TokenManagerPage() {
                     key={docTpl.id}
                     className={`flex items-center gap-3 p-3 rounded-2xl border-2 cursor-pointer transition-all ${
                       selectedDocTemplates.includes(docTpl.id)
-                        ? 'border-emerald-600 bg-emerald-50/50 shadow-2xs'
-                        : 'border-slate-100 bg-slate-50/50 hover:border-emerald-200'
+                        ? 'border-emerald-600 bg-emerald-50 dark:bg-emerald-500/10/50 shadow-2xs'
+                        : 'border-border bg-muted text-muted-foreground/50 hover:border-emerald-200 dark:border-emerald-500/20'
                     }`}
                   >
                     <input
                       type="checkbox"
-                      className="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500"
+                      className="w-4 h-4 text-emerald-600 dark:text-emerald-400 rounded border-border focus:ring-emerald-500"
                       checked={selectedDocTemplates.includes(docTpl.id)}
                       onChange={(e) => {
                         if (e.target.checked)
@@ -593,9 +593,9 @@ export default function TokenManagerPage() {
               </div>
             </div>
 
-            <div className="flex flex-col md:flex-row items-center justify-between gap-5 pt-4 border-t border-slate-100">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-5 pt-4 border-t border-border">
               <div className="space-y-2 w-full md:w-auto">
-                <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest">
+                <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
                   Pilih Mesin AI (Model)
                 </label>
                 <div className="flex gap-3">
@@ -603,8 +603,8 @@ export default function TokenManagerPage() {
                     onClick={() => setModelType('flash')}
                     className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-extrabold border-2 transition-all ${
                       modelType === 'flash'
-                        ? 'border-indigo-600 bg-indigo-50 text-indigo-700'
-                        : 'border-slate-200 bg-white text-slate-500 hover:border-indigo-300'
+                        ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300'
+                        : 'border-border card-solid text-muted-foreground hover:border-indigo-300'
                     }`}
                   >
                     <Zap className="w-4 h-4" /> AI Flash (Standar)
@@ -613,8 +613,8 @@ export default function TokenManagerPage() {
                     onClick={() => setModelType('pro')}
                     className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-extrabold border-2 transition-all ${
                       modelType === 'pro'
-                        ? 'border-amber-500 bg-amber-50 text-amber-700'
-                        : 'border-slate-200 bg-white text-slate-500 hover:border-amber-300'
+                        ? 'border-amber-500 bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-300'
+                        : 'border-border card-solid text-muted-foreground hover:border-amber-300'
                     }`}
                   >
                     <Sparkles className="w-4 h-4" /> AI Pro (Premium)
@@ -658,20 +658,20 @@ export default function TokenManagerPage() {
                 </TableRow>
               ) : (
                 batches.map((batch) => (
-                  <TableRow key={batch.id} className="hover:bg-slate-50/70">
+                  <TableRow key={batch.id} className="hover:bg-muted text-muted-foreground/70">
                     <TableCell>
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 ring-1 ring-indigo-100">
+                        <div className="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 ring-1 ring-indigo-100">
                           <Building2 size={18} />
                         </div>
                         <div>
-                          <p className="font-extrabold text-slate-900 text-sm">{batch.corporateName}</p>
+                          <p className="font-extrabold text-foreground text-sm">{batch.corporateName}</p>
                           <p className="text-[11px] text-slate-400 font-medium mt-0.5">
                             {new Date(batch.createdAt).toLocaleDateString('id-ID')}
                           </p>
                           {batch.organizationId && (
                             <div className="flex items-center gap-2 mt-1">
-                              <Badge variant="indigo" className="text-[9px] px-1.5 bg-indigo-50 text-indigo-600">
+                              <Badge variant="indigo" className="text-[9px] px-1.5 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
                                 Linked to Tenant
                               </Badge>
                               <button 
@@ -692,7 +692,7 @@ export default function TokenManagerPage() {
                         <Badge variant={batch.modelType === 'pro' ? 'amber' : 'indigo'} className="text-[9px] px-2 py-0">
                           AI {batch.modelType.toUpperCase()}
                         </Badge>
-                        <span className="font-mono font-black text-indigo-700 bg-indigo-50/80 px-2 py-0.5 rounded-lg text-xs ring-1 ring-indigo-100/50">
+                        <span className="font-mono font-black text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-500/10/80 px-2 py-0.5 rounded-lg text-xs ring-1 ring-indigo-100/50">
                           {batch.id}-******
                         </span>
                       </div>
@@ -700,7 +700,7 @@ export default function TokenManagerPage() {
 
                     <TableCell className="align-top max-w-[280px]">
                       {editingBatchId === batch.id ? (
-                        <div className="space-y-4 bg-white p-4 rounded-2xl ring-1 ring-slate-200 shadow-md relative z-10 w-[300px]">
+                        <div className="space-y-4 card-solid p-4 rounded-2xl ring-1 ring-border shadow-md relative z-10 w-[300px]">
                           <div>
                             <p className="text-[10px] font-black text-slate-400 uppercase mb-2">
                               1. Akses Form Asesmen:
@@ -710,7 +710,7 @@ export default function TokenManagerPage() {
                                 <label key={tpl.id} className="flex items-start gap-2 cursor-pointer group">
                                   <input
                                     type="checkbox"
-                                    className="mt-0.5 rounded text-indigo-600"
+                                    className="mt-0.5 rounded text-indigo-600 dark:text-indigo-400"
                                     checked={editingAllowedTemplates.includes(tpl.id)}
                                     onChange={(e) => {
                                       if (e.target.checked)
@@ -721,7 +721,7 @@ export default function TokenManagerPage() {
                                         )
                                     }}
                                   />
-                                  <span className="text-xs font-bold text-slate-700 group-hover:text-indigo-600">
+                                  <span className="text-xs font-bold text-slate-700 group-hover:text-indigo-600 dark:text-indigo-400">
                                     {tpl.trackName}
                                   </span>
                                 </label>
@@ -730,7 +730,7 @@ export default function TokenManagerPage() {
                           </div>
 
                           <div>
-                            <p className="text-[10px] font-black text-slate-400 uppercase mb-2 border-t border-slate-100 pt-3">
+                            <p className="text-[10px] font-black text-slate-400 uppercase mb-2 border-t border-border pt-3">
                               2. Akses Dokumen Word:
                             </p>
                             <div className="max-h-[100px] overflow-y-auto space-y-1.5 custom-scrollbar pr-2">
@@ -738,7 +738,7 @@ export default function TokenManagerPage() {
                                 <label key={docTpl.id} className="flex items-start gap-2 cursor-pointer group">
                                   <input
                                     type="checkbox"
-                                    className="mt-0.5 rounded text-emerald-600"
+                                    className="mt-0.5 rounded text-emerald-600 dark:text-emerald-400"
                                     checked={editingDocTemplates.includes(docTpl.id)}
                                     onChange={(e) => {
                                       if (e.target.checked)
@@ -749,7 +749,7 @@ export default function TokenManagerPage() {
                                         )
                                     }}
                                   />
-                                  <span className="text-xs font-bold text-slate-700 group-hover:text-emerald-600">
+                                  <span className="text-xs font-bold text-slate-700 group-hover:text-emerald-600 dark:text-emerald-400">
                                     {docTpl.name}
                                   </span>
                                 </label>
@@ -757,7 +757,7 @@ export default function TokenManagerPage() {
                             </div>
                           </div>
 
-                          <div className="flex gap-2 pt-2 border-t border-slate-100">
+                          <div className="flex gap-2 pt-2 border-t border-border">
                             <Button
                               size="sm"
                               className="h-8 text-xs px-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold flex-1 rounded-xl"
@@ -769,7 +769,7 @@ export default function TokenManagerPage() {
                             <Button
                               size="sm"
                               variant="outline"
-                              className="h-8 text-xs px-3 text-slate-500 flex-1 rounded-xl"
+                              className="h-8 text-xs px-3 text-muted-foreground flex-1 rounded-xl"
                               onClick={() => setEditingBatchId(null)}
                             >
                               Batal
@@ -830,7 +830,7 @@ export default function TokenManagerPage() {
                               setEditingAllowedTemplates(batch.allowedTemplates || [])
                               setEditingDocTemplates(batch.allowedDocumentTemplates || [])
                             }}
-                            className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-600 flex items-center gap-1 hover:underline mt-1"
+                            className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-600 dark:text-indigo-400 flex items-center gap-1 hover:underline mt-1"
                           >
                             <Edit3 size={10} /> Ubah Batasan Akses
                           </button>
@@ -840,11 +840,11 @@ export default function TokenManagerPage() {
 
                     <TableCell className="text-center">
                       <div className="flex flex-col items-center">
-                        <div className="font-black text-slate-900 text-base">
+                        <div className="font-black text-foreground text-base">
                           {batch.usedCount || 0}{' '}
                           <span className="text-slate-400 text-xs">/ {batch.totalTokens}</span>
                         </div>
-                        <div className="w-24 h-1.5 bg-slate-100 rounded-full mt-1.5 overflow-hidden relative">
+                        <div className="w-24 h-1.5 bg-secondary text-secondary-foreground rounded-full mt-1.5 overflow-hidden relative">
                           <div
                             className="absolute h-full bg-emerald-500 rounded-full"
                             style={{
@@ -863,28 +863,28 @@ export default function TokenManagerPage() {
                             setNewQuotaAmount(batch.totalTokens)
                           }}
                           variant="outline"
-                          className="border-amber-200 bg-amber-50 shadow-2xs w-9 h-9 p-0 hover:bg-amber-100 rounded-xl"
+                          className="border-amber-200 dark:border-amber-500/20 bg-amber-50 dark:bg-amber-500/10 shadow-2xs w-9 h-9 p-0 hover:bg-amber-100 dark:hover:bg-amber-500/20 rounded-xl"
                           title="Atur Ulang Kuota Token"
                         >
-                          <Settings2 className="w-4 h-4 text-amber-600" />
+                          <Settings2 className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                         </Button>
 
                         <Button
                           onClick={() => setSelectedBatch(batch)}
                           variant="outline"
-                          className="border-slate-200 bg-white shadow-2xs w-9 h-9 p-0 rounded-xl"
+                          className="border-border card-solid shadow-2xs w-9 h-9 p-0 rounded-xl"
                           title="Lihat Detail Kode Token"
                         >
-                          <Eye className="w-4 h-4 text-slate-600" />
+                          <Eye className="w-4 h-4 text-muted-foreground" />
                         </Button>
 
                         <Button
                           onClick={() => exportTokensToCSV(batch.id, batch)}
                           variant="outline"
-                          className="border-indigo-200 bg-white shadow-2xs w-9 h-9 p-0 rounded-xl"
+                          className="border-indigo-200 dark:border-indigo-500/20 card-solid shadow-2xs w-9 h-9 p-0 rounded-xl"
                           title="Unduh CSV"
                         >
-                          <Download className="w-4 h-4 text-indigo-600" />
+                          <Download className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                         </Button>
 
                         <TokenExportPDFButton batch={batch} availableTemplates={availableTemplates} />
@@ -894,11 +894,11 @@ export default function TokenManagerPage() {
                             onClick={() => handleMigrateToTenant(batch)}
                             disabled={migratingBatchId === batch.id}
                             variant="outline"
-                            className="border-emerald-200 bg-emerald-50 shadow-2xs h-9 px-2.5 hover:bg-emerald-100 rounded-xl flex items-center gap-1.5"
+                            className="border-emerald-200 dark:border-emerald-500/20 bg-emerald-50 dark:bg-emerald-500/10 shadow-2xs h-9 px-2.5 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 rounded-xl flex items-center gap-1.5"
                             title="Migrasi ke Tenant B2B"
                           >
-                            <Building2 className="w-3.5 h-3.5 text-emerald-600" />
-                            <span className="text-xs font-bold text-emerald-700">
+                            <Building2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                            <span className="text-xs font-bold text-emerald-700 dark:text-emerald-300">
                               {migratingBatchId === batch.id ? 'Loading...' : 'Ke Tenant'}
                             </span>
                           </Button>
@@ -916,15 +916,15 @@ export default function TokenManagerPage() {
       {/* TAB 2: MANAJEMEN AKSES KURATOR */}
       {activeTab === 'kurator' && (
         <div className="space-y-6 animate-in fade-in duration-300">
-          <Card className="p-6 sm:p-8 bg-white rounded-3xl shadow-xs border-none ring-1 ring-slate-200/80 flex flex-col md:flex-row items-end gap-5">
+          <Card className="p-6 sm:p-8 card-solid rounded-3xl shadow-xs border-none ring-1 ring-border/80 flex flex-col md:flex-row items-end gap-5">
             <div className="space-y-2 flex-1 w-full">
-              <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
+              <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
                 <Building2 className="w-3.5 h-3.5" /> Nama Program / Entitas Tugas
               </label>
               <select
                 value={curatorProgram}
                 onChange={(e) => setCuratorProgram(e.target.value)}
-                className="flex h-12 w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-sm font-bold text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                className="flex h-12 w-full rounded-xl border border-border bg-muted text-muted-foreground/80 px-3 py-2 text-sm font-bold text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
               >
                 <option value="" disabled>
                   -- Pilih Program / Entitas --
@@ -938,14 +938,14 @@ export default function TokenManagerPage() {
             </div>
 
             <div className="space-y-2 w-full md:w-64">
-              <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
+              <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
                 <KeyRound className="w-3.5 h-3.5" /> Kode Login Kurator
               </label>
               <Input
                 value={curatorCode}
                 onChange={(e) => setCuratorCode(e.target.value.toUpperCase().replace(/\s/g, '-'))}
                 placeholder="CUR-SOLO-2026"
-                className="h-12 rounded-xl bg-slate-50/80 uppercase font-mono font-bold"
+                className="h-12 rounded-xl bg-muted text-muted-foreground/80 uppercase font-mono font-bold"
               />
             </div>
 
@@ -982,30 +982,30 @@ export default function TokenManagerPage() {
                 </TableRow>
               ) : (
                 curatorTokens.map((token) => (
-                  <TableRow key={token.id} className="hover:bg-slate-50/70">
+                  <TableRow key={token.id} className="hover:bg-muted text-muted-foreground/70">
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => handleCopyToken(token.id)}
-                          className="h-8 px-2 border-slate-200 rounded-lg"
+                          className="h-8 px-2 border-border rounded-lg"
                         >
                           {copiedToken === token.id ? (
-                            <Check className="w-3.5 h-3.5 text-emerald-600" />
+                            <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                           ) : (
-                            <Copy className="w-3.5 h-3.5 text-slate-500" />
+                            <Copy className="w-3.5 h-3.5 text-muted-foreground" />
                           )}
                         </Button>
-                        <span className="font-mono font-black text-emerald-700 bg-emerald-50 px-3 py-1 rounded-lg ring-1 ring-emerald-100/50">
+                        <span className="font-mono font-black text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-500/10 px-3 py-1 rounded-lg ring-1 ring-emerald-100/50">
                           {token.id}
                         </span>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <span className="font-extrabold text-slate-900 text-sm">{token.programName}</span>
+                      <span className="font-extrabold text-foreground text-sm">{token.programName}</span>
                     </TableCell>
-                    <TableCell className="text-center text-slate-500 font-medium text-xs">
+                    <TableCell className="text-center text-muted-foreground font-medium text-xs">
                       {new Date(token.createdAt).toLocaleDateString('id-ID')}
                     </TableCell>
                     <TableCell className="text-center">
@@ -1013,7 +1013,7 @@ export default function TokenManagerPage() {
                         <AlertDialogTrigger asChild>
                           <Button
                             variant="ghost"
-                            className="text-rose-500 hover:text-rose-700 hover:bg-rose-50 h-9 w-9 p-0 rounded-xl"
+                            className="text-rose-500 hover:text-rose-700 dark:text-rose-300 hover:bg-rose-50 dark:bg-rose-500/10 h-9 w-9 p-0 rounded-xl"
                             title="Cabut Akses"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -1046,36 +1046,36 @@ export default function TokenManagerPage() {
       {/* MODAL EDIT KUOTA TOKEN */}
       {editingQuotaBatch && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white rounded-[2rem] shadow-2xl w-full max-w-md flex flex-col ring-1 ring-slate-200 overflow-hidden animate-in zoom-in-95 duration-200">
-            <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+          <div className="card-solid rounded-[2rem] shadow-2xl w-full max-w-md flex flex-col ring-1 ring-border overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-border flex items-center justify-between bg-muted text-muted-foreground/50">
               <div>
-                <h3 className="text-lg font-black text-slate-900">Atur Ulang Kuota Token</h3>
-                <p className="text-xs font-bold text-slate-500 mt-0.5 uppercase tracking-widest">
+                <h3 className="text-lg font-black text-foreground">Atur Ulang Kuota Token</h3>
+                <p className="text-xs font-bold text-muted-foreground mt-0.5 uppercase tracking-widest">
                   {editingQuotaBatch.corporateName}
                 </p>
               </div>
               <button
                 onClick={() => setEditingQuotaBatch(null)}
-                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 text-slate-500 transition-colors"
+                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 text-muted-foreground transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
             <div className="p-6 space-y-6">
-              <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl ring-1 ring-slate-100">
+              <div className="flex items-center justify-between p-4 bg-muted text-muted-foreground rounded-2xl ring-1 ring-border">
                 <div className="text-center">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Awal</p>
-                  <p className="text-2xl font-black text-slate-800">{editingQuotaBatch.totalTokens}</p>
+                  <p className="text-2xl font-black text-foreground">{editingQuotaBatch.totalTokens}</p>
                 </div>
                 <div className="w-px h-10 bg-slate-200" />
                 <div className="text-center">
                   <p className="text-[10px] font-black text-amber-500 uppercase tracking-widest">Terpakai</p>
-                  <p className="text-2xl font-black text-amber-600">{editingQuotaBatch.usedCount}</p>
+                  <p className="text-2xl font-black text-amber-600 dark:text-amber-400">{editingQuotaBatch.usedCount}</p>
                 </div>
                 <div className="w-px h-10 bg-slate-200" />
                 <div className="text-center">
                   <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Sisa Aktif</p>
-                  <p className="text-2xl font-black text-emerald-600">
+                  <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400">
                     {editingQuotaBatch.totalTokens - editingQuotaBatch.usedCount}
                   </p>
                 </div>
@@ -1091,15 +1091,15 @@ export default function TokenManagerPage() {
                   max={5000}
                   value={newQuotaAmount}
                   onChange={(e) => setNewQuotaAmount(Number(e.target.value))}
-                  className="h-14 text-xl font-black bg-white rounded-xl text-center"
+                  className="h-14 text-xl font-black card-solid rounded-xl text-center"
                 />
               </div>
             </div>
-            <div className="p-6 border-t border-slate-100 bg-slate-50/50 flex gap-3">
+            <div className="p-6 border-t border-border bg-muted text-muted-foreground/50 flex gap-3">
               <Button
                 variant="outline"
                 onClick={() => setEditingQuotaBatch(null)}
-                className="w-full h-12 rounded-xl font-bold border-slate-200 text-slate-600 hover:bg-slate-100"
+                className="w-full h-12 rounded-xl font-bold border-border text-muted-foreground hover:bg-secondary text-secondary-foreground"
               >
                 Batal
               </Button>
@@ -1122,11 +1122,11 @@ export default function TokenManagerPage() {
       {/* MODAL DETAIL BATCH KODE TOKEN */}
       {selectedBatch && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white rounded-[2rem] shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col ring-1 ring-slate-200 overflow-hidden animate-in zoom-in-95 duration-200">
-            <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+          <div className="card-solid rounded-[2rem] shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col ring-1 ring-border overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="px-6 py-5 border-b border-border flex items-center justify-between bg-muted text-muted-foreground/50">
               <div>
-                <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
-                  <KeyRound className="w-5 h-5 text-indigo-600" /> Detail Batch: {selectedBatch.corporateName}
+                <h3 className="text-lg font-black text-foreground flex items-center gap-2">
+                  <KeyRound className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /> Detail Batch: {selectedBatch.corporateName}
                 </h3>
                 <p className="text-xs font-bold text-slate-400 mt-0.5 uppercase tracking-widest">
                   Prefix: {selectedBatch.id} | Total: {selectedBatch.totalTokens} Token
@@ -1138,25 +1138,25 @@ export default function TokenManagerPage() {
                   setSearchToken('')
                   setEditingBatchId(null)
                 }}
-                className="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors"
+                className="w-9 h-9 flex items-center justify-center rounded-xl bg-secondary text-secondary-foreground text-muted-foreground hover:bg-slate-200 transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="p-4 border-b border-slate-100 bg-white">
+            <div className="p-4 border-b border-border card-solid">
               <div className="relative">
                 <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                 <Input
                   value={searchToken}
                   onChange={(e) => setSearchToken(e.target.value)}
                   placeholder="Cari Kode Token atau Nama Usaha..."
-                  className="pl-9 h-11 bg-slate-50 border-slate-200 rounded-xl font-medium text-xs"
+                  className="pl-9 h-11 bg-muted text-muted-foreground border-border rounded-xl font-medium text-xs"
                 />
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto bg-slate-50/30 p-4 space-y-3 custom-scrollbar">
+            <div className="flex-1 overflow-y-auto bg-muted text-muted-foreground/30 p-4 space-y-3 custom-scrollbar">
               {getFilteredTokens().length === 0 ? (
                 <div className="text-center py-10 text-slate-400 font-bold text-sm">
                   Tidak ada token yang cocok.
@@ -1167,11 +1167,11 @@ export default function TokenManagerPage() {
                   return (
                     <div
                       key={code}
-                      className="bg-white p-4 rounded-2xl ring-1 ring-slate-200/60 shadow-2xs flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between hover:ring-indigo-200 transition-all"
+                      className="card-solid p-4 rounded-2xl ring-1 ring-border shadow-2xs flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between hover:ring-indigo-200 dark:ring-indigo-500/20 transition-all"
                     >
                       <div className="space-y-1.5">
                         <div className="flex items-center gap-3">
-                          <code className="text-sm font-black text-slate-900 font-mono bg-slate-100 px-3 py-1 rounded-lg border border-slate-200">
+                          <code className="text-sm font-black text-foreground font-mono bg-secondary text-secondary-foreground px-3 py-1 rounded-lg border border-border">
                             {fullToken}
                           </code>
                           {data.isUsed ? (
@@ -1185,7 +1185,7 @@ export default function TokenManagerPage() {
                           )}
                         </div>
                         {data.isUsed && data.usedByNamaUsaha && (
-                          <div className="text-xs font-medium text-slate-500 flex items-center gap-1">
+                          <div className="text-xs font-medium text-muted-foreground flex items-center gap-1">
                             <Users className="w-3.5 h-3.5 text-slate-400" /> Diklaim oleh{' '}
                             <strong className="text-slate-700">{data.usedByNamaUsaha}</strong>
                           </div>
@@ -1200,7 +1200,7 @@ export default function TokenManagerPage() {
                           className={`shrink-0 rounded-xl font-bold h-9 px-4 text-xs ${
                             copiedToken === fullToken
                               ? 'bg-emerald-500 text-white hover:bg-emerald-600'
-                              : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100'
+                              : 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-500/20'
                           }`}
                         >
                           {copiedToken === fullToken ? (
@@ -1214,7 +1214,7 @@ export default function TokenManagerPage() {
                           )}
                         </Button>
                       ) : (
-                        <div className="shrink-0 h-9 px-3 flex items-center justify-center text-xs font-bold text-slate-400 bg-slate-50 rounded-xl ring-1 ring-slate-100 cursor-not-allowed">
+                        <div className="shrink-0 h-9 px-3 flex items-center justify-center text-xs font-bold text-slate-400 bg-muted text-muted-foreground rounded-xl ring-1 ring-border cursor-not-allowed">
                           Token Tidak Berlaku
                         </div>
                       )}

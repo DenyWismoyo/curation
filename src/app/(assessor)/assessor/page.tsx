@@ -260,7 +260,7 @@ export default function AssessorDashboardPage() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-slate-400">
-        <Loader2 className="w-10 h-10 animate-spin mb-4 text-emerald-600" />
+        <Loader2 className="w-10 h-10 animate-spin mb-4 text-emerald-600 dark:text-emerald-400" />
         <p className="font-bold tracking-widest text-xs uppercase">Menyiapkan Ruang Kerja...</p>
       </div>
     );
@@ -299,12 +299,12 @@ export default function AssessorDashboardPage() {
           <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
             Asesor: {allocation.assessorName}
           </p>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">{allocation.corporateName}</h1>
-          <p className="text-slate-500 mt-2 font-medium max-w-2xl text-balance">
+          <h1 className="text-3xl font-black text-foreground tracking-tight">{allocation.corporateName}</h1>
+          <p className="text-muted-foreground mt-2 font-medium max-w-2xl text-balance">
             Kelola tata usaha penilaian, distribusikan token ke peserta, dan koreksi hasil evaluasi secara manual.
           </p>
           {workspaceMode === 'b2b' && (
-            <p className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-indigo-50 text-indigo-700 text-xs font-black uppercase tracking-widest ring-1 ring-indigo-200">
+            <p className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 text-xs font-black uppercase tracking-widest ring-1 ring-indigo-200 dark:ring-indigo-500/20">
               <ShieldCheck className="w-3.5 h-3.5" /> Workspace B2B Mode
             </p>
           )}
@@ -320,7 +320,7 @@ export default function AssessorDashboardPage() {
               <select 
                 value={activeTemplate?.id || ''}
                 onChange={(e) => setActiveTemplate(allowedModules.find(m => m.id === e.target.value))}
-                className="h-[50px] w-full sm:w-[220px] rounded-2xl border border-slate-200 bg-white px-4 text-sm font-bold text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+                className="h-[50px] w-full sm:w-[220px] rounded-2xl border border-border card-solid px-4 text-sm font-bold text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
               >
                 {allowedModules.map((mod: any) => (
                   <option key={mod.id} value={mod.id}>{mod.trackName}</option>
@@ -335,7 +335,7 @@ export default function AssessorDashboardPage() {
                <Button 
                  onClick={() => setIsPreviewingTemplate(true)}
                  variant="outline"
-                 className="h-[50px] px-5 rounded-2xl border-slate-200 text-slate-600 hover:bg-slate-50 font-bold flex items-center gap-2 shadow-sm"
+                 className="h-[50px] px-5 rounded-2xl border-border text-muted-foreground hover:bg-muted text-muted-foreground font-bold flex items-center gap-2 shadow-sm"
                >
                  <Eye className="w-4 h-4"/>
                  <span className="text-[10px] uppercase tracking-widest mt-0.5">Preview Form</span>
@@ -343,7 +343,7 @@ export default function AssessorDashboardPage() {
                <Button 
                  onClick={() => setIsCustomizingTemplate(true)}
                  variant="outline"
-                 className="h-[50px] px-5 rounded-2xl border-indigo-200 text-indigo-700 hover:bg-indigo-50 font-bold flex items-center gap-2 shadow-sm"
+                 className="h-[50px] px-5 rounded-2xl border-indigo-200 dark:border-indigo-500/20 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:bg-indigo-500/10 font-bold flex items-center gap-2 shadow-sm"
                >
                  <Settings2 className="w-4 h-4"/>
                  <span className="text-[10px] uppercase tracking-widest mt-0.5">Sesuaikan Modul</span>
@@ -351,9 +351,9 @@ export default function AssessorDashboardPage() {
              </div>
           )}
           
-          <div className="bg-white px-5 py-2 rounded-2xl ring-1 ring-slate-200 shadow-sm flex flex-col justify-center items-center h-[50px]">
+          <div className="card-solid px-5 py-2 rounded-2xl ring-1 ring-border shadow-sm flex flex-col justify-center items-center h-[50px]">
             <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Sisa Kuota</p>
-            <p className="text-base font-black text-emerald-600 leading-tight">{allocation.totalTokens - currentGeneratedCount} <span className="text-xs text-slate-500 font-bold">Lembar</span></p>
+            <p className="text-base font-black text-emerald-600 dark:text-emerald-400 leading-tight">{allocation.totalTokens - currentGeneratedCount} <span className="text-xs text-muted-foreground font-bold">Lembar</span></p>
           </div>
         </div>
       </div>
@@ -363,11 +363,11 @@ export default function AssessorDashboardPage() {
         <div className="lg:col-span-1 space-y-6">
           {allocation ? (
             <>
-              <Card className="p-6 bg-white rounded-3xl border-none ring-1 ring-slate-200 shadow-sm">
-                <h3 className="text-sm font-black text-slate-900 mb-4 flex items-center gap-2">
-                  <KeyRound className="w-4 h-4 text-emerald-600" /> Distribusi Token Baru
+              <Card className="p-6 card-solid rounded-3xl border-none ring-1 ring-border shadow-sm">
+                <h3 className="text-sm font-black text-foreground mb-4 flex items-center gap-2">
+                  <KeyRound className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Distribusi Token Baru
                 </h3>
-                <p className="text-xs text-slate-500 font-medium mb-5">
+                <p className="text-xs text-muted-foreground font-medium mb-5">
                   Cetak token dan bagikan kode ini kepada peserta Anda agar mereka bisa mengakses form evaluasi.
                 </p>
                 
@@ -378,7 +378,7 @@ export default function AssessorDashboardPage() {
                     onChange={e => setGenerateQty(Number(e.target.value))} 
                     min={1} 
                     max={allocation.totalTokens - currentGeneratedCount}
-                    className="h-11 bg-slate-50 font-bold" 
+                    className="h-11 bg-muted text-muted-foreground font-bold" 
                   />
                   <Button 
                     onClick={handleGenerateTokens} 
@@ -391,21 +391,21 @@ export default function AssessorDashboardPage() {
                 </div>
               </Card>
 
-              <Card className="bg-white rounded-3xl border-none ring-1 ring-slate-200 shadow-sm overflow-hidden flex flex-col h-[400px]">
-                <div className="p-4 border-b border-slate-100 bg-slate-50/50">
-                  <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest">Daftar Kode Akses</h3>
+              <Card className="card-solid rounded-3xl border-none ring-1 ring-border shadow-sm overflow-hidden flex flex-col h-[400px]">
+                <div className="p-4 border-b border-border bg-muted text-muted-foreground/50">
+                  <h3 className="text-xs font-black text-muted-foreground uppercase tracking-widest">Daftar Kode Akses</h3>
                 </div>
                 <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
                   {generatedTokensArray.map(([code, data]: any) => {
                     const fullToken = `${allocation.id}-${code}`;
                     return (
-                      <div key={code} className="bg-slate-50 p-3 rounded-xl border border-slate-200 flex flex-col gap-2">
+                      <div key={code} className="bg-muted text-muted-foreground p-3 rounded-xl border border-border flex flex-col gap-2">
                         <div className="flex items-center justify-between">
-                          <code className="text-sm font-black text-slate-800 font-mono tracking-wide">{fullToken}</code>
+                          <code className="text-sm font-black text-foreground font-mono tracking-wide">{fullToken}</code>
                           {!data.isUsed ? (
-                            <button onClick={() => handleCopyToken(fullToken)} className="text-slate-400 hover:text-emerald-600"><Copy className="w-4 h-4" /></button>
+                            <button onClick={() => handleCopyToken(fullToken)} className="text-slate-400 hover:text-emerald-600 dark:text-emerald-400"><Copy className="w-4 h-4" /></button>
                           ) : (
-                            <span className="text-[9px] font-black uppercase tracking-widest text-amber-600 bg-amber-100 px-2 py-0.5 rounded">Terpakai</span>
+                            <span className="text-[9px] font-black uppercase tracking-widest text-amber-600 dark:text-amber-400 bg-amber-100 px-2 py-0.5 rounded">Terpakai</span>
                           )}
                         </div>
                       </div>
@@ -415,9 +415,9 @@ export default function AssessorDashboardPage() {
               </Card>
             </>
           ) : (
-            <Card className="p-6 bg-indigo-50/70 rounded-3xl border-none ring-1 ring-indigo-200 shadow-sm">
+            <Card className="p-6 bg-indigo-50 dark:bg-indigo-500/10/70 rounded-3xl border-none ring-1 ring-indigo-200 dark:ring-indigo-500/20 shadow-sm">
               <h3 className="text-sm font-black text-indigo-800 mb-2">Mode Penilaian B2B Aktif</h3>
-              <p className="text-xs text-indigo-700 font-medium leading-relaxed">
+              <p className="text-xs text-indigo-700 dark:text-indigo-300 font-medium leading-relaxed">
                 Akun Anda tidak memakai kuota token assessor klasik, tetapi tetap dapat menilai member B2B berdasarkan organization scopes yang diberikan admin.
               </p>
             </Card>
@@ -426,11 +426,11 @@ export default function AssessorDashboardPage() {
 
         {/* KOLOM KANAN: DAFTAR PESERTA */}
         <div className="lg:col-span-2 space-y-4">
-          <Card className="bg-white rounded-3xl border-none ring-1 ring-slate-200 shadow-sm overflow-hidden flex flex-col h-[calc(100vh-180px)] min-h-[600px]">
-             <div className="p-5 sm:p-6 border-b border-slate-100 flex flex-col sm:flex-row gap-4 justify-between items-center bg-white sticky top-0 z-10">
+          <Card className="card-solid rounded-3xl border-none ring-1 ring-border shadow-sm overflow-hidden flex flex-col h-[calc(100vh-180px)] min-h-[600px]">
+             <div className="p-5 sm:p-6 border-b border-border flex flex-col sm:flex-row gap-4 justify-between items-center card-solid sticky top-0 z-10">
               <div>
-                <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
-                  <Briefcase className="w-5 h-5 text-indigo-600" /> Hasil Pengisian Pendaftar
+                <h3 className="text-lg font-black text-foreground flex items-center gap-2">
+                  <Briefcase className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /> Hasil Pengisian Pendaftar
                 </h3>
               </div>
               <div className="flex w-full sm:w-auto gap-2">
@@ -438,7 +438,7 @@ export default function AssessorDashboardPage() {
                   <select
                     value={selectedOrganization}
                     onChange={(e) => setSelectedOrganization(e.target.value)}
-                    className="h-10 rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-700"
+                    className="h-10 rounded-xl border border-border bg-muted text-muted-foreground px-3 text-sm font-semibold text-slate-700"
                   >
                     <option value="__all__">Semua Organisasi</option>
                     {scopeOrganizations.map((org) => (
@@ -448,14 +448,14 @@ export default function AssessorDashboardPage() {
                 )}
                 <div className="relative w-full sm:w-64">
                   <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                  <Input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Cari..." className="pl-9 bg-slate-50" />
+                  <Input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Cari..." className="pl-9 bg-muted text-muted-foreground" />
                 </div>
               </div>
             </div>
 
             <div className="flex-1 overflow-x-auto overflow-y-auto w-full custom-scrollbar">
               <table className="w-full text-sm text-left whitespace-nowrap">
-                <thead className="bg-slate-50/80 text-slate-500 uppercase font-black text-[10px] tracking-widest border-b border-slate-100 sticky top-0 z-10">
+                <thead className="bg-muted text-muted-foreground/80 text-muted-foreground uppercase font-black text-[10px] tracking-widest border-b border-border sticky top-0 z-10">
                   <tr>
                     <th className="px-6 py-4">Identitas Peserta</th>
                     <th className="px-6 py-4 text-center">Skor Akhir</th>
@@ -469,13 +469,13 @@ export default function AssessorDashboardPage() {
                     const skorAkhir = item.aiResult?.totalScore || item.score || 0;
 
                     return (
-                      <tr key={item.id} className="hover:bg-slate-50 transition-colors">
+                      <tr key={item.id} className="hover:bg-muted text-muted-foreground transition-colors">
                         <td className="px-6 py-4">
-                          <p className="font-black text-slate-900 text-base mb-0.5">{item.namaUsaha}</p>
-                          <p className="text-[10px] text-slate-500 font-medium">{item.email}</p>
+                          <p className="font-black text-foreground text-base mb-0.5">{item.namaUsaha}</p>
+                          <p className="text-[10px] text-muted-foreground font-medium">{item.email}</p>
                         </td>
                         <td className="px-6 py-4 text-center">
-                          <div className={`inline-flex items-center justify-center w-9 h-9 rounded-full font-black text-sm ring-1 ${isFinalized ? 'bg-emerald-50 text-emerald-700 ring-emerald-200' : 'bg-slate-100 text-slate-700 ring-slate-200'}`}>
+                          <div className={`inline-flex items-center justify-center w-9 h-9 rounded-full font-black text-sm ring-1 ${isFinalized ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 ring-emerald-200 dark:ring-emerald-500/20' : 'bg-secondary text-secondary-foreground text-slate-700 ring-slate-200'}`}>
                             {item.curatorAssessment?.verifiedScore || skorAkhir}
                           </div>
                         </td>
@@ -483,7 +483,7 @@ export default function AssessorDashboardPage() {
                           <Button 
                             onClick={() => setSelectedAssessment(item)} 
                             variant={isFinalized ? "outline" : "default"} 
-                            className={`h-9 px-4 rounded-xl font-bold text-xs shadow-sm ${isFinalized ? 'border-slate-200 text-slate-700' : isDraft ? 'bg-amber-500 hover:bg-amber-600 text-white' : 'bg-indigo-600 hover:bg-indigo-700 text-white'}`}
+                            className={`h-9 px-4 rounded-xl font-bold text-xs shadow-sm ${isFinalized ? 'border-border text-slate-700' : isDraft ? 'bg-amber-500 hover:bg-amber-600 text-white' : 'bg-indigo-600 hover:bg-indigo-700 text-white'}`}
                           >
                             {isFinalized ? <><Eye className="w-3.5 h-3.5 mr-1.5" /> Lihat Hasil</> : <><Edit3 className="w-3.5 h-3.5 mr-1.5" /> Edit & Cetak</>}
                           </Button>

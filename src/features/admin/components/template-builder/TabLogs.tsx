@@ -70,7 +70,7 @@ export function TabLogs({ template }: TabLogsProps) {
           <div className="p-2 bg-slate-800/50 rounded-lg"><Terminal className="w-5 h-5 text-emerald-400" /></div>
           <div>
             <h3 className="text-sm font-bold text-slate-200 tracking-wider">SYSTEM LOGS TERMINAL</h3>
-            <p className="text-[10px] text-slate-500 flex items-center gap-1.5 mt-0.5">
+            <p className="text-[10px] text-muted-foreground flex items-center gap-1.5 mt-0.5">
               <Activity className="w-3 h-3 text-indigo-400" /> Serverless Backend Stream
             </p>
           </div>
@@ -96,7 +96,7 @@ export function TabLogs({ template }: TabLogsProps) {
         className="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-1.5 font-mono text-[11px] sm:text-xs tracking-tight"
       >
         {logs.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-slate-600 opacity-50 space-y-2">
+          <div className="flex flex-col items-center justify-center h-full text-muted-foreground opacity-50 space-y-2">
             <Terminal className="w-10 h-10 mb-2" />
             <p>Menunggu aktivitas AI (Standby Mode)...</p>
           </div>
@@ -107,8 +107,8 @@ export function TabLogs({ template }: TabLogsProps) {
             const isError = log.type === 'error';
 
             return (
-              <div key={idx} className={`flex items-start gap-3 p-1.5 rounded hover:bg-white/5 transition-colors ${isError ? 'bg-rose-950/30' : ''}`}>
-                <span className="text-slate-600 shrink-0 select-none flex items-center gap-1">
+              <div key={idx} className={`flex items-start gap-3 p-1.5 rounded hover:card-solid/5 transition-colors ${isError ? 'bg-rose-950/30' : ''}`}>
+                <span className="text-muted-foreground shrink-0 select-none flex items-center gap-1">
                   <Clock className="w-3 h-3" /> [{formatTime(log.timestamp)}]
                 </span>
                 
@@ -131,7 +131,7 @@ export function TabLogs({ template }: TabLogsProps) {
         )}
         
         {isGenerating && (
-          <div className="flex items-center gap-3 p-1.5 text-slate-500 animate-pulse">
+          <div className="flex items-center gap-3 p-1.5 text-muted-foreground animate-pulse">
             <span className="shrink-0 select-none flex items-center gap-1 opacity-0"><Clock className="w-3 h-3" /> [00:00:00.000]</span>
             <span className="shrink-0 w-3.5 h-3.5"></span>
             <span className="break-words flex-1 leading-relaxed">AI sedang bekerja... Mohon tunggu sebentar.</span>

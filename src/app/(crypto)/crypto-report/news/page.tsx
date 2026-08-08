@@ -61,7 +61,7 @@ export default function CryptoNewsPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-slate-50 dark:bg-slate-950">
+      <div className="flex justify-center items-center min-h-screen bg-background text-foreground">
         <CryptoLoadingState type="spinner" message="Memuat berita terbaru..." />
       </div>
     );
@@ -69,7 +69,7 @@ export default function CryptoNewsPage() {
 
   if (newsReports.length === 0) {
     return (
-      <div className="p-8 flex justify-center items-center min-h-screen bg-slate-50 dark:bg-slate-950">
+      <div className="p-8 flex justify-center items-center min-h-screen bg-background text-foreground">
         <CryptoEmptyState 
            icon={<Newspaper className="w-8 h-8" />}
            title="Belum Ada Berita"
@@ -80,16 +80,16 @@ export default function CryptoNewsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-background text-foreground pb-20 px-4 sm:px-6 lg:px-8">
       
       {/* HEADER SECTION */}
-      <div className="bg-slate-50 dark:bg-slate-950/40 backdrop-blur-md border-b border-white/5 mb-6 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
+      <div className="bg-background text-foreground backdrop-blur-md border-b border-white/5 mb-6 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto py-4">
            <CryptoButton 
                variant="ghost" 
                size="sm" 
                onClick={() => router.back()}
-               className="mb-6 -ml-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white"
+               className="mb-6 -ml-2 text-muted-foreground hover:text-foreground"
            >
                <ArrowLeft className="w-4 h-4 mr-2" /> Kembali ke Laporan
            </CryptoButton>
@@ -111,13 +111,13 @@ export default function CryptoNewsPage() {
         {newsReports.map((report) => {
           const isBullish = report.marketSentiment === "BULLISH";
           const isBearish = report.marketSentiment === "BEARISH";
-          const sentimentColor = isBullish ? "bg-emerald-500" : isBearish ? "bg-rose-500" : "bg-slate-500";
+          const sentimentColor = isBullish ? "bg-emerald-500" : isBearish ? "bg-rose-500" : "bg-muted text-muted-foreground0";
           const Icon = isBullish ? TrendingUp : isBearish ? TrendingDown : Minus;
           const createdAt = report.createdAt instanceof Date ? report.createdAt : new Date(report.createdAt);
 
           return (
             <CryptoCard key={report.id} variant="default" className="overflow-hidden">
-              <div className="bg-white/60 dark:bg-slate-900/60 p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden border-b border-slate-200 dark:border-slate-800">
+              <div className="card-solid/60 dark:bg-slate-900/60 p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden border-b border-slate-200 dark:border-slate-800">
                 <div className="absolute right-0 top-0 p-8 opacity-5">
                   <Globe className="w-48 h-48" />
                 </div>
@@ -127,19 +127,19 @@ export default function CryptoNewsPage() {
                     <CryptoBadge variant={isBullish ? 'bullish' : isBearish ? 'danger' : 'neutral'} className="uppercase tracking-widest flex items-center gap-1.5">
                       <Icon className="w-3.5 h-3.5" /> {report.marketSentiment} MARKET
                     </CryptoBadge>
-                    <span className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest flex items-center gap-1">
+                    <span className="text-xs text-muted-foreground font-bold uppercase tracking-widest flex items-center gap-1">
                       <Clock className="w-3.5 h-3.5" /> 
                       {createdAt.toLocaleDateString("id-ID", { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })} WIB
                     </span>
                   </div>
-                  <h2 className="text-xl md:text-2xl font-black leading-tight text-slate-900 dark:text-white mb-2">
+                  <h2 className="text-xl md:text-2xl font-black leading-tight text-foreground mb-2">
                     {report.headlineSummary}
                   </h2>
                 </div>
               </div>
 
               <div className="p-6 md:p-8">
-                <h3 className="font-bold text-sm uppercase tracking-widest text-slate-500 mb-6 flex items-center gap-2">
+                <h3 className="font-bold text-sm uppercase tracking-widest text-muted-foreground mb-6 flex items-center gap-2">
                   <Newspaper className="w-4 h-4" /> Top News Highlights
                 </h3>
                 
@@ -147,11 +147,11 @@ export default function CryptoNewsPage() {
                   {report.newsItems?.map((item: any, idx: number) => {
                     const impactBullish = item.impact === "BULLISH";
                     const impactBearish = item.impact === "BEARISH";
-                    const impactColor = impactBullish ? "text-emerald-600 dark:text-emerald-400" : impactBearish ? "text-rose-600 dark:text-rose-400" : "text-slate-500 dark:text-slate-400";
-                    const impactBg = impactBullish ? "bg-emerald-100 dark:bg-emerald-500/10" : impactBearish ? "bg-rose-100 dark:bg-rose-500/10" : "bg-slate-100 dark:bg-slate-800/50";
+                    const impactColor = impactBullish ? "text-emerald-600 dark:text-emerald-400" : impactBearish ? "text-rose-600 dark:text-rose-400" : "text-muted-foreground";
+                    const impactBg = impactBullish ? "bg-emerald-100 dark:bg-emerald-500/10" : impactBearish ? "bg-rose-100 dark:bg-rose-500/10" : "bg-secondary text-secondary-foreground/50";
                     
                     return (
-                      <div key={idx} className="bg-white/40 dark:bg-slate-900/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col transition-all hover:border-slate-300 dark:border-slate-700">
+                      <div key={idx} className="card-solid/40 dark:bg-slate-900/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col transition-all hover:border-slate-300 dark:border-slate-700">
                         <div className="flex items-center flex-wrap gap-2 mb-3">
                            <CryptoBadge variant={impactBullish ? 'bullish' : impactBearish ? 'danger' : 'neutral'} className="text-[10px]">
                              {item.impact}
@@ -172,15 +172,15 @@ export default function CryptoNewsPage() {
                              </CryptoBadge>
                            )}
                         </div>
-                        <h4 className="font-black text-slate-900 dark:text-white text-lg mb-2 leading-snug">
+                        <h4 className="font-black text-foreground text-lg mb-2 leading-snug">
                            {item.title}
                         </h4>
-                        <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-4 flex-1">
+                        <p className="text-muted-foreground text-sm leading-relaxed mb-4 flex-1">
                            {item.summary}
                         </p>
                         
-                        <div className="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800/60 text-xs text-slate-500 dark:text-slate-400 font-medium italic mb-2">
-                           <span className="font-bold block mb-1 text-slate-600 dark:text-slate-300">Actionable Insight:</span>
+                        <div className="bg-background text-foreground p-3 rounded-xl border border-slate-200 dark:border-slate-800/60 text-xs text-muted-foreground font-medium italic mb-2">
+                           <span className="font-bold block mb-1 text-muted-foreground">Actionable Insight:</span>
                            {item.impactAnalysis}
                         </div>
 

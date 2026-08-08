@@ -129,12 +129,12 @@ function MetricCard({
   accentClass: string;
 }) {
   return (
-    <Card className="p-5 bg-white rounded-[1.75rem] border-none ring-1 ring-slate-200 shadow-sm">
+    <Card className="p-5 card-solid rounded-[1.75rem] border-none ring-1 ring-border shadow-sm">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">{title}</p>
-          <p className="text-3xl font-black text-slate-900 mt-2 tracking-tight">{value}</p>
-          <p className="text-sm font-medium text-slate-500 mt-2 leading-relaxed">{hint}</p>
+          <p className="text-3xl font-black text-foreground mt-2 tracking-tight">{value}</p>
+          <p className="text-sm font-medium text-muted-foreground mt-2 leading-relaxed">{hint}</p>
         </div>
         <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${accentClass}`}>
           <Icon className="w-6 h-6" />
@@ -156,14 +156,14 @@ function SectionCard({
   icon: React.ComponentType<{ className?: string }>;
 }) {
   return (
-    <Card className="bg-white rounded-[2rem] border-none ring-1 ring-slate-200 shadow-sm overflow-hidden">
-      <div className="px-6 py-5 border-b border-slate-100 flex items-start justify-between gap-4">
+    <Card className="card-solid rounded-[2rem] border-none ring-1 ring-border shadow-sm overflow-hidden">
+      <div className="px-6 py-5 border-b border-border flex items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <Icon className="w-4 h-4 text-indigo-600" />
-            <h2 className="text-sm font-black uppercase tracking-[0.2em] text-slate-500">{title}</h2>
+            <Icon className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+            <h2 className="text-sm font-black uppercase tracking-[0.2em] text-muted-foreground">{title}</h2>
           </div>
-          <p className="text-sm text-slate-500 font-medium leading-relaxed">{subtitle}</p>
+          <p className="text-sm text-muted-foreground font-medium leading-relaxed">{subtitle}</p>
         </div>
       </div>
       <div className="p-6">{children}</div>
@@ -802,8 +802,8 @@ export default function AdminB2BPilotDashboardPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-[65vh]">
-        <div className="flex flex-col items-center gap-3 text-slate-500">
-          <div className="w-10 h-10 rounded-full border-4 border-indigo-200 border-t-indigo-600 animate-spin" />
+        <div className="flex flex-col items-center gap-3 text-muted-foreground">
+          <div className="w-10 h-10 rounded-full border-4 border-indigo-200 dark:border-indigo-500/20 border-t-indigo-600 animate-spin" />
           <p className="text-xs font-black uppercase tracking-[0.28em]">Menyiapkan dashboard B2B...</p>
         </div>
       </div>
@@ -812,8 +812,8 @@ export default function AdminB2BPilotDashboardPage() {
 
   if (accessError) {
     return (
-      <Card className="rounded-[1.75rem] border-none ring-1 ring-rose-200 bg-rose-50 p-6">
-        <p className="text-[11px] font-black uppercase tracking-[0.22em] text-rose-600">Access Guard</p>
+      <Card className="rounded-[1.75rem] border-none ring-1 ring-rose-200 dark:ring-rose-500/20 bg-rose-50 dark:bg-rose-500/10 p-6">
+        <p className="text-[11px] font-black uppercase tracking-[0.22em] text-rose-600 dark:text-rose-400">Access Guard</p>
         <h2 className="text-xl font-black text-rose-900 mt-2">Akses data dashboard dibatasi</h2>
         <p className="text-sm text-rose-800 mt-3 leading-relaxed">{accessError}</p>
       </Card>
@@ -822,11 +822,11 @@ export default function AdminB2BPilotDashboardPage() {
 
   return (
     <div className="space-y-6 pb-12">
-      <Card className="border-none ring-1 ring-slate-200 rounded-[2rem] bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 text-white shadow-xl overflow-hidden">
+      <Card className="border-none ring-1 ring-border rounded-[2rem] bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 text-white shadow-xl overflow-hidden">
         <div className="p-7 md:p-8 lg:p-10 space-y-8">
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
             <div className="max-w-4xl">
-              <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-[11px] font-black uppercase tracking-[0.24em] text-indigo-100 ring-1 ring-white/10">
+              <div className="inline-flex items-center gap-2 rounded-full card-solid/10 px-4 py-2 text-[11px] font-black uppercase tracking-[0.24em] text-indigo-100 ring-1 ring-white/10">
                 <BriefcaseBusiness className="w-4 h-4" />
                 B2B Pilot Dashboard & Assessment-as-a-Service
               </div>
@@ -843,11 +843,11 @@ export default function AdminB2BPilotDashboardPage() {
             </div>
 
             <div className="grid grid-cols-2 gap-3 min-w-full lg:min-w-[320px] lg:max-w-[340px]">
-              <div className="rounded-3xl bg-white/10 px-4 py-4 ring-1 ring-white/10">
+              <div className="rounded-3xl card-solid/10 px-4 py-4 ring-1 ring-white/10">
                 <p className="text-[10px] font-black uppercase tracking-[0.24em] text-indigo-100/70">Operating Model</p>
                 <p className="text-2xl font-black mt-2">{snapshot.operatingModel}</p>
               </div>
-              <div className="rounded-3xl bg-white/10 px-4 py-4 ring-1 ring-white/10">
+              <div className="rounded-3xl card-solid/10 px-4 py-4 ring-1 ring-white/10">
                 <p className="text-[10px] font-black uppercase tracking-[0.24em] text-indigo-100/70">B2B2C Ready</p>
                 <p className="text-2xl font-black mt-2">{snapshot.b2b2cReadyCount}</p>
               </div>
@@ -869,7 +869,7 @@ export default function AdminB2BPilotDashboardPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-[1.5fr,1fr] gap-4">
-            <div className="rounded-[1.75rem] bg-white/10 p-5 ring-1 ring-white/10">
+            <div className="rounded-[1.75rem] card-solid/10 p-5 ring-1 ring-white/10">
               <p className="text-[10px] font-black uppercase tracking-[0.24em] text-indigo-100/70">Executive Narrative</p>
               <p className="text-lg font-bold text-white mt-3 leading-relaxed">{narrative}</p>
               <div className="mt-4 flex flex-wrap gap-2">
@@ -888,7 +888,7 @@ export default function AdminB2BPilotDashboardPage() {
               </div>
             </div>
 
-            <div className="rounded-[1.75rem] bg-white/10 p-5 ring-1 ring-white/10 space-y-4">
+            <div className="rounded-[1.75rem] card-solid/10 p-5 ring-1 ring-white/10 space-y-4">
               <div className="flex items-center gap-2 text-indigo-50">
                 <Filter className="w-4 h-4" />
                 <p className="text-sm font-black uppercase tracking-[0.2em]">Pivot Kontrol</p>
@@ -970,21 +970,21 @@ export default function AdminB2BPilotDashboardPage() {
           value={String(snapshot.totalParticipants)}
           hint="Jumlah asesmen yang sudah masuk pada scope pilihan aktif."
           icon={Users2}
-          accentClass="bg-indigo-50 text-indigo-600"
+          accentClass="bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
         />
         <MetricCard
           title="Validated Coverage"
           value={formatPercent(snapshot.totalParticipants > 0 ? (snapshot.validatedCount / snapshot.totalParticipants) * 100 : 0)}
           hint={`${snapshot.validatedCount} assessment sudah tervalidasi kurator.`}
           icon={ShieldCheck}
-          accentClass="bg-emerald-50 text-emerald-600"
+          accentClass="bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
         />
         <MetricCard
           title="Analytics Coverage"
           value={formatPercent(snapshot.totalParticipants > 0 ? (snapshot.analyticsCoverageCount / snapshot.totalParticipants) * 100 : 0)}
           hint={`${snapshot.analyticsCoverageCount} assessment sudah memiliki analyticsSummary.`}
           icon={BarChart3}
-          accentClass="bg-sky-50 text-sky-600"
+          accentClass="bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400"
         />
         <MetricCard
           title="Average Score"
@@ -998,14 +998,14 @@ export default function AdminB2BPilotDashboardPage() {
           value={formatScore(snapshot.avgAnalyticsScore)}
           hint="Membantu membaca kualitas output analytics lintas tenant."
           icon={TrendingUp}
-          accentClass="bg-amber-50 text-amber-600"
+          accentClass="bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400"
         />
         <MetricCard
           title="Dominant Readiness"
           value={snapshot.dominantReadiness}
           hint="Tier readiness yang paling dominan pada data aktif."
           icon={Target}
-          accentClass="bg-rose-50 text-rose-600"
+          accentClass="bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400"
         />
       </div>
 
@@ -1017,7 +1017,7 @@ export default function AdminB2BPilotDashboardPage() {
         >
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
             <div className="space-y-3">
-              <h3 className="text-sm font-black text-slate-900">Readiness Distribution</h3>
+              <h3 className="text-sm font-black text-foreground">Readiness Distribution</h3>
               <div className="h-72">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={snapshot.readinessDistribution}>
@@ -1032,7 +1032,7 @@ export default function AdminB2BPilotDashboardPage() {
             </div>
 
             <div className="space-y-3">
-              <h3 className="text-sm font-black text-slate-900">Performance Band</h3>
+              <h3 className="text-sm font-black text-foreground">Performance Band</h3>
               <div className="h-72">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
@@ -1071,7 +1071,7 @@ export default function AdminB2BPilotDashboardPage() {
                 'Segment pivot memakai field organisasi yang sudah ada; jika kosong akan masuk ke "Belum dipetakan".',
                 'B2B2C readiness dihitung dari keberadaan partner, customer segment, atau channel pada data assessment.',
               ].map((item) => (
-                <div key={item} className="rounded-2xl bg-slate-50 px-4 py-3 ring-1 ring-slate-100 text-sm font-medium text-slate-700 leading-relaxed">
+                <div key={item} className="rounded-2xl bg-muted text-muted-foreground px-4 py-3 ring-1 ring-border text-sm font-medium text-slate-700 leading-relaxed">
                   {item}
                 </div>
               ))}
@@ -1086,72 +1086,72 @@ export default function AdminB2BPilotDashboardPage() {
         icon={CircleDashed}
       >
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-          <div className="rounded-[1.5rem] bg-slate-50 p-5 ring-1 ring-slate-100">
+          <div className="rounded-[1.5rem] bg-muted text-muted-foreground p-5 ring-1 ring-border">
             <p className="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-black">Data Coverage Score</p>
-            <p className="text-3xl font-black text-slate-900 mt-2">{pilotOperations.dataCoverageScore}</p>
-            <p className="text-xs text-slate-500 mt-2">Rata-rata coverage validasi ({formatPercent(pilotOperations.validatedCoverage)}) dan analytics ({formatPercent(pilotOperations.analyticsCoverage)}).</p>
+            <p className="text-3xl font-black text-foreground mt-2">{pilotOperations.dataCoverageScore}</p>
+            <p className="text-xs text-muted-foreground mt-2">Rata-rata coverage validasi ({formatPercent(pilotOperations.validatedCoverage)}) dan analytics ({formatPercent(pilotOperations.analyticsCoverage)}).</p>
           </div>
-          <div className="rounded-[1.5rem] bg-slate-50 p-5 ring-1 ring-slate-100">
+          <div className="rounded-[1.5rem] bg-muted text-muted-foreground p-5 ring-1 ring-border">
             <p className="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-black">Validation Backlog</p>
-            <p className="text-3xl font-black text-slate-900 mt-2">{pilotOperations.backlogCount}</p>
-            <p className="text-xs text-slate-500 mt-2">Jumlah data yang belum berstatus validated pada tenant aktif.</p>
+            <p className="text-3xl font-black text-foreground mt-2">{pilotOperations.backlogCount}</p>
+            <p className="text-xs text-muted-foreground mt-2">Jumlah data yang belum berstatus validated pada tenant aktif.</p>
           </div>
-          <div className="rounded-[1.5rem] bg-slate-50 p-5 ring-1 ring-slate-100">
+          <div className="rounded-[1.5rem] bg-muted text-muted-foreground p-5 ring-1 ring-border">
             <p className="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-black">Data Quality Gaps</p>
-            <p className="text-3xl font-black text-slate-900 mt-2">{pilotOperations.unknownSegmentCount + pilotOperations.unclassifiedReadinessCount}</p>
-            <p className="text-xs text-slate-500 mt-2">{pilotOperations.unknownSegmentCount} tanpa segment dan {pilotOperations.unclassifiedReadinessCount} readiness belum terklasifikasi.</p>
+            <p className="text-3xl font-black text-foreground mt-2">{pilotOperations.unknownSegmentCount + pilotOperations.unclassifiedReadinessCount}</p>
+            <p className="text-xs text-muted-foreground mt-2">{pilotOperations.unknownSegmentCount} tanpa segment dan {pilotOperations.unclassifiedReadinessCount} readiness belum terklasifikasi.</p>
           </div>
-          <div className="rounded-[1.5rem] bg-slate-50 p-5 ring-1 ring-slate-100">
+          <div className="rounded-[1.5rem] bg-muted text-muted-foreground p-5 ring-1 ring-border">
             <p className="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-black">Stale Signals</p>
-            <p className="text-3xl font-black text-slate-900 mt-2">{pilotOperations.staleRecordsCount}</p>
-            <p className="text-xs text-slate-500 mt-2">{formatPercent(pilotOperations.staleRate)} data terakhir lebih lama dari 45 hari.</p>
+            <p className="text-3xl font-black text-foreground mt-2">{pilotOperations.staleRecordsCount}</p>
+            <p className="text-xs text-muted-foreground mt-2">{formatPercent(pilotOperations.staleRate)} data terakhir lebih lama dari 45 hari.</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-          <div className="rounded-2xl bg-amber-50 px-4 py-3 ring-1 ring-amber-200 text-sm text-amber-900">
+          <div className="rounded-2xl bg-amber-50 dark:bg-amber-500/10 px-4 py-3 ring-1 ring-amber-200 dark:ring-amber-500/20 text-sm text-amber-900">
             <span className="font-black">SLA Attention:</span> {pilotOperations.highPrioritySegments} segmen berstatus High Priority memerlukan intervensi 30 hari.
           </div>
-          <div className="rounded-2xl bg-sky-50 px-4 py-3 ring-1 ring-sky-200 text-sm text-sky-900">
+          <div className="rounded-2xl bg-sky-50 dark:bg-sky-500/10 px-4 py-3 ring-1 ring-sky-200 dark:ring-sky-500/20 text-sm text-sky-900">
             <span className="font-black">Packaging Active:</span> {selectedPackageMeta.label} untuk persona {selectedPersonaMeta.label}.
           </div>
         </div>
 
-        <div className="mt-4 rounded-[1.5rem] bg-white p-4 ring-1 ring-slate-200">
+        <div className="mt-4 rounded-[1.5rem] card-solid p-4 ring-1 ring-border">
           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3">Success Metrics 30-60-90</p>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
-            <div className="rounded-xl bg-slate-50 p-3 ring-1 ring-slate-100">
+            <div className="rounded-xl bg-muted text-muted-foreground p-3 ring-1 ring-border">
               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Retest Coverage</p>
-              <p className="text-xl font-black text-slate-900 mt-1">{formatPercent(successMetrics.retestCoverageRate)}</p>
-              <p className="text-xs text-slate-500 mt-1">{successMetrics.retestedEntitiesCount} dari {successMetrics.uniqueEntitiesCount} entitas sudah retest.</p>
+              <p className="text-xl font-black text-foreground mt-1">{formatPercent(successMetrics.retestCoverageRate)}</p>
+              <p className="text-xs text-muted-foreground mt-1">{successMetrics.retestedEntitiesCount} dari {successMetrics.uniqueEntitiesCount} entitas sudah retest.</p>
             </div>
-            <div className="rounded-xl bg-slate-50 p-3 ring-1 ring-slate-100">
+            <div className="rounded-xl bg-muted text-muted-foreground p-3 ring-1 ring-border">
               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Retest Cadence</p>
-              <p className="text-xl font-black text-slate-900 mt-1">{successMetrics.avgRetestCadenceDays === null ? '-' : `${successMetrics.avgRetestCadenceDays.toFixed(1)} hari`}</p>
-              <p className="text-xs text-slate-500 mt-1">Jarak rata-rata antar 2 assessment terakhir per entitas yang retest.</p>
+              <p className="text-xl font-black text-foreground mt-1">{successMetrics.avgRetestCadenceDays === null ? '-' : `${successMetrics.avgRetestCadenceDays.toFixed(1)} hari`}</p>
+              <p className="text-xs text-muted-foreground mt-1">Jarak rata-rata antar 2 assessment terakhir per entitas yang retest.</p>
             </div>
-            <div className="rounded-xl bg-slate-50 p-3 ring-1 ring-slate-100">
+            <div className="rounded-xl bg-muted text-muted-foreground p-3 ring-1 ring-border">
               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Improvement Delta</p>
-              <p className="text-xl font-black text-slate-900 mt-1">{successMetrics.improvementDeltaAvg === null ? '-' : successMetrics.improvementDeltaAvg.toFixed(1)}</p>
-              <p className="text-xs text-slate-500 mt-1">Selisih skor terbaru vs baseline pertama pada entitas yang retest.</p>
+              <p className="text-xl font-black text-foreground mt-1">{successMetrics.improvementDeltaAvg === null ? '-' : successMetrics.improvementDeltaAvg.toFixed(1)}</p>
+              <p className="text-xs text-muted-foreground mt-1">Selisih skor terbaru vs baseline pertama pada entitas yang retest.</p>
             </div>
-            <div className="rounded-xl bg-slate-50 p-3 ring-1 ring-slate-100">
+            <div className="rounded-xl bg-muted text-muted-foreground p-3 ring-1 ring-border">
               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Closure Rate</p>
-              <p className="text-xl font-black text-slate-900 mt-1">{formatPercent(successMetrics.closureRate)}</p>
-              <p className="text-xs text-slate-500 mt-1">Segmen high priority yang sudah mencapai indikator closed.</p>
+              <p className="text-xl font-black text-foreground mt-1">{formatPercent(successMetrics.closureRate)}</p>
+              <p className="text-xs text-muted-foreground mt-1">Segmen high priority yang sudah mencapai indikator closed.</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
-            <div className={`rounded-xl px-3 py-2 ring-1 text-sm ${successMetrics.milestone30.passed ? 'bg-emerald-50 ring-emerald-200 text-emerald-900' : 'bg-amber-50 ring-amber-200 text-amber-900'}`}>
+            <div className={`rounded-xl px-3 py-2 ring-1 text-sm ${successMetrics.milestone30.passed ? 'bg-emerald-50 dark:bg-emerald-500/10 ring-emerald-200 dark:ring-emerald-500/20 text-emerald-900' : 'bg-amber-50 dark:bg-amber-500/10 ring-amber-200 dark:ring-amber-500/20 text-amber-900'}`}>
               <p className="font-black">30 Hari: {successMetrics.milestone30.passed ? 'PASS' : 'HOLD'}</p>
               <p className="text-xs mt-1">{successMetrics.milestone30.note}</p>
             </div>
-            <div className={`rounded-xl px-3 py-2 ring-1 text-sm ${successMetrics.milestone60.passed ? 'bg-emerald-50 ring-emerald-200 text-emerald-900' : 'bg-amber-50 ring-amber-200 text-amber-900'}`}>
+            <div className={`rounded-xl px-3 py-2 ring-1 text-sm ${successMetrics.milestone60.passed ? 'bg-emerald-50 dark:bg-emerald-500/10 ring-emerald-200 dark:ring-emerald-500/20 text-emerald-900' : 'bg-amber-50 dark:bg-amber-500/10 ring-amber-200 dark:ring-amber-500/20 text-amber-900'}`}>
               <p className="font-black">60 Hari: {successMetrics.milestone60.passed ? 'PASS' : 'HOLD'}</p>
               <p className="text-xs mt-1">{successMetrics.milestone60.note}</p>
             </div>
-            <div className={`rounded-xl px-3 py-2 ring-1 text-sm ${successMetrics.milestone90.passed ? 'bg-emerald-50 ring-emerald-200 text-emerald-900' : 'bg-amber-50 ring-amber-200 text-amber-900'}`}>
+            <div className={`rounded-xl px-3 py-2 ring-1 text-sm ${successMetrics.milestone90.passed ? 'bg-emerald-50 dark:bg-emerald-500/10 ring-emerald-200 dark:ring-emerald-500/20 text-emerald-900' : 'bg-amber-50 dark:bg-amber-500/10 ring-amber-200 dark:ring-amber-500/20 text-amber-900'}`}>
               <p className="font-black">90 Hari: {successMetrics.milestone90.passed ? 'PASS' : 'HOLD'}</p>
               <p className="text-xs mt-1">{successMetrics.milestone90.note}</p>
             </div>
@@ -1165,14 +1165,14 @@ export default function AdminB2BPilotDashboardPage() {
           subtitle="Jejak aktivitas kurator per tenant: pembukaan draft, finalisasi, dan perubahan tag."
           icon={ShieldCheck}
         >
-          <div className="rounded-[1.5rem] bg-slate-50 p-4 ring-1 ring-slate-100 mb-4">
+          <div className="rounded-[1.5rem] bg-muted text-muted-foreground p-4 ring-1 ring-border mb-4">
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-3">
               <label className="block">
                 <span className="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-black">Action</span>
                 <select
                   value={auditActionFilter}
                   onChange={(event) => setAuditActionFilter(event.target.value)}
-                  className="mt-1 h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm"
+                  className="mt-1 h-10 w-full rounded-xl border border-border card-solid px-3 text-sm"
                 >
                   <option value="all">Semua Action</option>
                   <option value="open_draft">Open Draft</option>
@@ -1192,7 +1192,7 @@ export default function AdminB2BPilotDashboardPage() {
                   value={auditActorFilter}
                   onChange={(event) => setAuditActorFilter(event.target.value)}
                   placeholder="email atau uid"
-                  className="mt-1 h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm"
+                  className="mt-1 h-10 w-full rounded-xl border border-border card-solid px-3 text-sm"
                 />
                 <datalist id="curator-actor-options">
                   {actorFilterOptions.map((actor) => (
@@ -1207,7 +1207,7 @@ export default function AdminB2BPilotDashboardPage() {
                   type="date"
                   value={auditDateFrom}
                   onChange={(event) => setAuditDateFrom(event.target.value)}
-                  className="mt-1 h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm"
+                  className="mt-1 h-10 w-full rounded-xl border border-border card-solid px-3 text-sm"
                 />
               </label>
 
@@ -1217,7 +1217,7 @@ export default function AdminB2BPilotDashboardPage() {
                   type="date"
                   value={auditDateTo}
                   onChange={(event) => setAuditDateTo(event.target.value)}
-                  className="mt-1 h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm"
+                  className="mt-1 h-10 w-full rounded-xl border border-border card-solid px-3 text-sm"
                 />
               </label>
 
@@ -1233,31 +1233,31 @@ export default function AdminB2BPilotDashboardPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-4">
-            <div className="rounded-[1.5rem] bg-slate-50 p-5 ring-1 ring-slate-100">
+            <div className="rounded-[1.5rem] bg-muted text-muted-foreground p-5 ring-1 ring-border">
               <p className="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-black">Total Events</p>
-              <p className="text-3xl font-black text-slate-900 mt-2">{curatorAuditSummary.totalEvents}</p>
-              <p className="text-xs text-slate-500 mt-2">Event audit pada scope tenant aktif.</p>
+              <p className="text-3xl font-black text-foreground mt-2">{curatorAuditSummary.totalEvents}</p>
+              <p className="text-xs text-muted-foreground mt-2">Event audit pada scope tenant aktif.</p>
             </div>
-            <div className="rounded-[1.5rem] bg-slate-50 p-5 ring-1 ring-slate-100">
+            <div className="rounded-[1.5rem] bg-muted text-muted-foreground p-5 ring-1 ring-border">
               <p className="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-black">Active Curators</p>
-              <p className="text-3xl font-black text-slate-900 mt-2">{curatorAuditSummary.uniqueCurators}</p>
-              <p className="text-xs text-slate-500 mt-2">Jumlah aktor unik yang melakukan aksi curator.</p>
+              <p className="text-3xl font-black text-foreground mt-2">{curatorAuditSummary.uniqueCurators}</p>
+              <p className="text-xs text-muted-foreground mt-2">Jumlah aktor unik yang melakukan aksi curator.</p>
             </div>
-            <div className="rounded-[1.5rem] bg-slate-50 p-5 ring-1 ring-slate-100">
+            <div className="rounded-[1.5rem] bg-muted text-muted-foreground p-5 ring-1 ring-border">
               <p className="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-black">Draft Opened</p>
-              <p className="text-3xl font-black text-slate-900 mt-2">{curatorAuditSummary.openDraftCount}</p>
-              <p className="text-xs text-slate-500 mt-2">Jumlah pembukaan draft penilaian.</p>
+              <p className="text-3xl font-black text-foreground mt-2">{curatorAuditSummary.openDraftCount}</p>
+              <p className="text-xs text-muted-foreground mt-2">Jumlah pembukaan draft penilaian.</p>
             </div>
-            <div className="rounded-[1.5rem] bg-slate-50 p-5 ring-1 ring-slate-100">
+            <div className="rounded-[1.5rem] bg-muted text-muted-foreground p-5 ring-1 ring-border">
               <p className="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-black">Finalize / Tag Edit</p>
-              <p className="text-3xl font-black text-slate-900 mt-2">{curatorAuditSummary.finalizeCount} / {curatorAuditSummary.tagEditCount}</p>
-              <p className="text-xs text-slate-500 mt-2">Finalisasi assessment dan perubahan tag tenant.</p>
+              <p className="text-3xl font-black text-foreground mt-2">{curatorAuditSummary.finalizeCount} / {curatorAuditSummary.tagEditCount}</p>
+              <p className="text-xs text-muted-foreground mt-2">Finalisasi assessment dan perubahan tag tenant.</p>
             </div>
           </div>
 
           {(curatorAuditAbuseSignals.finalizeSpike || curatorAuditAbuseSignals.tagChurnAnomaly || curatorAuditAbuseSignals.actorDominance) && (
-            <div className="rounded-2xl bg-rose-50 px-4 py-3 ring-1 ring-rose-200 mb-4">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-rose-600">Abuse Indicators</p>
+            <div className="rounded-2xl bg-rose-50 dark:bg-rose-500/10 px-4 py-3 ring-1 ring-rose-200 dark:ring-rose-500/20 mb-4">
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-rose-600 dark:text-rose-400">Abuse Indicators</p>
               <div className="text-sm text-rose-900 mt-2 space-y-1">
                 {curatorAuditAbuseSignals.finalizeSpike && (
                   <p>
@@ -1279,7 +1279,7 @@ export default function AdminB2BPilotDashboardPage() {
           )}
 
           {!curatorAuditAbuseSignals.finalizeSpike && !curatorAuditAbuseSignals.tagChurnAnomaly && !curatorAuditAbuseSignals.actorDominance && (
-            <div className="rounded-2xl bg-emerald-50 px-4 py-3 ring-1 ring-emerald-200 mb-4 text-sm text-emerald-900">
+            <div className="rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 px-4 py-3 ring-1 ring-emerald-200 dark:ring-emerald-500/20 mb-4 text-sm text-emerald-900">
               Tidak ada indikator abuse signifikan pada 24 jam terakhir untuk scope tenant aktif.
             </div>
           )}
@@ -1287,7 +1287,7 @@ export default function AdminB2BPilotDashboardPage() {
           <div className="overflow-x-auto custom-scrollbar">
             <table className="w-full min-w-[900px] text-sm">
               <thead>
-                <tr className="border-b border-slate-100 text-left text-[10px] uppercase tracking-[0.22em] text-slate-400">
+                <tr className="border-b border-border text-left text-[10px] uppercase tracking-[0.22em] text-slate-400">
                   <th className="py-3 pr-4">Waktu</th>
                   <th className="py-3 pr-4">Tenant</th>
                   <th className="py-3 pr-4">Action</th>
@@ -1299,28 +1299,28 @@ export default function AdminB2BPilotDashboardPage() {
               <tbody>
                 {auditLoading ? (
                   <tr>
-                    <td className="py-6 text-slate-500" colSpan={6}>Memuat audit trail curator...</td>
+                    <td className="py-6 text-muted-foreground" colSpan={6}>Memuat audit trail curator...</td>
                   </tr>
                 ) : filteredCuratorAudits.length === 0 ? (
                   <tr>
-                    <td className="py-6 text-slate-500" colSpan={6}>Belum ada event curator pada scope tenant ini.</td>
+                    <td className="py-6 text-muted-foreground" colSpan={6}>Belum ada event curator pada scope tenant ini.</td>
                   </tr>
                 ) : (
                   filteredCuratorAudits.slice(0, 25).map((entry) => (
                     <tr key={entry.id} className="border-b border-slate-50 align-top">
-                      <td className="py-3 pr-4 text-slate-600">{formatDateTime(entry.createdAt)}</td>
+                      <td className="py-3 pr-4 text-muted-foreground">{formatDateTime(entry.createdAt)}</td>
                       <td className="py-3 pr-4 font-semibold text-slate-700">{entry.corporateEntity || '-'}</td>
                       <td className="py-3 pr-4">
-                        <span className="inline-flex rounded-full bg-indigo-50 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-indigo-700 ring-1 ring-indigo-200">
+                        <span className="inline-flex rounded-full bg-indigo-50 dark:bg-indigo-500/10 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-indigo-700 dark:text-indigo-300 ring-1 ring-indigo-200 dark:ring-indigo-500/20">
                           {entry.action.replace(/_/g, ' ')}
                         </span>
                       </td>
-                      <td className="py-3 pr-4 text-slate-600 font-mono text-xs">{entry.assessmentId || '-'}</td>
+                      <td className="py-3 pr-4 text-muted-foreground font-mono text-xs">{entry.assessmentId || '-'}</td>
                       <td className="py-3 pr-4 text-slate-700">
                         <p className="font-semibold">{entry.userEmail || entry.userId}</p>
-                        <p className="text-xs text-slate-500 mt-0.5">{entry.role || '-'}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{entry.role || '-'}</p>
                       </td>
-                      <td className="py-3 text-xs text-slate-500">{entry.routePath || '-'}</td>
+                      <td className="py-3 text-xs text-muted-foreground">{entry.routePath || '-'}</td>
                     </tr>
                   ))
                 )}
@@ -1353,7 +1353,7 @@ export default function AdminB2BPilotDashboardPage() {
             <div className="overflow-x-auto custom-scrollbar">
               <table className="w-full min-w-[760px] text-sm">
                 <thead>
-                  <tr className="border-b border-slate-100 text-left text-[10px] uppercase tracking-[0.22em] text-slate-400">
+                  <tr className="border-b border-border text-left text-[10px] uppercase tracking-[0.22em] text-slate-400">
                     <th className="py-3 pr-4">Segmen</th>
                     <th className="py-3 pr-4">Participants</th>
                     <th className="py-3 pr-4">Avg Score</th>
@@ -1367,8 +1367,8 @@ export default function AdminB2BPilotDashboardPage() {
                   {snapshot.segmentSummaries.slice(0, visibleSegmentRows).map((segment) => (
                     <tr key={segment.label} className="border-b border-slate-50 align-top">
                       <td className="py-3 pr-4">
-                        <p className="font-black text-slate-900">{segment.label}</p>
-                        <p className="text-xs text-slate-500 mt-1">{segment.dominantReadiness}</p>
+                        <p className="font-black text-foreground">{segment.label}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{segment.dominantReadiness}</p>
                       </td>
                       <td className="py-3 pr-4 font-semibold text-slate-700">{segment.count}</td>
                       <td className="py-3 pr-4 font-semibold text-slate-700">{formatScore(segment.avgScore)}</td>
@@ -1378,16 +1378,16 @@ export default function AdminB2BPilotDashboardPage() {
                         <span
                           className={`inline-flex rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.18em] ${
                             segment.priority === 'High'
-                              ? 'bg-rose-50 text-rose-700 ring-1 ring-rose-200'
+                              ? 'bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-300 ring-1 ring-rose-200 dark:ring-rose-500/20'
                               : segment.priority === 'Medium'
-                                ? 'bg-amber-50 text-amber-700 ring-1 ring-amber-200'
-                                : 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200'
+                                ? 'bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-300 ring-1 ring-amber-200 dark:ring-amber-500/20'
+                                : 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 ring-1 ring-emerald-200 dark:ring-emerald-500/20'
                           }`}
                         >
                           {segment.priority}
                         </span>
                       </td>
-                      <td className="py-3 text-slate-600">
+                      <td className="py-3 text-muted-foreground">
                         {segment.topRisk || segment.topFocus || 'Belum ada sinyal dominan'}
                       </td>
                     </tr>
@@ -1409,19 +1409,19 @@ export default function AdminB2BPilotDashboardPage() {
               <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-3">Top Risk Hotspots</p>
               <div className="space-y-3">
                 {snapshot.riskHotspots.length === 0 ? (
-                  <div className="rounded-2xl bg-slate-50 p-4 text-sm font-medium text-slate-500 ring-1 ring-slate-100">
+                  <div className="rounded-2xl bg-muted text-muted-foreground p-4 text-sm font-medium text-muted-foreground ring-1 ring-border">
                     Risiko belum banyak terstruktur di analyticsSummary. Dashboard tetap jalan, tetapi kualitas tactical layer akan makin baik jika risk taxonomy dirapikan.
                   </div>
                 ) : (
                   snapshot.riskHotspots.map((risk, index) => (
-                    <div key={risk.label} className="rounded-2xl bg-slate-50 px-4 py-3 ring-1 ring-slate-100 flex items-center justify-between gap-4">
+                    <div key={risk.label} className="rounded-2xl bg-muted text-muted-foreground px-4 py-3 ring-1 ring-border flex items-center justify-between gap-4">
                       <div className="flex items-start gap-3">
-                        <div className="w-8 h-8 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-xs font-black">
+                        <div className="w-8 h-8 rounded-full bg-amber-100 text-amber-700 dark:text-amber-300 flex items-center justify-center text-xs font-black">
                           {index + 1}
                         </div>
                         <div>
-                          <p className="font-semibold text-slate-800 leading-relaxed">{risk.label}</p>
-                          <p className="text-xs text-slate-500 mt-1">Muncul pada {risk.count} assessment.</p>
+                          <p className="font-semibold text-foreground leading-relaxed">{risk.label}</p>
+                          <p className="text-xs text-muted-foreground mt-1">Muncul pada {risk.count} assessment.</p>
                         </div>
                       </div>
                     </div>
@@ -1434,15 +1434,15 @@ export default function AdminB2BPilotDashboardPage() {
               <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-3">Recommended Focus Clusters</p>
               <div className="flex flex-wrap gap-2">
                 {snapshot.recommendationFocus.length === 0 ? (
-                  <span className="text-sm text-slate-500">Belum ada cluster focus yang terdokumentasi.</span>
+                  <span className="text-sm text-muted-foreground">Belum ada cluster focus yang terdokumentasi.</span>
                 ) : (
                   snapshot.recommendationFocus.map((item) => (
                     <span
                       key={item.label}
-                      className="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-3 py-2 text-xs font-bold text-indigo-700 ring-1 ring-indigo-200"
+                      className="inline-flex items-center gap-2 rounded-full bg-indigo-50 dark:bg-indigo-500/10 px-3 py-2 text-xs font-bold text-indigo-700 dark:text-indigo-300 ring-1 ring-indigo-200 dark:ring-indigo-500/20"
                     >
                       {item.label}
-                      <span className="rounded-full bg-white px-2 py-0.5 text-[10px] font-black text-indigo-600 ring-1 ring-indigo-100">
+                      <span className="rounded-full card-solid px-2 py-0.5 text-[10px] font-black text-indigo-600 dark:text-indigo-400 ring-1 ring-indigo-100">
                         {item.count}
                       </span>
                     </span>
@@ -1462,29 +1462,29 @@ export default function AdminB2BPilotDashboardPage() {
         >
           <div className="space-y-4">
             {visibleRecommendations.length === 0 ? (
-              <div className="rounded-2xl bg-slate-50 p-5 ring-1 ring-slate-100 text-sm text-slate-500">
+              <div className="rounded-2xl bg-muted text-muted-foreground p-5 ring-1 ring-border text-sm text-muted-foreground">
                 Belum ada cukup data untuk membuat rekomendasi taktis. Pastikan tenant memiliki readiness tier dan analyticsSummary.
               </div>
             ) : (
               visibleRecommendations.map((recommendation) => (
-                <div key={recommendation.segment} className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-5">
+                <div key={recommendation.segment} className="rounded-[1.5rem] border border-border bg-muted text-muted-foreground p-5">
                   <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                     <div>
                       <div className="flex items-center gap-2">
-                        <h3 className="text-base font-black text-slate-900">{recommendation.segment}</h3>
+                        <h3 className="text-base font-black text-foreground">{recommendation.segment}</h3>
                         <span
                           className={`inline-flex rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.18em] ${
                             recommendation.priority === 'High'
-                              ? 'bg-rose-50 text-rose-700 ring-1 ring-rose-200'
+                              ? 'bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-300 ring-1 ring-rose-200 dark:ring-rose-500/20'
                               : recommendation.priority === 'Medium'
-                                ? 'bg-amber-50 text-amber-700 ring-1 ring-amber-200'
-                                : 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200'
+                                ? 'bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-300 ring-1 ring-amber-200 dark:ring-amber-500/20'
+                                : 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 ring-1 ring-emerald-200 dark:ring-emerald-500/20'
                           }`}
                         >
                           {recommendation.priority}
                         </span>
                       </div>
-                      <p className="text-sm text-slate-500 font-medium mt-2">{recommendation.rationale}</p>
+                      <p className="text-sm text-muted-foreground font-medium mt-2">{recommendation.rationale}</p>
                     </div>
                     <Button className="rounded-xl bg-slate-900 hover:bg-indigo-600 text-white font-bold h-10 px-4">
                       Action cue
@@ -1493,7 +1493,7 @@ export default function AdminB2BPilotDashboardPage() {
                   </div>
                   <div className="mt-4 space-y-2">
                     {recommendation.actions.map((action) => (
-                      <div key={action} className="rounded-2xl bg-white px-4 py-3 ring-1 ring-slate-200 text-sm text-slate-700 font-medium">
+                      <div key={action} className="rounded-2xl card-solid px-4 py-3 ring-1 ring-border text-sm text-slate-700 font-medium">
                         {action}
                       </div>
                     ))}
@@ -1525,31 +1525,31 @@ export default function AdminB2BPilotDashboardPage() {
 
             <div className="space-y-3">
               {snapshot.recentAssessments.map((item) => (
-                <div key={item.id} className="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-100 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+                <div key={item.id} className="rounded-2xl bg-muted text-muted-foreground p-4 ring-1 ring-border flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
                   <div>
-                    <p className="font-black text-slate-900">{item.name}</p>
-                    <p className="text-sm text-slate-500 mt-1">
+                    <p className="font-black text-foreground">{item.name}</p>
+                    <p className="text-sm text-muted-foreground mt-1">
                       {item.organization} - {item.segmentLabel}
                     </p>
                   </div>
                   <div className="flex flex-wrap items-center gap-2 text-xs font-bold">
-                    <span className="inline-flex rounded-full bg-indigo-50 px-3 py-1.5 text-indigo-700 ring-1 ring-indigo-200">
+                    <span className="inline-flex rounded-full bg-indigo-50 dark:bg-indigo-500/10 px-3 py-1.5 text-indigo-700 dark:text-indigo-300 ring-1 ring-indigo-200 dark:ring-indigo-500/20">
                       {item.readiness}
                     </span>
-                    <span className="inline-flex rounded-full bg-slate-100 px-3 py-1.5 text-slate-700 ring-1 ring-slate-200">
+                    <span className="inline-flex rounded-full bg-secondary text-secondary-foreground px-3 py-1.5 text-slate-700 ring-1 ring-border">
                       Skor {item.score ?? '-'}
                     </span>
-                    <span className="inline-flex rounded-full bg-white px-3 py-1.5 text-slate-600 ring-1 ring-slate-200">
+                    <span className="inline-flex rounded-full card-solid px-3 py-1.5 text-muted-foreground ring-1 ring-border">
                       {item.status}
                     </span>
-                    <span className="inline-flex rounded-full bg-white px-3 py-1.5 text-slate-500 ring-1 ring-slate-200">
+                    <span className="inline-flex rounded-full card-solid px-3 py-1.5 text-muted-foreground ring-1 ring-border">
                       {formatDateTime(item.createdAt)}
                     </span>
                   </div>
                 </div>
               ))}
               {snapshot.recentAssessments.length === 0 && (
-                <div className="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-100 text-sm text-slate-500">
+                <div className="rounded-2xl bg-muted text-muted-foreground p-4 ring-1 ring-border text-sm text-muted-foreground">
                   Belum ada assessment yang bisa ditampilkan.
                 </div>
               )}
@@ -1568,7 +1568,7 @@ export default function AdminB2BPilotDashboardPage() {
         <div className="overflow-x-auto custom-scrollbar">
           <table className="w-full min-w-[860px] text-sm">
             <thead>
-              <tr className="border-b border-slate-100 text-left text-[10px] uppercase tracking-[0.22em] text-slate-400">
+              <tr className="border-b border-border text-left text-[10px] uppercase tracking-[0.22em] text-slate-400">
                 <th className="py-3 pr-4">Organization</th>
                 <th className="py-3 pr-4">Participants</th>
                 <th className="py-3 pr-4">Avg Score</th>
@@ -1585,18 +1585,18 @@ export default function AdminB2BPilotDashboardPage() {
                     <button
                       type="button"
                       onClick={() => setSelectedOrganization(item.name)}
-                      className="font-black text-slate-900 hover:text-indigo-600 transition-colors text-left"
+                      className="font-black text-foreground hover:text-indigo-600 dark:text-indigo-400 transition-colors text-left"
                     >
                       {item.name}
                     </button>
                   </td>
                   <td className="py-3 pr-4 font-semibold text-slate-700">{item.count}</td>
                   <td className="py-3 pr-4 font-semibold text-slate-700">{formatScore(item.avgScore)}</td>
-                  <td className="py-3 pr-4 text-slate-600">{item.dominantReadiness}</td>
+                  <td className="py-3 pr-4 text-muted-foreground">{item.dominantReadiness}</td>
                   <td className="py-3 pr-4 font-semibold text-slate-700">{formatPercent(item.validatedRate)}</td>
                   <td className="py-3 pr-4 font-semibold text-slate-700">{formatPercent(item.analyticsCoverage)}</td>
                   <td className="py-3">
-                    <span className="inline-flex rounded-full bg-slate-100 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-slate-700 ring-1 ring-slate-200">
+                    <span className="inline-flex rounded-full bg-secondary text-secondary-foreground px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-slate-700 ring-1 ring-border">
                       {item.operatingModel}
                     </span>
                   </td>
@@ -1605,7 +1605,7 @@ export default function AdminB2BPilotDashboardPage() {
             </tbody>
           </table>
           {portfolioSummaries.length === 0 && (
-            <div className="rounded-2xl bg-slate-50 p-5 ring-1 ring-slate-100 text-sm text-slate-500 mt-4">
+            <div className="rounded-2xl bg-muted text-muted-foreground p-5 ring-1 ring-border text-sm text-muted-foreground mt-4">
               Data tenant belum tersedia. Dashboard ini akan otomatis aktif begitu koleksi <code>assessments</code> memiliki dokumen.
             </div>
           )}
@@ -1634,9 +1634,9 @@ export default function AdminB2BPilotDashboardPage() {
               body: 'Tambahkan partner mapping eksplisit di data model agar expansion ke reseller, mitra coaching, atau operator delivery lebih mulus.',
             },
           ].map((item) => (
-            <div key={item.title} className="rounded-[1.5rem] bg-slate-50 p-5 ring-1 ring-slate-100">
-              <h3 className="text-base font-black text-slate-900">{item.title}</h3>
-              <p className="text-sm text-slate-600 mt-3 leading-relaxed">{item.body}</p>
+            <div key={item.title} className="rounded-[1.5rem] bg-muted text-muted-foreground p-5 ring-1 ring-border">
+              <h3 className="text-base font-black text-foreground">{item.title}</h3>
+              <p className="text-sm text-muted-foreground mt-3 leading-relaxed">{item.body}</p>
             </div>
           ))}
         </div>

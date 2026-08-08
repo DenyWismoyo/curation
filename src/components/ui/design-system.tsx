@@ -54,27 +54,27 @@ export function AppModal({
       size === 'fullscreen' ? 'p-0' : 'p-4 sm:p-6'
     )}>
       <div className={cn(
-        "bg-slate-50 w-full shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-300",
+        "bg-muted text-muted-foreground w-full shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-300",
         size === 'fullscreen' ? 'h-full rounded-none' : 'max-h-[95vh] rounded-[2rem]',
         modalSizeMap[size],
         className
       )}>
         {header ? header : (title || onClose) ? (
-          <div className="bg-white px-6 py-5 sm:px-8 border-b border-slate-200 flex justify-between items-center shrink-0">
+          <div className="card-solid px-6 py-5 sm:px-8 border-b border-border flex justify-between items-center shrink-0">
             <div>
               {title && (
-                <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                <h2 className="text-xl sm:text-2xl font-black text-foreground tracking-tight flex items-center gap-2">
                   {icon} {title}
                 </h2>
               )}
               {subtitle && (
-                <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1">
+                <p className="text-xs sm:text-sm text-muted-foreground font-medium mt-1">
                   {subtitle}
                 </p>
               )}
             </div>
             {onClose && !hideCloseButton && (
-              <Button onClick={onClose} variant="ghost" className="h-10 w-10 p-0 rounded-full text-slate-400 hover:text-rose-500 hover:bg-rose-50 shrink-0 ml-4">
+              <Button onClick={onClose} variant="ghost" className="h-10 w-10 p-0 rounded-full text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:bg-rose-500/10 shrink-0 ml-4">
                 <X className="w-5 h-5" />
               </Button>
             )}
@@ -108,7 +108,7 @@ interface AppTabsProps {
 export function AppTabs({ tabs, active, onChange, variant = 'pill', className }: AppTabsProps) {
   if (variant === 'underline') {
     return (
-      <div className={cn("flex items-center gap-6 border-b border-slate-200 px-6", className)}>
+      <div className={cn("flex items-center gap-6 border-b border-border px-6", className)}>
         {tabs.map(tab => (
           <button
             key={tab.id}
@@ -116,8 +116,8 @@ export function AppTabs({ tabs, active, onChange, variant = 'pill', className }:
             className={cn(
               "py-4 text-sm font-bold border-b-2 transition-colors flex items-center gap-2",
               active === tab.id
-                ? "border-indigo-600 text-indigo-600"
-                : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"
+                ? "border-indigo-600 text-indigo-600 dark:text-indigo-400"
+                : "border-transparent text-muted-foreground hover:text-slate-700 hover:border-border"
             )}
           >
             {tab.icon}
@@ -139,7 +139,7 @@ export function AppTabs({ tabs, active, onChange, variant = 'pill', className }:
             "px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap flex items-center gap-2",
             active === tab.id
               ? "bg-slate-900 text-white shadow-md"
-              : "bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-800"
+              : "bg-muted text-muted-foreground text-muted-foreground hover:bg-secondary text-secondary-foreground hover:text-foreground"
           )}
         >
           {tab.icon}
@@ -162,12 +162,12 @@ interface StatusBadgeProps {
 }
 
 const badgeVariantMap = {
-  success: 'bg-emerald-50 text-emerald-700 ring-emerald-200/60',
-  warning: 'bg-amber-50 text-amber-700 ring-amber-200/60',
-  danger: 'bg-rose-50 text-rose-700 ring-rose-200/60',
-  info: 'bg-indigo-50 text-indigo-700 ring-indigo-200/60',
-  premium: 'bg-amber-50 text-amber-700 ring-amber-200/60', // can customize further
-  default: 'bg-slate-50 text-slate-600 ring-slate-200/60',
+  success: 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 ring-emerald-200 dark:ring-emerald-500/20/60',
+  warning: 'bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-300 ring-amber-200 dark:ring-amber-500/20/60',
+  danger: 'bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-300 ring-rose-200 dark:ring-rose-500/20/60',
+  info: 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 ring-indigo-200 dark:ring-indigo-500/20/60',
+  premium: 'bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-300 ring-amber-200 dark:ring-amber-500/20/60', // can customize further
+  default: 'bg-muted text-muted-foreground text-muted-foreground ring-slate-200/60',
 };
 
 const pulseColorMap = {
@@ -176,7 +176,7 @@ const pulseColorMap = {
   danger: 'bg-rose-500',
   info: 'bg-indigo-500',
   premium: 'bg-amber-500',
-  default: 'bg-slate-500',
+  default: 'bg-muted text-muted-foreground0',
 };
 
 export function StatusBadge({ variant = 'default', children, icon, pulse, className }: StatusBadgeProps) {
@@ -235,7 +235,7 @@ export function AppSpinner({ size = 'md', message, className }: AppSpinnerProps)
   return (
     <div className={cn("flex flex-col items-center gap-3", className)}>
       <div className={cn(
-        "border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin",
+        "border-4 border-indigo-200 dark:border-indigo-500/20 border-t-indigo-600 rounded-full animate-spin",
         spinnerSizeMap[size]
       )} />
       {message && (
@@ -260,7 +260,7 @@ interface PageAuthGateProps {
 export function PageAuthGate({ loading, authorized, loadingMessage = 'Otentikasi...', children }: PageAuthGateProps) {
   if (loading || !authorized) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-muted text-muted-foreground p-4">
         <AppSpinner size="md" message={loadingMessage} />
       </div>
     );
@@ -287,10 +287,10 @@ const paddingMap = {
 };
 
 const cardVariantMap = {
-  default: 'bg-white ring-1 ring-slate-200/60 shadow-sm',
-  elevated: 'bg-white shadow-xl shadow-slate-200/50 ring-1 ring-slate-100',
-  ghost: 'bg-slate-50 border border-slate-100',
-  highlighted: 'bg-indigo-50/50 ring-1 ring-indigo-100',
+  default: 'card-solid ring-1 ring-border shadow-sm',
+  elevated: 'card-solid shadow-xl shadow-slate-200/50 ring-1 ring-border',
+  ghost: 'bg-muted text-muted-foreground border border-border',
+  highlighted: 'bg-indigo-50 dark:bg-indigo-500/10/50 ring-1 ring-indigo-100',
 };
 
 export function ContentCard({

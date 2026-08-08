@@ -15,15 +15,15 @@ export function BundleUpsellBanner({ onSelectBundle, className = '' }: BundleUps
       {/* Paket 3 Modul */}
       <motion.div 
         whileHover={{ scale: 1.02 }}
-        className="relative bg-gradient-to-br from-indigo-50 to-white rounded-3xl p-6 ring-1 ring-indigo-100 shadow-xl shadow-indigo-100/50 overflow-hidden flex flex-col justify-between"
+        className="relative bg-gradient-to-br from-indigo-50 to-white dark:to-transparent rounded-3xl p-6 ring-1 ring-indigo-100 shadow-xl shadow-indigo-100/50 overflow-hidden flex flex-col justify-between"
       >
         <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-bl-full blur-2xl"></div>
         <div className="relative z-10">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-indigo-100 text-indigo-700 rounded-lg text-xs font-black uppercase tracking-wider mb-4">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-indigo-100 text-indigo-700 dark:text-indigo-300 rounded-lg text-xs font-black uppercase tracking-wider mb-4">
             <Sparkles size={14} /> Terlaris
           </div>
-          <h3 className="text-xl font-black text-slate-900 mb-2">Bundle 3 Modul</h3>
-          <p className="text-sm text-slate-600 font-medium mb-4">
+          <h3 className="text-xl font-black text-foreground mb-2">Bundle 3 Modul</h3>
+          <p className="text-sm text-muted-foreground font-medium mb-4">
             Pilih 3 asesmen apapun dari katalog. Cocok untuk mengukur kesiapan bisnis dan kompetensi dasar.
           </p>
           <div className="space-y-2 mb-6">
@@ -37,7 +37,7 @@ export function BundleUpsellBanner({ onSelectBundle, className = '' }: BundleUps
         </div>
         <div className="relative z-10 mt-auto">
           <div className="flex items-end gap-2 mb-4">
-            <span className="text-2xl font-black text-slate-900">Rp 149.000</span>
+            <span className="text-2xl font-black text-foreground">Rp 149.000</span>
             <span className="text-sm text-slate-400 line-through font-medium mb-1">Rp 171.000</span>
           </div>
           <button 
@@ -54,7 +54,7 @@ export function BundleUpsellBanner({ onSelectBundle, className = '' }: BundleUps
         whileHover={{ scale: 1.02 }}
         className="relative bg-gradient-to-br from-slate-900 to-indigo-900 rounded-3xl p-6 ring-1 ring-white/10 shadow-xl shadow-indigo-900/20 overflow-hidden flex flex-col justify-between"
       >
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-bl-full blur-2xl"></div>
+        <div className="absolute top-0 right-0 w-32 h-32 card-solid/10 rounded-bl-full blur-2xl"></div>
         <div className="absolute bottom-0 left-0 w-40 h-40 bg-emerald-500/20 rounded-tr-full blur-3xl"></div>
         
         <div className="relative z-10">
@@ -81,7 +81,7 @@ export function BundleUpsellBanner({ onSelectBundle, className = '' }: BundleUps
           </div>
           <button 
             onClick={() => onSelectBundle('BUNDLE_5')}
-            className="w-full h-12 bg-white hover:bg-slate-100 text-slate-900 rounded-xl font-bold flex items-center justify-center gap-2 transition-colors shadow-lg shadow-black/20"
+            className="w-full h-12 card-solid hover:bg-secondary text-secondary-foreground text-foreground rounded-xl font-bold flex items-center justify-center gap-2 transition-colors shadow-lg shadow-black/20"
           >
             Beli Bundle 5 Modul <ArrowRight size={16} />
           </button>

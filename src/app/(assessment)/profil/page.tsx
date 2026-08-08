@@ -50,14 +50,14 @@ interface UserStats {
 }
 
 const BADGES: Badge[] = [
-  { id: 'first_step', label: 'Langkah Pertama', description: 'Menyelesaikan asesmen pertama', icon: <Zap size={18} />, color: 'text-indigo-600', bgColor: 'bg-indigo-50', condition: (s) => s.completedAssessments >= 1 },
-  { id: 'score_80', label: 'Skor Gemilang', description: 'Meraih skor di atas 80', icon: <Star size={18} />, color: 'text-amber-500', bgColor: 'bg-amber-50', condition: (s) => s.maxScore >= 80 },
-  { id: 'consistent', label: 'Konsistensi Strategis', description: 'Menyelesaikan 3 asesmen atau lebih', icon: <TrendingUp size={18} />, color: 'text-emerald-600', bgColor: 'bg-emerald-50', condition: (s) => s.completedAssessments >= 3 },
-  { id: 'multi_track', label: 'Explorer', description: 'Mencoba 3 program berbeda', icon: <Target size={18} />, color: 'text-blue-600', bgColor: 'bg-blue-50', condition: (s) => s.distinctTracks >= 3 },
-  { id: 'executor', label: 'Eksekutor', description: 'Menyelesaikan 5+ action items', icon: <CheckCircle2 size={18} />, color: 'text-purple-600', bgColor: 'bg-purple-50', condition: (s) => s.completedActionItems >= 5 },
-  { id: 'premium', label: 'Member Premium', description: 'Memiliki akses modul premium', icon: <Award size={18} />, color: 'text-rose-500', bgColor: 'bg-rose-50', condition: (s) => s.hasPremium },
+  { id: 'first_step', label: 'Langkah Pertama', description: 'Menyelesaikan asesmen pertama', icon: <Zap size={18} />, color: 'text-indigo-600 dark:text-indigo-400', bgColor: 'bg-indigo-50 dark:bg-indigo-500/10', condition: (s) => s.completedAssessments >= 1 },
+  { id: 'score_80', label: 'Skor Gemilang', description: 'Meraih skor di atas 80', icon: <Star size={18} />, color: 'text-amber-500', bgColor: 'bg-amber-50 dark:bg-amber-500/10', condition: (s) => s.maxScore >= 80 },
+  { id: 'consistent', label: 'Konsistensi Strategis', description: 'Menyelesaikan 3 asesmen atau lebih', icon: <TrendingUp size={18} />, color: 'text-emerald-600 dark:text-emerald-400', bgColor: 'bg-emerald-50 dark:bg-emerald-500/10', condition: (s) => s.completedAssessments >= 3 },
+  { id: 'multi_track', label: 'Explorer', description: 'Mencoba 3 program berbeda', icon: <Target size={18} />, color: 'text-blue-600 dark:text-blue-400', bgColor: 'bg-blue-50 dark:bg-blue-500/10', condition: (s) => s.distinctTracks >= 3 },
+  { id: 'executor', label: 'Eksekutor', description: 'Menyelesaikan 5+ action items', icon: <CheckCircle2 size={18} />, color: 'text-purple-600 dark:text-purple-400', bgColor: 'bg-purple-50 dark:bg-purple-500/10', condition: (s) => s.completedActionItems >= 5 },
+  { id: 'premium', label: 'Member Premium', description: 'Memiliki akses modul premium', icon: <Award size={18} />, color: 'text-rose-500', bgColor: 'bg-rose-50 dark:bg-rose-500/10', condition: (s) => s.hasPremium },
   { id: 'score_90', label: 'Elite Analyst', description: 'Meraih skor di atas 90', icon: <Trophy size={18} />, color: 'text-yellow-500', bgColor: 'bg-yellow-50', condition: (s) => s.maxScore >= 90 },
-  { id: 'high_confidence', label: 'Strategis', description: 'Menyelesaikan 5 asesmen atau lebih', icon: <BarChart3 size={18} />, color: 'text-teal-600', bgColor: 'bg-teal-50', condition: (s) => s.completedAssessments >= 5 },
+  { id: 'high_confidence', label: 'Strategis', description: 'Menyelesaikan 5 asesmen atau lebih', icon: <BarChart3 size={18} />, color: 'text-teal-600 dark:text-teal-400', bgColor: 'bg-teal-50 dark:bg-teal-500/10', condition: (s) => s.completedAssessments >= 5 },
 ];
 
 export default function ProfilPage() {
@@ -181,7 +181,7 @@ export default function ProfilPage() {
         {/* PROFILE INFO */}
         <div className="flex items-center gap-5 mt-2">
           <div className="relative shrink-0">
-            <div className="w-20 h-20 bg-indigo-50 text-indigo-600 rounded-[1.5rem] flex items-center justify-center text-2xl font-black ring-1 ring-indigo-100 shadow-sm">
+            <div className="w-20 h-20 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-[1.5rem] flex items-center justify-center text-2xl font-black ring-1 ring-indigo-100 shadow-sm">
               {user.displayName?.charAt(0).toUpperCase() || 'U'}
             </div>
             {stats?.hasPremium && (
@@ -191,10 +191,10 @@ export default function ProfilPage() {
             )}
           </div>
           <div className="flex-1 min-w-0">
-            <h1 className="text-2xl font-black text-slate-900 truncate mb-1">
+            <h1 className="text-2xl font-black text-foreground truncate mb-1">
               {user.displayName || 'Pengguna Omnifit'}
             </h1>
-            <p className="text-sm text-slate-500 font-medium truncate">{user.email}</p>
+            <p className="text-sm text-muted-foreground font-medium truncate">{user.email}</p>
             <div className="flex items-center gap-2 mt-2 flex-wrap">
               {stats?.hasPremium && (
                 <StatusBadge variant="premium" icon={<Award size={12}/>}>
@@ -240,7 +240,7 @@ export default function ProfilPage() {
                   {
                     label: 'Total Asesmen',
                     value: <>{stats?.totalAssessments ?? 0}<span className="text-sm text-slate-400 font-bold ml-1">program</span></>,
-                    icon: <DocExportIcon size={20} className="text-indigo-600" />,
+                    icon: <DocExportIcon size={20} className="text-indigo-600 dark:text-indigo-400" />,
                   },
                   {
                     label: 'Skor Tertinggi',
@@ -250,7 +250,7 @@ export default function ProfilPage() {
                   {
                     label: 'Rata-rata Skor',
                     value: <>{stats?.avgScore ?? 0}<span className="text-sm text-slate-400 font-bold ml-1">/100</span></>,
-                    icon: <BarChart3 size={20} className="text-emerald-600" />,
+                    icon: <BarChart3 size={20} className="text-emerald-600 dark:text-emerald-400" />,
                   },
                   {
                     label: 'Lencana',
@@ -263,7 +263,7 @@ export default function ProfilPage() {
                       label={s.label}
                       value={s.value}
                       icon={
-                        <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center ring-1 ring-slate-100 mb-2">
+                        <div className="w-10 h-10 bg-muted text-muted-foreground rounded-xl flex items-center justify-center ring-1 ring-border mb-2">
                           {s.icon}
                         </div>
                       }
@@ -275,15 +275,15 @@ export default function ProfilPage() {
               {/* ACTION PLAN PROGRESS */}
               {stats && stats.totalActionItems > 0 && (
                 <ContentCard className="flex flex-col md:flex-row items-center gap-6">
-                  <div className="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center shrink-0">
-                    <InfinityWorkflowIcon size={28} className="text-indigo-600" />
+                  <div className="w-14 h-14 bg-indigo-50 dark:bg-indigo-500/10 rounded-2xl flex items-center justify-center shrink-0">
+                    <InfinityWorkflowIcon size={28} className="text-indigo-600 dark:text-indigo-400" />
                   </div>
                   <div className="flex-1 w-full">
                     <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-sm font-black text-slate-900">Progres Action Plan OS</h3>
-                      <span className="text-sm font-black text-indigo-600">{actionPlanProgress}%</span>
+                      <h3 className="text-sm font-black text-foreground">Progres Action Plan OS</h3>
+                      <span className="text-sm font-black text-indigo-600 dark:text-indigo-400">{actionPlanProgress}%</span>
                     </div>
-                    <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden mb-2">
+                    <div className="w-full h-3 bg-secondary text-secondary-foreground rounded-full overflow-hidden mb-2">
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${actionPlanProgress}%` }}
@@ -291,9 +291,9 @@ export default function ProfilPage() {
                         className="h-full bg-indigo-500 rounded-full"
                       />
                     </div>
-                    <p className="text-xs text-slate-500 font-medium">
+                    <p className="text-xs text-muted-foreground font-medium">
                       Anda telah mengeksekusi{' '}
-                      <strong className="text-slate-800">{stats.completedActionItems}</strong>{' '}
+                      <strong className="text-foreground">{stats.completedActionItems}</strong>{' '}
                       dari total {stats.totalActionItems} tugas strategis.
                     </p>
                   </div>
@@ -303,21 +303,21 @@ export default function ProfilPage() {
               {/* QUICK ACTIONS */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
-                  { label: 'Lihat Progress', desc: 'Timeline & grafik performa', href: '/progress', icon: <TrendingUp size={20} className="text-emerald-600" />, ring: 'hover:ring-emerald-200' },
-                  { label: 'Buka Workspace', desc: 'Selesaikan Action Plan', href: '/workspace', icon: <InfinityWorkflowIcon size={20} className="text-indigo-600" />, ring: 'hover:ring-indigo-200' },
-                  { label: 'Katalog Modul', desc: 'Cari asesmen baru', href: '/katalog', icon: <AiSparkIcon size={20} className="text-purple-500" />, ring: 'hover:ring-purple-200' },
-                  { label: 'Portal Affiliate', desc: 'Komisi & Referral', href: '/affiliate', icon: <HandCoins size={20} className="text-amber-600" />, ring: 'hover:ring-amber-200' },
+                  { label: 'Lihat Progress', desc: 'Timeline & grafik performa', href: '/progress', icon: <TrendingUp size={20} className="text-emerald-600 dark:text-emerald-400" />, ring: 'hover:ring-emerald-200 dark:ring-emerald-500/20' },
+                  { label: 'Buka Workspace', desc: 'Selesaikan Action Plan', href: '/workspace', icon: <InfinityWorkflowIcon size={20} className="text-indigo-600 dark:text-indigo-400" />, ring: 'hover:ring-indigo-200 dark:ring-indigo-500/20' },
+                  { label: 'Katalog Modul', desc: 'Cari asesmen baru', href: '/katalog', icon: <AiSparkIcon size={20} className="text-purple-500" />, ring: 'hover:ring-purple-200 dark:ring-purple-500/20' },
+                  { label: 'Portal Affiliate', desc: 'Komisi & Referral', href: '/affiliate', icon: <HandCoins size={20} className="text-amber-600 dark:text-amber-400" />, ring: 'hover:ring-amber-200 dark:ring-amber-500/20' },
                 ].map((a, i) => (
                   <button
                     key={i}
                     onClick={() => router.push(a.href)}
-                    className={`bg-white p-6 rounded-[1.5rem] ring-1 ring-slate-200/60 shadow-sm text-left transition-all ${a.ring} group flex flex-col`}
+                    className={`card-solid p-6 rounded-[1.5rem] ring-1 ring-border shadow-sm text-left transition-all ${a.ring} group flex flex-col`}
                   >
-                    <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <div className="w-10 h-10 bg-muted text-muted-foreground rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                       {a.icon}
                     </div>
-                    <p className="text-sm font-black text-slate-900 mb-1">{a.label}</p>
-                    <p className="text-xs text-slate-500 leading-relaxed">{a.desc}</p>
+                    <p className="text-sm font-black text-foreground mb-1">{a.label}</p>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{a.desc}</p>
                   </button>
                 ))}
               </div>
@@ -349,13 +349,13 @@ export default function ProfilPage() {
                       <motion.div
                         key={badge.id}
                         initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.05 }}
-                        className="bg-white p-6 rounded-[1.5rem] ring-1 ring-slate-200/60 shadow-sm text-center"
+                        className="card-solid p-6 rounded-[1.5rem] ring-1 ring-border shadow-sm text-center"
                       >
                         <div className={`w-14 h-14 ${badge.bgColor} rounded-2xl flex items-center justify-center mx-auto mb-4 ring-1 ring-white shadow-inner`}>
                           <span className={badge.color}>{badge.icon}</span>
                         </div>
-                        <p className="text-sm font-black text-slate-900 leading-tight mb-1">{badge.label}</p>
-                        <p className="text-[10px] text-slate-500 leading-relaxed">{badge.description}</p>
+                        <p className="text-sm font-black text-foreground leading-tight mb-1">{badge.label}</p>
+                        <p className="text-[10px] text-muted-foreground leading-relaxed">{badge.description}</p>
                       </motion.div>
                     ))}
                   </div>
@@ -369,11 +369,11 @@ export default function ProfilPage() {
                   </h3>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {lockedBadges.map((badge) => (
-                      <div key={badge.id} className="bg-white p-6 rounded-[1.5rem] ring-1 ring-slate-100 text-center opacity-50 grayscale">
-                        <div className="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                      <div key={badge.id} className="card-solid p-6 rounded-[1.5rem] ring-1 ring-border text-center opacity-50 grayscale">
+                        <div className="w-14 h-14 bg-secondary text-secondary-foreground rounded-2xl flex items-center justify-center mx-auto mb-4">
                           <span className="text-slate-400">{badge.icon}</span>
                         </div>
-                        <p className="text-sm font-bold text-slate-500 leading-tight mb-1">{badge.label}</p>
+                        <p className="text-sm font-bold text-muted-foreground leading-tight mb-1">{badge.label}</p>
                         <p className="text-[10px] text-slate-400 leading-relaxed">{badge.description}</p>
                       </div>
                     ))}
@@ -392,15 +392,15 @@ export default function ProfilPage() {
             >
               {/* PENGATURAN KONTAK & NOTIFIKASI */}
               <ContentCard>
-                <SectionLabel icon={<Bell size={16} className="text-indigo-600" />} className="mb-6">
+                <SectionLabel icon={<Bell size={16} className="text-indigo-600 dark:text-indigo-400" />} className="mb-6">
                   Preferensi Kontak & Nudge (Follow-Up)
                 </SectionLabel>
                 
                 <div className="space-y-4">
                   {/* Nomor WhatsApp */}
-                  <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                    <label className="block text-sm font-bold text-slate-900 mb-1">Nomor WhatsApp</label>
-                    <p className="text-xs text-slate-500 mb-3">
+                  <div className="p-4 bg-muted text-muted-foreground rounded-2xl border border-border">
+                    <label className="block text-sm font-bold text-foreground mb-1">Nomor WhatsApp</label>
+                    <p className="text-xs text-muted-foreground mb-3">
                       Digunakan untuk mengirimkan pesan follow-up otomatis berbasis AI mengenai progress *Action Plan* Anda.
                     </p>
                     <input 
@@ -408,15 +408,15 @@ export default function ProfilPage() {
                       placeholder="Contoh: 081234567890" 
                       value={profileData.phone}
                       onChange={(e) => setProfileData(prev => ({ ...prev, phone: e.target.value }))}
-                      className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium text-slate-700 text-sm"
+                      className="w-full h-11 px-4 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium text-slate-700 text-sm"
                     />
                   </div>
 
                   {/* Nudge Email */}
-                  <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                  <div className="flex items-center justify-between p-4 bg-muted text-muted-foreground rounded-2xl border border-border">
                     <div>
-                      <p className="text-sm font-bold text-slate-900">Weekly Action Plan (Email)</p>
-                      <p className="text-xs text-slate-500 mt-1">
+                      <p className="text-sm font-bold text-foreground">Weekly Action Plan (Email)</p>
+                      <p className="text-xs text-muted-foreground mt-1">
                         Kirim ringkasan mingguan ke email terdaftar Anda.
                       </p>
                     </div>
@@ -424,15 +424,15 @@ export default function ProfilPage() {
                       onClick={() => setProfileData(prev => ({ ...prev, nudgeEmail: !prev.nudgeEmail }))}
                       className={`w-14 h-8 rounded-full transition-colors relative shadow-inner ${profileData.nudgeEmail ? 'bg-indigo-600' : 'bg-slate-200'}`}
                     >
-                      <div className={`w-6 h-6 bg-white rounded-full shadow-md absolute top-1 transition-transform ${profileData.nudgeEmail ? 'translate-x-7' : 'translate-x-1'}`} />
+                      <div className={`w-6 h-6 card-solid rounded-full shadow-md absolute top-1 transition-transform ${profileData.nudgeEmail ? 'translate-x-7' : 'translate-x-1'}`} />
                     </button>
                   </div>
 
                   {/* Nudge WhatsApp */}
-                  <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                  <div className="flex items-center justify-between p-4 bg-muted text-muted-foreground rounded-2xl border border-border">
                     <div>
-                      <p className="text-sm font-bold text-slate-900">Weekly Action Plan (WhatsApp)</p>
-                      <p className="text-xs text-slate-500 mt-1">
+                      <p className="text-sm font-bold text-foreground">Weekly Action Plan (WhatsApp)</p>
+                      <p className="text-xs text-muted-foreground mt-1">
                         Terima pesan WhatsApp dari AI Coach kami setiap awal pekan.
                       </p>
                     </div>
@@ -440,7 +440,7 @@ export default function ProfilPage() {
                       onClick={() => setProfileData(prev => ({ ...prev, nudgeWhatsapp: !prev.nudgeWhatsapp }))}
                       className={`w-14 h-8 rounded-full transition-colors relative shadow-inner ${profileData.nudgeWhatsapp ? 'bg-indigo-600' : 'bg-slate-200'}`}
                     >
-                      <div className={`w-6 h-6 bg-white rounded-full shadow-md absolute top-1 transition-transform ${profileData.nudgeWhatsapp ? 'translate-x-7' : 'translate-x-1'}`} />
+                      <div className={`w-6 h-6 card-solid rounded-full shadow-md absolute top-1 transition-transform ${profileData.nudgeWhatsapp ? 'translate-x-7' : 'translate-x-1'}`} />
                     </button>
                   </div>
 
@@ -459,11 +459,11 @@ export default function ProfilPage() {
               {/* INFO AKUN */}
               <ContentCard padding="none">
                 <div className="p-6 pb-2">
-                  <SectionLabel icon={<Settings size={16} className="text-slate-500" />}>
+                  <SectionLabel icon={<Settings size={16} className="text-muted-foreground" />}>
                     Informasi Akun Sistem
                   </SectionLabel>
                 </div>
-                <AppKeyValueList variant="striped" className="border-t border-slate-100">
+                <AppKeyValueList variant="striped" className="border-t border-border">
                   <AppKeyValueItem 
                     label="Nama Lengkap" 
                     value={user.displayName} 
@@ -486,7 +486,7 @@ export default function ProfilPage() {
               {/* LOGOUT */}
               <button
                 onClick={async () => { await logout(); router.push('/'); }}
-                className="w-full flex items-center justify-center gap-2 h-14 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-600 font-black text-sm transition-colors ring-1 ring-rose-200"
+                className="w-full flex items-center justify-center gap-2 h-14 rounded-2xl bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 font-black text-sm transition-colors ring-1 ring-rose-200 dark:ring-rose-500/20"
               >
                 <LogOut size={18} /> Keluar dari Sistem (Logout)
               </button>

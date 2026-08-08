@@ -678,15 +678,15 @@ function TemplateBuilderContent() {
                 Dynamic Form Engine
               </Badge>
               <span className="text-slate-300">•</span>
-              <span className="text-xs font-bold text-slate-500">Schema & AI Blueprint Builder</span>
+              <span className="text-xs font-bold text-muted-foreground">Schema & AI Blueprint Builder</span>
             </div>
-            <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+            <h1 className="text-3xl font-black text-foreground tracking-tight flex items-center gap-3">
               <div className="p-2 bg-indigo-600 text-white rounded-2xl shadow-lg shadow-indigo-600/20">
                 <Settings2 className="w-6 h-6" />
               </div>
               Template Form Builder
             </h1>
-            <p className="text-slate-500 mt-1 font-medium max-w-2xl text-sm leading-relaxed">
+            <p className="text-muted-foreground mt-1 font-medium max-w-2xl text-sm leading-relaxed">
               Kelola struktur pertanyaan, prompt AI, dan direktori modul asesmen secara dinamis.
             </p>
           </div>
@@ -696,7 +696,7 @@ function TemplateBuilderContent() {
               onClick={handleMassGenerateExpectedOutputs}
               disabled={isMassGenerating}
               variant="outline"
-              className="border-indigo-200 text-indigo-700 hover:bg-indigo-50 rounded-2xl h-10 px-4 font-bold text-xs cursor-pointer shadow-xs"
+              className="border-indigo-200 dark:border-indigo-500/20 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:bg-indigo-500/10 rounded-2xl h-10 px-4 font-bold text-xs cursor-pointer shadow-xs"
             >
               {isMassGenerating ? (
                 <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
@@ -715,20 +715,20 @@ function TemplateBuilderContent() {
               className={`rounded-2xl h-10 px-4 font-bold text-xs transition-all flex items-center gap-1.5 cursor-pointer ${
                 isEditMode
                   ? 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-md shadow-indigo-600/20'
-                  : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                  : 'card-solid border-border text-slate-700 hover:bg-muted text-muted-foreground'
               }`}
             >
               {isEditMode ? <CheckCircle2 className="w-4 h-4" /> : <Settings2 className="w-4 h-4" />}
               {isEditMode ? 'Selesai Mengatur' : 'Atur Organisasi'}
             </Button>
 
-            <div className="hidden sm:flex bg-slate-100 p-1 rounded-2xl ring-1 ring-slate-200">
+            <div className="hidden sm:flex bg-secondary text-secondary-foreground p-1 rounded-2xl ring-1 ring-border">
               <button
                 onClick={() => setViewMode('list')}
                 className={`p-1.5 rounded-xl transition-all cursor-pointer ${
                   viewMode === 'list'
-                    ? 'bg-white shadow-xs text-indigo-600 font-bold'
-                    : 'text-slate-500 hover:text-slate-800'
+                    ? 'card-solid shadow-xs text-indigo-600 dark:text-indigo-400 font-bold'
+                    : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 <ListIcon size={16} />
@@ -737,16 +737,16 @@ function TemplateBuilderContent() {
                 onClick={() => setViewMode('grid')}
                 className={`p-1.5 rounded-xl transition-all cursor-pointer ${
                   viewMode === 'grid'
-                    ? 'bg-white shadow-xs text-indigo-600 font-bold'
-                    : 'text-slate-500 hover:text-slate-800'
+                    ? 'card-solid shadow-xs text-indigo-600 dark:text-indigo-400 font-bold'
+                    : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 <LayoutGrid size={16} />
               </button>
             </div>
 
-            <label className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-2xl text-xs font-bold cursor-pointer shadow-xs transition-all">
-              <Upload className="h-4 w-4 text-slate-500" /> Import JSON
+            <label className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 card-solid border border-border text-slate-700 hover:bg-muted text-muted-foreground rounded-2xl text-xs font-bold cursor-pointer shadow-xs transition-all">
+              <Upload className="h-4 w-4 text-muted-foreground" /> Import JSON
               <input type="file" accept=".json" onChange={importTemplate} className="hidden" />
             </label>
 
@@ -760,7 +760,7 @@ function TemplateBuilderContent() {
         </div>
 
         {/* FOLDER DIRECTORY TABS */}
-        <div className="w-full bg-white p-3 rounded-3xl ring-1 ring-slate-200/80 shadow-2xs flex items-center gap-2 overflow-x-auto hide-scrollbar">
+        <div className="w-full card-solid p-3 rounded-3xl ring-1 ring-border/80 shadow-2xs flex items-center gap-2 overflow-x-auto hide-scrollbar">
           <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2 flex items-center gap-1 shrink-0">
             <Folder size={12} /> DIREKTORI:
           </span>
@@ -784,7 +784,7 @@ function TemplateBuilderContent() {
                 className={`flex items-center gap-2 px-3.5 py-2 rounded-2xl cursor-pointer transition-all border shrink-0 text-xs font-bold ${
                   isCurrentActive
                     ? 'bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-600/20'
-                    : 'bg-slate-50 border-slate-100 text-slate-600 hover:bg-slate-100'
+                    : 'bg-muted text-muted-foreground border-border text-muted-foreground hover:bg-secondary text-secondary-foreground'
                 }`}
               >
                 {isCurrentActive ? (
@@ -806,7 +806,7 @@ function TemplateBuilderContent() {
 
         {/* SEARCH BAR & DATATABLE */}
         <div className="space-y-4">
-          <div className="flex items-center justify-between gap-3 bg-white p-3 rounded-2xl ring-1 ring-slate-200/80 shadow-2xs">
+          <div className="flex items-center justify-between gap-3 card-solid p-3 rounded-2xl ring-1 ring-border/80 shadow-2xs">
             <div className="relative w-full sm:max-w-sm">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
@@ -814,7 +814,7 @@ function TemplateBuilderContent() {
                 placeholder={`Cari di folder ${activeFolder}...`}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-slate-50 border-none ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-500 rounded-xl h-9 pl-9 pr-4 text-xs font-medium outline-none"
+                className="w-full bg-muted text-muted-foreground border-none ring-1 ring-border focus:ring-2 focus:ring-indigo-500 rounded-xl h-9 pl-9 pr-4 text-xs font-medium outline-none"
               />
             </div>
           </div>
@@ -826,7 +826,7 @@ function TemplateBuilderContent() {
               <Skeleton className="h-16 w-full rounded-2xl" />
             </div>
           ) : filteredTemplates.length === 0 ? (
-            <div className="text-center p-16 bg-white rounded-3xl border border-dashed border-slate-200 ring-1 ring-slate-100">
+            <div className="text-center p-16 card-solid rounded-3xl border border-dashed border-border ring-1 ring-border">
               <FolderOpen className="w-10 h-10 text-slate-300 mx-auto mb-3" />
               <h3 className="text-base font-black text-slate-700">
                 {searchQuery ? 'Pencarian Tidak Ditemukan' : 'Folder Kosong'}
@@ -850,7 +850,7 @@ function TemplateBuilderContent() {
               </TableHeader>
               <TableBody>
                 {filteredTemplates.map((template) => (
-                  <TableRow key={template.id} className="hover:bg-slate-50/70 group">
+                  <TableRow key={template.id} className="hover:bg-muted text-muted-foreground/70 group">
                     <TableCell>
                       <div
                         onClick={() =>
@@ -860,7 +860,7 @@ function TemplateBuilderContent() {
                         }
                         className="cursor-pointer"
                       >
-                        <p className="font-extrabold text-slate-900 text-sm group-hover:text-indigo-600 transition-colors">
+                        <p className="font-extrabold text-foreground text-sm group-hover:text-indigo-600 dark:text-indigo-400 transition-colors">
                           {template.trackName}
                         </p>
                         <p className="text-[11px] text-slate-400 font-medium line-clamp-1 mt-0.5">
@@ -898,7 +898,7 @@ function TemplateBuilderContent() {
                             )
                           }
                           variant="ghost"
-                          className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 h-8 px-3 rounded-xl font-bold text-xs"
+                          className="bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 h-8 px-3 rounded-xl font-bold text-xs"
                         >
                           <Edit3 className="w-3.5 h-3.5 mr-1" /> Edit
                         </Button>
@@ -907,7 +907,7 @@ function TemplateBuilderContent() {
                           <AlertDialogTrigger asChild>
                             <Button
                               variant="ghost"
-                              className="text-rose-500 hover:text-rose-700 hover:bg-rose-50 h-8 w-8 p-0 rounded-xl"
+                              className="text-rose-500 hover:text-rose-700 dark:text-rose-300 hover:bg-rose-50 dark:bg-rose-500/10 h-8 w-8 p-0 rounded-xl"
                               title="Hapus Template"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -946,12 +946,12 @@ function TemplateBuilderContent() {
   return (
     <div className="space-y-6 animate-in fade-in duration-300 pb-20 w-full min-w-0 font-sans">
       {/* HEADER EDITOR */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl ring-1 ring-slate-200/80 shadow-2xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 card-solid p-4 sm:p-6 rounded-3xl ring-1 ring-border/80 shadow-2xs">
         <div className="flex items-center gap-3">
           <Button
             variant="ghost"
             onClick={() => router.push(`?folder=${encodeURIComponent(activeFolder)}`)}
-            className="w-10 h-10 p-0 rounded-xl bg-slate-100/80 hover:bg-slate-200 text-slate-600 shrink-0"
+            className="w-10 h-10 p-0 rounded-xl bg-secondary text-secondary-foreground/80 hover:bg-slate-200 text-muted-foreground shrink-0"
           >
             <ChevronLeft size={20} />
           </Button>
@@ -970,7 +970,7 @@ function TemplateBuilderContent() {
                 </Badge>
               )}
             </div>
-            <h1 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight leading-tight mt-1">
+            <h1 className="text-lg sm:text-xl font-black text-foreground tracking-tight leading-tight mt-1">
               {activeTemplate?.trackName}
             </h1>
           </div>
@@ -980,9 +980,9 @@ function TemplateBuilderContent() {
           <Button
             onClick={duplicateTemplate}
             variant="outline"
-            className="rounded-xl h-10 px-4 font-bold text-xs border-slate-200 text-slate-700 hover:bg-slate-50"
+            className="rounded-xl h-10 px-4 font-bold text-xs border-border text-slate-700 hover:bg-muted text-muted-foreground"
           >
-            <Copy className="w-4 h-4 mr-1.5 text-slate-500" /> Salin Template
+            <Copy className="w-4 h-4 mr-1.5 text-muted-foreground" /> Salin Template
           </Button>
 
           <Button
@@ -1010,7 +1010,7 @@ function TemplateBuilderContent() {
         }
         className="w-full"
       >
-        <TabsList className="bg-white border border-slate-200/80 p-1 rounded-2xl shadow-2xs">
+        <TabsList className="card-solid border border-border/80 p-1 rounded-2xl shadow-2xs">
           <TabsTrigger value="general" className="rounded-xl px-5 py-2 text-xs font-bold gap-2">
             <FileEdit className="w-4 h-4" /> Informasi Umum
           </TabsTrigger>

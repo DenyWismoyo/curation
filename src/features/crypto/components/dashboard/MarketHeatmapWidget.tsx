@@ -50,7 +50,7 @@ export default function MarketHeatmapWidget({ marketData }: MarketHeatmapWidgetP
             <div className="p-2 bg-indigo-50 dark:bg-indigo-500/10 rounded-xl border border-indigo-100 dark:border-indigo-500/20">
               <Grid className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
             </div>
-            <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 tracking-tight">Market Heatmap <span className="text-sm font-medium text-slate-500 dark:text-slate-400 ml-2">(24H Movers)</span></h2>
+            <h2 className="text-xl font-bold text-foreground dark:text-slate-100 tracking-tight">Market Heatmap <span className="text-sm font-medium text-muted-foreground ml-2">(24H Movers)</span></h2>
          </div>
       </div>
       
@@ -61,8 +61,8 @@ export default function MarketHeatmapWidget({ marketData }: MarketHeatmapWidgetP
            
            // Elegant enterprise color styling
            let cardStyle = isPositive 
-             ? "bg-emerald-50/50 dark:bg-emerald-500/5 border-emerald-200/50 dark:border-emerald-500/20 hover:border-emerald-300 dark:hover:border-emerald-500/40" 
-             : "bg-rose-50/50 dark:bg-rose-500/5 border-rose-200/50 dark:border-rose-500/20 hover:border-rose-300 dark:hover:border-rose-500/40";
+             ? "bg-emerald-50 dark:bg-emerald-500/10/50 dark:bg-emerald-500/5 border-emerald-200 dark:border-emerald-500/20/50 dark:border-emerald-500/20 hover:border-emerald-300 dark:hover:border-emerald-500/40" 
+             : "bg-rose-50 dark:bg-rose-500/10/50 dark:bg-rose-500/5 border-rose-200 dark:border-rose-500/20/50 dark:border-rose-500/20 hover:border-rose-300 dark:hover:border-rose-500/40";
            
            let textStyle = isPositive ? "text-emerald-700 dark:text-emerald-400" : "text-rose-700 dark:text-rose-400";
            let changeBg = isPositive ? "bg-emerald-100 dark:bg-emerald-500/20" : "bg-rose-100 dark:bg-rose-500/20";
@@ -80,7 +80,7 @@ export default function MarketHeatmapWidget({ marketData }: MarketHeatmapWidgetP
              <Link href={`/crypto-report/${coin.symbol}USDT`} key={idx}>
                <div className={`rounded-2xl p-4 flex flex-col justify-between h-[100px] transition-all duration-300 hover:-translate-y-1 relative group border ${cardStyle}`}>
                  <div className="flex items-start justify-between">
-                    <span className="font-black text-base text-slate-800 dark:text-slate-100 tracking-tight">{coin.symbol}</span>
+                    <span className="font-black text-base text-foreground dark:text-slate-100 tracking-tight">{coin.symbol}</span>
                     <div className={`flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] font-bold ${changeBg} ${textStyle}`}>
                        {icon} {absChange.toFixed(2)}%
                     </div>

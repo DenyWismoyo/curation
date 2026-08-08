@@ -130,7 +130,7 @@ export default function AdminOnboardingMetricsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-[55vh]">
-        <div className="flex items-center gap-2 text-slate-500 font-semibold">
+        <div className="flex items-center gap-2 text-muted-foreground font-semibold">
           <Activity className="w-4 h-4 animate-pulse" />
           Memuat onboarding metrics...
         </div>
@@ -144,66 +144,66 @@ export default function AdminOnboardingMetricsPage() {
         <div className="flex items-center gap-2 mb-2">
           <Badge
             variant="secondary"
-            className="px-3 py-0.5 text-[10px] uppercase font-black tracking-wider bg-indigo-100 text-indigo-700 hover:bg-indigo-100"
+            className="px-3 py-0.5 text-[10px] uppercase font-black tracking-wider bg-indigo-100 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-500/20"
           >
             Agent Analytics
           </Badge>
           <span className="text-slate-300">•</span>
-          <span className="text-xs font-bold text-slate-500">
+          <span className="text-xs font-bold text-muted-foreground">
             Model Performance & Quality Logs
           </span>
         </div>
-        <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+        <h1 className="text-3xl font-black text-foreground tracking-tight flex items-center gap-3">
           <div className="p-2 bg-indigo-600 text-white rounded-2xl shadow-lg shadow-indigo-600/20">
             <Activity className="w-6 h-6" />
           </div>
           Onboarding Agent Metrics
         </h1>
-        <p className="text-slate-500 mt-1 font-medium max-w-3xl text-sm leading-relaxed">
+        <p className="text-muted-foreground mt-1 font-medium max-w-3xl text-sm leading-relaxed">
           Monitoring kualitas output adaptive onboarding (model vs fallback) dan
           latensi respons.
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="p-5 bg-white rounded-2xl ring-1 ring-slate-200/80 border-none shadow-xs">
+        <Card className="p-5 card-solid rounded-2xl ring-1 ring-border/80 border-none shadow-xs">
           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
             Total Calls
           </p>
-          <p className="text-2xl font-black text-slate-900 mt-1">
+          <p className="text-2xl font-black text-foreground mt-1">
             {summary.totalCalls}
           </p>
         </Card>
-        <Card className="p-5 bg-white rounded-2xl ring-1 ring-slate-200/80 border-none shadow-xs">
+        <Card className="p-5 card-solid rounded-2xl ring-1 ring-border/80 border-none shadow-xs">
           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
             Fallback Calls
           </p>
-          <p className="text-2xl font-black text-amber-600 mt-1">
+          <p className="text-2xl font-black text-amber-600 dark:text-amber-400 mt-1">
             {summary.fallbackCalls}
           </p>
         </Card>
-        <Card className="p-5 bg-white rounded-2xl ring-1 ring-slate-200/80 border-none shadow-xs">
+        <Card className="p-5 card-solid rounded-2xl ring-1 ring-border/80 border-none shadow-xs">
           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
             Fallback Rate
           </p>
-          <p className="text-2xl font-black text-rose-600 mt-1">
+          <p className="text-2xl font-black text-rose-600 dark:text-rose-400 mt-1">
             {summary.fallbackRate}%
           </p>
         </Card>
-        <Card className="p-5 bg-white rounded-2xl ring-1 ring-slate-200/80 border-none shadow-xs">
+        <Card className="p-5 card-solid rounded-2xl ring-1 ring-border/80 border-none shadow-xs">
           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
             Avg Latency
           </p>
-          <p className="text-2xl font-black text-indigo-600 mt-1">
+          <p className="text-2xl font-black text-indigo-600 dark:text-indigo-400 mt-1">
             {summary.avgLatencyMs} ms
           </p>
         </Card>
       </div>
 
-      <Card className="p-6 bg-white rounded-2xl ring-1 ring-slate-200 border-none shadow-sm">
+      <Card className="p-6 card-solid rounded-2xl ring-1 ring-border border-none shadow-sm">
         <div className="flex items-center gap-2 mb-4">
-          <BarChart3 className="w-4 h-4 text-indigo-600" />
-          <h2 className="text-sm font-black uppercase tracking-widest text-slate-500">
+          <BarChart3 className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+          <h2 className="text-sm font-black uppercase tracking-widest text-muted-foreground">
             Distribusi Sumber Output
           </h2>
         </div>
@@ -212,24 +212,24 @@ export default function AdminOnboardingMetricsPage() {
           {Object.entries(summary.sourceDist).map(([key, value]) => (
             <div
               key={key}
-              className="p-4 rounded-xl bg-slate-50 ring-1 ring-slate-100"
+              className="p-4 rounded-xl bg-muted text-muted-foreground ring-1 ring-border"
             >
-              <p className="text-xs font-bold text-slate-500">{key}</p>
-              <p className="text-xl font-black text-slate-900 mt-1">{value}</p>
+              <p className="text-xs font-bold text-muted-foreground">{key}</p>
+              <p className="text-xl font-black text-foreground mt-1">{value}</p>
             </div>
           ))}
           {Object.keys(summary.sourceDist).length === 0 && (
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-muted-foreground">
               Belum ada data source distribution.
             </p>
           )}
         </div>
       </Card>
 
-      <Card className="p-6 bg-white rounded-2xl ring-1 ring-slate-200 border-none shadow-sm">
+      <Card className="p-6 card-solid rounded-2xl ring-1 ring-border border-none shadow-sm">
         <div className="flex items-center gap-2 mb-4">
-          <Clock3 className="w-4 h-4 text-indigo-600" />
-          <h2 className="text-sm font-black uppercase tracking-widest text-slate-500">
+          <Clock3 className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+          <h2 className="text-sm font-black uppercase tracking-widest text-muted-foreground">
             Log Terbaru (40 call)
           </h2>
         </div>
@@ -237,7 +237,7 @@ export default function AdminOnboardingMetricsPage() {
         <div className="overflow-x-auto custom-scrollbar">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-left text-[10px] uppercase tracking-widest text-slate-400 border-b border-slate-100">
+              <tr className="text-left text-[10px] uppercase tracking-widest text-slate-400 border-b border-border">
                 <th className="py-3 pr-4">Waktu</th>
                 <th className="py-3 pr-4">Purpose / Sector</th>
                 <th className="py-3 pr-4">Source</th>
@@ -249,7 +249,7 @@ export default function AdminOnboardingMetricsPage() {
             <tbody>
               {logs.map((row) => (
                 <tr key={row.id} className="border-b border-slate-50 align-top">
-                  <td className="py-3 pr-4 text-slate-600">
+                  <td className="py-3 pr-4 text-muted-foreground">
                     {formatDate(row.createdAt)}
                   </td>
                   <td className="py-3 pr-4 text-slate-700">
@@ -264,8 +264,8 @@ export default function AdminOnboardingMetricsPage() {
                     <span
                       className={`inline-flex items-center rounded-lg px-2 py-1 text-[10px] font-black uppercase tracking-wide ${
                         row.fallback
-                          ? 'bg-amber-50 text-amber-700 ring-1 ring-amber-200'
-                          : 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200'
+                          ? 'bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-300 ring-1 ring-amber-200 dark:ring-amber-500/20'
+                          : 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 ring-1 ring-emerald-200 dark:ring-emerald-500/20'
                       }`}
                     >
                       {row.source || '-'}
@@ -275,17 +275,17 @@ export default function AdminOnboardingMetricsPage() {
                     {Number(row.stepCount || 0)} /{' '}
                     {Number(row.recommendationCount || 0)}
                   </td>
-                  <td className="py-3 pr-4 font-semibold text-slate-800">
+                  <td className="py-3 pr-4 font-semibold text-foreground">
                     {Number(row.latencyMs || 0)} ms
                   </td>
                   <td className="py-3">
                     {row.warning ? (
-                      <span className="inline-flex items-center gap-1 text-amber-700 text-xs font-semibold">
+                      <span className="inline-flex items-center gap-1 text-amber-700 dark:text-amber-300 text-xs font-semibold">
                         <AlertTriangle className="w-3.5 h-3.5" />
                         {row.warning}
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 text-emerald-700 text-xs font-semibold">
+                      <span className="inline-flex items-center gap-1 text-emerald-700 dark:text-emerald-300 text-xs font-semibold">
                         <ShieldCheck className="w-3.5 h-3.5" />
                         Normal
                       </span>
@@ -298,28 +298,28 @@ export default function AdminOnboardingMetricsPage() {
         </div>
       </Card>
 
-      <Card className="p-6 bg-white rounded-2xl ring-1 ring-slate-200 border-none shadow-sm">
-        <h2 className="text-sm font-black uppercase tracking-widest text-slate-500 mb-3">
+      <Card className="p-6 card-solid rounded-2xl ring-1 ring-border border-none shadow-sm">
+        <h2 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-3">
           Metrik Harian (14 dokumen terakhir)
         </h2>
         <div className="space-y-2">
           {metrics.map((row) => (
             <div
               key={row.id}
-              className="p-4 rounded-xl bg-slate-50 ring-1 ring-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"
+              className="p-4 rounded-xl bg-muted text-muted-foreground ring-1 ring-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"
             >
-              <p className="text-xs font-bold text-slate-600">{row.id}</p>
+              <p className="text-xs font-bold text-muted-foreground">{row.id}</p>
               <p className="text-xs text-slate-700">
                 total:{' '}
                 <span className="font-black">
                   {Number(row.totalCalls || 0)}
                 </span>{' '}
                 | fallback:{' '}
-                <span className="font-black text-amber-700">
+                <span className="font-black text-amber-700 dark:text-amber-300">
                   {Number(row.fallbackCalls || 0)}
                 </span>
               </p>
-              <p className="text-[11px] text-slate-500">
+              <p className="text-[11px] text-muted-foreground">
                 updated: {formatDate(row.updatedAt)}
               </p>
             </div>

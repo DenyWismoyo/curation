@@ -23,14 +23,14 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        'bg-white rounded-[2rem] p-12 sm:p-16 text-center ring-1 ring-slate-200/60 shadow-sm',
+        'card-solid rounded-[2rem] p-12 sm:p-16 text-center ring-1 ring-border shadow-sm',
         className
       )}
     >
       {icon && <div className="mx-auto mb-4 opacity-60 grayscale">{icon}</div>}
-      <h3 className="text-xl font-black text-slate-900 mb-2">{title}</h3>
+      <h3 className="text-xl font-black text-foreground mb-2">{title}</h3>
       {description && (
-        <p className="text-sm text-slate-500 max-w-sm mx-auto mb-8 leading-relaxed">
+        <p className="text-sm text-muted-foreground max-w-sm mx-auto mb-8 leading-relaxed">
           {description}
         </p>
       )}

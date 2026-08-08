@@ -124,7 +124,7 @@ export default function MitraLandingPage({ params }: { params: { slug: string } 
 
   if (loadingOrg) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-muted text-muted-foreground flex items-center justify-center">
         <Loader2 className="w-10 h-10 animate-spin text-slate-400" />
       </div>
     );
@@ -132,12 +132,12 @@ export default function MitraLandingPage({ params }: { params: { slug: string } 
 
   if (errorOrg || !orgData) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 text-center">
+      <div className="min-h-screen bg-muted text-muted-foreground flex flex-col items-center justify-center p-6 text-center">
         <div className="w-20 h-20 bg-slate-200 rounded-full flex items-center justify-center mb-6">
           <ShieldCheck className="w-10 h-10 text-slate-400" />
         </div>
-        <h1 className="text-2xl font-black text-slate-900 mb-2">404 - Not Found</h1>
-        <p className="text-slate-500">{errorOrg || 'Halaman mitra tidak ditemukan.'}</p>
+        <h1 className="text-2xl font-black text-foreground mb-2">404 - Not Found</h1>
+        <p className="text-muted-foreground">{errorOrg || 'Halaman mitra tidak ditemukan.'}</p>
         <Button onClick={() => router.push('/')} variant="outline" className="mt-6 rounded-xl h-12 px-8 font-bold">
           Kembali ke Beranda
         </Button>
@@ -175,11 +175,11 @@ export default function MitraLandingPage({ params }: { params: { slug: string } 
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="max-w-md w-full bg-white/90 backdrop-blur-xl p-8 sm:p-10 rounded-[2.5rem] shadow-2xl ring-1 ring-slate-200/50 relative z-10"
+        className="max-w-md w-full card-solid/90 backdrop-blur-xl p-8 sm:p-10 rounded-[2.5rem] shadow-2xl ring-1 ring-border/50 relative z-10"
         style={{ boxShadow: `0 25px 50px -12px ${primaryColor}20` }}
       >
         <div className="flex justify-center mb-8 relative">
-          <div className="w-24 h-24 bg-white rounded-3xl shadow-xl ring-1 ring-slate-100 flex items-center justify-center overflow-hidden z-10">
+          <div className="w-24 h-24 card-solid rounded-3xl shadow-xl ring-1 ring-border flex items-center justify-center overflow-hidden z-10">
              {orgData.branding?.logoUrl || orgData.logoUrl ? (
                <img src={orgData.branding?.logoUrl || orgData.logoUrl} alt={orgData.displayName || 'Mitra Logo'} className="w-full h-full object-contain p-2" />
              ) : (
@@ -193,15 +193,15 @@ export default function MitraLandingPage({ params }: { params: { slug: string } 
         </div>
 
         <div className="text-center mb-8">
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mb-3">
+          <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight mb-3">
             {orgData.displayName || 'Mitra Portal'}
           </h1>
-          <p className="text-sm font-medium text-slate-600 leading-relaxed">
+          <p className="text-sm font-medium text-muted-foreground leading-relaxed">
             {orgData.branding?.welcomeMessage || orgData.welcomeMessage || 'Masukkan kode token yang Anda miliki untuk memulai proses asesmen.'}
           </p>
           
           {orgData.branding?.description && (
-            <div className="mt-4 bg-slate-50 p-4 rounded-xl text-xs text-slate-600 text-left border border-slate-100 leading-relaxed shadow-inner">
+            <div className="mt-4 bg-muted text-muted-foreground p-4 rounded-xl text-xs text-muted-foreground text-left border border-border leading-relaxed shadow-inner">
                {orgData.branding.description}
             </div>
           )}
@@ -209,16 +209,16 @@ export default function MitraLandingPage({ params }: { params: { slug: string } 
 
         {!user ? (
           <div className="space-y-4">
-            <div className="bg-amber-50 p-4 rounded-2xl ring-1 ring-amber-200/50 flex gap-3 text-left">
+            <div className="bg-amber-50 dark:bg-amber-500/10 p-4 rounded-2xl ring-1 ring-amber-200 dark:ring-amber-500/20/50 flex gap-3 text-left">
               <ShieldCheck className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
-              <p className="text-xs font-medium text-amber-700 leading-relaxed">
+              <p className="text-xs font-medium text-amber-700 dark:text-amber-300 leading-relaxed">
                 Anda wajib masuk dengan Akun Google terlebih dahulu agar progres asesmen dapat tersimpan dengan aman ke akun Anda.
               </p>
             </div>
             <Button 
               size="lg" 
               onClick={loginWithGoogle} 
-              className="w-full shadow-md bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 h-14 rounded-2xl text-base font-bold transition-all flex items-center justify-center gap-3"
+              className="w-full shadow-md card-solid text-slate-700 border border-border hover:bg-muted text-muted-foreground h-14 rounded-2xl text-base font-bold transition-all flex items-center justify-center gap-3"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -233,7 +233,7 @@ export default function MitraLandingPage({ params }: { params: { slug: string } 
           <div className="space-y-4">
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <KeyRound className="w-5 h-5 text-slate-400 group-focus-within:text-slate-600 transition-colors" />
+                <KeyRound className="w-5 h-5 text-slate-400 group-focus-within:text-muted-foreground transition-colors" />
               </div>
               <Input 
                 type="text" 
@@ -241,7 +241,7 @@ export default function MitraLandingPage({ params }: { params: { slug: string } 
                 value={tokenInput}
                 onChange={(e) => setTokenInput(e.target.value.toUpperCase())}
                 onKeyDown={handleKeyDown}
-                className="pl-12 h-16 w-full text-center text-lg font-black tracking-[0.1em] uppercase bg-slate-50/50 border-2 border-slate-100 rounded-2xl focus:border-slate-300 focus:ring-0 transition-all placeholder:text-sm placeholder:font-semibold placeholder:tracking-normal placeholder:lowercase placeholder:text-slate-400"
+                className="pl-12 h-16 w-full text-center text-lg font-black tracking-[0.1em] uppercase bg-muted text-muted-foreground/50 border-2 border-border rounded-2xl focus:border-border focus:ring-0 transition-all placeholder:text-sm placeholder:font-semibold placeholder:tracking-normal placeholder:lowercase placeholder:text-slate-400"
                 disabled={isValidating}
               />
             </div>
@@ -273,16 +273,16 @@ export default function MitraLandingPage({ params }: { params: { slug: string } 
             </Button>
             
             <div className="mt-6 flex items-center justify-center gap-2">
-              <div className="w-6 h-6 rounded-full bg-slate-100 overflow-hidden shrink-0">
+              <div className="w-6 h-6 rounded-full bg-secondary text-secondary-foreground overflow-hidden shrink-0">
                 {user.photoURL ? (
                   <img src={user.photoURL} alt="Profile" className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-500">
+                  <div className="w-full h-full bg-slate-200 flex items-center justify-center text-[10px] font-bold text-muted-foreground">
                     {user.email?.charAt(0).toUpperCase()}
                   </div>
                 )}
               </div>
-              <p className="text-xs font-semibold text-slate-500 truncate">
+              <p className="text-xs font-semibold text-muted-foreground truncate">
                 Masuk sebagai <span className="text-slate-700">{user.email}</span>
               </p>
             </div>
@@ -290,19 +290,19 @@ export default function MitraLandingPage({ params }: { params: { slug: string } 
         )}
 
         {(orgData.branding?.websiteUrl || orgData.branding?.instagramUrl || orgData.branding?.linkedinUrl) && (
-          <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-center gap-4">
+          <div className="mt-8 pt-6 border-t border-border flex items-center justify-center gap-4">
             {orgData.branding.websiteUrl && (
-              <a href={orgData.branding.websiteUrl} target="_blank" rel="noreferrer" title="Kunjungi Website" className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors shadow-sm ring-1 ring-slate-200">
+              <a href={orgData.branding.websiteUrl} target="_blank" rel="noreferrer" title="Kunjungi Website" className="w-10 h-10 rounded-full bg-muted text-muted-foreground flex items-center justify-center text-slate-400 hover:text-muted-foreground hover:bg-secondary text-secondary-foreground transition-colors shadow-sm ring-1 ring-border">
                  <Globe className="w-4 h-4" />
               </a>
             )}
             {orgData.branding.instagramUrl && (
-              <a href={orgData.branding.instagramUrl} target="_blank" rel="noreferrer" title="Instagram" className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:text-pink-600 hover:bg-pink-50 transition-colors shadow-sm ring-1 ring-slate-200">
+              <a href={orgData.branding.instagramUrl} target="_blank" rel="noreferrer" title="Instagram" className="w-10 h-10 rounded-full bg-muted text-muted-foreground flex items-center justify-center text-slate-400 hover:text-pink-600 dark:text-pink-400 hover:bg-pink-50 dark:bg-pink-500/10 transition-colors shadow-sm ring-1 ring-border">
                  <Instagram className="w-4 h-4" />
               </a>
             )}
             {orgData.branding.linkedinUrl && (
-              <a href={orgData.branding.linkedinUrl} target="_blank" rel="noreferrer" title="LinkedIn" className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors shadow-sm ring-1 ring-slate-200">
+              <a href={orgData.branding.linkedinUrl} target="_blank" rel="noreferrer" title="LinkedIn" className="w-10 h-10 rounded-full bg-muted text-muted-foreground flex items-center justify-center text-slate-400 hover:text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:bg-blue-500/10 transition-colors shadow-sm ring-1 ring-border">
                  <Linkedin className="w-4 h-4" />
               </a>
             )}
@@ -310,7 +310,7 @@ export default function MitraLandingPage({ params }: { params: { slug: string } 
         )}
 
         <div className="mt-6 flex justify-center">
-          <Button asChild variant="outline" size="sm" className="text-xs text-indigo-600 border-indigo-200 hover:bg-indigo-50 rounded-xl px-6 shadow-sm">
+          <Button asChild variant="outline" size="sm" className="text-xs text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-500/20 hover:bg-indigo-50 dark:bg-indigo-500/10 rounded-xl px-6 shadow-sm">
             <a href="/admin/partners">Lihat Daftar Mitra Terdaftar</a>
           </Button>
         </div>

@@ -74,7 +74,7 @@ export default function DangerZonePage() {
 
   if (authLoading || loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-slate-50 dark:bg-slate-950">
+      <div className="flex justify-center items-center min-h-screen bg-background text-foreground">
         <CryptoLoadingState type="spinner" message="Mendeteksi Zona Berbahaya..." />
       </div>
     );
@@ -102,7 +102,7 @@ export default function DangerZonePage() {
 
   if (!latestReport) {
     return (
-      <div className="p-8 flex justify-center items-center min-h-screen bg-slate-50 dark:bg-slate-950">
+      <div className="p-8 flex justify-center items-center min-h-screen bg-background text-foreground">
         <CryptoEmptyState 
            icon={<Flame className="w-8 h-8" />}
            title="Belum Ada Data"
@@ -121,16 +121,16 @@ export default function DangerZonePage() {
       title="Danger Zone" 
       description="Ketahui aset kripto mana yang terdeteksi sedang dimanipulasi atau berisiko tinggi. Eksklusif untuk pengguna Premium."
     >
-      <div className="w-full relative min-h-screen bg-slate-50 dark:bg-black">
+      <div className="w-full relative min-h-screen bg-muted text-muted-foreground dark:bg-black">
       
       {/* HEADER SECTION */}
-      <div className="bg-white/80 dark:bg-slate-950/40 backdrop-blur-md border-b border-slate-200 dark:border-white/5 mb-6">
+      <div className="card-solid/80 dark:bg-slate-950/40 backdrop-blur-md border-b border-slate-200 dark:border-white/5 mb-6">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
            <CryptoButton 
                variant="ghost" 
                size="sm" 
                onClick={() => router.back()}
-               className="mb-6 -ml-2 text-slate-500 hover:text-slate-900 dark:text-slate-500 dark:text-slate-400 dark:hover:text-slate-900 dark:text-white"
+               className="mb-6 -ml-2 text-muted-foreground hover:text-foreground dark:text-muted-foreground dark:hover:text-foreground"
            >
                <ArrowLeft className="w-4 h-4 mr-2" /> Kembali ke Laporan
            </CryptoButton>
@@ -146,15 +146,15 @@ export default function DangerZonePage() {
 
                <div className="flex flex-col items-end gap-2 shrink-0">
                    <Select value={selectedReportId} onValueChange={setSelectedReportId}>
-                     <SelectTrigger className="w-[200px] h-9 text-xs bg-white dark:bg-slate-900/50 border-slate-200 dark:border-slate-800/80 text-slate-700 dark:text-slate-600 dark:text-slate-300 focus:ring-0 focus:ring-offset-0 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-100 dark:bg-slate-800 transition-colors">
+                     <SelectTrigger className="w-[200px] h-9 text-xs card-solid border-slate-200 dark:border-slate-800/80 text-slate-700 dark:text-muted-foreground focus:ring-0 focus:ring-offset-0 rounded-xl hover:bg-muted text-muted-foreground dark:hover:bg-secondary text-secondary-foreground transition-colors">
                         <SelectValue placeholder="Pilih Waktu" />
                      </SelectTrigger>
-                     <SelectContent className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-600 dark:text-slate-300 rounded-xl shadow-lg dark:shadow-xl dark:shadow-black/50">
+                     <SelectContent className="card-solid border-slate-200 dark:border-slate-800 text-slate-700 dark:text-muted-foreground rounded-xl shadow-lg dark:shadow-xl dark:shadow-black/50">
                         {reports.map(r => {
                            const d = r.createdAt?.toDate ? r.createdAt.toDate() : new Date(r.createdAt);
                            const isLatest = r.id === reports[0]?.id;
                            return (
-                              <SelectItem key={r.id} value={r.id} className="text-xs cursor-pointer focus:bg-slate-100 dark:bg-slate-800 focus:text-slate-900 dark:text-white">
+                              <SelectItem key={r.id} value={r.id} className="text-xs cursor-pointer focus:bg-secondary text-secondary-foreground focus:text-foreground">
                                  {d.toLocaleDateString("id-ID", { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })} WIB {isLatest && "(Terbaru)"}
                               </SelectItem>
                            )
@@ -189,7 +189,7 @@ export default function DangerZonePage() {
                         <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6 pb-6 border-b border-red-100 dark:border-red-900/30">
                             <div>
                                 <div className="flex items-center gap-3 mb-2">
-                                    <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">{coin.symbol}</h2>
+                                    <h2 className="text-3xl font-black text-foreground tracking-tight">{coin.symbol}</h2>
                                     {isShort ? (
                                         <CryptoBadge variant="info">SHORT OPPORTUNITY</CryptoBadge>
                                     ) : (

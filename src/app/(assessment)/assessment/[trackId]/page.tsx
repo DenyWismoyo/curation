@@ -92,7 +92,7 @@ function InteractiveDashboardLoading({ formData, trackName, assessmentId }: { fo
   }, [assessmentId]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white py-8 px-4 sm:py-12 sm:px-6 lg:px-12 relative overflow-hidden flex flex-col justify-between">
+    <div className="min-h-screen bg-background text-foreground py-8 px-4 sm:py-12 sm:px-6 lg:px-12 relative overflow-hidden flex flex-col justify-between">
 
       {/* BACKGROUND DECORATIVE GLOW */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[140px] pointer-events-none" />
@@ -166,7 +166,7 @@ function InteractiveDashboardLoading({ formData, trackName, assessmentId }: { fo
                     ? 'bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/40'
                     : isCurrent
                       ? 'bg-indigo-600 text-white ring-2 ring-indigo-400 shadow-md shadow-indigo-500/50 animate-pulse'
-                      : 'bg-slate-800 text-slate-500'
+                      : 'bg-slate-800 text-muted-foreground'
                   }`}>
                   {isDone ? '✓' : idx + 1}
                 </div>
@@ -174,7 +174,7 @@ function InteractiveDashboardLoading({ formData, trackName, assessmentId }: { fo
                 {/* STEP DETAILS */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
-                    <h4 className={`text-sm font-semibold truncate ${isCurrent ? 'text-white font-bold' : isDone ? 'text-slate-300' : 'text-slate-500'}`}>
+                    <h4 className={`text-sm font-semibold truncate ${isCurrent ? 'text-white font-bold' : isDone ? 'text-slate-300' : 'text-muted-foreground'}`}>
                       {step.name}
                     </h4>
                     {isCurrent && (
@@ -290,12 +290,12 @@ export default function AssessmentPage({ params }: { params: Promise<{ trackId: 
 
   if (state.isLoadingTemplates) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-muted text-muted-foreground">
         <div className="w-14 h-14 mb-4 relative flex items-center justify-center">
           <div className="absolute inset-0 rounded-full border-[4px] border-indigo-100 border-t-indigo-600 animate-spin" />
-          <BrainIcon size={24} className="text-indigo-600 animate-pulse" />
+          <BrainIcon size={24} className="text-indigo-600 dark:text-indigo-400 animate-pulse" />
         </div>
-        <p className="text-slate-500 font-medium tracking-wide">Mengkalibrasi Modul Asesmen...</p>
+        <p className="text-muted-foreground font-medium tracking-wide">Mengkalibrasi Modul Asesmen...</p>
       </div>
     );
   }
@@ -338,7 +338,7 @@ export default function AssessmentPage({ params }: { params: Promise<{ trackId: 
   // LAYAR 3: WIZARD FORMULIR DINAMIS
   // ========================================================
   return (
-    <main className="min-h-screen bg-slate-50">
+    <main className="min-h-screen bg-muted text-muted-foreground">
       <DynamicWizard
         template={template}
         onBack={() => {

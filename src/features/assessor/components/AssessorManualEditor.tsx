@@ -69,17 +69,17 @@ export function AssessorManualEditor({ data, onClose, onSaveSuccess }: AssessorM
       size="2xl"
       hideCloseButton={true}
       header={
-        <div className="bg-white px-6 py-5 border-b border-slate-200 flex justify-between items-center shrink-0">
+        <div className="card-solid px-6 py-5 border-b border-border flex justify-between items-center shrink-0">
           <div>
-            <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-              <Edit3 className="w-5 h-5 text-indigo-600" /> Editor Manual Asesor
+            <h2 className="text-xl font-black text-foreground tracking-tight flex items-center gap-2">
+              <Edit3 className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /> Editor Manual Asesor
             </h2>
-            <p className="text-xs text-slate-500 font-medium mt-1">
+            <p className="text-xs text-muted-foreground font-medium mt-1">
               Ubah data input dan hasil evaluasi tanpa memotong kuota token AI.
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <Button onClick={onClose} variant="ghost" className="h-10 w-10 p-0 rounded-full text-slate-400 hover:text-rose-500 hover:bg-rose-50">
+            <Button onClick={onClose} variant="ghost" className="h-10 w-10 p-0 rounded-full text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:bg-rose-500/10">
               <X className="w-5 h-5" />
             </Button>
           </div>
@@ -87,7 +87,7 @@ export function AssessorManualEditor({ data, onClose, onSaveSuccess }: AssessorM
       }
     >
         {/* Tab Navigasi */}
-        <div className="bg-white border-b border-slate-200 shrink-0 overflow-x-auto pt-2">
+        <div className="card-solid border-b border-border shrink-0 overflow-x-auto pt-2">
           <AppTabs
             active={activeTab}
             onChange={(val: any) => setActiveTab(val)}
@@ -105,7 +105,7 @@ export function AssessorManualEditor({ data, onClose, onSaveSuccess }: AssessorM
           {/* TAB 1: EDIT FORM DATA PESERTA */}
           {activeTab === 'input' && (
             <div className="max-w-4xl mx-auto space-y-6">
-              <div className="bg-amber-50 border border-amber-200 p-4 rounded-xl flex items-center gap-3 text-amber-800 text-xs font-bold">
+              <div className="bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 p-4 rounded-xl flex items-center gap-3 text-amber-800 text-xs font-bold">
                 <ShieldAlert className="w-5 h-5 shrink-0" />
                 Perubahan pada kolom ini akan menggantikan input asli dari peserta di dalam database.
               </div>
@@ -117,25 +117,25 @@ export function AssessorManualEditor({ data, onClose, onSaveSuccess }: AssessorM
                   
                   return (
                     <div key={key} className={`space-y-1.5 ${key === 'namaUsaha' || isLongText ? 'md:col-span-2' : ''}`}>
-                      <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">{formatKey(key)}</label>
+                      <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">{formatKey(key)}</label>
                       {isArray ? (
                         <Input 
                           value={(value as string[]).join(', ')} 
                           onChange={(e) => setLocalFormData({...localFormData, [key]: e.target.value.split(',').map(s => s.trim())})}
-                          className="bg-white border-slate-200 font-medium"
+                          className="card-solid border-border font-medium"
                           placeholder="Pisahkan nilai dengan koma (,)"
                         />
                       ) : isLongText ? (
                         <Textarea 
                           value={value as string}
                           onChange={(e) => setLocalFormData({...localFormData, [key]: e.target.value})}
-                          className="bg-white border-slate-200 font-medium min-h-[100px]"
+                          className="card-solid border-border font-medium min-h-[100px]"
                         />
                       ) : (
                         <Input 
                           value={String(value || '')}
                           onChange={(e) => setLocalFormData({...localFormData, [key]: e.target.value})}
-                          className="bg-white border-slate-200 font-medium"
+                          className="card-solid border-border font-medium"
                         />
                       )}
                     </div>
@@ -148,57 +148,57 @@ export function AssessorManualEditor({ data, onClose, onSaveSuccess }: AssessorM
           {/* TAB 2: EDIT HASIL AI */}
           {activeTab === 'ai' && (
             <div className="max-w-4xl mx-auto space-y-6">
-              <div className="bg-emerald-50 border border-emerald-200 p-4 rounded-xl flex items-center gap-3 text-emerald-800 text-xs font-bold mb-4">
-                <ShieldAlert className="w-5 h-5 shrink-0 text-emerald-600" />
+              <div className="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 p-4 rounded-xl flex items-center gap-3 text-emerald-800 text-xs font-bold mb-4">
+                <ShieldAlert className="w-5 h-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
                 Simpan perubahan di sini, lalu cetak PDF untuk mendapatkan laporan resmi dengan redaksi manual Anda.
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Skor Akhir (0-100)</label>
+                  <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">Skor Akhir (0-100)</label>
                   <Input 
                     type="number" 
                     value={localAiResult.totalScore || 0} 
                     onChange={(e) => setLocalAiResult({...localAiResult, totalScore: Number(e.target.value)})}
-                    className="bg-white border-slate-200 font-black text-lg text-indigo-600 h-12"
+                    className="card-solid border-border font-black text-lg text-indigo-600 dark:text-indigo-400 h-12"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Level Kesiapan (Maturity)</label>
+                  <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">Level Kesiapan (Maturity)</label>
                   <Input 
                     value={localAiResult.readinessLevel || ''} 
                     onChange={(e) => setLocalAiResult({...localAiResult, readinessLevel: e.target.value})}
-                    className="bg-white border-slate-200 font-bold h-12"
+                    className="card-solid border-border font-bold h-12"
                   />
                 </div>
                 <div className="space-y-1.5 md:col-span-2">
-                  <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Kesimpulan Rute / Rekomendasi Utama</label>
+                  <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">Kesimpulan Rute / Rekomendasi Utama</label>
                   <Input 
                     value={localAiResult.incubationRoute || ''} 
                     onChange={(e) => setLocalAiResult({...localAiResult, incubationRoute: e.target.value})}
-                    className="bg-white border-slate-200 font-medium h-12"
+                    className="card-solid border-border font-medium h-12"
                   />
                 </div>
                 <div className="space-y-1.5 md:col-span-2">
-                  <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Executive Summary (Ringkasan Eksekutif)</label>
+                  <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">Executive Summary (Ringkasan Eksekutif)</label>
                   <Textarea 
                     value={localAiResult.executiveSummary || ''} 
                     onChange={(e) => setLocalAiResult({...localAiResult, executiveSummary: e.target.value})}
-                    className="bg-white border-slate-200 font-medium min-h-[160px]"
+                    className="card-solid border-border font-medium min-h-[160px]"
                   />
                 </div>
               </div>
 
               {/* EDITOR SWOT (Jika ada) */}
               {localAiResult.swotAnalysis && (
-                <div className="space-y-4 pt-6 border-t border-slate-100">
-                  <h3 className="font-black text-slate-800 text-sm uppercase tracking-widest">Analisis Matriks (SWOT)</h3>
-                  <p className="text-[10px] text-slate-500 font-medium -mt-2">Setiap baris baru (Enter) akan menjadi satu poin di laporan PDF.</p>
+                <div className="space-y-4 pt-6 border-t border-border">
+                  <h3 className="font-black text-foreground text-sm uppercase tracking-widest">Analisis Matriks (SWOT)</h3>
+                  <p className="text-[10px] text-muted-foreground font-medium -mt-2">Setiap baris baru (Enter) akan menjadi satu poin di laporan PDF.</p>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     {['strengths', 'weaknesses', 'opportunities', 'threats'].map((key) => (
                       <div key={key} className="space-y-1.5">
-                        <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">{key}</label>
+                        <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">{key}</label>
                         <Textarea 
                           value={arrayToText(localAiResult.swotAnalysis[key])} 
                           onChange={(e) => setLocalAiResult({
@@ -208,7 +208,7 @@ export function AssessorManualEditor({ data, onClose, onSaveSuccess }: AssessorM
                               [key]: textToArray(e.target.value)
                             }
                           })}
-                          className="bg-white border-slate-200 font-medium min-h-[120px] text-xs leading-relaxed"
+                          className="card-solid border-border font-medium min-h-[120px] text-xs leading-relaxed"
                         />
                       </div>
                     ))}
@@ -220,7 +220,7 @@ export function AssessorManualEditor({ data, onClose, onSaveSuccess }: AssessorM
         </div>
 
         {/* Footer Actions */}
-        <div className="bg-slate-50 px-6 py-4 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4 shrink-0">
+        <div className="bg-muted text-muted-foreground px-6 py-4 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4 shrink-0">
           
           <div className="w-full sm:w-auto">
             {/* Tombol Ekspor PDF yang mengambil state form lokal secara Real-time */}

@@ -5,14 +5,14 @@ function parseInlineText(text: string) {
   return parts.map((part, index) => {
     if (part.startsWith('**') && part.endsWith('**')) {
       return (
-        <strong key={index} className="font-black text-slate-900">
+        <strong key={index} className="font-black text-foreground">
           {part.slice(2, -2)}
         </strong>
       );
     }
     if (part.startsWith('*') && part.endsWith('*')) {
       return (
-        <em key={index} className="italic font-medium text-slate-800">
+        <em key={index} className="italic font-medium text-foreground">
           {part.slice(1, -1)}
         </em>
       );
@@ -55,8 +55,8 @@ export function MarkdownContent({
               key={idx}
               className={
                 isArticle
-                  ? 'text-xl sm:text-2xl font-black text-slate-900 mt-10 mb-4 leading-snug'
-                  : 'text-xl font-black text-slate-900 mt-8'
+                  ? 'text-xl sm:text-2xl font-black text-foreground mt-10 mb-4 leading-snug'
+                  : 'text-xl font-black text-foreground mt-8'
               }
             >
               {parseInlineText(trimmed.slice(4))}
@@ -70,8 +70,8 @@ export function MarkdownContent({
               key={idx}
               className={
                 isArticle
-                  ? 'text-2xl sm:text-3xl font-black text-slate-900 mt-12 mb-6 border-b border-slate-100 pb-3 leading-snug'
-                  : 'text-2xl font-black text-slate-900 mt-10 border-b border-slate-100 pb-2'
+                  ? 'text-2xl sm:text-3xl font-black text-foreground mt-12 mb-6 border-b border-border pb-3 leading-snug'
+                  : 'text-2xl font-black text-foreground mt-10 border-b border-border pb-2'
               }
             >
               {parseInlineText(trimmed.slice(3))}
@@ -85,8 +85,8 @@ export function MarkdownContent({
               key={idx}
               className={
                 isArticle
-                  ? 'text-3xl sm:text-4xl font-black text-slate-900 mt-12 mb-6 leading-tight'
-                  : 'text-3xl font-black text-slate-900 mt-10'
+                  ? 'text-3xl sm:text-4xl font-black text-foreground mt-12 mb-6 leading-tight'
+                  : 'text-3xl font-black text-foreground mt-10'
               }
             >
               {parseInlineText(trimmed.slice(2))}
@@ -101,7 +101,7 @@ export function MarkdownContent({
           return (
             <ol
               key={idx}
-              className="space-y-2 pl-5 list-decimal marker:font-black marker:text-indigo-600"
+              className="space-y-2 pl-5 list-decimal marker:font-black marker:text-indigo-600 dark:text-indigo-400"
             >
               {items.map((item, itemIdx) => (
                 <li key={itemIdx}>
@@ -124,8 +124,8 @@ export function MarkdownContent({
               key={idx}
               className={
                 isArticle
-                  ? 'space-y-3 sm:space-y-4 my-8 bg-slate-50/70 p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-100'
-                  : 'space-y-2 bg-slate-50 p-5 rounded-2xl border border-slate-100'
+                  ? 'space-y-3 sm:space-y-4 my-8 bg-muted text-muted-foreground/70 p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-border'
+                  : 'space-y-2 bg-muted text-muted-foreground p-5 rounded-2xl border border-border'
               }
             >
               {items.map((item, itemIdx) => (

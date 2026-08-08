@@ -86,12 +86,12 @@ export function GlobalFeedbackWidget() {
                     setIsMenuOpen(false);
                     setIsAiOpen(true);
                   }}
-                  className="flex items-center gap-4 bg-white/95 backdrop-blur-md hover:bg-white border border-slate-200 shadow-[0_8px_30px_rgb(0,0,0,0.12)] p-2 pr-5 rounded-full transition-all group"
+                  className="flex items-center gap-4 card-solid/95 backdrop-blur-md hover:card-solid border border-border shadow-[0_8px_30px_rgb(0,0,0,0.12)] p-2 pr-5 rounded-full transition-all group"
                 >
-                  <div className="w-10 h-10 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
+                  <div className="w-10 h-10 rounded-full bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 flex items-center justify-center text-indigo-600 dark:text-indigo-400 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
                     <Sparkles className="w-4 h-4" />
                   </div>
-                  <span className="text-sm font-bold text-slate-700 group-hover:text-indigo-600 transition-colors">Tanya Omni AI</span>
+                  <span className="text-sm font-bold text-slate-700 group-hover:text-indigo-600 dark:text-indigo-400 transition-colors">Tanya Omni AI</span>
                 </button>
 
                 {/* SUB-MENU 2: BERI ULASAN */}
@@ -101,12 +101,12 @@ export function GlobalFeedbackWidget() {
                     setIsMenuOpen(false);
                     setIsFeedbackOpen(true);
                   }}
-                  className="flex items-center gap-4 bg-white/95 backdrop-blur-md hover:bg-white border border-slate-200 shadow-[0_8px_30px_rgb(0,0,0,0.12)] p-2 pr-5 rounded-full transition-all group"
+                  className="flex items-center gap-4 card-solid/95 backdrop-blur-md hover:card-solid border border-border shadow-[0_8px_30px_rgb(0,0,0,0.12)] p-2 pr-5 rounded-full transition-all group"
                 >
-                  <div className="w-10 h-10 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-500 group-hover:text-white transition-colors duration-300">
+                  <div className="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 flex items-center justify-center text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white transition-colors duration-300">
                     <MessageSquarePlus className="w-4 h-4" />
                   </div>
-                  <span className="text-sm font-bold text-slate-700 group-hover:text-emerald-600 transition-colors">Beri Ulasan</span>
+                  <span className="text-sm font-bold text-slate-700 group-hover:text-emerald-600 dark:text-emerald-400 transition-colors">Beri Ulasan</span>
                 </button>
               </motion.div>
             )}
@@ -120,7 +120,7 @@ export function GlobalFeedbackWidget() {
             }}
             className={`w-14 h-14 rounded-full flex items-center justify-center shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300 active:scale-95 border-2 ${
               isMenuOpen
-                 ? 'bg-white text-slate-800 border-slate-200 rotate-90'
+                 ? 'card-solid text-foreground border-border rotate-90'
                  : 'bg-slate-900 text-white border-transparent hover:scale-105 hover:shadow-indigo-500/30 rotate-0'
             }`}
           >

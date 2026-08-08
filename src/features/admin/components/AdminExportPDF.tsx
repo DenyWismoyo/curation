@@ -75,13 +75,13 @@ export function AdminExportPDF({ data }: { data: any }) {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <FileText className="w-5 h-5 text-indigo-600" />
+            <FileText className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
             Konfigurasi Ekspor Laporan
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          <p className="text-sm text-slate-500 font-medium">
+          <p className="text-sm text-muted-foreground font-medium">
             Pilih bagian laporan yang ingin disertakan ke dalam file PDF.
           </p>
           <div className="space-y-3">
@@ -92,12 +92,12 @@ export function AdminExportPDF({ data }: { data: any }) {
               { key: 'includeStrategyRisks', label: 'Strategi & Risiko' },
               { key: 'includeAppendix', label: 'Data Input / Raw Data' }
             ].map(({ key, label }) => (
-              <label key={key} className="flex items-center space-x-3 cursor-pointer p-3 rounded-xl ring-1 ring-slate-200 hover:bg-slate-50 transition-colors">
+              <label key={key} className="flex items-center space-x-3 cursor-pointer p-3 rounded-xl ring-1 ring-border hover:bg-muted text-muted-foreground transition-colors">
                 <input
                   type="checkbox"
                   checked={exportOptions[key as keyof typeof exportOptions]}
                   onChange={() => handleToggleOption(key as keyof typeof exportOptions)}
-                  className="w-5 h-5 text-indigo-600 rounded-md border-slate-300 focus:ring-indigo-500 cursor-pointer accent-indigo-600"
+                  className="w-5 h-5 text-indigo-600 dark:text-indigo-400 rounded-md border-border focus:ring-indigo-500 cursor-pointer accent-indigo-600"
                 />
                 <span className="text-sm font-bold text-slate-700">{label}</span>
               </label>
@@ -111,7 +111,7 @@ export function AdminExportPDF({ data }: { data: any }) {
             disabled={isExporting}
             variant="outline"
             title="Render Ulang PDF Baru (Abaikan Arsip)"
-            className="rounded-xl font-bold h-11 text-indigo-600 hover:bg-indigo-50"
+            className="rounded-xl font-bold h-11 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:bg-indigo-500/10"
           >
             <RefreshCw className={`w-4 h-4 mr-2 ${isExporting ? 'animate-spin' : ''}`} />
             Render Ulang

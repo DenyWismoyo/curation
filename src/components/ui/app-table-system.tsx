@@ -61,7 +61,7 @@ export function AppDataTable<T>({
 
   if (isLoading) {
     return (
-      <div className={cn("w-full bg-white rounded-2xl ring-1 ring-slate-100 shadow-sm flex items-center justify-center min-h-[400px]", className)}>
+      <div className={cn("w-full card-solid rounded-2xl ring-1 ring-border shadow-sm flex items-center justify-center min-h-[400px]", className)}>
         <AppSpinner size="lg" message="Memuat Data..." />
       </div>
     );
@@ -74,7 +74,7 @@ export function AppDataTable<T>({
         title={emptyTitle}
         description={emptyDescription}
         action={emptyAction}
-        className={cn("bg-white border-slate-200/60 ring-1 ring-slate-100 shadow-sm", className)}
+        className={cn("card-solid border-border ring-1 ring-border shadow-sm", className)}
       />
     );
   }
@@ -110,7 +110,7 @@ export function AppDataTable<T>({
             <TableRow
               key={keyExtractor(item)}
               onClick={() => onRowClick?.(item)}
-              className={cn(onRowClick && 'cursor-pointer hover:bg-slate-50/80 transition-colors')}
+              className={cn(onRowClick && 'cursor-pointer hover:bg-muted text-muted-foreground/80 transition-colors')}
             >
               {columns.map((col, idx) => {
                 const cellContent = col.cell
@@ -133,14 +133,14 @@ export function AppDataTable<T>({
       {/* Pagination Controls */}
       {pagination && totalPages > 1 && (
         <div className="flex items-center justify-between px-2 py-3">
-          <div className="text-xs font-bold text-slate-500">
+          <div className="text-xs font-bold text-muted-foreground">
             Menampilkan {((currentPage - 1) * pageSize) + 1} - {Math.min(currentPage * pageSize, data.length)} dari {data.length}
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={handlePrevPage}
               disabled={currentPage === 1}
-              className="w-8 h-8 flex items-center justify-center rounded-lg bg-white ring-1 ring-slate-200 text-slate-500 hover:bg-slate-50 hover:text-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-lg card-solid ring-1 ring-border text-muted-foreground hover:bg-muted text-muted-foreground hover:text-indigo-600 dark:text-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <ChevronLeft size={16} />
             </button>
@@ -150,7 +150,7 @@ export function AppDataTable<T>({
             <button
               onClick={handleNextPage}
               disabled={currentPage === totalPages}
-              className="w-8 h-8 flex items-center justify-center rounded-lg bg-white ring-1 ring-slate-200 text-slate-500 hover:bg-slate-50 hover:text-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-lg card-solid ring-1 ring-border text-muted-foreground hover:bg-muted text-muted-foreground hover:text-indigo-600 dark:text-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <ChevronRight size={16} />
             </button>
@@ -180,13 +180,13 @@ export function AppActionMenu({ actions }: AppActionMenuProps) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+          className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:bg-indigo-500/10 transition-colors"
           onClick={(e) => e.stopPropagation()} // Prevent row click
         >
           <MoreVertical size={16} />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48 p-2 rounded-xl ring-1 ring-slate-100 shadow-xl">
+      <DropdownMenuContent align="end" className="w-48 p-2 rounded-xl ring-1 ring-border shadow-xl">
         {actions.map((action, idx) => (
           <DropdownMenuItem
             key={idx}
@@ -195,10 +195,10 @@ export function AppActionMenu({ actions }: AppActionMenuProps) {
               action.onClick();
             }}
             className={cn(
-              "flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-bold cursor-pointer transition-colors focus:bg-slate-50",
+              "flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-bold cursor-pointer transition-colors focus:bg-muted text-muted-foreground",
               action.variant === 'danger'
-                ? "text-rose-600 focus:text-rose-700 focus:bg-rose-50"
-                : "text-slate-700 focus:text-indigo-700 focus:bg-indigo-50"
+                ? "text-rose-600 dark:text-rose-400 focus:text-rose-700 dark:text-rose-300 focus:bg-rose-50 dark:bg-rose-500/10"
+                : "text-slate-700 focus:text-indigo-700 dark:text-indigo-300 focus:bg-indigo-50 dark:bg-indigo-500/10"
             )}
           >
             {action.icon}

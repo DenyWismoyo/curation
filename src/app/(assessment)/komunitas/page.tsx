@@ -41,40 +41,40 @@ interface LeaderboardEntry {
 const RANK_ICONS = [
   <Crown key={1} size={16} className="text-yellow-500" />,
   <Medal key={2} size={16} className="text-slate-400" />,
-  <Medal key={3} size={16} className="text-amber-600" />,
+  <Medal key={3} size={16} className="text-amber-600 dark:text-amber-400" />,
 ]
 
 const TRACK_COLORS: Record<string, string> = {
-  B2B: 'bg-indigo-50 text-indigo-600',
-  Startup: 'bg-purple-50 text-purple-600',
-  Personal: 'bg-teal-50 text-teal-600',
-  Komunitas: 'bg-emerald-50 text-emerald-600',
+  B2B: 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400',
+  Startup: 'bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400',
+  Personal: 'bg-teal-50 dark:bg-teal-500/10 text-teal-600 dark:text-teal-400',
+  Komunitas: 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
 }
 
 const MILESTONES = [
   {
-    icon: <BrainIcon size={24} className="text-indigo-600" />,
+    icon: <BrainIcon size={24} className="text-indigo-600 dark:text-indigo-400" />,
     label: '10,000+',
     sublabel: 'Asesmen Selesai',
-    bg: 'bg-indigo-50',
+    bg: 'bg-indigo-50 dark:bg-indigo-500/10',
   },
   {
-    icon: <Users size={24} className="text-emerald-600" />,
+    icon: <Users size={24} className="text-emerald-600 dark:text-emerald-400" />,
     label: '5,000+',
     sublabel: 'Pengguna Aktif',
-    bg: 'bg-emerald-50',
+    bg: 'bg-emerald-50 dark:bg-emerald-500/10',
   },
   {
     icon: <TrendingUp size={24} className="text-amber-500" />,
     label: '76',
     sublabel: 'Rata-rata Skor',
-    bg: 'bg-amber-50',
+    bg: 'bg-amber-50 dark:bg-amber-500/10',
   },
   {
     icon: <Star size={24} className="text-purple-500" />,
     label: '92%',
     sublabel: 'Kepuasan Pengguna',
-    bg: 'bg-purple-50',
+    bg: 'bg-purple-50 dark:bg-purple-500/10',
   },
 ]
 
@@ -157,10 +157,10 @@ export default function KomunitasPage() {
       <div className="max-w-3xl mx-auto px-5 lg:px-10 pt-8 space-y-8">
         {/* HERO */}
         <div className="text-center">
-          <h1 className="text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
+          <h1 className="text-3xl font-black tracking-tight text-foreground sm:text-4xl">
             Komunitas Omnifit
           </h1>
-          <p className="mt-4 text-base leading-8 text-slate-500 font-medium">
+          <p className="mt-4 text-base leading-8 text-muted-foreground font-medium">
             Bergabunglah dengan ribuan pemimpin bisnis dan profesional yang
             menggunakan AI untuk tumbuh bersama.
           </p>
@@ -190,11 +190,11 @@ export default function KomunitasPage() {
         </div>
 
         {/* LEADERBOARD */}
-        <div className="bg-white rounded-3xl ring-1 ring-slate-200 shadow-sm overflow-hidden">
+        <div className="card-solid rounded-3xl ring-1 ring-border shadow-sm overflow-hidden">
           <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-slate-50">
             <div className="flex items-center gap-2">
               <Trophy size={18} className="text-yellow-500" />
-              <h2 className="text-sm font-black text-slate-900">
+              <h2 className="text-sm font-black text-foreground">
                 Papan Skor Teratas
               </h2>
             </div>
@@ -208,14 +208,14 @@ export default function KomunitasPage() {
               {Array.from({ length: 5 }).map((_, i) => (
                 <div
                   key={i}
-                  className="h-14 bg-slate-50 rounded-2xl animate-pulse"
+                  className="h-14 bg-muted text-muted-foreground rounded-2xl animate-pulse"
                 />
               ))}
             </div>
           ) : leaderboard.length === 0 ? (
             <div className="p-12 text-center">
               <Trophy size={40} className="text-slate-200 mx-auto mb-3" />
-              <p className="text-sm text-slate-500 font-medium">
+              <p className="text-sm text-muted-foreground font-medium">
                 Belum ada data leaderboard
               </p>
             </div>
@@ -246,10 +246,10 @@ export default function KomunitasPage() {
                       i === 0
                         ? 'bg-yellow-100 text-yellow-700'
                         : i === 1
-                          ? 'bg-slate-100 text-slate-600'
+                          ? 'bg-secondary text-secondary-foreground text-muted-foreground'
                           : i === 2
-                            ? 'bg-amber-100 text-amber-700'
-                            : 'bg-indigo-50 text-indigo-600'
+                            ? 'bg-amber-100 text-amber-700 dark:text-amber-300'
+                            : 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
                     }`}
                   >
                     {entry.displayName.charAt(0).toUpperCase()}
@@ -257,12 +257,12 @@ export default function KomunitasPage() {
 
                   {/* NAME + TRACK */}
                   <div className="flex-1 min-w-0">
-                    <p className="font-black text-slate-800 text-sm truncate">
+                    <p className="font-black text-foreground text-sm truncate">
                       {entry.displayName}
                     </p>
                     {entry.trackType && (
                       <span
-                        className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md ${TRACK_COLORS[entry.trackType] || 'bg-slate-50 text-slate-500'}`}
+                        className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md ${TRACK_COLORS[entry.trackType] || 'bg-muted text-muted-foreground text-muted-foreground'}`}
                       >
                         {entry.trackType}
                       </span>
@@ -273,10 +273,10 @@ export default function KomunitasPage() {
                   <div
                     className={`px-3 py-1.5 rounded-xl font-black text-sm flex-shrink-0 ${
                       entry.score >= 80
-                        ? 'bg-emerald-50 text-emerald-700'
+                        ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300'
                         : entry.score >= 60
-                          ? 'bg-amber-50 text-amber-700'
-                          : 'bg-slate-50 text-slate-600'
+                          ? 'bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-300'
+                          : 'bg-muted text-muted-foreground text-muted-foreground'
                     }`}
                   >
                     {entry.score}
@@ -290,7 +290,7 @@ export default function KomunitasPage() {
         {/* SOCIAL SHARE */}
         <div className="bg-gradient-to-br from-indigo-600 to-purple-700 p-8 rounded-3xl text-white">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-white/10 rounded-2xl flex items-center justify-center">
+            <div className="w-10 h-10 card-solid/10 rounded-2xl flex items-center justify-center">
               <Share2 size={20} className="text-white" />
             </div>
             <div>
@@ -301,14 +301,14 @@ export default function KomunitasPage() {
             </div>
           </div>
 
-          <p className="text-indigo-100 text-sm leading-relaxed mb-5 bg-white/5 rounded-2xl p-4 font-medium">
+          <p className="text-indigo-100 text-sm leading-relaxed mb-5 card-solid/5 rounded-2xl p-4 font-medium">
             "{SOCIAL_SHARE_TEXT} {SHARE_URL}"
           </p>
 
           <button
             onClick={handleShare}
             disabled={sharing}
-            className="w-full h-12 bg-white text-indigo-700 font-black rounded-2xl text-sm hover:bg-indigo-50 transition-colors shadow-lg flex items-center justify-center gap-2 disabled:opacity-70"
+            className="w-full h-12 card-solid text-indigo-700 dark:text-indigo-300 font-black rounded-2xl text-sm hover:bg-indigo-50 dark:bg-indigo-500/10 transition-colors shadow-lg flex items-center justify-center gap-2 disabled:opacity-70"
           >
             <Share2 size={16} />
             {sharing ? 'Membagikan...' : 'Bagikan ke Teman'}
@@ -317,12 +317,12 @@ export default function KomunitasPage() {
 
         {/* JOIN CTA */}
         {!user && (
-          <div className="bg-white rounded-3xl ring-1 ring-slate-200 shadow-sm p-8 text-center">
-            <AiSparkIcon size={40} className="text-indigo-600 mx-auto mb-3" />
-            <h3 className="font-black text-lg text-slate-900 mb-2">
+          <div className="card-solid rounded-3xl ring-1 ring-border shadow-sm p-8 text-center">
+            <AiSparkIcon size={40} className="text-indigo-600 dark:text-indigo-400 mx-auto mb-3" />
+            <h3 className="font-black text-lg text-foreground mb-2">
               Daftar & Masuk Leaderboard
             </h3>
-            <p className="text-sm text-slate-500 mb-5">
+            <p className="text-sm text-muted-foreground mb-5">
               Mulai asesmen dan tampilkan nama Anda di papan skor
             </p>
             <button

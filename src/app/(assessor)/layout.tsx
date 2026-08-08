@@ -47,31 +47,31 @@ export default function AssessorLayout({ children }: { children: React.ReactNode
 
   return (
     <PageAuthGate loading={loading} authorized={isAuthorized} loadingMessage="Otentikasi Mitra...">
-    <div className="flex h-screen overflow-hidden bg-slate-50 font-sans text-slate-900">
+    <div className="flex h-screen overflow-hidden bg-muted text-muted-foreground font-sans text-foreground">
 
       
       {/* MOBILE SIDEBAR */}
       {isMobileMenuOpen && (
         <div className="md:hidden fixed inset-0 z-50 flex">
           <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)} />
-          <aside className="relative w-72 h-full bg-white flex flex-col shadow-2xl">
-            <div className="h-20 flex items-center justify-between px-6 border-b border-slate-100">
+          <aside className="relative w-72 h-full card-solid flex flex-col shadow-2xl">
+            <div className="h-20 flex items-center justify-between px-6 border-b border-border">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-emerald-600 text-white rounded-lg flex items-center justify-center"><ClipboardCheck className="w-5 h-5"/></div>
                 <h1 className="text-lg font-black tracking-tight">Mitra Asesor</h1>
               </div>
-              <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-slate-400 hover:bg-slate-100 rounded-xl"><X size={20}/></button>
+              <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-slate-400 hover:bg-secondary text-secondary-foreground rounded-xl"><X size={20}/></button>
             </div>
             <nav className="flex-1 py-6 px-4 space-y-2 overflow-y-auto">
               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 px-3">Menu Mitra</p>
               {menuItems.map((item) => (
-                <Link key={item.path} href={item.path} className={`flex items-center gap-3 px-3 py-3 rounded-xl font-bold ${pathname === item.path ? 'bg-emerald-50 text-emerald-700' : 'text-slate-500'}`}>
-                  <item.icon size={20} className={pathname === item.path ? 'text-emerald-600' : 'text-slate-400'} /> {item.name}
+                <Link key={item.path} href={item.path} className={`flex items-center gap-3 px-3 py-3 rounded-xl font-bold ${pathname === item.path ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300' : 'text-muted-foreground'}`}>
+                  <item.icon size={20} className={pathname === item.path ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'} /> {item.name}
                 </Link>
               ))}
             </nav>
-            <div className="p-4 border-t border-slate-100">
-              <button onClick={() => { logout(); router.push('/'); }} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-rose-600 font-bold hover:bg-rose-50"><LogOut size={20}/> Keluar</button>
+            <div className="p-4 border-t border-border">
+              <button onClick={() => { logout(); router.push('/'); }} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-rose-600 dark:text-rose-400 font-bold hover:bg-rose-50 dark:bg-rose-500/10"><LogOut size={20}/> Keluar</button>
             </div>
           </aside>
         </div>
@@ -79,10 +79,10 @@ export default function AssessorLayout({ children }: { children: React.ReactNode
 
       {/* DESKTOP SIDEBAR */}
       <aside 
-        className={`hidden md:flex flex-col bg-white border-r border-slate-200 shrink-0 transition-all duration-300 relative
+        className={`hidden md:flex flex-col card-solid border-r border-border shrink-0 transition-all duration-300 relative
         ${isSidebarCollapsed ? 'w-20' : 'w-72'}`}
       >
-         <div className="h-20 flex items-center px-6 border-b border-slate-100 justify-between shrink-0">
+         <div className="h-20 flex items-center px-6 border-b border-border justify-between shrink-0">
            <div className={`flex items-center gap-3 overflow-hidden ${isSidebarCollapsed ? 'justify-center w-full px-0' : ''}`}>
              <div className="w-8 h-8 bg-emerald-600 text-white rounded-lg flex items-center justify-center shrink-0">
                <ClipboardCheck className="w-5 h-5" />
@@ -96,7 +96,7 @@ export default function AssessorLayout({ children }: { children: React.ReactNode
            </div>
            
            {!isSidebarCollapsed && (
-             <button onClick={() => setIsSidebarCollapsed(true)} className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 shrink-0">
+             <button onClick={() => setIsSidebarCollapsed(true)} className="p-1.5 hover:bg-secondary text-secondary-foreground rounded-lg text-slate-400 shrink-0">
                <PanelLeftClose size={18} />
              </button>
            )}
@@ -110,26 +110,26 @@ export default function AssessorLayout({ children }: { children: React.ReactNode
                <Link 
                  key={item.path} href={item.path} title={isSidebarCollapsed ? item.name : ''}
                  className={`flex items-center gap-3 px-3 py-3 rounded-xl font-bold transition-all ${
-                   isActive ? 'bg-emerald-50 text-emerald-700' : 'text-slate-500 hover:bg-slate-50 hover:text-emerald-600'
+                   isActive ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300' : 'text-muted-foreground hover:bg-muted text-muted-foreground hover:text-emerald-600 dark:text-emerald-400'
                  } ${isSidebarCollapsed ? 'justify-center' : ''}`}
                >
-                 <item.icon size={20} className={isActive ? 'text-emerald-600' : 'text-slate-400 shrink-0'} /> 
+                 <item.icon size={20} className={isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 shrink-0'} /> 
                  {!isSidebarCollapsed && <span className="whitespace-nowrap">{item.name}</span>}
                </Link>
              );
            })}
          </nav>
 
-         <div className="p-4 border-t border-slate-100 shrink-0">
+         <div className="p-4 border-t border-border shrink-0">
            {isSidebarCollapsed && (
-             <button onClick={() => setIsSidebarCollapsed(false)} className="w-full flex items-center justify-center p-3 rounded-xl text-slate-400 hover:bg-slate-100 transition-colors mb-2">
+             <button onClick={() => setIsSidebarCollapsed(false)} className="w-full flex items-center justify-center p-3 rounded-xl text-slate-400 hover:bg-secondary text-secondary-foreground transition-colors mb-2">
                <PanelLeftOpen size={20} />
              </button>
            )}
            <button 
              onClick={() => { logout(); router.push('/'); }} 
              title={isSidebarCollapsed ? "Keluar" : ""}
-             className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-rose-600 hover:bg-rose-50 font-bold transition-colors ${isSidebarCollapsed ? 'justify-center' : ''}`}
+             className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:bg-rose-500/10 font-bold transition-colors ${isSidebarCollapsed ? 'justify-center' : ''}`}
            >
              <LogOut size={20} className="shrink-0" />
              {!isSidebarCollapsed && <span>Keluar</span>}
@@ -141,11 +141,11 @@ export default function AssessorLayout({ children }: { children: React.ReactNode
       <main className="flex-1 min-w-0 flex flex-col h-screen overflow-hidden">
          
         {/* Header Mobile */}
-        <div className="md:hidden bg-white/80 backdrop-blur-md border-b border-slate-200 p-4 flex justify-between items-center shrink-0 z-10">
-          <button onClick={() => setIsMobileMenuOpen(true)} className="p-2 -ml-2 text-slate-600 hover:bg-slate-100 rounded-xl">
+        <div className="md:hidden card-solid/80 backdrop-blur-md border-b border-border p-4 flex justify-between items-center shrink-0 z-10">
+          <button onClick={() => setIsMobileMenuOpen(true)} className="p-2 -ml-2 text-muted-foreground hover:bg-secondary text-secondary-foreground rounded-xl">
             <Menu size={24} />
           </button>
-          <h2 className="font-black text-emerald-600 flex items-center gap-2">
+          <h2 className="font-black text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
             <ClipboardCheck className="w-5 h-5"/> Mitra Portal
           </h2>
           <button onClick={() => { logout(); router.push('/'); }} className="text-rose-500 p-2">

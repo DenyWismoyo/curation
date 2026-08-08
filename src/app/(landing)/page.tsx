@@ -105,7 +105,7 @@ export default function LandingHubPage() {
         {/* Navbar */}
         <header className="relative z-50 p-6 flex justify-between items-center max-w-7xl mx-auto w-full">
           <div className="flex items-center gap-3 group cursor-pointer" onClick={() => handleNavigation('/')}>
-            <div className="w-10 h-10 bg-white/5 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/10 shadow-2xl group-hover:border-indigo-500/50 transition-colors">
+            <div className="w-10 h-10 card-solid/5 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/10 shadow-2xl group-hover:border-indigo-500/50 transition-colors">
               <SafeLogo src="/logo.png" alt="Omnifit Logo" width={24} height={24} />
             </div>
             <span className="text-xl font-black tracking-tight text-white group-hover:text-indigo-400 transition-colors">
@@ -114,11 +114,11 @@ export default function LandingHubPage() {
           </div>
           <div className="flex items-center gap-4">
             {user ? (
-              <Button onClick={() => router.push('/assessment')} variant="outline" className="hidden sm:flex border-white/10 bg-white/5 text-white hover:bg-white/10">
+              <Button onClick={() => router.push('/assessment')} variant="outline" className="hidden sm:flex border-white/10 card-solid/5 text-white hover:card-solid/10">
                 Dashboard
               </Button>
             ) : (
-              <Button onClick={() => router.push('/login')} variant="outline" className="border-white/10 bg-white/5 text-white hover:bg-white/10">
+              <Button onClick={() => router.push('/login')} variant="outline" className="border-white/10 card-solid/5 text-white hover:card-solid/10">
                 Login
               </Button>
             )}
@@ -175,7 +175,7 @@ export default function LandingHubPage() {
                   <div className="w-14 h-14 rounded-2xl bg-indigo-500/20 flex items-center justify-center border border-indigo-500/30 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
                     <BrainCircuit className="w-7 h-7 text-indigo-400" />
                   </div>
-                  <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white group-hover:-rotate-45 transition-all duration-500">
+                  <div className="w-10 h-10 rounded-full card-solid/5 flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white group-hover:-rotate-45 transition-all duration-500">
                     <ArrowRight className="w-5 h-5 text-slate-400 group-hover:text-white" />
                   </div>
                 </div>
@@ -227,7 +227,7 @@ export default function LandingHubPage() {
                   <div className="w-14 h-14 rounded-2xl bg-amber-500/20 flex items-center justify-center border border-amber-500/30 group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-500">
                     <LineChart className="w-7 h-7 text-amber-400" />
                   </div>
-                  <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white group-hover:-rotate-45 transition-all duration-500">
+                  <div className="w-10 h-10 rounded-full card-solid/5 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white group-hover:-rotate-45 transition-all duration-500">
                     <ArrowRight className="w-5 h-5 text-slate-400 group-hover:text-white" />
                   </div>
                 </div>
@@ -263,7 +263,7 @@ export default function LandingHubPage() {
                   <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
                     <BookOpenText className="w-7 h-7 text-emerald-400" />
                   </div>
-                  <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white group-hover:-rotate-45 transition-all duration-500">
+                  <div className="w-10 h-10 rounded-full card-solid/5 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white group-hover:-rotate-45 transition-all duration-500">
                     <ArrowRight className="w-5 h-5 text-slate-400 group-hover:text-white" />
                   </div>
                 </div>
@@ -296,7 +296,7 @@ export default function LandingHubPage() {
         
         {/* Footer */}
         <footer className="relative z-10 py-8 text-center border-t border-white/5 bg-[#020617]">
-          <p className="text-xs font-medium text-slate-600">
+          <p className="text-xs font-medium text-muted-foreground">
             &copy; {new Date().getFullYear()} Omnifit.cloud Ecosystem. All rights reserved.
           </p>
         </footer>

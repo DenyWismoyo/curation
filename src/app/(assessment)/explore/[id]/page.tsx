@@ -40,9 +40,9 @@ const parseInlineText = (text: string) => {
   const parts = text.split(/(\*\*.*?\*\*|\*.*?\*)/g);
   return parts.map((part, index) => {
     if (part.startsWith('**') && part.endsWith('**')) {
-      return <strong key={index} className="font-black text-slate-900">{part.slice(2, -2)}</strong>;
+      return <strong key={index} className="font-black text-foreground">{part.slice(2, -2)}</strong>;
     } else if (part.startsWith('*') && part.endsWith('*')) {
-      return <em key={index} className="italic font-medium text-slate-800">{part.slice(1, -1)}</em>;
+      return <em key={index} className="italic font-medium text-foreground">{part.slice(1, -1)}</em>;
     }
     return part;
   });
@@ -57,15 +57,15 @@ const MarkdownRenderer = ({ content }: { content: string }) => {
       {blocks.map((block, bIdx) => {
         const trimmed = block.trim();
         if (trimmed.startsWith('### ')) {
-          return <h3 key={bIdx} className="text-xl sm:text-2xl font-black text-slate-900 mt-10 mb-4 leading-snug">{parseInlineText(trimmed.slice(4))}</h3>;
+          return <h3 key={bIdx} className="text-xl sm:text-2xl font-black text-foreground mt-10 mb-4 leading-snug">{parseInlineText(trimmed.slice(4))}</h3>;
         } else if (trimmed.startsWith('## ')) {
-          return <h2 key={bIdx} className="text-2xl sm:text-3xl font-black text-slate-900 mt-12 mb-6 border-b border-slate-100 pb-3 leading-snug">{parseInlineText(trimmed.slice(3))}</h2>;
+          return <h2 key={bIdx} className="text-2xl sm:text-3xl font-black text-foreground mt-12 mb-6 border-b border-border pb-3 leading-snug">{parseInlineText(trimmed.slice(3))}</h2>;
         } else if (trimmed.startsWith('# ')) {
-          return <h1 key={bIdx} className="text-3xl sm:text-4xl font-black text-slate-900 mt-12 mb-6 leading-tight">{parseInlineText(trimmed.slice(2))}</h1>;
+          return <h1 key={bIdx} className="text-3xl sm:text-4xl font-black text-foreground mt-12 mb-6 leading-tight">{parseInlineText(trimmed.slice(2))}</h1>;
         } else if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
           const items = trimmed.split('\n').filter(i => i.trim().length > 0);
           return (
-            <ul key={bIdx} className="space-y-3 sm:space-y-4 my-8 bg-slate-50/70 p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-100">
+            <ul key={bIdx} className="space-y-3 sm:space-y-4 my-8 bg-muted text-muted-foreground/70 p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-border">
               {items.map((item, iIdx) => (
                 <li key={iIdx} className="flex items-start gap-3 sm:gap-4">
                   <span className="text-indigo-500 mt-[7px] sm:mt-[9px] shrink-0 text-[10px] sm:text-[12px]">●</span>
@@ -131,7 +131,7 @@ export default function ArticleDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#FAFAFA] flex flex-col items-center justify-center text-slate-400">
+      <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center text-slate-400">
         <Loader2 className="w-10 h-10 animate-spin mb-4 text-indigo-500" />
         <p className="font-bold text-xs uppercase tracking-widest">Membuka Halaman...</p>
       </div>
@@ -148,7 +148,7 @@ export default function ArticleDetailPage() {
         <div className="flex-1 text-center md:text-left">
           <p className="text-[10px] font-black uppercase tracking-widest text-indigo-500 mb-2">Implementasi Praktis</p>
           <h4 className="text-xl md:text-2xl font-black text-indigo-950 mb-2 leading-tight text-balance">Uji {article.linkedTemplateName || 'Kesiapan Anda'} Sekarang</h4>
-          <p className="text-indigo-700/80 text-sm font-medium">Beralih dari wawasan menjadi tindakan dengan instrumen analitik kami.</p>
+          <p className="text-indigo-700 dark:text-indigo-300/80 text-sm font-medium">Beralih dari wawasan menjadi tindakan dengan instrumen analitik kami.</p>
         </div>
         <button 
           onClick={() => router.push(`/katalog?buy=${article.linkedTemplateId}`)} 
@@ -161,7 +161,7 @@ export default function ArticleDetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] pb-24 font-sans selection:bg-indigo-100">
+    <div className="min-h-screen bg-background text-foreground pb-24 font-sans selection:bg-indigo-100">
       
       {/* Wrapper Luar: Tipis di mobile, lebar di desktop */}
       <div className="max-w-4xl mx-auto px-0 sm:px-6 md:px-8 pt-0 sm:pt-8">
@@ -170,39 +170,39 @@ export default function ArticleDetailPage() {
         <div className="px-5 sm:px-0 py-5 sm:pb-5">
           <button 
             onClick={() => router.push('/explore')}
-            className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors w-fit group"
+            className="flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-indigo-600 dark:text-indigo-400 transition-colors w-fit group"
           >
             <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Kembali
           </button>
         </div>
 
         {/* Kartu Artikel: Edge-to-edge di mobile, rounded & shadow di desktop */}
-        <article className="bg-white rounded-none sm:rounded-[2.5rem] md:rounded-[3rem] p-5 sm:p-10 lg:p-14 shadow-none sm:shadow-sm ring-0 sm:ring-1 sm:ring-slate-200/50">
+        <article className="card-solid rounded-none sm:rounded-[2.5rem] md:rounded-[3rem] p-5 sm:p-10 lg:p-14 shadow-none sm:shadow-sm ring-0 sm:ring-1 sm:ring-slate-200/50">
           
           <div className="flex items-center justify-between mb-8 sm:mb-10">
-            <span className="px-3 sm:px-4 py-1.5 sm:py-2 bg-indigo-50 text-indigo-600 text-[10px] sm:text-xs font-black uppercase tracking-widest rounded-lg">
+            <span className="px-3 sm:px-4 py-1.5 sm:py-2 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[10px] sm:text-xs font-black uppercase tracking-widest rounded-lg">
               {article.category}
             </span>
             <button 
               onClick={handleShare}
-              className="flex items-center gap-2 text-[11px] sm:text-xs font-bold text-slate-500 hover:text-indigo-600 bg-slate-50 hover:bg-indigo-50 px-3 sm:px-4 py-2 rounded-xl transition-all ring-1 ring-slate-100 hover:ring-indigo-200"
+              className="flex items-center gap-2 text-[11px] sm:text-xs font-bold text-muted-foreground hover:text-indigo-600 dark:text-indigo-400 bg-muted text-muted-foreground hover:bg-indigo-50 dark:bg-indigo-500/10 px-3 sm:px-4 py-2 rounded-xl transition-all ring-1 ring-border hover:ring-indigo-200 dark:ring-indigo-500/20"
             >
               {copied ? <Check size={14} className="text-emerald-500"/> : <Share2 size={14}/>}
               {copied ? 'Tersalin' : 'Bagikan'}
             </button>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-[1.15] mb-6 sm:mb-8 text-balance">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-foreground tracking-tight leading-[1.15] mb-6 sm:mb-8 text-balance">
             {article.title}
           </h1>
 
-          <div className="flex items-center gap-4 text-xs font-bold text-slate-400 mb-8 sm:mb-12 pb-6 sm:pb-8 border-b border-slate-100">
+          <div className="flex items-center gap-4 text-xs font-bold text-slate-400 mb-8 sm:mb-12 pb-6 sm:pb-8 border-b border-border">
             <span className="flex items-center gap-1.5"><Calendar size={14} className="mb-0.5" /> {new Date(article.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
             <span className="flex items-center gap-1.5"><Clock size={14} className="mb-0.5" /> Baca {article.readTime}</span>
           </div>
 
           {/* Gambar Artikel: Strict 2:1 */}
-          <div className="w-full aspect-[2/1] bg-slate-50 rounded-2xl sm:rounded-[2rem] flex items-center justify-center mb-10 sm:mb-14 ring-1 ring-slate-100 overflow-hidden relative shadow-inner">
+          <div className="w-full aspect-[2/1] bg-muted text-muted-foreground rounded-2xl sm:rounded-[2rem] flex items-center justify-center mb-10 sm:mb-14 ring-1 ring-border overflow-hidden relative shadow-inner">
              <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 to-slate-50/50"></div>
              {article.imageUrl ? (
                <img src={article.imageUrl} alt={article.title} className="relative z-10 w-full h-full object-cover" />

@@ -28,6 +28,7 @@ import {
   Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { PublicSearchDialog } from '@/components/common/PublicSearchDialog'
+import { ThemeToggleCompact } from '@/components/ui/ThemeToggleCompact'
 
 // ── Import dari config terpusat ──────────────────────────────
 import {
@@ -44,18 +45,18 @@ function MegaMenuItem({ item, onClose }: { item: NavItem; onClose?: () => void }
       <Link
         href={item.href}
         onClick={onClose}
-        className="flex items-start gap-3.5 p-3 rounded-2xl hover:bg-slate-50 transition-all group"
+        className="flex items-start gap-3.5 p-3 rounded-2xl hover:bg-muted text-muted-foreground transition-all group"
       >
         <div
           className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ring-1 group-hover:scale-105 transition-transform
-            ${item.accent?.bg ?? 'bg-slate-50'} ${item.accent?.ring ?? 'ring-slate-100'}`}
+            ${item.accent?.bg ?? 'bg-muted text-muted-foreground'} ${item.accent?.ring ?? 'ring-slate-100'}`}
         >
-          <item.icon size={18} className={item.accent?.text ?? 'text-slate-500'} />
+          <item.icon size={18} className={item.accent?.text ?? 'text-muted-foreground'} />
         </div>
         <div className="flex-1 min-w-0">
           {item.badge ? (
             <div className="flex items-center justify-between">
-              <p className={`text-sm font-extrabold text-slate-900 transition-colors group-hover:${item.accent?.text ?? 'text-indigo-600'}`}>
+              <p className={`text-sm font-extrabold text-foreground transition-colors group-hover:${item.accent?.text ?? 'text-indigo-600 dark:text-indigo-400'}`}>
                 {item.label}
               </p>
               <Badge variant="secondary" className="text-[10px] px-2 py-0">
@@ -63,7 +64,7 @@ function MegaMenuItem({ item, onClose }: { item: NavItem; onClose?: () => void }
               </Badge>
             </div>
           ) : (
-            <p className={`text-sm font-extrabold text-slate-900 transition-colors group-hover:${item.accent?.text ?? 'text-indigo-600'}`}>
+            <p className={`text-sm font-extrabold text-foreground transition-colors group-hover:${item.accent?.text ?? 'text-indigo-600 dark:text-indigo-400'}`}>
               {item.label}
             </p>
           )}
@@ -82,13 +83,13 @@ function DirectNavLink({ item, isActive }: { item: NavItem; isActive: boolean })
     <Link
       href={item.href}
       className={`relative px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-        isActive ? 'text-slate-900' : 'text-slate-500 hover:text-slate-800'
+        isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
       }`}
     >
       {isActive && (
         <motion.div
           layoutId="navbar-active"
-          className="absolute inset-0 bg-white shadow-sm ring-1 ring-slate-200/60 rounded-xl -z-10"
+          className="absolute inset-0 card-solid shadow-sm ring-1 ring-border rounded-xl -z-10"
           transition={{ type: 'spring', stiffness: 500, damping: 40 }}
         />
       )}
@@ -135,20 +136,20 @@ export function PublicNavbar() {
 
   return (
     <>
-      <header className="hidden md:flex fixed top-0 left-0 right-0 h-20 bg-white/80 backdrop-blur-xl border-b border-slate-200/60 z-40 items-center justify-between px-6 lg:px-12">
+      <header className="hidden md:flex fixed top-0 left-0 right-0 h-20 card-solid/80 backdrop-blur-xl border-b border-border z-40 items-center justify-between px-6 lg:px-12">
         {/* Brand */}
         <div className="flex items-center gap-6 lg:gap-8">
           <Link href={ROUTES.HOME} className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-sm ring-1 ring-slate-200 group-hover:ring-indigo-200 transition-all overflow-hidden p-1">
+            <div className="w-10 h-10 rounded-xl card-solid flex items-center justify-center shadow-sm ring-1 ring-border group-hover:ring-indigo-200 dark:ring-indigo-500/20 transition-all overflow-hidden p-1">
               <SafeLogo src="/logo.png" alt="Omnifit" width={24} height={24} className="object-contain w-full h-full" />
             </div>
-            <span className="text-lg font-black text-slate-900 tracking-tight group-hover:text-indigo-600 transition-colors">
+            <span className="text-lg font-black text-foreground tracking-tight group-hover:text-indigo-600 dark:text-indigo-400 transition-colors">
               Omnifit
             </span>
           </Link>
 
           {/* ── Menu Pill ───────────────────────────────────── */}
-          <nav className="flex items-center gap-1 bg-slate-50/60 p-1 rounded-2xl ring-1 ring-slate-100/80">
+          <nav className="flex items-center gap-1 bg-muted text-muted-foreground/60 p-1 rounded-2xl ring-1 ring-border/80">
             <NavigationMenu>
               <NavigationMenuList>
 
@@ -158,8 +159,8 @@ export function PublicNavbar() {
                     <NavigationMenuLink asChild>
                       <Link
                         href={item.href}
-                        className={`group inline-flex h-10 w-max items-center justify-center rounded-xl bg-transparent px-4 py-2 text-xs font-bold transition-colors hover:bg-slate-100 hover:text-slate-900 focus:bg-slate-100 focus:text-slate-900 focus:outline-none ${
-                          isActive(item.href) ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600'
+                        className={`group inline-flex h-10 w-max items-center justify-center rounded-xl bg-transparent px-4 py-2 text-xs font-bold transition-colors hover:bg-secondary text-secondary-foreground hover:text-foreground focus:bg-secondary text-secondary-foreground focus:text-foreground focus:outline-none ${
+                          isActive(item.href) ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300' : 'text-muted-foreground'
                         }`}
                       >
                         <item.icon size={14} className="mr-1.5 text-indigo-500" />
@@ -171,7 +172,7 @@ export function PublicNavbar() {
 
                 {/* Mega Menu: Asesmen & Produk */}
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900">
+                  <NavigationMenuTrigger className="rounded-xl text-xs font-bold text-muted-foreground hover:text-foreground">
                     <Sparkles size={14} className="mr-1.5 text-indigo-500" /> Asesmen & Produk
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
@@ -185,7 +186,7 @@ export function PublicNavbar() {
 
                 {/* Mega Menu: Ekosistem & Solusi */}
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900">
+                  <NavigationMenuTrigger className="rounded-xl text-xs font-bold text-muted-foreground hover:text-foreground">
                     <Handshake size={14} className="mr-1.5 text-blue-500" /> Ekosistem & Solusi
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
@@ -209,17 +210,18 @@ export function PublicNavbar() {
 
         {/* ── Area Kanan ──────────────────────────────────── */}
         <div className="flex items-center gap-3">
+          <ThemeToggleCompact />
           {/* Quick Search */}
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
                   onClick={() => setSearchOpen(true)}
-                  className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-slate-100/70 hover:bg-slate-100 text-slate-400 hover:text-slate-700 ring-1 ring-slate-200/60 transition-all text-xs font-medium"
+                  className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-secondary text-secondary-foreground/70 hover:bg-secondary text-secondary-foreground text-slate-400 hover:text-slate-700 ring-1 ring-border transition-all text-xs font-medium"
                 >
                   <Search size={14} className="text-slate-400" />
-                  <span className="hidden lg:inline text-slate-500 font-bold">Cari modul...</span>
-                  <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-black text-slate-400 bg-white rounded-md ring-1 ring-slate-200 shadow-2xs font-mono">
+                  <span className="hidden lg:inline text-muted-foreground font-bold">Cari modul...</span>
+                  <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-black text-slate-400 card-solid rounded-md ring-1 ring-border shadow-2xs font-mono">
                     ⌘K
                   </kbd>
                 </button>
@@ -230,13 +232,13 @@ export function PublicNavbar() {
 
           {user ? (
             <>
-              <div className="flex items-center gap-3 pl-3 border-l border-slate-200/60">
+              <div className="flex items-center gap-3 pl-3 border-l border-border">
                 {/* User dropdown */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
                       variant="ghost"
-                      className="flex items-center gap-2.5 p-1.5 pr-3 h-auto rounded-[1rem] hover:bg-slate-50 hover:ring-1 hover:ring-slate-200 transition-all"
+                      className="flex items-center gap-2.5 p-1.5 pr-3 h-auto rounded-[1rem] hover:bg-muted text-muted-foreground hover:ring-1 hover:ring-slate-200 transition-all"
                     >
                       {user.photoURL ? (
                         // eslint-disable-next-line @next/next/no-img-element
@@ -245,16 +247,16 @@ export function PublicNavbar() {
                           alt={user.displayName || 'User'}
                           width={32}
                           height={32}
-                          className="rounded-xl w-8 h-8 object-cover shadow-sm ring-1 ring-slate-200"
+                          className="rounded-xl w-8 h-8 object-cover shadow-sm ring-1 ring-border"
                           referrerPolicy="no-referrer"
                         />
                       ) : (
-                        <div className="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold text-sm ring-1 ring-indigo-100 shadow-sm">
+                        <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-sm ring-1 ring-indigo-100 shadow-sm">
                           {user.displayName?.charAt(0).toUpperCase() || 'U'}
                         </div>
                       )}
                       <div className="flex items-center gap-1.5">
-                        <span className="text-xs font-bold text-slate-800 leading-tight truncate max-w-[100px]">
+                        <span className="text-xs font-bold text-foreground leading-tight truncate max-w-[100px]">
                           {user.displayName?.split(' ')[0] || 'Pengguna'}
                         </span>
                         <ChevronDown size={14} className="text-slate-400" />
@@ -263,32 +265,32 @@ export function PublicNavbar() {
                   </DropdownMenuTrigger>
 
                   <DropdownMenuContent
-                    className="w-64 rounded-[1.5rem] p-3 shadow-xl ring-1 ring-slate-200 border-none bg-white"
+                    className="w-64 rounded-[1.5rem] p-3 shadow-xl ring-1 ring-border border-none card-solid"
                     align="end"
                   >
                     {/* Header akun */}
                     <DropdownMenuLabel className="font-normal px-3 py-2">
                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Akun Saya</p>
-                      <p className="text-sm font-bold text-slate-900 truncate mt-1">{user.email}</p>
+                      <p className="text-sm font-bold text-foreground truncate mt-1">{user.email}</p>
                       {assessmentQuota > 0 && (
-                        <div className="mt-3 flex items-center justify-between bg-indigo-50 px-3 py-2 rounded-xl ring-1 ring-indigo-200">
-                          <span className="text-xs font-bold text-indigo-700">Sisa Kuota:</span>
+                        <div className="mt-3 flex items-center justify-between bg-indigo-50 dark:bg-indigo-500/10 px-3 py-2 rounded-xl ring-1 ring-indigo-200 dark:ring-indigo-500/20">
+                          <span className="text-xs font-bold text-indigo-700 dark:text-indigo-300">Sisa Kuota:</span>
                           <span className="text-xs font-black bg-indigo-600 text-white px-2 py-0.5 rounded-md shadow-sm">
                             {assessmentQuota} Modul
                           </span>
                         </div>
                       )}
                     </DropdownMenuLabel>
-                    <DropdownMenuSeparator className="bg-slate-100 my-2" />
+                    <DropdownMenuSeparator className="bg-secondary text-secondary-foreground my-2" />
 
                     {/* Menu akun standar */}
                     <DropdownMenuGroup>
-                      <DropdownMenuItem asChild className="rounded-xl cursor-pointer hover:bg-slate-50 font-bold text-slate-700 py-2.5">
+                      <DropdownMenuItem asChild className="rounded-xl cursor-pointer hover:bg-muted text-muted-foreground font-bold text-slate-700 py-2.5">
                         <Link href={ROUTES.PROFIL} className="flex items-center gap-3">
                           <User size={16} className="text-slate-400" /> Profil Lengkap
                         </Link>
                       </DropdownMenuItem>
-                      <DropdownMenuItem asChild className="rounded-xl cursor-pointer hover:bg-slate-50 font-bold text-slate-700 py-2.5">
+                      <DropdownMenuItem asChild className="rounded-xl cursor-pointer hover:bg-muted text-muted-foreground font-bold text-slate-700 py-2.5">
                         <Link href={ROUTES.RIWAYAT} className="flex items-center gap-3">
                           <Receipt size={16} className="text-slate-400" /> Riwayat & Tagihan
                         </Link>
@@ -298,13 +300,13 @@ export function PublicNavbar() {
                     {/* Role-based portals (dinamis dari config) */}
                     {rolePortals.length > 0 && (
                       <>
-                        <DropdownMenuSeparator className="bg-slate-100 my-2" />
+                        <DropdownMenuSeparator className="bg-secondary text-secondary-foreground my-2" />
                         <DropdownMenuGroup>
                           {rolePortals.map((item) => (
                             <DropdownMenuItem
                               key={item.key}
                               asChild
-                              className="rounded-xl cursor-pointer hover:bg-slate-50 font-bold text-slate-700 py-2.5"
+                              className="rounded-xl cursor-pointer hover:bg-muted text-muted-foreground font-bold text-slate-700 py-2.5"
                             >
                               <Link href={item.href} className="flex items-center gap-3">
                                 <item.icon size={16} className="text-slate-400" />
@@ -316,10 +318,10 @@ export function PublicNavbar() {
                       </>
                     )}
 
-                    <DropdownMenuSeparator className="bg-slate-100 my-2" />
+                    <DropdownMenuSeparator className="bg-secondary text-secondary-foreground my-2" />
                     <DropdownMenuItem
                       onClick={handleLogout}
-                      className="rounded-xl text-rose-600 font-bold focus:bg-rose-50 focus:text-rose-700 py-2.5 cursor-pointer"
+                      className="rounded-xl text-rose-600 dark:text-rose-400 font-bold focus:bg-rose-50 dark:bg-rose-500/10 focus:text-rose-700 dark:text-rose-300 py-2.5 cursor-pointer"
                     >
                       <LogOut size={16} className="mr-3" />
                       Keluar Sistem
@@ -343,7 +345,7 @@ export function PublicNavbar() {
               <Button
                 variant="ghost"
                 asChild
-                className="rounded-xl h-10 px-4 font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all text-xs"
+                className="rounded-xl h-10 px-4 font-bold text-muted-foreground hover:text-foreground hover:bg-muted text-muted-foreground transition-all text-xs"
               >
                 <Link href={ROUTES.LOGIN}>
                   <LogIn size={14} className="mr-1.5" />

@@ -15,7 +15,7 @@ const Command = React.forwardRef<
   <CommandPrimitive
     ref={ref}
     className={cn(
-      "flex h-full w-full flex-col overflow-hidden rounded-2xl bg-white text-slate-900",
+      "flex h-full w-full flex-col overflow-hidden rounded-2xl card-solid text-foreground",
       className
     )}
     {...props}
@@ -41,12 +41,12 @@ const CommandInput = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Input>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
 >(({ className, ...props }, ref) => (
-  <div className="flex items-center border-b border-slate-100 px-4" cmdk-input-wrapper="">
+  <div className="flex items-center border-b border-border px-4" cmdk-input-wrapper="">
     <Search className="mr-2 h-4 w-4 shrink-0 text-slate-400" />
     <CommandPrimitive.Input
       ref={ref}
       className={cn(
-        "flex h-12 w-full rounded-md bg-transparent py-3 text-sm font-medium text-slate-900 outline-none placeholder:text-slate-400 disabled:cursor-not-allowed disabled:opacity-50",
+        "flex h-12 w-full rounded-md bg-transparent py-3 text-sm font-medium text-foreground outline-none placeholder:text-slate-400 disabled:cursor-not-allowed disabled:opacity-50",
         className
       )}
       {...props}
@@ -104,7 +104,7 @@ const CommandSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <CommandPrimitive.Separator
     ref={ref}
-    className={cn("-mx-1 h-px bg-slate-100", className)}
+    className={cn("-mx-1 h-px bg-secondary text-secondary-foreground", className)}
     {...props}
   />
 ))
@@ -117,7 +117,7 @@ const CommandItem = React.forwardRef<
   <CommandPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex cursor-pointer select-none items-center rounded-xl px-3 py-2.5 text-sm font-bold text-slate-700 outline-none data-[disabled=true]:pointer-events-none data-[selected='true']:bg-indigo-50 data-[selected='true']:text-indigo-600 data-[disabled=true]:opacity-50 transition-colors",
+      "relative flex cursor-pointer select-none items-center rounded-xl px-3 py-2.5 text-sm font-bold text-slate-700 outline-none data-[disabled=true]:pointer-events-none data-[selected='true']:bg-indigo-50 dark:bg-indigo-500/10 data-[selected='true']:text-indigo-600 dark:text-indigo-400 data-[disabled=true]:opacity-50 transition-colors",
       className
     )}
     {...props}
@@ -133,7 +133,7 @@ const CommandShortcut = ({
   return (
     <span
       className={cn(
-        "ml-auto text-xs tracking-widest text-slate-400 font-mono bg-slate-100 px-1.5 py-0.5 rounded-md",
+        "ml-auto text-xs tracking-widest text-slate-400 font-mono bg-secondary text-secondary-foreground px-1.5 py-0.5 rounded-md",
         className
       )}
       {...props}

@@ -76,10 +76,10 @@ export default function MacroEconomicCalendar() {
 
   const getImpactColor = (impact: string) => {
     switch(impact.toLowerCase()) {
-      case "high": return "bg-rose-500 text-slate-900 dark:text-white border-rose-500 shadow-rose-500/20";
-      case "medium": return "bg-orange-500 text-slate-900 dark:text-white border-orange-500 shadow-orange-500/20";
-      case "low": return "bg-yellow-400 text-slate-800 border-yellow-400 shadow-yellow-400/20";
-      default: return "bg-slate-200 text-slate-600 border-slate-200 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400";
+      case "high": return "bg-rose-500 text-foreground border-rose-500 shadow-rose-500/20";
+      case "medium": return "bg-orange-500 text-foreground border-orange-500 shadow-orange-500/20";
+      case "low": return "bg-yellow-400 text-foreground border-yellow-400 shadow-yellow-400/20";
+      default: return "bg-slate-200 text-muted-foreground border-border bg-secondary text-secondary-foreground text-muted-foreground";
     }
   };
 
@@ -135,8 +135,8 @@ export default function MacroEconomicCalendar() {
                   <Calendar className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                 </div>
                 <div>
-                  <h2 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">Mingguan AI</h2>
-                  <p className="text-[10px] font-bold text-slate-500">Macro Outlook</p>
+                  <h2 className="text-sm font-black text-foreground uppercase tracking-wider">Mingguan AI</h2>
+                  <p className="text-[10px] font-bold text-muted-foreground">Macro Outlook</p>
                 </div>
               </div>
               <div className="w-px h-10 bg-indigo-200 dark:bg-indigo-800/50 hidden sm:block"></div>
@@ -153,7 +153,7 @@ export default function MacroEconomicCalendar() {
           <select
             value={selectedDateStr || ""}
             onChange={(e) => setSelectedDateStr(e.target.value)}
-            className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-4 text-sm font-semibold focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 cursor-pointer shadow-sm h-full min-w-[200px]"
+            className="card-solid dark:bg-slate-800 text-foreground border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-4 text-sm font-semibold focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 cursor-pointer shadow-sm h-full min-w-[200px]"
           >
             {events.map((dayGroup, idx) => {
               const isToday = dayGroup.rawDate.toDateString() === new Date().toDateString();
@@ -167,10 +167,10 @@ export default function MacroEconomicCalendar() {
           
           <button 
             onClick={() => setRefreshTrigger(prev => prev + 1)}
-            className="p-4 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-700 transition-colors flex items-center justify-center group shadow-sm h-full"
+            className="p-4 card-solid dark:bg-slate-800 hover:bg-muted text-muted-foreground dark:hover:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-700 transition-colors flex items-center justify-center group shadow-sm h-full"
             title="Refresh Data"
           >
-            <RefreshCw className="w-5 h-5 text-slate-500 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white" />
+            <RefreshCw className="w-5 h-5 text-muted-foreground group-hover:text-foreground dark:group-hover:text-white" />
           </button>
         </div>
       </div>
@@ -179,7 +179,7 @@ export default function MacroEconomicCalendar() {
       {selectedDayGroup && (
         <CryptoCard variant="default" className="mt-4">
            {/* Day Header */}
-           <div className="bg-slate-100 dark:bg-slate-950/50 px-6 py-4 flex items-center justify-between border-b border-slate-200 dark:border-slate-800/50">
+           <div className="bg-secondary text-secondary-foreground dark:bg-slate-950/50 px-6 py-4 flex items-center justify-between border-b border-slate-200 dark:border-slate-800/50">
              <h3 className="font-bold text-slate-200">{selectedDayGroup.dateStr}</h3>
              {selectedDayGroup.rawDate.toDateString() === new Date().toDateString() && (
                <CryptoBadge variant="info">HARI INI</CryptoBadge>
@@ -196,8 +196,8 @@ export default function MacroEconomicCalendar() {
                  <div key={eIdx} className={`p-4 sm:px-6 flex flex-col sm:flex-row sm:items-center gap-4 transition-colors hover:bg-slate-200 dark:bg-slate-800/20 ${isPast ? 'opacity-60' : ''}`}>
                    
                    <div className="flex items-center gap-4 sm:w-48 shrink-0">
-                     <span className="font-medium text-slate-500 dark:text-slate-400 w-16">{timeStr}</span>
-                     <Badge className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-800 uppercase">{event.country}</Badge>
+                     <span className="font-medium text-muted-foreground w-16">{timeStr}</span>
+                     <Badge className="bg-secondary text-secondary-foreground text-muted-foreground border-slate-200 dark:border-slate-800 uppercase">{event.country}</Badge>
                    </div>
 
                    <div className="flex-1 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6">
@@ -205,7 +205,7 @@ export default function MacroEconomicCalendar() {
                        <Badge className={`${getImpactColor(event.impact)} text-[10px] w-14 justify-center shadow-sm`}>
                          {getImpactLabel(event.impact)}
                        </Badge>
-                       <span className={`font-semibold text-sm sm:text-base ${event.impact === 'High' ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-300'}`}>
+                       <span className={`font-semibold text-sm sm:text-base ${event.impact === 'High' ? 'text-foreground' : 'text-muted-foreground'}`}>
                          {event.title}
                        </span>
                      </div>
@@ -213,18 +213,18 @@ export default function MacroEconomicCalendar() {
                      {event.impact !== "Holiday" && (
                        <div className="flex items-center gap-4 text-sm mt-2 sm:mt-0 sm:w-64 shrink-0 bg-slate-200 dark:bg-slate-800/50 p-2 rounded-lg border border-slate-200 dark:border-slate-800">
                          <div className="flex flex-col w-1/3">
-                           <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold">Act</span>
-                           <span className={`font-bold ${event.actual ? 'text-slate-900 dark:text-white' : 'text-slate-500'}`}>
+                           <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">Act</span>
+                           <span className={`font-bold ${event.actual ? 'text-foreground' : 'text-muted-foreground'}`}>
                              {event.actual || "-"}
                            </span>
                          </div>
                          <div className="flex flex-col w-1/3 border-l border-slate-200 dark:border-slate-800 pl-3">
-                           <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold">Fcst</span>
-                           <span className="text-slate-600 dark:text-slate-300">{event.forecast || "-"}</span>
+                           <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">Fcst</span>
+                           <span className="text-muted-foreground">{event.forecast || "-"}</span>
                          </div>
                          <div className="flex flex-col w-1/3 border-l border-slate-200 dark:border-slate-800 pl-3">
-                           <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold">Prev</span>
-                           <span className="text-slate-500 dark:text-slate-400">{event.previous || "-"}</span>
+                           <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">Prev</span>
+                           <span className="text-muted-foreground">{event.previous || "-"}</span>
                          </div>
                        </div>
                      )}

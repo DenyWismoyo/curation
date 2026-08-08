@@ -20,9 +20,9 @@ const renderRichText = (str: string) => {
   const parts = str.split(/(\*\*.*?\*\*|\*.*?\*)/g);
   return parts.map((part, index) => {
     if (part.startsWith('**') && part.endsWith('**')) {
-      return <strong key={index} className="font-bold text-slate-900">{part.slice(2, -2)}</strong>;
+      return <strong key={index} className="font-bold text-foreground">{part.slice(2, -2)}</strong>;
     } else if (part.startsWith('*') && part.endsWith('*')) {
-      return <em key={index} className="italic text-slate-800 font-medium">{part.slice(1, -1)}</em>;
+      return <em key={index} className="italic text-foreground font-medium">{part.slice(1, -1)}</em>;
     }
     return part;
   });
@@ -41,7 +41,7 @@ export const TextToBullets = ({ text, colorClass = "text-indigo-500" }: { text: 
         if (cleanLine.startsWith('###') || cleanLine.startsWith('##') || (cleanLine === cleanLine.toUpperCase() && cleanLine.length > 5)) {
            return (
             <li key={idx} className="block mt-5 mb-1 list-none">
-               <strong className="text-slate-900 font-black text-sm uppercase tracking-wide border-b border-slate-100 pb-1.5 w-full block">
+               <strong className="text-foreground font-black text-sm uppercase tracking-wide border-b border-border pb-1.5 w-full block">
                  {renderRichText(cleanLine.replace(/^#+\s*/, ''))}
                </strong>
             </li>
@@ -61,10 +61,10 @@ export const TextToBullets = ({ text, colorClass = "text-indigo-500" }: { text: 
 const InsightAccordion = ({ id, title, icon: Icon, content }: any) => {
   const [isOpen, setIsOpen] = useState(id === 'rec-0');
   return (
-    <div className="bg-white ring-1 ring-slate-100 rounded-3xl overflow-hidden shadow-sm transition-all duration-300">
-      <button onClick={() => setIsOpen(!isOpen)} className="w-full flex items-center justify-between p-5 sm:p-6 text-left bg-white hover:bg-slate-50 transition-colors">
+    <div className="card-solid ring-1 ring-border rounded-3xl overflow-hidden shadow-sm transition-all duration-300">
+      <button onClick={() => setIsOpen(!isOpen)} className="w-full flex items-center justify-between p-5 sm:p-6 text-left card-solid hover:bg-muted text-muted-foreground transition-colors">
         <div className="flex items-center gap-4">
-          <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isOpen ? 'bg-indigo-100 text-indigo-600' : 'bg-slate-50 text-slate-500'}`}>
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isOpen ? 'bg-indigo-100 text-indigo-600 dark:text-indigo-400' : 'bg-muted text-muted-foreground text-muted-foreground'}`}>
             <Icon size={18} />
           </div>
           <h4 className={`text-sm font-black uppercase tracking-widest ${isOpen ? 'text-indigo-900' : 'text-slate-700'}`}>{title}</h4>
@@ -72,7 +72,7 @@ const InsightAccordion = ({ id, title, icon: Icon, content }: any) => {
         <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
       <div className={`transition-all duration-300 ease-in-out ${isOpen ? 'max-h-fit opacity-100' : 'max-h-0 opacity-0'}`}>
-        <div className="p-5 sm:p-6 pt-0 text-sm font-medium text-slate-600 border-t border-slate-50">
+        <div className="p-5 sm:p-6 pt-0 text-sm font-medium text-muted-foreground border-t border-slate-50">
           <TextToBullets text={content || "Tidak ada detail."} colorClass="text-indigo-400" />
         </div>
       </div>
@@ -92,8 +92,8 @@ const renderDynamicIcon = (type: string) => {
   }
 };
 
-const borderColors = ['ring-indigo-200', 'ring-emerald-200', 'ring-amber-200', 'ring-blue-200', 'ring-rose-200'];
-const textColors = ['text-indigo-600', 'text-emerald-600', 'text-amber-600', 'text-blue-600', 'text-rose-600'];
+const borderColors = ['ring-indigo-200 dark:ring-indigo-500/20', 'ring-emerald-200 dark:ring-emerald-500/20', 'ring-amber-200 dark:ring-amber-500/20', 'ring-blue-200 dark:ring-blue-500/20', 'ring-rose-200 dark:ring-rose-500/20'];
+const textColors = ['text-indigo-600 dark:text-indigo-400', 'text-emerald-600 dark:text-emerald-400', 'text-amber-600 dark:text-amber-400', 'text-blue-600 dark:text-blue-400', 'text-rose-600 dark:text-rose-400'];
 
 // ========================================================
 // 2. INTERFACES (Props)
@@ -234,17 +234,17 @@ export function UniversalAssessmentView({
 
       
       {isPublic && (
-        <div className="bg-gradient-to-br from-amber-50 to-orange-50/40 border border-amber-200/80 p-5 sm:p-6 rounded-3xl shadow-sm relative overflow-hidden">
+        <div className="bg-gradient-to-br from-amber-50 to-orange-50/40 border border-amber-200 dark:border-amber-500/20/80 p-5 sm:p-6 rounded-3xl shadow-sm relative overflow-hidden">
           <div className="absolute right-0 top-0 opacity-[0.03] pointer-events-none transform translate-x-6 -translate-y-6">
             <AdminShieldIcon size={160} />
           </div>
           <div className="flex flex-col lg:flex-row gap-4 items-start relative z-10">
-            <div className="bg-amber-100/80 p-3 rounded-2xl shrink-0 text-amber-600 ring-1 ring-amber-200 shadow-inner">
+            <div className="bg-amber-100/80 p-3 rounded-2xl shrink-0 text-amber-600 dark:text-amber-400 ring-1 ring-amber-200 dark:ring-amber-500/20 shadow-inner">
               <AdminShieldIcon size={28} />
             </div>
             <div className="flex-1 w-full space-y-3">
               <div className="flex items-center gap-2">
-                <span className="bg-amber-100/80 text-amber-800 text-[10px] font-black px-3 py-1 rounded-md uppercase tracking-widest ring-1 ring-amber-200">Status Laporan</span>
+                <span className="bg-amber-100/80 text-amber-800 text-[10px] font-black px-3 py-1 rounded-md uppercase tracking-widest ring-1 ring-amber-200 dark:ring-amber-500/20">Status Laporan</span>
                 <h4 className="text-amber-900 font-black text-sm sm:text-base uppercase tracking-wider">Hasil Pemrosesan Komputasi Otomatis (AI-Generated)</h4>
               </div>
               <p className="text-amber-800/90 text-sm font-medium leading-relaxed">Laporan analitik ini dihasilkan secara otomatis oleh sistem AI berdasarkan data mandiri pengguna. <b>Bersifat tidak mengikat sebelum divalidasi resmi.</b></p>
@@ -255,8 +255,8 @@ export function UniversalAssessmentView({
 
       
       {isInternal && curatorData && (
-        <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm ring-1 ring-slate-200 w-full">
-          <h3 className="text-xs font-black uppercase text-slate-500 tracking-widest mb-4 flex items-center gap-2">
+        <div className="card-solid p-6 sm:p-8 rounded-3xl shadow-sm ring-1 ring-border w-full">
+          <h3 className="text-xs font-black uppercase text-muted-foreground tracking-widest mb-4 flex items-center gap-2">
             <TechCardIcon size={16} className="text-indigo-500"/> Kustomisasi Quick Tags
           </h3>
           <div className="flex flex-wrap items-center gap-2.5">
@@ -267,7 +267,7 @@ export function UniversalAssessmentView({
                   <button
                     key={tag}
                     onClick={() => curatorData.toggleTag && curatorData.toggleTag(tag)}
-                    className={`flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold rounded-full transition-all border ${isSelected ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm ring-2 ring-indigo-200' : 'bg-white text-slate-500 border-slate-200 hover:border-indigo-300 hover:bg-slate-50'}`}
+                    className={`flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold rounded-full transition-all border ${isSelected ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm ring-2 ring-indigo-200 dark:ring-indigo-500/20' : 'card-solid text-muted-foreground border-border hover:border-indigo-300 hover:bg-muted text-muted-foreground'}`}
                   >
                     {tag}
                   </button>
@@ -275,7 +275,7 @@ export function UniversalAssessmentView({
               })
             ) : (
               curatorData.selectedTags.length > 0 ? curatorData.selectedTags.map((tag) => (
-                <span key={tag} className="flex items-center gap-1.5 px-4 py-1.5 bg-indigo-50 text-indigo-700 font-bold text-xs rounded-full ring-1 ring-indigo-200">{tag}</span>
+                <span key={tag} className="flex items-center gap-1.5 px-4 py-1.5 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 font-bold text-xs rounded-full ring-1 ring-indigo-200 dark:ring-indigo-500/20">{tag}</span>
               )) : (
                 <span className="text-xs italic text-slate-400">Tidak ada tag yang disematkan.</span>
               )
@@ -286,11 +286,11 @@ export function UniversalAssessmentView({
 
       
       {isInternal && curatorData && (
-        <div className={`p-6 sm:p-8 rounded-3xl shadow-sm ring-1 transition-all w-full ${isEditing ? 'bg-white ring-indigo-500 shadow-indigo-100 ring-2' : 'bg-white ring-slate-200'}`}>
-          <h3 className="font-black text-slate-900 text-lg mb-2 flex items-center gap-2">
-            <DocExportIcon size={20} className="text-indigo-600"/> Catatan & Kesimpulan Lapangan Peninjau Eksternal <span className="text-rose-500">*</span>
+        <div className={`p-6 sm:p-8 rounded-3xl shadow-sm ring-1 transition-all w-full ${isEditing ? 'card-solid ring-indigo-500 shadow-indigo-100 ring-2' : 'card-solid ring-slate-200'}`}>
+          <h3 className="font-black text-foreground text-lg mb-2 flex items-center gap-2">
+            <DocExportIcon size={20} className="text-indigo-600 dark:text-indigo-400"/> Catatan & Kesimpulan Lapangan Peninjau Eksternal <span className="text-rose-500">*</span>
           </h3>
-          <p className="text-xs text-slate-500 mb-4 font-medium">Ringkasan peninjauan langsung hasil verifikasi fisik, wawancara mendalam, dan fakta objektif.</p>
+          <p className="text-xs text-muted-foreground mb-4 font-medium">Ringkasan peninjauan langsung hasil verifikasi fisik, wawancara mendalam, dan fakta objektif.</p>
           
           {isEditing ? (
             <div className="relative">
@@ -298,20 +298,20 @@ export function UniversalAssessmentView({
                 value={curatorData.curatorNotes}
                 onChange={(e) => curatorData.setCuratorNotes && curatorData.setCuratorNotes(e.target.value)}
                 placeholder="Isi catatan peninjau di sini..."
-                className="min-h-[140px] bg-slate-50 rounded-2xl border-slate-200 text-sm font-medium focus-visible:ring-indigo-500 pb-12"
+                className="min-h-[140px] bg-muted text-muted-foreground rounded-2xl border-border text-sm font-medium focus-visible:ring-indigo-500 pb-12"
               />
               {curatorData.voiceDictation && (
                 <button
                   onClick={curatorData.voiceDictation.toggleRecord}
                   type="button"
-                  className={`absolute bottom-3 right-3 flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all shadow-sm ${curatorData.voiceDictation.isListening ? 'bg-rose-500 text-white animate-pulse' : 'bg-white text-slate-500 ring-1 ring-slate-200'}`}
+                  className={`absolute bottom-3 right-3 flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all shadow-sm ${curatorData.voiceDictation.isListening ? 'bg-rose-500 text-white animate-pulse' : 'card-solid text-muted-foreground ring-1 ring-border'}`}
                 >
                   {curatorData.voiceDictation.isListening ? <><MicOff size={14} /> Mendengarkan...</> : <><Mic size={14} /> Dikte Suara</>}
                 </button>
               )}
             </div>
           ) : (
-            <div className="bg-slate-50 p-5 rounded-2xl ring-1 ring-slate-100 min-h-[90px] text-sm text-slate-700 whitespace-pre-wrap font-medium leading-relaxed">
+            <div className="bg-muted text-muted-foreground p-5 rounded-2xl ring-1 ring-border min-h-[90px] text-sm text-slate-700 whitespace-pre-wrap font-medium leading-relaxed">
               {curatorData.curatorNotes || <span className="italic text-slate-400">Belum ada catatan utama dari lapangan.</span>}
             </div>
           )}
@@ -322,32 +322,32 @@ export function UniversalAssessmentView({
       <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 w-full">
         <div className="flex-1 flex flex-col gap-6">
           <div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight text-balance mb-3">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-foreground tracking-tight text-balance mb-3">
               {isPublic ? (activeCorporateName && activeCorporateName !== 'Omnifit' ? `Hasil Asesmen Program ${activeCorporateName}` : 'Laporan Narasi Analitik AI') : 'Workspace Penilai Internal'}
             </h1>
             <div className="flex flex-wrap items-center gap-2">
-              <p className="text-indigo-600 font-bold text-base sm:text-lg bg-indigo-50 px-3 py-1.5 rounded-lg ring-1 ring-indigo-100">
+              <p className="text-indigo-600 dark:text-indigo-400 font-bold text-base sm:text-lg bg-indigo-50 dark:bg-indigo-500/10 px-3 py-1.5 rounded-lg ring-1 ring-indigo-100">
                 {formData?.namaUsaha || formData?.namaPengisi || formData?.namaProyek || "Subjek Terkait"}
               </p>
-              <span className="bg-slate-100 text-slate-500 font-bold text-xs sm:text-sm px-3 py-1.5 rounded-lg uppercase tracking-widest ring-1 ring-slate-200">{trackType}</span>
+              <span className="bg-secondary text-secondary-foreground text-muted-foreground font-bold text-xs sm:text-sm px-3 py-1.5 rounded-lg uppercase tracking-widest ring-1 ring-border">{trackType}</span>
               
               {programName && (
-                <span className="bg-emerald-50 text-emerald-600 font-bold text-xs sm:text-sm px-3 py-1.5 rounded-lg uppercase tracking-widest ring-1 ring-emerald-200 flex items-center gap-1.5">
+                <span className="bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold text-xs sm:text-sm px-3 py-1.5 rounded-lg uppercase tracking-widest ring-1 ring-emerald-200 dark:ring-emerald-500/20 flex items-center gap-1.5">
                    <EcosystemIcon size={14} /> {programName}
                 </span>
               )}
             </div>
           </div>
           
-          <div className="bg-white ring-1 ring-slate-200 p-6 sm:p-8 rounded-3xl shadow-sm h-full flex flex-col">
+          <div className="card-solid ring-1 ring-border p-6 sm:p-8 rounded-3xl shadow-sm h-full flex flex-col">
             <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-              <h3 className="text-slate-900 font-black uppercase tracking-widest text-xs flex items-center gap-2">
+              <h3 className="text-foreground font-black uppercase tracking-widest text-xs flex items-center gap-2">
                 <AiSparkIcon size={16} className="text-indigo-500"/> Ringkasan Eksekutif Utama (AI)
               </h3>
               <div className="flex gap-2">
                 <button 
                   onClick={() => window.dispatchEvent(new CustomEvent('open_omniai_chat'))}
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-full transition-colors border border-indigo-100/60"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 px-3 py-1.5 rounded-full transition-colors border border-indigo-100/60"
                 >
                   <AiSparkIcon size={14} className="text-indigo-500" /> Tanya AI
                 </button>
@@ -361,7 +361,7 @@ export function UniversalAssessmentView({
                 )}
               </div>
             </div>
-            <div className="text-slate-600 text-sm font-medium flex-1">
+            <div className="text-muted-foreground text-sm font-medium flex-1">
               <TextToBullets text={aiResult?.executiveSummary || "Ringkasan analisis tidak tersedia."} colorClass="text-indigo-500" />
             </div>
           </div>
@@ -377,7 +377,7 @@ export function UniversalAssessmentView({
           <span className="relative z-10 text-[100px] font-black leading-none tracking-tighter drop-shadow-md mb-4">{Math.min(aiScore, 100)}</span>
           
           <div className="relative z-10 flex flex-col items-center gap-2 w-full">
-            <span className="text-sm font-black bg-white/20 backdrop-blur-md px-6 py-2 rounded-full ring-1 ring-white/30 text-center uppercase tracking-wider text-balance">
+            <span className="text-sm font-black card-solid/20 backdrop-blur-md px-6 py-2 rounded-full ring-1 ring-white/30 text-center uppercase tracking-wider text-balance">
               {aiResult?.readinessLevel?.split('|')[0]?.trim() || "Zonasi Normal"}
             </span>
             {aiResult?.readinessLevel?.includes('|') && (
@@ -392,14 +392,14 @@ export function UniversalAssessmentView({
       
       {/* DISEMBUNYIKAN DARI PUBLIK: METRIK KOMPARATIF RADAR CHART */}
       {isInternal && aiResult?.metrics && aiResult.metrics.length > 0 && (
-        <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-3xl ring-1 ring-slate-200 shadow-sm w-full">
+        <div className="card-solid p-6 sm:p-8 lg:p-10 rounded-3xl ring-1 ring-border shadow-sm w-full">
           <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-xl flex items-center justify-center shrink-0">
               <AILensIcon size={20} />
             </div>
             <div>
-              <h3 className="font-black text-slate-900 text-xl tracking-tight">Pilar Pemetaan Komparatif</h3>
-              <p className="text-sm text-slate-500 font-medium">Visualisasi perbandingan parameter kuantitatif</p>
+              <h3 className="font-black text-foreground text-xl tracking-tight">Pilar Pemetaan Komparatif</h3>
+              <p className="text-sm text-muted-foreground font-medium">Visualisasi perbandingan parameter kuantitatif</p>
             </div>
           </div>
           
@@ -424,14 +424,14 @@ export function UniversalAssessmentView({
             
             <div className="w-full lg:w-3/5 grid grid-cols-1 sm:grid-cols-2 gap-4">
               {aiResult.metrics?.map((item: any, idx: number) => (
-                <div key={idx} className="bg-slate-50 p-5 rounded-2xl ring-1 ring-slate-100 flex flex-col">
+                <div key={idx} className="bg-muted text-muted-foreground p-5 rounded-2xl ring-1 ring-border flex flex-col">
                   <div className="flex justify-between items-start mb-3 gap-3">
-                    <h4 className="text-sm font-black text-slate-900 leading-tight"><span className="text-indigo-600 mr-1.5">D{idx + 1}.</span>{item?.label}</h4>
-                    <div className="bg-white ring-1 ring-slate-200 px-2 py-1 rounded-md shrink-0">
-                      <span className={`text-base font-black ${item?.score >= 80 ? 'text-emerald-600' : item?.score >= 60 ? 'text-amber-500' : 'text-rose-500'}`}>{item?.score}</span>
+                    <h4 className="text-sm font-black text-foreground leading-tight"><span className="text-indigo-600 dark:text-indigo-400 mr-1.5">D{idx + 1}.</span>{item?.label}</h4>
+                    <div className="card-solid ring-1 ring-border px-2 py-1 rounded-md shrink-0">
+                      <span className={`text-base font-black ${item?.score >= 80 ? 'text-emerald-600 dark:text-emerald-400' : item?.score >= 60 ? 'text-amber-500' : 'text-rose-500'}`}>{item?.score}</span>
                     </div>
                   </div>
-                  <div className="text-xs text-slate-600 font-medium flex-1">
+                  <div className="text-xs text-muted-foreground font-medium flex-1">
                     <TextToBullets text={item?.description} colorClass="text-slate-400" />
                   </div>
                 </div>
@@ -440,19 +440,19 @@ export function UniversalAssessmentView({
           </div>
 
           {isInternal && curatorData && (
-            <div className="mt-8 pt-6 border-t border-slate-100">
-              <h4 className="text-xs font-black uppercase tracking-widest text-slate-900 mb-2 flex items-center gap-2">
-                <AdminShieldIcon size={16} className="text-emerald-600"/> Catatan Kalibrasi Angka Lapangan
+            <div className="mt-8 pt-6 border-t border-border">
+              <h4 className="text-xs font-black uppercase tracking-widest text-foreground mb-2 flex items-center gap-2">
+                <AdminShieldIcon size={16} className="text-emerald-600 dark:text-emerald-400"/> Catatan Kalibrasi Angka Lapangan
               </h4>
               {isEditing ? (
                 <Textarea 
                   value={curatorData.metricsNotes}
                   onChange={(e) => curatorData.setMetricsNotes && curatorData.setMetricsNotes(e.target.value)}
                   placeholder="Justifikasi penyesuaian pilar matriks..."
-                  className="bg-indigo-50/40 border-indigo-100 text-sm min-h-[90px] rounded-xl"
+                  className="bg-indigo-50 dark:bg-indigo-500/10/40 border-indigo-100 text-sm min-h-[90px] rounded-xl"
                 />
               ) : (
-                <div className="bg-slate-50 p-4 rounded-xl text-sm font-medium text-slate-700 min-h-[60px]">
+                <div className="bg-muted text-muted-foreground p-4 rounded-xl text-sm font-medium text-slate-700 min-h-[60px]">
                   {curatorData.metricsNotes || <span className="italic text-slate-400">Belum ada penyesuaian nilai pilar.</span>}
                 </div>
               )}
@@ -475,7 +475,7 @@ export function UniversalAssessmentView({
             const textColor = textColors[idx % textColors.length];
             
             return (
-               <div key={idx} className={`bg-white ring-1 ${ringColor} p-6 sm:p-8 rounded-3xl shadow-sm flex flex-col justify-between`}>
+               <div key={idx} className={`card-solid ring-1 ${ringColor} p-6 sm:p-8 rounded-3xl shadow-sm flex flex-col justify-between`}>
                  <div>
                    <h3 className={`text-xs font-black uppercase ${textColor} tracking-widest mb-4 flex items-center gap-2`}>
                      {renderDynamicIcon(block?.iconType)} {block?.title}
@@ -493,8 +493,8 @@ export function UniversalAssessmentView({
                  </div>
                  
                  {isInternal && curatorData && (
-                    <div className="pt-4 border-t border-slate-100 mt-auto">
-                      <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 flex items-center gap-1.5">
+                    <div className="pt-4 border-t border-border mt-auto">
+                      <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-2 flex items-center gap-1.5">
                         <AdminShieldIcon size={14} className="text-emerald-500" /> Tanggapan Ahli Ahli
                       </h4>
                       {isEditing ? (
@@ -502,10 +502,10 @@ export function UniversalAssessmentView({
                           value={curatorData.customBlockNotes?.[block.title] || ''}
                           onChange={(e) => curatorData.setCustomBlockNotes && curatorData.setCustomBlockNotes(block.title, e.target.value)}
                           placeholder={`Validasi aspek ${block.title}...`}
-                          className="bg-indigo-50/40 border-indigo-100 text-xs h-24 rounded-xl" 
+                          className="bg-indigo-50 dark:bg-indigo-500/10/40 border-indigo-100 text-xs h-24 rounded-xl" 
                         />
                       ) : (
-                        <div className="bg-slate-50 p-3 rounded-xl text-xs font-medium text-slate-700 min-h-[60px]">
+                        <div className="bg-muted text-muted-foreground p-3 rounded-xl text-xs font-medium text-slate-700 min-h-[60px]">
                           {curatorData.customBlockNotes?.[block.title] || <span className="italic text-slate-400">Belum ditanggapi.</span>}
                         </div>
                       )}
@@ -529,7 +529,7 @@ export function UniversalAssessmentView({
       {isInternal && aiResult?.swotAnalysis && (
         <div className="w-full">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <div className="bg-emerald-50/80 p-6 rounded-3xl ring-1 ring-emerald-200/60 shadow-sm">
+            <div className="bg-emerald-50 dark:bg-emerald-500/10/80 p-6 rounded-3xl ring-1 ring-emerald-200 dark:ring-emerald-500/20/60 shadow-sm">
                 <h4 className="text-emerald-900 font-black flex items-center gap-2 mb-4">
                   <GlobalTargetIcon size={20} /> {isCounseling ? 'Potensi Diri Sisi Unggul' : 'Strengths'}
                 </h4>
@@ -537,7 +537,7 @@ export function UniversalAssessmentView({
                   {aiResult.swotAnalysis.strengths?.map((s: string, i: number) => <li key={i}>{renderRichText(s)}</li>)}
                 </ul>
             </div>
-            <div className="bg-rose-50/80 p-6 rounded-3xl ring-1 ring-rose-200/60 shadow-sm">
+            <div className="bg-rose-50 dark:bg-rose-500/10/80 p-6 rounded-3xl ring-1 ring-rose-200 dark:ring-rose-500/20/60 shadow-sm">
                 <h4 className="text-rose-900 font-black flex items-center gap-2 mb-4">
                   <AILensIcon size={20} /> {isCounseling ? 'Titik Buta / Kendala Batin' : 'Weaknesses'}
                 </h4>
@@ -545,7 +545,7 @@ export function UniversalAssessmentView({
                   {aiResult.swotAnalysis.weaknesses?.map((w: string, i: number) => <li key={i}>{renderRichText(w)}</li>)}
                 </ul>
             </div>
-            <div className="bg-blue-50/80 p-6 rounded-3xl ring-1 ring-blue-200/60 shadow-sm">
+            <div className="bg-blue-50 dark:bg-blue-500/10/80 p-6 rounded-3xl ring-1 ring-blue-200 dark:ring-blue-500/20/60 shadow-sm">
                 <h4 className="text-blue-900 font-black flex items-center gap-2 mb-4">
                   <AiSparkIcon size={20} /> {isCounseling ? 'Peluang Ruang Terapi' : 'Opportunities'}
                 </h4>
@@ -553,7 +553,7 @@ export function UniversalAssessmentView({
                   {aiResult.swotAnalysis.opportunities?.map((o: string, i: number) => <li key={i}>{renderRichText(o)}</li>)}
                 </ul>
             </div>
-            <div className="bg-amber-50/80 p-6 rounded-3xl ring-1 ring-amber-200/60 shadow-sm">
+            <div className="bg-amber-50 dark:bg-amber-500/10/80 p-6 rounded-3xl ring-1 ring-amber-200 dark:ring-amber-500/20/60 shadow-sm">
                 <h4 className="text-amber-900 font-black flex items-center gap-2 mb-4">
                   <AdminShieldIcon size={20} /> {isCounseling ? 'Faktor Pemicu Stres (Triggers)' : 'Threats'}
                 </h4>
@@ -564,19 +564,19 @@ export function UniversalAssessmentView({
           </div>
 
           {isInternal && curatorData && (
-            <div className="bg-white p-6 sm:p-8 rounded-3xl ring-1 ring-slate-200 shadow-sm">
-              <h4 className="text-xs font-black uppercase tracking-widest text-slate-900 mb-2 flex items-center gap-2">
-                <AdminShieldIcon size={16} className="text-emerald-600"/> {getLabel('swot')} Peninjau
+            <div className="card-solid p-6 sm:p-8 rounded-3xl ring-1 ring-border shadow-sm">
+              <h4 className="text-xs font-black uppercase tracking-widest text-foreground mb-2 flex items-center gap-2">
+                <AdminShieldIcon size={16} className="text-emerald-600 dark:text-emerald-400"/> {getLabel('swot')} Peninjau
               </h4>
               {isEditing ? (
                 <Textarea 
                   value={curatorData.swotNotes}
                   onChange={(e) => curatorData.setSwotNotes && curatorData.setSwotNotes(e.target.value)}
                   placeholder="Tambahkan variabel eksternal atau dinamika khusus..."
-                  className="bg-indigo-50/40 border-indigo-100 text-sm min-h-[80px] rounded-xl"
+                  className="bg-indigo-50 dark:bg-indigo-500/10/40 border-indigo-100 text-sm min-h-[80px] rounded-xl"
                 />
               ) : (
-                <div className="bg-slate-50 p-3 rounded-xl text-sm font-medium text-slate-700 min-h-[50px]">
+                <div className="bg-muted text-muted-foreground p-3 rounded-xl text-sm font-medium text-slate-700 min-h-[50px]">
                   {curatorData.swotNotes || <span className="italic text-slate-400">Belum ada validasi matriks SWOT.</span>}
                 </div>
               )}
@@ -588,27 +588,27 @@ export function UniversalAssessmentView({
       
       {/* TETAP DITAMPILKAN: CRITICAL RISKS MAP */}
       {aiResult?.riskAssessment?.criticalRisks && aiResult.riskAssessment.criticalRisks.length > 0 && (
-        <div className="p-6 sm:p-8 rounded-3xl ring-1 ring-rose-200 bg-rose-50/30 w-full">
+        <div className="p-6 sm:p-8 rounded-3xl ring-1 ring-rose-200 dark:ring-rose-500/20 bg-rose-50 dark:bg-rose-500/10/30 w-full">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-rose-100 text-rose-600 rounded-xl flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 bg-rose-100 text-rose-600 dark:text-rose-400 rounded-xl flex items-center justify-center shrink-0">
               <AdminShieldIcon size={20} />
             </div>
-            <h3 className="font-black text-slate-900 text-xl tracking-tight">{getLabel('risk')}</h3>
+            <h3 className="font-black text-foreground text-xl tracking-tight">{getLabel('risk')}</h3>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {aiResult.riskAssessment?.criticalRisks?.map((risk: string, idx: number) => (
-              <div key={idx} className="flex flex-col ring-1 ring-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-md transition-all">
-                <div className="bg-rose-50/50 p-4 border-b border-rose-100/50">
-                  <h4 className="text-[10px] font-black uppercase tracking-widest text-rose-600 mb-1">Identifikasi Hambatan Kritis</h4>
-                  <div className="text-sm font-semibold text-slate-800">
+              <div key={idx} className="flex flex-col ring-1 ring-border rounded-2xl overflow-hidden card-solid shadow-sm hover:shadow-md transition-all">
+                <div className="bg-rose-50 dark:bg-rose-500/10/50 p-4 border-b border-rose-100/50">
+                  <h4 className="text-[10px] font-black uppercase tracking-widest text-rose-600 dark:text-rose-400 mb-1">Identifikasi Hambatan Kritis</h4>
+                  <div className="text-sm font-semibold text-foreground">
                     <TextToBullets text={risk} colorClass="text-rose-400" />
                   </div>
                 </div>
                 <div className="p-4">
-                  <h4 className="text-[10px] font-black uppercase tracking-widest text-emerald-600 mb-1 flex items-center gap-1.5">
+                  <h4 className="text-[10px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400 mb-1 flex items-center gap-1.5">
                     <AdminShieldIcon size={12}/> Strategi Tindakan Penyelamatan
                   </h4>
-                  <div className="text-sm font-medium text-slate-600">
+                  <div className="text-sm font-medium text-muted-foreground">
                     <TextToBullets text={aiResult.riskAssessment.mitigationStrategies?.[idx]} colorClass="text-emerald-500" />
                   </div>
                 </div>
@@ -622,12 +622,12 @@ export function UniversalAssessmentView({
       {/* TETAP DITAMPILKAN: ACTION PLAN & RECOMMENDATIONS */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
         {aiResult?.recommendations && aiResult.recommendations.length > 0 && (
-          <div className="lg:col-span-2 p-6 sm:p-8 lg:p-10 bg-white ring-1 ring-slate-200 rounded-3xl shadow-sm">
+          <div className="lg:col-span-2 p-6 sm:p-8 lg:p-10 card-solid ring-1 ring-border rounded-3xl shadow-sm">
             <div className="flex items-center gap-3 mb-6 sm:mb-8">
-              <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-xl flex items-center justify-center shrink-0">
                 <AiSparkIcon size={20} />
               </div>
-              <h3 className="font-black text-slate-900 text-xl sm:text-2xl tracking-tight">{getLabel('roadmap')}</h3>
+              <h3 className="font-black text-foreground text-xl sm:text-2xl tracking-tight">{getLabel('roadmap')}</h3>
             </div>
             
             <div className="flex flex-col gap-3">
@@ -639,7 +639,7 @@ export function UniversalAssessmentView({
         )}
         
         <div className={`${(!aiResult?.recommendations || aiResult.recommendations.length === 0) ? 'lg:col-span-3' : 'lg:col-span-1'} flex flex-col gap-6`}>
-          <div className={`p-6 sm:p-8 rounded-3xl text-center ring-1 shadow-sm ${isHighTier ? 'bg-emerald-50 ring-emerald-200/60 text-emerald-900' : 'bg-indigo-50 ring-indigo-200/60 text-indigo-900'}`}>
+          <div className={`p-6 sm:p-8 rounded-3xl text-center ring-1 shadow-sm ${isHighTier ? 'bg-emerald-50 dark:bg-emerald-500/10 ring-emerald-200 dark:ring-emerald-500/20/60 text-emerald-900' : 'bg-indigo-50 dark:bg-indigo-500/10 ring-indigo-200 dark:ring-indigo-500/20/60 text-indigo-900'}`}>
             <div className="flex justify-center mb-3">
               <InfinityWorkflowIcon size={32} className={isHighTier ? 'text-emerald-500' : 'text-indigo-500'} />
             </div>
@@ -648,7 +648,7 @@ export function UniversalAssessmentView({
               <Input 
                   value={curatorData.curatorRoute}
                   onChange={(e) => curatorData.setCuratorRoute && curatorData.setCuratorRoute(e.target.value)}
-                  className="bg-white font-black text-center h-10 border-slate-300 rounded-xl text-slate-900 mt-2"
+                  className="card-solid font-black text-center h-10 border-border rounded-xl text-foreground mt-2"
                   placeholder="Tentukan Jalur Akhir..." 
               />
             ) : (
@@ -679,7 +679,7 @@ export function UniversalAssessmentView({
               <div className="bg-slate-800/80 rounded-2xl p-5 border border-slate-700/50 flex items-center justify-between">
                 <div>
                   <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400 mb-1">Tingkat Konsistensi Jawaban</p>
-                  <p className="text-xs font-medium text-slate-500">Data Confidence Score</p>
+                  <p className="text-xs font-medium text-muted-foreground">Data Confidence Score</p>
                 </div>
                 <div className="text-right">
                   {aiResult?.dataConfidenceScore !== undefined ? (
@@ -687,7 +687,7 @@ export function UniversalAssessmentView({
                       {aiResult.dataConfidenceScore}
                     </span>
                   ) : (
-                    <span className="text-2xl font-black text-slate-500">N/A</span>
+                    <span className="text-2xl font-black text-muted-foreground">N/A</span>
                   )}
                 </div>
               </div>
@@ -705,7 +705,7 @@ export function UniversalAssessmentView({
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-xs text-slate-500 italic">Tidak terdeteksi anomali informasi antar seksi pengisian berkas.</p>
+                  <p className="text-xs text-muted-foreground italic">Tidak terdeteksi anomali informasi antar seksi pengisian berkas.</p>
                 )}
               </div>
             </div>
@@ -718,7 +718,7 @@ export function UniversalAssessmentView({
                 {aiResult?._internalReasoning ? (
                   <TextToBullets text={aiResult._internalReasoning} colorClass="text-indigo-400" />
                 ) : (
-                  <div className="h-full flex flex-col items-center justify-center text-slate-500 space-y-2 opacity-50 py-8">
+                  <div className="h-full flex flex-col items-center justify-center text-muted-foreground space-y-2 opacity-50 py-8">
                     <AdminShieldIcon size={32} className="mb-1" />
                     <span className="text-xs font-bold uppercase tracking-widest">Informasi Disembunyikan</span>
                   </div>
@@ -732,27 +732,27 @@ export function UniversalAssessmentView({
       
       {/* DISEMBUNYIKAN DARI PUBLIK: ARGUMEN JAWABAN AI (FIELD ARGUMENTS) */}
       {isInternal && aiResult?.fieldArguments && aiResult.fieldArguments.length > 0 && (
-        <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-3xl ring-1 ring-slate-200 shadow-sm w-full">
+        <div className="card-solid p-6 sm:p-8 lg:p-10 rounded-3xl ring-1 ring-border shadow-sm w-full">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-xl flex items-center justify-center shrink-0">
               <BrainIcon size={20} />
             </div>
             <div>
-              <h3 className="font-black text-slate-900 text-xl tracking-tight">Argumen Jawaban AI (Bedah Formulir)</h3>
-              <p className="text-sm text-slate-500 font-medium">Analisis mendetail untuk setiap poin data yang diisikan</p>
+              <h3 className="font-black text-foreground text-xl tracking-tight">Argumen Jawaban AI (Bedah Formulir)</h3>
+              <p className="text-sm text-muted-foreground font-medium">Analisis mendetail untuk setiap poin data yang diisikan</p>
             </div>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {aiResult.fieldArguments?.map((item: any, idx: number) => (
-              <div key={idx} className="bg-slate-50 p-4 rounded-2xl ring-1 ring-slate-100 flex flex-col hover:shadow-md transition-shadow">
+              <div key={idx} className="bg-muted text-muted-foreground p-4 rounded-2xl ring-1 ring-border flex flex-col hover:shadow-md transition-shadow">
                 <div className="flex justify-between items-start mb-2 gap-3">
-                  <h4 className="text-xs font-black text-slate-900 leading-tight flex-1">{item?.label}</h4>
-                  <div className="bg-white ring-1 ring-slate-200 px-2 py-1 rounded-md shrink-0">
-                    <span className={`text-sm font-black ${item?.score >= 80 ? 'text-emerald-600' : item?.score >= 60 ? 'text-amber-500' : 'text-rose-500'}`}>{item?.score}</span>
+                  <h4 className="text-xs font-black text-foreground leading-tight flex-1">{item?.label}</h4>
+                  <div className="card-solid ring-1 ring-border px-2 py-1 rounded-md shrink-0">
+                    <span className={`text-sm font-black ${item?.score >= 80 ? 'text-emerald-600 dark:text-emerald-400' : item?.score >= 60 ? 'text-amber-500' : 'text-rose-500'}`}>{item?.score}</span>
                   </div>
                 </div>
-                <div className="text-[11px] text-slate-600 font-medium flex-1 leading-relaxed border-t border-slate-200/60 pt-2 mt-1">
+                <div className="text-[11px] text-muted-foreground font-medium flex-1 leading-relaxed border-t border-border pt-2 mt-1">
                   <TextToBullets text={item?.description} colorClass="text-indigo-400" />
                 </div>
               </div>
@@ -814,7 +814,7 @@ export function UniversalAssessmentView({
                     />
                   ) : (
                     <div className="bg-slate-800/60 p-3 rounded-xl text-xs font-medium text-slate-300 min-h-[50px]">
-                      {curatorData.documentNotes || <span className="italic text-slate-500">Belum ada catatan validasi fisik berkas.</span>}
+                      {curatorData.documentNotes || <span className="italic text-muted-foreground">Belum ada catatan validasi fisik berkas.</span>}
                     </div>
                   )}
                 </div>
@@ -827,14 +827,14 @@ export function UniversalAssessmentView({
 
   const renderActionTimeline = () => (
     <div className="space-y-6 sm:space-y-8 max-w-5xl mx-auto w-full">
-      <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-3xl ring-1 ring-slate-200 shadow-sm w-full">
+      <div className="card-solid p-6 sm:p-8 lg:p-10 rounded-3xl ring-1 ring-border shadow-sm w-full">
         <div className="flex items-center gap-3 mb-8">
-          <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center shrink-0">
+          <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-2xl flex items-center justify-center shrink-0">
             <InfinityWorkflowIcon size={24} />
           </div>
           <div>
-            <h3 className="font-black text-slate-900 text-2xl tracking-tight">{getLabel('execution')}</h3>
-            <p className="text-sm text-slate-500 font-medium">Linimasa langkah strategis dan rancangan eksekusi lanjutan</p>
+            <h3 className="font-black text-foreground text-2xl tracking-tight">{getLabel('execution')}</h3>
+            <p className="text-sm text-muted-foreground font-medium">Linimasa langkah strategis dan rancangan eksekusi lanjutan</p>
           </div>
         </div>
 
@@ -846,8 +846,8 @@ export function UniversalAssessmentView({
               return (
                 <div key={idx} className="relative pl-8 sm:pl-10">
                   <div className={`absolute -left-[11px] top-1.5 w-5 h-5 rounded-full ring-4 ${markerColor}`} />
-                  <div className="bg-slate-50 p-5 rounded-2xl ring-1 ring-slate-100 hover:bg-white hover:shadow-lg hover:shadow-indigo-500/5 transition-all">
-                    <span className="inline-block text-[11px] font-black uppercase tracking-widest px-3 py-1.5 bg-indigo-100 text-indigo-700 rounded-lg mb-3">{step?.timeframe || "Timeframe"}</span>
+                  <div className="bg-muted text-muted-foreground p-5 rounded-2xl ring-1 ring-border hover:card-solid hover:shadow-lg hover:shadow-indigo-500/5 transition-all">
+                    <span className="inline-block text-[11px] font-black uppercase tracking-widest px-3 py-1.5 bg-indigo-100 text-indigo-700 dark:text-indigo-300 rounded-lg mb-3">{step?.timeframe || "Timeframe"}</span>
                     <div className="text-sm text-slate-700 font-bold leading-relaxed">
                       <TextToBullets text={step?.task} colorClass="text-indigo-400" />
                     </div>
@@ -857,7 +857,7 @@ export function UniversalAssessmentView({
             })}
           </div>
         ) : (
-          <div className="text-center py-10 text-slate-500 bg-slate-50 rounded-2xl ring-1 ring-slate-100">
+          <div className="text-center py-10 text-muted-foreground bg-muted text-muted-foreground rounded-2xl ring-1 ring-border">
             <p className="font-medium text-sm">Tidak ada linimasa langkah aksi yang tersedia saat ini.</p>
           </div>
         )}
@@ -876,7 +876,7 @@ export function UniversalAssessmentView({
           />
         </div>
       ) : (
-        <div className="text-center py-10 text-slate-500 bg-white rounded-3xl ring-1 ring-slate-200 shadow-sm">
+        <div className="text-center py-10 text-muted-foreground card-solid rounded-3xl ring-1 ring-border shadow-sm">
           <p className="font-medium text-sm">Fitur Cetak Biru Eksekusi (10 Langkah Strategis) tidak tersedia pada mode ini.</p>
         </div>
       )}
@@ -887,46 +887,46 @@ export function UniversalAssessmentView({
     <div ref={pdfRef} className="w-full animate-in fade-in duration-500 relative pb-20 md:pb-0">
       
       {/* Navigasi Utama Asesmen (Sticky Tabs) */}
-      <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md pt-4 pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 border-b border-slate-200/50 mb-6">
+      <div className="sticky top-0 z-30 card-solid/95 backdrop-blur-md pt-4 pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 border-b border-border/50 mb-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           {/* Desktop Tabs */}
-          <TabsList className="hidden md:flex bg-slate-100/50 p-1.5 rounded-2xl h-auto gap-2 border border-slate-200/50 w-full justify-center">
-            <TabsTrigger value="overview" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:bg-white data-[state=active]:text-indigo-700 data-[state=active]:shadow-sm transition-all">1. Ikhtisar Eksekutif</TabsTrigger>
-            <TabsTrigger value="actiontimeline" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:bg-white data-[state=active]:text-indigo-700 data-[state=active]:shadow-sm transition-all">Linimasa Eksekusi</TabsTrigger>
+          <TabsList className="hidden md:flex bg-secondary text-secondary-foreground/50 p-1.5 rounded-2xl h-auto gap-2 border border-border/50 w-full justify-center">
+            <TabsTrigger value="overview" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:card-solid data-[state=active]:text-indigo-700 dark:text-indigo-300 data-[state=active]:shadow-sm transition-all">1. Ikhtisar Eksekutif</TabsTrigger>
+            <TabsTrigger value="actiontimeline" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:card-solid data-[state=active]:text-indigo-700 dark:text-indigo-300 data-[state=active]:shadow-sm transition-all">Linimasa Eksekusi</TabsTrigger>
             {assessmentId && isPublic && (
-              <TabsTrigger value="actionplan" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:bg-white data-[state=active]:text-indigo-700 data-[state=active]:shadow-sm transition-all data-[state=inactive]:text-indigo-600 data-[state=inactive]:bg-indigo-50/50 border border-indigo-100/50">10 Langkah Strategis</TabsTrigger>
+              <TabsTrigger value="actionplan" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:card-solid data-[state=active]:text-indigo-700 dark:text-indigo-300 data-[state=active]:shadow-sm transition-all data-[state=inactive]:text-indigo-600 dark:text-indigo-400 data-[state=inactive]:bg-indigo-50 dark:bg-indigo-500/10/50 border border-indigo-100/50">10 Langkah Strategis</TabsTrigger>
             )}
             {isInternal && aiResult?.customAnalysisBlocks?.length > 0 && (
-               <TabsTrigger value="deepdive" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:bg-white data-[state=active]:text-indigo-700 data-[state=active]:shadow-sm transition-all">Analisis Tematik</TabsTrigger>
+               <TabsTrigger value="deepdive" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:card-solid data-[state=active]:text-indigo-700 dark:text-indigo-300 data-[state=active]:shadow-sm transition-all">Analisis Tematik</TabsTrigger>
             )}
-            <TabsTrigger value="strategy" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:bg-white data-[state=active]:text-indigo-700 data-[state=active]:shadow-sm transition-all">Risiko & Strategi</TabsTrigger>
+            <TabsTrigger value="strategy" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:card-solid data-[state=active]:text-indigo-700 dark:text-indigo-300 data-[state=active]:shadow-sm transition-all">Risiko & Strategi</TabsTrigger>
             {isInternal && (
-              <TabsTrigger value="validation" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:bg-white data-[state=active]:text-indigo-700 data-[state=active]:shadow-sm transition-all">Bedah & Validasi</TabsTrigger>
+              <TabsTrigger value="validation" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:card-solid data-[state=active]:text-indigo-700 dark:text-indigo-300 data-[state=active]:shadow-sm transition-all">Bedah & Validasi</TabsTrigger>
             )}
           </TabsList>
 
           {/* Mobile Hamburger Menu */}
-          <div className="md:hidden flex items-center bg-white border border-slate-200/80 shadow-sm rounded-2xl p-1.5 pr-4">
+          <div className="md:hidden flex items-center card-solid border border-border/80 shadow-sm rounded-2xl p-1.5 pr-4">
             <Sheet>
               <SheetTrigger asChild>
-                <button className="flex items-center justify-center w-11 h-11 bg-slate-100/80 text-slate-700 rounded-xl hover:bg-slate-200 transition-colors shrink-0">
+                <button className="flex items-center justify-center w-11 h-11 bg-secondary text-secondary-foreground/80 text-slate-700 rounded-xl hover:bg-slate-200 transition-colors shrink-0">
                   <Menu size={20} />
                 </button>
               </SheetTrigger>
               <SheetContent side="top" className="rounded-b-3xl pt-14 px-4 pb-6">
                 <SheetHeader className="mb-4 text-left">
-                  <SheetTitle className="text-lg font-black text-slate-900">Menu Asesmen</SheetTitle>
+                  <SheetTitle className="text-lg font-black text-foreground">Menu Asesmen</SheetTitle>
                 </SheetHeader>
                 <div className="flex flex-col gap-2.5">
                   <SheetClose asChild>
-                    <button onClick={() => setActiveTab('overview')} className={`flex items-center px-4 py-3.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'overview' ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-slate-50'}`}>1. Ikhtisar Eksekutif</button>
+                    <button onClick={() => setActiveTab('overview')} className={`flex items-center px-4 py-3.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'overview' ? 'bg-secondary text-secondary-foreground text-foreground' : 'text-muted-foreground hover:bg-muted text-muted-foreground'}`}>1. Ikhtisar Eksekutif</button>
                   </SheetClose>
                   <SheetClose asChild>
-                    <button onClick={() => setActiveTab('actiontimeline')} className={`flex items-center px-4 py-3.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'actiontimeline' ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-slate-50'}`}>Linimasa Eksekusi</button>
+                    <button onClick={() => setActiveTab('actiontimeline')} className={`flex items-center px-4 py-3.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'actiontimeline' ? 'bg-secondary text-secondary-foreground text-foreground' : 'text-muted-foreground hover:bg-muted text-muted-foreground'}`}>Linimasa Eksekusi</button>
                   </SheetClose>
                   {assessmentId && isPublic && (
                     <SheetClose asChild>
-                      <button onClick={() => setActiveTab('actionplan')} className={`flex items-center justify-between px-4 py-3.5 rounded-xl text-sm font-bold transition-all ring-1 ring-indigo-500/30 ${activeTab === 'actionplan' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100'}`}>
+                      <button onClick={() => setActiveTab('actionplan')} className={`flex items-center justify-between px-4 py-3.5 rounded-xl text-sm font-bold transition-all ring-1 ring-indigo-500/30 ${activeTab === 'actionplan' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-500/20'}`}>
                         <span>10 Langkah Strategis</span>
                         <AiSparkIcon size={16} className={activeTab === 'actionplan' ? 'text-white/80' : 'text-indigo-500'} />
                       </button>
@@ -934,15 +934,15 @@ export function UniversalAssessmentView({
                   )}
                   {isInternal && aiResult?.customAnalysisBlocks?.length > 0 && (
                     <SheetClose asChild>
-                      <button onClick={() => setActiveTab('deepdive')} className={`flex items-center px-4 py-3.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'deepdive' ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-slate-50'}`}>Analisis Tematik</button>
+                      <button onClick={() => setActiveTab('deepdive')} className={`flex items-center px-4 py-3.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'deepdive' ? 'bg-secondary text-secondary-foreground text-foreground' : 'text-muted-foreground hover:bg-muted text-muted-foreground'}`}>Analisis Tematik</button>
                     </SheetClose>
                   )}
                   <SheetClose asChild>
-                    <button onClick={() => setActiveTab('strategy')} className={`flex items-center px-4 py-3.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'strategy' ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-slate-50'}`}>Risiko & Strategi</button>
+                    <button onClick={() => setActiveTab('strategy')} className={`flex items-center px-4 py-3.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'strategy' ? 'bg-secondary text-secondary-foreground text-foreground' : 'text-muted-foreground hover:bg-muted text-muted-foreground'}`}>Risiko & Strategi</button>
                   </SheetClose>
                   {isInternal && (
                     <SheetClose asChild>
-                      <button onClick={() => setActiveTab('validation')} className={`flex items-center px-4 py-3.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'validation' ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-slate-50'}`}>Bedah & Validasi</button>
+                      <button onClick={() => setActiveTab('validation')} className={`flex items-center px-4 py-3.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'validation' ? 'bg-secondary text-secondary-foreground text-foreground' : 'text-muted-foreground hover:bg-muted text-muted-foreground'}`}>Bedah & Validasi</button>
                     </SheetClose>
                   )}
                 </div>
@@ -951,10 +951,10 @@ export function UniversalAssessmentView({
             
             <div className="ml-3.5 flex-1 overflow-hidden">
               <span className="text-[9px] uppercase font-black text-slate-400 tracking-widest block mb-0.5">Sedang Diakses</span>
-              <div className="text-sm font-black text-slate-800 truncate leading-none">
+              <div className="text-sm font-black text-foreground truncate leading-none">
                 {activeTab === 'overview' && '1. Ikhtisar Eksekutif'}
                 {activeTab === 'actiontimeline' && 'Linimasa Eksekusi'}
-                {activeTab === 'actionplan' && <span className="text-indigo-600">10 Langkah Strategis</span>}
+                {activeTab === 'actionplan' && <span className="text-indigo-600 dark:text-indigo-400">10 Langkah Strategis</span>}
                 {activeTab === 'deepdive' && 'Analisis Tematik'}
                 {activeTab === 'strategy' && 'Risiko & Strategi'}
                 {activeTab === 'validation' && 'Bedah & Validasi'}

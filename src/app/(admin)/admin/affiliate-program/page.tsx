@@ -107,30 +107,30 @@ export default function AdminAffiliateProgramPage() {
         <div className="flex items-center gap-2 mb-2">
           <Badge
             variant="secondary"
-            className="px-3 py-0.5 text-[10px] uppercase font-black tracking-wider bg-indigo-100 text-indigo-700 hover:bg-indigo-100"
+            className="px-3 py-0.5 text-[10px] uppercase font-black tracking-wider bg-indigo-100 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-500/20"
           >
             Affiliate Management
           </Badge>
           <span className="text-slate-300">•</span>
-          <span className="text-xs font-bold text-slate-500">
+          <span className="text-xs font-bold text-muted-foreground">
             Commission Rules Engine
           </span>
         </div>
-        <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+        <h1 className="text-3xl font-black text-foreground tracking-tight flex items-center gap-3">
           <div className="p-2 bg-indigo-600 text-white rounded-2xl shadow-lg shadow-indigo-600/20">
             <Percent className="w-6 h-6" />
           </div>
           Pengaturan Program Affiliate
         </h1>
-        <p className="text-slate-500 mt-1 font-medium max-w-3xl text-sm leading-relaxed">
+        <p className="text-muted-foreground mt-1 font-medium max-w-3xl text-sm leading-relaxed">
           Atur persentase komisi default program affiliate yang akan digunakan
           untuk perhitungan komisi transaksi.
         </p>
       </div>
 
-      <Card className="bg-white rounded-3xl border-none ring-1 ring-slate-200/80 shadow-xs p-6 space-y-5">
+      <Card className="card-solid rounded-3xl border-none ring-1 ring-border/80 shadow-xs p-6 space-y-5">
         <div>
-          <p className="text-xs font-black uppercase tracking-widest text-slate-500 mb-2">
+          <p className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-2">
             Komisi Default Program (%)
           </p>
           <div className="relative max-w-sm">
@@ -138,33 +138,33 @@ export default function AdminAffiliateProgramPage() {
             <Input
               value={ratePercent}
               onChange={(e) => setRatePercent(e.target.value)}
-              className="pl-9 h-11 bg-slate-50/80 rounded-xl border-slate-200 font-bold focus-visible:ring-indigo-500"
+              className="pl-9 h-11 bg-muted text-muted-foreground/80 rounded-xl border-border font-bold focus-visible:ring-indigo-500"
               placeholder="Contoh: 10"
             />
           </div>
-          <p className="text-xs text-slate-500 mt-2">
+          <p className="text-xs text-muted-foreground mt-2">
             Contoh input: 10 berarti komisi 10% dari nilai transaksi yang valid.
           </p>
         </div>
 
         <div>
-          <p className="text-xs font-black uppercase tracking-widest text-slate-500 mb-2">
+          <p className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-2">
             Keterangan Komisi (Ditampilkan ke Affiliate)
           </p>
           <textarea
             value={commissionInfoText}
             onChange={(e) => setCommissionInfoText(e.target.value)}
-            className="min-h-[100px] w-full rounded-xl border border-slate-200 bg-slate-50/80 p-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none"
+            className="min-h-[100px] w-full rounded-xl border border-border bg-muted text-muted-foreground/80 p-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none"
             placeholder="Contoh: Komisi dibayarkan setelah transaksi berstatus PAID dan lolos review admin."
           />
         </div>
 
-        <label className="flex items-start gap-3 p-3.5 rounded-2xl bg-amber-50/80 ring-1 ring-amber-200/70 cursor-pointer">
+        <label className="flex items-start gap-3 p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-500/10/80 ring-1 ring-amber-200 dark:ring-amber-500/20/70 cursor-pointer">
           <input
             type="checkbox"
             checked={applyToExistingAffiliates}
             onChange={(e) => setApplyToExistingAffiliates(e.target.checked)}
-            className="mt-0.5 w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500"
+            className="mt-0.5 w-4 h-4 text-indigo-600 dark:text-indigo-400 rounded border-border focus:ring-indigo-500"
           />
           <span className="text-sm text-amber-900 font-bold">
             Terapkan juga persentase komisi ini ke profil affiliate yang sudah

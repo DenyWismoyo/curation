@@ -48,19 +48,19 @@ export function SocialShareCard({ namaUsaha, score, readinessLevel, trackType }:
   };
 
   return (
-    <div className="bg-white p-6 sm:p-8 flex flex-col h-full relative group">
+    <div className="card-solid p-6 sm:p-8 flex flex-col h-full relative group">
       
       {/* KARTU VISUAL (Target Screenshot yang Elegan) */}
       <div 
         ref={cardRef}
-        className="bg-slate-50/50 p-6 sm:p-8 rounded-[1.5rem] ring-1 ring-slate-200 mb-6 relative overflow-hidden flex-1 flex flex-col"
+        className="bg-muted text-muted-foreground/50 p-6 sm:p-8 rounded-[1.5rem] ring-1 ring-border mb-6 relative overflow-hidden flex-1 flex flex-col"
       >
         {/* Ornamen Latar yang Sangat Halus */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50/50 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
+        <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 dark:bg-indigo-500/10/50 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
         <AiSparkIcon size={120} className="absolute -bottom-10 -right-10 text-slate-100 opacity-50 grayscale pointer-events-none transform -rotate-12" />
 
         <div className="flex justify-between items-start mb-10 relative z-10">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white ring-1 ring-slate-200 rounded-lg text-[9px] font-black uppercase tracking-widest text-slate-700 shadow-sm">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 card-solid ring-1 ring-border rounded-lg text-[9px] font-black uppercase tracking-widest text-slate-700 shadow-sm">
             <ShieldCheck size={14} className="text-emerald-500" />
             Omnifit Verified
           </div>
@@ -70,19 +70,19 @@ export function SocialShareCard({ namaUsaha, score, readinessLevel, trackType }:
         </div>
 
         <div className="mb-10 relative z-10 flex-1">
-          <p className="text-[10px] font-black text-indigo-600 uppercase tracking-widest mb-2 line-clamp-1">
+          <p className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest mb-2 line-clamp-1">
             {trackType}
           </p>
           <div className="flex items-baseline gap-1.5 mb-2">
-            <span className="text-7xl font-black text-slate-900 tracking-tighter leading-none">{score}</span>
+            <span className="text-7xl font-black text-foreground tracking-tighter leading-none">{score}</span>
             <span className="text-xl font-bold text-slate-400">/100</span>
           </div>
         </div>
 
-        <div className="flex items-end justify-between border-t border-slate-200/80 pt-5 relative z-10">
+        <div className="flex items-end justify-between border-t border-border/80 pt-5 relative z-10">
           <div className="flex-1 pr-4">
             <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Entitas Tervalidasi</p>
-            <p className="text-sm font-bold text-slate-800 line-clamp-1">{namaUsaha}</p>
+            <p className="text-sm font-bold text-foreground line-clamp-1">{namaUsaha}</p>
           </div>
           <div className="text-right shrink-0">
             <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Indeks Kesiapan</p>
@@ -107,8 +107,8 @@ export function SocialShareCard({ namaUsaha, score, readinessLevel, trackType }:
             onClick={handleCopyCaption}
             className={`flex-1 rounded-xl h-12 text-xs font-bold transition-all ${
               isCopied 
-                ? 'bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-50 hover:text-emerald-600' 
-                : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:text-indigo-600'
+                ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20 hover:bg-emerald-50 dark:bg-emerald-500/10 hover:text-emerald-600 dark:text-emerald-400' 
+                : 'card-solid text-slate-700 border-border hover:bg-muted text-muted-foreground hover:text-indigo-600 dark:text-indigo-400'
             }`}
           >
             {isCopied ? <Check size={14} className="mr-2" /> : <Copy size={14} className="mr-2 text-slate-400" />}

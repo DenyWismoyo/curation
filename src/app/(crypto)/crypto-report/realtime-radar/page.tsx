@@ -76,20 +76,20 @@ export default function RealtimeRadarPage() {
 
   const isAdmin = (user as any)?.role?.startsWith('admin') || user?.email === 'deny.wismoyo@gmail.com';
 
-  if (!user) return <div className="p-8 text-center text-slate-500 dark:text-slate-400">Harap login...</div>
+  if (!user) return <div className="p-8 text-center text-muted-foreground">Harap login...</div>
   if (!isAdmin) return <div className="p-8 text-center text-rose-500 font-bold">Akses Ditolak! Halaman ini hanya untuk admin_csrs atau deny.wismoyo@gmail.com.</div>
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex flex-col md:flex-row items-center justify-between mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 dark:text-white flex items-center gap-3">
+          <h1 className="text-3xl font-black text-foreground flex items-center gap-3">
             <Zap className="text-yellow-400" size={32} />
-            Realtime Radar <span className="bg-red-500 text-slate-900 dark:text-white text-xs px-2 py-1 rounded-md ml-2">ADMIN ONLY</span>
+            Realtime Radar <span className="bg-red-500 text-foreground text-xs px-2 py-1 rounded-md ml-2">ADMIN ONLY</span>
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-2">On-demand AI generation untuk Volatility Scanner & Hidden Gems tanpa menunggu jadwal Cron.</p>
+          <p className="text-muted-foreground mt-2">On-demand AI generation untuk Volatility Scanner & Hidden Gems tanpa menunggu jadwal Cron.</p>
         </div>
-        <Button onClick={() => { setSelectedScalpingId(scalpingReports[0]?.id || ''); setSelectedGemId(gemReports[0]?.id || ''); }} variant="outline" className="border-slate-200 dark:border-white/10 text-slate-900 dark:text-white bg-slate-100 dark:bg-white/5">
+        <Button onClick={() => { setSelectedScalpingId(scalpingReports[0]?.id || ''); setSelectedGemId(gemReports[0]?.id || ''); }} variant="outline" className="border-slate-200 dark:border-white/10 text-foreground bg-secondary text-secondary-foreground dark:card-solid/5">
            <RefreshCw size={16} className="mr-2" /> Reset View to Latest
         </Button>
       </div>
@@ -108,14 +108,14 @@ export default function RealtimeRadarPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         
         {/* SCALPING CARD */}
-        <div className="bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/10 rounded-2xl p-6 backdrop-blur-xl">
+        <div className="card-solid/50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/10 rounded-2xl p-6 backdrop-blur-xl">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
               <Zap className="text-yellow-400" size={20} /> Volatility Scanner
             </h2>
             <div className="flex items-center gap-2">
               <select 
-                className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs border border-slate-200 dark:border-white/10 rounded-md px-2 py-1 outline-none"
+                className="bg-secondary text-secondary-foreground text-muted-foreground text-xs border border-slate-200 dark:border-white/10 rounded-md px-2 py-1 outline-none"
                 value={selectedScalpingId}
                 onChange={(e) => setSelectedScalpingId(e.target.value)}
               >
@@ -133,11 +133,11 @@ export default function RealtimeRadarPage() {
           
           {latestScalping ? (
             <div className="space-y-4">
-               <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-white/5">
-                 <h3 className="font-bold text-slate-900 dark:text-white mb-2">{latestScalping.title || 'Laporan Volatilitas'}</h3>
-                 <p className="text-sm text-slate-500 dark:text-slate-400">Sentiment: <span className="text-slate-900 dark:text-white font-bold">{latestScalping.sentiment}</span></p>
-                 <p className="text-sm text-slate-500 dark:text-slate-400">Regime: <span className="text-slate-900 dark:text-white font-bold">{latestScalping.marketRegime}</span></p>
-                 <p className="text-sm text-slate-600 dark:text-slate-300 mt-2 italic">"{latestScalping.macroInsight}"</p>
+               <div className="bg-background text-foreground p-4 rounded-xl border border-white/5">
+                 <h3 className="font-bold text-foreground mb-2">{latestScalping.title || 'Laporan Volatilitas'}</h3>
+                 <p className="text-sm text-muted-foreground">Sentiment: <span className="text-foreground font-bold">{latestScalping.sentiment}</span></p>
+                 <p className="text-sm text-muted-foreground">Regime: <span className="text-foreground font-bold">{latestScalping.marketRegime}</span></p>
+                 <p className="text-sm text-muted-foreground mt-2 italic">"{latestScalping.macroInsight}"</p>
                </div>
                
                <div className="space-y-3">
@@ -145,32 +145,32 @@ export default function RealtimeRadarPage() {
                    <div key={idx} className="bg-slate-200 dark:bg-slate-800/50 p-4 rounded-xl border border-emerald-500/30">
                      <div className="flex justify-between items-center mb-2">
                        <span className="font-black text-lg text-emerald-400">{opp.symbol} <span className="text-xs px-2 py-0.5 bg-emerald-500/20 rounded-full">{opp.direction}</span></span>
-                       <span className="text-xs font-bold text-slate-500 dark:text-slate-400">{opp.confidenceScore}</span>
+                       <span className="text-xs font-bold text-muted-foreground">{opp.confidenceScore}</span>
                      </div>
                      <div className="grid grid-cols-3 gap-2 text-sm">
-                       <div><span className="text-slate-500 text-xs">Entry</span><br/><span className="text-slate-900 dark:text-white font-mono">{opp.entryPrice}</span></div>
-                       <div><span className="text-slate-500 text-xs">Target</span><br/><span className="text-emerald-400 font-mono">{opp.targetPrice}</span></div>
-                       <div><span className="text-slate-500 text-xs">Stop Loss</span><br/><span className="text-red-400 font-mono">{opp.stopLossPrice || opp.stopLoss}</span></div>
+                       <div><span className="text-muted-foreground text-xs">Entry</span><br/><span className="text-foreground font-mono">{opp.entryPrice}</span></div>
+                       <div><span className="text-muted-foreground text-xs">Target</span><br/><span className="text-emerald-400 font-mono">{opp.targetPrice}</span></div>
+                       <div><span className="text-muted-foreground text-xs">Stop Loss</span><br/><span className="text-red-400 font-mono">{opp.stopLossPrice || opp.stopLoss}</span></div>
                      </div>
-                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">{opp.momentum}</p>
+                     <p className="text-xs text-muted-foreground mt-2">{opp.momentum}</p>
                    </div>
                  ))}
                </div>
             </div>
           ) : (
-            <div className="text-center py-12 text-slate-500">Belum ada data realtime volatilitas.</div>
+            <div className="text-center py-12 text-muted-foreground">Belum ada data realtime volatilitas.</div>
           )}
         </div>
 
         {/* GEMS CARD */}
-        <div className="bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/10 rounded-2xl p-6 backdrop-blur-xl">
+        <div className="card-solid/50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/10 rounded-2xl p-6 backdrop-blur-xl">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
               <Target className="text-emerald-400" size={20} /> Hidden Gems Radar
             </h2>
             <div className="flex items-center gap-2">
               <select 
-                className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs border border-slate-200 dark:border-white/10 rounded-md px-2 py-1 outline-none"
+                className="bg-secondary text-secondary-foreground text-muted-foreground text-xs border border-slate-200 dark:border-white/10 rounded-md px-2 py-1 outline-none"
                 value={selectedGemId}
                 onChange={(e) => setSelectedGemId(e.target.value)}
               >
@@ -188,8 +188,8 @@ export default function RealtimeRadarPage() {
           
           {latestGem ? (
             <div className="space-y-4">
-               <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-white/5">
-                 <p className="text-sm text-slate-600 dark:text-slate-300 italic">"{latestGem.marketContext}"</p>
+               <div className="bg-background text-foreground p-4 rounded-xl border border-white/5">
+                 <p className="text-sm text-muted-foreground italic">"{latestGem.marketContext}"</p>
                </div>
                
                <div className="space-y-3">
@@ -200,22 +200,22 @@ export default function RealtimeRadarPage() {
                        <span className="text-xs px-2 py-1 bg-blue-500/20 text-blue-300 rounded-lg">{pick.riskLevel}</span>
                      </div>
                      <div className="grid grid-cols-2 gap-4 text-sm mb-3">
-                       <div className="bg-slate-50 dark:bg-slate-950/50 p-2 rounded-lg">
-                          <span className="text-slate-500 text-xs block">RSI 1D</span>
-                          <span className="text-slate-900 dark:text-white font-mono">{pick.rsi1d}</span>
+                       <div className="bg-background text-foreground p-2 rounded-lg">
+                          <span className="text-muted-foreground text-xs block">RSI 1D</span>
+                          <span className="text-foreground font-mono">{pick.rsi1d}</span>
                        </div>
-                       <div className="bg-slate-50 dark:bg-slate-950/50 p-2 rounded-lg">
-                          <span className="text-slate-500 text-xs block">StochRSI 4H</span>
-                          <span className="text-slate-900 dark:text-white font-mono">{pick.stochRsi4h}</span>
+                       <div className="bg-background text-foreground p-2 rounded-lg">
+                          <span className="text-muted-foreground text-xs block">StochRSI 4H</span>
+                          <span className="text-foreground font-mono">{pick.stochRsi4h}</span>
                        </div>
                      </div>
-                     <p className="text-sm text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-white/5 p-3 rounded-lg leading-relaxed">{pick.reasoning}</p>
+                     <p className="text-sm text-muted-foreground bg-secondary text-secondary-foreground dark:card-solid/5 p-3 rounded-lg leading-relaxed">{pick.reasoning}</p>
                    </div>
                  ))}
                </div>
             </div>
           ) : (
-            <div className="text-center py-12 text-slate-500">Belum ada data realtime hidden gems.</div>
+            <div className="text-center py-12 text-muted-foreground">Belum ada data realtime hidden gems.</div>
           )}
         </div>
       </div>

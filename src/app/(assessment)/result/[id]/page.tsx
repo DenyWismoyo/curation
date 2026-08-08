@@ -31,7 +31,7 @@ function ResultProcessingView({ formData, status, isCacheHit }: { formData?: Rec
     : statusLabelMap[status || ''] || 'Sistem sedang memproses asesmen Anda...';
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white py-8 px-4 sm:py-12 sm:px-6 lg:px-12 relative overflow-hidden flex flex-col justify-center">
+    <div className="min-h-screen bg-background text-foreground py-8 px-4 sm:py-12 sm:px-6 lg:px-12 relative overflow-hidden flex flex-col justify-center">
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[140px] pointer-events-none" />
       <div className="max-w-3xl mx-auto w-full bg-slate-900/80 backdrop-blur-2xl ring-1 ring-slate-800 p-6 sm:p-8 rounded-3xl shadow-2xl text-center space-y-5">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/10 ring-1 ring-indigo-500/30 text-indigo-300 text-xs font-semibold uppercase tracking-wider">
@@ -141,25 +141,25 @@ export default function SharedResultPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-muted text-muted-foreground">
         <div className="w-14 h-14 mb-4 relative flex items-center justify-center">
           <div className="absolute inset-0 rounded-full border-[4px] border-indigo-100 border-t-indigo-600 animate-spin" />
-          <BrainIcon size={24} className="text-indigo-600 animate-pulse" />
+          <BrainIcon size={24} className="text-indigo-600 dark:text-indigo-400 animate-pulse" />
         </div>
-        <h2 className="text-xl font-black text-slate-900 tracking-tight">Memuat Data Analitik...</h2>
-        <p className="text-sm font-medium text-slate-500 mt-2">Menarik data dari server aman.</p>
+        <h2 className="text-xl font-black text-foreground tracking-tight">Memuat Data Analitik...</h2>
+        <p className="text-sm font-medium text-muted-foreground mt-2">Menarik data dari server aman.</p>
       </div>
     );
   }
 
   if (error || !data) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 px-6 text-center">
-        <div className="w-20 h-20 bg-rose-50 text-rose-500 rounded-[2rem] shadow-sm ring-1 ring-rose-100 flex items-center justify-center mb-6">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-muted text-muted-foreground px-6 text-center">
+        <div className="w-20 h-20 bg-rose-50 dark:bg-rose-500/10 text-rose-500 rounded-[2rem] shadow-sm ring-1 ring-rose-100 flex items-center justify-center mb-6">
           <DocExportIcon size={36} />
         </div>
-        <h2 className="text-2xl font-black text-slate-900 mb-2">Laporan Tidak Tersedia</h2>
-        <p className="text-slate-500 font-medium mb-8 max-w-md">{error}</p>
+        <h2 className="text-2xl font-black text-foreground mb-2">Laporan Tidak Tersedia</h2>
+        <p className="text-muted-foreground font-medium mb-8 max-w-md">{error}</p>
         <button 
           onClick={() => router.push('/')}
           className="flex items-center gap-2 px-6 py-3 bg-slate-900 hover:bg-indigo-600 text-white rounded-xl font-bold shadow-xl shadow-slate-900/20 hover:shadow-indigo-600/30 transition-all"

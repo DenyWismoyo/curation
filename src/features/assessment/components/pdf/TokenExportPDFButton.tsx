@@ -49,10 +49,10 @@ export function TokenExportPDFButton({ batch, availableTemplates }: TokenExportP
       onClick={handleDownload} 
       disabled={isExporting} 
       variant="outline" 
-      className="border-emerald-200 bg-emerald-50 w-10 h-10 p-0 hover:bg-emerald-100 transition-colors shadow-sm"
+      className="border-emerald-200 dark:border-emerald-500/20 bg-emerald-50 dark:bg-emerald-500/10 w-10 h-10 p-0 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition-colors shadow-sm"
       title="Unduh PDF Daftar Token Resmi"
     >
-      {isExporting ? <Loader2 className="w-4 h-4 animate-spin text-emerald-600" /> : <FileDown className="w-4 h-4 text-emerald-600" />}
+      {isExporting ? <Loader2 className="w-4 h-4 animate-spin text-emerald-600 dark:text-emerald-400" /> : <FileDown className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />}
     </Button>
   );
 }

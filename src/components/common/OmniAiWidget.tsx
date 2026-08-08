@@ -186,9 +186,9 @@ export function OmniAiWidget({ isOpen, onClose }: OmniAiWidgetProps) {
         const subParts = parts[i].split(/(\*\*.*?\*\*|\*.*?\*)/g);
         const subElements = subParts.map((part, idx) => {
           if (part.startsWith('**') && part.endsWith('**')) {
-            return <strong key={`bold-${i}-${idx}`} className={`font-black tracking-tight ${isUser ? 'text-white' : 'text-slate-900'}`}>{part.slice(2, -2)}</strong>;
+            return <strong key={`bold-${i}-${idx}`} className={`font-black tracking-tight ${isUser ? 'text-white' : 'text-foreground'}`}>{part.slice(2, -2)}</strong>;
           } else if (part.startsWith('*') && part.endsWith('*')) {
-            return <em key={`italic-${i}-${idx}`} className={`italic ${isUser ? 'text-slate-300' : 'text-slate-600'}`}>{part.slice(1, -1)}</em>;
+            return <em key={`italic-${i}-${idx}`} className={`italic ${isUser ? 'text-slate-300' : 'text-muted-foreground'}`}>{part.slice(1, -1)}</em>;
           }
           return <span key={`text-${i}-${idx}`}>{part.split('\n').map((line, lIdx, arr) => (
             <React.Fragment key={`line-${i}-${idx}-${lIdx}`}>
@@ -204,9 +204,9 @@ export function OmniAiWidget({ isOpen, onClose }: OmniAiWidgetProps) {
         
         elements.push(
           isInternal ? (
-            <Link key={`link-${i}`} href={linkUrl} className="text-indigo-600 hover:text-indigo-800 font-black underline decoration-indigo-300 underline-offset-[3px] transition-all mx-1 hover:bg-indigo-50 px-1 rounded-sm">{linkText}</Link>
+            <Link key={`link-${i}`} href={linkUrl} className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 font-black underline decoration-indigo-300 underline-offset-[3px] transition-all mx-1 hover:bg-indigo-50 dark:bg-indigo-500/10 px-1 rounded-sm">{linkText}</Link>
           ) : (
-            <a key={`link-${i}`} href={linkUrl} target="_blank" rel="noopener noreferrer" className="text-sky-600 hover:text-sky-800 font-black underline decoration-sky-300 underline-offset-[3px] transition-all mx-1 hover:bg-sky-50 px-1 rounded-sm">{linkText}</a>
+            <a key={`link-${i}`} href={linkUrl} target="_blank" rel="noopener noreferrer" className="text-sky-600 dark:text-sky-400 hover:text-sky-800 font-black underline decoration-sky-300 underline-offset-[3px] transition-all mx-1 hover:bg-sky-50 dark:bg-sky-500/10 px-1 rounded-sm">{linkText}</a>
           )
         );
       }
@@ -232,10 +232,10 @@ export function OmniAiWidget({ isOpen, onClose }: OmniAiWidgetProps) {
               onClose();
             }
           }}
-          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[200] w-[calc(100%-2rem)] sm:w-[450px] h-[85vh] max-h-[700px] flex flex-col bg-white/95 backdrop-blur-2xl border border-slate-200/60 rounded-[2rem] shadow-[0_10px_40px_-10px_rgba(49,46,129,0.3)] overflow-hidden"
+          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[200] w-[calc(100%-2rem)] sm:w-[450px] h-[85vh] max-h-[700px] flex flex-col card-solid/95 backdrop-blur-2xl border border-border rounded-[2rem] shadow-[0_10px_40px_-10px_rgba(49,46,129,0.3)] overflow-hidden"
         >
           {/* HEADER */}
-          <div className="flex items-center justify-between p-5 border-b border-slate-100/80 bg-white/60 shrink-0 relative z-10">
+          <div className="flex items-center justify-between p-5 border-b border-border/80 card-solid/60 shrink-0 relative z-10">
             <div className="flex items-center gap-3">
               <div className="relative w-10 h-10 bg-slate-900 rounded-2xl flex items-center justify-center text-white shadow-inner ring-1 ring-slate-800">
                 <Sparkles size={18} className="text-indigo-400" />
@@ -245,15 +245,15 @@ export function OmniAiWidget({ isOpen, onClose }: OmniAiWidgetProps) {
                 </span>
               </div>
               <div>
-                <h3 className="font-black text-sm text-slate-900 tracking-tight leading-none">Omni AI</h3>
-                <p className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest mt-1">Smart Assistant</p>
+                <h3 className="font-black text-sm text-foreground tracking-tight leading-none">Omni AI</h3>
+                <p className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest mt-1">Smart Assistant</p>
               </div>
             </div>
             <div className="flex items-center gap-1.5">
-              <button onClick={handleClearChat} className="w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-colors" title="Bersihkan Memori">
+              <button onClick={handleClearChat} className="w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:bg-rose-50 dark:bg-rose-500/10 hover:text-rose-500 transition-colors" title="Bersihkan Memori">
                 <Trash2 size={14} />
               </button>
-              <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-900 transition-colors">
+              <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:bg-secondary text-secondary-foreground hover:text-foreground transition-colors">
                 <X size={16} />
               </button>
             </div>
@@ -263,10 +263,10 @@ export function OmniAiWidget({ isOpen, onClose }: OmniAiWidgetProps) {
           <div className="flex-1 p-5 overflow-y-auto custom-scrollbar flex flex-col gap-4 relative z-10 pointer-events-auto">
             {messages.map((msg) => (
               <div key={msg.id} className={`flex items-start gap-2.5 ${msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                <div className={`mt-1 w-7 h-7 rounded-full flex items-center justify-center shrink-0 shadow-sm ring-1 ${msg.sender === 'user' ? 'bg-slate-50 text-slate-400 ring-slate-200' : msg.sender === 'system' ? 'bg-rose-50 text-rose-500 ring-rose-200' : 'bg-indigo-50 text-indigo-600 ring-indigo-200'}`}>
+                <div className={`mt-1 w-7 h-7 rounded-full flex items-center justify-center shrink-0 shadow-sm ring-1 ${msg.sender === 'user' ? 'bg-muted text-muted-foreground text-slate-400 ring-slate-200' : msg.sender === 'system' ? 'bg-rose-50 dark:bg-rose-500/10 text-rose-500 ring-rose-200 dark:ring-rose-500/20' : 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 ring-indigo-200 dark:ring-indigo-500/20'}`}>
                   {msg.sender === 'user' ? <UserIcon size={14} /> : msg.sender === 'system' ? <AlertCircle size={14} /> : <Sparkles size={14} />}
                 </div>
-                <div className={`px-4 py-3 max-w-[80%] text-[13px] font-medium leading-relaxed shadow-sm ${msg.sender === 'user' ? 'bg-slate-900 text-white rounded-[1.25rem] rounded-tr-sm' : msg.sender === 'system' ? 'bg-rose-50 border border-rose-100 text-rose-700 rounded-[1.25rem] rounded-tl-sm text-xs' : 'bg-white border border-slate-100 text-slate-700 rounded-[1.25rem] rounded-tl-sm'}`}>
+                <div className={`px-4 py-3 max-w-[80%] text-[13px] font-medium leading-relaxed shadow-sm ${msg.sender === 'user' ? 'bg-slate-900 text-white rounded-[1.25rem] rounded-tr-sm' : msg.sender === 'system' ? 'bg-rose-50 dark:bg-rose-500/10 border border-rose-100 text-rose-700 dark:text-rose-300 rounded-[1.25rem] rounded-tl-sm text-xs' : 'card-solid border border-border text-slate-700 rounded-[1.25rem] rounded-tl-sm'}`}>
                   {renderChatMarkdown(msg.text, msg.sender === 'user')}
                 </div>
               </div>
@@ -274,8 +274,8 @@ export function OmniAiWidget({ isOpen, onClose }: OmniAiWidgetProps) {
             
             {isTyping && (
               <div className="flex items-end gap-2.5">
-                <div className="w-7 h-7 rounded-full bg-indigo-50 flex items-center justify-center shrink-0 text-indigo-600 ring-1 ring-indigo-200 shadow-sm"><Sparkles size={14} /></div>
-                <div className="px-4 py-3 rounded-[1.25rem] bg-white border border-slate-100 shadow-sm rounded-tl-sm flex gap-1.5 items-center h-[42px]">
+                <div className="w-7 h-7 rounded-full bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center shrink-0 text-indigo-600 dark:text-indigo-400 ring-1 ring-indigo-200 dark:ring-indigo-500/20 shadow-sm"><Sparkles size={14} /></div>
+                <div className="px-4 py-3 rounded-[1.25rem] card-solid border border-border shadow-sm rounded-tl-sm flex gap-1.5 items-center h-[42px]">
                   <motion.div animate={{ y: [0, -3, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0 }} className="w-1.5 h-1.5 bg-indigo-400 rounded-full"></motion.div>
                   <motion.div animate={{ y: [0, -3, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }} className="w-1.5 h-1.5 bg-indigo-400 rounded-full"></motion.div>
                   <motion.div animate={{ y: [0, -3, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }} className="w-1.5 h-1.5 bg-indigo-400 rounded-full"></motion.div>
@@ -286,14 +286,14 @@ export function OmniAiWidget({ isOpen, onClose }: OmniAiWidgetProps) {
           </div>
 
           {/* INPUT AREA */}
-          <div className="bg-white/90 border-t border-slate-100 shrink-0 relative z-10 flex flex-col p-4 pointer-events-auto">
+          <div className="card-solid/90 border-t border-border shrink-0 relative z-10 flex flex-col p-4 pointer-events-auto">
             {!isTyping && messages[messages.length - 1]?.sender !== 'user' && (
               <div className="flex gap-2 overflow-x-auto custom-scrollbar pb-3 px-1">
                 {quickActions.map((action, idx) => (
                   <button
                     key={idx}
                     onClick={() => handleSendMessage(action)}
-                    className="whitespace-nowrap flex items-center gap-1.5 text-[11px] font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-full transition-colors border border-indigo-100/50"
+                    className="whitespace-nowrap flex items-center gap-1.5 text-[11px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 px-3 py-1.5 rounded-full transition-colors border border-indigo-100/50"
                   >
                     <Zap size={12} className="text-indigo-400" /> {action}
                   </button>
@@ -306,7 +306,7 @@ export function OmniAiWidget({ isOpen, onClose }: OmniAiWidgetProps) {
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder="Tanyakan sesuatu..."
-                className="pr-12 h-12 bg-slate-50/50 border-slate-200 focus-visible:ring-indigo-500 rounded-2xl font-medium shadow-inner transition-all group-hover:bg-slate-50 text-sm"
+                className="pr-12 h-12 bg-muted text-muted-foreground/50 border-border focus-visible:ring-indigo-500 rounded-2xl font-medium shadow-inner transition-all group-hover:bg-muted text-muted-foreground text-sm"
                 disabled={isTyping}
               />
               <Button

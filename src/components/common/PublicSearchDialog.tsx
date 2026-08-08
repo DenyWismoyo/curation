@@ -63,11 +63,11 @@ export function PublicSearchDialog({
             className="flex items-center justify-between"
           >
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
                 <LibraryBig size={16} />
               </div>
               <div>
-                <p className="font-extrabold text-slate-900">Katalog Modul Asesmen</p>
+                <p className="font-extrabold text-foreground">Katalog Modul Asesmen</p>
                 <p className="text-xs text-slate-400 font-medium">Jelajahi berbagai template asesmen AI universal</p>
               </div>
             </div>
@@ -79,11 +79,11 @@ export function PublicSearchDialog({
             className="flex items-center justify-between"
           >
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center">
                 <Compass size={16} />
               </div>
               <div>
-                <p className="font-extrabold text-slate-900">Explore Insight</p>
+                <p className="font-extrabold text-foreground">Explore Insight</p>
                 <p className="text-xs text-slate-400 font-medium">Temukan tren analitik dan ulasan publik</p>
               </div>
             </div>
@@ -94,11 +94,11 @@ export function PublicSearchDialog({
             className="flex items-center justify-between"
           >
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center">
                 <MapPinned size={16} />
               </div>
               <div>
-                <p className="font-extrabold text-slate-900">Roadmap AI</p>
+                <p className="font-extrabold text-foreground">Roadmap AI</p>
                 <p className="text-xs text-slate-400 font-medium">Peta perkembangan fitur AI Omnifit</p>
               </div>
             </div>
@@ -112,11 +112,11 @@ export function PublicSearchDialog({
             className="flex items-center justify-between"
           >
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center">
                 <Handshake size={16} />
               </div>
               <div>
-                <p className="font-extrabold text-slate-900">Ekosistem Mitra B2B</p>
+                <p className="font-extrabold text-foreground">Ekosistem Mitra B2B</p>
                 <p className="text-xs text-slate-400 font-medium">Jaringan pakar, institusi, & klien korporasi</p>
               </div>
             </div>
@@ -128,11 +128,11 @@ export function PublicSearchDialog({
             className="flex items-center justify-between"
           >
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
                 <HandCoins size={16} />
               </div>
               <div>
-                <p className="font-extrabold text-slate-900">Portal Affiliate</p>
+                <p className="font-extrabold text-foreground">Portal Affiliate</p>
                 <p className="text-xs text-slate-400 font-medium">Program komisi referral & peluang kemitraan</p>
               </div>
             </div>
@@ -144,11 +144,11 @@ export function PublicSearchDialog({
             className="flex items-center justify-between"
           >
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                 <Users size={16} />
               </div>
               <div>
-                <p className="font-extrabold text-slate-900">Komunitas & Forum</p>
+                <p className="font-extrabold text-foreground">Komunitas & Forum</p>
                 <p className="text-xs text-slate-400 font-medium">Ruang berbagi ulasan & diskusi antar pengguna</p>
               </div>
             </div>
@@ -165,7 +165,7 @@ export function PublicSearchDialog({
                 <KeyRound size={16} />
               </div>
               <div>
-                <p className="font-extrabold text-slate-900">Gunakan Token Asesmen</p>
+                <p className="font-extrabold text-foreground">Gunakan Token Asesmen</p>
                 <p className="text-xs text-slate-400 font-medium">Klaim token untuk memulai asesmen khusus</p>
               </div>
             </div>

@@ -49,10 +49,10 @@ export default function PublicRoadmapPage() {
     <PageShell size="md" fullBleed>
       <div className="max-w-4xl mx-auto px-5 sm:px-6 pt-8 pb-24 relative z-10">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
+          <h1 className="text-3xl font-black tracking-tight text-foreground sm:text-4xl">
             Roadmap Omnifit AI
           </h1>
-          <p className="mt-4 text-base leading-8 text-slate-500 font-medium max-w-2xl mx-auto">
+          <p className="mt-4 text-base leading-8 text-muted-foreground font-medium max-w-2xl mx-auto">
             Kami terus berevolusi. Ikuti perjalanan kami dalam membangun
             infrastruktur analitik dan asesmen kecerdasan buatan yang adaptif
             dan paling presisi.
@@ -72,17 +72,17 @@ export default function PublicRoadmapPage() {
                 size={56}
                 className="mx-auto text-slate-200 mb-6 grayscale opacity-50"
               />
-              <h3 className="text-xl font-black text-slate-800 mb-2">
+              <h3 className="text-xl font-black text-foreground mb-2">
                 Rencana Sedang Disusun
               </h3>
-              <p className="text-sm font-medium text-slate-500">
+              <p className="text-sm font-medium text-muted-foreground">
                 Tim kami sedang meracik pembaruan selanjutnya.
               </p>
             </div>
           ) : (
             <div className="space-y-6 sm:space-y-8 relative">
               {/* Garis Vertikal Timeline */}
-              <div className="absolute left-6 sm:left-7 top-4 bottom-8 w-px bg-slate-100 hidden sm:block"></div>
+              <div className="absolute left-6 sm:left-7 top-4 bottom-8 w-px bg-secondary text-secondary-foreground hidden sm:block"></div>
 
               <AnimatePresence>
                 {roadmaps.map((item, idx) => (
@@ -96,12 +96,12 @@ export default function PublicRoadmapPage() {
                     {/* Ikon Status */}
                     <div className="flex items-center gap-4 sm:gap-0 z-10 shrink-0">
                       <div
-                        className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center border-[6px] border-white shadow-sm ring-1 ring-slate-100 transition-transform group-hover:scale-110 ${
+                        className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center border-[6px] border-white shadow-sm ring-1 ring-border transition-transform group-hover:scale-110 ${
                           item.status === 'completed'
                             ? 'bg-emerald-100 text-emerald-500'
                             : item.status === 'in-progress'
-                              ? 'bg-indigo-100 text-indigo-600'
-                              : 'bg-slate-50 text-slate-400'
+                              ? 'bg-indigo-100 text-indigo-600 dark:text-indigo-400'
+                              : 'bg-muted text-muted-foreground text-slate-400'
                         }`}
                       >
                         {item.status === 'completed' ? (
@@ -118,10 +118,10 @@ export default function PublicRoadmapPage() {
                         <span
                           className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md inline-block ${
                             item.status === 'completed'
-                              ? 'bg-emerald-50 text-emerald-600 ring-1 ring-emerald-100'
+                              ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 ring-1 ring-emerald-100'
                               : item.status === 'in-progress'
-                                ? 'bg-indigo-50 text-indigo-600 ring-1 ring-indigo-100'
-                                : 'bg-slate-50 text-slate-500 ring-1 ring-slate-200'
+                                ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 ring-1 ring-indigo-100'
+                                : 'bg-muted text-muted-foreground text-muted-foreground ring-1 ring-border'
                           }`}
                         >
                           {item.quarter}
@@ -131,26 +131,26 @@ export default function PublicRoadmapPage() {
 
                     {/* Konten Timeline */}
                     <div
-                      className={`flex-1 pt-1 pb-6 sm:pb-8 ${idx !== roadmaps.length - 1 ? 'border-b border-slate-100/70' : ''}`}
+                      className={`flex-1 pt-1 pb-6 sm:pb-8 ${idx !== roadmaps.length - 1 ? 'border-b border-border/70' : ''}`}
                     >
                       {/* Quarter Badge for Desktop (Muncul di atas judul pada PC) */}
                       <span
                         className={`hidden sm:inline-block text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md mb-3 ring-1 ${
                           item.status === 'completed'
-                            ? 'bg-emerald-50 text-emerald-600 ring-emerald-100'
+                            ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 ring-emerald-100'
                             : item.status === 'in-progress'
-                              ? 'bg-indigo-50 text-indigo-600 ring-indigo-100'
-                              : 'bg-slate-50 text-slate-500 ring-slate-200'
+                              ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 ring-indigo-100'
+                              : 'bg-muted text-muted-foreground text-muted-foreground ring-slate-200'
                         }`}
                       >
                         {item.quarter}
                       </span>
 
-                      <h3 className="text-xl sm:text-2xl font-black text-slate-900 mb-2 sm:mb-3 leading-tight group-hover:text-indigo-600 transition-colors">
+                      <h3 className="text-xl sm:text-2xl font-black text-foreground mb-2 sm:mb-3 leading-tight group-hover:text-indigo-600 dark:text-indigo-400 transition-colors">
                         {item.title}
                       </h3>
 
-                      <p className="text-sm sm:text-base font-medium text-slate-500 leading-relaxed">
+                      <p className="text-sm sm:text-base font-medium text-muted-foreground leading-relaxed">
                         {item.description}
                       </p>
                     </div>

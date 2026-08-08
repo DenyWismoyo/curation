@@ -84,13 +84,13 @@ export default function CryptoAcademyAdminPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight">Manajemen Modul Crypto</h1>
-          <p className="text-slate-500 text-sm mt-1">Kelola kurikulum dan konten untuk Crypto Academy</p>
+          <h1 className="text-2xl font-black text-foreground tracking-tight">Manajemen Modul Crypto</h1>
+          <p className="text-muted-foreground text-sm mt-1">Kelola kurikulum dan konten untuk Crypto Academy</p>
         </div>
         <div className="flex gap-3">
           <button 
             onClick={() => router.push('/study')}
-            className="px-4 py-2 bg-white text-indigo-600 border border-indigo-200 rounded-xl font-bold text-sm hover:bg-indigo-50 transition-colors shadow-sm"
+            className="px-4 py-2 card-solid text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/20 rounded-xl font-bold text-sm hover:bg-indigo-50 dark:bg-indigo-500/10 transition-colors shadow-sm"
           >
             Generate via AI (Study)
           </button>
@@ -104,7 +104,7 @@ export default function CryptoAcademyAdminPage() {
       </div>
 
       <Card className="border-0 shadow-xl shadow-slate-200/40 rounded-2xl overflow-hidden">
-        <div className="p-4 border-b border-slate-100 flex flex-col sm:flex-row gap-4 bg-slate-50/50">
+        <div className="p-4 border-b border-border flex flex-col sm:flex-row gap-4 bg-muted text-muted-foreground/50">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
             <input 
@@ -112,7 +112,7 @@ export default function CryptoAcademyAdminPage() {
               placeholder="Cari modul..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none"
+              className="w-full pl-9 pr-4 py-2 rounded-xl border border-border text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -120,7 +120,7 @@ export default function CryptoAcademyAdminPage() {
             <select 
               value={filterLevel}
               onChange={(e) => setFilterLevel(e.target.value)}
-              className="pl-3 pr-8 py-2 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none appearance-none bg-white"
+              className="pl-3 pr-8 py-2 rounded-xl border border-border text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none appearance-none card-solid"
             >
               <option value="">Semua Level</option>
               {levels.map(level => (
@@ -136,12 +136,12 @@ export default function CryptoAcademyAdminPage() {
               <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
             </div>
           ) : filteredModules.length === 0 ? (
-            <div className="p-12 text-center text-slate-500">
+            <div className="p-12 text-center text-muted-foreground">
               Tidak ada modul ditemukan.
             </div>
           ) : (
             <table className="w-full text-left text-sm whitespace-nowrap">
-              <thead className="bg-slate-50 border-b border-slate-100 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
+              <thead className="bg-muted text-muted-foreground border-b border-border text-muted-foreground font-bold uppercase tracking-wider text-[10px]">
                 <tr>
                   <th className="px-6 py-4">Urutan</th>
                   <th className="px-6 py-4">Judul Modul</th>
@@ -154,33 +154,33 @@ export default function CryptoAcademyAdminPage() {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {filteredModules.map((module) => (
-                  <tr key={module.id} className="hover:bg-slate-50/50 transition-colors">
+                  <tr key={module.id} className="hover:bg-muted text-muted-foreground/50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <ArrowUpDown className="w-3 h-3 text-slate-400 cursor-move" />
                         <span className="font-bold text-slate-700">{module.moduleOrder}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 font-semibold text-slate-900 truncate max-w-[250px]">
+                    <td className="px-6 py-4 font-semibold text-foreground truncate max-w-[250px]">
                       {module.title}
                     </td>
                     <td className="px-6 py-4">
-                      <Badge variant="outline" className="bg-white">
+                      <Badge variant="outline" className="card-solid">
                         {module.level}
                       </Badge>
                     </td>
                     <td className="px-6 py-4">
                       <Badge className={
-                        module.difficulty === 'beginner' ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-100' :
-                        module.difficulty === 'intermediate' ? 'bg-amber-100 text-amber-700 hover:bg-amber-100' :
-                        'bg-rose-100 text-rose-700 hover:bg-rose-100'
+                        module.difficulty === 'beginner' ? 'bg-emerald-100 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-500/20' :
+                        module.difficulty === 'intermediate' ? 'bg-amber-100 text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-500/20' :
+                        'bg-rose-100 text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-500/20'
                       }>
                         {module.difficulty}
                       </Badge>
                     </td>
                     <td className="px-6 py-4 text-center">
                       {module.assessmentTemplateId ? (
-                        <Badge variant="indigo" className="bg-indigo-50 text-indigo-700">Tersedia</Badge>
+                        <Badge variant="indigo" className="bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300">Tersedia</Badge>
                       ) : (
                         <span className="text-slate-400 text-xs">—</span>
                       )}
@@ -190,8 +190,8 @@ export default function CryptoAcademyAdminPage() {
                         onClick={() => handleTogglePublish(module.id, module.isPublished)}
                         className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold transition-colors ${
                           module.isPublished 
-                            ? 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100' 
-                            : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                            ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-500/20' 
+                            : 'bg-secondary text-secondary-foreground text-muted-foreground hover:bg-slate-200'
                         }`}
                       >
                         {module.isPublished ? <CheckCircle className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
@@ -202,21 +202,21 @@ export default function CryptoAcademyAdminPage() {
                       <div className="flex items-center justify-end gap-2">
                         <button 
                           onClick={() => window.open(`/crypto-academy/${encodeURIComponent(module.level)}/${module.id}`, '_blank')}
-                          className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                          className="p-1.5 text-slate-400 hover:text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:bg-indigo-500/10 rounded-lg transition-colors"
                           title="Preview"
                         >
                           <Eye className="w-4 h-4" />
                         </button>
                         <button 
                           onClick={() => router.push(`/admin/crypto-academy/${module.id}`)}
-                          className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                          className="p-1.5 text-slate-400 hover:text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:bg-indigo-500/10 rounded-lg transition-colors"
                           title="Edit"
                         >
                           <Edit className="w-4 h-4" />
                         </button>
                         <button 
                           onClick={() => handleDelete(module.id)}
-                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                          className="p-1.5 text-slate-400 hover:text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:bg-rose-500/10 rounded-lg transition-colors"
                           title="Hapus"
                         >
                           <Trash2 className="w-4 h-4" />

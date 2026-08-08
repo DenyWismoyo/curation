@@ -124,15 +124,15 @@ export default function CoinHistoryPage() {
         
         {/* HEADER */}
         <div className="mb-8">
-          <Button variant="ghost" className="mb-4 text-slate-500 hover:text-indigo-600" onClick={() => router.back()}>
+          <Button variant="ghost" className="mb-4 text-muted-foreground hover:text-indigo-600 dark:text-indigo-400" onClick={() => router.back()}>
             <ArrowLeft className="w-4 h-4 mr-2" /> Kembali ke Laporan Utama
           </Button>
-          <div className="flex items-center gap-4 bg-white dark:bg-slate-900 p-6 md:p-8 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800">
+          <div className="flex items-center gap-4 card-solid p-6 md:p-8 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800">
              <div className="p-4 bg-indigo-900/50 rounded-full">
                <History className="w-8 h-8 text-indigo-400" />
              </div>
              <div>
-               <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
+               <h1 className="text-3xl md:text-4xl font-black tracking-tight text-foreground">
                  Riwayat Aset: <span className="text-indigo-400">{symbol}</span>
                </h1>
                <p className="text-muted-foreground text-sm md:text-base mt-1">
@@ -160,24 +160,24 @@ export default function CoinHistoryPage() {
                const isSell = item.data.recommendation === "SELL";
                
                let cardColor = "from-slate-500/10 to-transparent border-slate-200 dark:border-slate-800/50";
-               let iconColor = "bg-slate-500 text-slate-900 dark:text-white shadow-slate-200/50";
-               let badgeColor = "bg-slate-100/50 text-slate-700 border-slate-300/50 bg-slate-200 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300";
-               let glowColor = "bg-slate-500/20";
+               let iconColor = "bg-muted text-muted-foreground0 text-foreground shadow-slate-200/50";
+               let badgeColor = "bg-secondary text-secondary-foreground/50 text-slate-700 border-border/50 bg-slate-200 dark:bg-slate-800/50 text-muted-foreground";
+               let glowColor = "bg-muted text-muted-foreground0/20";
                
                if (isScalp) {
-                  cardColor = "from-orange-500/10 to-transparent border-orange-200/50 border-orange-900/50";
-                  iconColor = "bg-gradient-to-br from-orange-400 to-orange-600 text-slate-900 dark:text-white shadow-orange-500/30";
-                  badgeColor = "bg-orange-100/50 text-orange-700 border-orange-300/50 bg-orange-500/10 text-orange-400";
+                  cardColor = "from-orange-500/10 to-transparent border-orange-200 dark:border-orange-500/20/50 border-orange-900/50";
+                  iconColor = "bg-gradient-to-br from-orange-400 to-orange-600 text-foreground shadow-orange-500/30";
+                  badgeColor = "bg-orange-100/50 text-orange-700 dark:text-orange-300 border-orange-300/50 bg-orange-500/10 text-orange-400";
                   glowColor = "bg-orange-500/30";
                } else if (isBuy) {
-                  cardColor = "from-emerald-500/10 to-transparent border-emerald-200/50 border-emerald-300 dark:border-emerald-900/50";
-                  iconColor = "bg-gradient-to-br from-emerald-400 to-emerald-600 text-slate-900 dark:text-white shadow-emerald-500/30";
-                  badgeColor = "bg-emerald-100/50 text-emerald-700 border-emerald-300/50 bg-emerald-500/10 text-emerald-400";
+                  cardColor = "from-emerald-500/10 to-transparent border-emerald-200 dark:border-emerald-500/20/50 border-emerald-300 dark:border-emerald-900/50";
+                  iconColor = "bg-gradient-to-br from-emerald-400 to-emerald-600 text-foreground shadow-emerald-500/30";
+                  badgeColor = "bg-emerald-100/50 text-emerald-700 dark:text-emerald-300 border-emerald-300/50 bg-emerald-500/10 text-emerald-400";
                   glowColor = "bg-emerald-500/30";
                } else if (isSell) {
-                  cardColor = "from-rose-500/10 to-transparent border-rose-200/50 border-rose-900/50";
-                  iconColor = "bg-gradient-to-br from-rose-400 to-rose-600 text-slate-900 dark:text-white shadow-rose-500/30";
-                  badgeColor = "bg-rose-100/50 text-rose-700 border-rose-300/50 bg-rose-500/10 text-rose-400";
+                  cardColor = "from-rose-500/10 to-transparent border-rose-200 dark:border-rose-500/20/50 border-rose-900/50";
+                  iconColor = "bg-gradient-to-br from-rose-400 to-rose-600 text-foreground shadow-rose-500/30";
+                  badgeColor = "bg-rose-100/50 text-rose-700 dark:text-rose-300 border-rose-300/50 bg-rose-500/10 text-rose-400";
                   glowColor = "bg-rose-500/30";
                }
 
@@ -191,7 +191,7 @@ export default function CoinHistoryPage() {
                        </div>
                     </div>
 
-                    <Card className={`overflow-hidden rounded-2xl border bg-gradient-to-br bg-white/40 dark:bg-slate-900/40 backdrop-blur-md shadow-[0_4px_20px_rgb(0,0,0,0.03)] transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 ${cardColor}`}>
+                    <Card className={`overflow-hidden rounded-2xl border bg-gradient-to-br card-solid/40 dark:bg-slate-900/40 backdrop-blur-md shadow-[0_4px_20px_rgb(0,0,0,0.03)] transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 ${cardColor}`}>
                        <div className="p-5 md:p-6 border-b border-current/10 flex flex-col sm:flex-row justify-between sm:items-center gap-3 relative">
                          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-current opacity-20 to-transparent"></div>
                          <div className="relative z-10">
@@ -199,35 +199,35 @@ export default function CoinHistoryPage() {
                                <Badge variant="outline" className={`text-[10px] uppercase font-black tracking-widest ${badgeColor} shadow-sm`}>
                                  {isScalp ? "VOLATILITY SCANNER" : item.data.recommendation || "ANALYSIS"}
                                </Badge>
-                               <span className="text-xs text-slate-500 text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1.5 bg-white/60 dark:bg-slate-900/60 px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-800/50 shadow-sm">
+                               <span className="text-xs text-muted-foreground text-muted-foreground font-medium flex items-center gap-1.5 card-solid/60 dark:bg-slate-900/60 px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-800/50 shadow-sm">
                                   <Clock className="w-3 h-3" />
                                   {item.date.toLocaleDateString("id-ID", { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })} WIB
                                </span>
                             </div>
-                            <h3 className="font-bold text-slate-900 dark:text-white text-lg mt-1 line-clamp-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{item.title}</h3>
+                            <h3 className="font-bold text-foreground text-lg mt-1 line-clamp-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{item.title}</h3>
                          </div>
                        </div>
                        
                        <div className="p-5 md:p-6 flex flex-col xl:flex-row xl:items-stretch justify-between gap-6 relative z-10">
                            {/* LEFT SECTION: TEXT */}
                            <div className="flex-1">
-                             <p className="text-sm font-medium text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
+                             <p className="text-sm font-medium text-muted-foreground leading-relaxed whitespace-pre-wrap">
                                 {isScalp ? item.data.momentum : item.data.analysis}
                              </p>
                            </div>
 
                            {/* RIGHT SECTION: METRICS & CHART */}
                            <div className="flex flex-col sm:flex-row xl:flex-col items-center xl:items-end justify-center gap-4 xl:w-[28rem] shrink-0 border-t xl:border-t-0 xl:border-l border-current/10 pt-6 xl:pt-0 xl:pl-6">
-                              <div className="grid grid-cols-2 gap-3 text-xs w-full bg-white/80 dark:bg-slate-900/80 p-4 rounded-xl border border-current/20 shadow-inner text-left">
+                              <div className="grid grid-cols-2 gap-3 text-xs w-full card-solid/80 dark:bg-slate-900/80 p-4 rounded-xl border border-current/20 shadow-inner text-left">
                                  {isScalp ? (
                                    <>
-                                     <div className="text-slate-500">Entry: <span className="font-bold text-slate-900 dark:text-white text-sm">{item.data.entryPrice || item.data.entryZone}</span></div>
-                                     <div className="text-slate-500">Alokasi: <span className="font-bold text-indigo-400 text-sm">{item.data.allocationPercentage || '-'}</span></div>
+                                     <div className="text-muted-foreground">Entry: <span className="font-bold text-foreground text-sm">{item.data.entryPrice || item.data.entryZone}</span></div>
+                                     <div className="text-muted-foreground">Alokasi: <span className="font-bold text-indigo-400 text-sm">{item.data.allocationPercentage || '-'}</span></div>
                                    </>
                                  ) : (
                                    <>
-                                     <div className="text-slate-500">Support: <span className="font-bold text-slate-900 dark:text-white text-sm">{item.data.supportLevel || '-'}</span></div>
-                                     <div className="text-slate-500">Resist: <span className="font-bold text-slate-900 dark:text-white text-sm">{item.data.resistanceLevel || '-'}</span></div>
+                                     <div className="text-muted-foreground">Support: <span className="font-bold text-foreground text-sm">{item.data.supportLevel || '-'}</span></div>
+                                     <div className="text-muted-foreground">Resist: <span className="font-bold text-foreground text-sm">{item.data.resistanceLevel || '-'}</span></div>
                                    </>
                                  )}
                                  <div className="text-emerald-400 flex flex-col justify-center">
@@ -242,7 +242,7 @@ export default function CoinHistoryPage() {
                               
                               {item.klines && item.klines.length > 0 && (
                                 <div className="w-full mt-auto">
-                                   <div className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-2 text-center xl:text-right">Grafik Riwayat Pergerakan</div>
+                                   <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-2 text-center xl:text-right">Grafik Riwayat Pergerakan</div>
                                    <div className="w-full">
                                      <CryptoCandlestick 
                                         symbol={symbol}

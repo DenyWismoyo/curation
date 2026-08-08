@@ -84,11 +84,11 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
         className="text-center space-y-4 mb-4 sm:mb-8"
       >
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-[1.5rem] bg-indigo-50 text-indigo-600 ring-1 ring-indigo-100 shadow-sm mb-2">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-[1.5rem] bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 ring-1 ring-indigo-100 shadow-sm mb-2">
           <DocExportIcon size={32} />
         </div>
-        <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">Tinjauan Akhir</h2>
-        <p className="text-slate-500 font-medium max-w-lg mx-auto text-sm sm:text-base leading-relaxed">
+        <h2 className="text-3xl sm:text-4xl font-black text-foreground tracking-tight">Tinjauan Akhir</h2>
+        <p className="text-muted-foreground font-medium max-w-lg mx-auto text-sm sm:text-base leading-relaxed">
           Sistem telah merekam seluruh formulir Anda. Lakukan validasi terakhir sebelum data ini diinkubasi oleh Kecerdasan Buatan.
         </p>
       </motion.div>
@@ -96,32 +96,32 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
       {/* ================= BLOK 1: RINGKASAN DATA ================= */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}
-        className="bg-white p-6 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] ring-1 ring-slate-200/60 shadow-sm"
+        className="card-solid p-6 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] ring-1 ring-border shadow-sm"
       >
         <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-5 flex items-center gap-2">
           <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Ringkasan Pengisian Form
         </h3>
         
-        <div className="bg-slate-50/50 p-2 rounded-2xl ring-1 ring-slate-100/80 max-h-[40vh] overflow-y-auto custom-scrollbar">
+        <div className="bg-muted text-muted-foreground/50 p-2 rounded-2xl ring-1 ring-border/80 max-h-[40vh] overflow-y-auto custom-scrollbar">
           <div className="space-y-1">
             {Object.entries(answers).map(([key, value], idx) => (
-              <div key={key} className={`p-3 sm:p-4 rounded-xl transition-colors hover:bg-white ${idx % 2 === 0 ? 'bg-transparent' : 'bg-slate-50/80'}`}>
+              <div key={key} className={`p-3 sm:p-4 rounded-xl transition-colors hover:card-solid ${idx % 2 === 0 ? 'bg-transparent' : 'bg-muted text-muted-foreground/80'}`}>
                 <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">{key}</span>
-                <span className="block text-sm font-semibold text-slate-800 leading-relaxed">
+                <span className="block text-sm font-semibold text-foreground leading-relaxed">
                   {/* Format baru: objek dengan downloadURL */}
                   {(value && typeof value === 'object' && 'downloadURL' in value && 'fileName' in value) ? (
-                    <a href={value.downloadURL} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-indigo-600 hover:underline">
+                    <a href={value.downloadURL} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400 hover:underline">
                       <DocExportIcon size={16} className="shrink-0" /> {value.fileName}
                     </a>
                   /* Format lama: File object (tidak seharusnya ada lagi) */
                   ) : (value instanceof File || (value && typeof value === 'object' && 'name' in value && 'size' in value && 'type' in value)) ? (
-                    <span className="flex items-center gap-1.5 text-indigo-600"><DocExportIcon size={16} className="shrink-0" /> {value.name}</span>
+                    <span className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400"><DocExportIcon size={16} className="shrink-0" /> {value.name}</span>
                   /* String artefak dari cache */
                   ) : typeof value === 'string' && value.startsWith('[FILE:') ? (
                     <span className="flex items-center gap-1.5 text-rose-500 font-bold"><AlertCircle size={14} className="shrink-0" /> {value.replace('[FILE:', '').replace(']', '')} (File perlu diunggah ulang)</span>
                   /* URL string biasa */
                   ) : typeof value === 'string' && value.startsWith('https://') ? (
-                    <a href={value} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-indigo-600 hover:underline"><DocExportIcon size={16} className="shrink-0" /> Lihat Lampiran</a>
+                    <a href={value} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400 hover:underline"><DocExportIcon size={16} className="shrink-0" /> Lihat Lampiran</a>
                   ) : value !== undefined && value !== null && value !== '' ? (
                     String(value)
                   ) : (
@@ -137,7 +137,7 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
       {/* ================= BLOK 2: VERIFIKASI KEAMANAN & TOKEN ================= */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
-        className="bg-white p-6 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] ring-1 ring-slate-200/60 shadow-sm space-y-6"
+        className="card-solid p-6 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] ring-1 ring-border shadow-sm space-y-6"
       >
         <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
           <AdminShieldIcon className="w-4 h-4 text-indigo-500" /> Autentikasi Pemrosesan
@@ -161,7 +161,7 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
                   setToken(e.target.value.toUpperCase());
                   if (tokenError) setTokenError('');
                 }}
-                className={`h-12 pl-10 rounded-xl font-mono font-bold text-sm bg-slate-50 transition-all ${tokenError ? 'border-rose-300 ring-1 ring-rose-100 focus-visible:ring-rose-500' : 'border-slate-200 focus-visible:ring-indigo-500'}`}
+                className={`h-12 pl-10 rounded-xl font-mono font-bold text-sm bg-muted text-muted-foreground transition-all ${tokenError ? 'border-rose-300 ring-1 ring-rose-100 focus-visible:ring-rose-500' : 'border-border focus-visible:ring-indigo-500'}`}
                 disabled={isSubmitting}
               />
             </div>
@@ -176,7 +176,7 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
           <div className="space-y-2">
             <Label htmlFor="self-score" className="text-xs font-bold text-slate-700 flex justify-between">
               <span>Tingkat Keyakinan Data <span className="text-rose-500">*</span></span>
-              <span className="text-indigo-600 font-black">{selfScore || '0'} / 10</span>
+              <span className="text-indigo-600 dark:text-indigo-400 font-black">{selfScore || '0'} / 10</span>
             </Label>
             <Input
               id="self-score"
@@ -189,15 +189,15 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
                 if (!isNaN(val) && val >= 1 && val <= 10) setSelfScore(val);
                 else if (e.target.value === '') setSelfScore('');
               }}
-              className="h-12 rounded-xl bg-slate-50 font-bold text-sm border-slate-200 focus-visible:ring-indigo-500 transition-all"
+              className="h-12 rounded-xl bg-muted text-muted-foreground font-bold text-sm border-border focus-visible:ring-indigo-500 transition-all"
               disabled={isSubmitting}
             />
           </div>
 
           {/* Checkbox Konfirmasi (Full Width) */}
           <div className="md:col-span-2">
-            <label className={`flex items-start sm:items-center gap-4 p-4 sm:p-5 rounded-2xl border transition-all cursor-pointer ${isConfirmed ? 'bg-indigo-50/50 border-indigo-200 ring-1 ring-indigo-100' : 'bg-white border-slate-200 hover:bg-slate-50'}`}>
-              <div className={`mt-0.5 sm:mt-0 w-6 h-6 rounded-md border-2 flex items-center justify-center shrink-0 transition-colors ${isConfirmed ? 'bg-indigo-600 border-indigo-600 text-white' : 'border-slate-300 bg-white'}`}>
+            <label className={`flex items-start sm:items-center gap-4 p-4 sm:p-5 rounded-2xl border transition-all cursor-pointer ${isConfirmed ? 'bg-indigo-50 dark:bg-indigo-500/10/50 border-indigo-200 dark:border-indigo-500/20 ring-1 ring-indigo-100' : 'card-solid border-border hover:bg-muted text-muted-foreground'}`}>
+              <div className={`mt-0.5 sm:mt-0 w-6 h-6 rounded-md border-2 flex items-center justify-center shrink-0 transition-colors ${isConfirmed ? 'bg-indigo-600 border-indigo-600 text-white' : 'border-border card-solid'}`}>
                 {isConfirmed && <Check className="w-4 h-4" strokeWidth={3} />}
               </div>
               <input
@@ -207,10 +207,10 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
                 disabled={isSubmitting}
               />
               <div className="flex-1">
-                <span className="block text-sm font-bold text-slate-900 mb-0.5">
+                <span className="block text-sm font-bold text-foreground mb-0.5">
                   Pernyataan Integritas Data <span className="text-rose-500">*</span>
                 </span>
-                <span className="block text-[11px] sm:text-xs font-medium text-slate-500 leading-relaxed">
+                <span className="block text-[11px] sm:text-xs font-medium text-muted-foreground leading-relaxed">
                   Saya memvalidasi bahwa seluruh informasi di atas diisi secara jujur, objektif, dan dapat dipertanggungjawabkan kebenarannya.
                 </span>
               </div>
@@ -223,7 +223,7 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
         <AnimatePresence>
           {!isFormValid && (
             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
-              <div className="flex items-center gap-2 mt-4 text-[11px] font-bold text-amber-700 bg-amber-50 p-3 rounded-xl border border-amber-200/60 uppercase tracking-wide">
+              <div className="flex items-center gap-2 mt-4 text-[11px] font-bold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/10 p-3 rounded-xl border border-amber-200 dark:border-amber-500/20/60 uppercase tracking-wide">
                 <AlertTriangle className="w-4 h-4 shrink-0 text-amber-500" />
                 {hasLostFiles ? 'Ada file lampiran yang hilang dari sesi sebelumnya. Harap kembali dan unggah ulang.' : 'Harap lengkapi Token, Skor, dan Integritas untuk melanjutkan.'}
               </div>
@@ -241,7 +241,7 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
           variant="ghost" 
           onClick={onBack} 
           disabled={isSubmitting}
-          className="w-full sm:w-auto h-14 px-6 rounded-2xl text-slate-500 font-bold hover:bg-slate-200 hover:text-slate-900 transition-all text-sm"
+          className="w-full sm:w-auto h-14 px-6 rounded-2xl text-muted-foreground font-bold hover:bg-slate-200 hover:text-foreground transition-all text-sm"
         >
           <ArrowLeft className="w-4 h-4 mr-2" /> Kembali ke Form
         </Button>
@@ -269,26 +269,26 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-0 bg-slate-900/40 backdrop-blur-sm">
             <motion.div 
               initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white rounded-[2rem] shadow-2xl max-w-sm w-full ring-1 ring-slate-200 overflow-hidden relative"
+              className="card-solid rounded-[2rem] shadow-2xl max-w-sm w-full ring-1 ring-border overflow-hidden relative"
             >
               <div className="p-6 sm:p-8 space-y-5 text-center">
-                <div className="w-16 h-16 bg-amber-50 text-amber-500 rounded-[1.5rem] flex items-center justify-center ring-1 ring-amber-100/50 mx-auto">
+                <div className="w-16 h-16 bg-amber-50 dark:bg-amber-500/10 text-amber-500 rounded-[1.5rem] flex items-center justify-center ring-1 ring-amber-100/50 mx-auto">
                   <AlertTriangle className="w-8 h-8" />
                 </div>
                 <div className="space-y-3">
-                  <h3 className="text-xl font-black text-slate-900 tracking-tight">Kirim Data & Analisis?</h3>
-                  <p className="text-sm font-medium text-slate-500 leading-relaxed">
-                    Setelah dikirim, data akan dikunci untuk dianalisis oleh AI. Proses ini akan menggunakan <strong className="text-indigo-600 font-bold">1 Kuota Token</strong> dari sesi Anda.
+                  <h3 className="text-xl font-black text-foreground tracking-tight">Kirim Data & Analisis?</h3>
+                  <p className="text-sm font-medium text-muted-foreground leading-relaxed">
+                    Setelah dikirim, data akan dikunci untuk dianalisis oleh AI. Proses ini akan menggunakan <strong className="text-indigo-600 dark:text-indigo-400 font-bold">1 Kuota Token</strong> dari sesi Anda.
                   </p>
                 </div>
               </div>
               
               {/* === PERBAIKAN LAYOUT DI SINI === */}
-              <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 border-t border-slate-100">
+              <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-3 bg-muted text-muted-foreground border-t border-border">
                 <Button 
                   variant="outline" 
                   onClick={() => setShowModal(false)}
-                  className="w-full rounded-xl h-12 border-slate-200 text-slate-600 font-bold hover:bg-white hover:text-slate-900"
+                  className="w-full rounded-xl h-12 border-border text-muted-foreground font-bold hover:card-solid hover:text-foreground"
                 >
                   Batal, Cek Lagi
                 </Button>

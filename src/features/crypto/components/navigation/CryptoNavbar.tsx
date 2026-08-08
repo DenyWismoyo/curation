@@ -101,7 +101,7 @@ export function CryptoNavbar() {
   const insightLinks = dynamicNavLinks.filter(l => ['/crypto-report/news', '/crypto-academy'].includes(l.href) || (!intelLinks.includes(l) && !radarLinks.includes(l) && l !== dashboardLink));
 
   return (
-    <header className="hidden md:flex fixed top-0 left-0 right-0 h-20 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200 dark:border-white/10 z-40 items-center justify-between px-6 lg:px-12 w-full max-w-full">
+    <header className="hidden md:flex fixed top-0 left-0 right-0 h-20 card-solid/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200 dark:border-white/10 z-40 items-center justify-between px-6 lg:px-12 w-full max-w-full">
       {/* Brand & Desktop Links */}
       <div className="flex items-center gap-6 lg:gap-10">
         <Link href="/crypto-report" className="flex items-center gap-3 group">
@@ -109,14 +109,14 @@ export function CryptoNavbar() {
              <Activity className="w-5 h-5 text-white" />
           </div>
           <div className="flex flex-col">
-            <span className="text-lg font-black text-slate-900 dark:text-white tracking-tight group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+            <span className="text-lg font-black text-foreground tracking-tight group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
               Crypto<span className="text-purple-600 dark:text-purple-500">Hub</span>
             </span>
           </div>
         </Link>
 
         {/* ── Menu Pill (Adaptive Theme & Grouped) ───────────────────────── */}
-        <nav className="flex items-center gap-1 bg-slate-100 dark:bg-white/5 p-1 rounded-2xl ring-1 ring-slate-200 dark:ring-white/10">
+        <nav className="flex items-center gap-1 bg-secondary text-secondary-foreground dark:card-solid/5 p-1 rounded-2xl ring-1 ring-slate-200 dark:ring-white/10">
           <NavigationMenu>
             <NavigationMenuList className="flex gap-1">
               
@@ -128,8 +128,8 @@ export function CryptoNavbar() {
                       href={dashboardLink.href}
                       className={`group relative flex h-10 items-center justify-center rounded-xl bg-transparent px-4 py-1.5 text-xs font-bold transition-all ${
                         isActive(dashboardLink.href)
-                          ? 'text-slate-900 dark:text-white bg-white dark:bg-white/15 shadow-sm ring-1 ring-slate-200 dark:ring-white/10' 
-                          : 'text-slate-500 hover:text-slate-900 hover:bg-white dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/5'
+                          ? 'text-foreground card-solid dark:card-solid/15 shadow-sm ring-1 ring-slate-200 dark:ring-white/10' 
+                          : 'text-muted-foreground hover:text-foreground hover:card-solid dark:text-slate-400 dark:hover:text-white dark:hover:card-solid/5'
                       }`}
                     >
                       <dashboardLink.icon size={14} className="mr-1.5 text-indigo-500" />
@@ -144,21 +144,21 @@ export function CryptoNavbar() {
                 <NavigationMenuItem>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <button className="group relative flex h-10 items-center justify-center rounded-xl bg-transparent px-4 py-1.5 text-xs font-bold transition-all text-slate-500 hover:text-slate-900 hover:bg-white dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/5 outline-none data-[state=open]:bg-white dark:data-[state=open]:bg-white/10 data-[state=open]:text-slate-900 dark:data-[state=open]:text-white">
+                      <button className="group relative flex h-10 items-center justify-center rounded-xl bg-transparent px-4 py-1.5 text-xs font-bold transition-all text-muted-foreground hover:text-foreground hover:card-solid dark:text-slate-400 dark:hover:text-white dark:hover:card-solid/5 outline-none data-[state=open]:card-solid dark:data-[state=open]:card-solid/10 data-[state=open]:text-foreground dark:data-[state=open]:text-white">
                         <BrainCircuit size={14} className="mr-1.5 text-purple-500" />
                         Intelligence
                         {hasDanger && <span className="ml-1.5 w-2 h-2 rounded-full bg-rose-500 animate-pulse" />}
                         <ChevronDown size={14} className="ml-1.5 opacity-50" />
                       </button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start" className="w-56 p-2 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl">
+                    <DropdownMenuContent align="start" className="w-56 p-2 rounded-2xl card-solid border border-slate-200 dark:border-slate-800 shadow-xl">
                       <div className="px-2 py-1.5 mb-1">
                         <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">Analitik Lanjutan</p>
                       </div>
                       {intelLinks.map(link => (
-                        <DropdownMenuItem key={link.href} asChild className="rounded-xl focus:bg-slate-100 dark:focus:bg-slate-800 cursor-pointer">
+                        <DropdownMenuItem key={link.href} asChild className="rounded-xl focus:bg-secondary text-secondary-foreground dark:focus:bg-slate-800 cursor-pointer">
                           <Link href={link.href} className="flex items-center gap-2 py-2">
-                            <link.icon size={14} className="text-slate-500" />
+                            <link.icon size={14} className="text-muted-foreground" />
                             <span className="font-bold flex-1">{link.label}</span>
                             {link.label === 'Danger Zone' && hasDanger && <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />}
                             {link.requiresPremium && !hasAccess && <Lock size={12} className="text-slate-400" />}
@@ -175,7 +175,7 @@ export function CryptoNavbar() {
                 <NavigationMenuItem>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <button className="group relative flex h-10 items-center justify-center rounded-xl bg-transparent px-4 py-1.5 text-xs font-bold transition-all text-slate-500 hover:text-slate-900 hover:bg-white dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/5 outline-none data-[state=open]:bg-white dark:data-[state=open]:bg-white/10 data-[state=open]:text-slate-900 dark:data-[state=open]:text-white">
+                      <button className="group relative flex h-10 items-center justify-center rounded-xl bg-transparent px-4 py-1.5 text-xs font-bold transition-all text-muted-foreground hover:text-foreground hover:card-solid dark:text-slate-400 dark:hover:text-white dark:hover:card-solid/5 outline-none data-[state=open]:card-solid dark:data-[state=open]:card-solid/10 data-[state=open]:text-foreground dark:data-[state=open]:text-white">
                         <Zap size={14} className="mr-1.5 text-emerald-500" />
                         Radar
                         {activeScalps > 0 && (
@@ -186,14 +186,14 @@ export function CryptoNavbar() {
                         <ChevronDown size={14} className="ml-1.5 opacity-50" />
                       </button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start" className="w-56 p-2 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl">
+                    <DropdownMenuContent align="start" className="w-56 p-2 rounded-2xl card-solid border border-slate-200 dark:border-slate-800 shadow-xl">
                       <div className="px-2 py-1.5 mb-1">
                         <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">Trading & Scanner</p>
                       </div>
                       {radarLinks.map(link => (
-                        <DropdownMenuItem key={link.href} asChild className="rounded-xl focus:bg-slate-100 dark:focus:bg-slate-800 cursor-pointer">
+                        <DropdownMenuItem key={link.href} asChild className="rounded-xl focus:bg-secondary text-secondary-foreground dark:focus:bg-slate-800 cursor-pointer">
                           <Link href={link.href} className="flex items-center gap-2 py-2">
-                            <link.icon size={14} className="text-slate-500" />
+                            <link.icon size={14} className="text-muted-foreground" />
                             <span className="font-bold flex-1">{link.label}</span>
                             {link.label === 'Scalping' && activeScalps > 0 && (
                               <span className="bg-emerald-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full min-w-[16px] text-center shadow-sm">
@@ -214,20 +214,20 @@ export function CryptoNavbar() {
                 <NavigationMenuItem>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <button className="group relative flex h-10 items-center justify-center rounded-xl bg-transparent px-4 py-1.5 text-xs font-bold transition-all text-slate-500 hover:text-slate-900 hover:bg-white dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/5 outline-none data-[state=open]:bg-white dark:data-[state=open]:bg-white/10 data-[state=open]:text-slate-900 dark:data-[state=open]:text-white">
+                      <button className="group relative flex h-10 items-center justify-center rounded-xl bg-transparent px-4 py-1.5 text-xs font-bold transition-all text-muted-foreground hover:text-foreground hover:card-solid dark:text-slate-400 dark:hover:text-white dark:hover:card-solid/5 outline-none data-[state=open]:card-solid dark:data-[state=open]:card-solid/10 data-[state=open]:text-foreground dark:data-[state=open]:text-white">
                         <BookOpen size={14} className="mr-1.5 text-orange-500" />
                         Insights
                         <ChevronDown size={14} className="ml-1.5 opacity-50" />
                       </button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start" className="w-56 p-2 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl">
+                    <DropdownMenuContent align="start" className="w-56 p-2 rounded-2xl card-solid border border-slate-200 dark:border-slate-800 shadow-xl">
                       <div className="px-2 py-1.5 mb-1">
                         <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">Berita & Edukasi</p>
                       </div>
                       {insightLinks.map(link => (
-                        <DropdownMenuItem key={link.href} asChild className="rounded-xl focus:bg-slate-100 dark:focus:bg-slate-800 cursor-pointer">
+                        <DropdownMenuItem key={link.href} asChild className="rounded-xl focus:bg-secondary text-secondary-foreground dark:focus:bg-slate-800 cursor-pointer">
                           <Link href={link.href} className="flex items-center gap-2 py-2">
-                            <link.icon size={14} className="text-slate-500" />
+                            <link.icon size={14} className="text-muted-foreground" />
                             <span className="font-bold flex-1">{link.label}</span>
                             {link.requiresPremium && !hasAccess && <Lock size={12} className="text-slate-400" />}
                           </Link>
@@ -253,7 +253,7 @@ export function CryptoNavbar() {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="flex items-center gap-2.5 p-1.5 pr-3 h-auto rounded-[1rem] hover:bg-slate-100 dark:hover:bg-white/5 hover:ring-1 hover:ring-slate-200 dark:hover:ring-white/10 transition-all"
+                  className="flex items-center gap-2.5 p-1.5 pr-3 h-auto rounded-[1rem] hover:bg-secondary text-secondary-foreground dark:hover:card-solid/5 hover:ring-1 hover:ring-slate-200 dark:hover:ring-white/10 transition-all"
                 >
                   {user.photoURL ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -274,60 +274,60 @@ export function CryptoNavbar() {
                     <span className="text-xs font-bold text-slate-700 dark:text-slate-200 leading-tight truncate max-w-[100px]">
                       {user.displayName?.split(' ')[0] || 'Pengguna'}
                     </span>
-                    <ChevronDown size={14} className="text-slate-400 dark:text-slate-500" />
+                    <ChevronDown size={14} className="text-slate-400 dark:text-muted-foreground" />
                   </div>
                 </Button>
               </DropdownMenuTrigger>
 
               <DropdownMenuContent
-                className="w-64 rounded-[1.5rem] p-3 shadow-lg dark:shadow-2xl dark:shadow-black/50 ring-1 ring-slate-200 dark:ring-white/10 border-slate-100 dark:border-white/5 bg-white dark:bg-slate-900"
+                className="w-64 rounded-[1.5rem] p-3 shadow-lg dark:shadow-2xl dark:shadow-black/50 ring-1 ring-slate-200 dark:ring-white/10 border-slate-100 dark:border-white/5 card-solid"
                 align="end"
               >
                 {/* Header akun */}
                 <DropdownMenuLabel className="font-normal px-3 py-2">
-                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Akun Saya</p>
-                  <p className="text-sm font-bold text-slate-900 dark:text-white truncate mt-1">{user.email}</p>
+                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Akun Saya</p>
+                  <p className="text-sm font-bold text-foreground truncate mt-1">{user.email}</p>
                   
                   {/* Status Crypto */}
-                  <div className="mt-3 flex items-center justify-between bg-slate-50 dark:bg-white/5 px-3 py-2 rounded-xl ring-1 ring-slate-100 dark:ring-white/10">
-                    <span className="text-xs font-bold text-slate-500 dark:text-slate-400">Status:</span>
+                  <div className="mt-3 flex items-center justify-between bg-muted text-muted-foreground dark:card-solid/5 px-3 py-2 rounded-xl ring-1 ring-slate-100 dark:ring-white/10">
+                    <span className="text-xs font-bold text-muted-foreground">Status:</span>
                     {hasAccess ? (
                       <span className="text-[10px] font-black bg-gradient-to-r from-amber-500 to-orange-400 text-white px-2 py-0.5 rounded-md shadow-sm uppercase tracking-wider">
                         Premium
                       </span>
                     ) : (
-                      <span className="text-[10px] font-black bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-2 py-0.5 rounded-md shadow-sm uppercase tracking-wider">
+                      <span className="text-[10px] font-black bg-secondary text-secondary-foreground text-muted-foreground px-2 py-0.5 rounded-md shadow-sm uppercase tracking-wider">
                         Free Tier
                       </span>
                     )}
                   </div>
                 </DropdownMenuLabel>
                 
-                <DropdownMenuSeparator className="bg-slate-100 dark:bg-white/5 my-2" />
+                <DropdownMenuSeparator className="bg-secondary text-secondary-foreground dark:card-solid/5 my-2" />
 
                 {/* Menu akun standar */}
                 <DropdownMenuGroup>
-                  <DropdownMenuItem asChild className="rounded-xl cursor-pointer hover:bg-slate-50 dark:hover:bg-white/5 font-bold text-slate-600 dark:text-slate-300 focus:text-slate-900 dark:focus:text-white focus:bg-slate-100 dark:focus:bg-white/10 py-2.5">
+                  <DropdownMenuItem asChild className="rounded-xl cursor-pointer hover:bg-muted text-muted-foreground dark:hover:card-solid/5 font-bold text-muted-foreground focus:text-foreground dark:focus:text-white focus:bg-secondary text-secondary-foreground dark:focus:card-solid/10 py-2.5">
                     <Link href={ROUTES.PROFIL} className="flex items-center gap-3">
-                      <User size={16} className="text-slate-400 dark:text-slate-500" /> Profil Lengkap
+                      <User size={16} className="text-slate-400 dark:text-muted-foreground" /> Profil Lengkap
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="rounded-xl cursor-pointer hover:bg-slate-50 dark:hover:bg-white/5 font-bold text-slate-600 dark:text-slate-300 focus:text-slate-900 dark:focus:text-white focus:bg-slate-100 dark:focus:bg-white/10 py-2.5">
+                  <DropdownMenuItem asChild className="rounded-xl cursor-pointer hover:bg-muted text-muted-foreground dark:hover:card-solid/5 font-bold text-muted-foreground focus:text-foreground dark:focus:text-white focus:bg-secondary text-secondary-foreground dark:focus:card-solid/10 py-2.5">
                     <Link href={ROUTES.RIWAYAT} className="flex items-center gap-3">
-                      <Receipt size={16} className="text-slate-400 dark:text-slate-500" /> Riwayat & Tagihan
+                      <Receipt size={16} className="text-slate-400 dark:text-muted-foreground" /> Riwayat & Tagihan
                     </Link>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
 
-                <DropdownMenuSeparator className="bg-slate-100 dark:bg-white/5 my-2" />
+                <DropdownMenuSeparator className="bg-secondary text-secondary-foreground dark:card-solid/5 my-2" />
                 
-                <DropdownMenuItem asChild className="rounded-xl cursor-pointer hover:bg-slate-50 dark:hover:bg-white/5 font-bold text-slate-600 dark:text-slate-300 focus:text-slate-900 dark:focus:text-white focus:bg-slate-100 dark:focus:bg-white/10 py-2.5">
+                <DropdownMenuItem asChild className="rounded-xl cursor-pointer hover:bg-muted text-muted-foreground dark:hover:card-solid/5 font-bold text-muted-foreground focus:text-foreground dark:focus:text-white focus:bg-secondary text-secondary-foreground dark:focus:card-solid/10 py-2.5">
                     <Link href="/crypto" className="flex items-center gap-3">
-                      <ChevronLeft size={16} className="text-slate-400 dark:text-slate-500" /> Kembali ke Main App
+                      <ChevronLeft size={16} className="text-slate-400 dark:text-muted-foreground" /> Kembali ke Main App
                     </Link>
                 </DropdownMenuItem>
                 
-                <DropdownMenuSeparator className="bg-slate-100 dark:bg-white/5 my-2" />
+                <DropdownMenuSeparator className="bg-secondary text-secondary-foreground dark:card-solid/5 my-2" />
                 
                 <DropdownMenuItem
                   onClick={handleLogout}
@@ -344,7 +344,7 @@ export function CryptoNavbar() {
             <Button
               variant="ghost"
               asChild
-              className="rounded-xl h-10 px-4 font-bold text-slate-400 hover:text-white hover:bg-white/10 transition-all text-xs"
+              className="rounded-xl h-10 px-4 font-bold text-slate-400 hover:text-white hover:card-solid/10 transition-all text-xs"
             >
               <Link href="/login">Masuk</Link>
             </Button>

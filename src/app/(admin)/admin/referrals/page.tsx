@@ -297,7 +297,7 @@ export default function AdminReferralsPage() {
     return (
       <div className="flex items-center justify-center h-[60vh]">
         <div className="flex flex-col items-center gap-3 text-slate-400">
-          <div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-indigo-200 dark:border-indigo-500/20 border-t-indigo-600 rounded-full animate-spin" />
           <p className="font-bold tracking-widest text-xs uppercase">
             Memuat Audit Referral...
           </p>
@@ -318,17 +318,17 @@ export default function AdminReferralsPage() {
               Referral Intelligence
             </Badge>
             <span className="text-slate-300">•</span>
-            <span className="text-xs font-bold text-slate-500">
+            <span className="text-xs font-bold text-muted-foreground">
               Attribution & Commission Audit
             </span>
           </div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+          <h1 className="text-3xl font-black text-foreground tracking-tight flex items-center gap-3">
             <div className="p-2 bg-indigo-600 text-white rounded-2xl shadow-lg shadow-indigo-600/20">
               <Radar className="w-6 h-6" />
             </div>
             Audit Referral Attribution
           </h1>
-          <p className="text-slate-500 mt-1 font-medium max-w-2xl text-sm leading-relaxed">
+          <p className="text-muted-foreground mt-1 font-medium max-w-2xl text-sm leading-relaxed">
             Monitor jejak ref per visitor, model atribusi, binding user, dan
             transaksi terakhir untuk validasi komisi affiliate.
           </p>
@@ -336,29 +336,29 @@ export default function AdminReferralsPage() {
 
         {/* QUICK METRICS */}
         <div className="grid grid-cols-2 gap-3 shrink-0">
-          <div className="bg-white p-4 rounded-2xl ring-1 ring-slate-200/80 shadow-xs flex items-center gap-4">
-            <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl">
+          <div className="card-solid p-4 rounded-2xl ring-1 ring-border/80 shadow-xs flex items-center gap-4">
+            <div className="p-2.5 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-xl">
               <Users size={20} />
             </div>
             <div>
               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                 Total Visitor Tracked
               </p>
-              <p className="text-xl font-black text-slate-900 mt-0.5">
+              <p className="text-xl font-black text-foreground mt-0.5">
                 {rows.length}
               </p>
             </div>
           </div>
 
-          <div className="bg-white p-4 rounded-2xl ring-1 ring-slate-200/80 shadow-xs flex items-center gap-4">
-            <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl">
+          <div className="card-solid p-4 rounded-2xl ring-1 ring-border/80 shadow-xs flex items-center gap-4">
+            <div className="p-2.5 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl">
               <CheckCircle2 size={20} />
             </div>
             <div>
               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                 Aktif (30-Hari)
               </p>
-              <p className="text-xl font-black text-emerald-600 mt-0.5">
+              <p className="text-xl font-black text-emerald-600 dark:text-emerald-400 mt-0.5">
                 {activeCount}
               </p>
             </div>
@@ -366,21 +366,21 @@ export default function AdminReferralsPage() {
         </div>
       </div>
 
-      <div className="bg-white p-4 rounded-2xl ring-1 ring-slate-200 shadow-sm flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+      <div className="card-solid p-4 rounded-2xl ring-1 ring-border shadow-sm flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
         <div className="relative w-full sm:w-[420px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
           <Input
             placeholder="Cari visitorId, affiliateCode, email, transactionId..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 h-11 bg-slate-50 rounded-xl border-slate-200 focus-visible:ring-indigo-500"
+            className="pl-9 h-11 bg-muted text-muted-foreground rounded-xl border-border focus-visible:ring-indigo-500"
           />
         </div>
 
         <div className="flex items-center gap-2">
-          <p className="text-xs font-bold text-slate-500">
+          <p className="text-xs font-bold text-muted-foreground">
             Menampilkan{' '}
-            <span className="text-slate-900">{filtered.length}</span> dokumen
+            <span className="text-foreground">{filtered.length}</span> dokumen
             referral attribution
           </p>
           <Button
@@ -395,7 +395,7 @@ export default function AdminReferralsPage() {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <Card className="xl:col-span-2 bg-white rounded-3xl border-none ring-1 ring-slate-200 shadow-sm overflow-hidden">
+        <Card className="xl:col-span-2 card-solid rounded-3xl border-none ring-1 ring-border shadow-sm overflow-hidden">
           {filtered.length === 0 ? (
             <div className="p-16 text-center text-slate-400">
               <Users className="w-12 h-12 mx-auto mb-4 opacity-20" />
@@ -406,7 +406,7 @@ export default function AdminReferralsPage() {
           ) : (
             <div className="overflow-x-auto w-full custom-scrollbar">
               <table className="w-full text-sm text-left whitespace-nowrap">
-                <thead className="bg-slate-50 text-slate-500 uppercase font-black text-[10px] tracking-widest border-b border-slate-100">
+                <thead className="bg-muted text-muted-foreground text-muted-foreground uppercase font-black text-[10px] tracking-widest border-b border-border">
                   <tr>
                     <th className="px-6 py-5">Visitor</th>
                     <th className="px-6 py-5">Affiliate</th>
@@ -423,42 +423,42 @@ export default function AdminReferralsPage() {
                       <tr
                         key={row.id}
                         onClick={() => setSelected(row)}
-                        className="hover:bg-indigo-50/30 transition-colors cursor-pointer"
+                        className="hover:bg-indigo-50 dark:bg-indigo-500/10/30 transition-colors cursor-pointer"
                       >
                         <td className="px-6 py-4">
-                          <p className="font-black text-slate-800">
+                          <p className="font-black text-foreground">
                             {trimText(row.visitorId || row.id, 24)}
                           </p>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-muted-foreground">
                             Touch: {formatDate(row.lastTouchAtMs)}
                           </p>
                         </td>
                         <td className="px-6 py-4">
-                          <p className="font-black text-indigo-700">
+                          <p className="font-black text-indigo-700 dark:text-indigo-300">
                             {row.selectedAffiliateCode || '-'}
                           </p>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-muted-foreground">
                             first: {row.firstClick?.affiliateCode || '-'}
                           </p>
                         </td>
                         <td className="px-6 py-4">
-                          <span className="inline-flex items-center rounded-lg bg-slate-100 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-slate-700">
+                          <span className="inline-flex items-center rounded-lg bg-secondary text-secondary-foreground px-2 py-1 text-[10px] font-black uppercase tracking-wide text-slate-700">
                             {row.attributionModel || '-'}
                           </span>
                         </td>
                         <td className="px-6 py-4">
-                          <p className="font-semibold text-slate-800">
+                          <p className="font-semibold text-foreground">
                             {trimText(row.boundUserEmail || '-', 26)}
                           </p>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-muted-foreground">
                             {trimText(row.boundUserUid || '-', 20)}
                           </p>
                         </td>
                         <td className="px-6 py-4">
-                          <p className="font-semibold text-slate-800">
+                          <p className="font-semibold text-foreground">
                             {row.lastTransactionId || '-'}
                           </p>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-muted-foreground">
                             exp: {formatDate(row.expiresAtMs)}
                           </p>
                         </td>
@@ -466,8 +466,8 @@ export default function AdminReferralsPage() {
                           <span
                             className={`inline-flex items-center rounded-lg px-2 py-1 text-[10px] font-black uppercase tracking-wide ${
                               active
-                                ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200'
-                                : 'bg-slate-100 text-slate-600 ring-1 ring-slate-200'
+                                ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 ring-1 ring-emerald-200 dark:ring-emerald-500/20'
+                                : 'bg-secondary text-secondary-foreground text-muted-foreground ring-1 ring-border'
                             }`}
                           >
                             {row.status || '-'}
@@ -482,18 +482,18 @@ export default function AdminReferralsPage() {
           )}
         </Card>
 
-        <Card className="bg-white rounded-3xl border-none ring-1 ring-slate-200 shadow-sm p-6">
+        <Card className="card-solid rounded-3xl border-none ring-1 ring-border shadow-sm p-6">
           {!selected ? (
             <div className="h-full flex flex-col items-center justify-center text-center text-slate-400">
               <Link2 className="w-10 h-10 mb-3 opacity-30" />
-              <p className="font-bold text-slate-500">
+              <p className="font-bold text-muted-foreground">
                 Pilih satu baris untuk melihat detail attribution.
               </p>
             </div>
           ) : (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">
+                <h3 className="text-sm font-black text-foreground uppercase tracking-widest">
                   Detail Attribution
                 </h3>
                 <Button
@@ -514,7 +514,7 @@ export default function AdminReferralsPage() {
                   <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                     Attribution ID
                   </p>
-                  <p className="font-semibold text-slate-800 break-all">
+                  <p className="font-semibold text-foreground break-all">
                     {selected.id}
                   </p>
                 </div>
@@ -522,7 +522,7 @@ export default function AdminReferralsPage() {
                   <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                     Selected Affiliate
                   </p>
-                  <p className="font-black text-indigo-700">
+                  <p className="font-black text-indigo-700 dark:text-indigo-300">
                     {selected.selectedAffiliateCode || '-'}
                   </p>
                 </div>
@@ -531,10 +531,10 @@ export default function AdminReferralsPage() {
                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                       First Click
                     </p>
-                    <p className="font-semibold text-slate-800">
+                    <p className="font-semibold text-foreground">
                       {selected.firstClick?.affiliateCode || '-'}
                     </p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-muted-foreground">
                       {formatDate(selected.firstClick?.capturedAtMs)}
                     </p>
                   </div>
@@ -542,10 +542,10 @@ export default function AdminReferralsPage() {
                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                       Last Click
                     </p>
-                    <p className="font-semibold text-slate-800">
+                    <p className="font-semibold text-foreground">
                       {selected.lastClick?.affiliateCode || '-'}
                     </p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-muted-foreground">
                       {formatDate(selected.lastClick?.capturedAtMs)}
                     </p>
                   </div>
@@ -554,7 +554,7 @@ export default function AdminReferralsPage() {
                   <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                     Landing Path
                   </p>
-                  <p className="font-semibold text-slate-800">
+                  <p className="font-semibold text-foreground">
                     {selected.lastClick?.landingPath ||
                       selected.firstClick?.landingPath ||
                       '-'}
@@ -577,10 +577,10 @@ export default function AdminReferralsPage() {
                   <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                     Bound User
                   </p>
-                  <p className="font-semibold text-slate-800">
+                  <p className="font-semibold text-foreground">
                     {selected.boundUserEmail || '-'}
                   </p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-muted-foreground">
                     {selected.boundUserUid || '-'}
                   </p>
                 </div>
@@ -588,15 +588,15 @@ export default function AdminReferralsPage() {
                   <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                     Last Transaction
                   </p>
-                  <p className="font-semibold text-slate-800">
+                  <p className="font-semibold text-foreground">
                     {selected.lastTransactionId || '-'}
                   </p>
                 </div>
-                <div className="flex items-center gap-2 text-xs text-slate-500 pt-2 border-t border-slate-100">
+                <div className="flex items-center gap-2 text-xs text-muted-foreground pt-2 border-t border-border">
                   <Clock3 className="w-3.5 h-3.5" />
                   Expired at: {formatDate(selected.expiresAtMs)}
                 </div>
-                <div className="flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 p-2 rounded-lg ring-1 ring-emerald-200">
+                <div className="flex items-center gap-2 text-xs text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-500/10 p-2 rounded-lg ring-1 ring-emerald-200 dark:ring-emerald-500/20">
                   <ShieldCheck className="w-3.5 h-3.5" />
                   Audit-only view. Perubahan attribution dilakukan via backend
                   pipeline.
@@ -614,25 +614,25 @@ export default function AdminReferralsPage() {
         </div>
       )}
 
-      <Card className="bg-white rounded-3xl border-none ring-1 ring-slate-200 shadow-sm p-6 mb-6">
+      <Card className="card-solid rounded-3xl border-none ring-1 ring-border shadow-sm p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-black uppercase tracking-widest text-amber-600">
+          <h3 className="text-sm font-black uppercase tracking-widest text-amber-600 dark:text-amber-400">
             Antrian Review Komisi (PENDING)
           </h3>
-          <p className="text-xs font-bold text-slate-500">
+          <p className="text-xs font-bold text-muted-foreground">
             {pendingCommissions.length} item
           </p>
         </div>
 
         {pendingCommissions.length === 0 ? (
-          <p className="text-sm text-slate-500 py-4">
+          <p className="text-sm text-muted-foreground py-4">
             Tidak ada komisi berstatus PENDING_APPROVAL saat ini.
           </p>
         ) : (
           <div className="overflow-x-auto w-full custom-scrollbar">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-[10px] uppercase tracking-widest text-slate-400 border-b border-slate-100">
+                <tr className="text-left text-[10px] uppercase tracking-widest text-slate-400 border-b border-border">
                   <th className="py-3 pr-4">Komisi ID</th>
                   <th className="py-3 pr-4">Affiliate</th>
                   <th className="py-3 pr-4">Modul</th>
@@ -644,16 +644,16 @@ export default function AdminReferralsPage() {
               <tbody>
                 {pendingCommissions.map((row) => (
                   <tr key={row.id} className="border-b border-slate-50">
-                    <td className="py-3 pr-4 font-semibold text-slate-800">
+                    <td className="py-3 pr-4 font-semibold text-foreground">
                       {trimText(row.id, 20)}
                     </td>
-                    <td className="py-3 pr-4 text-indigo-700 font-black">
+                    <td className="py-3 pr-4 text-indigo-700 dark:text-indigo-300 font-black">
                       {row.affiliateCode || '-'}
                     </td>
                     <td className="py-3 pr-4 text-slate-700">
                       {row.packageName || '-'}
                     </td>
-                    <td className="py-3 pr-4 font-black text-amber-600">
+                    <td className="py-3 pr-4 font-black text-amber-600 dark:text-amber-400">
                       Rp{' '}
                       {Number(row.commissionAmount || 0).toLocaleString(
                         'id-ID'
@@ -683,7 +683,7 @@ export default function AdminReferralsPage() {
                           onClick={() => handleReview(row.id, 'REJECT')}
                           disabled={reviewingId === row.id}
                           variant="outline"
-                          className="h-8 rounded-lg border-rose-200 text-rose-700 hover:bg-rose-50 px-3"
+                          className="h-8 rounded-lg border-rose-200 dark:border-rose-500/20 text-rose-700 dark:text-rose-300 hover:bg-rose-50 dark:bg-rose-500/10 px-3"
                         >
                           Reject
                         </Button>
@@ -697,25 +697,25 @@ export default function AdminReferralsPage() {
         )}
       </Card>
 
-      <Card className="bg-white rounded-3xl border-none ring-1 ring-slate-200 shadow-sm p-6">
+      <Card className="card-solid rounded-3xl border-none ring-1 ring-border shadow-sm p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-black uppercase tracking-widest text-slate-500">
+          <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground">
             Antrian Payout Komisi (APPROVED)
           </h3>
-          <p className="text-xs font-bold text-slate-500">
+          <p className="text-xs font-bold text-muted-foreground">
             {approvedCommissions.length} item
           </p>
         </div>
 
         {approvedCommissions.length === 0 ? (
-          <p className="text-sm text-slate-500 py-4">
+          <p className="text-sm text-muted-foreground py-4">
             Tidak ada komisi berstatus APPROVED saat ini.
           </p>
         ) : (
           <div className="overflow-x-auto w-full custom-scrollbar">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-[10px] uppercase tracking-widest text-slate-400 border-b border-slate-100">
+                <tr className="text-left text-[10px] uppercase tracking-widest text-slate-400 border-b border-border">
                   <th className="py-3 pr-4">Komisi ID</th>
                   <th className="py-3 pr-4">Affiliate</th>
                   <th className="py-3 pr-4">Modul</th>
@@ -727,16 +727,16 @@ export default function AdminReferralsPage() {
               <tbody>
                 {approvedCommissions.map((row) => (
                   <tr key={row.id} className="border-b border-slate-50">
-                    <td className="py-3 pr-4 font-semibold text-slate-800">
+                    <td className="py-3 pr-4 font-semibold text-foreground">
                       {row.id}
                     </td>
-                    <td className="py-3 pr-4 text-indigo-700 font-black">
+                    <td className="py-3 pr-4 text-indigo-700 dark:text-indigo-300 font-black">
                       {row.affiliateCode || '-'}
                     </td>
                     <td className="py-3 pr-4 text-slate-700">
                       {row.packageName || '-'}
                     </td>
-                    <td className="py-3 pr-4 font-black text-emerald-700">
+                    <td className="py-3 pr-4 font-black text-emerald-700 dark:text-emerald-300">
                       Rp{' '}
                       {Number(row.commissionAmount || 0).toLocaleString(
                         'id-ID'

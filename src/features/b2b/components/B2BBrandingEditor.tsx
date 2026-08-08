@@ -132,7 +132,7 @@ export function B2BBrandingEditor({ organizationId }: B2BBrandingEditorProps) {
 
   if (!organizationId || organizationId === '__all__') {
     return (
-      <div className="flex flex-col items-center justify-center p-12 bg-white rounded-3xl ring-1 ring-slate-200 border-none text-slate-500">
+      <div className="flex flex-col items-center justify-center p-12 card-solid rounded-3xl ring-1 ring-border border-none text-muted-foreground">
         <Palette className="w-12 h-12 mb-4 text-slate-300" />
         <p className="font-bold">Pilih Organisasi</p>
         <p className="text-sm">Silakan pilih spesifik organisasi / campaign di atas untuk mengatur branding.</p>
@@ -142,18 +142,18 @@ export function B2BBrandingEditor({ organizationId }: B2BBrandingEditorProps) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-12 bg-white rounded-3xl ring-1 ring-slate-200 border-none">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+      <div className="flex items-center justify-center p-12 card-solid rounded-3xl ring-1 ring-border border-none">
+        <Loader2 className="w-8 h-8 animate-spin text-indigo-600 dark:text-indigo-400" />
       </div>
     );
   }
 
   return (
-    <Card className="p-8 bg-white rounded-3xl shadow-sm ring-1 ring-slate-200 border-none space-y-8 animate-in fade-in duration-500">
+    <Card className="p-8 card-solid rounded-3xl shadow-sm ring-1 ring-border border-none space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-black text-slate-900">Kustomisasi Branding & Landing Page</h2>
-          <p className="text-sm text-slate-500 mt-1">
+          <h2 className="text-xl font-black text-foreground">Kustomisasi Branding & Landing Page</h2>
+          <p className="text-sm text-muted-foreground mt-1">
             Atur identitas visual untuk organisasi <strong>{orgName}</strong>. Halaman publik dapat diakses peserta melalui URL Slug.
           </p>
         </div>
@@ -165,7 +165,7 @@ export function B2BBrandingEditor({ organizationId }: B2BBrandingEditorProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="space-y-4">
           <div className="space-y-2">
-            <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center justify-between">
+            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest flex items-center justify-between">
               <span className="flex items-center gap-2">
                 <LinkIcon className="w-3.5 h-3.5" /> URL Slug (Publik)
               </span>
@@ -174,26 +174,26 @@ export function B2BBrandingEditor({ organizationId }: B2BBrandingEditorProps) {
                   href={`/mitra/${branding.slug}`} 
                   target="_blank" 
                   rel="noreferrer"
-                  className="flex items-center gap-1 text-[10px] text-indigo-600 hover:text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-full lowercase"
+                  className="flex items-center gap-1 text-[10px] text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-500/10 px-2 py-0.5 rounded-full lowercase"
                 >
                   Kunjungi Landing Page <ExternalLink className="w-3 h-3" />
                 </a>
               )}
             </label>
             <div className="flex">
-              <span className="inline-flex items-center px-4 rounded-l-xl border border-r-0 border-slate-200 bg-slate-50 text-slate-500 text-sm font-medium cursor-not-allowed">
+              <span className="inline-flex items-center px-4 rounded-l-xl border border-r-0 border-border bg-muted text-muted-foreground text-muted-foreground text-sm font-medium cursor-not-allowed">
                 omnifit.ai/mitra/
               </span>
               <Input
                 value={branding.slug}
                 readOnly
-                className="rounded-l-none rounded-r-xl h-11 bg-slate-50 text-slate-500 font-bold cursor-not-allowed focus-visible:ring-0"
+                className="rounded-l-none rounded-r-xl h-11 bg-muted text-muted-foreground text-muted-foreground font-bold cursor-not-allowed focus-visible:ring-0"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
               <Palette className="w-3.5 h-3.5" /> Warna Utama (Brand Color)
             </label>
             <div className="flex items-center gap-4">
@@ -214,31 +214,31 @@ export function B2BBrandingEditor({ organizationId }: B2BBrandingEditorProps) {
           </div>
 
           <div className="space-y-2">
-            <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
               <Type className="w-3.5 h-3.5" /> Teks Sambutan (Welcome Message)
             </label>
             <textarea
               value={branding.welcomeMessage}
               onChange={(e) => setBranding({ ...branding, welcomeMessage: e.target.value })}
               placeholder="Selamat datang di Portal Asesmen Telkomsel..."
-              className="w-full h-24 p-3 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-500 outline-none resize-none"
+              className="w-full h-24 p-3 rounded-xl border border-border text-sm focus:ring-2 focus:ring-indigo-500 outline-none resize-none"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
               <FileText className="w-3.5 h-3.5" /> Deskripsi Perusahaan
             </label>
             <textarea
               value={branding.description}
               onChange={(e) => setBranding({ ...branding, description: e.target.value })}
               placeholder="Jelaskan secara singkat mengenai organisasi/mitra (opsional)..."
-              className="w-full h-24 p-3 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-500 outline-none resize-none"
+              className="w-full h-24 p-3 rounded-xl border border-border text-sm focus:ring-2 focus:ring-indigo-500 outline-none resize-none"
             />
           </div>
           
           <div className="space-y-3 pt-2">
-            <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
               <Globe className="w-3.5 h-3.5" /> Tautan Media Sosial
             </label>
             <div className="space-y-2">
@@ -275,7 +275,7 @@ export function B2BBrandingEditor({ organizationId }: B2BBrandingEditorProps) {
 
         <div className="space-y-4">
           <div className="space-y-2">
-            <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center justify-between">
+            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest flex items-center justify-between">
               <span className="flex items-center gap-2"><ImageIcon className="w-3.5 h-3.5" /> Logo Perusahaan</span>
               {branding.logoUrl && (
                 <button onClick={() => setBranding({ ...branding, logoUrl: '' })} className="text-[10px] text-red-500 hover:underline">Hapus</button>
@@ -290,17 +290,17 @@ export function B2BBrandingEditor({ organizationId }: B2BBrandingEditorProps) {
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                 disabled={uploadingLogo}
               />
-              <div className="bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 hover:border-indigo-300 transition-colors flex flex-col items-center justify-center p-6 text-center h-40">
+              <div className="bg-muted text-muted-foreground rounded-2xl border-2 border-dashed border-border hover:border-indigo-300 transition-colors flex flex-col items-center justify-center p-6 text-center h-40">
                 {uploadingLogo ? (
                   <div className="flex flex-col items-center">
                     <Loader2 className="w-6 h-6 animate-spin text-indigo-500 mb-2" />
-                    <p className="text-xs text-slate-500 font-medium">Mengunggah Logo...</p>
+                    <p className="text-xs text-muted-foreground font-medium">Mengunggah Logo...</p>
                   </div>
                 ) : branding.logoUrl ? (
                   <img src={branding.logoUrl} alt="Logo Preview" className="max-h-full max-w-full object-contain p-2" />
                 ) : (
                   <>
-                    <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center mb-2">
+                    <div className="w-10 h-10 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center mb-2">
                       <UploadCloud className="w-5 h-5 text-slate-400" />
                     </div>
                     <p className="text-xs font-bold text-slate-700">Klik atau Tarik Logo ke sini</p>
@@ -312,7 +312,7 @@ export function B2BBrandingEditor({ organizationId }: B2BBrandingEditorProps) {
           </div>
 
           <div className="space-y-2 pt-4">
-            <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center justify-between">
+            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest flex items-center justify-between">
               <span className="flex items-center gap-2"><ImageIcon className="w-3.5 h-3.5" /> Banner / Cover Page</span>
               {branding.coverUrl && (
                 <button onClick={() => setBranding({ ...branding, coverUrl: '' })} className="text-[10px] text-red-500 hover:underline">Hapus</button>
@@ -327,17 +327,17 @@ export function B2BBrandingEditor({ organizationId }: B2BBrandingEditorProps) {
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                 disabled={uploadingCover}
               />
-              <div className="bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 hover:border-indigo-300 transition-colors flex flex-col items-center justify-center p-6 text-center h-48 overflow-hidden">
+              <div className="bg-muted text-muted-foreground rounded-2xl border-2 border-dashed border-border hover:border-indigo-300 transition-colors flex flex-col items-center justify-center p-6 text-center h-48 overflow-hidden">
                 {uploadingCover ? (
                   <div className="flex flex-col items-center">
                     <Loader2 className="w-6 h-6 animate-spin text-indigo-500 mb-2" />
-                    <p className="text-xs text-slate-500 font-medium">Mengunggah Banner...</p>
+                    <p className="text-xs text-muted-foreground font-medium">Mengunggah Banner...</p>
                   </div>
                 ) : branding.coverUrl ? (
                   <img src={branding.coverUrl} alt="Cover Preview" className="w-full h-full object-cover opacity-90 rounded-xl" />
                 ) : (
                   <>
-                    <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center mb-2">
+                    <div className="w-10 h-10 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center mb-2">
                       <UploadCloud className="w-5 h-5 text-slate-400" />
                     </div>
                     <p className="text-xs font-bold text-slate-700">Klik atau Tarik Banner ke sini</p>
@@ -350,7 +350,7 @@ export function B2BBrandingEditor({ organizationId }: B2BBrandingEditorProps) {
         </div>
       </div>
 
-      <div className="flex justify-end pt-6 border-t border-slate-100">
+      <div className="flex justify-end pt-6 border-t border-border">
         <Button
           onClick={handleSave}
           disabled={saving}

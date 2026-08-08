@@ -48,7 +48,7 @@ export default function LiquidityHeatmapPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-slate-50 dark:bg-slate-950">
+      <div className="flex justify-center items-center min-h-screen bg-background text-foreground">
         <CryptoLoadingState type="spinner" message="Memuat Peta Likuiditas..." />
       </div>
     );
@@ -77,7 +77,7 @@ export default function LiquidityHeatmapPage() {
 
   if (!latestReport) {
     return (
-      <div className="p-8 flex justify-center items-center min-h-screen bg-slate-50 dark:bg-slate-950">
+      <div className="p-8 flex justify-center items-center min-h-screen bg-background text-foreground">
         <CryptoEmptyState 
            icon={<Radar className="w-8 h-8" />}
            title="Belum Ada Data"
@@ -96,16 +96,16 @@ export default function LiquidityHeatmapPage() {
       title="Liquidity Heatmap" 
       description="Peta likuiditas market untuk mengetahui area target harga dan manipulasi bandar eksklusif untuk pengguna Premium."
     >
-      <div className="w-full relative min-h-screen bg-slate-50 dark:bg-slate-950">
+      <div className="w-full relative min-h-screen bg-background text-foreground">
       
       {/* HEADER SECTION */}
-      <div className="bg-slate-50 dark:bg-slate-950/40 backdrop-blur-md border-b border-white/5 mb-6">
+      <div className="bg-background text-foreground backdrop-blur-md border-b border-white/5 mb-6">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
            <CryptoButton 
                variant="ghost" 
                size="sm" 
                onClick={() => router.back()}
-               className="mb-6 -ml-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white"
+               className="mb-6 -ml-2 text-muted-foreground hover:text-foreground"
            >
                <ArrowLeft className="w-4 h-4 mr-2" /> Kembali ke Laporan
            </CryptoButton>
@@ -121,15 +121,15 @@ export default function LiquidityHeatmapPage() {
 
                <div className="flex flex-col items-end gap-2 shrink-0">
                    <Select value={selectedReportId} onValueChange={setSelectedReportId}>
-                     <SelectTrigger className="w-[200px] h-9 text-xs bg-white/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800/80 text-slate-600 dark:text-slate-300 focus:ring-0 focus:ring-offset-0 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-100 dark:bg-slate-800 transition-colors">
+                     <SelectTrigger className="w-[200px] h-9 text-xs card-solid/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800/80 text-muted-foreground focus:ring-0 focus:ring-offset-0 rounded-xl hover:bg-secondary text-secondary-foreground dark:hover:bg-secondary text-secondary-foreground transition-colors">
                         <SelectValue placeholder="Pilih Waktu" />
                      </SelectTrigger>
-                     <SelectContent className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 rounded-xl shadow-xl shadow-black/50">
+                     <SelectContent className="card-solid border-slate-200 dark:border-slate-800 text-muted-foreground rounded-xl shadow-xl shadow-black/50">
                         {reports.map(r => {
                            const d = r.createdAt?.toDate ? r.createdAt.toDate() : new Date(r.createdAt);
                            const isLatest = r.id === reports[0]?.id;
                            return (
-                              <SelectItem key={r.id} value={r.id} className="text-xs cursor-pointer focus:bg-slate-100 dark:bg-slate-800 focus:text-slate-900 dark:text-white">
+                              <SelectItem key={r.id} value={r.id} className="text-xs cursor-pointer focus:bg-secondary text-secondary-foreground focus:text-foreground">
                                  {d.toLocaleDateString("id-ID", { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })} WIB {isLatest && "(Terbaru)"}
                               </SelectItem>
                            )
@@ -143,7 +143,7 @@ export default function LiquidityHeatmapPage() {
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 pb-24">
          
-         <div className="mb-8 p-5 rounded-2xl bg-gradient-to-r from-slate-100 dark:from-slate-800 to-slate-200 dark:to-slate-900 border border-cyan-500/20 text-slate-600 dark:text-slate-300 relative overflow-hidden">
+         <div className="mb-8 p-5 rounded-2xl bg-gradient-to-r from-slate-100 dark:from-slate-800 to-slate-200 dark:to-slate-900 border border-cyan-500/20 text-muted-foreground relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-3xl"></div>
             <h3 className="font-bold text-cyan-400 mb-2 flex items-center gap-2 relative z-10">
                 <Radar className="w-4 h-4" /> Konsep Liquidity Sweep
@@ -161,9 +161,9 @@ export default function LiquidityHeatmapPage() {
                         <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6">
                             <div>
                                 <div className="flex items-center gap-3 mb-2">
-                                    <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">{coin.symbol}</h2>
+                                    <h2 className="text-3xl font-black text-foreground tracking-tight">{coin.symbol}</h2>
                                 </div>
-                                <div className="text-2xl font-bold text-slate-600 dark:text-slate-300 font-mono tracking-wider">
+                                <div className="text-2xl font-bold text-muted-foreground font-mono tracking-wider">
                                     {coin.currentPrice}
                                 </div>
                             </div>
@@ -176,8 +176,8 @@ export default function LiquidityHeatmapPage() {
                                 <div className="text-xs font-bold text-red-400 uppercase tracking-widest mb-1 flex items-center gap-1.5">
                                     <Crosshair className="w-3 h-3" /> Short Liquidity (Upper)
                                 </div>
-                                <div className="text-xl font-mono text-slate-900 dark:text-white font-bold">{coin.shortLiquidityZone}</div>
-                                <div className="text-xs text-slate-500 mt-2">Area Stop-Loss dari penjual (Shorts). Harga rawan melonjak ke titik ini.</div>
+                                <div className="text-xl font-mono text-foreground font-bold">{coin.shortLiquidityZone}</div>
+                                <div className="text-xs text-muted-foreground mt-2">Area Stop-Loss dari penjual (Shorts). Harga rawan melonjak ke titik ini.</div>
                             </div>
 
                             {/* Long Liquidity (Support) */}
@@ -186,35 +186,35 @@ export default function LiquidityHeatmapPage() {
                                 <div className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1 flex items-center gap-1.5">
                                     <Crosshair className="w-3 h-3" /> Long Liquidity (Lower)
                                 </div>
-                                <div className="text-xl font-mono text-slate-900 dark:text-white font-bold">{coin.longLiquidityZone}</div>
-                                <div className="text-xs text-slate-500 mt-2">Area Stop-Loss dari pembeli (Longs). Harga rawan terperosok ke titik ini.</div>
+                                <div className="text-xl font-mono text-foreground font-bold">{coin.longLiquidityZone}</div>
+                                <div className="text-xs text-muted-foreground mt-2">Area Stop-Loss dari pembeli (Longs). Harga rawan terperosok ke titik ini.</div>
                             </div>
                         </div>
 
                         {coin.quantitativeMetrics && (
                            <div className="grid grid-cols-3 gap-3 mb-6">
-                              <div className="bg-slate-50 dark:bg-black/30 p-3 rounded-lg border border-white/5">
-                                 <div className="text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-1">Open Interest</div>
+                              <div className="bg-muted text-muted-foreground dark:bg-black/30 p-3 rounded-lg border border-white/5">
+                                 <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Open Interest</div>
                                  <div className="text-sm font-black text-cyan-400">
                                      {coin.quantitativeMetrics.openInterest ? (parseFloat(coin.quantitativeMetrics.openInterest) / 1000000).toFixed(2) + 'M' : 'N/A'}
                                  </div>
                               </div>
-                              <div className="bg-slate-50 dark:bg-black/30 p-3 rounded-lg border border-white/5">
-                                 <div className="text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-1">Volatility</div>
+                              <div className="bg-muted text-muted-foreground dark:bg-black/30 p-3 rounded-lg border border-white/5">
+                                 <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Volatility</div>
                                  <div className="text-sm font-black text-blue-400">{coin.quantitativeMetrics.volatilityPct}%</div>
                               </div>
-                              <div className="bg-slate-50 dark:bg-black/30 p-3 rounded-lg border border-white/5">
-                                 <div className="text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-1">Raw ATR</div>
+                              <div className="bg-muted text-muted-foreground dark:bg-black/30 p-3 rounded-lg border border-white/5">
+                                 <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Raw ATR</div>
                                  <div className="text-sm font-black text-emerald-400">{coin.quantitativeMetrics.atr}</div>
                               </div>
                            </div>
                         )}
 
                         <div>
-                            <h4 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                            <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-3 flex items-center gap-2">
                                 <Activity className="w-4 h-4 text-cyan-500" /> Strategi Eksekusi Institusi
                             </h4>
-                            <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed font-medium bg-slate-200 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-300 dark:border-slate-700/50">
+                            <p className="text-muted-foreground text-sm leading-relaxed font-medium bg-slate-200 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-300 dark:border-slate-700/50">
                                 {coin.hunterStrategy}
                             </p>
                         </div>

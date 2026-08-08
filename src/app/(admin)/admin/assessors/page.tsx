@@ -256,54 +256,54 @@ export default function AdminAssessorManagerPage() {
               Partner Management
             </Badge>
             <span className="text-slate-300">•</span>
-            <span className="text-xs font-bold text-slate-500">Access Control & Delegations</span>
+            <span className="text-xs font-bold text-muted-foreground">Access Control & Delegations</span>
           </div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+          <h1 className="text-3xl font-black text-foreground tracking-tight flex items-center gap-3">
             <div className="p-2 bg-indigo-600 text-white rounded-2xl shadow-lg shadow-indigo-600/20">
               <UserCheck className="w-6 h-6" />
             </div>
             Kemitraan & Manajemen Asesor
           </h1>
-          <p className="text-slate-500 mt-1 font-medium max-w-2xl text-sm leading-relaxed">
+          <p className="text-muted-foreground mt-1 font-medium max-w-2xl text-sm leading-relaxed">
             Daftarkan email asesor eksternal, alokasikan kuota form penilaian secara eksklusif, dan sinkronkan dengan program pada Token Page.
           </p>
         </div>
 
         {/* QUICK SUMMARY CARDS */}
         <div className="grid grid-cols-2 gap-3 shrink-0">
-          <div className="bg-white p-4 rounded-2xl ring-1 ring-slate-200/80 shadow-xs flex items-center gap-4">
-            <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl"><UserCheck size={20} /></div>
+          <div className="card-solid p-4 rounded-2xl ring-1 ring-border/80 shadow-xs flex items-center gap-4">
+            <div className="p-2.5 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-xl"><UserCheck size={20} /></div>
             <div>
               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Total Asesor</p>
-              <p className="text-xl font-black text-slate-900 mt-0.5">{assessors.length}</p>
+              <p className="text-xl font-black text-foreground mt-0.5">{assessors.length}</p>
             </div>
           </div>
 
-          <div className="bg-white p-4 rounded-2xl ring-1 ring-slate-200/80 shadow-xs flex items-center gap-4">
-            <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl"><FolderOpen size={20} /></div>
+          <div className="card-solid p-4 rounded-2xl ring-1 ring-border/80 shadow-xs flex items-center gap-4">
+            <div className="p-2.5 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl"><FolderOpen size={20} /></div>
             <div>
               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Program Kemitraan</p>
-              <p className="text-xl font-black text-slate-900 mt-0.5">{programs.length}</p>
+              <p className="text-xl font-black text-foreground mt-0.5">{programs.length}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* FORM REGISTRASI ASESOR */}
-      <Card className="p-6 sm:p-8 bg-white rounded-3xl border-none ring-1 ring-slate-200/80 shadow-xs flex flex-col gap-6">
+      <Card className="p-6 sm:p-8 card-solid rounded-3xl border-none ring-1 ring-border/80 shadow-xs flex flex-col gap-6">
         <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-          <Plus className="w-4 h-4 text-indigo-600" /> Pembuatan Akun & Alokasi Asesor Baru
+          <Plus className="w-4 h-4 text-indigo-600 dark:text-indigo-400" /> Pembuatan Akun & Alokasi Asesor Baru
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           <div className="space-y-2 lg:col-span-1">
-            <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-1">
+            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-1">
               <FolderOpen className="w-3.5 h-3.5" /> Program Kemitraan
             </label>
             <select
               value={programName}
               onChange={(e) => setProgramName(e.target.value)}
-              className="flex h-12 w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs font-bold text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer"
+              className="flex h-12 w-full rounded-xl border border-border bg-muted text-muted-foreground/80 px-3 py-2 text-xs font-bold text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer"
             >
               <option value="" disabled>
                 -- Pilih Program Kemitraan --
@@ -322,19 +322,19 @@ export default function AdminAssessorManagerPage() {
           </div>
 
           <div className="space-y-2 lg:col-span-1">
-            <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-1">
+            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-1">
               <User className="w-3.5 h-3.5" /> Nama Asesor / Instansi
             </label>
             <Input
               value={assessorName}
               onChange={(e) => setAssessorName(e.target.value)}
               placeholder="Cth: Dr. Budi Santoso"
-              className="h-12 rounded-xl bg-slate-50/80 text-xs font-bold border-slate-200 focus-visible:ring-indigo-500"
+              className="h-12 rounded-xl bg-muted text-muted-foreground/80 text-xs font-bold border-border focus-visible:ring-indigo-500"
             />
           </div>
 
           <div className="space-y-2 lg:col-span-1">
-            <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-1">
+            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-1">
               <Mail className="w-3.5 h-3.5" /> Akun Google Asesor
             </label>
             <Input
@@ -342,12 +342,12 @@ export default function AdminAssessorManagerPage() {
               value={assessorEmail}
               onChange={(e) => setAssessorEmail(e.target.value)}
               placeholder="budi@gmail.com"
-              className="h-12 rounded-xl bg-slate-50/80 font-mono text-xs font-bold border-slate-200 focus-visible:ring-indigo-500"
+              className="h-12 rounded-xl bg-muted text-muted-foreground/80 font-mono text-xs font-bold border-border focus-visible:ring-indigo-500"
             />
           </div>
         </div>
 
-        <div className="flex justify-end pt-4 border-t border-slate-100">
+        <div className="flex justify-end pt-4 border-t border-border">
           <Button
             onClick={handleRegisterAssessor}
             disabled={isSubmitting}
@@ -398,9 +398,9 @@ export default function AdminAssessorManagerPage() {
                   .join(', ') || 'Semua Modul (Akses Penuh)'
 
               return (
-                <TableRow key={item.id} className="hover:bg-slate-50/70">
+                <TableRow key={item.id} className="hover:bg-muted text-muted-foreground/70">
                   <TableCell>
-                    <p className="font-extrabold text-slate-900 text-sm">{item.assessorName}</p>
+                    <p className="font-extrabold text-foreground text-sm">{item.assessorName}</p>
                     <p className="text-[11px] font-mono text-slate-400 font-medium flex items-center gap-1 mt-0.5">
                       <Mail size={10} />
                       {item.assessorEmail}
@@ -418,7 +418,7 @@ export default function AdminAssessorManagerPage() {
                       {matchedProgram ? templateNames : <span className="text-rose-500">Program Tidak Ditemukan</span>}
                     </span>
                     {matchedProgram && (
-                      <span className="font-mono font-black text-slate-400 bg-slate-50 px-2 py-0.5 rounded border border-slate-200 text-[9px] mt-1 inline-block">
+                      <span className="font-mono font-black text-slate-400 bg-muted text-muted-foreground px-2 py-0.5 rounded border border-border text-[9px] mt-1 inline-block">
                         Prefix: {matchedProgram.id}-***
                       </span>
                     )}
@@ -427,11 +427,11 @@ export default function AdminAssessorManagerPage() {
                   <TableCell className="text-center">
                     {matchedProgram ? (
                       <div className="flex flex-col items-center">
-                        <span className="font-black text-slate-800 text-sm">
+                        <span className="font-black text-foreground text-sm">
                           {matchedProgram.usedCount}{' '}
                           <span className="text-slate-300 text-xs">/ {matchedProgram.totalTokens}</span>
                         </span>
-                        <div className="w-20 h-1 bg-slate-100 rounded-full mt-1.5 overflow-hidden relative">
+                        <div className="w-20 h-1 bg-secondary text-secondary-foreground rounded-full mt-1.5 overflow-hidden relative">
                           <div
                             className="absolute h-full bg-emerald-500 rounded-full"
                             style={{
@@ -450,7 +450,7 @@ export default function AdminAssessorManagerPage() {
                       <Button
                         onClick={() => openEditModal(item)}
                         variant="ghost"
-                        className="text-amber-600 bg-amber-50 hover:bg-amber-100 h-8 px-3 rounded-xl font-bold text-xs"
+                        className="text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 hover:bg-amber-100 dark:hover:bg-amber-500/20 h-8 px-3 rounded-xl font-bold text-xs"
                         title="Edit Data Asesor"
                       >
                         <Edit3 className="w-3.5 h-3.5 mr-1" /> Edit
@@ -460,7 +460,7 @@ export default function AdminAssessorManagerPage() {
                         <AlertDialogTrigger asChild>
                           <Button
                             variant="ghost"
-                            className="text-rose-500 hover:text-rose-700 hover:bg-rose-50 h-8 w-8 p-0 rounded-xl"
+                            className="text-rose-500 hover:text-rose-700 dark:text-rose-300 hover:bg-rose-50 dark:bg-rose-500/10 h-8 w-8 p-0 rounded-xl"
                             title="Cabut Hak Asesor"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -498,20 +498,20 @@ export default function AdminAssessorManagerPage() {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white rounded-[2rem] shadow-2xl w-full max-w-xl flex flex-col ring-1 ring-slate-200 overflow-hidden relative"
+              className="card-solid rounded-[2rem] shadow-2xl w-full max-w-xl flex flex-col ring-1 ring-border overflow-hidden relative"
             >
-              <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+              <div className="p-6 border-b border-border flex items-center justify-between bg-muted text-muted-foreground/50">
                 <div>
-                  <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
+                  <h3 className="text-lg font-black text-foreground flex items-center gap-2">
                     <Edit3 className="w-5 h-5 text-amber-500" /> Edit Data Asesor
                   </h3>
-                  <p className="text-xs font-bold text-slate-500 mt-1">
-                    Akun Terkait: <span className="text-indigo-600">{editingAssessor.assessorEmail}</span>
+                  <p className="text-xs font-bold text-muted-foreground mt-1">
+                    Akun Terkait: <span className="text-indigo-600 dark:text-indigo-400">{editingAssessor.assessorEmail}</span>
                   </p>
                 </div>
                 <button
                   onClick={() => setEditingAssessor(null)}
-                  className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 text-slate-500 transition-colors"
+                  className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 text-muted-foreground transition-colors"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -526,7 +526,7 @@ export default function AdminAssessorManagerPage() {
                     <Input
                       value={editName}
                       onChange={(e) => setEditName(e.target.value)}
-                      className="h-12 bg-white rounded-xl focus-visible:ring-indigo-500 text-xs font-bold"
+                      className="h-12 card-solid rounded-xl focus-visible:ring-indigo-500 text-xs font-bold"
                     />
                   </div>
 
@@ -537,7 +537,7 @@ export default function AdminAssessorManagerPage() {
                     <select
                       value={editProgram}
                       onChange={(e) => setEditProgram(e.target.value)}
-                      className="flex h-12 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer"
+                      className="flex h-12 w-full rounded-xl border border-border card-solid px-3 py-2 text-xs font-bold text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer"
                     >
                       {programs.map((p) => (
                         <option key={p.id} value={p.corporateName}>
@@ -548,7 +548,7 @@ export default function AdminAssessorManagerPage() {
                   </div>
                 </div>
 
-                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex gap-3">
+                <div className="bg-muted text-muted-foreground p-4 rounded-2xl border border-border flex gap-3">
                   <div className="shrink-0 mt-0.5">
                     <ShieldAlert className="w-5 h-5 text-amber-500" />
                   </div>
@@ -558,11 +558,11 @@ export default function AdminAssessorManagerPage() {
                 </div>
               </div>
 
-              <div className="p-6 border-t border-slate-100 bg-slate-50/50 flex gap-3">
+              <div className="p-6 border-t border-border bg-muted text-muted-foreground/50 flex gap-3">
                 <Button
                   variant="outline"
                   onClick={() => setEditingAssessor(null)}
-                  className="w-full h-12 rounded-xl font-bold border-slate-200 text-slate-600 hover:bg-slate-100"
+                  className="w-full h-12 rounded-xl font-bold border-border text-muted-foreground hover:bg-secondary text-secondary-foreground"
                 >
                   Batal
                 </Button>

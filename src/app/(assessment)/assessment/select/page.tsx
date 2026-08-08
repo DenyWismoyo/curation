@@ -44,12 +44,12 @@ export default function AssessmentIndexPage() {
   // UI Loading Menggunakan Custom BrainIcon
   if (state.isLoadingTemplates || !isAuthorized) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-muted text-muted-foreground">
         <div className="w-14 h-14 mb-4 relative flex items-center justify-center">
           <div className="absolute inset-0 rounded-full border-[4px] border-indigo-100 border-t-indigo-600 animate-spin" />
-          <BrainIcon size={24} className="text-indigo-600 animate-pulse" />
+          <BrainIcon size={24} className="text-indigo-600 dark:text-indigo-400 animate-pulse" />
         </div>
-        <p className="text-slate-500 font-medium tracking-wide">
+        <p className="text-muted-foreground font-medium tracking-wide">
           {!isAuthorized ? 'Memverifikasi Akses...' : 'Memuat Katalog Modul...'}
         </p>
       </div>

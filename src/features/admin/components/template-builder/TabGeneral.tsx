@@ -341,12 +341,12 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
   const activeCarouselSlides = activeAssets?.carouselSlides || [];
 
   return (
-    <div className="bg-white p-6 md:p-8 rounded-3xl ring-1 ring-slate-200 shadow-sm space-y-8">
+    <div className="card-solid p-6 md:p-8 rounded-3xl ring-1 ring-border shadow-sm space-y-8">
       
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 pb-4 border-b border-slate-100">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 pb-4 border-b border-border">
         <div>
-          <h3 className="text-xl font-black text-slate-900">Identitas Program</h3>
-          <p className="text-sm text-slate-500 font-medium mt-1">Tampilan yang akan dilihat peserta di halaman depan katalog.</p>
+          <h3 className="text-xl font-black text-foreground">Identitas Program</h3>
+          <p className="text-sm text-muted-foreground font-medium mt-1">Tampilan yang akan dilihat peserta di halaman depan katalog.</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Button
@@ -354,7 +354,7 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
             onClick={handleGenerateIdentityInspirations}
             disabled={isGeneratingInspirations}
             variant="outline"
-            className="border-indigo-200 text-indigo-700 hover:bg-indigo-50 font-bold rounded-xl h-10 px-4 shadow-sm shrink-0 transition-all"
+            className="border-indigo-200 dark:border-indigo-500/20 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:bg-indigo-500/10 font-bold rounded-xl h-10 px-4 shadow-sm shrink-0 transition-all"
           >
             {isGeneratingInspirations ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
             Inspirasi DeepSeek
@@ -372,28 +372,28 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
       </div>
 
       {identityInspirations.length > 0 && (
-        <div className="mb-6 rounded-2xl border border-indigo-100 bg-indigo-50/50 p-4">
+        <div className="mb-6 rounded-2xl border border-indigo-100 bg-indigo-50 dark:bg-indigo-500/10/50 p-4">
           <div className="flex items-center justify-between gap-3 mb-3">
             <div>
               <h4 className="text-sm font-black text-indigo-900 uppercase tracking-wider">Kandidat Inspirasi DeepSeek</h4>
-              <p className="text-xs text-indigo-700/80 font-medium mt-1">Pilih satu kandidat untuk langsung mengganti Nama Program dan Deskripsi.</p>
+              <p className="text-xs text-indigo-700 dark:text-indigo-300/80 font-medium mt-1">Pilih satu kandidat untuk langsung mengganti Nama Program dan Deskripsi.</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {identityInspirations.map((item, idx) => (
-              <div key={item.id || idx} className="rounded-xl border border-indigo-200 bg-white p-4 space-y-2 shadow-sm">
+              <div key={item.id || idx} className="rounded-xl border border-indigo-200 dark:border-indigo-500/20 card-solid p-4 space-y-2 shadow-sm">
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-[10px] uppercase tracking-widest font-bold text-indigo-500">Opsi {idx + 1}</span>
-                  {item.angle ? <span className="text-[10px] font-semibold text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded-md">{item.angle}</span> : null}
+                  {item.angle ? <span className="text-[10px] font-semibold text-indigo-700 dark:text-indigo-300 bg-indigo-100 px-2 py-0.5 rounded-md">{item.angle}</span> : null}
                 </div>
 
                 <div>
-                  <p className="text-sm font-black text-slate-900 leading-snug">{item.trackName}</p>
-                  {item.trackIcon ? <p className="text-[11px] text-slate-500 font-semibold mt-1">Ikon: {item.trackIcon}</p> : null}
+                  <p className="text-sm font-black text-foreground leading-snug">{item.trackName}</p>
+                  {item.trackIcon ? <p className="text-[11px] text-muted-foreground font-semibold mt-1">Ikon: {item.trackIcon}</p> : null}
                 </div>
 
-                <p className="text-xs text-slate-600 leading-relaxed">{item.trackDescription}</p>
+                <p className="text-xs text-muted-foreground leading-relaxed">{item.trackDescription}</p>
 
                 <Button
                   type="button"
@@ -409,9 +409,9 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
       )}
 
       {/* ─── QUICK CONTEXT SELECTORS ─── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 bg-slate-50/50 p-4 rounded-2xl ring-1 ring-slate-100">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 bg-muted text-muted-foreground/50 p-4 rounded-2xl ring-1 ring-border">
         <div className="space-y-2">
-          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">
+          <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
             Tujuan Utama (Purpose)
           </label>
           <select 
@@ -420,7 +420,7 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
               const currentConfig = template.aiPromptConfig || {} as any;
               onChange({ ...template, aiPromptConfig: { ...currentConfig, formPurpose: e.target.value } });
             }}
-            className="w-full text-sm font-semibold text-slate-800 bg-white border-slate-200 rounded-xl h-10 px-3 outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full text-sm font-semibold text-foreground card-solid border-border rounded-xl h-10 px-3 outline-none focus:ring-2 focus:ring-indigo-500"
           >
             <option value="assessment">Asesmen / Penilaian (Objektif)</option>
             <option value="counseling">Konseling / Psikologi (Empatik)</option>
@@ -429,7 +429,7 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
           </select>
         </div>
         <div className="space-y-2">
-          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">
+          <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
             Target Audiens Utama
           </label>
           <select 
@@ -438,7 +438,7 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
               const currentConfig = template.aiPromptConfig || {} as any;
               onChange({ ...template, aiPromptConfig: { ...currentConfig, targetAudience: e.target.value } });
             }}
-            className="w-full text-sm font-semibold text-slate-800 bg-white border-slate-200 rounded-xl h-10 px-3 outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full text-sm font-semibold text-foreground card-solid border-border rounded-xl h-10 px-3 outline-none focus:ring-2 focus:ring-indigo-500"
           >
             <option value="company">Perusahaan / Korporat B2B</option>
             <option value="startup">Startup / Founder</option>
@@ -457,24 +457,24 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Nama Program</label>
-          <Input value={template.trackName} onChange={e => onChange({ ...template, trackName: e.target.value })} className="rounded-xl h-12 bg-slate-50 font-bold border-slate-200" />
+          <Input value={template.trackName} onChange={e => onChange({ ...template, trackName: e.target.value })} className="rounded-xl h-12 bg-muted text-muted-foreground font-bold border-border" />
         </div>
         
         <div className="space-y-2">
           <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Icon (Lucide)</label>
-          <Input value={template.trackIcon} onChange={e => onChange({ ...template, trackIcon: e.target.value })} placeholder="Contoh: Rocket, Target, Brain" className="rounded-xl h-12 bg-slate-50 font-mono text-sm border-slate-200" />
+          <Input value={template.trackIcon} onChange={e => onChange({ ...template, trackIcon: e.target.value })} placeholder="Contoh: Rocket, Target, Brain" className="rounded-xl h-12 bg-muted text-muted-foreground font-mono text-sm border-border" />
         </div>
 
         <div className="space-y-2 md:col-span-2">
           <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Deskripsi Singkat</label>
-          <Textarea value={template.trackDescription} onChange={e => onChange({ ...template, trackDescription: e.target.value })} className="rounded-xl bg-slate-50 border-slate-200 min-h-[100px] leading-relaxed font-medium" placeholder="Jelaskan secara singkat tujuan form ini..." />
+          <Textarea value={template.trackDescription} onChange={e => onChange({ ...template, trackDescription: e.target.value })} className="rounded-xl bg-muted text-muted-foreground border-border min-h-[100px] leading-relaxed font-medium" placeholder="Jelaskan secara singkat tujuan form ini..." />
         </div>
 
         {/* --- BLOK KONTEKS SPESIFIK & PROMPT ANCHORS --- */}
-        <div className="space-y-4 md:col-span-2 p-5 bg-amber-50/50 rounded-2xl ring-1 ring-amber-100 mt-2">
+        <div className="space-y-4 md:col-span-2 p-5 bg-amber-50 dark:bg-amber-500/10/50 rounded-2xl ring-1 ring-amber-100 mt-2">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-1">
             <div className="flex items-center gap-2">
-              <Target size={18} className="text-amber-600" />
+              <Target size={18} className="text-amber-600 dark:text-amber-400" />
               <label className="text-[11px] font-black text-amber-900 uppercase tracking-widest">Konteks Spesifik & Ketajaman AI</label>
             </div>
             <Button type="button" variant="outline" size="sm" onClick={handleGenerateAnchors} disabled={isGeneratingAnchors} className="h-8 text-[10px] font-bold bg-amber-100 hover:bg-amber-200 text-amber-800 border-amber-300 rounded-lg shadow-sm shrink-0">
@@ -485,12 +485,12 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-amber-700 uppercase tracking-widest">Profil Subjek</label>
-              <Textarea value={template.specificTargetContext || ''} onChange={e => onChange({ ...template, specificTargetContext: e.target.value })} className="rounded-xl bg-white border-amber-200 min-h-[80px] text-xs font-medium" />
+              <label className="text-[10px] font-bold text-amber-700 dark:text-amber-300 uppercase tracking-widest">Profil Subjek</label>
+              <Textarea value={template.specificTargetContext || ''} onChange={e => onChange({ ...template, specificTargetContext: e.target.value })} className="rounded-xl card-solid border-amber-200 dark:border-amber-500/20 min-h-[80px] text-xs font-medium" />
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-amber-700 uppercase tracking-widest">Metodologi</label>
-              <Textarea value={template.methodologyContext || ''} onChange={e => onChange({ ...template, methodologyContext: e.target.value })} className="rounded-xl bg-white border-amber-200 min-h-[80px] text-xs font-medium" />
+              <label className="text-[10px] font-bold text-amber-700 dark:text-amber-300 uppercase tracking-widest">Metodologi</label>
+              <Textarea value={template.methodologyContext || ''} onChange={e => onChange({ ...template, methodologyContext: e.target.value })} className="rounded-xl card-solid border-amber-200 dark:border-amber-500/20 min-h-[80px] text-xs font-medium" />
             </div>
           </div>
 
@@ -498,18 +498,18 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
           <div className="space-y-2 pt-3 border-t border-amber-100 mt-1">
             <div className="flex items-center justify-between">
               <label className="text-[10px] font-black text-amber-800 uppercase tracking-widest flex items-center gap-1.5">
-                <Wand2 size={11} className="text-amber-600" />
+                <Wand2 size={11} className="text-amber-600 dark:text-amber-400" />
                 Instruksi Khusus untuk AI Form Builder
               </label>
-              <span className="text-[9px] text-amber-600/80 font-semibold bg-amber-100 px-2 py-0.5 rounded-md">Opsional · Langsung Mempengaruhi Generasi Form</span>
+              <span className="text-[9px] text-amber-600 dark:text-amber-400/80 font-semibold bg-amber-100 px-2 py-0.5 rounded-md">Opsional · Langsung Mempengaruhi Generasi Form</span>
             </div>
             <Textarea 
               value={(template as any).formBuilderInstruction || ''} 
               onChange={e => onChange({ ...template, formBuilderInstruction: e.target.value } as any)} 
-              className="rounded-xl bg-white border-amber-300 min-h-[90px] text-xs font-medium focus-visible:ring-amber-400" 
+              className="rounded-xl card-solid border-amber-300 min-h-[90px] text-xs font-medium focus-visible:ring-amber-400" 
               placeholder={`Tulis instruksi khusus yang ingin Anda berikan kepada AI saat membangun form. Contoh:\n• "Tambahkan seksi khusus untuk upload portofolio proyek terdahulu"\n• "Pastikan ada pertanyaan tentang sertifikasi ISO yang dimiliki"\n• "Buat pertanyaan dengan banyak jawaban berbobot (radio_weight), hindari pertanyaan terbuka"\n• "Jangan tanyakan soal data keuangan, fokus pada proses operasional saja"`}
             />
-            <p className="text-[9px] text-amber-600/70 font-medium">
+            <p className="text-[9px] text-amber-600 dark:text-amber-400/70 font-medium">
               ✦ Instruksi ini akan dibaca langsung oleh Architect Agent sebagai panduan wajib dalam merancang struktur dan konten form.
             </p>
           </div>
@@ -517,12 +517,12 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
       </div>
 
 
-      <div className="space-y-4 p-6 bg-slate-50/80 rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden mt-8">
+      <div className="space-y-4 p-6 bg-muted text-muted-foreground/80 rounded-3xl border border-border shadow-sm relative overflow-hidden mt-8">
         <div className="absolute top-0 left-0 w-1.5 h-full bg-indigo-500"></div>
         
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
           <div>
-            <h4 className="font-black text-slate-900 text-lg uppercase tracking-tight">Harapan Output / Benefit Peserta</h4>
+            <h4 className="font-black text-foreground text-lg uppercase tracking-tight">Harapan Output / Benefit Peserta</h4>
           </div>
           <Button type="button" onClick={handleGenerateOutputs} disabled={isGenerating} className="shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl h-10 shadow-sm">
             {isGenerating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />} Auto-Generate
@@ -533,38 +533,38 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
           {(template.expectedOutputs || []).map((item, idx) => {
             const { title, subs } = parseExpectedOutput(item);
             return (
-              <div key={idx} className="flex gap-4 items-start relative bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+              <div key={idx} className="flex gap-4 items-start relative card-solid p-5 rounded-2xl border border-border shadow-sm">
                 <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="md:col-span-1 space-y-2">
                     <label className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest">Judul</label>
-                    <Input value={title} onChange={(e) => updateExpectedOutput(idx, e.target.value, subs)} className="font-black text-slate-800 border-slate-200 bg-slate-50" />
+                    <Input value={title} onChange={(e) => updateExpectedOutput(idx, e.target.value, subs)} className="font-black text-foreground border-border bg-muted text-muted-foreground" />
                   </div>
                   <div className="md:col-span-2 space-y-2">
-                    <label className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Detail</label>
-                    <Textarea value={subs} onChange={(e) => updateExpectedOutput(idx, title, e.target.value)} className="text-sm font-medium border-slate-200 min-h-[60px]" />
+                    <label className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Detail</label>
+                    <Textarea value={subs} onChange={(e) => updateExpectedOutput(idx, title, e.target.value)} className="text-sm font-medium border-border min-h-[60px]" />
                   </div>
                 </div>
-                <Button type="button" variant="ghost" onClick={() => removeExpectedOutput(idx)} className="text-slate-400 hover:text-rose-600 h-10 w-10 mt-6"><Trash2 className="w-4 h-4"/></Button>
+                <Button type="button" variant="ghost" onClick={() => removeExpectedOutput(idx)} className="text-slate-400 hover:text-rose-600 dark:text-rose-400 h-10 w-10 mt-6"><Trash2 className="w-4 h-4"/></Button>
               </div>
             )
           })}
-          <Button type="button" variant="outline" onClick={addExpectedOutput} className="w-full border-dashed border-2 border-slate-300 text-slate-500 font-bold rounded-2xl h-12 shadow-sm"><Plus className="w-5 h-5 mr-2"/> Tambah Baru</Button>
+          <Button type="button" variant="outline" onClick={addExpectedOutput} className="w-full border-dashed border-2 border-border text-muted-foreground font-bold rounded-2xl h-12 shadow-sm"><Plus className="w-5 h-5 mr-2"/> Tambah Baru</Button>
         </div>
       </div>
 
       {/* --- MARKETING KIT --- */}
-      <div className="space-y-4 p-6 bg-fuchsia-50/50 rounded-3xl border border-fuchsia-200 shadow-sm relative overflow-hidden mt-6">
+      <div className="space-y-4 p-6 bg-fuchsia-50 dark:bg-fuchsia-500/10/50 rounded-3xl border border-fuchsia-200 dark:border-fuchsia-500/20 shadow-sm relative overflow-hidden mt-6">
         <div className="absolute top-0 left-0 w-1.5 h-full bg-fuchsia-500"></div>
         
-        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 mb-2 pb-4 border-b border-fuchsia-200/50">
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 mb-2 pb-4 border-b border-fuchsia-200 dark:border-fuchsia-500/20/50">
           <div>
             <h4 className="font-black text-fuchsia-900 text-lg uppercase tracking-tight">Marketing & Social Media Kit</h4>
-            <p className="text-xs text-fuchsia-700/80 font-medium mt-1">Gunakan AI untuk meramu Caption promosi dan merender Visual Carousel per slide.</p>
+            <p className="text-xs text-fuchsia-700 dark:text-fuchsia-300/80 font-medium mt-1">Gunakan AI untuk meramu Caption promosi dan merender Visual Carousel per slide.</p>
           </div>
           
-          <div className="flex flex-wrap bg-white p-1 rounded-xl ring-1 ring-fuchsia-200 shadow-sm">
+          <div className="flex flex-wrap card-solid p-1 rounded-xl ring-1 ring-fuchsia-200 dark:ring-fuchsia-500/20 shadow-sm">
             {['instagram', 'tiktok', 'threads', 'facebook'].map(platform => (
-              <button key={platform} type="button" onClick={() => setActivePlatform(platform as any)} className={`px-4 py-1.5 text-xs font-bold capitalize rounded-lg transition-all ${activePlatform === platform ? 'bg-fuchsia-600 text-white shadow-sm' : 'text-fuchsia-500 hover:bg-fuchsia-50'}`}>
+              <button key={platform} type="button" onClick={() => setActivePlatform(platform as any)} className={`px-4 py-1.5 text-xs font-bold capitalize rounded-lg transition-all ${activePlatform === platform ? 'bg-fuchsia-600 text-white shadow-sm' : 'text-fuchsia-500 hover:bg-fuchsia-50 dark:bg-fuchsia-500/10'}`}>
                 {platform}
               </button>
             ))}
@@ -572,7 +572,7 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
         </div>
 
         <div className="flex items-center justify-between mt-2">
-           <span className="text-xs font-bold text-fuchsia-700 uppercase tracking-wider flex items-center gap-1.5">
+           <span className="text-xs font-bold text-fuchsia-700 dark:text-fuchsia-300 uppercase tracking-wider flex items-center gap-1.5">
              Modul Aktif: <span className="bg-fuchsia-100 text-fuchsia-800 px-2 py-0.5 rounded-md capitalize">{activePlatform}</span>
            </span>
            <Button type="button" onClick={handleGenerateCopywriting} disabled={isGeneratingCopy} className="shrink-0 bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-bold rounded-xl h-9 text-xs shadow-sm">
@@ -585,8 +585,8 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
           {/* KOLOM KIRI: CAPTION & REVISI CAPTION */}
           <div className="space-y-3 flex flex-col h-full lg:col-span-1">
             <div className="flex justify-between items-end">
-              <label className="text-[10px] font-bold text-fuchsia-600 uppercase tracking-widest">Copywriting / Caption</label>
-              <button type="button" onClick={() => { navigator.clipboard.writeText(activeAssets?.copywriting || ''); toast.success("Tersalin!"); }} className="text-[9px] font-bold text-fuchsia-500 hover:text-fuchsia-700 flex items-center gap-1"><Copy size={12}/> Salin Teks</button>
+              <label className="text-[10px] font-bold text-fuchsia-600 dark:text-fuchsia-400 uppercase tracking-widest">Copywriting / Caption</label>
+              <button type="button" onClick={() => { navigator.clipboard.writeText(activeAssets?.copywriting || ''); toast.success("Tersalin!"); }} className="text-[9px] font-bold text-fuchsia-500 hover:text-fuchsia-700 dark:text-fuchsia-300 flex items-center gap-1"><Copy size={12}/> Salin Teks</button>
             </div>
             
             <Textarea 
@@ -596,19 +596,19 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
                 onChange({ ...template, promoAssets: { ...currentAssets, [activePlatform]: { ...currentAssets[activePlatform], copywriting: e.target.value } } });
               }}
               placeholder={`Teks promosi khusus ${activePlatform}...`}
-              className="flex-1 min-h-[250px] rounded-2xl bg-white border-fuchsia-200 text-sm font-medium focus-visible:ring-fuchsia-500 p-4 leading-relaxed"
+              className="flex-1 min-h-[250px] rounded-2xl card-solid border-fuchsia-200 dark:border-fuchsia-500/20 text-sm font-medium focus-visible:ring-fuchsia-500 p-4 leading-relaxed"
             />
             
             {/* AREA REVISI CAPTION */}
             {activeAssets?.copywriting && (
-              <div className="bg-white p-2 rounded-xl ring-1 ring-fuchsia-200 shadow-sm flex flex-col gap-2">
+              <div className="card-solid p-2 rounded-xl ring-1 ring-fuchsia-200 dark:ring-fuchsia-500/20 shadow-sm flex flex-col gap-2">
                 <Input 
                   value={copyRevisionText}
                   onChange={(e) => setCopyRevisionText(e.target.value)}
                   placeholder="Ketik instruksi revisi (Contoh: 'Buat lebih santai')" 
-                  className="text-xs h-8 border-fuchsia-100 bg-fuchsia-50/30"
+                  className="text-xs h-8 border-fuchsia-100 bg-fuchsia-50 dark:bg-fuchsia-500/10/30"
                 />
-                <Button type="button" onClick={handleReviseCopywriting} disabled={isRevisingCopy || !copyRevisionText.trim()} variant="outline" className="h-8 text-xs font-bold text-fuchsia-600 border-fuchsia-200 hover:bg-fuchsia-50 w-full">
+                <Button type="button" onClick={handleReviseCopywriting} disabled={isRevisingCopy || !copyRevisionText.trim()} variant="outline" className="h-8 text-xs font-bold text-fuchsia-600 dark:text-fuchsia-400 border-fuchsia-200 dark:border-fuchsia-500/20 hover:bg-fuchsia-50 dark:bg-fuchsia-500/10 w-full">
                   {isRevisingCopy ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <Wand2 className="w-3.5 h-3.5 mr-1.5" />} Revisi dengan AI
                 </Button>
               </div>
@@ -619,24 +619,24 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
           <div className="flex flex-col gap-4 lg:col-span-2">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3">
               <div>
-                <label className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest flex items-center gap-1"><Sparkles size={12}/> AI Image Prompts (Carousel)</label>
-                <p className="text-[11px] text-fuchsia-700/70 font-medium mt-1">Render gambar dilakukan satu per satu untuk memastikan kualitas optimal.</p>
+                <label className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest flex items-center gap-1"><Sparkles size={12}/> AI Image Prompts (Carousel)</label>
+                <p className="text-[11px] text-fuchsia-700 dark:text-fuchsia-300/70 font-medium mt-1">Render gambar dilakukan satu per satu untuk memastikan kualitas optimal.</p>
               </div>
             </div>
 
             {activeCarouselSlides.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {activeCarouselSlides.map((slide: any, index: number) => (
-                  <div key={index} className="p-4 bg-white/70 border border-fuchsia-200 rounded-2xl flex flex-col gap-3 shadow-sm">
+                  <div key={index} className="p-4 card-solid/70 border border-fuchsia-200 dark:border-fuchsia-500/20 rounded-2xl flex flex-col gap-3 shadow-sm">
                     <div className="flex justify-between items-center">
-                      <span className="text-[10px] font-black uppercase tracking-widest bg-fuchsia-100 text-fuchsia-700 px-2 py-0.5 rounded-md">Slide {slide.slideNumber}</span>
+                      <span className="text-[10px] font-black uppercase tracking-widest bg-fuchsia-100 text-fuchsia-700 dark:text-fuchsia-300 px-2 py-0.5 rounded-md">Slide {slide.slideNumber}</span>
                       
                       {/* TOMBOL RENDER MANUAL PER SLIDE */}
                       <Button 
                         type="button" 
                         onClick={() => handleRenderSingleSlide(index)}
                         disabled={isRenderingSingleSlide[index]}
-                        className={`h-7 px-3 text-[10px] font-bold rounded-md transition-all ${slide.imageUrl ? 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border border-indigo-200' : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm'}`}
+                        className={`h-7 px-3 text-[10px] font-bold rounded-md transition-all ${slide.imageUrl ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 border border-indigo-200 dark:border-indigo-500/20' : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm'}`}
                       >
                         {isRenderingSingleSlide[index] ? <Loader2 className="w-3 h-3 animate-spin mr-1.5"/> : (slide.imageUrl ? <RefreshCw className="w-3 h-3 mr-1.5"/> : <ImageIcon className="w-3 h-3 mr-1.5"/>)} 
                         {slide.imageUrl ? 'Render Ulang' : 'Render Gambar'}
@@ -644,7 +644,7 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[9px] font-bold text-slate-500 uppercase">Teks Tipografi di Gambar</label>
+                      <label className="text-[9px] font-bold text-muted-foreground uppercase">Teks Tipografi di Gambar</label>
                       <Input 
                         value={slide.textOnImage || ''} 
                         onChange={(e) => {
@@ -653,12 +653,12 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
                           updatedSlides[index] = { ...updatedSlides[index], textOnImage: e.target.value };
                           onChange({ ...template, promoAssets: { ...currentAssets, [activePlatform]: { ...currentAssets[activePlatform], carouselSlides: updatedSlides } } });
                         }}
-                        className="h-8 text-[11px] bg-white border-fuchsia-100 font-bold" 
+                        className="h-8 text-[11px] card-solid border-fuchsia-100 font-bold" 
                       />
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[9px] font-bold text-slate-500 uppercase">Instruksi Visual (Prompt AI)</label>
+                      <label className="text-[9px] font-bold text-muted-foreground uppercase">Instruksi Visual (Prompt AI)</label>
                       <Textarea 
                         value={slide.imagePrompt || ''}
                         onChange={(e) => {
@@ -667,7 +667,7 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
                           updatedSlides[index] = { ...updatedSlides[index], imagePrompt: e.target.value };
                           onChange({ ...template, promoAssets: { ...currentAssets, [activePlatform]: { ...currentAssets[activePlatform], carouselSlides: updatedSlides } } });
                         }}
-                        className="h-[60px] text-[10px] font-mono bg-white border-fuchsia-200 resize-none p-2"
+                        className="h-[60px] text-[10px] font-mono card-solid border-fuchsia-200 dark:border-fuchsia-500/20 resize-none p-2"
                       />
                     </div>
                     
@@ -677,7 +677,7 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
                         value={slideRevisionTexts[index] || ''}
                         onChange={(e) => setSlideRevisionTexts(prev => ({ ...prev, [index]: e.target.value }))}
                         placeholder="Revisi prompt AI (misal: 'Ganti elemen')"
-                        className="h-7 text-[10px] flex-1 bg-indigo-50/40 border-indigo-100"
+                        className="h-7 text-[10px] flex-1 bg-indigo-50 dark:bg-indigo-500/10/40 border-indigo-100"
                       />
                       <Button 
                         type="button" 
@@ -689,7 +689,7 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
                       </Button>
                     </div>
 
-                    <div className="rounded-xl overflow-hidden border border-fuchsia-200 bg-slate-100 aspect-[3/4] relative shadow-inner flex items-center justify-center mt-1 group">
+                    <div className="rounded-xl overflow-hidden border border-fuchsia-200 dark:border-fuchsia-500/20 bg-secondary text-secondary-foreground aspect-[3/4] relative shadow-inner flex items-center justify-center mt-1 group">
                       {slide.imageUrl ? (
                         <>
                           <img src={slide.imageUrl} alt={`Slide ${slide.slideNumber}`} className="w-full h-full object-cover" />
@@ -700,7 +700,7 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
                                type="button"
                                onClick={() => handleDownloadImage(slide.imageUrl, slide.slideNumber)}
                                disabled={isDownloading[slide.slideNumber]}
-                               className="h-8 px-3 text-[10px] font-bold bg-white text-slate-900 hover:bg-slate-200 rounded-lg"
+                               className="h-8 px-3 text-[10px] font-bold card-solid text-foreground hover:bg-slate-200 rounded-lg"
                              >
                                {isDownloading[slide.slideNumber] ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1"/> : <DownloadCloud className="w-3.5 h-3.5 mr-1"/>}
                                Download
@@ -714,7 +714,7 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
                       ) : (
                         <div className="text-center p-4 opacity-40">
                           <ImageIcon className="w-8 h-8 mx-auto mb-2 text-slate-400" />
-                          <p className="text-[10px] font-bold text-slate-500">Belum Dirender</p>
+                          <p className="text-[10px] font-bold text-muted-foreground">Belum Dirender</p>
                         </div>
                       )}
                     </div>
@@ -722,10 +722,10 @@ export function TabGeneral({ template, onChange }: TabGeneralProps) {
                 ))}
               </div>
             ) : (
-              <div className="text-center p-10 bg-fuchsia-50/50 border border-dashed border-fuchsia-200 rounded-2xl opacity-60">
+              <div className="text-center p-10 bg-fuchsia-50 dark:bg-fuchsia-500/10/50 border border-dashed border-fuchsia-200 dark:border-fuchsia-500/20 rounded-2xl opacity-60">
                  <ImageIcon className="w-10 h-10 mx-auto mb-3 text-fuchsia-300" />
                  <p className="text-xs font-bold text-fuchsia-900">Belum ada slide visual.</p>
-                 <p className="text-[10px] text-fuchsia-700 mt-1">Tekan "Generate Ulang Konsep" di atas.</p>
+                 <p className="text-[10px] text-fuchsia-700 dark:text-fuchsia-300 mt-1">Tekan "Generate Ulang Konsep" di atas.</p>
               </div>
             )}
           </div>

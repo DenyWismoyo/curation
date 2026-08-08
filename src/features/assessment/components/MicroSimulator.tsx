@@ -40,7 +40,7 @@ export const MicroSimulator = () => {
   };
 
   return (
-    <div className="w-full max-w-xl mx-auto mt-10 bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
+    <div className="w-full max-w-xl mx-auto mt-10 card-solid/5 backdrop-blur-lg border border-white/10 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
       {/* Background Glow */}
       <div className="absolute -top-24 -right-24 w-48 h-48 bg-indigo-500/20 blur-3xl rounded-full pointer-events-none"></div>
       <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-emerald-500/20 blur-3xl rounded-full pointer-events-none"></div>
@@ -61,7 +61,7 @@ export const MicroSimulator = () => {
             value={idea}
             onChange={(e) => setIdea(e.target.value)}
             placeholder="Contoh: Aplikasi kasir warteg berbasis cloud..."
-            className="flex-1 bg-white/10 border-white/20 text-white placeholder:text-gray-500 focus-visible:ring-indigo-500"
+            className="flex-1 card-solid/10 border-white/20 text-white placeholder:text-gray-500 focus-visible:ring-indigo-500"
             disabled={loading}
           />
           <Button 
@@ -82,14 +82,14 @@ export const MicroSimulator = () => {
               className="overflow-hidden"
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="bg-white/5 border border-emerald-500/30 rounded-xl p-4">
+                <div className="card-solid/5 border border-emerald-500/30 rounded-xl p-4">
                   <div className="flex items-center space-x-2 text-emerald-400 font-semibold mb-2">
                     <Target size={16} /> <span>Kekuatan Utama</span>
                   </div>
                   <p className="text-sm text-gray-300 leading-relaxed">{result.kekuatan}</p>
                 </div>
                 
-                <div className="bg-white/5 border border-amber-500/30 rounded-xl p-4">
+                <div className="card-solid/5 border border-amber-500/30 rounded-xl p-4">
                   <div className="flex items-center space-x-2 text-amber-400 font-semibold mb-2">
                     <AlertTriangle size={16} /> <span>Blind Spot Potensial</span>
                   </div>
@@ -97,7 +97,7 @@ export const MicroSimulator = () => {
                 </div>
               </div>
 
-              <div className="mt-4 flex items-center justify-between bg-white/5 border border-white/10 rounded-xl p-4">
+              <div className="mt-4 flex items-center justify-between card-solid/5 border border-white/10 rounded-xl p-4">
                 <div>
                   <div className="text-sm text-gray-400">Skor Kelayakan (Estimasi AI)</div>
                   <div className="text-2xl font-bold text-white flex items-end space-x-1">
@@ -108,7 +108,7 @@ export const MicroSimulator = () => {
                 <Button 
                   onClick={() => document.getElementById('assessment-tracks')?.scrollIntoView({ behavior: 'smooth' })}
                   variant="outline"
-                  className="bg-white/10 hover:bg-white/20 border-white/20 text-white border-0 shadow-sm"
+                  className="card-solid/10 hover:card-solid/20 border-white/20 text-white border-0 shadow-sm"
                 >
                   Asesmen Lengkap <ArrowRight size={16} className="ml-2" />
                 </Button>

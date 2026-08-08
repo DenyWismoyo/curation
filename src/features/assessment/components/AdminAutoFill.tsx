@@ -46,7 +46,7 @@ export function AdminAutoFill({ fields, onFill, disabled }: AdminAutoFillProps) 
       onClick={handleAutoFill} 
       disabled={isLoading || disabled || fields.length === 0}
       variant="outline"
-      className="text-[10px] sm:text-xs font-bold bg-indigo-50 text-indigo-600 border-indigo-200 hover:bg-indigo-100 hover:text-indigo-700 px-2 py-1.5 rounded-lg flex items-center gap-1 transition-colors"
+      className="text-[10px] sm:text-xs font-bold bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-500/20 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 hover:text-indigo-700 dark:text-indigo-300 px-2 py-1.5 rounded-lg flex items-center gap-1 transition-colors"
       title="Isi otomatis dengan AI (Admin Only)"
     >
       {isLoading ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}

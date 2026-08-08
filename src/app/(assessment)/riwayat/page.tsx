@@ -110,7 +110,7 @@ export default function RiwayatTransaksiPage() {
       <PageHeader
         title="Riwayat Transaksi"
         subtitle="Lacak status tagihan dan kelola token akses modul Anda."
-        icon={<Receipt size={24} className="text-indigo-600" />}
+        icon={<Receipt size={24} className="text-indigo-600 dark:text-indigo-400" />}
         backHref="/"
         backLabel="Kembali ke Beranda"
       />
@@ -137,17 +137,17 @@ export default function RiwayatTransaksiPage() {
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: index * 0.05 }}
-                    className={`bg-white p-6 rounded-[1.5rem] ring-1 shadow-sm flex flex-col h-full transition-all hover:shadow-md ${
+                    className={`card-solid p-6 rounded-[1.5rem] ring-1 shadow-sm flex flex-col h-full transition-all hover:shadow-md ${
                       isPaid
-                        ? 'ring-slate-200/60 hover:ring-indigo-200'
-                        : 'bg-amber-50/30 ring-amber-200/80 hover:ring-amber-300'
+                        ? 'ring-slate-200/60 hover:ring-indigo-200 dark:ring-indigo-500/20'
+                        : 'bg-amber-50 dark:bg-amber-500/10/30 ring-amber-200 dark:ring-amber-500/20/80 hover:ring-amber-300'
                     }`}
                   >
                     {/* STATUS + TANGGAL */}
                     <div className="flex justify-between items-start mb-4">
                       <span className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md ring-1 ${
                         isPaid
-                          ? 'bg-emerald-50 text-emerald-700 ring-emerald-200'
+                          ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 ring-emerald-200 dark:ring-emerald-500/20'
                           : 'bg-amber-100 text-amber-800 ring-amber-300'
                       }`}>
                         {isPaid ? 'Lunas' : 'Menunggu Pembayaran'}
@@ -159,23 +159,23 @@ export default function RiwayatTransaksiPage() {
 
                     {/* NAMA PAKET + HARGA */}
                     <div className="mb-6 flex-1">
-                      <h3 className="text-lg font-black text-slate-900 leading-snug line-clamp-2 mb-2">
+                      <h3 className="text-lg font-black text-foreground leading-snug line-clamp-2 mb-2">
                         {tx.packageName}
                       </h3>
-                      <p className="text-sm font-bold text-slate-500">
+                      <p className="text-sm font-bold text-muted-foreground">
                         Total Tagihan:{' '}
-                        <span className="text-slate-800">{formatRupiah(tx.amount)}</span>
+                        <span className="text-foreground">{formatRupiah(tx.amount)}</span>
                       </p>
                     </div>
 
                     {/* TOKEN AKSES */}
                     {isPaid && tx.tokenCode && (
-                      <div className="flex items-center justify-between gap-3 bg-slate-50 p-3 pl-4 rounded-xl ring-1 ring-slate-100 w-full mb-4">
+                      <div className="flex items-center justify-between gap-3 bg-muted text-muted-foreground p-3 pl-4 rounded-xl ring-1 ring-border w-full mb-4">
                         <div>
                           <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">
                             Token Akses
                           </p>
-                          <p className="font-mono font-black text-slate-800 tracking-tight text-sm">
+                          <p className="font-mono font-black text-foreground tracking-tight text-sm">
                             {tx.tokenCode}
                           </p>
                         </div>
@@ -183,8 +183,8 @@ export default function RiwayatTransaksiPage() {
                           onClick={() => handleCopy(tx.tokenCode!)}
                           className={`h-9 w-9 flex items-center justify-center rounded-lg transition-colors shrink-0 ring-1 ${
                             copiedToken === tx.tokenCode
-                              ? 'bg-emerald-100 text-emerald-600 ring-emerald-200'
-                              : 'bg-white text-slate-400 hover:text-indigo-600 ring-slate-200'
+                              ? 'bg-emerald-100 text-emerald-600 dark:text-emerald-400 ring-emerald-200 dark:ring-emerald-500/20'
+                              : 'card-solid text-slate-400 hover:text-indigo-600 dark:text-indigo-400 ring-slate-200'
                           }`}
                           title="Salin Token"
                         >
@@ -194,7 +194,7 @@ export default function RiwayatTransaksiPage() {
                     )}
 
                     {/* CTA */}
-                    <div className="pt-4 border-t border-slate-100/80 mt-auto">
+                    <div className="pt-4 border-t border-border/80 mt-auto">
                       {isPaid ? (
                         <Button
                           variant="brand"

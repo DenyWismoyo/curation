@@ -49,7 +49,7 @@ export function CryptoBottomNav() {
           className="bg-slate-900/90 backdrop-blur-xl border border-slate-200 dark:border-white/10 shadow-xl shadow-slate-950/20 rounded-2xl p-1 max-w-lg mx-auto ring-1 ring-white/5 pointer-events-auto"
           style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 4px)' }}
         >
-          <div className="flex items-stretch justify-around relative bg-white/5 p-0.5 rounded-xl">
+          <div className="flex items-stretch justify-around relative card-solid/5 p-0.5 rounded-xl">
             {CRYPTO_BOTTOM_NAV_LINKS.map((item) => {
               const active = isActive(item.href)
               
@@ -64,7 +64,7 @@ export function CryptoBottomNav() {
                   {active && (
                     <motion.div
                       layoutId="crypto-bottom-nav-active"
-                      className="absolute inset-0 bg-white/10 shadow-sm ring-1 ring-white/10 rounded-xl -z-10"
+                      className="absolute inset-0 card-solid/10 shadow-sm ring-1 ring-white/10 rounded-xl -z-10"
                       transition={{ type: 'spring', stiffness: 500, damping: 40 }}
                     />
                   )}
@@ -76,10 +76,10 @@ export function CryptoBottomNav() {
                       <item.icon size={20} strokeWidth={active ? 2.5 : 1.5} className={active ? 'text-purple-400' : ''} />
                     </motion.div>
                     {item.requiresPremium && !hasAccess && (
-                       <Lock className="w-3 h-3 absolute -top-1 -right-2 text-slate-500 opacity-80" />
+                       <Lock className="w-3 h-3 absolute -top-1 -right-2 text-muted-foreground opacity-80" />
                     )}
                   </div>
-                  <span className={`text-[10px] font-bold tracking-tight ${active ? 'text-slate-900 dark:text-white' : 'text-slate-500 dark:text-slate-400'}`}>
+                  <span className={`text-[10px] font-bold tracking-tight ${active ? 'text-foreground' : 'text-muted-foreground'}`}>
                     {item.label}
                   </span>
                 </Link>
@@ -96,7 +96,7 @@ export function CryptoBottomNav() {
                 {drawerOpen && (
                   <motion.div
                     layoutId="crypto-bottom-nav-active"
-                    className="absolute inset-0 bg-white/10 shadow-sm ring-1 ring-white/10 rounded-xl -z-10"
+                    className="absolute inset-0 card-solid/10 shadow-sm ring-1 ring-white/10 rounded-xl -z-10"
                     transition={{ type: 'spring', stiffness: 500, damping: 40 }}
                   />
                 )}
@@ -108,7 +108,7 @@ export function CryptoBottomNav() {
                     <Menu size={20} strokeWidth={drawerOpen ? 2.5 : 1.5} className={drawerOpen ? 'text-purple-400' : ''} />
                   </motion.div>
                 </div>
-                <span className={`text-[10px] font-bold tracking-tight ${drawerOpen ? 'text-slate-900 dark:text-white' : 'text-slate-500 dark:text-slate-400'}`}>
+                <span className={`text-[10px] font-bold tracking-tight ${drawerOpen ? 'text-foreground' : 'text-muted-foreground'}`}>
                   More
                 </span>
             </button>
@@ -118,14 +118,14 @@ export function CryptoBottomNav() {
 
       {/* ── PROFILE DRAWER (DARK) ─────────────────────────────────── */}
       <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
-        <SheetContent side="bottom" className="p-0 border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950 rounded-t-[2.5rem] overflow-hidden max-h-[85vh]">
+        <SheetContent side="bottom" className="p-0 border-t border-slate-200 dark:border-white/10 bg-background text-foreground rounded-t-[2.5rem] overflow-hidden max-h-[85vh]">
           <SheetHeader className="sr-only">
             <SheetTitle>Navigasi Ekstra Crypto</SheetTitle>
           </SheetHeader>
 
           {/* Drag handle */}
           <div className="flex justify-center pt-3 pb-1">
-            <div className="w-12 h-1.5 bg-white/10 rounded-full" />
+            <div className="w-12 h-1.5 card-solid/10 rounded-full" />
           </div>
 
           {/* User identity */}
@@ -146,7 +146,7 @@ export function CryptoBottomNav() {
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-black text-slate-900 dark:text-white truncate">
+                  <p className="text-sm font-black text-foreground truncate">
                     {user.displayName || 'Pengguna'}
                   </p>
                   <p className="text-xs text-slate-400 font-medium truncate">{user.email}</p>
@@ -159,8 +159,8 @@ export function CryptoBottomNav() {
               </div>
             ) : (
               <div>
-                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Navigation</p>
-                <p className="text-sm font-black text-slate-900 dark:text-white mt-0.5">CryptoHub Menu</p>
+                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Navigation</p>
+                <p className="text-sm font-black text-foreground mt-0.5">CryptoHub Menu</p>
               </div>
             )}
           </div>
@@ -173,30 +173,30 @@ export function CryptoBottomNav() {
                 key={item.href}
                 href={item.href}
                 onClick={() => setDrawerOpen(false)}
-                className="flex items-center gap-3.5 px-3 py-3 rounded-2xl hover:bg-white/5 transition-colors group"
+                className="flex items-center gap-3.5 px-3 py-3 rounded-2xl hover:card-solid/5 transition-colors group"
               >
-                <div className="w-9 h-9 bg-white/5 rounded-xl flex items-center justify-center ring-1 ring-white/10 shadow-sm">
+                <div className="w-9 h-9 card-solid/5 rounded-xl flex items-center justify-center ring-1 ring-white/10 shadow-sm">
                   <item.icon size={16} className="text-slate-400 group-hover:text-purple-400 transition-colors" />
                 </div>
-                <span className="text-sm font-bold text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors flex-1">
+                <span className="text-sm font-bold text-muted-foreground group-hover:text-foreground dark:group-hover:text-white transition-colors flex-1">
                   {item.label}
                 </span>
                 {item.requiresPremium && !hasAccess && (
-                   <Lock className="w-4 h-4 text-slate-600" />
+                   <Lock className="w-4 h-4 text-muted-foreground" />
                 )}
-                <ChevronRight size={14} className="text-slate-600 group-hover:text-slate-400 transition-colors" />
+                <ChevronRight size={14} className="text-muted-foreground group-hover:text-slate-400 transition-colors" />
               </Link>
             ))}
 
             {isAdmin && (
               <>
-                <div className="h-px bg-white/5 mx-3 my-2" />
+                <div className="h-px card-solid/5 mx-3 my-2" />
                 {CRYPTO_ADMIN_LINKS.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
                     onClick={() => setDrawerOpen(false)}
-                    className="flex items-center gap-3.5 px-3 py-3 rounded-2xl hover:bg-white/5 transition-colors group"
+                    className="flex items-center gap-3.5 px-3 py-3 rounded-2xl hover:card-solid/5 transition-colors group"
                   >
                     <div className="w-9 h-9 bg-amber-500/10 rounded-xl flex items-center justify-center ring-1 ring-amber-500/30 shadow-sm">
                       <item.icon size={16} className="text-amber-400" />
@@ -204,22 +204,22 @@ export function CryptoBottomNav() {
                     <span className="text-sm font-bold text-amber-100/80 group-hover:text-amber-400 transition-colors flex-1">
                       {item.label}
                     </span>
-                    <ChevronRight size={14} className="text-slate-600 group-hover:text-slate-400 transition-colors" />
+                    <ChevronRight size={14} className="text-muted-foreground group-hover:text-slate-400 transition-colors" />
                   </Link>
                 ))}
               </>
             )}
             
-            <div className="h-px bg-white/5 mx-3 my-2" />
+            <div className="h-px card-solid/5 mx-3 my-2" />
             <Link
                 href="/crypto"
                 onClick={() => setDrawerOpen(false)}
-                className="flex items-center gap-3.5 px-3 py-3 rounded-2xl hover:bg-white/5 transition-colors group"
+                className="flex items-center gap-3.5 px-3 py-3 rounded-2xl hover:card-solid/5 transition-colors group"
               >
-                <div className="w-9 h-9 bg-white/5 rounded-xl flex items-center justify-center ring-1 ring-white/10 shadow-sm">
+                <div className="w-9 h-9 card-solid/5 rounded-xl flex items-center justify-center ring-1 ring-white/10 shadow-sm">
                   <ChevronRight size={16} className="text-slate-400 rotate-180 group-hover:-translate-x-1 transition-transform" />
                 </div>
-                <span className="text-sm font-bold text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors flex-1">
+                <span className="text-sm font-bold text-muted-foreground group-hover:text-foreground dark:group-hover:text-white transition-colors flex-1">
                   Kembali ke Main App
                 </span>
             </Link>
@@ -239,16 +239,16 @@ export function CryptoBottomNav() {
           <div className="px-4 py-2 border-t border-white/5">
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="w-full flex items-center gap-3.5 px-3 py-3 rounded-2xl hover:bg-white/5 transition-colors group"
+              className="w-full flex items-center gap-3.5 px-3 py-3 rounded-2xl hover:card-solid/5 transition-colors group"
             >
-              <div className="w-9 h-9 bg-white/5 rounded-xl flex items-center justify-center ring-1 ring-white/10 shadow-sm">
+              <div className="w-9 h-9 card-solid/5 rounded-xl flex items-center justify-center ring-1 ring-white/10 shadow-sm">
                 {theme === 'dark' ? (
                    <span className="text-amber-500 text-lg">☀️</span>
                 ) : (
                    <span className="text-indigo-400 text-lg">🌙</span>
                 )}
               </div>
-              <span className="text-sm font-bold text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white flex-1 text-left">
+              <span className="text-sm font-bold text-muted-foreground group-hover:text-foreground dark:group-hover:text-white flex-1 text-left">
                 {theme === 'dark' ? 'Ubah ke Mode Terang' : 'Ubah ke Mode Gelap'}
               </span>
             </button>

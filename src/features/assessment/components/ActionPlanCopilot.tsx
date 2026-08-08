@@ -113,15 +113,15 @@ export const ActionPlanCopilot = ({ assessmentId }: ActionPlanCopilotProps) => {
         </Button>
       </SheetTrigger>
       
-      <SheetContent className="w-full sm:max-w-md border-l-0 sm:border-l sm:rounded-l-2xl flex flex-col p-0 bg-slate-50">
-        <SheetHeader className="flex flex-row items-center justify-between p-4 sm:p-6 border-b border-slate-200 bg-white shadow-sm z-10 space-y-0">
+      <SheetContent className="w-full sm:max-w-md border-l-0 sm:border-l sm:rounded-l-2xl flex flex-col p-0 bg-muted text-muted-foreground">
+        <SheetHeader className="flex flex-row items-center justify-between p-4 sm:p-6 border-b border-border card-solid shadow-sm z-10 space-y-0">
           <SheetTitle className="flex items-center gap-3 text-indigo-950">
-            <div className="p-2 bg-indigo-100 rounded-lg text-indigo-600">
+            <div className="p-2 bg-indigo-100 rounded-lg text-indigo-600 dark:text-indigo-400">
               <Bot size={20} />
             </div>
             <div className="text-left">
               <div className="text-lg font-black tracking-tight leading-none mb-1">Omnifit Copilot</div>
-              <div className="text-xs text-emerald-600 font-medium flex items-center gap-1">
+              <div className="text-xs text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -130,7 +130,7 @@ export const ActionPlanCopilot = ({ assessmentId }: ActionPlanCopilotProps) => {
               </div>
             </div>
           </SheetTitle>
-          <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="rounded-full h-8 w-8 text-slate-500 hover:bg-slate-100">
+          <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="rounded-full h-8 w-8 text-muted-foreground hover:bg-secondary text-secondary-foreground">
             <X size={20} />
           </Button>
         </SheetHeader>
@@ -148,7 +148,7 @@ export const ActionPlanCopilot = ({ assessmentId }: ActionPlanCopilotProps) => {
                   });
                   setIsHistoryLoaded(true);
                 }}
-                className="text-xs font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-4 py-2 rounded-full transition-colors flex items-center gap-2 border border-indigo-100 shadow-sm"
+                className="text-xs font-medium text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 px-4 py-2 rounded-full transition-colors flex items-center gap-2 border border-indigo-100 shadow-sm"
               >
                 <MessageSquare size={14} />
                 Muat Riwayat Chat Sebelumnya
@@ -160,7 +160,7 @@ export const ActionPlanCopilot = ({ assessmentId }: ActionPlanCopilotProps) => {
               <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                 msg.role === 'user' 
                   ? 'bg-indigo-600 text-white rounded-tr-sm shadow-md' 
-                  : 'bg-white text-slate-700 rounded-tl-sm ring-1 ring-slate-200 shadow-sm'
+                  : 'card-solid text-slate-700 rounded-tl-sm ring-1 ring-border shadow-sm'
               }`}>
                 {msg.role === 'model' ? (
                   <ReactMarkdown
@@ -183,9 +183,9 @@ export const ActionPlanCopilot = ({ assessmentId }: ActionPlanCopilotProps) => {
           ))}
           {isLoading && (
             <div className="flex justify-start">
-              <div className="bg-white rounded-2xl rounded-tl-sm ring-1 ring-slate-200 shadow-sm px-4 py-3 flex items-center gap-2">
-                <Loader2 size={16} className="animate-spin text-indigo-600" />
-                <span className="text-xs text-slate-500 font-medium">Copilot sedang berpikir...</span>
+              <div className="card-solid rounded-2xl rounded-tl-sm ring-1 ring-border shadow-sm px-4 py-3 flex items-center gap-2">
+                <Loader2 size={16} className="animate-spin text-indigo-600 dark:text-indigo-400" />
+                <span className="text-xs text-muted-foreground font-medium">Copilot sedang berpikir...</span>
               </div>
             </div>
           )}
@@ -198,7 +198,7 @@ export const ActionPlanCopilot = ({ assessmentId }: ActionPlanCopilotProps) => {
               <button 
                 key={i}
                 onClick={() => setInput(prompt)}
-                className="text-[11px] font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-full ring-1 ring-indigo-200 transition-colors"
+                className="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 px-3 py-1.5 rounded-full ring-1 ring-indigo-200 dark:ring-indigo-500/20 transition-colors"
               >
                 {prompt}
               </button>
@@ -207,13 +207,13 @@ export const ActionPlanCopilot = ({ assessmentId }: ActionPlanCopilotProps) => {
         )}
 
         {/* Input Area */}
-        <div className="p-4 bg-white border-t border-slate-200">
+        <div className="p-4 card-solid border-t border-border">
           <form onSubmit={handleSend} className="relative flex items-center">
             <Input 
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Tanya tentang profil atau action plan Anda..."
-              className="pr-12 bg-slate-50 border-slate-200 rounded-xl focus-visible:ring-indigo-500"
+              className="pr-12 bg-muted text-muted-foreground border-border rounded-xl focus-visible:ring-indigo-500"
               disabled={isLoading}
             />
             <Button 

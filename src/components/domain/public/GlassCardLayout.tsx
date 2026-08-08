@@ -30,7 +30,7 @@ export function GlassCardLayout({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
         className={cn(
-          'max-w-md w-full bg-white/80 backdrop-blur-xl p-8 sm:p-10 rounded-[2rem] shadow-2xl shadow-indigo-500/10 ring-1 ring-slate-200 relative z-10',
+          'max-w-md w-full card-solid/80 backdrop-blur-xl p-8 sm:p-10 rounded-[2rem] shadow-2xl shadow-indigo-500/10 ring-1 ring-border relative z-10',
           cardClassName
         )}
       >

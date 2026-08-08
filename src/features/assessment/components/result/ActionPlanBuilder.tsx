@@ -141,12 +141,12 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
   };
 
   const getTimeframeStyle = (timeframe: string, isCompleted: boolean) => {
-    if (isCompleted) return 'bg-slate-100 text-slate-400 ring-slate-200';
+    if (isCompleted) return 'bg-secondary text-secondary-foreground text-slate-400 ring-slate-200';
     const lowerTime = timeframe.toLowerCase();
-    if (lowerTime.includes('harian')) return 'bg-emerald-50 text-emerald-600 ring-emerald-200';
-    if (lowerTime.includes('mingguan')) return 'bg-sky-50 text-sky-600 ring-sky-200';
-    if (lowerTime.includes('bulanan')) return 'bg-indigo-50 text-indigo-600 ring-indigo-200';
-    return 'bg-slate-50 text-slate-600 ring-slate-200';
+    if (lowerTime.includes('harian')) return 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 ring-emerald-200 dark:ring-emerald-500/20';
+    if (lowerTime.includes('mingguan')) return 'bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 ring-sky-200 dark:ring-sky-500/20';
+    if (lowerTime.includes('bulanan')) return 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 ring-indigo-200 dark:ring-indigo-500/20';
+    return 'bg-muted text-muted-foreground text-muted-foreground ring-slate-200';
   };
 
   const baseScore = Math.min(100, Math.max(0, Number(aiResult?.totalScore || 50)));
@@ -162,7 +162,7 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
     return (
       <div className="bg-slate-900 p-6 sm:p-14 rounded-3xl sm:rounded-[3rem] text-center shadow-2xl flex flex-col items-center justify-center relative overflow-hidden ring-1 ring-slate-800">
         <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-600/20 rounded-full blur-[80px] pointer-events-none"></div>
-        <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/5 text-indigo-400 rounded-2xl sm:rounded-3xl flex items-center justify-center mb-6 ring-1 ring-white/10 backdrop-blur-md z-10">
+        <div className="w-16 h-16 sm:w-20 sm:h-20 card-solid/5 text-indigo-400 rounded-2xl sm:rounded-3xl flex items-center justify-center mb-6 ring-1 ring-white/10 backdrop-blur-md z-10">
           <Target className="w-8 h-8 sm:w-10 sm:h-10" />
         </div>
         <h3 className="text-2xl sm:text-3xl font-black text-white mb-3 tracking-tight z-10">Cetak Biru Eksekusi</h3>
@@ -185,7 +185,7 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
   }
 
   return (
-    <div className="bg-white rounded-3xl sm:rounded-[3rem] ring-1 ring-slate-200 relative overflow-hidden flex flex-col h-full shadow-sm">
+    <div className="card-solid rounded-3xl sm:rounded-[3rem] ring-1 ring-border relative overflow-hidden flex flex-col h-full shadow-sm">
       <div className="bg-slate-900 p-5 sm:p-10 relative overflow-hidden shrink-0">
         <div className="absolute -right-10 -top-10 w-60 h-60 bg-indigo-500/20 rounded-full blur-[80px]"></div>
         
@@ -196,7 +196,7 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
             </h3>
             <p className="text-xs sm:text-sm text-slate-400 font-medium">Selesaikan misi untuk meningkatkan metrik operasional harian Anda.</p>
           </div>
-          <div className="shrink-0 flex items-center gap-2 bg-white/5 backdrop-blur-md px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl border border-white/10 self-start sm:self-auto">
+          <div className="shrink-0 flex items-center gap-2 card-solid/5 backdrop-blur-md px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl border border-white/10 self-start sm:self-auto">
             {isSaving ? (
               <><Loader2 className="w-3.5 h-3.5 text-indigo-400 animate-spin" /> <span className="text-[11px] sm:text-xs font-bold text-slate-300">Menyimpan...</span></>
             ) : (
@@ -217,7 +217,7 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            <div className="bg-white/5 p-3 rounded-xl border border-white/10">
+            <div className="card-solid/5 p-3 rounded-xl border border-white/10">
               <span className="text-[10px] font-medium text-slate-400 block">Skor Asli</span>
               <span className="text-xl sm:text-2xl font-black text-slate-300">{baseScore}</span>
             </div>
@@ -225,14 +225,14 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
               <span className="text-[10px] font-medium text-emerald-300 block">Proyeksi Skor Baru</span>
               <span className="text-xl sm:text-2xl font-black text-emerald-400">{projectedScore}</span>
             </div>
-            <div className="col-span-2 sm:col-span-1 bg-white/5 p-3 rounded-xl border border-white/10 flex flex-col justify-center">
+            <div className="col-span-2 sm:col-span-1 card-solid/5 p-3 rounded-xl border border-white/10 flex flex-col justify-center">
               <span className="text-[10px] font-medium text-slate-400 block">Proyeksi Kesiapan</span>
               <span className="text-xs font-bold text-indigo-300 truncate">{getProjectedLevel(projectedScore)}</span>
             </div>
           </div>
         </div>
 
-        <div className="relative z-10 bg-white/5 p-4 sm:p-5 rounded-2xl ring-1 ring-white/10">
+        <div className="relative z-10 card-solid/5 p-4 sm:p-5 rounded-2xl ring-1 ring-white/10">
             <div className="flex justify-between items-end mb-2.5">
                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Progres Keseluruhan</span>
                 <span className="text-xl sm:text-2xl font-black text-white">{progressPercentage}%</span>
@@ -249,15 +249,15 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
       </div>
 
 
-      <div className="p-4 sm:p-10 space-y-3 sm:space-y-5 flex-1 bg-[#FAFAFA]">
+      <div className="p-4 sm:p-10 space-y-3 sm:space-y-5 flex-1 bg-background text-foreground">
         {isAllCompleted && (
             <motion.div 
                 initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-                className="bg-emerald-50 border border-emerald-200 p-6 sm:p-8 rounded-2xl sm:rounded-[2rem] text-center mb-6 sm:mb-8 shadow-sm"
+                className="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 p-6 sm:p-8 rounded-2xl sm:rounded-[2rem] text-center mb-6 sm:mb-8 shadow-sm"
             >
                 <Trophy className="w-10 h-10 sm:w-12 sm:h-12 text-emerald-500 mx-auto mb-3 sm:mb-4" />
                 <h4 className="text-emerald-900 font-black text-lg sm:text-xl mb-2">Siklus Eksekusi Selesai!</h4>
-                <p className="text-emerald-700 text-xs sm:text-sm font-medium mb-5 sm:mb-6">Anda telah menyelesaikan 10 langkah krusial awal. Pertahankan ritme Anda.</p>
+                <p className="text-emerald-700 dark:text-emerald-300 text-xs sm:text-sm font-medium mb-5 sm:mb-6">Anda telah menyelesaikan 10 langkah krusial awal. Pertahankan ritme Anda.</p>
                 <Button className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl h-10 sm:h-12 shadow-md px-4 sm:px-6 text-sm">
                     <Sparkles className="w-4 h-4 mr-2" /> Inisiasi Fase Berikutnya
                 </Button>
@@ -278,10 +278,10 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
                 onClick={() => setExpandedId(isExpanded ? null : item.id)}
                 className={`flex flex-col p-4 sm:p-8 rounded-2xl sm:rounded-[2rem] ring-1 transition-all duration-300 cursor-pointer overflow-hidden ${
                   item.isCompleted 
-                    ? 'bg-white ring-slate-100 opacity-60 grayscale-[0.5]' 
+                    ? 'card-solid ring-slate-100 opacity-60 grayscale-[0.5]' 
                     : isExpanded 
-                      ? 'bg-white ring-indigo-300 shadow-xl shadow-indigo-500/10 scale-[1.01] z-10' 
-                      : 'bg-white ring-slate-200 hover:shadow-md hover:ring-indigo-200'
+                      ? 'card-solid ring-indigo-300 shadow-xl shadow-indigo-500/10 scale-[1.01] z-10' 
+                      : 'card-solid ring-slate-200 hover:shadow-md hover:ring-indigo-200 dark:ring-indigo-500/20'
                 }`}
               >
                 <div className="flex items-start gap-3 sm:gap-5">
@@ -292,7 +292,7 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
                     {item.isCompleted ? (
                       <CheckCircle2 className="w-6 h-6 sm:w-8 sm:h-8 text-emerald-500 drop-shadow-sm" />
                     ) : (
-                      <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 sm:border-[3px] border-slate-300 hover:border-indigo-400 transition-colors" />
+                      <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 sm:border-[3px] border-border hover:border-indigo-400 transition-colors" />
                     )}
                   </button>
                   
@@ -304,13 +304,13 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
                     </div>
                     
                     <h4 className={`text-base sm:text-xl font-black leading-tight transition-all duration-300 mb-1.5 sm:mb-2 pr-4 sm:pr-6 ${
-                      item.isCompleted ? 'text-slate-400 line-through decoration-slate-300' : 'text-slate-800'
+                      item.isCompleted ? 'text-slate-400 line-through decoration-slate-300' : 'text-foreground'
                     }`}>
                       {item.task}
                     </h4>
                     
                     <p className={`text-xs sm:text-sm font-medium leading-relaxed transition-all duration-300 ${
-                      item.isCompleted ? 'text-slate-400' : 'text-slate-500'
+                      item.isCompleted ? 'text-slate-400' : 'text-muted-foreground'
                     }`}>
                       {item.description}
                     </p>
@@ -326,10 +326,10 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      className="mt-6 pt-6 border-t border-slate-100"
+                      className="mt-6 pt-6 border-t border-border"
                     >
                       {item.contextualTip && (
-                        <div className="bg-indigo-50/50 p-5 rounded-2xl border border-indigo-100/50 flex gap-3 mb-6 shadow-sm">
+                        <div className="bg-indigo-50 dark:bg-indigo-500/10/50 p-5 rounded-2xl border border-indigo-100/50 flex gap-3 mb-6 shadow-sm">
                           <Sparkles className="w-5 h-5 text-indigo-500 shrink-0 mt-0.5" />
                           <div>
                             <p className="text-[10px] font-black text-indigo-500 uppercase tracking-widest mb-1.5">Panduan Eksekusi</p>
@@ -340,8 +340,8 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
 
                       {/* RENDER SUB-TASKS JIKA ADA */}
                       {item.subTasks && item.subTasks.length > 0 && (
-                        <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 mb-6">
-                           <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">Langkah Taktis (Micro-Steps)</p>
+                        <div className="bg-muted text-muted-foreground p-5 rounded-2xl border border-border mb-6">
+                           <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-4">Langkah Taktis (Micro-Steps)</p>
                            <div className="space-y-4">
                              {item.subTasks.map((sub) => (
                                 <div key={sub.id} className="flex items-start gap-3 group">
@@ -352,7 +352,7 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
                                       {sub.isCompleted ? (
                                         <CheckCircle2 className="w-5 h-5 text-emerald-500" />
                                       ) : (
-                                        <div className="w-5 h-5 rounded-full border-2 border-slate-300 group-hover:border-indigo-400 transition-colors" />
+                                        <div className="w-5 h-5 rounded-full border-2 border-border group-hover:border-indigo-400 transition-colors" />
                                       )}
                                     </button>
                                     <span className={`text-sm font-bold leading-snug ${sub.isCompleted ? 'text-slate-400 line-through decoration-slate-300' : 'text-slate-700'}`}>
@@ -365,18 +365,18 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
                       )}
 
                       {item.youtubeRecommendations && item.youtubeRecommendations.length > 0 && (
-                        <div className="bg-rose-50/40 p-5 rounded-2xl border border-rose-100/70 mb-6">
+                        <div className="bg-rose-50 dark:bg-rose-500/10/40 p-5 rounded-2xl border border-rose-100/70 mb-6">
                           <p className="text-[10px] font-black text-rose-500 uppercase tracking-widest mb-3">Rekomendasi Konten YouTube</p>
                           <div className="space-y-2">
                             {item.youtubeRecommendations.map((rec, recIdx) => (
                               <button
                                 key={`${item.id}-yt-${recIdx}`}
                                 onClick={(e) => openYoutubeSearch(rec.query, e)}
-                                className="w-full text-left bg-white hover:bg-rose-50 border border-slate-200 hover:border-rose-200 rounded-xl px-3 py-2 transition-colors"
+                                className="w-full text-left card-solid hover:bg-rose-50 dark:bg-rose-500/10 border border-border hover:border-rose-200 dark:border-rose-500/20 rounded-xl px-3 py-2 transition-colors"
                                 type="button"
                               >
-                                <p className="text-xs font-black text-slate-800 leading-snug">{rec.title}</p>
-                                <p className="text-[11px] text-slate-500 mt-0.5">{rec.query}</p>
+                                <p className="text-xs font-black text-foreground leading-snug">{rec.title}</p>
+                                <p className="text-[11px] text-muted-foreground mt-0.5">{rec.query}</p>
                               </button>
                             ))}
                           </div>
@@ -389,16 +389,16 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
                         <Button 
                           onClick={(e) => handleAddToCalendar(item.task, item.description, item.timeframe, item.contextualTip, item.subTasks, e)}
                           variant="outline" 
-                          className="flex-1 bg-white hover:bg-emerald-50 border-slate-200 hover:border-emerald-200 text-slate-700 hover:text-emerald-700 h-12 rounded-xl shadow-sm"
+                          className="flex-1 card-solid hover:bg-emerald-50 dark:bg-emerald-500/10 border-border hover:border-emerald-200 dark:border-emerald-500/20 text-slate-700 hover:text-emerald-700 dark:text-emerald-300 h-12 rounded-xl shadow-sm"
                         >
-                          <CalendarPlus size={16} className="mr-2 text-emerald-600" /> Masukkan ke Kalender
+                          <CalendarPlus size={16} className="mr-2 text-emerald-600 dark:text-emerald-400" /> Masukkan ke Kalender
                         </Button>
 
                         {item.searchKeyword && (
                           <Button 
                             onClick={(e) => openYoutubeSearch(item.searchKeyword!, e)}
                             variant="outline" 
-                            className="flex-1 bg-white hover:bg-rose-50 border-slate-200 hover:border-rose-200 text-slate-700 hover:text-rose-600 h-12 rounded-xl shadow-sm"
+                            className="flex-1 card-solid hover:bg-rose-50 dark:bg-rose-500/10 border-border hover:border-rose-200 dark:border-rose-500/20 text-slate-700 hover:text-rose-600 dark:text-rose-400 h-12 rounded-xl shadow-sm"
                           >
                             <PlayCircle size={16} className="mr-2 text-rose-500" /> Cari Referensi Visual
                           </Button>

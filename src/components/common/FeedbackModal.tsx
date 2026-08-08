@@ -80,14 +80,14 @@ export function FeedbackModal({ isOpen, onClose, user }: FeedbackModalProps) {
           }}
           className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[200] w-[calc(100%-2rem)] sm:w-[400px]"
         >
-          <div className="bg-white w-full rounded-[2rem] shadow-[0_10px_40px_-10px_rgba(49,46,129,0.3)] overflow-hidden relative ring-1 ring-slate-200">
+          <div className="card-solid w-full rounded-[2rem] shadow-[0_10px_40px_-10px_rgba(49,46,129,0.3)] overflow-hidden relative ring-1 ring-border">
             {/* Header */}
             <div className="bg-slate-900 p-6 sm:p-8 text-center relative overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-indigo-500/20 to-transparent pointer-events-none"></div>
               
               <button
                 onClick={onClose}
-                className="absolute top-4 right-4 text-slate-400 hover:text-white bg-white/10 hover:bg-white/20 p-2 rounded-full transition-colors z-10"
+                className="absolute top-4 right-4 text-slate-400 hover:text-white card-solid/10 hover:card-solid/20 p-2 rounded-full transition-colors z-10"
               >
                 <X size={18} />
               </button>
@@ -103,7 +103,7 @@ export function FeedbackModal({ isOpen, onClose, user }: FeedbackModalProps) {
             </div>
 
             {/* Body */}
-            <div className="p-6 sm:p-8 space-y-6 bg-white">
+            <div className="p-6 sm:p-8 space-y-6 card-solid">
               {/* Star Rating */}
               <div className="flex flex-col items-center gap-3">
                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Penilaian Anda</p>
@@ -136,7 +136,7 @@ export function FeedbackModal({ isOpen, onClose, user }: FeedbackModalProps) {
                   placeholder="Tuliskan kendala, saran fitur baru, atau kesan Anda di sini..."
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  className="bg-slate-50 border-slate-200 rounded-xl resize-none h-32 focus-visible:ring-indigo-500 text-sm font-medium pointer-events-auto"
+                  className="bg-muted text-muted-foreground border-border rounded-xl resize-none h-32 focus-visible:ring-indigo-500 text-sm font-medium pointer-events-auto"
                 />
               </div>
 

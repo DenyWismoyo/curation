@@ -37,19 +37,19 @@ export default function CryptoAlertsWidget() {
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
         <div className="fixed bottom-[5.5rem] right-6 z-40">
-          <button className="flex items-center justify-center relative rounded-full bg-white dark:bg-slate-900 shadow-lg shadow-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-100 dark:bg-slate-800 transition-transform hover:scale-110 w-12 h-12 border border-slate-200 dark:border-slate-800">
-            <BellRing className="w-5 h-5 text-slate-600 dark:text-slate-300" />
+          <button className="flex items-center justify-center relative rounded-full card-solid shadow-lg shadow-slate-900/50 hover:bg-secondary text-secondary-foreground dark:hover:bg-secondary text-secondary-foreground transition-transform hover:scale-110 w-12 h-12 border border-slate-200 dark:border-slate-800">
+            <BellRing className="w-5 h-5 text-muted-foreground" />
             <span className="absolute top-0 right-0 w-3 h-3 bg-rose-500 rounded-full border-2 border-slate-200 dark:border-slate-900 animate-pulse"></span>
           </button>
         </div>
       </SheetTrigger>
-      <SheetContent side="right" className="w-full sm:w-[400px] p-0 flex flex-col bg-slate-50 dark:bg-slate-950 border-l border-slate-200 dark:border-slate-800 shadow-2xl">
-        <SheetHeader className="px-6 py-5 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 relative z-10 shadow-sm">
-          <SheetTitle className="flex items-center gap-2 text-xl font-black tracking-tight text-slate-900 dark:text-white">
+      <SheetContent side="right" className="w-full sm:w-[400px] p-0 flex flex-col bg-background text-foreground border-l border-slate-200 dark:border-slate-800 shadow-2xl">
+        <SheetHeader className="px-6 py-5 card-solid border-b border-slate-200 dark:border-slate-800 relative z-10 shadow-sm">
+          <SheetTitle className="flex items-center gap-2 text-xl font-black tracking-tight text-foreground">
              <BellRing className="w-5 h-5 text-indigo-500" />
              Notification Center
           </SheetTitle>
-          <SheetDescription className="text-slate-500 text-slate-500 dark:text-slate-400 text-sm">
+          <SheetDescription className="text-muted-foreground text-muted-foreground text-sm">
             Riwayat peringatan sinyal scalping "Siap Meledak".
           </SheetDescription>
         </SheetHeader>
@@ -74,12 +74,12 @@ export default function CryptoAlertsWidget() {
                          <Zap className="w-3 h-3" />
                          Alert
                        </CryptoBadge>
-                       <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                       <span className="text-xs text-muted-foreground font-medium">
                          {alert.createdAt?.toDate ? alert.createdAt.toDate().toLocaleDateString("id-ID", { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : ""}
                        </span>
                      </div>
-                     <h3 className="font-bold text-slate-900 dark:text-white text-lg mb-1 pl-2">{alert.title}</h3>
-                     <p className="text-sm text-slate-500 dark:text-slate-400 pl-2 whitespace-pre-wrap leading-relaxed line-clamp-3 group-hover:line-clamp-none transition-all duration-300">
+                     <h3 className="font-bold text-foreground text-lg mb-1 pl-2">{alert.title}</h3>
+                     <p className="text-sm text-muted-foreground pl-2 whitespace-pre-wrap leading-relaxed line-clamp-3 group-hover:line-clamp-none transition-all duration-300">
                        {alert.body}
                      </p>
                      

@@ -220,22 +220,22 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
 
   if (isGenerating) {
     return (
-      <div className="flex flex-col items-center justify-center p-20 bg-indigo-50/50 border border-dashed border-indigo-200 rounded-[2rem] text-center space-y-4">
+      <div className="flex flex-col items-center justify-center p-20 bg-indigo-50 dark:bg-indigo-500/10/50 border border-dashed border-indigo-200 dark:border-indigo-500/20 rounded-[2rem] text-center space-y-4">
         <Loader2 className="w-12 h-12 text-indigo-500 animate-spin" />
         <h3 className="font-black text-xl text-indigo-900">Sistem AI Sedang Meracik Formulir...</h3>
-        <p className="text-sm font-medium text-indigo-600/70">Silakan pantau progress di tab System Logs atau tab Otak AI.</p>
+        <p className="text-sm font-medium text-indigo-600 dark:text-indigo-400/70">Silakan pantau progress di tab System Logs atau tab Otak AI.</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-4">
-      <div className="sticky top-0 z-50 flex justify-between items-center bg-white/90 backdrop-blur-md p-4 rounded-3xl ring-1 ring-slate-200 shadow-sm mb-6">
+      <div className="sticky top-0 z-50 flex justify-between items-center card-solid/90 backdrop-blur-md p-4 rounded-3xl ring-1 ring-border shadow-sm mb-6">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 bg-slate-100 text-slate-600 rounded-xl"><Bot className="w-5 h-5"/></div>
+          <div className="p-2.5 bg-secondary text-secondary-foreground text-muted-foreground rounded-xl"><Bot className="w-5 h-5"/></div>
           <div>
-            <h4 className="font-black text-slate-800 text-sm">Visual Editor Formulir</h4>
-            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Hasil Generasi Otak AI</p>
+            <h4 className="font-black text-foreground text-sm">Visual Editor Formulir</h4>
+            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">Hasil Generasi Otak AI</p>
           </div>
         </div>
         <Button type="button" onClick={handleManualSave} variant="outline" className="bg-slate-900 text-white hover:bg-slate-800 font-bold hidden sm:flex gap-2 rounded-xl h-10 shadow-sm">
@@ -244,7 +244,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
       </div>
 
       {(!template.steps || template.steps.length === 0) ? (
-        <div className="text-center p-12 bg-white rounded-3xl ring-1 ring-slate-200 border border-dashed border-slate-300">
+        <div className="text-center p-12 card-solid rounded-3xl ring-1 ring-border border border-dashed border-border">
           <p className="text-slate-400 font-bold text-sm">Belum ada langkah formulir yang dibuat. Silakan kembali ke tab <b className="text-slate-700">Otak AI</b> dan tekan tombol <b>Generate</b>.</p>
         </div>
       ) : (
@@ -253,14 +253,14 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
           const isStepBeingEnhanced = enhancingStepIndex === sIdx;
           
           return (
-            <div key={`step-${sIdx}`} className={`bg-white rounded-[2rem] ring-1 ring-slate-200/80 shadow-sm overflow-hidden transition-all duration-300 ${isStepBeingEnhanced ? 'opacity-70 pointer-events-none' : ''}`}>
+            <div key={`step-${sIdx}`} className={`card-solid rounded-[2rem] ring-1 ring-border/80 shadow-sm overflow-hidden transition-all duration-300 ${isStepBeingEnhanced ? 'opacity-70 pointer-events-none' : ''}`}>
               
               <div 
-                className={`p-5 flex items-center justify-between cursor-pointer select-none transition-colors ${isExpanded ? 'bg-slate-900 text-white' : 'hover:bg-slate-50/50'}`}
+                className={`p-5 flex items-center justify-between cursor-pointer select-none transition-colors ${isExpanded ? 'bg-slate-900 text-white' : 'hover:bg-muted text-muted-foreground/50'}`}
                 onClick={() => toggleStepExpansion(sIdx)}
               >
                 <div className="flex items-center gap-4 flex-1">
-                  <span className={`flex items-center justify-center w-7 h-7 rounded-full text-[11px] font-black shrink-0 ${isExpanded ? 'bg-indigo-500 text-white' : 'bg-slate-200 text-slate-600'}`}>
+                  <span className={`flex items-center justify-center w-7 h-7 rounded-full text-[11px] font-black shrink-0 ${isExpanded ? 'bg-indigo-500 text-white' : 'bg-slate-200 text-muted-foreground'}`}>
                     {step.stepNumber}
                   </span>
                   {isExpanded ? (
@@ -275,7 +275,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                       className="bg-slate-800 border-slate-700 text-white font-bold h-9 w-full max-w-xs text-sm rounded-xl" 
                     />
                   ) : (
-                    <h3 className="font-bold text-slate-800 text-sm sm:text-base">{step.title} <span className="text-slate-400 text-xs font-medium ml-2">({step.fields?.length || 0} Pertanyaan)</span></h3>
+                    <h3 className="font-bold text-foreground text-sm sm:text-base">{step.title} <span className="text-slate-400 text-xs font-medium ml-2">({step.fields?.length || 0} Pertanyaan)</span></h3>
                   )}
                 </div>
                 
@@ -303,7 +303,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
               </div>
 
               {isExpanded && (
-                <div className="p-4 sm:p-6 bg-slate-50/40 space-y-3 border-t border-slate-100">
+                <div className="p-4 sm:p-6 bg-muted text-muted-foreground/40 space-y-3 border-t border-border">
                   {step.fields?.map((field, fIdx) => {
                     const isPrimaryIdentity = ['namaUsaha', 'namaPengisi'].includes(field.id);
                     const fieldKey = `${sIdx}-${fIdx}`;
@@ -320,7 +320,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                         onDrop={(e) => handleDrop(e, sIdx, fIdx)}
                         onDragEnd={handleDragEnd}
                         className={`rounded-2xl ring-1 shadow-sm transition-all overflow-hidden 
-                          ${isPrimaryIdentity ? 'bg-indigo-50/20 ring-indigo-100/60' : 'bg-white ring-slate-200/70 hover:ring-indigo-300'}
+                          ${isPrimaryIdentity ? 'bg-indigo-50 dark:bg-indigo-500/10/20 ring-indigo-100/60' : 'card-solid ring-slate-200/70 hover:ring-indigo-300'}
                           ${isDragging ? 'opacity-40 scale-[0.98]' : ''}
                           ${isDragOver ? 'border-t-4 border-t-indigo-500' : ''}
                         `}
@@ -328,11 +328,11 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                         {/* SUMMARY VIEW */}
                         <div 
                           onClick={() => toggleFieldExpansion(sIdx, fIdx)}
-                          className={`flex items-center gap-3 p-3 sm:p-4 cursor-pointer hover:bg-slate-50/50 select-none ${isFieldExpanded ? 'bg-slate-50 border-b border-slate-100' : ''}`}
+                          className={`flex items-center gap-3 p-3 sm:p-4 cursor-pointer hover:bg-muted text-muted-foreground/50 select-none ${isFieldExpanded ? 'bg-muted text-muted-foreground border-b border-border' : ''}`}
                         >
                           <div className="flex items-center gap-3 flex-1 min-w-0">
                             {!isPrimaryIdentity ? (
-                              <div className="cursor-grab active:cursor-grabbing p-1 text-slate-300 hover:text-indigo-600 hidden sm:block">
+                              <div className="cursor-grab active:cursor-grabbing p-1 text-slate-300 hover:text-indigo-600 dark:text-indigo-400 hidden sm:block">
                                 <GripVertical className="w-5 h-5" />
                               </div>
                             ) : (
@@ -342,9 +342,9 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                             )}
                             
                             <div className="flex-1 truncate">
-                              <h4 className="text-sm font-bold text-slate-800 truncate">{field.label || "Pertanyaan Tanpa Label"}</h4>
+                              <h4 className="text-sm font-bold text-foreground truncate">{field.label || "Pertanyaan Tanpa Label"}</h4>
                               <div className="flex flex-wrap items-center gap-2 mt-1">
-                                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-200/60 text-slate-600">
+                                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-200/60 text-muted-foreground">
                                   {field.type}
                                 </span>
                                 <span className="text-[10px] text-slate-400 font-mono hidden sm:block">ID: {field.id}</span>
@@ -354,7 +354,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                                   </span>
                                 )}
                                 {field.showIf && (
-                                  <span className="text-[10px] font-bold text-indigo-600 flex items-center gap-1 bg-indigo-100/50 px-1.5 py-0.5 rounded">
+                                  <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-1 bg-indigo-100/50 px-1.5 py-0.5 rounded">
                                     <GitBranch className="w-3 h-3" /> Kondisional
                                   </span>
                                 )}
@@ -369,7 +369,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                                 variant="ghost" 
                                 size="sm"
                                 onClick={(e) => { e.stopPropagation(); removeField(sIdx, fIdx); }} 
-                                className="h-8 w-8 p-0 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 hidden sm:flex"
+                                className="h-8 w-8 p-0 rounded-xl text-slate-400 hover:text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:bg-rose-500/10 hidden sm:flex"
                               >
                                 <Trash2 className="h-4 w-4" />
                               </Button>
@@ -379,7 +379,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                               variant="ghost" 
                               size="sm"
                               onClick={(e) => { e.stopPropagation(); toggleFieldExpansion(sIdx, fIdx); }}
-                              className={`h-8 w-8 p-0 rounded-xl ${isFieldExpanded ? 'bg-indigo-100 text-indigo-600' : 'text-slate-400 hover:text-indigo-600 hover:bg-indigo-50'}`}
+                              className={`h-8 w-8 p-0 rounded-xl ${isFieldExpanded ? 'bg-indigo-100 text-indigo-600 dark:text-indigo-400' : 'text-slate-400 hover:text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:bg-indigo-500/10'}`}
                             >
                               {isFieldExpanded ? <ChevronUp className="w-4 h-4" /> : <Edit2 className="w-4 h-4" />}
                             </Button>
@@ -388,17 +388,17 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
 
                         {/* EXPANDED EDIT VIEW */}
                         {isFieldExpanded && (
-                          <div className="p-4 sm:p-5 bg-white/40">
+                          <div className="p-4 sm:p-5 card-solid/40">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                               
                               <div className="space-y-1 md:col-span-2 relative">
                                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Label Pertanyaan</label>
-                                <Input value={field.label} onChange={e => updateField(sIdx, fIdx, 'label', e.target.value)} className="bg-white border-slate-200 h-10 rounded-xl font-bold text-slate-800 text-sm" />
+                                <Input value={field.label} onChange={e => updateField(sIdx, fIdx, 'label', e.target.value)} className="card-solid border-border h-10 rounded-xl font-bold text-foreground text-sm" />
                               </div>
 
                               <div className="space-y-1">
                                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tipe Input</label>
-                                <select value={field.type} disabled={isPrimaryIdentity} onChange={e => updateField(sIdx, fIdx, 'type', e.target.value as FieldType)} className="w-full border border-slate-200 h-10 rounded-xl text-xs px-3 bg-white text-slate-800 font-medium">
+                                <select value={field.type} disabled={isPrimaryIdentity} onChange={e => updateField(sIdx, fIdx, 'type', e.target.value as FieldType)} className="w-full border border-border h-10 rounded-xl text-xs px-3 card-solid text-foreground font-medium">
                                   <option value="text">Teks Pendek</option>
                                   <option value="textarea">Teks Panjang</option>
                                   <option value="number">Angka / Nominal (IDR)</option>
@@ -413,24 +413,24 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                               <div className="space-y-1">
                                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex justify-between items-center">
                                   <span>Key Database (ID)</span>
-                                  {!isPrimaryIdentity && <button type="button" onClick={() => generateAutoIdFromLabel(sIdx, fIdx)} className="text-indigo-600 text-[9px] font-black flex items-center gap-0.5 bg-indigo-50 px-1.5 py-0.5 rounded"><Sparkles className="w-2.5 h-2.5"/> Auto-ID</button>}
+                                  {!isPrimaryIdentity && <button type="button" onClick={() => generateAutoIdFromLabel(sIdx, fIdx)} className="text-indigo-600 dark:text-indigo-400 text-[9px] font-black flex items-center gap-0.5 bg-indigo-50 dark:bg-indigo-500/10 px-1.5 py-0.5 rounded"><Sparkles className="w-2.5 h-2.5"/> Auto-ID</button>}
                                 </label>
-                                <Input value={field.id} disabled={isPrimaryIdentity} onChange={e => updateField(sIdx, fIdx, 'id', e.target.value.replace(/[^a-zA-Z0-9_]/g, ''))} className="bg-white border-slate-200 text-indigo-700 h-10 rounded-xl text-xs font-mono" />
+                                <Input value={field.id} disabled={isPrimaryIdentity} onChange={e => updateField(sIdx, fIdx, 'id', e.target.value.replace(/[^a-zA-Z0-9_]/g, ''))} className="card-solid border-border text-indigo-700 dark:text-indigo-300 h-10 rounded-xl text-xs font-mono" />
                               </div>
                               
                               <div className="flex items-center gap-5 pt-1 md:col-span-2">
-                                <label className="flex items-center gap-2 text-xs font-bold text-slate-600 cursor-pointer select-none">
-                                  <input type="checkbox" checked={field.required} disabled={isPrimaryIdentity} onChange={e => updateField(sIdx, fIdx, 'required', e.target.checked)} className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
+                                <label className="flex items-center gap-2 text-xs font-bold text-muted-foreground cursor-pointer select-none">
+                                  <input type="checkbox" checked={field.required} disabled={isPrimaryIdentity} onChange={e => updateField(sIdx, fIdx, 'required', e.target.checked)} className="w-4 h-4 rounded border-border text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500" />
                                   Wajib Diisi
                                 </label>
-                                <label className="flex items-center gap-2 text-xs font-bold text-slate-600 cursor-pointer select-none">
-                                  <input type="checkbox" checked={field.gridSpan === 2} onChange={e => updateField(sIdx, fIdx, 'gridSpan', e.target.checked ? 2 : 1)} className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
+                                <label className="flex items-center gap-2 text-xs font-bold text-muted-foreground cursor-pointer select-none">
+                                  <input type="checkbox" checked={field.gridSpan === 2} onChange={e => updateField(sIdx, fIdx, 'gridSpan', e.target.checked ? 2 : 1)} className="w-4 h-4 rounded border-border text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500" />
                                   Lebar Penuh (100%)
                                 </label>
                                 {!isPrimaryIdentity && (
                                   <div className="flex items-center gap-2 ml-auto">
-                                    <span className="text-xs font-bold text-slate-600">Bobot Ekstra:</span>
-                                    <select value={field.weightMultiplier || 1} onChange={e => updateField(sIdx, fIdx, 'weightMultiplier', parseInt(e.target.value))} className="border border-slate-200 h-8 rounded-lg text-xs px-2 bg-white text-slate-700 font-bold">
+                                    <span className="text-xs font-bold text-muted-foreground">Bobot Ekstra:</span>
+                                    <select value={field.weightMultiplier || 1} onChange={e => updateField(sIdx, fIdx, 'weightMultiplier', parseInt(e.target.value))} className="border border-border h-8 rounded-lg text-xs px-2 card-solid text-slate-700 font-bold">
                                       <option value={1}>1x (Standar)</option>
                                       <option value={2}>2x (Penting)</option>
                                       <option value={3}>3x (Krusial)</option>
@@ -442,29 +442,29 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
 
                               {/* VALIDATION BLOCK */}
                               {!isPrimaryIdentity && (field.type === 'text' || field.type === 'textarea' || field.type === 'number') && (
-                                <div className="md:col-span-2 space-y-2 p-3 bg-slate-50 border border-slate-200 rounded-xl">
-                                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider block">Validasi Input</label>
+                                <div className="md:col-span-2 space-y-2 p-3 bg-muted text-muted-foreground border border-border rounded-xl">
+                                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-wider block">Validasi Input</label>
                                   <div className="flex items-center gap-3">
                                     {field.type === 'number' ? (
                                       <>
-                                        <Input type="number" placeholder="Min" value={field.validation?.min || ''} onChange={e => updateField(sIdx, fIdx, 'validation', { ...field.validation, min: e.target.value ? parseFloat(e.target.value) : undefined })} className="h-8 text-xs bg-white w-24" />
-                                        <Input type="number" placeholder="Max" value={field.validation?.max || ''} onChange={e => updateField(sIdx, fIdx, 'validation', { ...field.validation, max: e.target.value ? parseFloat(e.target.value) : undefined })} className="h-8 text-xs bg-white w-24" />
+                                        <Input type="number" placeholder="Min" value={field.validation?.min || ''} onChange={e => updateField(sIdx, fIdx, 'validation', { ...field.validation, min: e.target.value ? parseFloat(e.target.value) : undefined })} className="h-8 text-xs card-solid w-24" />
+                                        <Input type="number" placeholder="Max" value={field.validation?.max || ''} onChange={e => updateField(sIdx, fIdx, 'validation', { ...field.validation, max: e.target.value ? parseFloat(e.target.value) : undefined })} className="h-8 text-xs card-solid w-24" />
                                       </>
                                     ) : (
                                       <>
-                                        <Input type="number" placeholder="Min Char" value={field.validation?.minLength || ''} onChange={e => updateField(sIdx, fIdx, 'validation', { ...field.validation, minLength: e.target.value ? parseInt(e.target.value) : undefined })} className="h-8 text-xs bg-white w-24" />
-                                        <Input type="number" placeholder="Max Char" value={field.validation?.maxLength || ''} onChange={e => updateField(sIdx, fIdx, 'validation', { ...field.validation, maxLength: e.target.value ? parseInt(e.target.value) : undefined })} className="h-8 text-xs bg-white w-24" />
+                                        <Input type="number" placeholder="Min Char" value={field.validation?.minLength || ''} onChange={e => updateField(sIdx, fIdx, 'validation', { ...field.validation, minLength: e.target.value ? parseInt(e.target.value) : undefined })} className="h-8 text-xs card-solid w-24" />
+                                        <Input type="number" placeholder="Max Char" value={field.validation?.maxLength || ''} onChange={e => updateField(sIdx, fIdx, 'validation', { ...field.validation, maxLength: e.target.value ? parseInt(e.target.value) : undefined })} className="h-8 text-xs card-solid w-24" />
                                       </>
                                     )}
-                                    <Input placeholder="Pesan Error Kustom (Opsional)" value={field.validation?.customErrorMessage || ''} onChange={e => updateField(sIdx, fIdx, 'validation', { ...field.validation, customErrorMessage: e.target.value })} className="h-8 text-xs bg-white flex-1" />
+                                    <Input placeholder="Pesan Error Kustom (Opsional)" value={field.validation?.customErrorMessage || ''} onChange={e => updateField(sIdx, fIdx, 'validation', { ...field.validation, customErrorMessage: e.target.value })} className="h-8 text-xs card-solid flex-1" />
                                   </div>
                                 </div>
                               )}
 
                               {/* --- LOGIKA BERCABANG (SHOW-IF) --- */}
                               {!isPrimaryIdentity && (
-                                <div className="md:col-span-2 space-y-2 p-4 bg-indigo-50/50 rounded-2xl border border-indigo-100">
-                                  <label className="text-[10px] font-black text-indigo-900 uppercase tracking-wider flex items-center gap-1.5"><GitBranch className="w-3.5 h-3.5 text-indigo-600"/> Logika Aliran Cabang Pertanyaan</label>
+                                <div className="md:col-span-2 space-y-2 p-4 bg-indigo-50 dark:bg-indigo-500/10/50 rounded-2xl border border-indigo-100">
+                                  <label className="text-[10px] font-black text-indigo-900 uppercase tracking-wider flex items-center gap-1.5"><GitBranch className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400"/> Logika Aliran Cabang Pertanyaan</label>
                                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                     <select 
                                       value={field.showIf ? "conditional" : "always"} 
@@ -476,7 +476,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                                           updateField(sIdx, fIdx, 'showIf', { fieldId: avail[0]?.id || '', operator: 'equals', value: '', equals: '' });
                                         }
                                       }}
-                                      className="border border-slate-200 h-10 rounded-xl text-xs px-2 bg-white text-slate-700"
+                                      className="border border-border h-10 rounded-xl text-xs px-2 card-solid text-slate-700"
                                     >
                                       <option value="always">Tampilkan Selalu</option>
                                       <option value="conditional">Tampilkan Kondisional...</option>
@@ -487,7 +487,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                                         <select 
                                           value={field.showIf.fieldId} 
                                           onChange={(e) => updateField(sIdx, fIdx, 'showIf', { ...field.showIf, fieldId: e.target.value, value: '', equals: '' })}
-                                          className="border border-indigo-200 h-10 rounded-xl text-xs px-2 bg-white text-indigo-900 font-medium col-span-1"
+                                          className="border border-indigo-200 dark:border-indigo-500/20 h-10 rounded-xl text-xs px-2 card-solid text-indigo-900 font-medium col-span-1"
                                         >
                                           <option value="" disabled>Pilih Pertanyaan Pemicu...</option>
                                           {getAllAvailableFields().map(f => (
@@ -498,7 +498,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                                         <select 
                                           value={field.showIf.operator || 'equals'} 
                                           onChange={(e) => updateField(sIdx, fIdx, 'showIf', { ...field.showIf, operator: e.target.value as any })}
-                                          className="border border-indigo-200 h-10 rounded-xl text-xs px-2 bg-white text-indigo-900 font-bold col-span-1"
+                                          className="border border-indigo-200 dark:border-indigo-500/20 h-10 rounded-xl text-xs px-2 card-solid text-indigo-900 font-bold col-span-1"
                                         >
                                           <option value="equals">Sama Dengan (=)</option>
                                           <option value="not_equals">Tidak Sama (≠)</option>
@@ -517,7 +517,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                                               <select 
                                                 value={String(showValue || '')} 
                                                 onChange={(e) => updateField(sIdx, fIdx, 'showIf', { ...field.showIf, value: e.target.value, equals: e.target.value })}
-                                                className="border border-indigo-300 h-10 rounded-xl text-xs px-2 bg-indigo-50 text-indigo-700 font-bold col-span-1"
+                                                className="border border-indigo-300 h-10 rounded-xl text-xs px-2 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 font-bold col-span-1"
                                               >
                                                 <option value="" disabled>Pilih Jawaban Pemicu...</option>
                                                 {targetField.options.map((opt: any, i: number) => {
@@ -533,7 +533,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                                               placeholder="Ketik Nilai Pemicu (Cth: Ya)" 
                                               value={String(showValue || '')} 
                                               onChange={(e) => updateField(sIdx, fIdx, 'showIf', { ...field.showIf, value: e.target.value, equals: e.target.value })}
-                                              className="bg-indigo-50 border-indigo-200 h-10 text-xs rounded-xl font-bold text-indigo-700 col-span-1"
+                                              className="bg-indigo-50 dark:bg-indigo-500/10 border-indigo-200 dark:border-indigo-500/20 h-10 text-xs rounded-xl font-bold text-indigo-700 dark:text-indigo-300 col-span-1"
                                             />
                                           );
                                         })()}
@@ -545,8 +545,8 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
 
                               {/* SCORING MATRIX COMPONENT */}
                               {(field.type === 'radio' || field.type === 'checkbox' || field.type === 'select') && !isPrimaryIdentity && (
-                                <div className="md:col-span-2 space-y-3 p-4 sm:p-5 bg-slate-50 border border-slate-200 rounded-2xl">
-                                  <label className="text-[10px] font-black text-slate-600 uppercase tracking-wider block">Opsi Jawaban & Matrix Bobot Kuantitatif (0-100)</label>
+                                <div className="md:col-span-2 space-y-3 p-4 sm:p-5 bg-muted text-muted-foreground border border-border rounded-2xl">
+                                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-wider block">Opsi Jawaban & Matrix Bobot Kuantitatif (0-100)</label>
                                   
                                   <div className="space-y-2">
                                     {(field.options || []).map((opt, optIdx) => {
@@ -555,7 +555,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                                       const optWeight = isObj ? opt.weight : 0;
 
                                       return (
-                                        <div key={optIdx} className="flex items-center gap-2 bg-white p-2 border border-slate-200 rounded-xl shadow-sm">
+                                        <div key={optIdx} className="flex items-center gap-2 card-solid p-2 border border-border rounded-xl shadow-sm">
                                           <Input 
                                             value={optLabel} 
                                             onChange={e => {
@@ -563,7 +563,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                                               newOpts[optIdx] = { label: e.target.value, weight: optWeight };
                                               updateField(sIdx, fIdx, 'options', newOpts);
                                             }} 
-                                            className="h-9 text-xs font-medium bg-white flex-1 border-none focus-visible:ring-0 shadow-none" 
+                                            className="h-9 text-xs font-medium card-solid flex-1 border-none focus-visible:ring-0 shadow-none" 
                                             placeholder="Teks Pilihan..."
                                           />
                                           <div className="w-px h-5 bg-slate-200 mx-1"></div>
@@ -576,14 +576,14 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                                                 newOpts[optIdx] = { label: optLabel, weight: parseInt(e.target.value) || 0 };
                                                 updateField(sIdx, fIdx, 'options', newOpts);
                                               }} 
-                                              className="w-16 h-9 text-center text-xs font-black text-indigo-700 bg-indigo-50/50 border-indigo-100 rounded-lg" 
+                                              className="w-16 h-9 text-center text-xs font-black text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-500/10/50 border-indigo-100 rounded-lg" 
                                             />
                                           </div>
                                           <Button type="button" variant="ghost" onClick={() => {
                                             const newOpts = [...(field.options || [])];
                                             newOpts.splice(optIdx, 1);
                                             updateField(sIdx, fIdx, 'options', newOpts);
-                                          }} className="h-9 w-9 text-slate-300 hover:bg-rose-50 hover:text-rose-600 p-0 rounded-lg ml-1 shrink-0">
+                                          }} className="h-9 w-9 text-slate-300 hover:bg-rose-50 dark:bg-rose-500/10 hover:text-rose-600 dark:text-rose-400 p-0 rounded-lg ml-1 shrink-0">
                                             <Trash2 className="w-4 h-4"/>
                                           </Button>
                                         </div>
@@ -594,7 +594,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                                     const newOpts = [...(field.options || [])];
                                     newOpts.push({ label: `Pilihan ${newOpts.length + 1}`, weight: 0 });
                                     updateField(sIdx, fIdx, 'options', newOpts);
-                                  }} className="w-full h-10 text-[11px] border-dashed border-2 font-bold text-slate-500 rounded-xl hover:bg-slate-100">
+                                  }} className="w-full h-10 text-[11px] border-dashed border-2 font-bold text-muted-foreground rounded-xl hover:bg-secondary text-secondary-foreground">
                                     <Plus className="w-4 h-4 mr-1.5"/> Tambah Pilihan Berbobot
                                   </Button>
                                 </div>
@@ -606,7 +606,7 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
                     );
                   })}
                   <div className="pt-2">
-                    <Button type="button" variant="outline" onClick={() => addField(sIdx)} className="w-full border-dashed border-2 h-12 text-xs font-black text-indigo-500 border-indigo-200 bg-indigo-50/30 rounded-xl hover:bg-indigo-50"><Plus className="h-4 w-4 mr-1.5" /> Tambah Pertanyaan Baru</Button>
+                    <Button type="button" variant="outline" onClick={() => addField(sIdx)} className="w-full border-dashed border-2 h-12 text-xs font-black text-indigo-500 border-indigo-200 dark:border-indigo-500/20 bg-indigo-50 dark:bg-indigo-500/10/30 rounded-xl hover:bg-indigo-50 dark:bg-indigo-500/10"><Plus className="h-4 w-4 mr-1.5" /> Tambah Pertanyaan Baru</Button>
                   </div>
                 </div>
               )}
@@ -615,17 +615,17 @@ export function TabFormBuilder({ template, onChange, onAutoSave }: TabFormBuilde
         })
       )}
 
-      <Button type="button" onClick={addStep} className="w-full bg-slate-100 text-slate-600 hover:bg-slate-200 h-14 font-black text-sm rounded-2xl mt-4 border-dashed border-2 border-slate-300"><Plus className="h-5 w-5 mr-1.5" /> Tambah Seksi Langkah Baru (Manual)</Button>
+      <Button type="button" onClick={addStep} className="w-full bg-secondary text-secondary-foreground text-muted-foreground hover:bg-slate-200 h-14 font-black text-sm rounded-2xl mt-4 border-dashed border-2 border-border"><Plus className="h-5 w-5 mr-1.5" /> Tambah Seksi Langkah Baru (Manual)</Button>
 
       {/* DIALOG MODAL CONFIRM DELETE STEP */}
       {stepToDelete !== null && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-[1.5rem] p-6 w-full max-w-sm shadow-xl">
-            <h3 className="text-base font-black text-slate-900 text-center">Hapus Langkah Formulir Ini?</h3>
-            <p className="text-xs text-slate-500 text-center mt-1 leading-relaxed">Seluruh susunan variabel kuesioner di dalam seksi langkah ini akan terhapus secara permanen.</p>
+          <div className="card-solid rounded-[1.5rem] p-6 w-full max-w-sm shadow-xl">
+            <h3 className="text-base font-black text-foreground text-center">Hapus Langkah Formulir Ini?</h3>
+            <p className="text-xs text-muted-foreground text-center mt-1 leading-relaxed">Seluruh susunan variabel kuesioner di dalam seksi langkah ini akan terhapus secara permanen.</p>
             <div className="flex gap-2.5 mt-6">
               <Button type="button" variant="outline" onClick={() => setStepToDelete(null)} className="w-full h-10 text-xs font-bold rounded-xl">Batal</Button>
-              <Button type="button" onClick={executeRemoveStep} className="w-full h-10 text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white rounded-xl">Ya, Hapus</Button>
+              <Button type="button" onClick={executeRemoveStep} className="w-full h-10 text-xs font-bold btn-danger-rich rounded-xl">Ya, Hapus</Button>
             </div>
           </div>
         </div>

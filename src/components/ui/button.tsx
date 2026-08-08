@@ -22,7 +22,7 @@ const buttonVariants = cva(
         brand:
           "bg-slate-900 text-white hover:bg-indigo-600 rounded-xl h-12 px-6 font-semibold shadow-lg shadow-slate-900/10 hover:shadow-indigo-600/20",
         brandOutline:
-          "border-slate-200 bg-white text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 rounded-xl h-12 px-6 font-semibold",
+          "border-border card-solid text-slate-700 hover:bg-indigo-50 dark:bg-indigo-500/10 hover:text-indigo-600 dark:text-indigo-400 hover:border-indigo-200 dark:border-indigo-500/20 rounded-xl h-12 px-6 font-semibold",
       },
       size: {
         default:

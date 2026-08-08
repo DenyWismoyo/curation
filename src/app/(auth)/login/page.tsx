@@ -82,7 +82,7 @@ function ValidatedInput({
           disabled={disabled}
           autoFocus={autoFocus}
           className={`pl-10 pr-10 h-12 rounded-xl transition-all font-medium text-sm
-            ${showError ? 'border-rose-300 focus-visible:ring-rose-400/30 bg-rose-50/30' : ''}
+            ${showError ? 'border-rose-300 focus-visible:ring-rose-400/30 bg-rose-50 dark:bg-rose-500/10/30' : ''}
             ${showSuccess ? 'border-emerald-300 focus-visible:ring-emerald-400/30' : ''}
           `}
         />
@@ -91,7 +91,7 @@ function ValidatedInput({
             <button
               type="button"
               onClick={() => setShowPassword(p => !p)}
-              className="text-slate-400 hover:text-slate-600 transition-colors p-0.5"
+              className="text-slate-400 hover:text-muted-foreground transition-colors p-0.5"
               tabIndex={-1}
             >
               {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
@@ -127,12 +127,12 @@ function PasswordStrength({ password }: { password: string }) {
         {[0, 1, 2, 3].map(i => (
           <div
             key={i}
-            className={`h-1 flex-1 rounded-full transition-all duration-300 ${i < score ? colors[score] : 'bg-slate-100'}`}
+            className={`h-1 flex-1 rounded-full transition-all duration-300 ${i < score ? colors[score] : 'bg-secondary text-secondary-foreground'}`}
           />
         ))}
       </div>
       {score > 0 && (
-        <p className={`text-[10px] font-bold ${score <= 1 ? 'text-rose-500' : score <= 2 ? 'text-amber-500' : 'text-emerald-600'}`}>
+        <p className={`text-[10px] font-bold ${score <= 1 ? 'text-rose-500' : score <= 2 ? 'text-amber-500' : 'text-emerald-600 dark:text-emerald-400'}`}>
           Kekuatan kata sandi: {labels[score]}
         </p>
       )}
@@ -229,8 +229,8 @@ export default function LoginPage() {
     return (
       <GlassCardLayout>
         <div className="flex flex-col items-center gap-3 text-center">
-          <div className="w-10 h-10 border-2 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
-          <p className="text-sm font-bold text-slate-500">Menyiapkan sesi...</p>
+          <div className="w-10 h-10 border-2 border-indigo-200 dark:border-indigo-500/20 border-t-indigo-600 rounded-full animate-spin" />
+          <p className="text-sm font-bold text-muted-foreground">Menyiapkan sesi...</p>
         </div>
       </GlassCardLayout>
     );
@@ -247,7 +247,7 @@ export default function LoginPage() {
     <GlassCardLayout>
       {/* Logo */}
       <div className="flex justify-center mb-6">
-        <div className="w-14 h-14 bg-white rounded-2xl shadow-lg ring-1 ring-slate-100 flex items-center justify-center overflow-hidden">
+        <div className="w-14 h-14 card-solid rounded-2xl shadow-lg ring-1 ring-border flex items-center justify-center overflow-hidden">
           <SafeLogo src="/logo.png" alt="Omnifit" width={56} height={56} className="w-full h-full object-contain p-1.5" priority />
         </div>
       </div>
@@ -255,7 +255,7 @@ export default function LoginPage() {
       {/* Back link */}
       <Link
         href="/"
-        className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-400 hover:text-indigo-600 transition-colors mb-5"
+        className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-400 hover:text-indigo-600 dark:text-indigo-400 transition-colors mb-5"
       >
         <ArrowLeft size={14} /> Kembali ke Beranda
       </Link>
@@ -270,9 +270,9 @@ export default function LoginPage() {
           transition={{ duration: 0.2 }}
           className="mb-6"
         >
-          <p className="text-[10px] font-black uppercase tracking-widest text-indigo-600 mb-1">Akses Omnifit</p>
-          <h1 className="text-2xl font-black text-slate-900">{modeConfig[mode].title}</h1>
-          <p className="text-sm text-slate-500 font-medium mt-1">{modeConfig[mode].subtitle}</p>
+          <p className="text-[10px] font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 mb-1">Akses Omnifit</p>
+          <h1 className="text-2xl font-black text-foreground">{modeConfig[mode].title}</h1>
+          <p className="text-sm text-muted-foreground font-medium mt-1">{modeConfig[mode].subtitle}</p>
         </motion.div>
       </AnimatePresence>
 
@@ -282,16 +282,16 @@ export default function LoginPage() {
           <button
             onClick={handleGoogle}
             disabled={working}
-            className="w-full h-12 flex items-center justify-center gap-3 rounded-xl bg-white ring-1 ring-slate-200 hover:ring-indigo-300 hover:bg-indigo-50/50 text-slate-700 hover:text-indigo-700 font-bold text-sm shadow-sm transition-all disabled:opacity-60"
+            className="w-full h-12 flex items-center justify-center gap-3 rounded-xl card-solid ring-1 ring-border hover:ring-indigo-300 hover:bg-indigo-50 dark:bg-indigo-500/10/50 text-slate-700 hover:text-indigo-700 dark:text-indigo-300 font-bold text-sm shadow-sm transition-all disabled:opacity-60"
           >
             {working ? <Loader2 className="w-4 h-4 animate-spin" /> : <GoogleIcon />}
             {mode === 'register' ? 'Daftar dengan Google' : 'Masuk dengan Google'}
           </button>
 
           <div className="relative flex items-center my-5">
-            <div className="flex-grow border-t border-slate-100" />
+            <div className="flex-grow border-t border-border" />
             <span className="mx-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">atau dengan email</span>
-            <div className="flex-grow border-t border-slate-100" />
+            <div className="flex-grow border-t border-border" />
           </div>
         </>
       )}
@@ -353,7 +353,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setMode('reset')}
-                className="text-xs font-bold text-indigo-600 hover:text-indigo-800 hover:underline transition-colors"
+                className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 hover:underline transition-colors"
               >
                 Lupa kata sandi?
               </button>
@@ -361,16 +361,16 @@ export default function LoginPage() {
           )}
 
           {mode === 'register' && (
-            <div className="space-y-3 mt-4 mb-2 p-3 bg-slate-50/50 rounded-xl border border-slate-100">
+            <div className="space-y-3 mt-4 mb-2 p-3 bg-muted text-muted-foreground/50 rounded-xl border border-border">
               <label className="flex items-start gap-3 cursor-pointer group">
                 <input
                   type="checkbox"
                   checked={tosAccepted}
                   onChange={(e) => setTosAccepted(e.target.checked)}
-                  className="mt-0.5 w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 transition-all cursor-pointer"
+                  className="mt-0.5 w-4 h-4 rounded border-border text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500 transition-all cursor-pointer"
                 />
-                <span className="text-[11px] text-slate-600 leading-snug">
-                  Saya setuju dengan <Link href="/legal/tos" target="_blank" className="font-bold text-indigo-600 hover:underline">Syarat & Ketentuan</Link> yang berlaku.
+                <span className="text-[11px] text-muted-foreground leading-snug">
+                  Saya setuju dengan <Link href="/legal/tos" target="_blank" className="font-bold text-indigo-600 dark:text-indigo-400 hover:underline">Syarat & Ketentuan</Link> yang berlaku.
                 </span>
               </label>
               <label className="flex items-start gap-3 cursor-pointer group">
@@ -378,21 +378,21 @@ export default function LoginPage() {
                   type="checkbox"
                   checked={privacyAccepted}
                   onChange={(e) => setPrivacyAccepted(e.target.checked)}
-                  className="mt-0.5 w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 transition-all cursor-pointer"
+                  className="mt-0.5 w-4 h-4 rounded border-border text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500 transition-all cursor-pointer"
                 />
-                <span className="text-[11px] text-slate-600 leading-snug">
-                  Saya menyetujui <Link href="/legal/privacy" target="_blank" className="font-bold text-indigo-600 hover:underline">Kebijakan Privasi</Link> pengelolaan data saya.
+                <span className="text-[11px] text-muted-foreground leading-snug">
+                  Saya menyetujui <Link href="/legal/privacy" target="_blank" className="font-bold text-indigo-600 dark:text-indigo-400 hover:underline">Kebijakan Privasi</Link> pengelolaan data saya.
                 </span>
               </label>
               {isCryptoRoute && (
-                <label className="flex items-start gap-3 cursor-pointer group pt-2 border-t border-slate-200">
+                <label className="flex items-start gap-3 cursor-pointer group pt-2 border-t border-border">
                   <input
                     type="checkbox"
                     checked={cryptoRiskAccepted}
                     onChange={(e) => setCryptoRiskAccepted(e.target.checked)}
-                    className="mt-0.5 w-4 h-4 rounded border-slate-300 text-rose-500 focus:ring-rose-500 transition-all cursor-pointer"
+                    className="mt-0.5 w-4 h-4 rounded border-border text-rose-500 focus:ring-rose-500 transition-all cursor-pointer"
                   />
-                  <span className="text-[11px] text-rose-700 leading-snug font-medium">
+                  <span className="text-[11px] text-rose-700 dark:text-rose-300 leading-snug font-medium">
                     Saya menyadari risiko tinggi investasi aset kripto. <Link href="/legal/crypto-risk" target="_blank" className="font-bold hover:underline">Baca Pernyataan Risiko</Link>.
                   </span>
                 </label>
@@ -413,15 +413,15 @@ export default function LoginPage() {
       </AnimatePresence>
 
       {/* Mode switcher */}
-      <div className="mt-5 text-center text-sm text-slate-500 font-medium space-y-1.5">
+      <div className="mt-5 text-center text-sm text-muted-foreground font-medium space-y-1.5">
         {mode === 'login' && (
           <p>Belum punya akun?{' '}
-            <button onClick={() => setMode('register')} className="text-indigo-600 font-bold hover:underline">Daftar gratis</button>
+            <button onClick={() => setMode('register')} className="text-indigo-600 dark:text-indigo-400 font-bold hover:underline">Daftar gratis</button>
           </p>
         )}
         {mode === 'register' && (
           <p>Sudah punya akun?{' '}
-            <button onClick={() => setMode('login')} className="text-indigo-600 font-bold hover:underline">Masuk</button>
+            <button onClick={() => setMode('login')} className="text-indigo-600 dark:text-indigo-400 font-bold hover:underline">Masuk</button>
           </p>
         )}
         {mode === 'reset' && (
@@ -432,7 +432,7 @@ export default function LoginPage() {
       </div>
 
       {/* Privacy note */}
-      <div className="mt-6 pt-5 border-t border-slate-100 flex items-center justify-center gap-1.5 text-slate-400">
+      <div className="mt-6 pt-5 border-t border-border flex items-center justify-center gap-1.5 text-slate-400">
         <ShieldCheck size={13} className="text-emerald-500" />
         <p className="text-[10px] font-bold">Data Anda aman & tidak dibagikan ke pihak ketiga.</p>
       </div>

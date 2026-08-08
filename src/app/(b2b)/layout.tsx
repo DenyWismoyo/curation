@@ -50,7 +50,7 @@ export default function B2BLayout({ children }: { children: React.ReactNode }) {
 
   if (loading || !user) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-slate-500 bg-[#f4f6fb]">
+      <div className="min-h-screen flex items-center justify-center text-muted-foreground bg-[#f4f6fb]">
         <div className="animate-pulse flex flex-col items-center">
           <BriefcaseBusiness className="w-8 h-8 text-indigo-300 mb-4" />
           <p className="text-sm font-medium">Verifikasi akses B2B...</p>
@@ -72,7 +72,7 @@ export default function B2BLayout({ children }: { children: React.ReactNode }) {
         </div>
         <button 
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="p-2 bg-white/10 rounded-lg text-slate-200 hover:text-white"
+          className="p-2 card-solid/10 rounded-lg text-slate-200 hover:text-white"
         >
           {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
@@ -104,7 +104,7 @@ export default function B2BLayout({ children }: { children: React.ReactNode }) {
             </div>
           </div>
           {accessibleTenantsCount > 0 && (
-            <div className="mt-4 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 inline-flex items-center gap-2">
+            <div className="mt-4 px-3 py-1.5 rounded-lg card-solid/5 border border-white/10 inline-flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
               <span className="text-xs font-medium text-slate-300">
                 {accessibleTenantsCount} Tenant{accessibleTenantsCount > 1 ? 's' : ''} Active
@@ -117,7 +117,7 @@ export default function B2BLayout({ children }: { children: React.ReactNode }) {
         <div className="flex-1 py-6 px-4 overflow-y-auto space-y-8">
           
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-3 px-2">Personas</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-3 px-2">Personas</p>
             <div className="space-y-1">
               {NAV_ITEMS.map((item) => {
                 const active = pathname === item.href;
@@ -128,7 +128,7 @@ export default function B2BLayout({ children }: { children: React.ReactNode }) {
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 ${
                       active 
                         ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 font-medium' 
-                        : 'text-slate-400 hover:text-white hover:bg-white/5'
+                        : 'text-slate-400 hover:text-white hover:card-solid/5'
                     }`}
                   >
                     {item.icon}
@@ -140,17 +140,17 @@ export default function B2BLayout({ children }: { children: React.ReactNode }) {
           </div>
 
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-3 px-2">Quick Links</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-3 px-2">Quick Links</p>
             <div className="space-y-1">
-              <Link href="/" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
+              <Link href="/" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:card-solid/5 transition-colors">
                 <Home className="w-4 h-4" />
                 <span className="text-sm font-medium">Public Home</span>
               </Link>
-              <Link href="/admin" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
+              <Link href="/admin" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:card-solid/5 transition-colors">
                 <Shield className="w-4 h-4" />
                 <span className="text-sm font-medium">Curator Admin</span>
               </Link>
-              <Link href="/assessor" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
+              <Link href="/assessor" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:card-solid/5 transition-colors">
                 <UserCog className="w-4 h-4" />
                 <span className="text-sm font-medium">Assessor Portal</span>
               </Link>
@@ -186,7 +186,7 @@ export default function B2BLayout({ children }: { children: React.ReactNode }) {
       <main className="flex-1 min-w-0 flex flex-col h-screen overflow-hidden">
         
         {/* Desktop Top Bar (Optional, for search/actions) */}
-        <header className="hidden md:flex h-16 bg-white/50 backdrop-blur-md border-b border-slate-200/60 items-center justify-end px-8 shrink-0 z-30">
+        <header className="hidden md:flex h-16 card-solid/50 backdrop-blur-md border-b border-border items-center justify-end px-8 shrink-0 z-30">
           <div className="flex items-center gap-4">
              {/* You can add global search or notifications here in the future */}
           </div>

@@ -60,38 +60,38 @@ const PLATFORM_STATS = [
 // ─── Value props untuk guest (kolom kanan) ───────────────────────────────────
 const GUEST_VALUE_PROPS = [
   {
-    icon: <BrainIcon size={22} className="text-indigo-600" />,
-    bg: 'bg-indigo-50',
+    icon: <BrainIcon size={22} className="text-indigo-600 dark:text-indigo-400" />,
+    bg: 'bg-indigo-50 dark:bg-indigo-500/10',
     title: 'Diagnosis AI Real-Time',
     desc: 'Identifikasi kekuatan & blind spot bisnis Anda dalam hitungan menit.',
   },
   {
-    icon: <AiSparkIcon size={22} className="text-emerald-600" />,
-    bg: 'bg-emerald-50',
+    icon: <AiSparkIcon size={22} className="text-emerald-600 dark:text-emerald-400" />,
+    bg: 'bg-emerald-50 dark:bg-emerald-500/10',
     title: 'Peta Jalan Taktis',
     desc: 'Rekomendasi langkah konkret yang siap dieksekusi, bukan sekadar skor.',
   },
   {
-    icon: <GlobalTargetIcon size={22} className="text-amber-600" />,
-    bg: 'bg-amber-50',
+    icon: <GlobalTargetIcon size={22} className="text-amber-600 dark:text-amber-400" />,
+    bg: 'bg-amber-50 dark:bg-amber-500/10',
     title: 'Laporan Visual Elegan',
     desc: 'Dokumen hasil bergrafik otomatis, siap dipresentasikan ke stakeholder.',
   },
   {
-    icon: <Zap size={22} className="text-purple-600" />,
-    bg: 'bg-purple-50',
+    icon: <Zap size={22} className="text-purple-600 dark:text-purple-400" />,
+    bg: 'bg-purple-50 dark:bg-purple-500/10',
     title: 'Formulir Adaptif',
     desc: 'Pertanyaan menyesuaikan jawaban Anda — seperti diwawancarai langsung oleh ahli.',
   },
   {
-    icon: <Sparkles size={22} className="text-blue-600" />,
-    bg: 'bg-blue-50',
+    icon: <Sparkles size={22} className="text-blue-600 dark:text-blue-400" />,
+    bg: 'bg-blue-50 dark:bg-blue-500/10',
     title: 'Konsultasi AI Premium',
     desc: 'Bedah hasil asesmen dan dapatkan insight mendalam bersama asisten pakar virtual.',
   },
   {
-    icon: <BriefcaseBusiness size={22} className="text-rose-600" />,
-    bg: 'bg-rose-50',
+    icon: <BriefcaseBusiness size={22} className="text-rose-600 dark:text-rose-400" />,
+    bg: 'bg-rose-50 dark:bg-rose-500/10',
     title: 'Akses B2B & Bundling',
     desc: 'Tingkatkan standar operasional tim Anda melalui bundling modul dengan harga terbaik.',
   },
@@ -319,7 +319,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
         {/* ══════════════════════════════════════════════════════════════════════
             HERO SECTION — full-width, above the fold
         ══════════════════════════════════════════════════════════════════════ */}
-        <section className="relative overflow-hidden border-b border-slate-100/80">
+        <section className="relative overflow-hidden border-b border-border/80">
           {/* Subtle background orbs */}
           <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
             <div className="absolute -top-32 -left-32 w-[500px] h-[500px] bg-indigo-100/40 rounded-full blur-[120px]" />
@@ -334,12 +334,12 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
               className="flex flex-col items-center text-center gap-6"
             >
               {/* Logo */}
-              <m.div variants={fadeUp} className="w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-2xl shadow-md ring-1 ring-slate-200/60 overflow-hidden flex items-center justify-center">
+              <m.div variants={fadeUp} className="w-16 h-16 sm:w-20 sm:h-20 card-solid rounded-2xl shadow-md ring-1 ring-border overflow-hidden flex items-center justify-center">
                 <SafeLogo src="/logo.png" alt="Omnifit" width={80} height={80} className="w-full h-full object-contain p-2" priority />
               </m.div>
 
               {/* Eyebrow */}
-              <m.div variants={fadeUp} className="inline-flex items-center gap-2 px-4 py-1.5 bg-indigo-50 text-indigo-700 rounded-full text-[11px] font-black uppercase tracking-widest ring-1 ring-indigo-200/60">
+              <m.div variants={fadeUp} className="inline-flex items-center gap-2 px-4 py-1.5 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 rounded-full text-[11px] font-black uppercase tracking-widest ring-1 ring-indigo-200 dark:ring-indigo-500/20/60">
                 <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
                 Platform Asesmen AI Terdepan di Indonesia
               </m.div>
@@ -347,16 +347,16 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
               {/* Headline */}
               <m.h1
                 variants={fadeUp}
-                className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 leading-[1.1] text-balance max-w-4xl"
+                className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-foreground leading-[1.1] text-balance max-w-4xl"
               >
                 Baca Situasi Lebih Jernih.{' '}
-                <span className="text-indigo-600">Tumbuh Lebih Cepat.</span>
+                <span className="text-indigo-600 dark:text-indigo-400">Tumbuh Lebih Cepat.</span>
               </m.h1>
 
               {/* Subheadline */}
               <m.p
                 variants={fadeUp}
-                className="text-base sm:text-lg text-slate-500 font-medium leading-relaxed max-w-2xl text-balance"
+                className="text-base sm:text-lg text-muted-foreground font-medium leading-relaxed max-w-2xl text-balance"
               >
                 Platform asesmen AI yang membantu Anda mengidentifikasi kekuatan, menyusun prioritas tindakan, dan mengeksekusi rencana tumbuh — dalam hitungan menit, bukan berhari-hari.
               </m.p>
@@ -365,11 +365,11 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
               <m.div variants={fadeUp} className="flex flex-wrap items-center justify-center gap-4 sm:gap-8">
                 {PLATFORM_STATS.map((s, i) => (
                   <div key={i} className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-xl bg-white ring-1 ring-slate-200 flex items-center justify-center shadow-sm">
+                    <div className="w-8 h-8 rounded-xl card-solid ring-1 ring-border flex items-center justify-center shadow-sm">
                       {s.icon}
                     </div>
                     <div className="text-left">
-                      <p className="text-sm font-black text-slate-900 leading-none">{s.value}</p>
+                      <p className="text-sm font-black text-foreground leading-none">{s.value}</p>
                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{s.label}</p>
                     </div>
                   </div>
@@ -387,7 +387,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                 </Link>
                 <Link
                   href="/katalog"
-                  className="inline-flex items-center gap-2 h-12 px-6 rounded-xl bg-white text-slate-700 hover:text-indigo-600 hover:bg-slate-50 font-bold text-sm ring-1 ring-slate-200 shadow-sm transition-all"
+                  className="inline-flex items-center gap-2 h-12 px-6 rounded-xl card-solid text-slate-700 hover:text-indigo-600 dark:text-indigo-400 hover:bg-muted text-muted-foreground font-bold text-sm ring-1 ring-border shadow-sm transition-all"
                 >
                   <LibraryBig className="w-4 h-4" />
                   Lihat Katalog Modul
@@ -407,7 +407,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                     <Link
                       key={i}
                       href={item.href}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-bold text-slate-500 hover:text-indigo-600 bg-white hover:bg-indigo-50 ring-1 ring-slate-200 hover:ring-indigo-200 transition-all"
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-bold text-muted-foreground hover:text-indigo-600 dark:text-indigo-400 card-solid hover:bg-indigo-50 dark:bg-indigo-500/10 ring-1 ring-border hover:ring-indigo-200 dark:ring-indigo-500/20 transition-all"
                     >
                       {item.icon} {item.label}
                     </Link>
@@ -415,7 +415,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                     <button
                       key={i}
                       onClick={item.onClick}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-bold text-slate-500 hover:text-indigo-600 bg-white hover:bg-indigo-50 ring-1 ring-slate-200 hover:ring-indigo-200 transition-all"
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-bold text-muted-foreground hover:text-indigo-600 dark:text-indigo-400 card-solid hover:bg-indigo-50 dark:bg-indigo-500/10 ring-1 ring-border hover:ring-indigo-200 dark:ring-indigo-500/20 transition-all"
                     >
                       {item.icon} {item.label}
                     </button>
@@ -458,33 +458,33 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                       <m.div
                         key="options"
                         initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
-                        className="bg-white rounded-[2rem] ring-1 ring-slate-200/60 shadow-sm p-6 sm:p-8 space-y-4"
+                        className="card-solid rounded-[2rem] ring-1 ring-border shadow-sm p-6 sm:p-8 space-y-4"
                       >
                         <div className="mb-2">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-indigo-600 mb-1">Akses Platform</p>
-                          <h2 className="text-xl font-black text-slate-900">Masuk atau Daftar</h2>
-                          <p className="text-sm text-slate-500 font-medium mt-1">Simpan progres & akses semua fitur secara aman.</p>
+                          <p className="text-[10px] font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 mb-1">Akses Platform</p>
+                          <h2 className="text-xl font-black text-foreground">Masuk atau Daftar</h2>
+                          <p className="text-sm text-muted-foreground font-medium mt-1">Simpan progres & akses semua fitur secara aman.</p>
                         </div>
 
                         {/* Google CTA — primary */}
                         <button
                           onClick={onLogin}
-                          className="w-full h-12 flex items-center justify-center gap-3 rounded-xl bg-white ring-1 ring-slate-200 hover:ring-indigo-300 hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 font-bold text-sm shadow-sm transition-all"
+                          className="w-full h-12 flex items-center justify-center gap-3 rounded-xl card-solid ring-1 ring-border hover:ring-indigo-300 hover:bg-indigo-50 dark:bg-indigo-500/10 text-slate-700 hover:text-indigo-700 dark:text-indigo-300 font-bold text-sm shadow-sm transition-all"
                         >
                           <GoogleIcon />
                           Masuk dengan Akun Google
                         </button>
 
                         <div className="relative flex items-center">
-                          <div className="flex-grow border-t border-slate-100" />
+                          <div className="flex-grow border-t border-border" />
                           <span className="mx-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">atau</span>
-                          <div className="flex-grow border-t border-slate-100" />
+                          <div className="flex-grow border-t border-border" />
                         </div>
 
                         <div className="grid grid-cols-2 gap-3">
                           <button
                             onClick={() => setAuthMode('login')}
-                            className="h-11 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-sm ring-1 ring-slate-200 transition-all"
+                            className="h-11 rounded-xl bg-muted text-muted-foreground hover:bg-secondary text-secondary-foreground text-slate-700 font-bold text-sm ring-1 ring-border transition-all"
                           >
                             Masuk Email
                           </button>
@@ -503,11 +503,11 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                         key="reset"
                         initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
                         onSubmit={handleResetPassword}
-                        className="bg-white rounded-[2rem] ring-1 ring-slate-200/60 shadow-sm p-6 sm:p-8 space-y-4"
+                        className="card-solid rounded-[2rem] ring-1 ring-border shadow-sm p-6 sm:p-8 space-y-4"
                       >
                         <div>
-                          <h2 className="text-lg font-black text-slate-900">Atur Ulang Kata Sandi</h2>
-                          <p className="text-sm text-slate-500 font-medium mt-1 leading-relaxed">Masukkan email Anda. Kami akan mengirimkan tautan reset.</p>
+                          <h2 className="text-lg font-black text-foreground">Atur Ulang Kata Sandi</h2>
+                          <p className="text-sm text-muted-foreground font-medium mt-1 leading-relaxed">Masukkan email Anda. Kami akan mengirimkan tautan reset.</p>
                         </div>
                         <div className="relative">
                           <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
@@ -527,10 +527,10 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                         key={authMode}
                         initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
                         onSubmit={handleEmailAuth}
-                        className="bg-white rounded-[2rem] ring-1 ring-slate-200/60 shadow-sm p-6 sm:p-8 space-y-4"
+                        className="card-solid rounded-[2rem] ring-1 ring-border shadow-sm p-6 sm:p-8 space-y-4"
                       >
                         <div>
-                          <h2 className="text-lg font-black text-slate-900">
+                          <h2 className="text-lg font-black text-foreground">
                             {authMode === 'register' ? 'Buat Akun Baru' : 'Masuk ke Akun'}
                           </h2>
                         </div>
@@ -552,7 +552,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
 
                         {authMode === 'login' && (
                           <div className="flex justify-end -mt-1">
-                            <button type="button" onClick={() => setAuthMode('reset')} className="text-xs font-bold text-indigo-600 hover:underline">
+                            <button type="button" onClick={() => setAuthMode('reset')} className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline">
                               Lupa kata sandi?
                             </button>
                           </div>
@@ -580,22 +580,22 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
               {user && (
                 <m.div variants={fadeUp} className="space-y-3">
                   {/* User identity card */}
-                  <div className="flex items-center justify-between bg-white px-5 py-4 rounded-[1.5rem] ring-1 ring-slate-200/60 shadow-sm">
+                  <div className="flex items-center justify-between card-solid px-5 py-4 rounded-[1.5rem] ring-1 ring-border shadow-sm">
                     <div className="flex items-center gap-3 overflow-hidden">
                       {user.photoURL ? (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={user.photoURL} alt={user.displayName || 'User'} className="w-11 h-11 rounded-xl object-cover ring-1 ring-slate-200 shrink-0" referrerPolicy="no-referrer" />
+                        <img src={user.photoURL} alt={user.displayName || 'User'} className="w-11 h-11 rounded-xl object-cover ring-1 ring-border shrink-0" referrerPolicy="no-referrer" />
                       ) : (
-                        <div className="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-black text-lg ring-1 ring-indigo-100 shrink-0">
+                        <div className="w-11 h-11 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-black text-lg ring-1 ring-indigo-100 shrink-0">
                           {user.displayName?.charAt(0).toUpperCase() || 'U'}
                         </div>
                       )}
                       <div className="truncate">
-                        <p className="text-sm font-black text-slate-900 truncate leading-tight">{user.displayName || 'Pengguna'}</p>
+                        <p className="text-sm font-black text-foreground truncate leading-tight">{user.displayName || 'Pengguna'}</p>
                         <p className="text-xs font-medium text-slate-400 truncate">{user.email}</p>
                       </div>
                     </div>
-                    <button onClick={onLogout} className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors shrink-0" title="Keluar">
+                    <button onClick={onLogout} className="p-2 text-slate-400 hover:text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:bg-rose-500/10 rounded-xl transition-colors shrink-0" title="Keluar">
                       <LogOut size={16} />
                     </button>
                   </div>
@@ -614,14 +614,14 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                     </Link>
                     {role?.startsWith('admin') && (
                       <Link href="/admin" className="col-span-2">
-                        <Button variant="outline" className="w-full h-11 rounded-xl text-xs gap-2 bg-slate-50">
+                        <Button variant="outline" className="w-full h-11 rounded-xl text-xs gap-2 bg-muted text-muted-foreground">
                           <LayoutDashboard size={15} /> Dasbor Admin
                         </Button>
                       </Link>
                     )}
                     {role === 'assessor' && (
                       <Link href="/assessor" className="col-span-2">
-                        <Button variant="outline" className="w-full h-11 rounded-xl text-xs gap-2 bg-slate-50">
+                        <Button variant="outline" className="w-full h-11 rounded-xl text-xs gap-2 bg-muted text-muted-foreground">
                           <ClipboardCheck size={15} /> Ruang Kerja Asesor
                         </Button>
                       </Link>
@@ -642,7 +642,7 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
               )}
 
               {/* ── Onboarding nudge banner ───────────────────────────────────── */}
-              <m.div variants={fadeUp} className="rounded-[1.5rem] bg-indigo-50/60 p-5 ring-1 ring-indigo-100 shadow-sm">
+              <m.div variants={fadeUp} className="rounded-[1.5rem] bg-indigo-50 dark:bg-indigo-500/10/60 p-5 ring-1 ring-indigo-100 shadow-sm">
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shrink-0 shadow-sm">
                     <Sparkles className="w-5 h-5 text-white" />
@@ -650,10 +650,10 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                   <div className="flex-1 min-w-0">
                     <p className="text-[10px] font-black uppercase tracking-widest text-indigo-500 mb-1">Rekomendasi Adaptif</p>
                     <h3 className="text-sm font-black text-indigo-950 leading-snug mb-1">Onboarding 2 Menit</h3>
-                    <p className="text-xs text-indigo-700/70 font-medium leading-relaxed mb-3">AI menyusun 5 langkah prioritas & merekomendasikan modul yang tepat untuk Anda.</p>
+                    <p className="text-xs text-indigo-700 dark:text-indigo-300/70 font-medium leading-relaxed mb-3">AI menyusun 5 langkah prioritas & merekomendasikan modul yang tepat untuk Anda.</p>
                     <Link
                       href={user ? '/onboarding' : '/login?next=/onboarding'}
-                      className="inline-flex items-center gap-1.5 text-xs font-black text-indigo-600 hover:text-indigo-800 transition-colors"
+                      className="inline-flex items-center gap-1.5 text-xs font-black text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 transition-colors"
                     >
                       Mulai Sekarang <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
@@ -662,15 +662,15 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
               </m.div>
 
               {/* ── Privacy & legal strip ─────────────────────────────────────── */}
-              <m.div variants={fadeUp} className="rounded-xl bg-white ring-1 ring-slate-100 px-4 py-3 flex items-center justify-between gap-3 shadow-sm">
-                <div className="flex items-center gap-1.5 text-slate-500">
+              <m.div variants={fadeUp} className="rounded-xl card-solid ring-1 ring-border px-4 py-3 flex items-center justify-between gap-3 shadow-sm">
+                <div className="flex items-center gap-1.5 text-muted-foreground">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
                   <p className="text-[10px] font-bold uppercase tracking-wider">Privasi Terjamin</p>
                 </div>
                 <div className="flex items-center gap-3 text-[11px] font-bold">
-                  <Link href="/privasi" className="text-slate-400 hover:text-indigo-600 transition-colors">Privasi</Link>
+                  <Link href="/privasi" className="text-slate-400 hover:text-indigo-600 dark:text-indigo-400 transition-colors">Privasi</Link>
                   <span className="text-slate-200">|</span>
-                  <Link href="/kebijakan" className="text-slate-400 hover:text-indigo-600 transition-colors">Ketentuan</Link>
+                  <Link href="/kebijakan" className="text-slate-400 hover:text-indigo-600 dark:text-indigo-400 transition-colors">Ketentuan</Link>
                 </div>
               </m.div>
             </m.div>
@@ -685,14 +685,14 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                     <m.div
                       key={i}
                       variants={cardVariant}
-                      className="bg-white p-6 rounded-[1.5rem] ring-1 ring-slate-200/60 shadow-sm hover:shadow-md hover:ring-indigo-200 transition-all flex flex-col gap-4"
+                      className="card-solid p-6 rounded-[1.5rem] ring-1 ring-border shadow-sm hover:shadow-md hover:ring-indigo-200 dark:ring-indigo-500/20 transition-all flex flex-col gap-4"
                     >
                       <div className={`w-12 h-12 ${vp.bg} rounded-2xl flex items-center justify-center ring-1 ring-white shadow-inner`}>
                         {vp.icon}
                       </div>
                       <div>
-                        <h3 className="text-sm font-black text-slate-900 mb-1">{vp.title}</h3>
-                        <p className="text-xs text-slate-500 font-medium leading-relaxed">{vp.desc}</p>
+                        <h3 className="text-sm font-black text-foreground mb-1">{vp.title}</h3>
+                        <p className="text-xs text-muted-foreground font-medium leading-relaxed">{vp.desc}</p>
                       </div>
                     </m.div>
                   ))}
@@ -703,10 +703,10 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
               {/* ── LOGGED IN: Skeleton ───────────────────────────────────────── */}
               {user && isFetchingData && (
                 <div className="animate-pulse space-y-4 mb-8">
-                  <div className="h-5 bg-slate-100 rounded-lg w-1/3" />
+                  <div className="h-5 bg-secondary text-secondary-foreground rounded-lg w-1/3" />
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {[1, 2, 3, 4].map(i => (
-                      <div key={i} className="h-32 bg-slate-100 rounded-[1.5rem]" />
+                      <div key={i} className="h-32 bg-secondary text-secondary-foreground rounded-[1.5rem]" />
                     ))}
                   </div>
                 </div>
@@ -724,21 +724,21 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
               {/* ── LOGGED IN: Quick Actions ───────────────────────────────────── */}
               {user && !isFetchingData && (
                 <div className="grid grid-cols-2 gap-4 mb-8">
-                  <button onClick={() => setIsDraftsModalOpen(true)} className="flex items-center gap-3 bg-white p-4 rounded-[1.5rem] ring-1 ring-slate-200/60 shadow-sm hover:ring-amber-300 transition-all">
-                    <div className="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center text-amber-500">
+                  <button onClick={() => setIsDraftsModalOpen(true)} className="flex items-center gap-3 card-solid p-4 rounded-[1.5rem] ring-1 ring-border shadow-sm hover:ring-amber-300 transition-all">
+                    <div className="w-10 h-10 bg-amber-50 dark:bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-500">
                       <DocExportIcon className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="text-sm font-black text-slate-900">Draf ({drafts.length})</div>
+                      <div className="text-sm font-black text-foreground">Draf ({drafts.length})</div>
                       <div className="text-[11px] text-slate-400">Lanjutkan pengerjaan</div>
                     </div>
                   </button>
-                  <button onClick={() => setIsHistoryModalOpen(true)} className="flex items-center gap-3 bg-white p-4 rounded-[1.5rem] ring-1 ring-slate-200/60 shadow-sm hover:ring-indigo-300 transition-all">
-                    <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-500">
+                  <button onClick={() => setIsHistoryModalOpen(true)} className="flex items-center gap-3 card-solid p-4 rounded-[1.5rem] ring-1 ring-border shadow-sm hover:ring-indigo-300 transition-all">
+                    <div className="w-10 h-10 bg-indigo-50 dark:bg-indigo-500/10 rounded-xl flex items-center justify-center text-indigo-500">
                       <History className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="text-sm font-black text-slate-900">Riwayat ({history.length})</div>
+                      <div className="text-sm font-black text-foreground">Riwayat ({history.length})</div>
                       <div className="text-[11px] text-slate-400">Lihat hasil terdahulu</div>
                     </div>
                   </button>
@@ -751,14 +751,14 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                   variants={fadeUp}
                   initial="hidden"
                   animate="visible"
-                  className="bg-white rounded-[2rem] ring-1 ring-slate-200/60 shadow-sm p-12 text-center flex flex-col items-center gap-4"
+                  className="card-solid rounded-[2rem] ring-1 ring-border shadow-sm p-12 text-center flex flex-col items-center gap-4"
                 >
-                  <div className="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center ring-1 ring-indigo-100">
-                    <AiSparkIcon size={28} className="text-indigo-600" />
+                  <div className="w-16 h-16 bg-indigo-50 dark:bg-indigo-500/10 rounded-2xl flex items-center justify-center ring-1 ring-indigo-100">
+                    <AiSparkIcon size={28} className="text-indigo-600 dark:text-indigo-400" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-black text-slate-900 mb-1">Belum Ada Riwayat</h3>
-                    <p className="text-sm text-slate-500 font-medium leading-relaxed max-w-xs mx-auto">
+                    <h3 className="text-lg font-black text-foreground mb-1">Belum Ada Riwayat</h3>
+                    <p className="text-sm text-muted-foreground font-medium leading-relaxed max-w-xs mx-auto">
                       Mulai asesmen pertama Anda untuk melihat hasil dan rekam jejak analitik di sini.
                     </p>
                   </div>
@@ -792,21 +792,21 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
             />
             <m.div
               initial={{ opacity: 0, scale: 0.95, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="fixed left-1/2 top-1/2 z-50 w-[92%] max-w-3xl max-h-[85vh] flex flex-col -translate-x-1/2 -translate-y-1/2 bg-white rounded-3xl shadow-2xl ring-1 ring-slate-200 overflow-hidden"
+              className="fixed left-1/2 top-1/2 z-50 w-[92%] max-w-3xl max-h-[85vh] flex flex-col -translate-x-1/2 -translate-y-1/2 card-solid rounded-3xl shadow-2xl ring-1 ring-border overflow-hidden"
             >
-              <div className="p-5 md:p-6 border-b border-slate-100 flex items-center justify-between bg-white shrink-0">
+              <div className="p-5 md:p-6 border-b border-border flex items-center justify-between card-solid shrink-0">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center text-amber-500">
+                  <div className="w-10 h-10 bg-amber-50 dark:bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-500">
                     <DocExportIcon className="w-5 h-5" />
                   </div>
                   <div>
-                    <h2 className="text-base md:text-lg font-black text-slate-900">Draf Belum Selesai</h2>
-                    <p className="text-xs text-slate-500">{drafts.length} draf tersimpan lokal</p>
+                    <h2 className="text-base md:text-lg font-black text-foreground">Draf Belum Selesai</h2>
+                    <p className="text-xs text-muted-foreground">{drafts.length} draf tersimpan lokal</p>
                   </div>
                 </div>
-                <button onClick={() => setIsDraftsModalOpen(false)} className="p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 rounded-xl transition-colors"><X size={20} /></button>
+                <button onClick={() => setIsDraftsModalOpen(false)} className="p-2 text-slate-400 hover:bg-secondary text-secondary-foreground hover:text-slate-700 rounded-xl transition-colors"><X size={20} /></button>
               </div>
-              <div className="p-5 md:p-6 overflow-y-auto bg-slate-50/50 flex-1">
+              <div className="p-5 md:p-6 overflow-y-auto bg-muted text-muted-foreground/50 flex-1">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {drafts.map((draft, idx) => (
                     <div
@@ -815,12 +815,12 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                         setIsDraftsModalOpen(false);
                         handleResumeDraft(draft);
                       }}
-                      className="bg-white p-5 rounded-[1.5rem] ring-1 ring-slate-200/60 shadow-sm cursor-pointer group hover:ring-amber-300 hover:shadow-md transition-all flex flex-col min-h-[120px]"
+                      className="card-solid p-5 rounded-[1.5rem] ring-1 ring-border shadow-sm cursor-pointer group hover:ring-amber-300 hover:shadow-md transition-all flex flex-col min-h-[120px]"
                     >
-                      <span className="text-[9px] font-black uppercase tracking-widest text-amber-700 bg-amber-50 px-2.5 py-1 rounded-md ring-1 ring-amber-100 w-fit mb-3">
+                      <span className="text-[9px] font-black uppercase tracking-widest text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/10 px-2.5 py-1 rounded-md ring-1 ring-amber-100 w-fit mb-3">
                         Tersimpan Lokal
                       </span>
-                      <h4 className="font-black text-slate-900 text-sm group-hover:text-amber-600 line-clamp-2 transition-colors flex-1 mb-3">
+                      <h4 className="font-black text-foreground text-sm group-hover:text-amber-600 dark:text-amber-400 line-clamp-2 transition-colors flex-1 mb-3">
                         {asSafeText(draft.trackName, 'Draft Tanpa Nama')}
                       </h4>
                       <p className="text-[11px] font-bold text-slate-400 group-hover:text-amber-500 flex items-center gap-1.5 transition-colors mt-auto">
@@ -850,21 +850,21 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
             />
             <m.div
               initial={{ opacity: 0, scale: 0.95, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="fixed left-1/2 top-1/2 z-50 w-[92%] max-w-3xl max-h-[85vh] flex flex-col -translate-x-1/2 -translate-y-1/2 bg-white rounded-3xl shadow-2xl ring-1 ring-slate-200 overflow-hidden"
+              className="fixed left-1/2 top-1/2 z-50 w-[92%] max-w-3xl max-h-[85vh] flex flex-col -translate-x-1/2 -translate-y-1/2 card-solid rounded-3xl shadow-2xl ring-1 ring-border overflow-hidden"
             >
-              <div className="p-5 md:p-6 border-b border-slate-100 flex items-center justify-between bg-white shrink-0">
+              <div className="p-5 md:p-6 border-b border-border flex items-center justify-between card-solid shrink-0">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-500">
+                  <div className="w-10 h-10 bg-indigo-50 dark:bg-indigo-500/10 rounded-xl flex items-center justify-center text-indigo-500">
                     <History className="w-5 h-5" />
                   </div>
                   <div>
-                    <h2 className="text-base md:text-lg font-black text-slate-900">Riwayat Kurasi</h2>
-                    <p className="text-xs text-slate-500">{history.length} riwayat tersimpan</p>
+                    <h2 className="text-base md:text-lg font-black text-foreground">Riwayat Kurasi</h2>
+                    <p className="text-xs text-muted-foreground">{history.length} riwayat tersimpan</p>
                   </div>
                 </div>
-                <button onClick={() => setIsHistoryModalOpen(false)} className="p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 rounded-xl transition-colors"><X size={20} /></button>
+                <button onClick={() => setIsHistoryModalOpen(false)} className="p-2 text-slate-400 hover:bg-secondary text-secondary-foreground hover:text-slate-700 rounded-xl transition-colors"><X size={20} /></button>
               </div>
-              <div className="p-5 md:p-6 overflow-y-auto bg-slate-50/50 flex-1">
+              <div className="p-5 md:p-6 overflow-y-auto bg-muted text-muted-foreground/50 flex-1">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {history.map((item, idx) => (
                     <div
@@ -873,20 +873,20 @@ export function CurationLanding({ onStart, history, onLoadHistory, user, role, o
                         setIsHistoryModalOpen(false);
                         onLoadHistory(item);
                       }}
-                      className="bg-white p-5 rounded-[1.5rem] ring-1 ring-slate-200/60 shadow-sm cursor-pointer group hover:ring-indigo-300 hover:shadow-md transition-all flex flex-col min-h-[140px]"
+                      className="card-solid p-5 rounded-[1.5rem] ring-1 ring-border shadow-sm cursor-pointer group hover:ring-indigo-300 hover:shadow-md transition-all flex flex-col min-h-[140px]"
                     >
-                      <span className="text-[9px] font-black uppercase tracking-widest text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-md ring-1 ring-indigo-100 w-fit mb-3">
+                      <span className="text-[9px] font-black uppercase tracking-widest text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-500/10 px-2.5 py-1 rounded-md ring-1 ring-indigo-100 w-fit mb-3">
                         {asSafeText(item.trackType, 'Evaluasi')}
                       </span>
-                      <h4 className="font-black text-slate-900 text-sm group-hover:text-indigo-600 line-clamp-2 transition-colors flex-1 mb-4">
+                      <h4 className="font-black text-foreground text-sm group-hover:text-indigo-600 dark:text-indigo-400 line-clamp-2 transition-colors flex-1 mb-4">
                         {asSafeText(item.namaUsaha, 'Tanpa Nama')}
                       </h4>
-                      <div className="flex items-center justify-between pt-3 border-t border-slate-100 mt-auto">
+                      <div className="flex items-center justify-between pt-3 border-t border-border mt-auto">
                         <div className="flex items-center gap-2">
-                          <div className="p-1.5 bg-slate-50 rounded-lg ring-1 ring-slate-200 group-hover:ring-indigo-200 group-hover:bg-indigo-50 transition-colors">
+                          <div className="p-1.5 bg-muted text-muted-foreground rounded-lg ring-1 ring-border group-hover:ring-indigo-200 dark:ring-indigo-500/20 group-hover:bg-indigo-50 dark:bg-indigo-500/10 transition-colors">
                             <BrainIcon size={13} className="text-slate-400 group-hover:text-indigo-500 transition-colors" />
                           </div>
-                          <p className="text-xs font-bold text-slate-600">Skor: {asSafeNumber(item.score, 0)}</p>
+                          <p className="text-xs font-bold text-muted-foreground">Skor: {asSafeNumber(item.score, 0)}</p>
                         </div>
                         <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-indigo-500 transition-colors" />
                       </div>

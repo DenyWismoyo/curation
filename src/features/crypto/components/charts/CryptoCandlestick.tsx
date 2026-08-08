@@ -200,7 +200,7 @@ export default function CryptoCandlestick({ symbol, klines, targetPrice, stopLos
   }, [klines, targetPrice, stopLossPrice, symbol]);
 
   return (
-    <div className="w-full h-48 md:h-64 mt-2 overflow-hidden rounded-xl bg-slate-50/50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800 relative z-0">
+    <div className="w-full h-48 md:h-64 mt-2 overflow-hidden rounded-xl bg-muted text-muted-foreground/50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800 relative z-0">
       <div ref={chartContainerRef} className="w-full h-full" />
     </div>
   );

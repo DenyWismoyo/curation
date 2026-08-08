@@ -33,13 +33,13 @@ const renderMarkdownText = (str: string) => {
   return parts.map((part, index) => {
     if (part.startsWith('**') && part.endsWith('**')) {
       return (
-        <strong key={index} className="font-black text-indigo-600">
+        <strong key={index} className="font-black text-indigo-600 dark:text-indigo-400">
           {part.slice(2, -2)}
         </strong>
       )
     } else if (part.startsWith('*') && part.endsWith('*')) {
       return (
-        <strong key={index} className="font-bold text-indigo-600">
+        <strong key={index} className="font-bold text-indigo-600 dark:text-indigo-400">
           {part.slice(1, -1)}
         </strong>
       )
@@ -369,17 +369,17 @@ export function DynamicWizard({
   // ================= TAMPILAN REVIEW AKHIR =================
   if (isReviewMode) {
     return (
-      <div className="w-full flex flex-col justify-center min-h-[100dvh] bg-[#FAFAFA] py-12 px-4 sm:px-6">
+      <div className="w-full flex flex-col justify-center min-h-[100dvh] bg-background text-foreground py-12 px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="w-full max-w-4xl mx-auto"
         >
           <div className="mb-8 text-center">
-            <h2 className="text-3xl font-black text-slate-900 tracking-tight">
+            <h2 className="text-3xl font-black text-foreground tracking-tight">
               Tahap Akhir
             </h2>
-            <p className="text-slate-500 mt-2 font-medium">
+            <p className="text-muted-foreground mt-2 font-medium">
               Lakukan penilaian mandiri sebelum data dikirim ke mesin komputasi
               AI.
             </p>
@@ -447,15 +447,15 @@ export function DynamicWizard({
 
   // ================= TAMPILAN WIZARD (FOCUS MODE) =================
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-[#FAFAFA] overflow-hidden">
+    <div className="fixed inset-0 z-50 flex flex-col bg-background text-foreground overflow-hidden">
       {/* ================= HEADER (FIXED TOP) ================= */}
-      <header className="bg-white border-b border-slate-200 shrink-0 relative z-20">
+      <header className="card-solid border-b border-border shrink-0 relative z-20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
           {/* Kiri: Tombol Kembali */}
           <button
             onClick={() => (step > 1 ? setStep(step - 1) : onBack())}
             disabled={isGeneratingStep}
-            className="flex items-center gap-1.5 text-slate-500 hover:text-indigo-600 transition-colors w-20 sm:w-28 disabled:opacity-50"
+            className="flex items-center gap-1.5 text-muted-foreground hover:text-indigo-600 dark:text-indigo-400 transition-colors w-20 sm:w-28 disabled:opacity-50"
           >
             <ChevronLeft size={20} />{' '}
             <span className="text-sm font-bold hidden sm:block">Kembali</span>
@@ -463,7 +463,7 @@ export function DynamicWizard({
 
           {/* Tengah: Judul Assessment & Judul Step */}
           <div className="flex-1 flex flex-col items-center justify-center min-w-0 px-2 text-center pt-1">
-            <h1 className="text-[10px] sm:text-xs font-black text-slate-900 uppercase tracking-widest truncate w-full">
+            <h1 className="text-[10px] sm:text-xs font-black text-foreground uppercase tracking-widest truncate w-full">
               {template.trackName}
             </h1>
             {!isGeneratingStep && currentStepData && (
@@ -473,8 +473,8 @@ export function DynamicWizard({
                 animate={{ opacity: 1, y: 0 }}
                 className="flex items-center justify-center gap-1.5 mt-1"
               >
-                <StepIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-600" />
-                <h2 className="text-[11px] sm:text-sm font-bold text-indigo-600 truncate max-w-[200px] sm:max-w-md">
+                <StepIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-600 dark:text-indigo-400" />
+                <h2 className="text-[11px] sm:text-sm font-bold text-indigo-600 dark:text-indigo-400 truncate max-w-[200px] sm:max-w-md">
                   {renderMarkdownText(currentStepData.title)}
                 </h2>
               </motion.div>
@@ -497,7 +497,7 @@ export function DynamicWizard({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="hidden sm:flex text-[10px] text-emerald-600 font-bold items-center gap-1"
+                  className="hidden sm:flex text-[10px] text-emerald-600 dark:text-emerald-400 font-bold items-center gap-1"
                 >
                   <Check size={12} /> {saveStatus}
                 </motion.span>
@@ -506,7 +506,7 @@ export function DynamicWizard({
             <button
               onClick={handleClearForm}
               disabled={isGeneratingStep}
-              className="text-[10px] font-bold text-rose-500 hover:bg-rose-50 px-2 py-1.5 rounded-lg transition-colors flex items-center gap-1 disabled:opacity-50"
+              className="text-[10px] font-bold text-rose-500 hover:bg-rose-50 dark:bg-rose-500/10 px-2 py-1.5 rounded-lg transition-colors flex items-center gap-1 disabled:opacity-50"
               title="Kosongkan Form"
             >
               <Trash2 size={14} />{' '}
@@ -516,7 +516,7 @@ export function DynamicWizard({
         </div>
 
         {/* Progress Line */}
-        <div className="w-full h-1 bg-slate-100 absolute bottom-0 left-0">
+        <div className="w-full h-1 bg-secondary text-secondary-foreground absolute bottom-0 left-0">
           <motion.div
             className="h-full bg-indigo-600 rounded-r-full"
             initial={{ width: 0 }}
@@ -542,14 +542,14 @@ export function DynamicWizard({
                 exit="exit"
                 className="flex flex-col items-center justify-center py-20 text-center space-y-6"
               >
-                <div className="w-20 h-20 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center shadow-inner">
+                <div className="w-20 h-20 bg-rose-100 text-rose-600 dark:text-rose-400 rounded-full flex items-center justify-center shadow-inner">
                   <AlertTriangle size={36} />
                 </div>
                 <div className="space-y-3">
-                  <h3 className="text-2xl font-black text-slate-900">
+                  <h3 className="text-2xl font-black text-foreground">
                     Koneksi Terputus
                   </h3>
-                  <p className="text-slate-500 font-medium max-w-md mx-auto leading-relaxed">
+                  <p className="text-muted-foreground font-medium max-w-md mx-auto leading-relaxed">
                     Gagal meracik pertanyaan khusus untuk Anda. Pastikan koneksi
                     internet Anda stabil.
                   </p>
@@ -598,14 +598,14 @@ export function DynamicWizard({
                   ></motion.div>
                   <BrainIcon
                     size={40}
-                    className="text-indigo-600 animate-pulse"
+                    className="text-indigo-600 dark:text-indigo-400 animate-pulse"
                   />
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-2xl font-black text-slate-900">
+                  <h3 className="text-2xl font-black text-foreground">
                     Menganalisis & Meracik Modul...
                   </h3>
-                  <p className="text-slate-500 font-medium max-w-md mx-auto leading-relaxed">
+                  <p className="text-muted-foreground font-medium max-w-md mx-auto leading-relaxed">
                     Sistem kami sedang membaca profil Anda dan menyusun
                     pertanyaan khusus (tailor-made) untuk tahap selanjutnya.
                   </p>
@@ -622,7 +622,7 @@ export function DynamicWizard({
               >
                 {/* Deskripsi Step Jika Ada */}
                 {currentStepData?.description && (
-                  <div className="mb-6 bg-indigo-50/50 p-4 rounded-2xl ring-1 ring-indigo-100 text-sm font-medium text-indigo-900 text-center shadow-sm">
+                  <div className="mb-6 bg-indigo-50 dark:bg-indigo-500/10/50 p-4 rounded-2xl ring-1 ring-indigo-100 text-sm font-medium text-indigo-900 text-center shadow-sm">
                     {currentStepData.description}
                   </div>
                 )}
@@ -648,7 +648,7 @@ export function DynamicWizard({
                             duration: 0.4,
                             ease: 'easeOut',
                           }}
-                          className="bg-white p-5 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] shadow-sm ring-1 ring-slate-200/60 transition-shadow hover:ring-indigo-200 hover:shadow-md"
+                          className="card-solid p-5 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] shadow-sm ring-1 ring-border transition-shadow hover:ring-indigo-200 dark:ring-indigo-500/20 hover:shadow-md"
                         >
                           <DynamicField
                             field={field}
@@ -661,14 +661,14 @@ export function DynamicWizard({
                             <motion.div
                               initial={{ opacity: 0, height: 0 }}
                               animate={{ opacity: 1, height: 'auto' }}
-                              className="mt-4 inline-flex items-start gap-2 bg-indigo-50/60 p-3 rounded-xl border border-indigo-100/60"
+                              className="mt-4 inline-flex items-start gap-2 bg-indigo-50 dark:bg-indigo-500/10/60 p-3 rounded-xl border border-indigo-100/60"
                             >
                               <AiSparkIcon
                                 size={16}
                                 className="text-indigo-500 shrink-0 mt-0.5"
                               />
                               <p className="text-[11px] font-medium text-indigo-900/80 leading-relaxed">
-                                <strong className="text-indigo-700">
+                                <strong className="text-indigo-700 dark:text-indigo-300">
                                   Analisis AI:
                                 </strong>{' '}
                                 {field.aiReasoning}
@@ -687,15 +687,15 @@ export function DynamicWizard({
 
       {/* ================= FOOTER (FIXED BOTTOM) ================= */}
       {!isGeneratingStep && (
-        <footer className="bg-white border-t border-slate-200 shrink-0 z-20 relative shadow-[0_-10px_20px_rgba(0,0,0,0.02)]">
+        <footer className="card-solid border-t border-border shrink-0 z-20 relative shadow-[0_-10px_20px_rgba(0,0,0,0.02)]">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 h-20 sm:h-24 flex items-center justify-between gap-4">
             {/* Kiri: Indikator Langkah */}
-            <div className="text-sm font-bold text-slate-500 flex flex-col sm:flex-row sm:items-baseline gap-1">
+            <div className="text-sm font-bold text-muted-foreground flex flex-col sm:flex-row sm:items-baseline gap-1">
               <span className="text-[10px] sm:text-xs uppercase tracking-widest text-slate-400">
                 Progres
               </span>
               <div>
-                <span className="text-indigo-600 font-black text-xl sm:text-2xl">
+                <span className="text-indigo-600 dark:text-indigo-400 font-black text-xl sm:text-2xl">
                   {step}
                 </span>{' '}
                 <span className="text-xs sm:text-sm">/ {totalSteps}</span>
@@ -705,7 +705,7 @@ export function DynamicWizard({
             {/* Kanan: Aksi Selanjutnya */}
             <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
               {!isStepValid() && currentStepData?.fields?.length > 0 && (
-                <span className="hidden sm:flex text-[10px] font-bold text-amber-600 items-center gap-1.5 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200">
+                <span className="hidden sm:flex text-[10px] font-bold text-amber-600 dark:text-amber-400 items-center gap-1.5 bg-amber-50 dark:bg-amber-500/10 px-3 py-1.5 rounded-lg border border-amber-200 dark:border-amber-500/20">
                   <AlertTriangle size={14} /> Lengkapi Pertanyaan Wajib (*)
                 </span>
               )}

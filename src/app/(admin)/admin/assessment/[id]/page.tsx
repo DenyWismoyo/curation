@@ -69,7 +69,7 @@ export default function AdminAssessmentDetailPage() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[70vh] text-slate-400">
-        <Loader2 className="w-10 h-10 animate-spin mb-4 text-indigo-600" />
+        <Loader2 className="w-10 h-10 animate-spin mb-4 text-indigo-600 dark:text-indigo-400" />
         <p className="font-bold tracking-widest text-xs uppercase">Memuat Detail Asesmen...</p>
       </div>
     );
@@ -90,29 +90,29 @@ export default function AdminAssessmentDetailPage() {
     <div className="space-y-6 animate-in fade-in duration-500 pb-20">
       
       {/* HEADER NAVIGASI & IDENTITAS KUNCI */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-5 sm:p-6 rounded-3xl ring-1 ring-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 card-solid p-5 sm:p-6 rounded-3xl ring-1 ring-border/80 shadow-xs">
         <div className="flex items-start gap-4">
-          <Button variant="ghost" onClick={() => router.push('/admin')} className="w-10 h-10 mt-1 p-0 rounded-2xl bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 text-slate-600 shrink-0 cursor-pointer transition-colors" title="Kembali ke Dasbor">
+          <Button variant="ghost" onClick={() => router.push('/admin')} className="w-10 h-10 mt-1 p-0 rounded-2xl bg-secondary text-secondary-foreground hover:bg-indigo-50 dark:bg-indigo-500/10 hover:text-indigo-600 dark:text-indigo-400 text-muted-foreground shrink-0 cursor-pointer transition-colors" title="Kembali ke Dasbor">
             <ChevronLeft size={20} />
           </Button>
           <div>
             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Admin Preview Mode</p>
-            <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight mb-2">{data.namaUsaha || 'Tanpa Nama'}</h1>
+            <h1 className="text-xl sm:text-2xl font-black text-foreground tracking-tight leading-tight mb-2">{data.namaUsaha || 'Tanpa Nama'}</h1>
             
             {/* INJEKSI KONTAK PESERTA DARI FORMDATA */}
             <div className="flex flex-wrap items-center gap-3">
               {formData?.namaPengisi && (
-                <span className="text-[11px] font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg ring-1 ring-slate-200/50 flex items-center gap-1.5">
+                <span className="text-[11px] font-bold text-muted-foreground bg-secondary text-secondary-foreground px-2.5 py-1 rounded-lg ring-1 ring-border/50 flex items-center gap-1.5">
                     {formData.namaPengisi}
                 </span>
               )}
               {formData?.email && (
-                <a href={`mailto:${formData.email}`} className="text-[11px] font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1 rounded-lg ring-1 ring-indigo-200/50 flex items-center gap-1.5 transition-colors">
+                <a href={`mailto:${formData.email}`} className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 px-2.5 py-1 rounded-lg ring-1 ring-indigo-200 dark:ring-indigo-500/20/50 flex items-center gap-1.5 transition-colors">
                   <Mail size={12} /> {formData.email}
                 </a>
               )}
               {formData?.telepon && (
-                <a href={`https://wa.me/${waNumber.startsWith('0') ? '62' + waNumber.slice(1) : waNumber}`} target="_blank" rel="noreferrer" className="text-[11px] font-bold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1 rounded-lg ring-1 ring-emerald-200/50 flex items-center gap-1.5 transition-colors">
+                <a href={`https://wa.me/${waNumber.startsWith('0') ? '62' + waNumber.slice(1) : waNumber}`} target="_blank" rel="noreferrer" className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 px-2.5 py-1 rounded-lg ring-1 ring-emerald-200 dark:ring-emerald-500/20/50 flex items-center gap-1.5 transition-colors">
                   <Phone size={12} /> {formData.telepon}
                 </a>
               )}
@@ -126,20 +126,20 @@ export default function AdminAssessmentDetailPage() {
       </div>
 
       {/* TABS */}
-      <div className="sticky top-[60px] md:top-20 z-40 bg-[#FAFAFA]/95 backdrop-blur-md py-4 -mx-4 px-4 sm:mx-0 sm:px-0 flex gap-2 overflow-x-auto custom-scrollbar flex-nowrap border-b border-slate-200/50 mb-6 w-[100vw] sm:w-full">
-        <button onClick={() => setActiveTab('evaluasi')} className={`shrink-0 px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${activeTab === 'evaluasi' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 ring-1 ring-slate-200/80'}`}>
+      <div className="sticky top-[60px] md:top-20 z-40 bg-background text-foreground/95 backdrop-blur-md py-4 -mx-4 px-4 sm:mx-0 sm:px-0 flex gap-2 overflow-x-auto custom-scrollbar flex-nowrap border-b border-border/50 mb-6 w-[100vw] sm:w-full">
+        <button onClick={() => setActiveTab('evaluasi')} className={`shrink-0 px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${activeTab === 'evaluasi' ? 'bg-slate-900 text-white shadow-md' : 'card-solid text-muted-foreground hover:bg-secondary text-secondary-foreground hover:text-foreground ring-1 ring-border/80'}`}>
           <ShieldCheck className="w-4 h-4"/> Lembar Hasil Evaluasi
         </button>
-        <button onClick={() => setActiveTab('input')} className={`shrink-0 px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${activeTab === 'input' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 ring-1 ring-slate-200/80'}`}>
+        <button onClick={() => setActiveTab('input')} className={`shrink-0 px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${activeTab === 'input' ? 'bg-slate-900 text-white shadow-md' : 'card-solid text-muted-foreground hover:bg-secondary text-secondary-foreground hover:text-foreground ring-1 ring-border/80'}`}>
           <Briefcase className="w-4 h-4"/> Data Input Peserta
         </button>
-        <button onClick={() => setActiveTab('analytics')} className={`shrink-0 px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${activeTab === 'analytics' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 ring-1 ring-slate-200/80'}`}>
+        <button onClick={() => setActiveTab('analytics')} className={`shrink-0 px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${activeTab === 'analytics' ? 'bg-slate-900 text-white shadow-md' : 'card-solid text-muted-foreground hover:bg-secondary text-secondary-foreground hover:text-foreground ring-1 ring-border/80'}`}>
           <BarChart3 className="w-4 h-4"/> Ringkasan Analytics
         </button>
-        <button onClick={() => setActiveTab('argumen')} className={`shrink-0 px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${activeTab === 'argumen' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 ring-1 ring-slate-200/80'}`}>
+        <button onClick={() => setActiveTab('argumen')} className={`shrink-0 px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${activeTab === 'argumen' ? 'bg-slate-900 text-white shadow-md' : 'card-solid text-muted-foreground hover:bg-secondary text-secondary-foreground hover:text-foreground ring-1 ring-border/80'}`}>
           <Brain className="w-4 h-4"/> Argumen Jawaban AI
         </button>
-        <button onClick={() => setActiveTab('log_ai')} className={`shrink-0 px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${activeTab === 'log_ai' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 ring-1 ring-slate-200/80'}`}>
+        <button onClick={() => setActiveTab('log_ai')} className={`shrink-0 px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${activeTab === 'log_ai' ? 'bg-slate-900 text-white shadow-md' : 'card-solid text-muted-foreground hover:bg-secondary text-secondary-foreground hover:text-foreground ring-1 ring-border/80'}`}>
           <Cpu className="w-4 h-4"/> Log Master AI
         </button>
       </div>
@@ -178,8 +178,8 @@ export default function AdminAssessmentDetailPage() {
       )}
 
       {activeTab === 'input' && (
-        <div className="max-w-5xl bg-white rounded-3xl ring-1 ring-slate-200 p-6 sm:p-8 shadow-sm">
-          <h3 className="text-lg font-black text-slate-900 mb-6 flex items-center gap-2"><Briefcase className="w-5 h-5 text-indigo-600"/> Data Input Registrasi Peserta</h3>
+        <div className="max-w-5xl card-solid rounded-3xl ring-1 ring-border p-6 sm:p-8 shadow-sm">
+          <h3 className="text-lg font-black text-foreground mb-6 flex items-center gap-2"><Briefcase className="w-5 h-5 text-indigo-600 dark:text-indigo-400"/> Data Input Registrasi Peserta</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {Object.entries(formData || {}).map(([key, value]) => {
               if (!value) return null;
@@ -189,9 +189,9 @@ export default function AdminAssessmentDetailPage() {
               const isArray = Array.isArray(value);
               
               return (
-                <div key={key} className="bg-slate-50 p-4 rounded-2xl ring-1 ring-slate-100">
+                <div key={key} className="bg-muted text-muted-foreground p-4 rounded-2xl ring-1 ring-border">
                   <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">{formatKey(key)}</p>
-                  {isUrl ? <a href={value as string} target="_blank" rel="noreferrer" className="text-indigo-600 font-bold text-sm hover:underline flex items-center gap-1">Lihat Lampiran</a> : isArray ? <div className="flex flex-wrap gap-1.5 mt-1">{(value as string[]).map((item, i) => <span key={i} className="px-2 py-1 bg-white ring-1 ring-slate-200 rounded-md text-xs font-semibold text-slate-700">{item}</span>)}</div> : <p className="text-sm font-semibold text-slate-800 whitespace-pre-wrap leading-relaxed">{String(value)}</p>}
+                  {isUrl ? <a href={value as string} target="_blank" rel="noreferrer" className="text-indigo-600 dark:text-indigo-400 font-bold text-sm hover:underline flex items-center gap-1">Lihat Lampiran</a> : isArray ? <div className="flex flex-wrap gap-1.5 mt-1">{(value as string[]).map((item, i) => <span key={i} className="px-2 py-1 card-solid ring-1 ring-border rounded-md text-xs font-semibold text-slate-700">{item}</span>)}</div> : <p className="text-sm font-semibold text-foreground whitespace-pre-wrap leading-relaxed">{String(value)}</p>}
                 </div>
               );
             })}
@@ -200,29 +200,29 @@ export default function AdminAssessmentDetailPage() {
       )}
 
       {activeTab === 'argumen' && (
-        <div className="max-w-5xl bg-white rounded-3xl ring-1 ring-slate-200 p-6 sm:p-8 shadow-sm">
-          <h3 className="text-lg font-black text-slate-900 mb-6 flex items-center gap-2">
-            <Brain className="w-5 h-5 text-indigo-600"/> Argumen Jawaban AI (Bedah Formulir)
+        <div className="max-w-5xl card-solid rounded-3xl ring-1 ring-border p-6 sm:p-8 shadow-sm">
+          <h3 className="text-lg font-black text-foreground mb-6 flex items-center gap-2">
+            <Brain className="w-5 h-5 text-indigo-600 dark:text-indigo-400"/> Argumen Jawaban AI (Bedah Formulir)
           </h3>
           
           {aiResult?.fieldArguments && aiResult.fieldArguments.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {aiResult.fieldArguments.map((item: any, idx: number) => (
-                <div key={idx} className="bg-slate-50 p-4 rounded-2xl ring-1 ring-slate-100 flex flex-col hover:shadow-md transition-shadow">
+                <div key={idx} className="bg-muted text-muted-foreground p-4 rounded-2xl ring-1 ring-border flex flex-col hover:shadow-md transition-shadow">
                   <div className="flex justify-between items-start mb-2 gap-3">
-                    <h4 className="text-xs font-black text-slate-900 leading-tight flex-1">{item?.label}</h4>
-                    <div className="bg-white ring-1 ring-slate-200 px-2 py-1 rounded-md shrink-0">
-                      <span className={`text-sm font-black ${item?.score >= 80 ? 'text-emerald-600' : item?.score >= 60 ? 'text-amber-500' : 'text-rose-500'}`}>{item?.score}</span>
+                    <h4 className="text-xs font-black text-foreground leading-tight flex-1">{item?.label}</h4>
+                    <div className="card-solid ring-1 ring-border px-2 py-1 rounded-md shrink-0">
+                      <span className={`text-sm font-black ${item?.score >= 80 ? 'text-emerald-600 dark:text-emerald-400' : item?.score >= 60 ? 'text-amber-500' : 'text-rose-500'}`}>{item?.score}</span>
                     </div>
                   </div>
-                  <div className="text-[11px] text-slate-600 font-medium flex-1 leading-relaxed border-t border-slate-200/60 pt-2 mt-1 whitespace-pre-wrap">
+                  <div className="text-[11px] text-muted-foreground font-medium flex-1 leading-relaxed border-t border-border pt-2 mt-1 whitespace-pre-wrap">
                     {item?.description}
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-             <div className="rounded-2xl bg-slate-50 ring-1 ring-slate-200 p-4 text-sm font-semibold text-slate-600">
+             <div className="rounded-2xl bg-muted text-muted-foreground ring-1 ring-border p-4 text-sm font-semibold text-muted-foreground">
                Argumen bedah jawaban belum tersedia.
              </div>
           )}
@@ -230,39 +230,39 @@ export default function AdminAssessmentDetailPage() {
       )}
 
       {activeTab === 'log_ai' && (
-        <div className="max-w-5xl bg-white rounded-3xl ring-1 ring-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
-          <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
-            <Cpu className="w-5 h-5 text-indigo-600"/> Log Komputasi Internal Master AI
+        <div className="max-w-5xl card-solid rounded-3xl ring-1 ring-border p-6 sm:p-8 shadow-sm space-y-6">
+          <h3 className="text-lg font-black text-foreground flex items-center gap-2">
+            <Cpu className="w-5 h-5 text-indigo-600 dark:text-indigo-400"/> Log Komputasi Internal Master AI
           </h3>
-          <p className="text-sm text-slate-500 mb-6">Data ini adalah log rahasia dari "pemikiran" di balik layar agen AI saat memproses form.</p>
+          <p className="text-sm text-muted-foreground mb-6">Data ini adalah log rahasia dari "pemikiran" di balik layar agen AI saat memproses form.</p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* TINGKAT KEPERCAYAAN & KONTRADIKSI */}
-            <div className="bg-slate-50 p-5 rounded-2xl ring-1 ring-slate-200 space-y-4">
+            <div className="bg-muted text-muted-foreground p-5 rounded-2xl ring-1 ring-border space-y-4">
                <div>
-                 <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1">Data Confidence Score</p>
+                 <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Data Confidence Score</p>
                  <div className="flex items-center gap-3">
-                   <span className={`text-2xl font-black ${aiResult?.dataConfidenceScore >= 80 ? 'text-emerald-600' : aiResult?.dataConfidenceScore >= 60 ? 'text-amber-500' : 'text-rose-500'}`}>
+                   <span className={`text-2xl font-black ${aiResult?.dataConfidenceScore >= 80 ? 'text-emerald-600 dark:text-emerald-400' : aiResult?.dataConfidenceScore >= 60 ? 'text-amber-500' : 'text-rose-500'}`}>
                      {aiResult?.dataConfidenceScore || 0}%
                    </span>
-                   <span className="text-xs font-semibold text-slate-500 bg-slate-200 px-2 py-1 rounded-md">
+                   <span className="text-xs font-semibold text-muted-foreground bg-slate-200 px-2 py-1 rounded-md">
                      Kepercayaan AI thd Validitas Form
                    </span>
                  </div>
                </div>
 
                <div>
-                 <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2">Kontradiksi Data Ditemukan</p>
+                 <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Kontradiksi Data Ditemukan</p>
                  {aiResult?.contradictionsFound && aiResult.contradictionsFound.length > 0 ? (
                    <ul className="space-y-2">
                      {aiResult.contradictionsFound.map((item: string, idx: number) => (
-                       <li key={idx} className="text-xs font-medium text-rose-700 bg-rose-50 px-3 py-2 rounded-xl ring-1 ring-rose-200/50 flex items-start gap-2">
+                       <li key={idx} className="text-xs font-medium text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-500/10 px-3 py-2 rounded-xl ring-1 ring-rose-200 dark:ring-rose-500/20/50 flex items-start gap-2">
                          <span className="shrink-0 mt-0.5">•</span> <span>{item}</span>
                        </li>
                      ))}
                    </ul>
                  ) : (
-                   <div className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-3 py-2 rounded-xl ring-1 ring-emerald-200/50">
+                   <div className="text-xs font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-500/10 px-3 py-2 rounded-xl ring-1 ring-emerald-200 dark:ring-emerald-500/20/50">
                      Sempurna. Tidak ada klaim kontradiktif yang ditemukan.
                    </div>
                  )}
@@ -270,19 +270,19 @@ export default function AdminAssessmentDetailPage() {
             </div>
 
             {/* FORENSIK DOKUMEN */}
-            <div className="bg-slate-50 p-5 rounded-2xl ring-1 ring-slate-200 space-y-4">
+            <div className="bg-muted text-muted-foreground p-5 rounded-2xl ring-1 ring-border space-y-4">
               <div className="flex items-center gap-2 mb-2">
-                <FileSearch className="w-4 h-4 text-slate-600" />
-                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Forensik Dokumen Lampiran</p>
+                <FileSearch className="w-4 h-4 text-muted-foreground" />
+                <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">Forensik Dokumen Lampiran</p>
               </div>
               
               {!aiResult?.fileAnalysisInsights ? (
-                <p className="text-xs text-slate-500 italic">Tidak ada dokumen lampiran yang diproses.</p>
+                <p className="text-xs text-muted-foreground italic">Tidak ada dokumen lampiran yang diproses.</p>
               ) : (
                 <div className="space-y-3">
                   <div>
                     <p className="text-[10px] font-bold text-slate-400 uppercase">Kualitas Dokumen</p>
-                    <p className="text-sm font-semibold text-slate-800">{aiResult.fileAnalysisInsights.documentQuality}</p>
+                    <p className="text-sm font-semibold text-foreground">{aiResult.fileAnalysisInsights.documentQuality}</p>
                   </div>
                   <div>
                     <p className="text-[10px] font-bold text-slate-400 uppercase">Temuan Kunci Dokumen</p>
@@ -295,7 +295,7 @@ export default function AdminAssessmentDetailPage() {
                   {aiResult.fileAnalysisInsights.discrepancies && (
                     <div>
                       <p className="text-[10px] font-bold text-rose-400 uppercase">Diskrepansi Dokumen vs Klaim</p>
-                      <p className="text-xs font-medium text-rose-700 bg-rose-50 p-2 rounded-lg mt-1">{aiResult.fileAnalysisInsights.discrepancies}</p>
+                      <p className="text-xs font-medium text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-500/10 p-2 rounded-lg mt-1">{aiResult.fileAnalysisInsights.discrepancies}</p>
                     </div>
                   )}
                 </div>
@@ -316,35 +316,35 @@ export default function AdminAssessmentDetailPage() {
       )}
 
       {activeTab === 'analytics' && (
-        <div className="max-w-5xl bg-white rounded-3xl ring-1 ring-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
-          <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
-            <BarChart3 className="w-5 h-5 text-indigo-600"/> Ringkasan Analytics Performa
+        <div className="max-w-5xl card-solid rounded-3xl ring-1 ring-border p-6 sm:p-8 shadow-sm space-y-6">
+          <h3 className="text-lg font-black text-foreground flex items-center gap-2">
+            <BarChart3 className="w-5 h-5 text-indigo-600 dark:text-indigo-400"/> Ringkasan Analytics Performa
           </h3>
 
           {!analyticsSummary ? (
-            <div className="rounded-2xl bg-slate-50 ring-1 ring-slate-200 p-4 text-sm font-semibold text-slate-600">
+            <div className="rounded-2xl bg-muted text-muted-foreground ring-1 ring-border p-4 text-sm font-semibold text-muted-foreground">
               Ringkasan analytics belum tersedia untuk assessment ini.
             </div>
           ) : (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="rounded-2xl bg-indigo-50 ring-1 ring-indigo-200 p-4">
+                <div className="rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 ring-1 ring-indigo-200 dark:ring-indigo-500/20 p-4">
                   <p className="text-[11px] font-bold uppercase tracking-widest text-indigo-500">Performance Score</p>
-                  <p className="text-2xl font-black text-indigo-700 mt-1">{analyticsSummary.performanceScore ?? '-'} / 100</p>
+                  <p className="text-2xl font-black text-indigo-700 dark:text-indigo-300 mt-1">{analyticsSummary.performanceScore ?? '-'} / 100</p>
                 </div>
-                <div className="rounded-2xl bg-emerald-50 ring-1 ring-emerald-200 p-4">
+                <div className="rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 ring-1 ring-emerald-200 dark:ring-emerald-500/20 p-4">
                   <p className="text-[11px] font-bold uppercase tracking-widest text-emerald-500">Performance Band</p>
-                  <p className="text-2xl font-black text-emerald-700 mt-1">{analyticsSummary.performanceBand ?? '-'}</p>
+                  <p className="text-2xl font-black text-emerald-700 dark:text-emerald-300 mt-1">{analyticsSummary.performanceBand ?? '-'}</p>
                 </div>
-                <div className="rounded-2xl bg-slate-50 ring-1 ring-slate-200 p-4">
-                  <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500">Analytics Version</p>
+                <div className="rounded-2xl bg-muted text-muted-foreground ring-1 ring-border p-4">
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Analytics Version</p>
                   <p className="text-2xl font-black text-slate-700 mt-1">{analyticsSummary.version ?? '-'}</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="rounded-2xl bg-slate-50 ring-1 ring-slate-200 p-4">
-                  <p className="text-sm font-black text-slate-900 mb-3">Dimensi Skor</p>
+                <div className="rounded-2xl bg-muted text-muted-foreground ring-1 ring-border p-4">
+                  <p className="text-sm font-black text-foreground mb-3">Dimensi Skor</p>
                   <div className="space-y-2 text-sm text-slate-700 font-semibold">
                     <p>Business Readiness: {analyticsSummary.dimensions?.businessReadiness ?? '-'} / 100</p>
                     <p>Data Quality: {analyticsSummary.dimensions?.dataQuality ?? '-'} / 100</p>
@@ -353,8 +353,8 @@ export default function AdminAssessmentDetailPage() {
                   </div>
                 </div>
 
-                <div className="rounded-2xl bg-slate-50 ring-1 ring-slate-200 p-4">
-                  <p className="text-sm font-black text-slate-900 mb-3">Ringkasan Temuan</p>
+                <div className="rounded-2xl bg-muted text-muted-foreground ring-1 ring-border p-4">
+                  <p className="text-sm font-black text-foreground mb-3">Ringkasan Temuan</p>
                   <p className="text-sm text-slate-700 font-semibold mb-3">{analyticsSummary.summary?.headline || '-'}</p>
                   <ul className="space-y-2 text-sm text-slate-700 list-disc pl-5">
                     {(analyticsSummary.summary?.keyFindings || []).map((finding: string, idx: number) => (
@@ -365,7 +365,7 @@ export default function AdminAssessmentDetailPage() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="rounded-2xl bg-amber-50 ring-1 ring-amber-200 p-4">
+                <div className="rounded-2xl bg-amber-50 dark:bg-amber-500/10 ring-1 ring-amber-200 dark:ring-amber-500/20 p-4">
                   <p className="text-sm font-black text-amber-800 mb-3">Risiko Utama</p>
                   <ul className="space-y-2 text-sm text-amber-900 list-disc pl-5">
                     {(analyticsSummary.risks || []).length > 0 ? (
@@ -376,7 +376,7 @@ export default function AdminAssessmentDetailPage() {
                   </ul>
                 </div>
 
-                <div className="rounded-2xl bg-indigo-50 ring-1 ring-indigo-200 p-4">
+                <div className="rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 ring-1 ring-indigo-200 dark:ring-indigo-500/20 p-4">
                   <p className="text-sm font-black text-indigo-800 mb-3">Fokus Rekomendasi</p>
                   <ul className="space-y-2 text-sm text-indigo-900 list-disc pl-5">
                     {(analyticsSummary.summary?.recommendedFocus || []).map((focus: string, idx: number) => (

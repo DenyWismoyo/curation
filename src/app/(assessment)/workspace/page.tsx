@@ -47,7 +47,7 @@ export default function ExecutionWorkspacePage() {
     <div className="min-h-screen bg-background flex flex-col font-sans selection:bg-indigo-100 selection:text-indigo-900">
 
       {/* ── STICKY HEADER ─────────────────────────────────────────────────── */}
-      <header className="bg-white border-b border-slate-100 sticky top-0 md:top-20 z-40 shadow-sm">
+      <header className="card-solid border-b border-border sticky top-0 md:top-20 z-40 shadow-sm">
         <div className="max-w-[1000px] mx-auto px-5 lg:px-8 py-4">
 
           {/* Single-row header with compact dropdown selector */}
@@ -66,7 +66,7 @@ export default function ExecutionWorkspacePage() {
                         const target = assessments.find(a => a.id === e.target.value);
                         if (target) setSelectedDoc(target);
                       }}
-                      className="bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-800 font-bold text-xs rounded-xl px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm max-w-[220px] sm:max-w-[320px] truncate cursor-pointer transition-all"
+                      className="bg-muted text-muted-foreground hover:bg-secondary text-secondary-foreground border border-border text-foreground font-bold text-xs rounded-xl px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm max-w-[220px] sm:max-w-[320px] truncate cursor-pointer transition-all"
                     >
                       {assessments.map(a => (
                         <option key={a.id} value={a.id}>
@@ -74,7 +74,7 @@ export default function ExecutionWorkspacePage() {
                         </option>
                       ))}
                     </select>
-                    <span className="bg-indigo-50 text-indigo-700 text-[10px] font-black px-2 py-0.5 rounded-full ring-1 ring-indigo-100 shrink-0">
+                    <span className="bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 text-[10px] font-black px-2 py-0.5 rounded-full ring-1 ring-indigo-100 shrink-0">
                       {assessments.length} Asesmen
                     </span>
                   </div>
@@ -83,9 +83,9 @@ export default function ExecutionWorkspacePage() {
             </div>
 
             <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
-              <InfinityWorkflowIcon size={18} className="text-indigo-600" />
-              <span className="text-sm font-black text-slate-900 tracking-tight">
-                Omnifit <span className="text-indigo-600">OS</span>
+              <InfinityWorkflowIcon size={18} className="text-indigo-600 dark:text-indigo-400" />
+              <span className="text-sm font-black text-foreground tracking-tight">
+                Omnifit <span className="text-indigo-600 dark:text-indigo-400">OS</span>
               </span>
             </div>
           </div>

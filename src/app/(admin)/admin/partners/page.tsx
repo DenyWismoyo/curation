@@ -296,17 +296,17 @@ export default function AdminPartnersPage() {
               Ecosystem Hub
             </Badge>
             <span className="text-slate-300">•</span>
-            <span className="text-xs font-bold text-slate-500">
+            <span className="text-xs font-bold text-muted-foreground">
               Partners & Endorsements
             </span>
           </div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+          <h1 className="text-3xl font-black text-foreground tracking-tight flex items-center gap-3">
             <div className="p-2 bg-indigo-600 text-white rounded-2xl shadow-lg shadow-indigo-600/20">
               <Handshake className="w-6 h-6" />
             </div>
             Kemitraan & Ekosistem
           </h1>
-          <p className="text-slate-500 mt-1 font-medium max-w-2xl text-sm leading-relaxed">
+          <p className="text-muted-foreground mt-1 font-medium max-w-2xl text-sm leading-relaxed">
             Kelola logo institusi mitra dan testimoni dari pakar/ahli yang
             mendukung ekosistem Omnifit.
           </p>
@@ -314,29 +314,29 @@ export default function AdminPartnersPage() {
 
         {/* SUMMARY CARDS */}
         <div className="grid grid-cols-2 gap-3 shrink-0">
-          <div className="bg-white p-4 rounded-2xl ring-1 ring-slate-200/80 shadow-xs flex items-center gap-4">
-            <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl">
+          <div className="card-solid p-4 rounded-2xl ring-1 ring-border/80 shadow-xs flex items-center gap-4">
+            <div className="p-2.5 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-xl">
               <Handshake size={20} />
             </div>
             <div>
               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                 Total Mitra
               </p>
-              <p className="text-xl font-black text-slate-900 mt-0.5">
+              <p className="text-xl font-black text-foreground mt-0.5">
                 {partners.length}
               </p>
             </div>
           </div>
 
-          <div className="bg-white p-4 rounded-2xl ring-1 ring-slate-200/80 shadow-xs flex items-center gap-4">
-            <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl">
+          <div className="card-solid p-4 rounded-2xl ring-1 ring-border/80 shadow-xs flex items-center gap-4">
+            <div className="p-2.5 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl">
               <UserCheck size={20} />
             </div>
             <div>
               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                 Testimoni Pakar
               </p>
-              <p className="text-xl font-black text-emerald-600 mt-0.5">
+              <p className="text-xl font-black text-emerald-600 dark:text-emerald-400 mt-0.5">
                 {partners.filter((p) => p.category === 'testimoni_ahli').length}
               </p>
             </div>
@@ -346,16 +346,16 @@ export default function AdminPartnersPage() {
 
       {/* FORM INPUT / EDIT */}
       <Card
-        className={`p-6 sm:p-8 bg-white rounded-3xl border-none shadow-sm flex flex-col gap-6 transition-all ${isEditing ? 'ring-2 ring-amber-400 shadow-amber-500/10' : 'ring-1 ring-slate-200'}`}
+        className={`p-6 sm:p-8 card-solid rounded-3xl border-none shadow-sm flex flex-col gap-6 transition-all ${isEditing ? 'ring-2 ring-amber-400 shadow-amber-500/10' : 'ring-1 ring-border'}`}
       >
         <div className="flex items-center justify-between">
           <h3
-            className={`text-sm font-black uppercase tracking-widest flex items-center gap-2 ${isEditing ? 'text-amber-600' : 'text-slate-400'}`}
+            className={`text-sm font-black uppercase tracking-widest flex items-center gap-2 ${isEditing ? 'text-amber-600 dark:text-amber-400' : 'text-slate-400'}`}
           >
             {isEditing ? (
               <Edit3 className="w-4 h-4" />
             ) : (
-              <Plus className="w-4 h-4 text-indigo-600" />
+              <Plus className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
             )}
             {isEditing ? 'Ubah Data' : 'Tambah Data Baru'}
           </h3>
@@ -363,7 +363,7 @@ export default function AdminPartnersPage() {
             <Button
               variant="ghost"
               onClick={handleCancelEdit}
-              className="text-slate-500 hover:bg-slate-100 h-8 px-3 rounded-lg text-xs font-bold"
+              className="text-muted-foreground hover:bg-secondary text-secondary-foreground h-8 px-3 rounded-lg text-xs font-bold"
             >
               <X className="w-3.5 h-3.5 mr-1.5" /> Batal Edit
             </Button>
@@ -372,13 +372,13 @@ export default function AdminPartnersPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div className="space-y-2">
-            <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">
+            <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
               Kategori Input
             </label>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value as any)}
-              className={`flex h-12 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer ${isEditing ? 'bg-amber-50/30' : 'bg-slate-50'} ${isExpert ? 'text-indigo-700 border-indigo-200 bg-indigo-50/30' : 'text-slate-700'}`}
+              className={`flex h-12 w-full rounded-xl border border-border px-3 py-2 text-sm font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer ${isEditing ? 'bg-amber-50 dark:bg-amber-500/10/30' : 'bg-muted text-muted-foreground'} ${isExpert ? 'text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-500/20 bg-indigo-50 dark:bg-indigo-500/10/30' : 'text-slate-700'}`}
             >
               <option value="mitra_strategis">
                 Mitra Strategis (Logo Institusi)
@@ -394,7 +394,7 @@ export default function AdminPartnersPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">
+            <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
               {isExpert ? 'Nama Lengkap Pakar' : 'Nama Institusi / Mitra'}
             </label>
             <Input
@@ -403,26 +403,26 @@ export default function AdminPartnersPage() {
               placeholder={
                 isExpert ? 'Misal: Dr. Budi Santoso' : 'Misal: Solo Techno Park'
               }
-              className={`h-12 rounded-xl font-semibold ${isEditing ? 'bg-amber-50/30' : 'bg-slate-50'}`}
+              className={`h-12 rounded-xl font-semibold ${isEditing ? 'bg-amber-50 dark:bg-amber-500/10/30' : 'bg-muted text-muted-foreground'}`}
             />
           </div>
 
           {isExpert && (
             <div className="space-y-2">
-              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">
+              <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
                 Jabatan / Gelar / Institusi
               </label>
               <Input
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
                 placeholder="Misal: Kepala Dinas / Pakar AI"
-                className={`h-12 rounded-xl font-medium text-sm ${isEditing ? 'bg-amber-50/30' : 'bg-slate-50'}`}
+                className={`h-12 rounded-xl font-medium text-sm ${isEditing ? 'bg-amber-50 dark:bg-amber-500/10/30' : 'bg-muted text-muted-foreground'}`}
               />
             </div>
           )}
 
           <div className="space-y-2">
-            <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">
+            <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
               <UploadCloud className="w-3 h-3" />{' '}
               {isEditing
                 ? `Ganti ${isExpert ? 'Foto' : 'Logo'} (Opsional)`
@@ -431,7 +431,7 @@ export default function AdminPartnersPage() {
             <div className="relative flex items-center gap-3">
               {isEditing && existingLogoUrl && !logoFile && (
                 <div
-                  className={`w-12 h-12 bg-slate-50 border border-slate-200 shrink-0 flex items-center justify-center overflow-hidden ${isExpert ? 'rounded-full' : 'rounded-xl p-1'}`}
+                  className={`w-12 h-12 bg-muted text-muted-foreground border border-border shrink-0 flex items-center justify-center overflow-hidden ${isExpert ? 'rounded-full' : 'rounded-xl p-1'}`}
                 >
                   <img
                     src={existingLogoUrl}
@@ -449,7 +449,7 @@ export default function AdminPartnersPage() {
                     if (e.target.files && e.target.files[0])
                       setLogoFile(e.target.files[0])
                   }}
-                  className={`h-12 rounded-xl font-medium text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[11px] file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer pt-2.5 ${isEditing ? 'bg-amber-50/30' : 'bg-slate-50'}`}
+                  className={`h-12 rounded-xl font-medium text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[11px] file:font-bold file:bg-indigo-50 dark:bg-indigo-500/10 file:text-indigo-700 dark:text-indigo-300 hover:file:bg-indigo-100 cursor-pointer pt-2.5 ${isEditing ? 'bg-amber-50 dark:bg-amber-500/10/30' : 'bg-muted text-muted-foreground'}`}
                 />
               </div>
             </div>
@@ -457,21 +457,21 @@ export default function AdminPartnersPage() {
 
           {isExpert && (
             <div className="space-y-2 md:col-span-2">
-              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">
+              <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
                 Pesan Testimoni
               </label>
               <Textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Tuliskan ulasan atau pendapat ahli tentang platform ini..."
-                className={`min-h-[100px] rounded-xl text-sm font-medium resize-y ${isEditing ? 'bg-amber-50/30' : 'bg-slate-50'}`}
+                className={`min-h-[100px] rounded-xl text-sm font-medium resize-y ${isEditing ? 'bg-amber-50 dark:bg-amber-500/10/30' : 'bg-muted text-muted-foreground'}`}
               />
             </div>
           )}
 
           <div className="grid grid-cols-2 gap-4 md:col-span-2">
             <div className="space-y-2">
-              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">
+              <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
                 <LinkIcon className="w-3 h-3" /> Link Tujuan (Opsional)
               </label>
               <Input
@@ -482,11 +482,11 @@ export default function AdminPartnersPage() {
                     ? 'Link profil LinkedIn ahli (opsional)'
                     : 'https://...'
                 }
-                className={`h-12 rounded-xl text-sm font-medium ${isEditing ? 'bg-amber-50/30' : 'bg-slate-50'}`}
+                className={`h-12 rounded-xl text-sm font-medium ${isEditing ? 'bg-amber-50 dark:bg-amber-500/10/30' : 'bg-muted text-muted-foreground'}`}
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">
+              <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
                 Urutan Tampil
               </label>
               <Input
@@ -494,13 +494,13 @@ export default function AdminPartnersPage() {
                 value={order}
                 onChange={(e) => setOrder(Number(e.target.value))}
                 min={1}
-                className={`h-12 rounded-xl font-bold ${isEditing ? 'bg-amber-50/30' : 'bg-slate-50'}`}
+                className={`h-12 rounded-xl font-bold ${isEditing ? 'bg-amber-50 dark:bg-amber-500/10/30' : 'bg-muted text-muted-foreground'}`}
               />
             </div>
           </div>
         </div>
 
-        <div className="flex justify-end pt-4 border-t border-slate-100">
+        <div className="flex justify-end pt-4 border-t border-border">
           <Button
             onClick={handleSavePartner}
             disabled={isSubmitting}
@@ -519,8 +519,8 @@ export default function AdminPartnersPage() {
       </Card>
 
       {/* FILTER TAB & TABEL DATA */}
-      <Card className="bg-white rounded-3xl overflow-hidden shadow-sm ring-1 ring-slate-200 border-none flex flex-col">
-        <div className="px-4 pt-4 border-b border-slate-100 flex items-center gap-2 overflow-x-auto hide-scrollbar bg-slate-50/30">
+      <Card className="card-solid rounded-3xl overflow-hidden shadow-sm ring-1 ring-border border-none flex flex-col">
+        <div className="px-4 pt-4 border-b border-border flex items-center gap-2 overflow-x-auto hide-scrollbar bg-muted text-muted-foreground/30">
           {[
             { id: 'semua', label: 'Semua Data', icon: Layers },
             { id: 'powered_by', label: 'Powered By', icon: CheckCircle2 },
@@ -537,17 +537,17 @@ export default function AdminPartnersPage() {
               onClick={() => setActiveTab(tab.id as any)}
               className={`flex items-center gap-2 px-4 py-3 border-b-2 text-sm font-bold transition-all whitespace-nowrap ${
                 activeTab === tab.id
-                  ? 'border-indigo-600 text-indigo-700 bg-indigo-50/50 rounded-t-xl'
-                  : 'border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-t-xl'
+                  ? 'border-indigo-600 text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-500/10/50 rounded-t-xl'
+                  : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-muted text-muted-foreground rounded-t-xl'
               }`}
             >
               <tab.icon
-                className={`w-4 h-4 ${activeTab === tab.id ? 'text-indigo-600' : 'text-slate-400'}`}
+                className={`w-4 h-4 ${activeTab === tab.id ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400'}`}
               />
               {tab.label}
               {tab.id === 'semua' && (
                 <span
-                  className={`ml-1.5 px-2 py-0.5 rounded-md text-[10px] ${activeTab === tab.id ? 'bg-indigo-100 text-indigo-800' : 'bg-slate-100 text-slate-500'}`}
+                  className={`ml-1.5 px-2 py-0.5 rounded-md text-[10px] ${activeTab === tab.id ? 'bg-indigo-100 text-indigo-800' : 'bg-secondary text-secondary-foreground text-muted-foreground'}`}
                 >
                   {partners.length}
                 </span>
@@ -558,7 +558,7 @@ export default function AdminPartnersPage() {
 
         {loading ? (
           <div className="py-16 text-center text-slate-400 font-medium flex justify-center items-center gap-2">
-            <Loader2 className="w-5 h-5 animate-spin text-indigo-600" /> Memuat
+            <Loader2 className="w-5 h-5 animate-spin text-indigo-600 dark:text-indigo-400" /> Memuat
             basis data...
           </div>
         ) : filteredPartners.length === 0 ? (
@@ -571,7 +571,7 @@ export default function AdminPartnersPage() {
         ) : (
           <div className="overflow-x-auto custom-scrollbar">
             <table className="w-full text-sm text-left whitespace-nowrap">
-              <thead className="bg-slate-50/50 text-slate-500 uppercase font-black text-[10px] tracking-widest border-b border-slate-100">
+              <thead className="bg-muted text-muted-foreground/50 text-muted-foreground uppercase font-black text-[10px] tracking-widest border-b border-border">
                 <tr>
                   <th className="px-6 py-4">Preview</th>
                   <th className="px-6 py-4">Informasi Utama</th>
@@ -586,11 +586,11 @@ export default function AdminPartnersPage() {
                   return (
                     <tr
                       key={item.id}
-                      className="hover:bg-slate-50/50 transition-colors group"
+                      className="hover:bg-muted text-muted-foreground/50 transition-colors group"
                     >
                       <td className="px-6 py-4">
                         <div
-                          className={`bg-white border border-slate-200 p-1 flex items-center justify-center relative overflow-hidden ${isPakar ? 'w-14 h-14 rounded-full' : 'w-24 h-12 rounded-lg'}`}
+                          className={`card-solid border border-border p-1 flex items-center justify-center relative overflow-hidden ${isPakar ? 'w-14 h-14 rounded-full' : 'w-24 h-12 rounded-lg'}`}
                         >
                           <img
                             src={item.logoUrl}
@@ -604,11 +604,11 @@ export default function AdminPartnersPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4 max-w-[250px]">
-                        <p className="font-bold text-slate-900 text-base truncate">
+                        <p className="font-bold text-foreground text-base truncate">
                           {item.name}
                         </p>
                         {isPakar && item.role && (
-                          <p className="text-[11px] font-medium text-slate-500 truncate">
+                          <p className="text-[11px] font-medium text-muted-foreground truncate">
                             {item.role}
                           </p>
                         )}
@@ -625,7 +625,7 @@ export default function AdminPartnersPage() {
                         )}
                         {isPakar && item.message && (
                           <div
-                            className="mt-2 text-xs text-slate-500 italic truncate"
+                            className="mt-2 text-xs text-muted-foreground italic truncate"
                             title={item.message}
                           >
                             "{item.message}"
@@ -634,7 +634,7 @@ export default function AdminPartnersPage() {
                       </td>
                       <td className="px-6 py-4">
                         <span
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold border ${isPakar ? 'bg-indigo-50 text-indigo-700 border-indigo-200' : 'bg-slate-100 text-slate-700 border-slate-200'}`}
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold border ${isPakar ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-500/20' : 'bg-secondary text-secondary-foreground text-slate-700 border-border'}`}
                         >
                           {getCategoryLabel(item.category)}
                         </span>
@@ -642,7 +642,7 @@ export default function AdminPartnersPage() {
                           <span className="text-[10px] font-black text-slate-400 uppercase">
                             Urutan Tampil:
                           </span>
-                          <span className="text-xs font-black text-indigo-700 bg-indigo-50 px-1.5 rounded">
+                          <span className="text-xs font-black text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-500/10 px-1.5 rounded">
                             {item.order}
                           </span>
                         </div>
@@ -652,7 +652,7 @@ export default function AdminPartnersPage() {
                           onClick={() =>
                             handleToggleActive(item.id, item.isActive)
                           }
-                          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${item.isActive ? 'bg-emerald-50 text-emerald-600 ring-1 ring-emerald-200 hover:bg-emerald-100' : 'bg-slate-100 text-slate-400 ring-1 ring-slate-200 hover:bg-slate-200'}`}
+                          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${item.isActive ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 ring-1 ring-emerald-200 dark:ring-emerald-500/20 hover:bg-emerald-100 dark:hover:bg-emerald-500/20' : 'bg-secondary text-secondary-foreground text-slate-400 ring-1 ring-border hover:bg-slate-200'}`}
                         >
                           {item.isActive ? (
                             <>
@@ -670,7 +670,7 @@ export default function AdminPartnersPage() {
                           <Button
                             onClick={() => handleEditClick(item)}
                             variant="ghost"
-                            className="text-amber-600 bg-amber-50 hover:bg-amber-100 h-9 px-3 rounded-xl font-bold flex items-center gap-1.5"
+                            className="text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 hover:bg-amber-100 dark:hover:bg-amber-500/20 h-9 px-3 rounded-xl font-bold flex items-center gap-1.5"
                             title="Ubah Data"
                           >
                             <Edit3 className="w-4 h-4" /> Edit
@@ -678,7 +678,7 @@ export default function AdminPartnersPage() {
                           <Button
                             onClick={() => handleDeletePartner(item)}
                             variant="ghost"
-                            className="text-rose-500 bg-rose-50 hover:bg-rose-100 h-9 w-9 p-0 rounded-xl"
+                            className="text-rose-500 bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-500/20 h-9 w-9 p-0 rounded-xl"
                             title="Hapus Data"
                           >
                             <Trash2 className="w-4 h-4" />

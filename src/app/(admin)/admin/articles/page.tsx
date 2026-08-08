@@ -357,34 +357,34 @@ export default function AdminArticlesPage() {
               Editorial Hub
             </Badge>
             <span className="text-slate-300">•</span>
-            <span className="text-xs font-bold text-slate-500">Content & Knowledge Management</span>
+            <span className="text-xs font-bold text-muted-foreground">Content & Knowledge Management</span>
           </div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+          <h1 className="text-3xl font-black text-foreground tracking-tight flex items-center gap-3">
             <div className="p-2 bg-indigo-600 text-white rounded-2xl shadow-lg shadow-indigo-600/20">
               <Newspaper className="w-6 h-6" />
             </div>
             Pusat Artikel & Wawasan
           </h1>
-          <p className="text-slate-500 mt-1 font-medium max-w-2xl text-sm leading-relaxed">
+          <p className="text-muted-foreground mt-1 font-medium max-w-2xl text-sm leading-relaxed">
             Kelola publikasi edukasi, studi kasus, dan update sistem yang akan tampil di halaman Explore Publik.
           </p>
         </div>
 
         {/* QUICK SUMMARY CARDS */}
         <div className="grid grid-cols-2 gap-3 shrink-0">
-          <div className="bg-white p-4 rounded-2xl ring-1 ring-slate-200/80 shadow-xs flex items-center gap-4">
-            <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl"><BookOpen size={20} /></div>
+          <div className="card-solid p-4 rounded-2xl ring-1 ring-border/80 shadow-xs flex items-center gap-4">
+            <div className="p-2.5 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-xl"><BookOpen size={20} /></div>
             <div>
               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Total Artikel</p>
-              <p className="text-xl font-black text-slate-900 mt-0.5">{articles.length}</p>
+              <p className="text-xl font-black text-foreground mt-0.5">{articles.length}</p>
             </div>
           </div>
 
-          <div className="bg-white p-4 rounded-2xl ring-1 ring-slate-200/80 shadow-xs flex items-center gap-4">
-            <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl"><CheckCircle2 size={20} /></div>
+          <div className="card-solid p-4 rounded-2xl ring-1 ring-border/80 shadow-xs flex items-center gap-4">
+            <div className="p-2.5 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl"><CheckCircle2 size={20} /></div>
             <div>
               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Diterbitkan</p>
-              <p className="text-xl font-black text-emerald-600 mt-0.5">{articles.filter(a => a.isPublished).length}</p>
+              <p className="text-xl font-black text-emerald-600 dark:text-emerald-400 mt-0.5">{articles.filter(a => a.isPublished).length}</p>
             </div>
           </div>
         </div>
@@ -392,24 +392,24 @@ export default function AdminArticlesPage() {
 
       {/* FORM EDITOR */}
       <Card
-        className={`p-6 sm:p-8 bg-white rounded-3xl border-none shadow-xs flex flex-col gap-6 transition-all ${
-          isEditing ? 'ring-2 ring-amber-400' : 'ring-1 ring-slate-200/80'
+        className={`p-6 sm:p-8 card-solid rounded-3xl border-none shadow-xs flex flex-col gap-6 transition-all ${
+          isEditing ? 'ring-2 ring-amber-400' : 'ring-1 ring-border/80'
         }`}
       >
         <div className="flex items-center justify-between">
           <h3
             className={`text-xs font-black uppercase tracking-widest flex items-center gap-2 ${
-              isEditing ? 'text-amber-600' : 'text-slate-400'
+              isEditing ? 'text-amber-600 dark:text-amber-400' : 'text-slate-400'
             }`}
           >
-            {isEditing ? <Edit3 className="w-4 h-4" /> : <Plus className="w-4 h-4 text-indigo-600" />}{' '}
+            {isEditing ? <Edit3 className="w-4 h-4" /> : <Plus className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />}{' '}
             {isEditing ? 'Ubah Artikel' : 'Tulis Artikel Baru'}
           </h3>
           {isEditing && (
             <Button
               variant="ghost"
               onClick={handleCancelEdit}
-              className="text-slate-500 hover:bg-slate-100 h-8 px-3 rounded-xl text-xs font-bold cursor-pointer"
+              className="text-muted-foreground hover:bg-secondary text-secondary-foreground h-8 px-3 rounded-xl text-xs font-bold cursor-pointer"
             >
               <X className="w-3.5 h-3.5 mr-1" /> Batal Edit
             </Button>
@@ -420,8 +420,8 @@ export default function AdminArticlesPage() {
         <div
           className={`p-5 rounded-2xl border flex flex-col sm:flex-row gap-4 items-end mb-2 ${
             isEditing
-              ? 'bg-amber-50/50 border-amber-200/60'
-              : 'bg-indigo-50/50 border-indigo-200/60'
+              ? 'bg-amber-50 dark:bg-amber-500/10/50 border-amber-200 dark:border-amber-500/20/60'
+              : 'bg-indigo-50 dark:bg-indigo-500/10/50 border-indigo-200 dark:border-indigo-500/20/60'
           }`}
         >
           <div className="flex-1 w-full space-y-2">
@@ -431,14 +431,14 @@ export default function AdminArticlesPage() {
               }`}
             >
               <Sparkles
-                className={`w-4 h-4 ${isEditing ? 'text-amber-600' : 'text-indigo-600'}`}
+                className={`w-4 h-4 ${isEditing ? 'text-amber-600 dark:text-amber-400' : 'text-indigo-600 dark:text-indigo-400'}`}
               />{' '}
               Tautan CTA (Call to Action) Asesmen
             </label>
             <select
               value={selectedTemplateId}
               onChange={(e) => setSelectedTemplateId(e.target.value)}
-              className="w-full h-11 rounded-xl bg-white border border-slate-200 px-3 font-bold text-xs text-slate-700 outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs cursor-pointer"
+              className="w-full h-11 rounded-xl card-solid border border-border px-3 font-bold text-xs text-slate-700 outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs cursor-pointer"
             >
               <option value="">-- Tidak Terhubung ke Modul Asesmen Manapun --</option>
               {templates.map((tpl) => (
@@ -467,7 +467,7 @@ export default function AdminArticlesPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {/* UPLOAD & COVER AI */}
           <div className="space-y-2 md:col-span-3 flex flex-col sm:flex-row gap-5 items-start">
-            <div className="w-full sm:w-72 aspect-[2/1] shrink-0 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center overflow-hidden relative shadow-inner">
+            <div className="w-full sm:w-72 aspect-[2/1] shrink-0 bg-muted text-muted-foreground rounded-2xl border-2 border-dashed border-border flex flex-col items-center justify-center overflow-hidden relative shadow-inner">
               {imagePreview ? (
                 <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
               ) : (
@@ -479,7 +479,7 @@ export default function AdminArticlesPage() {
             </div>
 
             <div className="flex-1 space-y-3 w-full">
-              <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
+              <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
                 <UploadCloud className="w-3.5 h-3.5" /> Gambar Cover Artikel (Rasio 2:1)
               </label>
               <div className="flex flex-col sm:flex-row gap-3">
@@ -488,14 +488,14 @@ export default function AdminArticlesPage() {
                   type="file"
                   accept="image/png, image/jpeg, image/webp"
                   onChange={handleImageChange}
-                  className="h-10 flex-1 rounded-xl bg-slate-50 text-xs font-medium cursor-pointer pt-1.5"
+                  className="h-10 flex-1 rounded-xl bg-muted text-muted-foreground text-xs font-medium cursor-pointer pt-1.5"
                 />
                 <Button
                   type="button"
                   onClick={handleGenerateImage}
                   disabled={isGeneratingImage || !title.trim()}
                   variant="outline"
-                  className="h-10 rounded-xl bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100 font-bold text-xs flex items-center justify-center gap-1.5 w-full sm:w-auto px-4 shadow-2xs"
+                  className="h-10 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-500/20 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 font-bold text-xs flex items-center justify-center gap-1.5 w-full sm:w-auto px-4 shadow-2xs"
                 >
                   {isGeneratingImage ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -508,26 +508,26 @@ export default function AdminArticlesPage() {
             </div>
           </div>
 
-          <div className="space-y-2 md:col-span-2 border-t border-slate-100 pt-5">
-            <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest">
+          <div className="space-y-2 md:col-span-2 border-t border-border pt-5">
+            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
               Judul Artikel
             </label>
             <Input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Tulis judul yang menarik..."
-              className="h-12 rounded-xl font-bold bg-slate-50/80 text-xs"
+              className="h-12 rounded-xl font-bold bg-muted text-muted-foreground/80 text-xs"
             />
           </div>
 
-          <div className="space-y-2 border-t border-slate-100 pt-5">
-            <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest">
+          <div className="space-y-2 border-t border-border pt-5">
+            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
               Kategori
             </label>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full h-12 rounded-xl bg-slate-50/80 border border-slate-200 px-3 font-bold text-xs text-slate-700 outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full h-12 rounded-xl bg-muted text-muted-foreground/80 border border-border px-3 font-bold text-xs text-slate-700 outline-none focus:ring-2 focus:ring-indigo-500"
             >
               <option value="Edukasi AI">Edukasi AI</option>
               <option value="Update Sistem">Update Sistem</option>
@@ -537,38 +537,38 @@ export default function AdminArticlesPage() {
           </div>
 
           <div className="space-y-2 md:col-span-3">
-            <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest">
+            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
               Kutipan Singkat (Excerpt)
             </label>
             <Textarea
               value={excerpt}
               onChange={(e) => setExcerpt(e.target.value)}
               placeholder="Ringkasan 1-2 kalimat untuk ditampilkan di kartu..."
-              className="bg-slate-50/80 rounded-xl resize-none h-20 text-xs font-medium"
+              className="bg-muted text-muted-foreground/80 rounded-xl resize-none h-20 text-xs font-medium"
             />
           </div>
 
           <div className="space-y-2 md:col-span-3">
-            <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest">
+            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
               Konten Utama (Dukung Markdown)
             </label>
             <Textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Tulis isi artikel lengkap di sini (mendukung penulisan Markdown)..."
-              className="bg-slate-50/80 rounded-xl min-h-[300px] text-xs font-medium leading-relaxed"
+              className="bg-muted text-muted-foreground/80 rounded-xl min-h-[300px] text-xs font-medium leading-relaxed"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest">
+            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
               Estimasi Baca
             </label>
             <Input
               value={readTime}
               onChange={(e) => setReadTime(e.target.value)}
               placeholder="Misal: 5 min"
-              className="h-11 rounded-xl bg-slate-50/80 font-medium text-xs"
+              className="h-11 rounded-xl bg-muted text-muted-foreground/80 font-medium text-xs"
             />
           </div>
 
@@ -578,7 +578,7 @@ export default function AdminArticlesPage() {
                 type="checkbox"
                 checked={isPublished}
                 onChange={(e) => setIsPublished(e.target.checked)}
-                className="w-4 h-4 text-indigo-600 rounded"
+                className="w-4 h-4 text-indigo-600 dark:text-indigo-400 rounded"
               />
               <span className="text-xs font-bold text-slate-700">Publikasikan</span>
             </label>
@@ -589,12 +589,12 @@ export default function AdminArticlesPage() {
                 onChange={(e) => setFeatured(e.target.checked)}
                 className="w-4 h-4 text-amber-500 rounded"
               />
-              <span className="text-xs font-bold text-amber-700">Sorotan Utama</span>
+              <span className="text-xs font-bold text-amber-700 dark:text-amber-300">Sorotan Utama</span>
             </label>
           </div>
         </div>
 
-        <div className="flex justify-end pt-4 border-t border-slate-100">
+        <div className="flex justify-end pt-4 border-t border-border">
           <Button
             onClick={handleSaveArticle}
             disabled={isSubmitting}
@@ -640,21 +640,21 @@ export default function AdminArticlesPage() {
             </TableRow>
           ) : (
             articles.map((item) => (
-              <TableRow key={item.id} className="hover:bg-slate-50/70 group">
+              <TableRow key={item.id} className="hover:bg-muted text-muted-foreground/70 group">
                 <TableCell>
                   {item.imageUrl ? (
-                    <div className="w-14 h-10 bg-slate-100 rounded-lg overflow-hidden ring-1 ring-slate-200">
+                    <div className="w-14 h-10 bg-secondary text-secondary-foreground rounded-lg overflow-hidden ring-1 ring-border">
                       <img src={item.imageUrl} alt="Cover" className="w-full h-full object-cover" />
                     </div>
                   ) : (
-                    <div className="w-14 h-10 bg-slate-50 rounded-lg ring-1 ring-slate-200 flex items-center justify-center text-slate-300">
+                    <div className="w-14 h-10 bg-muted text-muted-foreground rounded-lg ring-1 ring-border flex items-center justify-center text-slate-300">
                       <ImageIcon size={16} />
                     </div>
                   )}
                 </TableCell>
 
                 <TableCell className="max-w-[300px]">
-                  <p className="font-extrabold text-slate-900 text-sm truncate">{item.title}</p>
+                  <p className="font-extrabold text-foreground text-sm truncate">{item.title}</p>
                   <div className="flex items-center gap-1.5 mt-1">
                     <Badge variant="indigo" className="text-[9px] px-2 py-0">
                       {item.category}
@@ -690,7 +690,7 @@ export default function AdminArticlesPage() {
                     <Button
                       onClick={() => handleEditClick(item)}
                       variant="ghost"
-                      className="text-amber-600 bg-amber-50 hover:bg-amber-100 h-8 px-3 rounded-xl font-bold text-xs"
+                      className="text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 hover:bg-amber-100 dark:hover:bg-amber-500/20 h-8 px-3 rounded-xl font-bold text-xs"
                     >
                       <Edit3 className="w-3.5 h-3.5 mr-1" /> Edit
                     </Button>
@@ -699,7 +699,7 @@ export default function AdminArticlesPage() {
                       <AlertDialogTrigger asChild>
                         <Button
                           variant="ghost"
-                          className="text-rose-500 hover:text-rose-700 hover:bg-rose-50 h-8 w-8 p-0 rounded-xl"
+                          className="text-rose-500 hover:text-rose-700 dark:text-rose-300 hover:bg-rose-50 dark:bg-rose-500/10 h-8 w-8 p-0 rounded-xl"
                           title="Hapus Artikel"
                         >
                           <Trash2 className="w-4 h-4" />

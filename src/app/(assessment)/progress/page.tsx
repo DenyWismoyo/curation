@@ -40,9 +40,9 @@ function ScoreBadge({ score, status, isAdaptive }: { score?: number, status: str
     const numScore = Number(score);
     if (!isNaN(numScore)) {
       const color =
-        numScore >= 80 ? 'bg-emerald-50 text-emerald-700 ring-emerald-200'
-          : numScore >= 60 ? 'bg-amber-50 text-amber-700 ring-amber-200'
-          : 'bg-rose-50 text-rose-700 ring-rose-200'
+        numScore >= 80 ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 ring-emerald-200 dark:ring-emerald-500/20'
+          : numScore >= 60 ? 'bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-300 ring-amber-200 dark:ring-amber-500/20'
+          : 'bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-300 ring-rose-200 dark:ring-rose-500/20'
 
       return (
         <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-sm font-black ring-1 ${color}`}>
@@ -53,7 +53,7 @@ function ScoreBadge({ score, status, isAdaptive }: { score?: number, status: str
   }
   
   if (status === 'COMPLETED' || isAdaptive) {
-    return <span className="text-xs text-indigo-600 font-bold bg-indigo-50 px-2.5 py-1 rounded-lg ring-1 ring-indigo-200">Selesai</span>
+    return <span className="text-xs text-indigo-600 dark:text-indigo-400 font-bold bg-indigo-50 dark:bg-indigo-500/10 px-2.5 py-1 rounded-lg ring-1 ring-indigo-200 dark:ring-indigo-500/20">Selesai</span>
   }
   
   return <span className="text-xs text-slate-400 font-bold">Proses...</span>
@@ -148,7 +148,7 @@ export default function ProgressPage() {
       <PageHeader
         title="Progres Saya"
         subtitle="Timeline & analisis perjalanan asesmen"
-        icon={<Activity size={24} className="text-indigo-600" />}
+        icon={<Activity size={24} className="text-indigo-600 dark:text-indigo-400" />}
         onBack={() => router.back()}
       />
 
@@ -166,10 +166,10 @@ export default function ProgressPage() {
             {/* STATS GRID */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
-                { label: 'Total Program', value: records.length, valueClassName: 'text-slate-900' },
-                { label: 'Skor Tertinggi', value: bestScore, valueClassName: 'text-emerald-600' },
-                { label: 'Skor Terakhir', value: latestScore, valueClassName: 'text-indigo-600' },
-                { label: 'Rata-rata', value: avgScore, valueClassName: 'text-amber-600' },
+                { label: 'Total Program', value: records.length, valueClassName: 'text-foreground' },
+                { label: 'Skor Tertinggi', value: bestScore, valueClassName: 'text-emerald-600 dark:text-emerald-400' },
+                { label: 'Skor Terakhir', value: latestScore, valueClassName: 'text-indigo-600 dark:text-indigo-400' },
+                { label: 'Rata-rata', value: avgScore, valueClassName: 'text-amber-600 dark:text-amber-400' },
               ].map((s, i) => (
                 <motion.div key={i} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
                   <StatCard label={s.label} value={s.value} valueClassName={s.valueClassName} />
@@ -180,9 +180,9 @@ export default function ProgressPage() {
             {/* TREND SUMMARY */}
             {scores.length >= 2 && (
               <div className={`flex items-center gap-4 p-5 rounded-[1.5rem] ring-1 shadow-sm ${
-                improvement > 0 ? 'bg-emerald-50/50 ring-emerald-100'
-                  : improvement < 0 ? 'bg-rose-50/50 ring-rose-100'
-                  : 'bg-slate-50 ring-slate-200/60'
+                improvement > 0 ? 'bg-emerald-50 dark:bg-emerald-500/10/50 ring-emerald-100'
+                  : improvement < 0 ? 'bg-rose-50 dark:bg-rose-500/10/50 ring-rose-100'
+                  : 'bg-muted text-muted-foreground ring-slate-200/60'
               }`}>
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
                   improvement > 0 ? 'bg-emerald-100' : improvement < 0 ? 'bg-rose-100' : 'bg-slate-200'
@@ -190,8 +190,8 @@ export default function ProgressPage() {
                   {TrendIcon}
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-slate-900">Analisis Tren</p>
-                  <p className="text-xs font-medium text-slate-600 mt-0.5">
+                  <p className="text-sm font-bold text-foreground">Analisis Tren</p>
+                  <p className="text-xs font-medium text-muted-foreground mt-0.5">
                     {improvement > 0
                       ? `Luar biasa! Skor Anda meningkat ${improvement} poin sejak asesmen pertama.`
                       : improvement < 0
@@ -204,10 +204,10 @@ export default function ProgressPage() {
 
             {/* LINE CHART */}
             {scores.length >= 2 && (
-              <div className="bg-white p-6 sm:p-8 rounded-[2rem] ring-1 ring-slate-200/60 shadow-sm">
+              <div className="card-solid p-6 sm:p-8 rounded-[2rem] ring-1 ring-border shadow-sm">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-base font-black text-slate-900">Grafik Performa</h3>
-                  <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md uppercase tracking-widest ring-1 ring-indigo-100">
+                  <h3 className="text-base font-black text-foreground">Grafik Performa</h3>
+                  <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-2.5 py-1 rounded-md uppercase tracking-widest ring-1 ring-indigo-100">
                     {scores.length} Titik Data
                   </span>
                 </div>
@@ -229,11 +229,11 @@ export default function ProgressPage() {
                   <motion.div
                     key={rec.id}
                     initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.05 }}
-                    className="bg-white p-5 rounded-[1.5rem] ring-1 ring-slate-200/60 shadow-sm hover:shadow-md hover:ring-indigo-200 transition-all flex flex-col h-full min-h-[140px] group"
+                    className="card-solid p-5 rounded-[1.5rem] ring-1 ring-border shadow-sm hover:shadow-md hover:ring-indigo-200 dark:ring-indigo-500/20 transition-all flex flex-col h-full min-h-[140px] group"
                   >
                     <div className="flex justify-between items-start mb-3">
                       {rec.trackType && (
-                        <span className="text-[9px] font-black text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md ring-1 ring-indigo-100 uppercase tracking-widest">
+                        <span className="text-[9px] font-black text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-2 py-1 rounded-md ring-1 ring-indigo-100 uppercase tracking-widest">
                           {asSafeText(rec.trackType, 'Evaluasi')}
                         </span>
                       )}
@@ -241,10 +241,10 @@ export default function ProgressPage() {
                         <Calendar size={12} /> {formatDate(rec.createdAt)}
                       </span>
                     </div>
-                    <h4 className="font-black text-slate-900 text-sm mb-4 line-clamp-2 leading-snug group-hover:text-indigo-600 transition-colors flex-1">
+                    <h4 className="font-black text-foreground text-sm mb-4 line-clamp-2 leading-snug group-hover:text-indigo-600 dark:text-indigo-400 transition-colors flex-1">
                       {asSafeText(rec.namaUsaha || rec.businessName, 'Asesmen Tanpa Nama')}
                     </h4>
-                    <div className="flex items-center justify-between pt-3 border-t border-slate-100 mt-auto">
+                    <div className="flex items-center justify-between pt-3 border-t border-border mt-auto">
                       <div className="flex items-center gap-2">
                         <AiSparkIcon size={16} className={rec.status === 'COMPLETED' ? 'text-emerald-500' : 'text-slate-400'} />
                         <ScoreBadge score={rec.score} status={rec.status} isAdaptive={rec.trackType?.toLowerCase().includes('adaptive')} />
@@ -252,7 +252,7 @@ export default function ProgressPage() {
                       {rec.status === 'COMPLETED' && (
                         <button
                           onClick={() => router.push(`/result/${rec.id}`)}
-                          className="w-8 h-8 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 ring-1 ring-slate-200 hover:ring-indigo-200 transition-all"
+                          className="w-8 h-8 flex items-center justify-center rounded-xl bg-muted text-muted-foreground text-slate-400 hover:bg-indigo-50 dark:bg-indigo-500/10 hover:text-indigo-600 dark:text-indigo-400 ring-1 ring-border hover:ring-indigo-200 dark:ring-indigo-500/20 transition-all"
                         >
                           <ExternalLink size={14} />
                         </button>
@@ -264,12 +264,12 @@ export default function ProgressPage() {
             </div>
 
             {/* CTA */}
-            <div className="bg-indigo-50/50 p-8 sm:p-10 rounded-[2rem] ring-1 ring-indigo-100 text-center flex flex-col items-center">
-              <div className="w-14 h-14 bg-white text-indigo-600 rounded-[1.2rem] flex items-center justify-center shadow-sm ring-1 ring-indigo-100 mb-4">
+            <div className="bg-indigo-50 dark:bg-indigo-500/10/50 p-8 sm:p-10 rounded-[2rem] ring-1 ring-indigo-100 text-center flex flex-col items-center">
+              <div className="w-14 h-14 card-solid text-indigo-600 dark:text-indigo-400 rounded-[1.2rem] flex items-center justify-center shadow-sm ring-1 ring-indigo-100 mb-4">
                 <TrendingUp size={24} />
               </div>
               <h3 className="font-black text-xl text-indigo-950 mb-2 tracking-tight">Siap Melampaui Batas?</h3>
-              <p className="text-indigo-700/80 text-sm mb-6 max-w-sm leading-relaxed">
+              <p className="text-indigo-700 dark:text-indigo-300/80 text-sm mb-6 max-w-sm leading-relaxed">
                 Lakukan asesmen berikutnya untuk memantau perkembangan dan mendapatkan rekomendasi terbaru dari AI.
               </p>
               <Button

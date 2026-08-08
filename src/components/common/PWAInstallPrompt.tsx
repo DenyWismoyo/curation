@@ -114,21 +114,21 @@ export function PWAInstallPrompt() {
           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
           className="fixed top-6 right-4 sm:right-6 z-[200] w-[calc(100%-2rem)] sm:w-[360px]"
         >
-          <div className="bg-white/90 backdrop-blur-2xl border border-slate-200/60 p-4 rounded-[1.25rem] shadow-lg relative overflow-hidden group flex items-center gap-4">
+          <div className="card-solid/90 backdrop-blur-2xl border border-border p-4 rounded-[1.25rem] shadow-lg relative overflow-hidden group flex items-center gap-4">
             {/* Ambient Background Glow */}
             <div className="absolute -top-6 -right-6 w-24 h-24 bg-indigo-100/50 rounded-full blur-2xl pointer-events-none transition-all group-hover:scale-150"></div>
 
             {/* Tombol Close (Ditambah area klik agar mudah ditekan di Mobile) */}
             <button
               onClick={handleClose}
-              className="absolute top-2 right-2 w-8 h-8 flex items-center justify-center text-slate-400 hover:bg-rose-50 hover:text-rose-500 rounded-full transition-colors z-20 cursor-pointer"
+              className="absolute top-2 right-2 w-8 h-8 flex items-center justify-center text-slate-400 hover:bg-rose-50 dark:bg-rose-500/10 hover:text-rose-500 rounded-full transition-colors z-20 cursor-pointer"
               title="Tutup"
             >
               <X className="w-4 h-4" />
             </button>
 
             {/* Logo Omnifit */}
-            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shrink-0 shadow-sm ring-1 ring-slate-100 relative z-10 overflow-hidden">
+            <div className="w-12 h-12 card-solid rounded-2xl flex items-center justify-center shrink-0 shadow-sm ring-1 ring-border relative z-10 overflow-hidden">
               <Image
                 src="/icon-192x192.png"
                 alt="Omnifit Logo"
@@ -141,10 +141,10 @@ export function PWAInstallPrompt() {
 
             {/* Teks & Tombol */}
             <div className="flex-1 pr-6 relative z-10">
-              <h3 className="text-sm font-black text-slate-900 leading-tight mb-0.5">
+              <h3 className="text-sm font-black text-foreground leading-tight mb-0.5">
                 Instal Omnifit
               </h3>
-              <p className="text-[10px] font-bold text-slate-500 mb-2.5">
+              <p className="text-[10px] font-bold text-muted-foreground mb-2.5">
                 {isIOS
                   ? 'Ketuk pasang untuk panduan iOS.'
                   : 'Akses lebih cepat & tanpa batas.'}

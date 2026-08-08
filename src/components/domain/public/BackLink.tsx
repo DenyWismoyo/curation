@@ -24,8 +24,8 @@ export function BackLink({
   const router = useRouter();
 
   const classes = cn(
-    'inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors group',
-    pill && 'bg-slate-50 px-3 py-1.5 rounded-xl w-fit',
+    'inline-flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-indigo-600 dark:text-indigo-400 transition-colors group',
+    pill && 'bg-muted text-muted-foreground px-3 py-1.5 rounded-xl w-fit',
     className
   );
 

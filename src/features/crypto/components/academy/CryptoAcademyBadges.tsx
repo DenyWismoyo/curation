@@ -42,7 +42,7 @@ export function CryptoAcademyBadges() {
 
   if (loading) return null;
   if (!stats) return (
-    <Card className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">
+    <Card className="card-solid border-slate-200 dark:border-slate-800">
       <CardContent className="p-6 text-center">
         <p className="text-slate-400">Belum ada data pembelajaran.</p>
       </CardContent>
@@ -55,7 +55,7 @@ export function CryptoAcademyBadges() {
   return (
     <div className="space-y-4">
       {/* XP & Level Summary */}
-      <Card className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">
+      <Card className="card-solid border-slate-200 dark:border-slate-800">
         <CardContent className="p-6">
           <div className="flex justify-between items-center mb-4">
             <div>
@@ -64,7 +64,7 @@ export function CryptoAcademyBadges() {
                 <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-400">
                   {stats.xp}
                 </span>
-                <span className="text-sm text-slate-500 font-medium pb-1">/ {nextLevelXp} XP</span>
+                <span className="text-sm text-muted-foreground font-medium pb-1">/ {nextLevelXp} XP</span>
               </div>
             </div>
             <div className="text-right">
@@ -75,17 +75,17 @@ export function CryptoAcademyBadges() {
               </div>
             </div>
           </div>
-          <Progress value={progressPercent} className="h-2 bg-slate-100 dark:bg-slate-800" />
-          <p className="text-xs text-slate-500 mt-2 text-right">
+          <Progress value={progressPercent} className="h-2 bg-secondary text-secondary-foreground" />
+          <p className="text-xs text-muted-foreground mt-2 text-right">
             {nextLevelXp - stats.xp} XP menuju level berikutnya
           </p>
         </CardContent>
       </Card>
 
       {/* Badges Collection */}
-      <Card className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">
+      <Card className="card-solid border-slate-200 dark:border-slate-800">
         <CardHeader className="pb-2">
-          <CardTitle className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <CardTitle className="text-lg font-bold text-foreground flex items-center gap-2">
             <Medal className="w-5 h-5 text-purple-400" />
             Koleksi Badge
           </CardTitle>
@@ -97,11 +97,11 @@ export function CryptoAcademyBadges() {
                 const config = BADGE_CONFIG[badge];
                 const Icon = config?.icon || Trophy;
                 return (
-                  <div key={idx} className="flex flex-col items-center justify-center p-4 bg-slate-200 dark:bg-slate-800/50 rounded-xl border border-slate-300 dark:border-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-100 dark:bg-slate-800 transition-colors group">
-                    <div className="p-3 bg-white dark:bg-slate-900 rounded-full mb-3 ring-1 ring-white/10 group-hover:ring-white/20 group-hover:scale-110 transition-all">
+                  <div key={idx} className="flex flex-col items-center justify-center p-4 bg-slate-200 dark:bg-slate-800/50 rounded-xl border border-slate-300 dark:border-slate-700/50 hover:bg-secondary text-secondary-foreground dark:hover:bg-secondary text-secondary-foreground transition-colors group">
+                    <div className="p-3 card-solid rounded-full mb-3 ring-1 ring-white/10 group-hover:ring-white/20 group-hover:scale-110 transition-all">
                       <Icon className={`w-8 h-8 ${config?.color || "text-purple-500"}`} />
                     </div>
-                    <p className="font-bold text-sm text-slate-900 dark:text-white text-center mb-1">{badge}</p>
+                    <p className="font-bold text-sm text-foreground text-center mb-1">{badge}</p>
                     <p className="text-[10px] text-slate-400 text-center leading-tight">
                       {config?.desc || "Pencapaian Spesial"}
                     </p>
@@ -111,9 +111,9 @@ export function CryptoAcademyBadges() {
             </div>
           ) : (
             <div className="text-center py-8 bg-slate-200 dark:bg-slate-800/20 rounded-xl border border-slate-200 dark:border-slate-800 border-dashed">
-              <Trophy className="w-12 h-12 text-slate-600 mx-auto mb-3 opacity-50" />
+              <Trophy className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-50" />
               <p className="text-sm font-medium text-slate-400">Belum ada badge yang dikumpulkan.</p>
-              <p className="text-xs text-slate-500 mt-1">Selesaikan kuis untuk mulai mendapatkan badge!</p>
+              <p className="text-xs text-muted-foreground mt-1">Selesaikan kuis untuk mulai mendapatkan badge!</p>
             </div>
           )}
         </CardContent>

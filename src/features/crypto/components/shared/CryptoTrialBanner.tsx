@@ -52,7 +52,7 @@ export default function CryptoTrialBanner() {
           {isWarning ? <Clock size={16} /> : <Zap size={16} />}
         </div>
         <div className="text-xs sm:text-sm text-slate-200">
-          <span className="font-bold text-slate-900 dark:text-white mr-1">Trial Premium Aktif:</span>
+          <span className="font-bold text-foreground mr-1">Trial Premium Aktif:</span>
           Tersisa <span className={`font-mono font-bold ${isWarning ? 'text-rose-400' : 'text-emerald-400'}`}>
             {timeLeft.d} Hari {timeLeft.h.toString().padStart(2, '0')}:{timeLeft.m.toString().padStart(2, '0')}:{timeLeft.s.toString().padStart(2, '0')}
           </span>
@@ -67,7 +67,7 @@ export default function CryptoTrialBanner() {
         >
           Upgrade Sekarang
         </CryptoButton>
-        <button onClick={() => setDismissed(true)} className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors">
+        <button onClick={() => setDismissed(true)} className="text-muted-foreground hover:text-foreground transition-colors">
           <X size={16} />
         </button>
       </div>

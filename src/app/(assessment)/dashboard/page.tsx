@@ -154,7 +154,7 @@ export default function CustomerDashboard() {
         actions={headerActions}
       >
         {/* Badge sesi aktif */}
-        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 text-emerald-600 rounded-md text-[9px] font-black uppercase tracking-widest ring-1 ring-emerald-200/50 mt-3">
+        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-md text-[9px] font-black uppercase tracking-widest ring-1 ring-emerald-200 dark:ring-emerald-500/20/50 mt-3">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
           Sesi Terautentikasi
         </div>
@@ -167,8 +167,8 @@ export default function CustomerDashboard() {
           {/* KOLOM KIRI (4/12): BRANKAS TOKEN */}
           <div className="xl:col-span-4 space-y-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
-                <TechCardIcon size={20} className="text-indigo-600" />
+              <h2 className="text-lg font-black text-foreground flex items-center gap-2">
+                <TechCardIcon size={20} className="text-indigo-600 dark:text-indigo-400" />
                 Brankas Token
               </h2>
               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
@@ -191,19 +191,19 @@ export default function CustomerDashboard() {
                     key={tx.id}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-white p-6 rounded-[1.5rem] ring-1 ring-slate-200 shadow-sm hover:shadow-md hover:ring-indigo-200 transition-all group"
+                    className="card-solid p-6 rounded-[1.5rem] ring-1 ring-border shadow-sm hover:shadow-md hover:ring-indigo-200 dark:ring-indigo-500/20 transition-all group"
                   >
-                    <h3 className="text-sm font-black text-slate-900 leading-relaxed mb-4 group-hover:text-indigo-600 transition-colors">
+                    <h3 className="text-sm font-black text-foreground leading-relaxed mb-4 group-hover:text-indigo-600 dark:text-indigo-400 transition-colors">
                       {tx.packageName}
                     </h3>
 
                     {/* TOKEN DISPLAY */}
-                    <div className="flex items-center justify-between gap-3 bg-slate-50 p-2.5 pl-4 rounded-xl ring-1 ring-slate-100 mb-5">
+                    <div className="flex items-center justify-between gap-3 bg-muted text-muted-foreground p-2.5 pl-4 rounded-xl ring-1 ring-border mb-5">
                       <div>
                         <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">
                           Akses ID
                         </p>
-                        <p className="font-mono font-black text-slate-800 tracking-tight text-sm">
+                        <p className="font-mono font-black text-foreground tracking-tight text-sm">
                           {tx.tokenCode || (
                             <span className="text-amber-500 animate-pulse">Memproses...</span>
                           )}
@@ -214,8 +214,8 @@ export default function CustomerDashboard() {
                           onClick={() => handleCopy(tx.tokenCode!)}
                           className={`h-8 w-8 flex items-center justify-center rounded-lg transition-colors ring-1 ${
                             copiedToken === tx.tokenCode
-                              ? 'bg-emerald-100 text-emerald-600 ring-emerald-200'
-                              : 'bg-white text-slate-400 hover:text-indigo-600 ring-slate-200'
+                              ? 'bg-emerald-100 text-emerald-600 dark:text-emerald-400 ring-emerald-200 dark:ring-emerald-500/20'
+                              : 'card-solid text-slate-400 hover:text-indigo-600 dark:text-indigo-400 ring-slate-200'
                           }`}
                         >
                           {copiedToken === tx.tokenCode ? <Check size={14} /> : <Copy size={14} />}
@@ -239,8 +239,8 @@ export default function CustomerDashboard() {
 
           {/* KOLOM KANAN (8/12): REKAM JEJAK ASESMEN */}
           <div className="xl:col-span-8 space-y-6">
-            <h2 className="text-lg font-black text-slate-900 flex items-center gap-2 tracking-tight">
-              <InfinityWorkflowIcon size={20} className="text-indigo-600" />
+            <h2 className="text-lg font-black text-foreground flex items-center gap-2 tracking-tight">
+              <InfinityWorkflowIcon size={20} className="text-indigo-600 dark:text-indigo-400" />
               Rekam Jejak Analitik
             </h2>
 
@@ -258,11 +258,11 @@ export default function CustomerDashboard() {
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="bg-white p-6 rounded-[2rem] ring-1 ring-slate-200 shadow-sm hover:shadow-xl hover:shadow-indigo-500/5 hover:ring-indigo-200 transition-all flex flex-col h-full group"
+                    className="card-solid p-6 rounded-[2rem] ring-1 ring-border shadow-sm hover:shadow-xl hover:shadow-indigo-500/5 hover:ring-indigo-200 dark:ring-indigo-500/20 transition-all flex flex-col h-full group"
                   >
                     {/* TRACK + TANGGAL */}
                     <div className="flex justify-between items-start mb-6">
-                      <span className="text-[9px] font-black uppercase tracking-widest text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md">
+                      <span className="text-[9px] font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-2.5 py-1 rounded-md">
                         {asSafeText(ass.trackType, 'Evaluasi')}
                       </span>
                       <span className="text-[10px] font-bold text-slate-400 flex items-center gap-1.5">
@@ -273,26 +273,26 @@ export default function CustomerDashboard() {
                       </span>
                     </div>
 
-                    <h3 className="text-lg font-black text-slate-900 mb-8 group-hover:text-indigo-600 transition-colors line-clamp-2 leading-snug">
+                    <h3 className="text-lg font-black text-foreground mb-8 group-hover:text-indigo-600 dark:text-indigo-400 transition-colors line-clamp-2 leading-snug">
                       {asSafeText(ass.namaUsaha, 'Asesmen Tanpa Nama')}
                     </h3>
 
                     {/* STAT MINI */}
                     <div className="grid grid-cols-2 gap-3 mb-6 mt-auto">
-                      <div className="bg-slate-50 p-4 rounded-2xl ring-1 ring-slate-100 flex flex-col justify-center">
+                      <div className="bg-muted text-muted-foreground p-4 rounded-2xl ring-1 ring-border flex flex-col justify-center">
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
                           Skor Kinerja
                         </p>
-                        <p className="text-2xl font-black text-slate-900">
+                        <p className="text-2xl font-black text-foreground">
                           {asSafeText(ass.score, '0')}
                           <span className="text-sm text-slate-400">/100</span>
                         </p>
                       </div>
-                      <div className="bg-slate-50 p-4 rounded-2xl ring-1 ring-slate-100 flex flex-col justify-center">
+                      <div className="bg-muted text-muted-foreground p-4 rounded-2xl ring-1 ring-border flex flex-col justify-center">
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
                           Status Level
                         </p>
-                        <p className="text-xs font-bold text-emerald-600 leading-snug">
+                        <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 leading-snug">
                           {asSafeText(ass.readinessLevel, 'Diproses')}
                         </p>
                       </div>

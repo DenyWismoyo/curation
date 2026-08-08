@@ -115,10 +115,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (loading || !canAccessAdmin) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 font-sans">
+      <div className="min-h-screen flex items-center justify-center bg-muted text-muted-foreground font-sans">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-9 h-9 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
-          <p className="text-slate-500 font-black text-xs uppercase tracking-widest">Verifikasi Otoritas Admin...</p>
+          <div className="w-9 h-9 border-4 border-indigo-200 dark:border-indigo-500/20 border-t-indigo-600 rounded-full animate-spin"></div>
+          <p className="text-muted-foreground font-black text-xs uppercase tracking-widest">Verifikasi Otoritas Admin...</p>
         </div>
       </div>
     )
@@ -138,18 +138,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <TooltipProvider>
-      <div className="flex h-screen overflow-hidden bg-slate-50 font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-900">
+      <div className="flex h-screen overflow-hidden bg-muted text-muted-foreground font-sans text-foreground selection:bg-indigo-100 selection:text-indigo-900">
         
         {/* MOBILE SIDEBAR SHEET */}
         <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-          <SheetContent side="left" className="w-80 p-0 border-r border-slate-200 bg-white">
-            <SheetHeader className="h-20 flex items-center justify-between px-6 border-b border-slate-100 flex-row space-y-0">
+          <SheetContent side="left" className="w-80 p-0 border-r border-border card-solid">
+            <SheetHeader className="h-20 flex items-center justify-between px-6 border-b border-border flex-row space-y-0">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 bg-indigo-600 text-white rounded-xl flex items-center justify-center shadow-md shadow-indigo-600/20">
                   <ShieldCheck className="w-5 h-5" />
                 </div>
-                <SheetTitle className="text-lg font-black tracking-tight text-slate-900">
-                  CSRS <span className="text-indigo-600 text-xs font-black uppercase tracking-widest ml-1">Admin</span>
+                <SheetTitle className="text-lg font-black tracking-tight text-foreground">
+                  CSRS <span className="text-indigo-600 dark:text-indigo-400 text-xs font-black uppercase tracking-widest ml-1">Admin</span>
                 </SheetTitle>
               </div>
             </SheetHeader>
@@ -165,7 +165,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                       type="button"
                       onClick={() => toggleMobileGroup(group.key)}
                       className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors ${
-                        hasActiveItem ? 'text-indigo-600 bg-indigo-50/70' : 'text-slate-400 hover:bg-slate-50'
+                        hasActiveItem ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10/70' : 'text-slate-400 hover:bg-muted text-muted-foreground'
                       }`}
                     >
                       <span>{group.label}</span>
@@ -182,7 +182,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                               href={item.path}
                               onClick={() => setIsMobileMenuOpen(false)}
                               className={`flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-bold transition-all ${
-                                isActive ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20' : 'text-slate-600 hover:bg-slate-50'
+                                isActive ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20' : 'text-muted-foreground hover:bg-muted text-muted-foreground'
                               }`}
                             >
                               <div className="flex items-center gap-3">
@@ -204,13 +204,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               })}
             </nav>
 
-            <div className="p-4 border-t border-slate-100 absolute bottom-0 left-0 right-0 bg-white">
+            <div className="p-4 border-t border-border absolute bottom-0 left-0 right-0 card-solid">
               <button
                 onClick={() => {
                   logout()
                   router.push('/')
                 }}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-rose-600 font-bold hover:bg-rose-50 transition-colors text-sm"
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-rose-600 dark:text-rose-400 font-bold hover:bg-rose-50 dark:bg-rose-500/10 transition-colors text-sm"
               >
                 <LogOut size={18} /> Keluar dari Admin
               </button>
@@ -291,7 +291,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                       type="button"
                       onClick={() => toggleDesktopGroup(group.key)}
                       className={`w-full flex items-center justify-between px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors ${
-                        hasActiveItem ? 'text-indigo-400 bg-indigo-950/40' : 'text-slate-500 hover:bg-slate-800/40'
+                        hasActiveItem ? 'text-indigo-400 bg-indigo-950/40' : 'text-muted-foreground hover:bg-slate-800/40'
                       }`}
                     >
                       <span>{group.label}</span>
@@ -364,17 +364,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </aside>
 
         {/* KONTEN UTAMA */}
-        <main className="flex-1 min-w-0 flex flex-col h-screen overflow-hidden bg-slate-50">
+        <main className="flex-1 min-w-0 flex flex-col h-screen overflow-hidden bg-muted text-muted-foreground">
           {/* Header Khusus Mobile */}
-          <div className="md:hidden bg-white/90 backdrop-blur-md border-b border-slate-200 p-4 flex justify-between items-center shrink-0 z-10">
+          <div className="md:hidden card-solid/90 backdrop-blur-md border-b border-border p-4 flex justify-between items-center shrink-0 z-10">
             <button
               onClick={() => setIsMobileMenuOpen(true)}
-              className="p-2 -ml-2 text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"
+              className="p-2 -ml-2 text-muted-foreground hover:bg-secondary text-secondary-foreground rounded-xl transition-colors"
             >
               <Menu size={22} />
             </button>
-            <h2 className="font-black text-slate-900 flex items-center gap-2 text-base">
-              <ShieldCheck className="w-5 h-5 text-indigo-600" /> CSRS Admin
+            <h2 className="font-black text-foreground flex items-center gap-2 text-base">
+              <ShieldCheck className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /> CSRS Admin
             </h2>
             <button onClick={() => { logout(); router.push('/'); }} className="text-rose-500 p-2">
               <LogOut size={20} />
@@ -382,7 +382,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
 
           {/* Top Bar Khusus Desktop */}
-          <header className="hidden md:flex h-16 bg-white border-b border-slate-200/80 px-8 items-center justify-between shrink-0 z-10 shadow-xs">
+          <header className="hidden md:flex h-16 card-solid border-b border-border/80 px-8 items-center justify-between shrink-0 z-10 shadow-xs">
             {/* Breadcrumb / Page Title */}
             <div className="flex items-center gap-3">
               {(() => {
@@ -390,13 +390,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 const IconComponent = currentItem?.icon || LayoutDashboard
                 return (
                   <>
-                    <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
+                    <div className="p-2 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-lg">
                       <IconComponent size={18} />
                     </div>
                     <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
                       <span className="text-slate-400">Admin</span>
                       <span className="text-slate-300">/</span>
-                      <span className="text-slate-900 font-bold">{currentItem?.name || 'Dasbor Utama'}</span>
+                      <span className="text-foreground font-bold">{currentItem?.name || 'Dasbor Utama'}</span>
                     </div>
                   </>
                 )
@@ -405,14 +405,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
             {/* Quick User & System Status Pill */}
             <div className="flex items-center gap-4">
-              <div className="hidden lg:flex items-center gap-2 px-3 py-1 bg-emerald-50 border border-emerald-200/60 rounded-full text-[11px] font-bold text-emerald-700">
+              <div className="hidden lg:flex items-center gap-2 px-3 py-1 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20/60 rounded-full text-[11px] font-bold text-emerald-700 dark:text-emerald-300">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 <span>System Operational</span>
               </div>
 
               <div className="h-4 w-px bg-slate-200 hidden lg:block"></div>
 
-              <div className="flex items-center gap-2.5 px-3 py-1.5 bg-slate-100/80 rounded-full border border-slate-200/60">
+              <div className="flex items-center gap-2.5 px-3 py-1.5 bg-secondary text-secondary-foreground/80 rounded-full border border-border">
                 <div className="w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-black">
                   {(user?.email?.[0] || 'A').toUpperCase()}
                 </div>

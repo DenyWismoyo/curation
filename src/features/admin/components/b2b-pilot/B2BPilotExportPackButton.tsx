@@ -103,7 +103,7 @@ export function B2BPilotExportPackButton(props: B2BPilotExportPackButtonProps) {
       type="button"
       onClick={handleExport}
       disabled={isExporting}
-      className="h-11 rounded-2xl bg-white/15 hover:bg-white/25 text-white font-bold px-4 ring-1 ring-white/20 cursor-pointer transition-all"
+      className="h-11 rounded-2xl card-solid/15 hover:card-solid/25 text-white font-bold px-4 ring-1 ring-white/20 cursor-pointer transition-all"
       title="Unduh PDF export pack untuk pilot customer"
     >
       {isExporting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}

@@ -104,10 +104,10 @@ export default function CryptoAcademyPage() {
         {totalModules > 0 && (
           <CryptoCard variant="elevated" className="w-full md:w-64 shrink-0 p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Progress Belajar</span>
+              <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Progress Belajar</span>
               <span className="text-sm font-black text-emerald-400">{progressPercentage}%</span>
             </div>
-            <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+            <div className="h-2 bg-secondary text-secondary-foreground rounded-full overflow-hidden">
               <motion.div 
                 initial={{ width: 0 }}
                 animate={{ width: `${progressPercentage}%` }}
@@ -115,7 +115,7 @@ export default function CryptoAcademyPage() {
                 className="h-full bg-gradient-to-r from-emerald-500 to-teal-400"
               />
             </div>
-            <p className="text-[11px] text-slate-500 mt-2 text-right">
+            <p className="text-[11px] text-muted-foreground mt-2 text-right">
               {completedModules} dari {totalModules} modul selesai
             </p>
           </CryptoCard>
@@ -136,10 +136,10 @@ export default function CryptoAcademyPage() {
             return (
               <div key={level} className="relative">
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 font-black">
+                  <div className="w-10 h-10 rounded-full bg-secondary text-secondary-foreground border border-slate-300 dark:border-slate-700 flex items-center justify-center text-muted-foreground font-black">
                     {idx + 1}
                   </div>
-                  <h2 className="text-2xl font-black text-slate-900 dark:text-white">{level}</h2>
+                  <h2 className="text-2xl font-black text-foreground">{level}</h2>
                   <div className="flex-1 h-px bg-gradient-to-r from-slate-100 dark:from-slate-800 to-transparent" />
                 </div>
 
@@ -178,20 +178,20 @@ export default function CryptoAcademyPage() {
                         </div>
 
                         <h3 className={`text-lg font-black leading-snug mb-2 transition-colors ${
-                          isCompleted ? 'text-slate-500 dark:text-slate-400' : 'text-slate-100 group-hover:text-indigo-400'
+                          isCompleted ? 'text-muted-foreground' : 'text-slate-100 group-hover:text-indigo-400'
                         }`}>
                           {mod.title}
                         </h3>
 
                         {/* Content summary snippet */}
-                        <p className="text-xs text-slate-500 line-clamp-2 mt-2 leading-relaxed h-8">
+                        <p className="text-xs text-muted-foreground line-clamp-2 mt-2 leading-relaxed h-8">
                           {mod.description || (mod.content ? mod.content.replace(/#.*?\n/g, '').replace(/\[SRC.*?\]/g, '').substring(0, 100) + '...' : '')}
                         </p>
 
                         {mod.keyLearnings && mod.keyLearnings.length > 0 && (
                           <ul className="mt-3 space-y-1">
                             {mod.keyLearnings.slice(0, 2).map((learning, idx) => (
-                              <li key={idx} className="text-[10px] text-slate-500 dark:text-slate-400 flex items-start gap-1.5">
+                              <li key={idx} className="text-[10px] text-muted-foreground flex items-start gap-1.5">
                                 <span className="text-indigo-500 mt-0.5">•</span>
                                 <span className="line-clamp-1">{learning}</span>
                               </li>
@@ -199,14 +199,14 @@ export default function CryptoAcademyPage() {
                           </ul>
                         )}
 
-                        <div className="mt-5 pt-4 border-t border-slate-200 dark:border-slate-800/50 flex items-center justify-between text-xs font-bold text-slate-500 group-hover:text-indigo-400 transition-colors">
+                        <div className="mt-5 pt-4 border-t border-slate-200 dark:border-slate-800/50 flex items-center justify-between text-xs font-bold text-muted-foreground group-hover:text-indigo-400 transition-colors">
                           <div className="flex items-center gap-3">
                             <span className="flex items-center gap-1.5">
                               {mod.assessmentTemplateId && <Sparkles className="w-3 h-3 text-amber-500" />}
                               {mod.assessmentTemplateId ? 'Kuis' : 'Artikel'}
                             </span>
                             {mod.estimatedMinutes && (
-                              <span className="text-slate-600 font-medium">
+                              <span className="text-muted-foreground font-medium">
                                 • {mod.estimatedMinutes} mnt
                               </span>
                             )}

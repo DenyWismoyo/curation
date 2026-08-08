@@ -55,7 +55,7 @@ export function TemplateExportPDFButton({ template }: { template: FormTemplate }
       disabled={isGenerating}
       title="Unduh Struktur Form (PDF)"
       // Gaya menyesuaikan screenshot: tombol kecil minimalis di samping badge
-      className="w-8 h-8 flex items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all ring-1 ring-indigo-200 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+      className="w-8 h-8 flex items-center justify-center rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white transition-all ring-1 ring-indigo-200 dark:ring-indigo-500/20 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
     >
       {isGenerating ? (
         <Loader2 size={14} className="animate-spin" />

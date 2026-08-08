@@ -19,12 +19,12 @@ export function StatCard({
   return (
     <div
       className={cn(
-        'bg-white p-6 rounded-2xl ring-1 ring-slate-200/60 shadow-sm flex flex-col justify-center',
+        'card-solid p-6 rounded-2xl ring-1 ring-border shadow-sm flex flex-col justify-center',
         className
       )}
     >
       {icon && <div className="mb-2">{icon}</div>}
-      <p className={cn('text-3xl font-black mb-1 text-slate-900', valueClassName)}>
+      <p className={cn('text-3xl font-black mb-1 text-foreground', valueClassName)}>
         {value}
       </p>
       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">

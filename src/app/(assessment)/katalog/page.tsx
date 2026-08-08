@@ -18,13 +18,13 @@ function KatalogContent() {
   const autoOpenId = searchParams.get('buy');
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA]">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Page header — hanya tampil di mobile (sidebar sudah ada di desktop) */}
-      <div className="md:hidden flex items-center gap-3 px-5 pt-5 pb-3 bg-white border-b border-slate-100">
-        <Link href="/" className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-50 transition-colors">
+      <div className="md:hidden flex items-center gap-3 px-5 pt-5 pb-3 card-solid border-b border-border">
+        <Link href="/" className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-muted text-muted-foreground transition-colors">
           <ChevronLeft size={18} />
         </Link>
-        <span className="text-sm font-black text-slate-800">Katalog Asesmen</span>
+        <span className="text-sm font-black text-foreground">Katalog Asesmen</span>
       </div>
 
       {/* 
@@ -47,9 +47,9 @@ function KatalogContent() {
 export default function KatalogPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA]">
+      <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
         <div className="flex flex-col items-center gap-3 text-slate-400">
-          <div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+          <div className="w-8 h-8 border-4 border-indigo-200 dark:border-indigo-500/20 border-t-indigo-600 rounded-full animate-spin"></div>
           <p className="font-bold tracking-widest text-xs uppercase">Menyiapkan Katalog...</p>
         </div>
       </div>

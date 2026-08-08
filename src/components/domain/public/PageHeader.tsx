@@ -42,9 +42,9 @@ export function PageHeader({
             {eyebrow}
           </p>
         )}
-        <h1 className="text-3xl font-black text-slate-900 tracking-tight">{title}</h1>
+        <h1 className="text-3xl font-black text-foreground tracking-tight">{title}</h1>
         {subtitle && (
-          <p className="text-sm text-slate-500 font-medium mt-2 max-w-2xl">{subtitle}</p>
+          <p className="text-sm text-muted-foreground font-medium mt-2 max-w-2xl">{subtitle}</p>
         )}
         {children}
       </div>
@@ -56,7 +56,7 @@ export function PageHeader({
   return (
     <div
       className={cn(
-        'bg-white border-b border-slate-100/60 px-6 lg:px-12 py-8',
+        'card-solid border-b border-border px-6 lg:px-12 py-8',
         sticky && 'sticky top-20 z-30',
         className
       )}
@@ -71,7 +71,7 @@ export function PageHeader({
 
         <div className="flex items-center gap-4">
           {icon && (
-            <div className="w-14 h-14 bg-indigo-50 rounded-[1.2rem] ring-1 ring-indigo-100 flex items-center justify-center shrink-0">
+            <div className="w-14 h-14 bg-indigo-50 dark:bg-indigo-500/10 rounded-[1.2rem] ring-1 ring-indigo-100 flex items-center justify-center shrink-0">
               {icon}
             </div>
           )}
@@ -81,9 +81,9 @@ export function PageHeader({
                 {eyebrow}
               </p>
             )}
-            {title && <h1 className="text-3xl font-black text-slate-900 tracking-tight">{title}</h1>}
+            {title && <h1 className="text-3xl font-black text-foreground tracking-tight">{title}</h1>}
             {subtitle && (
-              <p className="text-sm text-slate-500 font-medium mt-1">{subtitle}</p>
+              <p className="text-sm text-muted-foreground font-medium mt-1">{subtitle}</p>
             )}
           </div>
           {!hasBack && actions && (

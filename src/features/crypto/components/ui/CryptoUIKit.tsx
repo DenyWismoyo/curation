@@ -16,18 +16,18 @@ export function CryptoCard({ className, variant = 'default', children, ...props 
   const baseClasses = 'rounded-2xl border transition-all duration-300 relative overflow-hidden';
   
   const variants = {
-    default: 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800',
-    elevated: 'bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border-slate-200/60 dark:border-slate-800/60 shadow-lg',
-    subtle: 'bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/10',
+    default: 'card-solid border-slate-200 dark:border-slate-800',
+    elevated: 'card-solid/90 dark:bg-slate-900/90 backdrop-blur-xl border-border/60 dark:border-slate-800/60 shadow-lg',
+    subtle: 'bg-muted text-muted-foreground dark:card-solid/5 border-slate-100 dark:border-white/10 hover:bg-secondary text-secondary-foreground dark:hover:card-solid/10',
     danger: 'bg-rose-50 dark:bg-rose-950/20 border-rose-100 dark:border-rose-900/30',
     premium: 'bg-gradient-to-br from-white to-amber-50 dark:from-slate-900 dark:to-slate-950 border-amber-200 dark:border-amber-500/20 shadow-md dark:shadow-[0_0_15px_rgba(245,158,11,0.1)]',
-    glow: 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:shadow-lg dark:hover:shadow-[0_0_20px_rgba(255,255,255,0.05)]',
-    'glow-indigo': 'bg-indigo-50/50 dark:bg-indigo-950/10 border-indigo-100 dark:border-indigo-900/20 hover:bg-indigo-50 dark:hover:bg-indigo-900/30',
-    'glow-amber': 'bg-amber-50/50 dark:bg-amber-950/10 border-amber-100 dark:border-amber-900/20 hover:bg-amber-50 dark:hover:bg-amber-900/30',
-    'glow-emerald': 'bg-emerald-50/50 dark:bg-emerald-950/10 border-emerald-100 dark:border-emerald-900/20 hover:bg-emerald-50 dark:hover:bg-emerald-900/30',
-    'glow-rose': 'bg-rose-50/50 dark:bg-rose-950/10 border-rose-100 dark:border-rose-900/20 hover:bg-rose-50 dark:hover:bg-rose-900/30',
-    'glow-cyan': 'bg-cyan-50/50 dark:bg-cyan-950/10 border-cyan-100 dark:border-cyan-900/20 hover:bg-cyan-50 dark:hover:bg-cyan-900/30',
-    'glow-purple': 'bg-purple-50/50 dark:bg-purple-950/10 border-purple-100 dark:border-purple-900/20 hover:bg-purple-50 dark:hover:bg-purple-900/30',
+    glow: 'card-solid border-slate-200 dark:border-slate-800 hover:shadow-lg dark:hover:shadow-[0_0_20px_rgba(255,255,255,0.05)]',
+    'glow-indigo': 'bg-indigo-50 dark:bg-indigo-500/10/50 dark:bg-indigo-950/10 border-indigo-100 dark:border-indigo-900/20 hover:bg-indigo-50 dark:hover:bg-indigo-900/30',
+    'glow-amber': 'bg-amber-50 dark:bg-amber-500/10/50 dark:bg-amber-950/10 border-amber-100 dark:border-amber-900/20 hover:bg-amber-50 dark:hover:bg-amber-900/30',
+    'glow-emerald': 'bg-emerald-50 dark:bg-emerald-500/10/50 dark:bg-emerald-950/10 border-emerald-100 dark:border-emerald-900/20 hover:bg-emerald-50 dark:hover:bg-emerald-900/30',
+    'glow-rose': 'bg-rose-50 dark:bg-rose-500/10/50 dark:bg-rose-950/10 border-rose-100 dark:border-rose-900/20 hover:bg-rose-50 dark:hover:bg-rose-900/30',
+    'glow-cyan': 'bg-cyan-50 dark:bg-cyan-500/10/50 dark:bg-cyan-950/10 border-cyan-100 dark:border-cyan-900/20 hover:bg-cyan-50 dark:hover:bg-cyan-900/30',
+    'glow-purple': 'bg-purple-50 dark:bg-purple-500/10/50 dark:bg-purple-950/10 border-purple-100 dark:border-purple-900/20 hover:bg-purple-50 dark:hover:bg-purple-900/30',
   };
 
   return (
@@ -50,7 +50,7 @@ export function CryptoBadge({ className, variant = 'info', children, ...props }:
   const variants = {
     bullish: 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20',
     bearish: 'bg-rose-100 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-500/20',
-    neutral: 'bg-slate-100 dark:bg-slate-500/10 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-500/20',
+    neutral: 'bg-secondary text-secondary-foreground dark:bg-muted text-muted-foreground0/10 text-muted-foreground dark:text-slate-400 border border-slate-200 dark:border-slate-500/20',
     premium: 'bg-gradient-to-r from-amber-500 to-orange-400 text-white border-0 shadow-md',
     danger: 'bg-rose-600 text-white border-0',
     info: 'bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/20',
@@ -77,10 +77,10 @@ export function CryptoButton({ className, variant = 'primary', size = 'md', chil
   
   const variants = {
     primary: 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-200 dark:shadow-indigo-900/50',
-    danger: 'bg-rose-600 hover:bg-rose-700 text-white shadow-md shadow-rose-200 dark:shadow-rose-900/50',
-    ghost: 'hover:bg-slate-100 dark:hover:bg-white/5 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white',
+    danger: 'btn-danger-rich shadow-md shadow-rose-200 dark:shadow-rose-900/50',
+    ghost: 'hover:bg-secondary text-secondary-foreground dark:hover:card-solid/5 text-muted-foreground hover:text-foreground dark:hover:text-white',
     premium: 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white shadow-lg shadow-orange-200 dark:shadow-orange-900/30 border border-amber-400/50',
-    outline: 'border border-slate-200 dark:border-slate-700 bg-transparent hover:bg-slate-50 dark:hover:bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300',
+    outline: 'border border-slate-200 dark:border-slate-700 bg-transparent hover:bg-muted text-muted-foreground dark:hover:bg-secondary text-secondary-foreground text-slate-700 dark:text-slate-300',
   };
   
   const sizes = {
@@ -120,11 +120,11 @@ export function CryptoPageHeader({ title, subtitle, badge, badgeVariant = 'premi
           )}
           {badge && <CryptoBadge variant={badgeVariant}>{badge}</CryptoBadge>}
         </div>
-        <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight mb-2">
+        <h1 className="text-3xl md:text-4xl font-black text-foreground tracking-tight mb-2">
           {title}
         </h1>
         {subtitle && (
-          <p className="text-slate-500 dark:text-slate-400 text-sm md:text-base max-w-2xl leading-relaxed">
+          <p className="text-muted-foreground text-sm md:text-base max-w-2xl leading-relaxed">
             {subtitle}
           </p>
         )}
@@ -164,16 +164,16 @@ export function CryptoPremiumGate({
 
   if (mode === 'fullscreen') {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 w-full relative overflow-hidden bg-slate-50 dark:bg-slate-950 rounded-3xl border border-slate-200 dark:border-white/5">
+      <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 w-full relative overflow-hidden bg-background text-foreground rounded-3xl border border-slate-200 dark:border-white/5">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-indigo-500/10 dark:bg-indigo-500/20 blur-[100px] rounded-full pointer-events-none" />
-        <div className="max-w-md w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-3xl p-8 text-center shadow-2xl relative z-10">
+        <div className="max-w-md w-full card-solid/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-3xl p-8 text-center shadow-2xl relative z-10">
           <div className="w-16 h-16 mx-auto bg-indigo-100 dark:bg-indigo-500/20 rounded-2xl flex items-center justify-center border border-indigo-200 dark:border-indigo-500/30 mb-6">
             <Lock className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
           </div>
-          <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-3 flex items-center justify-center gap-2">
+          <h2 className="text-2xl font-black text-foreground mb-3 flex items-center justify-center gap-2">
             {title} <Sparkles className="w-5 h-5 text-yellow-500" />
           </h2>
-          <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-8">
+          <p className="text-muted-foreground text-sm leading-relaxed mb-8">
             {description}
           </p>
           <div className="space-y-3">
@@ -196,14 +196,14 @@ export function CryptoPremiumGate({
       <div className="blur-[8px] opacity-40 select-none pointer-events-none transition-all duration-300 h-full">
         {children}
       </div>
-      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-6 text-center bg-white/20 dark:bg-slate-950/20 backdrop-blur-[2px]">
+      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-6 text-center card-solid/20 dark:bg-slate-950/20 backdrop-blur-[2px]">
         <div className="w-12 h-12 mb-3 bg-indigo-100 dark:bg-indigo-500/20 rounded-xl flex items-center justify-center border border-indigo-200 dark:border-indigo-500/30 shadow-lg dark:shadow-[0_0_15px_rgba(79,70,229,0.3)]">
           <Lock className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
         </div>
-        <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center justify-center gap-2 mb-2">
+        <h3 className="text-lg font-bold text-foreground flex items-center justify-center gap-2 mb-2">
           {title} <Sparkles className="w-4 h-4 text-yellow-500" />
         </h3>
-        <p className="text-xs text-slate-600 dark:text-slate-200 mb-4 max-w-[250px] leading-relaxed">
+        <p className="text-xs text-muted-foreground dark:text-slate-200 mb-4 max-w-[250px] leading-relaxed">
           {description}
         </p>
         <CryptoButton variant="primary" size="sm" onClick={onUpgradeClick}>
@@ -231,11 +231,11 @@ interface CryptoEmptyStateProps {
 export function CryptoEmptyState({ icon = <Info className="w-8 h-8" />, title, description, action }: CryptoEmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center px-4">
-      <div className="w-16 h-16 bg-slate-100 dark:bg-slate-900 rounded-full flex items-center justify-center mb-4 text-slate-500 border border-slate-200 dark:border-slate-800">
+      <div className="w-16 h-16 bg-secondary text-secondary-foreground dark:bg-slate-900 rounded-full flex items-center justify-center mb-4 text-muted-foreground border border-slate-200 dark:border-slate-800">
         {icon}
       </div>
-      <h3 className="text-lg font-black text-slate-900 dark:text-white mb-2">{title}</h3>
-      <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-6 leading-relaxed">
+      <h3 className="text-lg font-black text-foreground mb-2">{title}</h3>
+      <p className="text-sm text-muted-foreground max-w-sm mx-auto mb-6 leading-relaxed">
         {description}
       </p>
       {action}
@@ -266,7 +266,7 @@ export function CryptoLoadingState({ type = 'spinner', message = 'Memuat...', ro
   return (
     <div className="flex flex-col items-center justify-center py-20 opacity-70">
       <Loader2 className="w-10 h-10 animate-spin text-indigo-500 mb-4" />
-      <p className="text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest text-xs">{message}</p>
+      <p className="text-muted-foreground font-bold uppercase tracking-widest text-xs">{message}</p>
     </div>
   );
 }
@@ -306,16 +306,16 @@ export function CryptoStatCard({
   };
 
   const trendColors = {
-    up: 'text-emerald-700 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-500/10',
-    down: 'text-rose-700 bg-rose-100 dark:text-rose-400 dark:bg-rose-500/10',
-    neutral: 'text-slate-600 bg-slate-100 dark:text-slate-400 dark:bg-slate-800',
+    up: 'text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-500/10',
+    down: 'text-rose-700 dark:text-rose-300 bg-rose-100 dark:text-rose-400 dark:bg-rose-500/10',
+    neutral: 'text-muted-foreground bg-secondary text-secondary-foreground dark:text-slate-400 dark:bg-slate-800',
   };
 
   return (
     <div 
       onClick={onClick}
       className={cn(
-        "bg-white dark:bg-gradient-to-br dark:from-slate-900/90 dark:to-slate-950/90 border border-slate-200 dark:border-slate-800/60 backdrop-blur-xl shadow-sm dark:shadow-lg rounded-2xl overflow-hidden relative group transition-all duration-500",
+        "card-solid dark:bg-gradient-to-br dark:from-slate-900/90 dark:to-slate-950/90 border border-slate-200 dark:border-slate-800/60 backdrop-blur-xl shadow-sm dark:shadow-lg rounded-2xl overflow-hidden relative group transition-all duration-500",
         onClick && "cursor-pointer hover:-translate-y-1 hover:shadow-md dark:hover:shadow-lg"
       )}
     >
@@ -332,7 +332,7 @@ export function CryptoStatCard({
              </div>
            )}
          </div>
-         <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+         <div className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
            {value}
          </div>
       </div>

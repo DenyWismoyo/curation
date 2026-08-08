@@ -130,8 +130,8 @@ export default function OnboardingPage() {
 
   if (loading || checking) {
     return (
-      <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center">
-        <AiSparkIcon size={40} className="text-indigo-600 animate-pulse" />
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+        <AiSparkIcon size={40} className="text-indigo-600 dark:text-indigo-400 animate-pulse" />
       </div>
     );
   }
@@ -139,12 +139,12 @@ export default function OnboardingPage() {
   if (completedWithoutForce) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-[#FAFAFA] to-purple-50 flex items-center justify-center px-6 py-10">
-        <div className="w-full max-w-lg bg-white rounded-3xl ring-1 ring-slate-200 p-8 text-center shadow-sm">
+        <div className="w-full max-w-lg card-solid rounded-3xl ring-1 ring-border p-8 text-center shadow-sm">
           <div className="inline-flex w-16 h-16 bg-indigo-600 rounded-2xl items-center justify-center mb-4 shadow-lg shadow-indigo-500/25">
             <AiSparkIcon size={30} className="text-white" />
           </div>
-          <h1 className="text-2xl font-black text-slate-900 mb-2">Onboarding Sudah Selesai</h1>
-          <p className="text-sm text-slate-500 mb-6">
+          <h1 className="text-2xl font-black text-foreground mb-2">Onboarding Sudah Selesai</h1>
+          <p className="text-sm text-muted-foreground mb-6">
             Anda tetap bisa mengulangi onboarding kapan saja untuk memperbarui prioritas dan rekomendasi AI.
           </p>
 
@@ -152,7 +152,7 @@ export default function OnboardingPage() {
             <Button
               variant="outline"
               onClick={() => router.push('/dashboard')}
-              className="flex-1 h-11 rounded-xl border-slate-200 text-slate-600 font-bold"
+              className="flex-1 h-11 rounded-xl border-border text-muted-foreground font-bold"
             >
               Kembali ke Dashboard
             </Button>
@@ -180,11 +180,11 @@ export default function OnboardingPage() {
                 <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-black transition-all ${
                   i < step ? 'bg-indigo-600 text-white' :
                   i === step ? 'bg-indigo-600 text-white ring-4 ring-indigo-100' :
-                  'bg-slate-200 text-slate-500'
+                  'bg-slate-200 text-muted-foreground'
                 }`}>
                   {i < step ? '✓' : i + 1}
                 </div>
-                <span className={`text-xs font-bold hidden sm:block ${i === step ? 'text-indigo-600' : 'text-slate-400'}`}>
+                <span className={`text-xs font-bold hidden sm:block ${i === step ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400'}`}>
                   {label}
                 </span>
               </div>
@@ -202,32 +202,32 @@ export default function OnboardingPage() {
                 <div className="inline-flex w-16 h-16 bg-indigo-600 rounded-3xl items-center justify-center mb-4 shadow-lg shadow-indigo-500/25">
                   <AiSparkIcon size={32} className="text-white" />
                 </div>
-                <h1 className="text-3xl font-black text-slate-900 mb-2">Selamat Datang di<br/>Omnifit AI</h1>
-                <p className="text-slate-500 font-medium text-sm">Bantu kami personalisasi pengalaman Anda</p>
+                <h1 className="text-3xl font-black text-foreground mb-2">Selamat Datang di<br/>Omnifit AI</h1>
+                <p className="text-muted-foreground font-medium text-sm">Bantu kami personalisasi pengalaman Anda</p>
               </div>
 
               <div className="space-y-3">
-                <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">Apa tujuan utama Anda?</p>
+                <p className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-4">Apa tujuan utama Anda?</p>
                 {PURPOSES.map((p) => (
                   <button
                     key={p.id}
                     onClick={() => setPurpose(p.id)}
                     className={`w-full flex items-center gap-4 p-4 rounded-2xl ring-2 transition-all text-left ${
                       purpose === p.id
-                        ? 'ring-indigo-500 bg-indigo-50 shadow-md shadow-indigo-100'
-                        : 'ring-slate-200 bg-white hover:ring-indigo-200 hover:bg-slate-50'
+                        ? 'ring-indigo-500 bg-indigo-50 dark:bg-indigo-500/10 shadow-md shadow-indigo-100'
+                        : 'ring-slate-200 card-solid hover:ring-indigo-200 dark:ring-indigo-500/20 hover:bg-muted text-muted-foreground'
                     }`}
                   >
                     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${
-                      purpose === p.id ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-500'
+                      purpose === p.id ? 'bg-indigo-600 text-white' : 'bg-secondary text-secondary-foreground text-muted-foreground'
                     }`}>
                       {p.icon}
                     </div>
                     <div>
-                      <p className="font-black text-slate-900 text-sm">{p.label}</p>
-                      <p className="text-xs text-slate-500 mt-0.5">{p.description}</p>
+                      <p className="font-black text-foreground text-sm">{p.label}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{p.description}</p>
                     </div>
-                    {purpose === p.id && <ChevronRight size={16} className="ml-auto text-indigo-600 flex-shrink-0" />}
+                    {purpose === p.id && <ChevronRight size={16} className="ml-auto text-indigo-600 dark:text-indigo-400 flex-shrink-0" />}
                   </button>
                 ))}
               </div>
@@ -246,12 +246,12 @@ export default function OnboardingPage() {
           {step === 1 && (
             <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
               <div className="flex items-center gap-3 mb-6">
-                <button onClick={() => setStep(0)} className="w-9 h-9 flex items-center justify-center rounded-xl bg-white ring-1 ring-slate-200 text-slate-500 hover:text-indigo-600 transition-colors">
+                <button onClick={() => setStep(0)} className="w-9 h-9 flex items-center justify-center rounded-xl card-solid ring-1 ring-border text-muted-foreground hover:text-indigo-600 dark:text-indigo-400 transition-colors">
                   <ArrowLeft size={16} />
                 </button>
                 <div>
-                  <h2 className="text-xl font-black text-slate-900">Pilih Sektor</h2>
-                  <p className="text-xs text-slate-500">untuk {PURPOSES.find(p => p.id === purpose)?.label}</p>
+                  <h2 className="text-xl font-black text-foreground">Pilih Sektor</h2>
+                  <p className="text-xs text-muted-foreground">untuk {PURPOSES.find(p => p.id === purpose)?.label}</p>
                 </div>
               </div>
 
@@ -263,7 +263,7 @@ export default function OnboardingPage() {
                     className={`p-4 rounded-2xl ring-2 text-center transition-all font-bold text-sm ${
                       sector === s
                         ? 'ring-indigo-500 bg-indigo-600 text-white shadow-md shadow-indigo-100'
-                        : 'ring-slate-200 bg-white text-slate-700 hover:ring-indigo-200'
+                        : 'ring-slate-200 card-solid text-slate-700 hover:ring-indigo-200 dark:ring-indigo-500/20'
                     }`}
                   >
                     {s}
@@ -297,23 +297,23 @@ export default function OnboardingPage() {
                 >
                   <AiSparkIcon size={40} className="text-white" />
                 </motion.div>
-                <h2 className="text-2xl font-black text-slate-900 mb-2">Profil Anda Tersimpan! 🎉</h2>
-                <p className="text-sm text-slate-500">
+                <h2 className="text-2xl font-black text-foreground mb-2">Profil Anda Tersimpan! 🎉</h2>
+                <p className="text-sm text-muted-foreground">
                   Berdasarkan profil <strong>{PURPOSES.find(p => p.id === purpose)?.label}</strong> – <strong>{sector}</strong>, AI kami menyusun rencana 5 langkah prioritas.
                 </p>
               </div>
 
-              <div className="bg-white p-5 rounded-2xl ring-1 ring-indigo-100 mb-4">
-                <p className="text-xs font-black uppercase tracking-widest text-indigo-600 mb-2">Ringkasan Adaptif</p>
-                <p className="text-sm text-slate-600 leading-relaxed">
+              <div className="card-solid p-5 rounded-2xl ring-1 ring-indigo-100 mb-4">
+                <p className="text-xs font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 mb-2">Ringkasan Adaptif</p>
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   {adaptiveSummary || 'Rencana onboarding Anda sedang diprioritaskan agar lebih relevan dengan tujuan saat ini.'}
                 </p>
               </div>
 
               <div className="space-y-3 mb-5">
-                <p className="text-xs font-black uppercase tracking-widest text-slate-500">5 Langkah yang Direkomendasikan</p>
+                <p className="text-xs font-black uppercase tracking-widest text-muted-foreground">5 Langkah yang Direkomendasikan</p>
                 {adaptiveSteps.length === 0 ? (
-                  <div className="bg-white p-5 rounded-2xl ring-1 ring-slate-200 text-slate-500 text-sm flex items-center gap-2">
+                  <div className="card-solid p-5 rounded-2xl ring-1 ring-border text-muted-foreground text-sm flex items-center gap-2">
                     <Loader2 size={16} className="animate-spin" />
                     Menyiapkan langkah prioritas...
                   </div>
@@ -324,14 +324,14 @@ export default function OnboardingPage() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.1 + index * 0.06 }}
-                      className="bg-white p-4 rounded-2xl ring-1 ring-slate-200 shadow-sm"
+                      className="card-solid p-4 rounded-2xl ring-1 ring-border shadow-sm"
                     >
                       <div className="flex items-center gap-2 mb-2">
                         <div className="w-6 h-6 rounded-full bg-indigo-600 text-white text-[11px] font-black flex items-center justify-center">{index + 1}</div>
-                        <p className="font-black text-slate-900 text-sm">{stepItem.title}</p>
+                        <p className="font-black text-foreground text-sm">{stepItem.title}</p>
                       </div>
-                      <p className="text-xs text-slate-500 mb-2">{stepItem.whyNow}</p>
-                      <p className="text-xs text-indigo-700 font-semibold">Aksi cepat: {stepItem.action}</p>
+                      <p className="text-xs text-muted-foreground mb-2">{stepItem.whyNow}</p>
+                      <p className="text-xs text-indigo-700 dark:text-indigo-300 font-semibold">Aksi cepat: {stepItem.action}</p>
                     </motion.div>
                   ))
                 )}
@@ -344,14 +344,14 @@ export default function OnboardingPage() {
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 + i * 0.1 }}
-                    className="bg-white p-6 rounded-2xl ring-2 ring-indigo-100 shadow-sm"
+                    className="card-solid p-6 rounded-2xl ring-2 ring-indigo-100 shadow-sm"
                   >
                     <div className="flex items-start gap-3 mb-4">
-                      <Target size={20} className="text-indigo-600 mt-0.5 flex-shrink-0" />
+                      <Target size={20} className="text-indigo-600 dark:text-indigo-400 mt-0.5 flex-shrink-0" />
                       <div>
-                        <h3 className="font-black text-slate-900 text-base">{rec.moduleName}</h3>
-                        <p className="text-sm text-slate-500 mt-0.5">{rec.reason}</p>
-                        <p className="text-xs text-indigo-700 mt-1 font-semibold">Dampak: {rec.estimatedImpact}</p>
+                        <h3 className="font-black text-foreground text-base">{rec.moduleName}</h3>
+                        <p className="text-sm text-muted-foreground mt-0.5">{rec.reason}</p>
+                        <p className="text-xs text-indigo-700 dark:text-indigo-300 mt-1 font-semibold">Dampak: {rec.estimatedImpact}</p>
                       </div>
                     </div>
                     <Button
@@ -364,9 +364,9 @@ export default function OnboardingPage() {
                 ))}
 
                 {adaptiveModules.length === 0 && (
-                  <div className="bg-white p-6 rounded-2xl ring-1 ring-slate-200 text-center">
+                  <div className="card-solid p-6 rounded-2xl ring-1 ring-border text-center">
                     <Sparkles className="w-6 h-6 text-indigo-500 mx-auto mb-2" />
-                    <p className="text-sm text-slate-600">Belum ada modul spesifik yang bisa dicocokkan. Anda tetap bisa eksplor katalog lengkap.</p>
+                    <p className="text-sm text-muted-foreground">Belum ada modul spesifik yang bisa dicocokkan. Anda tetap bisa eksplor katalog lengkap.</p>
                   </div>
                 )}
               </div>
@@ -375,14 +375,14 @@ export default function OnboardingPage() {
                 <Button
                   variant="outline"
                   onClick={() => router.push('/katalog')}
-                  className="flex-1 h-11 font-bold text-sm rounded-xl border-slate-200 text-slate-600"
+                  className="flex-1 h-11 font-bold text-sm rounded-xl border-border text-muted-foreground"
                 >
                   Lihat Katalog
                 </Button>
                 <Button
                   variant="outline"
                   onClick={() => router.push('/dashboard')}
-                  className="flex-1 h-11 font-bold text-sm rounded-xl border-slate-200 text-slate-600"
+                  className="flex-1 h-11 font-bold text-sm rounded-xl border-border text-muted-foreground"
                 >
                   Ke Dashboard
                 </Button>

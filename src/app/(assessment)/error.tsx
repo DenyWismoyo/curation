@@ -20,16 +20,16 @@ export default function PublicError({
   const router = useRouter()
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-white px-6">
+    <div className="flex items-center justify-center min-h-screen card-solid px-6">
       <div className="flex flex-col items-center gap-4 max-w-xs text-center">
         <div className="w-14 h-14 rounded-2xl bg-red-50 flex items-center justify-center">
           <AlertTriangle size={28} className="text-red-500" />
         </div>
         <div>
-          <h2 className="text-base font-bold text-slate-800 mb-1">
+          <h2 className="text-base font-bold text-foreground mb-1">
             Terjadi Kesalahan
           </h2>
-          <p className="text-sm text-slate-500 leading-relaxed">
+          <p className="text-sm text-muted-foreground leading-relaxed">
             {error.message ||
               'Sesuatu tidak berjalan sebagaimana mestinya. Silakan coba lagi.'}
           </p>

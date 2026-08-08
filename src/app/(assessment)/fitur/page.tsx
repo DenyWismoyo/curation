@@ -19,37 +19,37 @@ import { Button } from '@/components/ui/button';
 export default function FeaturesPage() {
   const features = [
     {
-      icon: <GitBranch size={24} className="text-indigo-600" />,
+      icon: <GitBranch size={24} className="text-indigo-600 dark:text-indigo-400" />,
       title: 'Asesmen Dinamis (Branching)',
       description: 'Pertanyaan cerdas yang beradaptasi secara real-time berdasarkan jawaban Anda sebelumnya, memberikan pengalaman diagnosis yang sangat personal dan akurat.',
       color: 'bg-indigo-100',
     },
     {
-      icon: <BrainCircuit size={24} className="text-emerald-600" />,
+      icon: <BrainCircuit size={24} className="text-emerald-600 dark:text-emerald-400" />,
       title: 'Analisis AI Mendalam',
       description: 'Sistem scoring otomatis yang menghasilkan pemetaan matriks (SWOT), identifikasi risiko kritis (Critical Risks), dan insight yang tidak terlihat oleh mata telanjang.',
       color: 'bg-emerald-100',
     },
     {
-      icon: <Target size={24} className="text-rose-600" />,
+      icon: <Target size={24} className="text-rose-600 dark:text-rose-400" />,
       title: 'Auto-Generated Action Plan',
       description: 'Ubah hasil diagnosis menjadi To-Do List yang siap dieksekusi. AI menyusun rencana aksi bertahap (30 hari) sesuai prioritas masalah Anda.',
       color: 'bg-rose-100',
     },
     {
-      icon: <Sparkles size={24} className="text-amber-600" />,
+      icon: <Sparkles size={24} className="text-amber-600 dark:text-amber-400" />,
       title: 'Konsultasi AI Premium',
       description: 'Ruang kerja eksklusif untuk membedah "Hidden Metrics" dan anomali data hasil asesmen Anda langsung bersama AI Konsultan super pintar.',
       color: 'bg-amber-100',
     },
     {
-      icon: <Building2 size={24} className="text-sky-600" />,
+      icon: <Building2 size={24} className="text-sky-600 dark:text-sky-400" />,
       title: 'B2B Cohort Workspace',
       description: 'Dasbor manajemen khusus untuk entitas perusahaan. Lacak perkembangan tim, pantau analitik cohort, dan distribusikan Token Asesmen dengan mudah.',
       color: 'bg-sky-100',
     },
     {
-      icon: <LinkIcon size={24} className="text-purple-600" />,
+      icon: <LinkIcon size={24} className="text-purple-600 dark:text-purple-400" />,
       title: 'Sistem Afiliasi Terintegrasi',
       description: 'Program referral canggih yang memungkinkan pengguna mendapatkan komisi secara transparan dari setiap asesmen yang direkomendasikan.',
       color: 'bg-purple-100',
@@ -57,7 +57,7 @@ export default function FeaturesPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 pt-10 pb-20 overflow-hidden">
+    <div className="min-h-screen bg-muted text-muted-foreground pt-10 pb-20 overflow-hidden">
       {/* Background Decor */}
       <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-br from-indigo-900 via-slate-900 to-black rounded-b-[40px] sm:rounded-b-[100px] z-0 overflow-hidden">
         <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay"></div>
@@ -73,7 +73,7 @@ export default function FeaturesPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-white/90 text-xs font-bold uppercase tracking-widest mb-6 backdrop-blur-md">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full card-solid/10 border border-white/20 text-white/90 text-xs font-bold uppercase tracking-widest mb-6 backdrop-blur-md">
               <ShieldCheck size={14} /> Ekosistem Terintegrasi
             </span>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 tracking-tight leading-tight">
@@ -83,10 +83,10 @@ export default function FeaturesPage() {
               Omnifit Assessment adalah <em>decision support engine</em>. Kami mengubah data dari kuesioner menjadi keputusan intervensi yang nyata dan bisa langsung Anda eksekusi.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button asChild className="rounded-xl h-14 px-8 bg-white hover:bg-slate-100 text-slate-900 font-black text-base transition-all shadow-xl hover:scale-105">
+              <Button asChild className="rounded-xl h-14 px-8 card-solid hover:bg-secondary text-secondary-foreground text-foreground font-black text-base transition-all shadow-xl hover:scale-105">
                 <Link href="/katalog">Coba Asesmen Sekarang <ChevronRight size={18} className="ml-2" /></Link>
               </Button>
-              <Button asChild variant="outline" className="rounded-xl h-14 px-8 border-white/20 hover:bg-white/10 text-white font-bold text-base backdrop-blur-md transition-all">
+              <Button asChild variant="outline" className="rounded-xl h-14 px-8 border-white/20 hover:card-solid/10 text-white font-bold text-base backdrop-blur-md transition-all">
                 <Link href="/login">Masuk ke Dasbor</Link>
               </Button>
             </div>
@@ -101,17 +101,17 @@ export default function FeaturesPage() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="bg-white rounded-[2rem] p-8 shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:shadow-indigo-200/40 transition-all group ring-1 ring-slate-100 flex flex-col h-full relative overflow-hidden"
+              className="card-solid rounded-[2rem] p-8 shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:shadow-indigo-200/40 transition-all group ring-1 ring-border flex flex-col h-full relative overflow-hidden"
             >
-              <div className="absolute -right-10 -top-10 w-32 h-32 bg-slate-50 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out z-0"></div>
+              <div className="absolute -right-10 -top-10 w-32 h-32 bg-muted text-muted-foreground rounded-full group-hover:scale-150 transition-transform duration-500 ease-out z-0"></div>
               
               <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 relative z-10 ${feature.color} ring-4 ring-white shadow-sm group-hover:-translate-y-1 transition-transform`}>
                 {feature.icon}
               </div>
-              <h3 className="text-xl font-black text-slate-900 mb-3 relative z-10 tracking-tight">
+              <h3 className="text-xl font-black text-foreground mb-3 relative z-10 tracking-tight">
                 {feature.title}
               </h3>
-              <p className="text-slate-600 font-medium text-sm leading-relaxed relative z-10">
+              <p className="text-muted-foreground font-medium text-sm leading-relaxed relative z-10">
                 {feature.description}
               </p>
             </motion.div>

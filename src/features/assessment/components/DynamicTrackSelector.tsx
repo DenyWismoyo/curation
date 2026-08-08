@@ -35,32 +35,32 @@ const getCategoryTheme = (title: string, category: string) => {
   
   if (text.includes('koperasi') || text.includes('kelurahan') || text.includes('komunitas') || text.includes('hijau') || text.includes('sampah') || text.includes('properti')) {
     return { 
-      bg: 'bg-emerald-50', text: 'text-emerald-600', ring: 'ring-emerald-200',
-      hoverRing: 'hover:ring-emerald-300', hoverText: 'group-hover:text-emerald-600', hoverBg: 'group-hover:bg-emerald-50'
+      bg: 'bg-emerald-50 dark:bg-emerald-500/10', text: 'text-emerald-600 dark:text-emerald-400', ring: 'ring-emerald-200 dark:ring-emerald-500/20',
+      hoverRing: 'hover:ring-emerald-300', hoverText: 'group-hover:text-emerald-600 dark:text-emerald-400', hoverBg: 'group-hover:bg-emerald-50 dark:bg-emerald-500/10'
     };
   }
   if (text.includes('pemerintah') || text.includes('skp') || text.includes('kecamatan') || text.includes('layanan') || text.includes('disposisi') || text.includes('anak') || text.includes('parenting')) {
     return { 
-      bg: 'bg-amber-50', text: 'text-amber-600', ring: 'ring-amber-200',
-      hoverRing: 'hover:ring-amber-300', hoverText: 'group-hover:text-amber-600', hoverBg: 'group-hover:bg-amber-50'
+      bg: 'bg-amber-50 dark:bg-amber-500/10', text: 'text-amber-600 dark:text-amber-400', ring: 'ring-amber-200 dark:ring-amber-500/20',
+      hoverRing: 'hover:ring-amber-300', hoverText: 'group-hover:text-amber-600 dark:text-amber-400', hoverBg: 'group-hover:bg-amber-50 dark:bg-amber-500/10'
     };
   }
   if (text.includes('riset') || text.includes('akademik') || text.includes('perguruan') || text.includes('techno park') || text.includes('inkubasi') || text.includes('gen z') || text.includes('gen-z') || text.includes('talent')) {
     return { 
-      bg: 'bg-sky-50', text: 'text-sky-600', ring: 'ring-sky-200',
-      hoverRing: 'hover:ring-sky-300', hoverText: 'group-hover:text-sky-600', hoverBg: 'group-hover:bg-sky-50'
+      bg: 'bg-sky-50 dark:bg-sky-500/10', text: 'text-sky-600 dark:text-sky-400', ring: 'ring-sky-200 dark:ring-sky-500/20',
+      hoverRing: 'hover:ring-sky-300', hoverText: 'group-hover:text-sky-600 dark:text-sky-400', hoverBg: 'group-hover:bg-sky-50 dark:bg-sky-500/10'
     };
   }
   if (text.includes('kesehatan') || text.includes('medis') || text.includes('psikologi') || text.includes('mental')) {
     return { 
-      bg: 'bg-rose-50', text: 'text-rose-600', ring: 'ring-rose-200',
-      hoverRing: 'hover:ring-rose-300', hoverText: 'group-hover:text-rose-600', hoverBg: 'group-hover:bg-rose-50'
+      bg: 'bg-rose-50 dark:bg-rose-500/10', text: 'text-rose-600 dark:text-rose-400', ring: 'ring-rose-200 dark:ring-rose-500/20',
+      hoverRing: 'hover:ring-rose-300', hoverText: 'group-hover:text-rose-600 dark:text-rose-400', hoverBg: 'group-hover:bg-rose-50 dark:bg-rose-500/10'
     };
   }
 
   return { 
-    bg: 'bg-indigo-50', text: 'text-indigo-600', ring: 'ring-indigo-200',
-    hoverRing: 'hover:ring-indigo-300', hoverText: 'group-hover:text-indigo-600', hoverBg: 'group-hover:bg-indigo-50'
+    bg: 'bg-indigo-50 dark:bg-indigo-500/10', text: 'text-indigo-600 dark:text-indigo-400', ring: 'ring-indigo-200 dark:ring-indigo-500/20',
+    hoverRing: 'hover:ring-indigo-300', hoverText: 'group-hover:text-indigo-600 dark:text-indigo-400', hoverBg: 'group-hover:bg-indigo-50 dark:bg-indigo-500/10'
   };
 };
 
@@ -118,21 +118,21 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
   const OutputIcons = [AILensIcon, InfinityWorkflowIcon, BrainIcon, GlobalTargetIcon];
 
   return (
-    <div className="min-h-screen bg-slate-50/50 py-8 px-6 lg:py-12 flex flex-col items-center">
+    <div className="min-h-screen bg-muted text-muted-foreground/50 py-8 px-6 lg:py-12 flex flex-col items-center">
       <div className="max-w-[1200px] w-full space-y-8">
         
         {/* ================= HEADER KEMBALI & WHITE-LABELING ================= */}
         <div className="animate-in fade-in slide-in-from-top-4 duration-500 ease-out relative z-20 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <button 
             onClick={handleBack} 
-            className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-indigo-600 transition-all w-fit px-4 py-2.5 -ml-4 rounded-xl hover:bg-white hover:shadow-sm ring-1 ring-transparent hover:ring-slate-200 active:scale-95"
+            className="flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-indigo-600 dark:text-indigo-400 transition-all w-fit px-4 py-2.5 -ml-4 rounded-xl hover:card-solid hover:shadow-sm ring-1 ring-transparent hover:ring-slate-200 active:scale-95"
           >
             <ChevronLeft className="h-4 w-4" /> Kembali
           </button>
           
           {activeCorporateName && activeCorporateName !== 'Omnifit' && (
-            <div className="flex items-center gap-2 bg-indigo-50 px-4 py-2 rounded-full ring-1 ring-indigo-200">
-              <GlobalTargetIcon size={16} className="text-indigo-600" />
+            <div className="flex items-center gap-2 bg-indigo-50 dark:bg-indigo-500/10 px-4 py-2 rounded-full ring-1 ring-indigo-200 dark:ring-indigo-500/20">
+              <GlobalTargetIcon size={16} className="text-indigo-600 dark:text-indigo-400" />
               <span className="text-sm font-black text-indigo-900 tracking-tight">Program: {activeCorporateName}</span>
             </div>
           )}
@@ -140,10 +140,10 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
 
         {/* ================= GRID SECTION ================= */}
         {activeTemplates.length === 0 ? (
-          <div className="py-24 text-center text-slate-500 bg-white ring-1 ring-slate-200 rounded-[2rem] shadow-sm animate-in zoom-in-95 duration-500">
+          <div className="py-24 text-center text-muted-foreground card-solid ring-1 ring-border rounded-[2rem] shadow-sm animate-in zoom-in-95 duration-500">
             {/* Menggunakan TechCardIcon untuk Empty State */}
             <TechCardIcon className="mx-auto h-16 w-16 text-slate-200 mb-6 grayscale opacity-50" />
-            <p className="font-black text-2xl text-slate-900 mb-2">Katalog Belum Tersedia</p>
+            <p className="font-black text-2xl text-foreground mb-2">Katalog Belum Tersedia</p>
             <p className="text-base font-medium">Silakan hubungi administrator untuk menerbitkan modul asesmen.</p>
           </div>
         ) : (
@@ -160,7 +160,7 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
                   key={template.id} 
                   onClick={() => handleSelectTrack(template)}
                   style={{ animationFillMode: 'both', animationDelay: `${index * 50}ms` }}
-                  className={`animate-in fade-in slide-in-from-bottom-8 duration-500 ease-out bg-white rounded-3xl p-6 lg:p-8 ring-1 ring-slate-200 ${theme.hoverRing} flex flex-col transition-all duration-300 relative group overflow-hidden cursor-pointer hover:shadow-xl shadow-sm min-h-[280px]`}
+                  className={`animate-in fade-in slide-in-from-bottom-8 duration-500 ease-out card-solid rounded-3xl p-6 lg:p-8 ring-1 ring-border ${theme.hoverRing} flex flex-col transition-all duration-300 relative group overflow-hidden cursor-pointer hover:shadow-xl shadow-sm min-h-[280px]`}
                 >
                   <div className={`absolute -bottom-10 -right-10 w-48 h-48 transform group-hover:scale-110 group-hover:-rotate-12 transition-all duration-700 ease-out pointer-events-none opacity-5 ${theme.text}`}>
                     <IconComponent className="w-full h-full" strokeWidth={1} />
@@ -171,19 +171,19 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
                       <IconComponent className="w-7 h-7" />
                     </div>
                     
-                    <h3 className="text-xl lg:text-2xl font-black text-slate-900 leading-snug mb-3 pr-4">
+                    <h3 className="text-xl lg:text-2xl font-black text-foreground leading-snug mb-3 pr-4">
                       {template.trackName}
                     </h3>
-                    <p className="text-sm text-slate-500 font-medium leading-relaxed line-clamp-3">
+                    <p className="text-sm text-muted-foreground font-medium leading-relaxed line-clamp-3">
                       {template.trackDescription}
                     </p>
                   </div>
 
-                  <div className="relative z-10 pt-6 mt-6 flex items-center justify-between border-t border-slate-100">
+                  <div className="relative z-10 pt-6 mt-6 flex items-center justify-between border-t border-border">
                     <span className={`text-sm font-bold text-slate-400 transition-colors ${theme.hoverText}`}>
                       Mulai Asesmen
                     </span>
-                    <div className={`w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center transition-all duration-300 ${theme.hoverBg} group-hover:translate-x-1`}>
+                    <div className={`w-10 h-10 rounded-full bg-muted text-muted-foreground flex items-center justify-center transition-all duration-300 ${theme.hoverBg} group-hover:translate-x-1`}>
                       <ArrowRight className={`w-5 h-5 text-slate-400 transition-colors ${theme.hoverText}`} />
                     </div>
                   </div>
@@ -209,19 +209,19 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
               key="track-drawer-panel"
               initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 h-[100dvh] w-full max-w-md bg-white z-[210] shadow-2xl flex flex-col border-l border-slate-100"
+              className="fixed top-0 right-0 h-[100dvh] w-full max-w-md card-solid z-[210] shadow-2xl flex flex-col border-l border-border"
             >
               {/* Header Drawer */}
-              <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-white/80 backdrop-blur-md shrink-0">
+              <div className="p-6 border-b border-border flex justify-between items-center card-solid/80 backdrop-blur-md shrink-0">
                 <div>
-                  <h3 className="font-black text-xl text-slate-900">Persiapan Asesmen</h3>
+                  <h3 className="font-black text-xl text-foreground">Persiapan Asesmen</h3>
                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                     {selectedTrack.category || 'Asesmen Mandiri'}
                   </p>
                 </div>
                 <button 
                   onClick={() => setSelectedTrack(null)} 
-                  className="p-2 bg-slate-50 hover:bg-slate-100 rounded-full text-slate-500 transition-colors"
+                  className="p-2 bg-muted text-muted-foreground hover:bg-secondary text-secondary-foreground rounded-full text-muted-foreground transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -235,7 +235,7 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
                     <DrawerIcon className="w-8 h-8" />
                   </div>
                   <div>
-                    <h4 className="text-xl sm:text-2xl font-black text-slate-900 leading-tight">
+                    <h4 className="text-xl sm:text-2xl font-black text-foreground leading-tight">
                       {selectedTrack.trackName}
                     </h4>
                   </div>
@@ -257,13 +257,13 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
                           
                           return (
                             <li key={idx} className="flex items-start gap-3.5">
-                              <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm text-slate-600 ring-1 ring-slate-200">
+                              <div className="w-10 h-10 rounded-2xl card-solid flex items-center justify-center shrink-0 shadow-sm text-muted-foreground ring-1 ring-border">
                                 <DynamicIcon size={20} className={drawerTheme.text} />
                               </div>
                               <div>
-                                <p className="text-sm font-bold text-slate-900 mb-1">{title || item}</p>
+                                <p className="text-sm font-bold text-foreground mb-1">{title || item}</p>
                                 {subs && (
-                                  <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                                  <p className="text-xs text-muted-foreground font-medium leading-relaxed">
                                     {subs}
                                   </p>
                                 )}
@@ -275,34 +275,34 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
                         // Fallback Jika Kosong (Modul Lama)
                         <>
                           <li className="flex items-start gap-3.5">
-                            <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm text-slate-600 ring-1 ring-slate-200">
+                            <div className="w-10 h-10 rounded-2xl card-solid flex items-center justify-center shrink-0 shadow-sm text-muted-foreground ring-1 ring-border">
                               <AILensIcon size={20} />
                             </div>
                             <div>
-                              <p className="text-sm font-bold text-slate-900 mb-1">Analisis Instan & Mendalam</p>
-                              <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                              <p className="text-sm font-bold text-foreground mb-1">Analisis Instan & Mendalam</p>
+                              <p className="text-xs text-muted-foreground font-medium leading-relaxed">
                                 Laporan pemetaan komprehensif akan langsung disajikan dalam hitungan menit setelah Anda menyelesaikan pengisian.
                               </p>
                             </div>
                           </li>
                           <li className="flex items-start gap-3.5">
-                            <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm text-slate-600 ring-1 ring-slate-200">
+                            <div className="w-10 h-10 rounded-2xl card-solid flex items-center justify-center shrink-0 shadow-sm text-muted-foreground ring-1 ring-border">
                               <DocExportIcon size={20} />
                             </div>
                             <div>
-                              <p className="text-sm font-bold text-slate-900 mb-1">Salinan Terkirim ke Email</p>
-                              <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                              <p className="text-sm font-bold text-foreground mb-1">Salinan Terkirim ke Email</p>
+                              <p className="text-xs text-muted-foreground font-medium leading-relaxed">
                                 Akses hasil Anda kapan saja. Tautan dasbor dan salinan dokumen akan otomatis dikirimkan ke kotak masuk Anda.
                               </p>
                             </div>
                           </li>
                           <li className="flex items-start gap-3.5">
-                            <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm text-slate-600 ring-1 ring-slate-200">
+                            <div className="w-10 h-10 rounded-2xl card-solid flex items-center justify-center shrink-0 shadow-sm text-muted-foreground ring-1 ring-border">
                               <BrainIcon size={20} />
                             </div>
                             <div>
-                              <p className="text-sm font-bold text-slate-900 mb-1">Fondasi Konsultasi Lanjutan</p>
-                              <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                              <p className="text-sm font-bold text-foreground mb-1">Fondasi Konsultasi Lanjutan</p>
+                              <p className="text-xs text-muted-foreground font-medium leading-relaxed">
                                 Menjadi langkah awal dan <span className="italic">baseline</span> data objektif yang sangat berharga sebelum Anda melangkah ke sesi konsultasi bersama ahli.
                               </p>
                             </div>
@@ -313,51 +313,51 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
                   </div>
 
                   {/* KOTAK PANDUAN PENGISIAN (MENGGUNAKAN CUSTOM ICON) */}
-                  <div className="bg-slate-50 p-6 rounded-3xl ring-1 ring-slate-200">
-                    <h5 className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-5 flex items-center gap-2">
+                  <div className="bg-muted text-muted-foreground p-6 rounded-3xl ring-1 ring-border">
+                    <h5 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-5 flex items-center gap-2">
                       <AdminShieldIcon size={14} /> Panduan Sebelum Memulai
                     </h5>
                     <ul className="space-y-5">
                       <li className="flex items-start gap-3.5">
-                        <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm text-slate-500 ring-1 ring-slate-200">
+                        <div className="w-10 h-10 rounded-2xl card-solid flex items-center justify-center shrink-0 shadow-sm text-muted-foreground ring-1 ring-border">
                           <GlobalTargetIcon size={20} />
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-slate-800 mb-1">Jawab Secara Objektif</p>
-                          <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                          <p className="text-sm font-bold text-foreground mb-1">Jawab Secara Objektif</p>
+                          <p className="text-xs text-muted-foreground font-medium leading-relaxed">
                             Sistem AI kami membutuhkan data yang jujur dan apa adanya untuk merumuskan cetak biru yang paling akurat dan tepat sasaran.
                           </p>
                         </div>
                       </li>
                       <li className="flex items-start gap-3.5">
-                        <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm text-slate-500 ring-1 ring-slate-200">
+                        <div className="w-10 h-10 rounded-2xl card-solid flex items-center justify-center shrink-0 shadow-sm text-muted-foreground ring-1 ring-border">
                           <AdminShieldIcon size={20} />
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-slate-800 mb-1">Privasi Sepenuhnya Terjaga</p>
-                          <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                          <p className="text-sm font-bold text-foreground mb-1">Privasi Sepenuhnya Terjaga</p>
+                          <p className="text-xs text-muted-foreground font-medium leading-relaxed">
                             Jangan ragu membagikan kendala nyata. Seluruh data yang dimasukkan diproses dalam ekosistem yang tertutup dan aman.
                           </p>
                         </div>
                       </li>
                       <li className="flex items-start gap-3.5">
-                        <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm text-slate-500 ring-1 ring-slate-200">
+                        <div className="w-10 h-10 rounded-2xl card-solid flex items-center justify-center shrink-0 shadow-sm text-muted-foreground ring-1 ring-border">
                           <InfinityWorkflowIcon size={20} />
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-slate-800 mb-1">Progres Tersimpan Otomatis</p>
-                          <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                          <p className="text-sm font-bold text-foreground mb-1">Progres Tersimpan Otomatis</p>
+                          <p className="text-xs text-muted-foreground font-medium leading-relaxed">
                             Tidak perlu terburu-buru. Anda dapat menutup halaman kapan saja dan melanjutkannya nanti tanpa takut kehilangan data.
                           </p>
                         </div>
                       </li>
                       <li className="flex items-start gap-3.5">
-                        <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm text-slate-500 ring-1 ring-slate-200">
+                        <div className="w-10 h-10 rounded-2xl card-solid flex items-center justify-center shrink-0 shadow-sm text-muted-foreground ring-1 ring-border">
                           <AiSparkIcon size={20} />
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-slate-800 mb-1">Nikmati Prosesnya</p>
-                          <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                          <p className="text-sm font-bold text-foreground mb-1">Nikmati Prosesnya</p>
+                          <p className="text-xs text-muted-foreground font-medium leading-relaxed">
                             Instrumen ini dirancang interaktif layaknya berkonsultasi dengan ahlinya. Ikuti alurnya dan temukan wawasan baru.
                           </p>
                         </div>
@@ -369,7 +369,7 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
               </div>
 
               {/* Footer Drawer */}
-              <div className="p-6 border-t border-slate-100 bg-white shrink-0">
+              <div className="p-6 border-t border-border card-solid shrink-0">
                 <Button 
                   onClick={confirmSelection}
                   className="w-full h-14 rounded-2xl bg-slate-900 text-white font-bold text-base hover:bg-indigo-600 shadow-xl shadow-slate-900/10 transition-all flex items-center justify-center gap-2 group"

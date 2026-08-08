@@ -611,11 +611,11 @@ export default function PricingManagerPage() {
         className={`relative w-9 h-5 rounded-full transition-colors shrink-0 ${checked ? 'bg-indigo-600' : 'bg-slate-200'}`}
       >
         <div
-          className={`absolute top-0.5 left-0.5 bg-white w-4 h-4 rounded-full transition-transform shadow-sm ${checked ? 'translate-x-4' : 'translate-x-0'}`}
+          className={`absolute top-0.5 left-0.5 card-solid w-4 h-4 rounded-full transition-transform shadow-sm ${checked ? 'translate-x-4' : 'translate-x-0'}`}
         ></div>
       </div>
       <span
-        className={`text-xs font-bold transition-colors ${checked ? 'text-indigo-600' : 'text-slate-400'}`}
+        className={`text-xs font-bold transition-colors ${checked ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400'}`}
       >
         {label}
       </span>
@@ -671,17 +671,17 @@ export default function PricingManagerPage() {
               Monetization Hub
             </Badge>
             <span className="text-slate-300">•</span>
-            <span className="text-xs font-bold text-slate-500">
+            <span className="text-xs font-bold text-muted-foreground">
               Storefront & Pricing Engine
             </span>
           </div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+          <h1 className="text-3xl font-black text-foreground tracking-tight flex items-center gap-3">
             <div className="p-2 bg-indigo-600 text-white rounded-2xl shadow-lg shadow-indigo-600/20">
               <Store className="w-6 h-6" />
             </div>
             Landing Page & Monetisasi
           </h1>
-          <p className="text-slate-500 mt-1 font-medium max-w-2xl text-sm leading-relaxed">
+          <p className="text-muted-foreground mt-1 font-medium max-w-2xl text-sm leading-relaxed">
             Atur etalase modul asesmen, harga paket, promo khusus, dan kuota
             token B2C secara terpusat.
           </p>
@@ -695,7 +695,7 @@ export default function PricingManagerPage() {
               setIsEditMode(!isEditMode)
               if (isEditMode) setSelectedTemplates([])
             }}
-            className={`h-11 px-5 rounded-2xl font-bold text-xs transition-all flex items-center gap-2 shrink-0 cursor-pointer ${isEditMode ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'}`}
+            className={`h-11 px-5 rounded-2xl font-bold text-xs transition-all flex items-center gap-2 shrink-0 cursor-pointer ${isEditMode ? 'bg-indigo-600 text-white shadow-md' : 'card-solid text-slate-700 border-border hover:bg-muted text-muted-foreground'}`}
           >
             <CheckSquare className="w-4 h-4" />
             {isEditMode ? 'Selesai Memilih' : 'Pilih Massal'}
@@ -717,19 +717,19 @@ export default function PricingManagerPage() {
       </div>
 
       {/* Area Filter & Organisasi: Tabs + Search + Sort + Category */}
-      <div className="flex flex-col gap-4 bg-white p-4 sm:p-5 rounded-2xl ring-1 ring-slate-200 shadow-sm sticky top-0 md:relative z-40">
+      <div className="flex flex-col gap-4 card-solid p-4 sm:p-5 rounded-2xl ring-1 ring-border shadow-sm sticky top-0 md:relative z-40">
         {/* Row 1: Status Tabs, Search, and Sort */}
         <div className="flex flex-col lg:flex-row gap-4">
-          <div className="flex bg-slate-100 p-1.5 rounded-xl w-full lg:w-fit shrink-0">
+          <div className="flex bg-secondary text-secondary-foreground p-1.5 rounded-xl w-full lg:w-fit shrink-0">
             <button
               onClick={() => setActiveStatusTab('Aktif')}
-              className={`flex-1 lg:px-6 py-2 rounded-lg text-xs font-bold transition-all ${activeStatusTab === 'Aktif' ? 'bg-white shadow-sm text-indigo-700' : 'text-slate-500 hover:text-slate-700'}`}
+              className={`flex-1 lg:px-6 py-2 rounded-lg text-xs font-bold transition-all ${activeStatusTab === 'Aktif' ? 'card-solid shadow-sm text-indigo-700 dark:text-indigo-300' : 'text-muted-foreground hover:text-slate-700'}`}
             >
               Modul Aktif
             </button>
             <button
               onClick={() => setActiveStatusTab('Draft')}
-              className={`flex-1 lg:px-6 py-2 rounded-lg text-xs font-bold transition-all ${activeStatusTab === 'Draft' ? 'bg-white shadow-sm text-indigo-700' : 'text-slate-500 hover:text-slate-700'}`}
+              className={`flex-1 lg:px-6 py-2 rounded-lg text-xs font-bold transition-all ${activeStatusTab === 'Draft' ? 'card-solid shadow-sm text-indigo-700 dark:text-indigo-300' : 'text-muted-foreground hover:text-slate-700'}`}
             >
               Belum Aktif (Draft)
             </button>
@@ -742,7 +742,7 @@ export default function PricingManagerPage() {
               placeholder="Cari nama modul..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9 h-11 bg-slate-50 rounded-xl border-slate-200 focus-visible:ring-indigo-500 w-full font-medium text-sm"
+              className="pl-9 h-11 bg-muted text-muted-foreground rounded-xl border-border focus-visible:ring-indigo-500 w-full font-medium text-sm"
             />
           </div>
 
@@ -751,7 +751,7 @@ export default function PricingManagerPage() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="w-full h-11 pl-9 pr-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-indigo-500 appearance-none"
+              className="w-full h-11 pl-9 pr-3 bg-muted text-muted-foreground border border-border rounded-xl text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-indigo-500 appearance-none"
             >
               <option value="date_desc">Terbaru Diubah</option>
               <option value="date_asc">Terlama Diubah</option>
@@ -764,14 +764,14 @@ export default function PricingManagerPage() {
         </div>
 
         {/* Row 2: Category Tabs */}
-        <div className="flex items-center gap-2 overflow-x-auto custom-scrollbar pt-2 border-t border-slate-100">
+        <div className="flex items-center gap-2 overflow-x-auto custom-scrollbar pt-2 border-t border-border">
           <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5 shrink-0 pr-2">
             <Filter size={14} /> Kategori:
           </span>
           {isEditMode && (
             <button
               onClick={selectAllFiltered}
-              className="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all border border-indigo-300 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 shrink-0"
+              className="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all border border-indigo-300 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 shrink-0"
             >
               Pilih Semua di Bawah
             </button>
@@ -783,7 +783,7 @@ export default function PricingManagerPage() {
               className={`px-4 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all border shrink-0 ${
                 activeCategory === cat
                   ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
-                  : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50 hover:text-indigo-600'
+                  : 'card-solid text-muted-foreground border-border hover:bg-muted text-muted-foreground hover:text-indigo-600 dark:text-indigo-400'
               }`}
             >
               {cat}
@@ -801,12 +801,12 @@ export default function PricingManagerPage() {
       {/* Konten Utama - Render Berdasarkan Kategori */}
       <div className="w-full mt-6">
         {loading ? (
-          <div className="py-20 text-center text-slate-500 flex justify-center items-center gap-3 font-medium bg-white rounded-3xl shadow-sm ring-1 ring-slate-200">
-            <Loader2 className="w-6 h-6 animate-spin text-indigo-600" /> Memuat
+          <div className="py-20 text-center text-muted-foreground flex justify-center items-center gap-3 font-medium card-solid rounded-3xl shadow-sm ring-1 ring-border">
+            <Loader2 className="w-6 h-6 animate-spin text-indigo-600 dark:text-indigo-400" /> Memuat
             Etalase...
           </div>
         ) : displayedTemplates.length === 0 ? (
-          <div className="py-20 text-center text-slate-500 font-medium bg-white rounded-3xl shadow-sm ring-1 ring-slate-200">
+          <div className="py-20 text-center text-muted-foreground font-medium card-solid rounded-3xl shadow-sm ring-1 ring-border">
             {searchTerm
               ? 'Tidak ada modul asesmen yang cocok dengan pencarian dan filter Anda.'
               : `Belum ada modul dengan status ${activeStatusTab} di kategori ini.`}
@@ -820,14 +820,14 @@ export default function PricingManagerPage() {
                   key={categoryName}
                   className="space-y-4 animate-in fade-in duration-300"
                 >
-                  <div className="flex items-center gap-3 border-b-2 border-slate-100 pb-3 pl-2">
-                    <div className="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0">
+                  <div className="flex items-center gap-3 border-b-2 border-border pb-3 pl-2">
+                    <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0">
                       <Folder className="w-4 h-4" />
                     </div>
-                    <h2 className="text-xl font-black text-slate-800 tracking-tight">
+                    <h2 className="text-xl font-black text-foreground tracking-tight">
                       {categoryName}
                     </h2>
-                    <span className="bg-slate-100 text-slate-500 text-xs font-bold px-2.5 py-1 rounded-md ml-2">
+                    <span className="bg-secondary text-secondary-foreground text-muted-foreground text-xs font-bold px-2.5 py-1 rounded-md ml-2">
                       {items.length} Modul
                     </span>
                   </div>
@@ -853,10 +853,10 @@ export default function PricingManagerPage() {
 
                       // HIGHLIGHT ROW JIKA SEDANG DIPILIH (BATCH MODE)
                       const highlightRowClass = isSelected
-                        ? 'border-l-[4px] border-l-indigo-600 border-t border-r border-b border-indigo-200 bg-indigo-50/40 shadow-md ring-1 ring-indigo-500'
+                        ? 'border-l-[4px] border-l-indigo-600 border-t border-r border-b border-indigo-200 dark:border-indigo-500/20 bg-indigo-50 dark:bg-indigo-500/10/40 shadow-md ring-1 ring-indigo-500'
                         : state.isDisplayedOnLanding && state.isActive
-                          ? 'border-l-[4px] border-l-emerald-500 border-t border-r border-b border-slate-200 bg-emerald-50/10 hover:bg-emerald-50/30 shadow-sm'
-                          : 'border border-slate-200 bg-white/70 hover:bg-white opacity-80 hover:opacity-100 shadow-sm'
+                          ? 'border-l-[4px] border-l-emerald-500 border-t border-r border-b border-border bg-emerald-50 dark:bg-emerald-500/10/10 hover:bg-emerald-50 dark:bg-emerald-500/10/30 shadow-sm'
+                          : 'border border-border card-solid/70 hover:card-solid opacity-80 hover:opacity-100 shadow-sm'
 
                       return (
                         <div
@@ -872,7 +872,7 @@ export default function PricingManagerPage() {
                                 className={`w-6 h-6 shrink-0 cursor-pointer rounded-lg flex items-center justify-center border-2 transition-all shadow-sm ${
                                   isSelected
                                     ? 'bg-indigo-600 border-indigo-600 text-white'
-                                    : 'bg-white border-slate-300 text-transparent hover:border-indigo-400'
+                                    : 'card-solid border-border text-transparent hover:border-indigo-400'
                                 }`}
                               >
                                 <CheckSquare className="w-4 h-4" />
@@ -884,30 +884,30 @@ export default function PricingManagerPage() {
                               <div
                                 className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ring-1 shadow-sm ${
                                   state.isActive
-                                    ? 'bg-indigo-50 text-indigo-600 ring-indigo-200'
-                                    : 'bg-slate-100 text-slate-400 ring-slate-200'
+                                    ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 ring-indigo-200 dark:ring-indigo-500/20'
+                                    : 'bg-secondary text-secondary-foreground text-slate-400 ring-slate-200'
                                 }`}
                               >
                                 <LayoutGrid size={18} />
                               </div>
                               <div className="flex-1">
                                 <div className="flex items-center gap-2">
-                                  <p className="font-black text-slate-900 text-[15px] leading-snug line-clamp-1">
+                                  <p className="font-black text-foreground text-[15px] leading-snug line-clamp-1">
                                     {template.trackName}
                                   </p>
                                   {isAdaptive && (
-                                    <Badge className="bg-purple-100 text-purple-700 hover:bg-purple-200 border-purple-200 px-1.5 py-0 text-[9px] uppercase tracking-wider font-bold flex items-center gap-1 shadow-sm">
+                                    <Badge className="bg-purple-100 text-purple-700 dark:text-purple-300 hover:bg-purple-200 border-purple-200 dark:border-purple-500/20 px-1.5 py-0 text-[9px] uppercase tracking-wider font-bold flex items-center gap-1 shadow-sm">
                                       <Wand2 className="w-3 h-3" /> Adaptive
                                     </Badge>
                                   )}
                                 </div>
                                 <div className="flex items-center gap-2 mt-1">
-                                  <span className="text-xs text-slate-500 font-medium">
+                                  <span className="text-xs text-muted-foreground font-medium">
                                     {state.category}
                                   </span>
                                   <span className="text-slate-300">•</span>
                                   {state.isPaid ? (
-                                    <span className="text-xs font-bold text-emerald-600">
+                                    <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
                                       {discountPerc > 0
                                         ? formatRupiah(finalPrice)
                                         : formatRupiah(originalPrice)}
@@ -922,7 +922,7 @@ export default function PricingManagerPage() {
                             </div>
 
                             {/* Quick Toggles & Action */}
-                            <div className="flex items-center gap-4 w-full sm:w-auto shrink-0 border-t sm:border-t-0 sm:border-l border-slate-200 pt-3 sm:pt-0 sm:pl-4 justify-between sm:justify-end">
+                            <div className="flex items-center gap-4 w-full sm:w-auto shrink-0 border-t sm:border-t-0 sm:border-l border-border pt-3 sm:pt-0 sm:pl-4 justify-between sm:justify-end">
                               <div className="flex items-center gap-3">
                                 <div className="flex flex-col gap-2">
                                   <SwitchToggle
@@ -949,7 +949,7 @@ export default function PricingManagerPage() {
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => toggleExpandRow(template.id)}
-                                className="h-9 px-3 rounded-lg text-slate-500 hover:text-indigo-600 hover:bg-indigo-50"
+                                className="h-9 px-3 rounded-lg text-muted-foreground hover:text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:bg-indigo-500/10"
                               >
                                 {isExpanded ? (
                                   <ChevronUp className="w-4 h-4 mr-1" />
@@ -963,11 +963,11 @@ export default function PricingManagerPage() {
 
                           {/* EXPANDED CONTENT AREA */}
                           {isExpanded && (
-                            <div className="p-4 md:p-5 border-t border-slate-200 bg-slate-50/50 rounded-b-2xl animate-in slide-in-from-top-2 duration-200">
+                            <div className="p-4 md:p-5 border-t border-border bg-muted text-muted-foreground/50 rounded-b-2xl animate-in slide-in-from-top-2 duration-200">
                               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {/* Column 1: Pricing */}
                                 <div className="space-y-4">
-                                  <h4 className="text-xs font-black text-slate-700 uppercase tracking-widest border-b border-slate-200 pb-2 flex items-center gap-2">
+                                  <h4 className="text-xs font-black text-slate-700 uppercase tracking-widest border-b border-border pb-2 flex items-center gap-2">
                                     <Tag className="w-4 h-4 text-emerald-500" />{' '}
                                     Pengaturan Harga
                                   </h4>
@@ -1002,8 +1002,8 @@ export default function PricingManagerPage() {
                                         disabled={!state.isPaid}
                                         className={`pl-9 h-10 font-bold text-sm rounded-xl transition-all ${
                                           !state.isPaid
-                                            ? 'bg-slate-50 opacity-50 border-slate-200 text-slate-400'
-                                            : 'bg-white border-slate-200 shadow-sm focus-visible:ring-indigo-500'
+                                            ? 'bg-muted text-muted-foreground opacity-50 border-border text-slate-400'
+                                            : 'card-solid border-border shadow-sm focus-visible:ring-indigo-500'
                                         }`}
                                       />
                                     </div>
@@ -1023,7 +1023,7 @@ export default function PricingManagerPage() {
                                                 e.target.value
                                               )
                                             }
-                                            className="pl-8 pr-7 h-9 font-bold text-sm bg-white border-rose-200 text-rose-700 focus-visible:ring-rose-500"
+                                            className="pl-8 pr-7 h-9 font-bold text-sm card-solid border-rose-200 dark:border-rose-500/20 text-rose-700 dark:text-rose-300 focus-visible:ring-rose-500"
                                           />
                                           <span className="absolute right-3 top-1/2 -translate-y-1/2 font-bold text-rose-500">
                                             %
@@ -1040,7 +1040,7 @@ export default function PricingManagerPage() {
                                                 e.target.value
                                               )
                                             }
-                                            className="h-9 text-xs font-bold text-slate-600 bg-white"
+                                            className="h-9 text-xs font-bold text-muted-foreground card-solid"
                                             title="Batas waktu diskon"
                                           />
                                         </div>
@@ -1051,13 +1051,13 @@ export default function PricingManagerPage() {
 
                                 {/* Column 2: Curation & Display */}
                                 <div className="space-y-4">
-                                  <h4 className="text-xs font-black text-slate-700 uppercase tracking-widest border-b border-slate-200 pb-2 flex items-center gap-2">
+                                  <h4 className="text-xs font-black text-slate-700 uppercase tracking-widest border-b border-border pb-2 flex items-center gap-2">
                                     <Store className="w-4 h-4 text-orange-500" />{' '}
                                     Katalog & Etalase
                                   </h4>
                                   <div className="space-y-3">
                                     <div className="space-y-1">
-                                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">
+                                      <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
                                         Kategori Modul
                                       </label>
                                       <Input
@@ -1072,10 +1072,10 @@ export default function PricingManagerPage() {
                                             e.target.value
                                           )
                                         }
-                                        className="h-9 text-xs font-bold bg-white border-slate-200 shadow-sm focus-visible:ring-indigo-500"
+                                        className="h-9 text-xs font-bold card-solid border-border shadow-sm focus-visible:ring-indigo-500"
                                       />
                                     </div>
-                                    <div className="flex items-center gap-4 bg-orange-50/50 p-3 rounded-xl border border-orange-100/50">
+                                    <div className="flex items-center gap-4 bg-orange-50 dark:bg-orange-500/10/50 p-3 rounded-xl border border-orange-100/50">
                                       <SwitchToggle
                                         checked={state.isBestSeller}
                                         onChange={() =>
@@ -1096,7 +1096,7 @@ export default function PricingManagerPage() {
                                               e.target.value
                                             )
                                           }
-                                          className="h-8 w-16 text-xs font-bold bg-white text-center px-1"
+                                          className="h-8 w-16 text-xs font-bold card-solid text-center px-1"
                                         />
                                         <span className="text-[10px] font-bold text-slate-400 uppercase">
                                           User
@@ -1104,7 +1104,7 @@ export default function PricingManagerPage() {
                                       </div>
                                     </div>
                                     <div className="space-y-1">
-                                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">
+                                      <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
                                         <ListChecks className="w-3 h-3" />{' '}
                                         Keunggulan Tambahan
                                       </label>
@@ -1118,7 +1118,7 @@ export default function PricingManagerPage() {
                                             e.target.value
                                           )
                                         }
-                                        className="text-xs bg-white resize-y min-h-[60px] shadow-sm border-slate-200 focus-visible:ring-indigo-500"
+                                        className="text-xs card-solid resize-y min-h-[60px] shadow-sm border-border focus-visible:ring-indigo-500"
                                       />
                                     </div>
                                   </div>
@@ -1126,7 +1126,7 @@ export default function PricingManagerPage() {
 
                                 {/* Column 3: Actions */}
                                 <div className="space-y-4">
-                                  <h4 className="text-xs font-black text-slate-700 uppercase tracking-widest border-b border-slate-200 pb-2 flex items-center gap-2">
+                                  <h4 className="text-xs font-black text-slate-700 uppercase tracking-widest border-b border-border pb-2 flex items-center gap-2">
                                     <Wand2 className="w-4 h-4 text-indigo-500" />{' '}
                                     Aksi & Token
                                   </h4>
@@ -1135,7 +1135,7 @@ export default function PricingManagerPage() {
                                       onClick={() => handleAIOptimize(template)}
                                       disabled={isOptimizing === template.id}
                                       variant="outline"
-                                      className="w-full h-9 rounded-xl font-black border-indigo-200 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 hover:text-indigo-800 transition-all text-xs flex items-center justify-center gap-1.5 shadow-sm"
+                                      className="w-full h-9 rounded-xl font-black border-indigo-200 dark:border-indigo-500/20 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 hover:text-indigo-800 transition-all text-xs flex items-center justify-center gap-1.5 shadow-sm"
                                     >
                                       {isOptimizing === template.id ? (
                                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -1147,7 +1147,7 @@ export default function PricingManagerPage() {
                                     <Button
                                       onClick={() => handleCopyShareLink(template.id)}
                                       variant="outline"
-                                      className="w-full h-9 rounded-xl font-bold border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 transition-all text-xs flex items-center justify-center gap-1.5 shadow-sm"
+                                      className="w-full h-9 rounded-xl font-bold border-blue-200 dark:border-blue-500/20 bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-all text-xs flex items-center justify-center gap-1.5 shadow-sm"
                                     >
                                       <Share2 className="w-3.5 h-3.5" /> Copy Link Share
                                     </Button>
@@ -1160,7 +1160,7 @@ export default function PricingManagerPage() {
                                       }
                                       disabled={isGeneratingToken === template.id}
                                       variant="outline"
-                                      className="w-full h-9 rounded-xl font-bold border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-all text-xs flex items-center justify-center gap-1.5 shadow-sm"
+                                      className="w-full h-9 rounded-xl font-bold border-emerald-200 dark:border-emerald-500/20 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition-all text-xs flex items-center justify-center gap-1.5 shadow-sm"
                                     >
                                       {isGeneratingToken === template.id ? (
                                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -1182,12 +1182,12 @@ export default function PricingManagerPage() {
                                               generatedTokens[template.id]
                                             )
                                           }
-                                          className="shrink-0 p-1.5 bg-white rounded-lg hover:bg-emerald-50 shadow-sm ring-1 ring-emerald-200/50"
+                                          className="shrink-0 p-1.5 card-solid rounded-lg hover:bg-emerald-50 dark:bg-emerald-500/10 shadow-sm ring-1 ring-emerald-200 dark:ring-emerald-500/20/50"
                                         >
                                           {copiedTokens[template.id] ? (
-                                            <Check className="w-3.5 h-3.5 text-emerald-600" />
+                                            <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                                           ) : (
-                                            <Copy className="w-3.5 h-3.5 text-emerald-600" />
+                                            <Copy className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                                           )}
                                         </button>
                                       </div>
@@ -1200,7 +1200,7 @@ export default function PricingManagerPage() {
                                       className={`w-full mt-2 h-10 rounded-xl font-bold transition-all text-xs ${
                                         isChanged
                                           ? 'bg-slate-900 border-slate-900 text-white shadow-md hover:bg-indigo-600 hover:border-indigo-600'
-                                          : 'bg-slate-50 text-slate-400 border-slate-200 cursor-not-allowed'
+                                          : 'bg-muted text-muted-foreground text-slate-400 border-border cursor-not-allowed'
                                       }`}
                                     >
                                       {isSaving === template.id ? (

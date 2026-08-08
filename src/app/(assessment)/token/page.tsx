@@ -98,7 +98,7 @@ export default function TokenPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-6 relative overflow-hidden">
       {/* Background Ornaments (Diambil dari tema landing page Anda) */}
       <div className="absolute top-[-10%] left-[-5%] w-[40vw] h-[40vw] bg-indigo-200/40 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-5%] w-[30vw] h-[30vw] bg-blue-200/40 rounded-full blur-[120px] pointer-events-none" />
@@ -107,33 +107,33 @@ export default function TokenPage() {
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="max-w-md w-full bg-white/80 backdrop-blur-xl p-8 sm:p-10 rounded-[2rem] shadow-2xl shadow-indigo-500/10 ring-1 ring-slate-200 relative z-10"
+        className="max-w-md w-full card-solid/80 backdrop-blur-xl p-8 sm:p-10 rounded-[2rem] shadow-2xl shadow-indigo-500/10 ring-1 ring-border relative z-10"
       >
         <div className="flex justify-center mb-8">
-          <div className="w-16 h-16 bg-white rounded-[1.5rem] shadow-xl shadow-slate-200/50 ring-1 ring-slate-100 flex items-center justify-center overflow-hidden">
+          <div className="w-16 h-16 card-solid rounded-[1.5rem] shadow-xl shadow-slate-200/50 ring-1 ring-border flex items-center justify-center overflow-hidden">
              <SafeLogo src="/logo.png" alt="Omnifit Logo" width={60} height={60} className="w-full h-full object-contain p-2" priority />
           </div>
         </div>
 
         <div className="text-center mb-8">
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mb-2">Akses Modul</h1>
-          <p className="text-sm font-medium text-slate-500">
+          <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight mb-2">Akses Modul</h1>
+          <p className="text-sm font-medium text-muted-foreground">
             Masukkan kode token yang Anda miliki untuk memulai proses asesmen.
           </p>
         </div>
 
         {!user ? (
           <div className="space-y-4">
-            <div className="bg-amber-50 p-4 rounded-xl ring-1 ring-amber-200/50 flex gap-3 text-left">
+            <div className="bg-amber-50 dark:bg-amber-500/10 p-4 rounded-xl ring-1 ring-amber-200 dark:ring-amber-500/20/50 flex gap-3 text-left">
               <ShieldCheck className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
-              <p className="text-xs font-medium text-amber-700 leading-relaxed">
+              <p className="text-xs font-medium text-amber-700 dark:text-amber-300 leading-relaxed">
                 Anda wajib masuk dengan Akun Google terlebih dahulu agar progres asesmen dapat tersimpan dengan aman ke akun Anda.
               </p>
             </div>
             <Button 
               size="lg" 
               onClick={loginWithGoogle} 
-              className="w-full shadow-md bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:text-indigo-600 h-14 rounded-2xl text-base font-bold transition-all flex items-center justify-center gap-3"
+              className="w-full shadow-md card-solid text-slate-700 border border-border hover:bg-muted text-muted-foreground hover:text-indigo-600 dark:text-indigo-400 h-14 rounded-2xl text-base font-bold transition-all flex items-center justify-center gap-3"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -156,7 +156,7 @@ export default function TokenPage() {
                 onChange={(e) => setTokenInput(e.target.value.toUpperCase())}
                 onKeyDown={handleKeyDown}
                 placeholder="Contoh: KUKM1-XXXXX" 
-                className="pl-11 h-14 rounded-2xl bg-slate-50/50 border-slate-200/60 shadow-sm text-lg font-mono font-bold focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:border-transparent transition-all"
+                className="pl-11 h-14 rounded-2xl bg-muted text-muted-foreground/50 border-border shadow-sm text-lg font-mono font-bold focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:border-transparent transition-all"
                 disabled={isValidating}
               />
             </div>

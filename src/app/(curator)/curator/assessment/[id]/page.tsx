@@ -208,24 +208,24 @@ export default function CuratorAssessmentDetailPage() {
 
   if (loading || !data) return (
     <div className="flex flex-col items-center justify-center min-h-[70vh] text-slate-400">
-      <Loader2 className="w-10 h-10 animate-spin mb-4 text-indigo-600" />
+      <Loader2 className="w-10 h-10 animate-spin mb-4 text-indigo-600 dark:text-indigo-400" />
       <p className="font-bold tracking-widest text-xs uppercase">Mempersiapkan Workspace Kurator...</p>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-slate-50/80 p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-muted text-muted-foreground/80 p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8 animate-in fade-in duration-500 pb-24">
         
         {/* HEADER NAVIGASI */}
-        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 bg-white p-4 sm:p-6 rounded-3xl ring-1 ring-slate-200 shadow-sm sticky top-4 z-40 w-full">
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 card-solid p-4 sm:p-6 rounded-3xl ring-1 ring-border shadow-sm sticky top-4 z-40 w-full">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" onClick={() => router.push('/curator/dashboard')} className="w-10 h-10 p-0 rounded-full bg-slate-50 hover:bg-slate-200 text-slate-600 shrink-0">
+            <Button variant="ghost" onClick={() => router.push('/curator/dashboard')} className="w-10 h-10 p-0 rounded-full bg-muted text-muted-foreground hover:bg-slate-200 text-muted-foreground shrink-0">
               <ChevronLeft size={20} />
             </Button>
             <div>
               <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 flex items-center gap-1.5">Workspace Kurator   {data.trackType}</p>
-              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight">{data.namaUsaha}</h1>
+              <h1 className="text-xl sm:text-2xl font-black text-foreground tracking-tight leading-tight">{data.namaUsaha}</h1>
             </div>
           </div>
           
@@ -253,7 +253,7 @@ export default function CuratorAssessmentDetailPage() {
               }}
             />
 
-            <Button onClick={handleShareWhatsApp} variant="outline" className="bg-white text-emerald-600 border-emerald-200 rounded-xl font-bold h-10 px-4 shadow-sm">
+            <Button onClick={handleShareWhatsApp} variant="outline" className="card-solid text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20 rounded-xl font-bold h-10 px-4 shadow-sm">
               <MessageCircle className="w-4 h-4 sm:mr-2" /> <span className="hidden sm:inline">Bagikan</span>
             </Button>
             {!isEditing ? (
@@ -262,7 +262,7 @@ export default function CuratorAssessmentDetailPage() {
                 </Button>
               ) : (
                 <>
-                  <Button onClick={() => setIsEditing(false)} variant="outline" className="rounded-xl h-10 px-4 font-bold border-slate-200 text-slate-600">Tutup Editor</Button>
+                  <Button onClick={() => setIsEditing(false)} variant="outline" className="rounded-xl h-10 px-4 font-bold border-border text-muted-foreground">Tutup Editor</Button>
                   <Button onClick={handleFinalize} disabled={isFinalizing} className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black h-10 px-4 shadow-md">
                     <CheckCircle2 className="w-4 h-4 mr-2"/> Finalisasi
                   </Button>
@@ -273,10 +273,10 @@ export default function CuratorAssessmentDetailPage() {
 
         {/* TABS */}
         <div className="flex gap-2 w-full">
-          <button onClick={() => setActiveTab('evaluasi')} className={`px-5 py-3 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${activeTab === 'evaluasi' ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-slate-500 hover:bg-slate-50 ring-1 ring-slate-200 shadow-sm'}`}>
+          <button onClick={() => setActiveTab('evaluasi')} className={`px-5 py-3 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${activeTab === 'evaluasi' ? 'bg-indigo-600 text-white shadow-md' : 'card-solid text-muted-foreground hover:bg-muted text-muted-foreground ring-1 ring-border shadow-sm'}`}>
             <ShieldCheck className="w-4 h-4"/> Modul Evaluasi Lapangan
           </button>
-          <button onClick={() => setActiveTab('input')} className={`px-5 py-3 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${activeTab === 'input' ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-slate-500 hover:bg-slate-50 ring-1 ring-slate-200 shadow-sm'}`}>
+          <button onClick={() => setActiveTab('input')} className={`px-5 py-3 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${activeTab === 'input' ? 'bg-indigo-600 text-white shadow-md' : 'card-solid text-muted-foreground hover:bg-muted text-muted-foreground ring-1 ring-border shadow-sm'}`}>
             <Briefcase className="w-4 h-4"/> Data Input Peserta
           </button>
         </div>
@@ -316,17 +316,17 @@ export default function CuratorAssessmentDetailPage() {
         )}
 
         {activeTab === 'input' && (
-          <div className="w-full bg-white rounded-3xl ring-1 ring-slate-200 p-6 sm:p-8 shadow-sm">
-            <h3 className="text-lg font-black text-slate-900 mb-6 flex items-center gap-2"><Briefcase className="w-5 h-5 text-indigo-600"/> Detail Informasi Bisnis</h3>
+          <div className="w-full card-solid rounded-3xl ring-1 ring-border p-6 sm:p-8 shadow-sm">
+            <h3 className="text-lg font-black text-foreground mb-6 flex items-center gap-2"><Briefcase className="w-5 h-5 text-indigo-600 dark:text-indigo-400"/> Detail Informasi Bisnis</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {Object.entries(data.formData || {}).map(([key, value]) => {
                 if (!value) return null;
                 const isUrl = typeof value === 'string' && value.startsWith('http');
                 const isArray = Array.isArray(value);
                 return (
-                  <div key={key} className="bg-slate-50 p-4 rounded-2xl ring-1 ring-slate-100">
+                  <div key={key} className="bg-muted text-muted-foreground p-4 rounded-2xl ring-1 ring-border">
                     <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">{key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</p>
-                    {isUrl ? <a href={value as string} target="_blank" rel="noreferrer" className="text-indigo-600 font-bold text-sm hover:underline">Lihat Lampiran</a> : isArray ? <div className="flex flex-wrap gap-1.5 mt-1">{(value as string[]).map((item, i) => <span key={i} className="px-2 py-1 bg-white ring-1 ring-slate-200 rounded-md text-xs font-semibold text-slate-700">{item}</span>)}</div> : <p className="text-sm font-semibold text-slate-800 whitespace-pre-wrap leading-relaxed">{String(value)}</p>}
+                    {isUrl ? <a href={value as string} target="_blank" rel="noreferrer" className="text-indigo-600 dark:text-indigo-400 font-bold text-sm hover:underline">Lihat Lampiran</a> : isArray ? <div className="flex flex-wrap gap-1.5 mt-1">{(value as string[]).map((item, i) => <span key={i} className="px-2 py-1 card-solid ring-1 ring-border rounded-md text-xs font-semibold text-slate-700">{item}</span>)}</div> : <p className="text-sm font-semibold text-foreground whitespace-pre-wrap leading-relaxed">{String(value)}</p>}
                   </div>
                 );
               })}

@@ -76,10 +76,10 @@ export function BottomNav() {
       {/* ── BOTTOM NAV BAR ─────────────────────────────────── */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden p-2 bg-gradient-to-t from-white/95 via-white/80 to-transparent backdrop-blur-md pointer-events-none">
         <div
-          className="bg-white/90 backdrop-blur-xl border border-slate-200/80 shadow-xl shadow-slate-900/5 rounded-2xl p-1 max-w-lg mx-auto ring-1 ring-slate-100 pointer-events-auto"
+          className="card-solid/90 backdrop-blur-xl border border-border/80 shadow-xl shadow-slate-900/5 rounded-2xl p-1 max-w-lg mx-auto ring-1 ring-border pointer-events-auto"
           style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 4px)' }}
         >
-          <div className="flex items-stretch justify-around relative bg-slate-50/60 p-0.5 rounded-xl">
+          <div className="flex items-stretch justify-around relative bg-muted text-muted-foreground/60 p-0.5 rounded-xl">
             {visibleNavItems.map((item) => {
               const active = isActive(item.href)
               const isProfileTab = item.href === ROUTES.PROFIL
@@ -93,13 +93,13 @@ export function BottomNav() {
                     key={item.key}
                     onClick={() => setDrawerOpen(true)}
                     className={`flex flex-col items-center justify-center gap-1 py-1.5 px-3 flex-1 relative transition-all duration-200 min-h-[52px] rounded-xl font-bold text-xs ${
-                      drawerOpen ? 'text-slate-900' : 'text-slate-500 hover:text-slate-800'
+                      drawerOpen ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
                     }`}
                   >
                     {drawerOpen && (
                       <motion.div
                         layoutId="bottom-nav-active"
-                        className="absolute inset-0 bg-white shadow-sm ring-1 ring-slate-200/60 rounded-xl -z-10"
+                        className="absolute inset-0 card-solid shadow-sm ring-1 ring-border rounded-xl -z-10"
                         transition={{ type: 'spring', stiffness: 500, damping: 40 }}
                       />
                     )}
@@ -108,7 +108,7 @@ export function BottomNav() {
                         <img
                           src={user.photoURL}
                           alt="avatar"
-                          className="w-5 h-5 rounded-lg object-cover ring-1 ring-slate-200"
+                          className="w-5 h-5 rounded-lg object-cover ring-1 ring-border"
                           referrerPolicy="no-referrer"
                         />
                       ) : (
@@ -135,7 +135,7 @@ export function BottomNav() {
                         )}
                       </AnimatePresence>
                     </div>
-                    <span className={`text-[10px] font-bold tracking-tight ${drawerOpen ? 'text-slate-900' : 'text-slate-500'}`}>
+                    <span className={`text-[10px] font-bold tracking-tight ${drawerOpen ? 'text-foreground' : 'text-muted-foreground'}`}>
                       {item.label}
                     </span>
                   </button>
@@ -148,13 +148,13 @@ export function BottomNav() {
                   key={item.key}
                   href={item.href}
                   className={`flex flex-col items-center justify-center gap-1 py-1.5 px-3 flex-1 relative transition-all duration-200 min-h-[52px] rounded-xl font-bold text-xs ${
-                    active ? 'text-slate-900' : 'text-slate-500 hover:text-slate-800'
+                    active ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   {active && (
                     <motion.div
                       layoutId="bottom-nav-active"
-                      className="absolute inset-0 bg-white shadow-sm ring-1 ring-slate-200/60 rounded-xl -z-10"
+                      className="absolute inset-0 card-solid shadow-sm ring-1 ring-border rounded-xl -z-10"
                       transition={{ type: 'spring', stiffness: 500, damping: 40 }}
                     />
                   )}
@@ -177,7 +177,7 @@ export function BottomNav() {
                       )}
                     </AnimatePresence>
                   </div>
-                  <span className={`text-[10px] font-bold tracking-tight ${active ? 'text-slate-900' : 'text-slate-500'}`}>
+                  <span className={`text-[10px] font-bold tracking-tight ${active ? 'text-foreground' : 'text-muted-foreground'}`}>
                     {item.label}
                   </span>
                 </Link>
@@ -189,7 +189,7 @@ export function BottomNav() {
 
       {/* ── PROFILE DRAWER ─────────────────────────────────── */}
       <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
-        <SheetContent side="bottom" className="p-0 border-none bg-white rounded-t-[2.5rem] overflow-hidden max-h-[85vh]">
+        <SheetContent side="bottom" className="p-0 border-none card-solid rounded-t-[2.5rem] overflow-hidden max-h-[85vh]">
           <SheetHeader className="sr-only">
             <SheetTitle>Navigasi Utama Mobile</SheetTitle>
           </SheetHeader>
@@ -200,23 +200,23 @@ export function BottomNav() {
           </div>
 
           {/* User identity */}
-          <div className="px-6 pt-2 pb-4 border-b border-slate-100">
+          <div className="px-6 pt-2 pb-4 border-b border-border">
             {user ? (
               <div className="flex items-center gap-3.5">
                 {user.photoURL ? (
                   <img
                     src={user.photoURL}
                     alt="avatar"
-                    className="w-11 h-11 rounded-2xl object-cover ring-1 ring-slate-200 shadow-sm shrink-0"
+                    className="w-11 h-11 rounded-2xl object-cover ring-1 ring-border shadow-sm shrink-0"
                     referrerPolicy="no-referrer"
                   />
                 ) : (
-                  <div className="w-11 h-11 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-base font-black ring-1 ring-indigo-100 shadow-sm shrink-0">
+                  <div className="w-11 h-11 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-base font-black ring-1 ring-indigo-100 shadow-sm shrink-0">
                     {user.displayName?.charAt(0).toUpperCase() || 'U'}
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-black text-slate-900 truncate">
+                  <p className="text-sm font-black text-foreground truncate">
                     {user.displayName || 'Pengguna'}
                   </p>
                   <p className="text-xs text-slate-400 font-medium truncate">{user.email}</p>
@@ -225,7 +225,7 @@ export function BottomNav() {
             ) : (
               <div>
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Navigation</p>
-                <p className="text-sm font-black text-slate-900 mt-0.5">Menu Utama Publik</p>
+                <p className="text-sm font-black text-foreground mt-0.5">Menu Utama Publik</p>
               </div>
             )}
           </div>
@@ -237,19 +237,19 @@ export function BottomNav() {
               <Link
                 href={ROUTES.PROFIL}
                 onClick={() => setDrawerOpen(false)}
-                className="flex items-center gap-3.5 px-3 py-3 rounded-2xl hover:bg-slate-50 transition-colors group"
+                className="flex items-center gap-3.5 px-3 py-3 rounded-2xl hover:bg-muted text-muted-foreground transition-colors group"
               >
-                <div className="w-9 h-9 bg-slate-100/80 rounded-xl flex items-center justify-center ring-1 ring-slate-200/60 group-hover:ring-indigo-200 transition-colors">
-                  <Settings size={16} className="text-slate-500 group-hover:text-indigo-600 transition-colors" />
+                <div className="w-9 h-9 bg-secondary text-secondary-foreground/80 rounded-xl flex items-center justify-center ring-1 ring-border group-hover:ring-indigo-200 dark:ring-indigo-500/20 transition-colors">
+                  <Settings size={16} className="text-muted-foreground group-hover:text-indigo-600 dark:text-indigo-400 transition-colors" />
                 </div>
-                <span className="text-sm font-bold text-slate-700 group-hover:text-indigo-600 transition-colors flex-1">
+                <span className="text-sm font-bold text-slate-700 group-hover:text-indigo-600 dark:text-indigo-400 transition-colors flex-1">
                   Profil & Pengaturan
                 </span>
                 <ChevronRight size={14} className="text-slate-300 group-hover:text-indigo-400 transition-colors" />
               </Link>
             )}
 
-            {user && <div className="h-px bg-slate-100 mx-3 my-1" />}
+            {user && <div className="h-px bg-secondary text-secondary-foreground mx-3 my-1" />}
 
             {/* Dynamic links dari config */}
             {visibleDrawerItems.map((item) => (
@@ -257,25 +257,25 @@ export function BottomNav() {
                 key={item.key}
                 href={item.href}
                 onClick={() => setDrawerOpen(false)}
-                className="flex items-center gap-3.5 px-3 py-3 rounded-2xl hover:bg-slate-50 transition-colors group"
+                className="flex items-center gap-3.5 px-3 py-3 rounded-2xl hover:bg-muted text-muted-foreground transition-colors group"
               >
                 <div
-                  className={`w-9 h-9 ${item.accent?.bg ?? 'bg-slate-100'} rounded-xl flex items-center justify-center ring-1 ring-white/60 shadow-sm`}
+                  className={`w-9 h-9 ${item.accent?.bg ?? 'bg-secondary text-secondary-foreground'} rounded-xl flex items-center justify-center ring-1 ring-white/60 shadow-sm`}
                 >
                   <item.icon
                     size={16}
-                    className={item.accent?.text ?? 'text-slate-500'}
+                    className={item.accent?.text ?? 'text-muted-foreground'}
                   />
                 </div>
-                <span className="text-sm font-bold text-slate-700 group-hover:text-slate-900 transition-colors flex-1">
+                <span className="text-sm font-bold text-slate-700 group-hover:text-foreground transition-colors flex-1">
                   {item.label}
                 </span>
                 {item.badge && (
-                  <span className="text-[10px] font-black bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full">
+                  <span className="text-[10px] font-black bg-indigo-100 text-indigo-600 dark:text-indigo-400 px-2 py-0.5 rounded-full">
                     {item.badge}
                   </span>
                 )}
-                <ChevronRight size={14} className="text-slate-300 group-hover:text-slate-500 transition-colors" />
+                <ChevronRight size={14} className="text-slate-300 group-hover:text-muted-foreground transition-colors" />
               </Link>
             ))}
 
@@ -293,15 +293,15 @@ export function BottomNav() {
 
           {/* Logout */}
           {user && (
-            <div className="px-4 pt-2 pb-6 border-t border-slate-100">
+            <div className="px-4 pt-2 pb-6 border-t border-border">
               <button
                 onClick={handleLogout}
-                className="w-full flex items-center gap-3.5 px-3 py-3 rounded-2xl hover:bg-rose-50 transition-colors group"
+                className="w-full flex items-center gap-3.5 px-3 py-3 rounded-2xl hover:bg-rose-50 dark:bg-rose-500/10 transition-colors group"
               >
-                <div className="w-9 h-9 bg-rose-50 rounded-xl flex items-center justify-center ring-1 ring-rose-100">
+                <div className="w-9 h-9 bg-rose-50 dark:bg-rose-500/10 rounded-xl flex items-center justify-center ring-1 ring-rose-100">
                   <LogOut size={16} className="text-rose-500" />
                 </div>
-                <span className="text-sm font-bold text-rose-600 flex-1 text-left">
+                <span className="text-sm font-bold text-rose-600 dark:text-rose-400 flex-1 text-left">
                   Keluar dari Sistem
                 </span>
               </button>
