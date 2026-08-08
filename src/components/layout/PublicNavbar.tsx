@@ -130,10 +130,9 @@ export function PublicNavbar() {
 
           {/* ── Menu Pill ───────────────────────────────────── */}
           <nav className="flex items-center gap-1 bg-muted text-muted-foreground/60 p-1 rounded-2xl ring-1 ring-border/80">
+            {/* Mega Menu: Asesmen & Produk */}
             <NavigationMenu>
               <NavigationMenuList>
-
-                {/* Mega Menu: Asesmen & Produk */}
                 <NavigationMenuItem>
                   <NavigationMenuTrigger className="group relative flex h-10 items-center justify-center rounded-xl bg-transparent px-4 py-1.5 text-xs font-bold transition-all text-muted-foreground hover:text-foreground hover:card-solid dark:text-slate-400 dark:hover:text-white dark:hover:card-solid/5 outline-none data-[state=open]:card-solid dark:data-[state=open]:card-solid/10 data-[state=open]:text-foreground dark:data-[state=open]:text-white">
                     <Sparkles size={14} className="mr-1.5 text-indigo-500" /> Asesmen & Produk
@@ -146,8 +145,12 @@ export function PublicNavbar() {
                     </div>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
 
-                {/* Mega Menu: Ekosistem & Solusi */}
+            {/* Mega Menu: Ekosistem & Solusi */}
+            <NavigationMenu>
+              <NavigationMenuList>
                 <NavigationMenuItem>
                   <NavigationMenuTrigger className="group relative flex h-10 items-center justify-center rounded-xl bg-transparent px-4 py-1.5 text-xs font-bold transition-all text-muted-foreground hover:text-foreground hover:card-solid dark:text-slate-400 dark:hover:text-white dark:hover:card-solid/5 outline-none data-[state=open]:card-solid dark:data-[state=open]:card-solid/10 data-[state=open]:text-foreground dark:data-[state=open]:text-white">
                     <Handshake size={14} className="mr-1.5 text-blue-500" /> Ekosistem & Solusi
@@ -160,9 +163,13 @@ export function PublicNavbar() {
                     </div>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
 
-                {/* Auth-only grouped menu */}
-                {user && authNavItems.length > 0 && (
+            {/* Auth-only grouped menu */}
+            {user && authNavItems.length > 0 && (
+              <NavigationMenu>
+                <NavigationMenuList>
                   <NavigationMenuItem>
                     <NavigationMenuTrigger className="group relative flex h-10 items-center justify-center rounded-xl bg-transparent px-4 py-1.5 text-xs font-bold transition-all text-muted-foreground hover:text-foreground hover:card-solid dark:text-slate-400 dark:hover:text-white dark:hover:card-solid/5 outline-none data-[state=open]:card-solid dark:data-[state=open]:card-solid/10 data-[state=open]:text-foreground dark:data-[state=open]:text-white">
                       <FolderKanban size={14} className="mr-1.5 text-emerald-500" /> Progres & Brankas
@@ -175,9 +182,9 @@ export function PublicNavbar() {
                       </div>
                     </NavigationMenuContent>
                   </NavigationMenuItem>
-                )}
-              </NavigationMenuList>
-            </NavigationMenu>
+                </NavigationMenuList>
+              </NavigationMenu>
+            )}
           </nav>
         </div>
 
