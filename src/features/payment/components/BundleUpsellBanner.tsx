@@ -27,10 +27,10 @@ export function BundleUpsellBanner({ onSelectBundle, className = '' }: BundleUps
             Pilih 3 asesmen apapun dari katalog. Cocok untuk mengukur kesiapan bisnis dan kompetensi dasar.
           </p>
           <div className="space-y-2 mb-6">
-            <div className="flex items-center gap-2 text-sm text-slate-700">
+            <div className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
               <CheckCircle2 size={16} className="text-indigo-500" /> Bebas pilih modul apapun
             </div>
-            <div className="flex items-center gap-2 text-sm text-slate-700">
+            <div className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
               <CheckCircle2 size={16} className="text-indigo-500" /> Masa aktif kuota selamanya
             </div>
           </div>
@@ -42,7 +42,7 @@ export function BundleUpsellBanner({ onSelectBundle, className = '' }: BundleUps
           </div>
           <button 
             onClick={() => onSelectBundle('BUNDLE_3')}
-            className="w-full h-12 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-colors shadow-lg shadow-indigo-200"
+            className="w-full h-12 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-colors shadow-lg shadow-indigo-200 dark:shadow-[0_4px_20px_rgba(79,70,229,0.3)]"
           >
             Beli Bundle 3 Modul <ArrowRight size={16} />
           </button>
