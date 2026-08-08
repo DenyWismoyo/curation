@@ -20,7 +20,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
-import { ThemeToggle } from './ThemeToggle'
+import { ThemeToggleCompact } from '@/components/ui/ThemeToggleCompact'
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
@@ -101,7 +101,7 @@ export function CryptoNavbar() {
   const insightLinks = dynamicNavLinks.filter(l => ['/crypto-report/news', '/crypto-academy'].includes(l.href) || (!intelLinks.includes(l) && !radarLinks.includes(l) && l !== dashboardLink));
 
   return (
-    <header className="hidden md:flex fixed top-0 left-0 right-0 h-20 card-solid/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200 dark:border-white/10 z-40 items-center justify-between px-6 lg:px-12 w-full max-w-full">
+    <header className="hidden md:flex fixed top-0 left-0 right-0 h-20 card-solid/80 backdrop-blur-xl border-b border-border z-50 items-center justify-between px-6 lg:px-12">
       {/* Brand & Desktop Links */}
       <div className="flex items-center gap-6 lg:gap-10">
         <Link href="/crypto-report" className="flex items-center gap-3 group">
@@ -116,7 +116,7 @@ export function CryptoNavbar() {
         </Link>
 
         {/* ── Menu Pill (Adaptive Theme & Grouped) ───────────────────────── */}
-        <nav className="flex items-center gap-1 bg-secondary text-secondary-foreground dark:card-solid/5 p-1 rounded-2xl ring-1 ring-slate-200 dark:ring-white/10">
+        <nav className="flex items-center gap-1 bg-muted text-muted-foreground/60 p-1 rounded-2xl ring-1 ring-border/80">
           <NavigationMenu>
             <NavigationMenuList className="flex gap-1">
               
@@ -151,7 +151,7 @@ export function CryptoNavbar() {
                         <ChevronDown size={14} className="ml-1.5 opacity-50" />
                       </button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start" className="w-56 p-2 rounded-2xl card-solid border border-slate-200 dark:border-slate-800 shadow-xl">
+                    <DropdownMenuContent align="start" className="w-56 p-3 rounded-[1.5rem] card-solid ring-1 ring-border border-none shadow-xl">
                       <div className="px-2 py-1.5 mb-1">
                         <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">Analitik Lanjutan</p>
                       </div>
@@ -186,7 +186,7 @@ export function CryptoNavbar() {
                         <ChevronDown size={14} className="ml-1.5 opacity-50" />
                       </button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start" className="w-56 p-2 rounded-2xl card-solid border border-slate-200 dark:border-slate-800 shadow-xl">
+                    <DropdownMenuContent align="start" className="w-56 p-3 rounded-[1.5rem] card-solid ring-1 ring-border border-none shadow-xl">
                       <div className="px-2 py-1.5 mb-1">
                         <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">Trading & Scanner</p>
                       </div>
@@ -220,7 +220,7 @@ export function CryptoNavbar() {
                         <ChevronDown size={14} className="ml-1.5 opacity-50" />
                       </button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start" className="w-56 p-2 rounded-2xl card-solid border border-slate-200 dark:border-slate-800 shadow-xl">
+                    <DropdownMenuContent align="start" className="w-56 p-3 rounded-[1.5rem] card-solid ring-1 ring-border border-none shadow-xl">
                       <div className="px-2 py-1.5 mb-1">
                         <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">Berita & Edukasi</p>
                       </div>
@@ -245,9 +245,9 @@ export function CryptoNavbar() {
 
       {/* ── Area Kanan (User Dropdown) ────────────────────── */}
       <div className="flex items-center gap-2">
-        <ThemeToggle />
+        <ThemeToggleCompact />
         {user ? (
-          <div className="flex items-center gap-3 pl-3 border-l border-slate-200 dark:border-white/10">
+          <div className="flex items-center gap-3 pl-3 border-l border-border">
             {/* User dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -262,7 +262,7 @@ export function CryptoNavbar() {
                       alt={user.displayName || 'User'}
                       width={32}
                       height={32}
-                      className="rounded-xl w-8 h-8 object-cover shadow-sm ring-1 ring-slate-200 dark:ring-white/20"
+                      className="rounded-xl w-8 h-8 object-cover shadow-sm ring-1 ring-border"
                       referrerPolicy="no-referrer"
                     />
                   ) : (
@@ -280,7 +280,7 @@ export function CryptoNavbar() {
               </DropdownMenuTrigger>
 
               <DropdownMenuContent
-                className="w-64 rounded-[1.5rem] p-3 shadow-lg dark:shadow-2xl dark:shadow-black/50 ring-1 ring-slate-200 dark:ring-white/10 border-slate-100 dark:border-white/5 card-solid"
+                className="w-64 rounded-[1.5rem] p-3 shadow-xl ring-1 ring-border border-none card-solid"
                 align="end"
               >
                 {/* Header akun */}

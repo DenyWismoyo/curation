@@ -44,12 +44,12 @@ export function CryptoBottomNav() {
   return (
     <>
       {/* ── BOTTOM NAV BAR ─────────────────────────────────── */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden p-2 bg-gradient-to-t from-slate-50 dark:from-slate-950/95 via-slate-900/80 to-transparent backdrop-blur-md pointer-events-none">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden p-2 bg-gradient-to-t from-background/95 via-background/80 to-transparent backdrop-blur-md pointer-events-none">
         <div
-          className="bg-slate-900/90 backdrop-blur-xl border border-slate-200 dark:border-white/10 shadow-xl shadow-slate-950/20 rounded-2xl p-1 max-w-lg mx-auto ring-1 ring-white/5 pointer-events-auto"
+          className="card-solid/90 backdrop-blur-xl border border-border/80 shadow-xl shadow-slate-900/5 rounded-2xl p-1 max-w-lg mx-auto ring-1 ring-border pointer-events-auto"
           style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 4px)' }}
         >
-          <div className="flex items-stretch justify-around relative card-solid/5 p-0.5 rounded-xl">
+          <div className="flex items-stretch justify-around relative bg-muted text-muted-foreground/60 p-0.5 rounded-xl">
             {CRYPTO_BOTTOM_NAV_LINKS.map((item) => {
               const active = isActive(item.href)
               
@@ -64,7 +64,7 @@ export function CryptoBottomNav() {
                   {active && (
                     <motion.div
                       layoutId="crypto-bottom-nav-active"
-                      className="absolute inset-0 card-solid/10 shadow-sm ring-1 ring-white/10 rounded-xl -z-10"
+                      className="absolute inset-0 card-solid shadow-sm ring-1 ring-border rounded-xl -z-10"
                       transition={{ type: 'spring', stiffness: 500, damping: 40 }}
                     />
                   )}
@@ -94,11 +94,11 @@ export function CryptoBottomNav() {
                 }`}
               >
                 {drawerOpen && (
-                  <motion.div
-                    layoutId="crypto-bottom-nav-active"
-                    className="absolute inset-0 card-solid/10 shadow-sm ring-1 ring-white/10 rounded-xl -z-10"
-                    transition={{ type: 'spring', stiffness: 500, damping: 40 }}
-                  />
+                    <motion.div
+                      layoutId="crypto-bottom-nav-active"
+                      className="absolute inset-0 card-solid shadow-sm ring-1 ring-border rounded-xl -z-10"
+                      transition={{ type: 'spring', stiffness: 500, damping: 40 }}
+                    />
                 )}
                 <div className="relative">
                   <motion.div
@@ -118,18 +118,18 @@ export function CryptoBottomNav() {
 
       {/* ── PROFILE DRAWER (DARK) ─────────────────────────────────── */}
       <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
-        <SheetContent side="bottom" className="p-0 border-t border-slate-200 dark:border-white/10 bg-background text-foreground rounded-t-[2.5rem] overflow-hidden max-h-[85vh]">
+        <SheetContent side="bottom" className="p-0 border-none card-solid rounded-t-[2.5rem] overflow-hidden max-h-[85vh]">
           <SheetHeader className="sr-only">
             <SheetTitle>Navigasi Ekstra Crypto</SheetTitle>
           </SheetHeader>
 
           {/* Drag handle */}
           <div className="flex justify-center pt-3 pb-1">
-            <div className="w-12 h-1.5 card-solid/10 rounded-full" />
+            <div className="w-12 h-1.5 bg-slate-200/80 dark:bg-slate-700/80 rounded-full" />
           </div>
 
           {/* User identity */}
-          <div className="px-6 pt-2 pb-4 border-b border-white/5">
+          <div className="px-6 pt-2 pb-4 border-b border-border">
             {user ? (
               <div className="flex items-center gap-3.5">
                 {user.photoURL ? (
@@ -236,7 +236,7 @@ export function CryptoBottomNav() {
             )}
           </div>
 
-          <div className="px-4 py-2 border-t border-white/5">
+          <div className="px-4 py-2 border-t border-border">
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
               className="w-full flex items-center gap-3.5 px-3 py-3 rounded-2xl hover:card-solid/5 transition-colors group"
@@ -256,7 +256,7 @@ export function CryptoBottomNav() {
 
           {/* Logout */}
           {user && (
-            <div className="px-4 pt-2 pb-6 border-t border-white/5">
+            <div className="px-4 pt-2 pb-6 border-t border-border">
               <button
                 onClick={handleLogout}
                 className="w-full flex items-center gap-3.5 px-3 py-3 rounded-2xl hover:bg-rose-500/10 transition-colors group"

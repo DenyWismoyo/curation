@@ -136,7 +136,7 @@ export function PublicNavbar() {
 
   return (
     <>
-      <header className="hidden md:flex fixed top-0 left-0 right-0 h-20 card-solid/80 backdrop-blur-xl border-b border-border z-40 items-center justify-between px-6 lg:px-12">
+      <header className="hidden md:flex fixed top-0 left-0 right-0 h-20 card-solid/80 backdrop-blur-xl border-b border-border z-50 items-center justify-between px-6 lg:px-12">
         {/* Brand */}
         <div className="flex items-center gap-6 lg:gap-8">
           <Link href={ROUTES.HOME} className="flex items-center gap-3 group">

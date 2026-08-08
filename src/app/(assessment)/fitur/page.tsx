@@ -57,9 +57,9 @@ export default function FeaturesPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-muted text-muted-foreground pt-10 pb-20 overflow-hidden">
+    <div className="min-h-screen bg-background text-foreground pt-10 pb-20 overflow-hidden">
       {/* Background Decor */}
-      <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-br from-indigo-900 via-slate-900 to-black rounded-b-[40px] sm:rounded-b-[100px] z-0 overflow-hidden">
+      <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-br from-indigo-50 to-white dark:hidden rounded-b-[40px] sm:rounded-b-[100px] z-0 overflow-hidden">
         <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay"></div>
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-indigo-500 rounded-full blur-[120px] opacity-30"></div>
         <div className="absolute top-20 -left-20 w-72 h-72 bg-emerald-500 rounded-full blur-[100px] opacity-20"></div>
@@ -73,20 +73,20 @@ export default function FeaturesPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full card-solid/10 border border-white/20 text-white/90 text-xs font-bold uppercase tracking-widest mb-6 backdrop-blur-md">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full card-highlight border border-border text-xs font-bold uppercase tracking-widest mb-6 backdrop-blur-md">
               <ShieldCheck size={14} /> Ekosistem Terintegrasi
             </span>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 tracking-tight leading-tight">
-              Lebih Dari Sekadar <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">Asesmen Biasa.</span>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-foreground mb-6 tracking-tight leading-tight">
+              Lebih Dari Sekadar <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-cyan-500">Asesmen Biasa.</span>
             </h1>
-            <p className="text-lg text-slate-300 font-medium leading-relaxed mb-8">
+            <p className="text-lg text-muted-foreground font-medium leading-relaxed mb-8">
               Omnifit Assessment adalah <em>decision support engine</em>. Kami mengubah data dari kuesioner menjadi keputusan intervensi yang nyata dan bisa langsung Anda eksekusi.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button asChild className="rounded-xl h-14 px-8 card-solid hover:bg-secondary text-secondary-foreground text-foreground font-black text-base transition-all shadow-xl hover:scale-105">
+              <Button asChild className="rounded-xl h-14 px-8 bg-foreground hover:bg-secondary text-background font-black text-base transition-all shadow-xl hover:scale-105">
                 <Link href="/katalog">Coba Asesmen Sekarang <ChevronRight size={18} className="ml-2" /></Link>
               </Button>
-              <Button asChild variant="outline" className="rounded-xl h-14 px-8 border-white/20 hover:card-solid/10 text-white font-bold text-base backdrop-blur-md transition-all">
+              <Button asChild variant="outline" className="rounded-xl h-14 px-8 border-border hover:bg-muted text-foreground font-bold text-base backdrop-blur-md transition-all">
                 <Link href="/login">Masuk ke Dasbor</Link>
               </Button>
             </div>
@@ -101,7 +101,7 @@ export default function FeaturesPage() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="card-solid rounded-[2rem] p-8 shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:shadow-indigo-200/40 transition-all group ring-1 ring-border flex flex-col h-full relative overflow-hidden"
+              className="card-solid card-interactive p-8 flex flex-col h-full relative"
             >
               <div className="absolute -right-10 -top-10 w-32 h-32 bg-muted text-muted-foreground rounded-full group-hover:scale-150 transition-transform duration-500 ease-out z-0"></div>
               
@@ -124,7 +124,7 @@ export default function FeaturesPage() {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mt-16 max-w-5xl mx-auto bg-gradient-to-r from-slate-900 to-indigo-900 rounded-[2.5rem] p-10 sm:p-14 relative overflow-hidden shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8"
+          className="mt-16 max-w-5xl mx-auto card-premium-dark rounded-[2.5rem] p-10 sm:p-14 relative overflow-hidden shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8"
         >
           <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay"></div>
           <div className="relative z-10 md:max-w-xl text-center md:text-left">

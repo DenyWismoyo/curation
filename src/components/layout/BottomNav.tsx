@@ -74,7 +74,7 @@ export function BottomNav() {
   return (
     <>
       {/* ── BOTTOM NAV BAR ─────────────────────────────────── */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden p-2 bg-gradient-to-t from-white/95 via-white/80 to-transparent backdrop-blur-md pointer-events-none">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden p-2 bg-gradient-to-t from-background/95 via-background/80 to-transparent backdrop-blur-md pointer-events-none">
         <div
           className="card-solid/90 backdrop-blur-xl border border-border/80 shadow-xl shadow-slate-900/5 rounded-2xl p-1 max-w-lg mx-auto ring-1 ring-border pointer-events-auto"
           style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 4px)' }}

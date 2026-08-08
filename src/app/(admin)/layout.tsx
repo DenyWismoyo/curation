@@ -165,7 +165,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                       type="button"
                       onClick={() => toggleMobileGroup(group.key)}
                       className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors ${
-                        hasActiveItem ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10/70' : 'text-slate-400 hover:bg-muted text-muted-foreground'
+                        hasActiveItem ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10/70' : 'text-muted-foreground hover:bg-muted text-muted-foreground'
                       }`}
                     >
                       <span>{group.label}</span>
@@ -186,7 +186,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                               }`}
                             >
                               <div className="flex items-center gap-3">
-                                <item.icon size={18} className={isActive ? 'text-white' : 'text-slate-400'} />
+                                <item.icon size={18} className={isActive ? 'text-white' : 'text-muted-foreground'} />
                                 <span>{item.name}</span>
                               </div>
                               {item.badge && (
@@ -220,12 +220,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         {/* DESKTOP SIDEBAR */}
         <aside
-          className={`hidden md:flex flex-col bg-slate-900 text-slate-300 shrink-0 transition-all duration-300 relative z-20 shadow-xl shadow-slate-950/20 ${
+          className={`hidden md:flex flex-col bg-background text-foreground shrink-0 transition-all duration-300 relative z-20 shadow-xl shadow-sm ${
             isSidebarCollapsed ? 'w-20' : 'w-72'
           }`}
         >
           {/* Logo Header */}
-          <div className="h-20 flex items-center px-6 border-b border-slate-800 justify-between shrink-0">
+          <div className="h-20 flex items-center px-6 border-b border-border justify-between shrink-0">
             <div className={`flex items-center gap-3 overflow-hidden ${isSidebarCollapsed ? 'justify-center w-full px-0' : ''}`}>
               <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-indigo-600 text-white rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-indigo-500/25 border border-indigo-400/30">
                 <ShieldCheck className="w-5 h-5" />
@@ -246,7 +246,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <TooltipTrigger asChild>
                   <button
                     onClick={() => setIsSidebarCollapsed(true)}
-                    className="p-2 hover:bg-slate-800 rounded-xl text-slate-400 hover:text-white shrink-0 transition-colors"
+                    className="p-2 hover:bg-muted rounded-xl text-muted-foreground hover:text-white shrink-0 transition-colors"
                   >
                     <PanelLeftClose size={18} />
                   </button>
@@ -270,10 +270,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         className={`flex items-center justify-center p-3 rounded-xl font-bold transition-all duration-200 ${
                           isActive
                             ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 ring-1 ring-indigo-400/40'
-                            : 'text-slate-400 hover:bg-slate-800/80 hover:text-slate-100'
+                            : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                         }`}
                       >
-                        <item.icon size={20} className={isActive ? 'text-white' : 'text-slate-400 shrink-0'} />
+                        <item.icon size={20} className={isActive ? 'text-white' : 'text-muted-foreground shrink-0'} />
                       </Link>
                     </TooltipTrigger>
                     <TooltipContent side="right">{item.name}</TooltipContent>
@@ -291,7 +291,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                       type="button"
                       onClick={() => toggleDesktopGroup(group.key)}
                       className={`w-full flex items-center justify-between px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors ${
-                        hasActiveItem ? 'text-indigo-400 bg-indigo-950/40' : 'text-muted-foreground hover:bg-slate-800/40'
+                        hasActiveItem ? 'text-indigo-400 bg-indigo-950/40' : 'text-muted-foreground hover:bg-muted'
                       }`}
                     >
                       <span>{group.label}</span>
@@ -310,11 +310,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                               className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 ${
                                 isActive
                                   ? 'bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-md shadow-indigo-900/40 ring-1 ring-indigo-400/30'
-                                  : 'text-slate-400 hover:bg-slate-800/70 hover:text-slate-100'
+                                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                               }`}
                             >
                               <div className="flex items-center gap-3 min-w-0">
-                                <item.icon size={18} className={isActive ? 'text-white' : 'text-slate-400 shrink-0'} />
+                                <item.icon size={18} className={isActive ? 'text-white' : 'text-muted-foreground shrink-0'} />
                                 <span className="truncate">{item.name}</span>
                               </div>
                               {item.badge && (
@@ -334,13 +334,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </nav>
 
           {/* Footer User & Logout */}
-          <div className="p-4 border-t border-slate-800 shrink-0 bg-slate-900/90">
+          <div className="p-4 border-t border-border shrink-0 bg-background/90">
             {isSidebarCollapsed && (
               <Tooltip>
                 <TooltipTrigger asChild>
                   <button
                     onClick={() => setIsSidebarCollapsed(false)}
-                    className="w-full flex items-center justify-center p-3 rounded-xl text-slate-400 hover:bg-slate-800 transition-colors mb-2"
+                    className="w-full flex items-center justify-center p-3 rounded-xl text-muted-foreground hover:bg-muted transition-colors mb-2"
                   >
                     <PanelLeftOpen size={20} />
                   </button>
@@ -394,8 +394,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                       <IconComponent size={18} />
                     </div>
                     <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-                      <span className="text-slate-400">Admin</span>
-                      <span className="text-slate-300">/</span>
+                      <span className="text-muted-foreground">Admin</span>
+                      <span className="text-foreground">/</span>
                       <span className="text-foreground font-bold">{currentItem?.name || 'Dasbor Utama'}</span>
                     </div>
                   </>

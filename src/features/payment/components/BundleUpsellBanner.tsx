@@ -15,14 +15,14 @@ export function BundleUpsellBanner({ onSelectBundle, className = '' }: BundleUps
       {/* Paket 3 Modul */}
       <motion.div 
         whileHover={{ scale: 1.02 }}
-        className="relative bg-gradient-to-br from-indigo-50 to-white dark:to-transparent rounded-3xl p-6 ring-1 ring-indigo-100 shadow-xl shadow-indigo-100/50 overflow-hidden flex flex-col justify-between"
+        className="relative card-premium-light card-interactive p-6 flex flex-col justify-between"
       >
         <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-bl-full blur-2xl"></div>
         <div className="relative z-10">
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-indigo-100 text-indigo-700 dark:text-indigo-300 rounded-lg text-xs font-black uppercase tracking-wider mb-4">
             <Sparkles size={14} /> Terlaris
           </div>
-          <h3 className="text-xl font-black text-foreground mb-2">Bundle 3 Modul</h3>
+          <h3 className="text-xl font-black text-indigo-950 dark:text-indigo-50 mb-2">Bundle 3 Modul</h3>
           <p className="text-sm text-muted-foreground font-medium mb-4">
             Pilih 3 asesmen apapun dari katalog. Cocok untuk mengukur kesiapan bisnis dan kompetensi dasar.
           </p>
@@ -52,7 +52,7 @@ export function BundleUpsellBanner({ onSelectBundle, className = '' }: BundleUps
       {/* Paket 5 Modul */}
       <motion.div 
         whileHover={{ scale: 1.02 }}
-        className="relative bg-gradient-to-br from-slate-900 to-indigo-900 rounded-3xl p-6 ring-1 ring-white/10 shadow-xl shadow-indigo-900/20 overflow-hidden flex flex-col justify-between"
+        className="relative card-premium-dark card-interactive p-6 flex flex-col justify-between"
       >
         <div className="absolute top-0 right-0 w-32 h-32 card-solid/10 rounded-bl-full blur-2xl"></div>
         <div className="absolute bottom-0 left-0 w-40 h-40 bg-emerald-500/20 rounded-tr-full blur-3xl"></div>

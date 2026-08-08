@@ -100,8 +100,8 @@ export default function TokenPage() {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-6 relative overflow-hidden">
       {/* Background Ornaments (Diambil dari tema landing page Anda) */}
-      <div className="absolute top-[-10%] left-[-5%] w-[40vw] h-[40vw] bg-indigo-200/40 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-5%] w-[30vw] h-[30vw] bg-blue-200/40 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-[-10%] left-[-5%] w-[40vw] h-[40vw] bg-indigo-200/40 dark:hidden rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-5%] w-[30vw] h-[30vw] bg-blue-200/40 dark:hidden rounded-full blur-[120px] pointer-events-none" />
 
       <motion.div 
         initial={{ opacity: 0, scale: 0.95, y: 20 }}

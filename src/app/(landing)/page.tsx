@@ -93,7 +93,7 @@ export default function LandingHubPage() {
 
   return (
     <LazyMotion features={domAnimation}>
-      <div className="min-h-screen flex flex-col relative overflow-hidden bg-[#020617] font-sans selection:bg-indigo-500/30 text-slate-300">
+      <div className="min-h-screen flex flex-col relative overflow-hidden bg-background font-sans selection:bg-indigo-500/30 text-muted-foreground">
         
         {/* Premium Animated Background */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
@@ -105,20 +105,20 @@ export default function LandingHubPage() {
         {/* Navbar */}
         <header className="relative z-50 p-6 flex justify-between items-center max-w-7xl mx-auto w-full">
           <div className="flex items-center gap-3 group cursor-pointer" onClick={() => handleNavigation('/')}>
-            <div className="w-10 h-10 card-solid/5 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/10 shadow-2xl group-hover:border-indigo-500/50 transition-colors">
+            <div className="w-10 h-10 card-solid backdrop-blur-md rounded-xl flex items-center justify-center border border-border shadow-2xl group-hover:border-indigo-500/50 transition-colors">
               <SafeLogo src="/logo.png" alt="Omnifit Logo" width={24} height={24} />
             </div>
-            <span className="text-xl font-black tracking-tight text-white group-hover:text-indigo-400 transition-colors">
-              Omnifit<span className="text-white/50 font-medium">.cloud</span>
+            <span className="text-xl font-black tracking-tight text-foreground group-hover:text-indigo-400 transition-colors">
+              Omnifit<span className="text-foreground/50 font-medium">.cloud</span>
             </span>
           </div>
           <div className="flex items-center gap-4">
             {user ? (
-              <Button onClick={() => router.push('/assessment')} variant="outline" className="hidden sm:flex border-white/10 card-solid/5 text-white hover:card-solid/10">
+              <Button onClick={() => router.push('/assessment')} variant="outline" className="hidden sm:flex border-border card-solid text-foreground hover:bg-muted">
                 Dashboard
               </Button>
             ) : (
-              <Button onClick={() => router.push('/login')} variant="outline" className="border-white/10 card-solid/5 text-white hover:card-solid/10">
+              <Button onClick={() => router.push('/login')} variant="outline" className="border-border card-solid text-foreground hover:bg-muted">
                 Login
               </Button>
             )}
@@ -140,13 +140,13 @@ export default function LandingHubPage() {
               </span>
               Keren Omnifit.cloud Ecosystem
             </div>
-            <h1 className="text-5xl sm:text-6xl md:text-7xl font-black text-white tracking-tighter mb-8 leading-[1.1]">
+            <h1 className="text-5xl sm:text-6xl md:text-7xl font-black text-foreground tracking-tighter mb-8 leading-[1.1]">
               Satu Ekosistem, <br className="hidden md:block" />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-amber-400 drop-shadow-sm">
                 Tiga Otak AI.
               </span>
             </h1>
-            <p className="text-lg md:text-xl text-slate-400 font-medium leading-relaxed max-w-2xl mx-auto mb-10">
+            <p className="text-lg md:text-xl text-muted-foreground font-medium leading-relaxed max-w-2xl mx-auto mb-10">
               Platform intelijen terpadu. Dari evaluasi psikologi personal, analisis mendalam pasar kripto secara real-time, hingga asisten riset berstandar akademis.
             </p>
             <div className="flex justify-center">
@@ -175,8 +175,8 @@ export default function LandingHubPage() {
                   <div className="w-14 h-14 rounded-2xl bg-indigo-500/20 flex items-center justify-center border border-indigo-500/30 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
                     <BrainCircuit className="w-7 h-7 text-indigo-400" />
                   </div>
-                  <div className="w-10 h-10 rounded-full card-solid/5 flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white group-hover:-rotate-45 transition-all duration-500">
-                    <ArrowRight className="w-5 h-5 text-slate-400 group-hover:text-white" />
+                  <div className="w-10 h-10 rounded-full card-solid flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-foreground group-hover:-rotate-45 transition-all duration-500">
+                    <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-foreground" />
                   </div>
                 </div>
                 
@@ -184,31 +184,31 @@ export default function LandingHubPage() {
                   <div className="inline-block px-3 py-1 mb-4 rounded-lg bg-indigo-500/20 text-indigo-300 text-xs font-bold uppercase tracking-wider border border-indigo-500/20">
                     Public & Premium Access
                   </div>
-                  <h2 className="text-3xl font-black text-white mb-4">Self Service AI</h2>
-                  <p className="text-slate-400 leading-relaxed mb-8">
+                  <h2 className="text-3xl font-black text-foreground mb-4">Self Service AI</h2>
+                  <p className="text-muted-foreground leading-relaxed mb-8">
                     Platform evaluasi interaktif dengan modul siap pakai untuk berbagai kebutuhan. AI kami beradaptasi dengan profil Anda untuk memberikan wawasan yang mendalam.
                   </p>
                   
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-950/50 border border-white/5 group-hover:border-indigo-500/30 transition-colors">
+                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-background/50 border border-border group-hover:border-indigo-500/30 transition-colors">
                       <HeartPulse className="w-5 h-5 text-rose-400 shrink-0" />
-                      <span className="text-sm font-semibold text-slate-200">Kesehatan Mental & Diri</span>
+                      <span className="text-sm font-semibold text-foreground">Kesehatan Mental & Diri</span>
                     </div>
-                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-950/50 border border-white/5 group-hover:border-indigo-500/30 transition-colors">
+                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-background/50 border border-border group-hover:border-indigo-500/30 transition-colors">
                       <Baby className="w-5 h-5 text-sky-400 shrink-0" />
-                      <span className="text-sm font-semibold text-slate-200">Parenting & Keluarga</span>
+                      <span className="text-sm font-semibold text-foreground">Parenting & Keluarga</span>
                     </div>
-                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-950/50 border border-white/5 group-hover:border-indigo-500/30 transition-colors">
+                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-background/50 border border-border group-hover:border-indigo-500/30 transition-colors">
                       <Lightbulb className="w-5 h-5 text-amber-400 shrink-0" />
-                      <span className="text-sm font-semibold text-slate-200">Startup & Inovasi</span>
+                      <span className="text-sm font-semibold text-foreground">Startup & Inovasi</span>
                     </div>
-                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-950/50 border border-white/5 group-hover:border-indigo-500/30 transition-colors">
+                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-background/50 border border-border group-hover:border-indigo-500/30 transition-colors">
                       <Store className="w-5 h-5 text-emerald-400 shrink-0" />
-                      <span className="text-sm font-semibold text-slate-200">UMKM & Bisnis</span>
+                      <span className="text-sm font-semibold text-foreground">UMKM & Bisnis</span>
                     </div>
-                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-950/50 border border-white/5 group-hover:border-indigo-500/30 transition-colors md:col-span-2">
+                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-background/50 border border-border group-hover:border-indigo-500/30 transition-colors md:col-span-2">
                       <GraduationCap className="w-5 h-5 text-purple-400 shrink-0" />
-                      <span className="text-sm font-semibold text-slate-200">Zona Gen Z & Karir</span>
+                      <span className="text-sm font-semibold text-foreground">Zona Gen Z & Karir</span>
                     </div>
                   </div>
                 </div>
@@ -227,8 +227,8 @@ export default function LandingHubPage() {
                   <div className="w-14 h-14 rounded-2xl bg-amber-500/20 flex items-center justify-center border border-amber-500/30 group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-500">
                     <LineChart className="w-7 h-7 text-amber-400" />
                   </div>
-                  <div className="w-10 h-10 rounded-full card-solid/5 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white group-hover:-rotate-45 transition-all duration-500">
-                    <ArrowRight className="w-5 h-5 text-slate-400 group-hover:text-white" />
+                  <div className="w-10 h-10 rounded-full card-solid flex items-center justify-center group-hover:bg-amber-500 group-hover:text-foreground group-hover:-rotate-45 transition-all duration-500">
+                    <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-foreground" />
                   </div>
                 </div>
                 
@@ -236,16 +236,16 @@ export default function LandingHubPage() {
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 mb-4 rounded-lg bg-amber-500/20 text-amber-300 text-xs font-bold uppercase tracking-wider border border-amber-500/20">
                     <Lock size={12} /> Premium Data
                   </div>
-                  <h2 className="text-2xl font-black text-white mb-3">Crypto Insight</h2>
-                  <p className="text-sm text-slate-400 leading-relaxed mb-6">
+                  <h2 className="text-2xl font-black text-foreground mb-3">Crypto Insight</h2>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-6">
                     Bukan sekadar dashboard. Ini adalah AI Hedge Fund pribadi Anda untuk keunggulan di pasar kripto.
                   </p>
                   
                   <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-2 text-xs text-slate-300 bg-slate-950/50 p-2 rounded-lg border border-white/5"><Eye className="w-4 h-4 text-amber-500" /> Smart Money Tracking</div>
-                    <div className="flex items-center gap-2 text-xs text-slate-300 bg-slate-950/50 p-2 rounded-lg border border-white/5"><AlertTriangle className="w-4 h-4 text-rose-500" /> Danger Zone Alerts</div>
-                    <div className="flex items-center gap-2 text-xs text-slate-300 bg-slate-950/50 p-2 rounded-lg border border-white/5"><Diamond className="w-4 h-4 text-cyan-500" /> Hidden Gems Scanner</div>
-                    <div className="flex items-center gap-2 text-xs text-slate-300 bg-slate-950/50 p-2 rounded-lg border border-white/5"><Bot className="w-4 h-4 text-indigo-400" /> AI Copilot Chat 24/7</div>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground bg-background/50 p-2 rounded-lg border border-border"><Eye className="w-4 h-4 text-amber-500" /> Smart Money Tracking</div>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground bg-background/50 p-2 rounded-lg border border-border"><AlertTriangle className="w-4 h-4 text-rose-500" /> Danger Zone Alerts</div>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground bg-background/50 p-2 rounded-lg border border-border"><Diamond className="w-4 h-4 text-cyan-500" /> Hidden Gems Scanner</div>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground bg-background/50 p-2 rounded-lg border border-border"><Bot className="w-4 h-4 text-indigo-400" /> AI Copilot Chat 24/7</div>
                   </div>
                 </div>
               </div>
@@ -263,8 +263,8 @@ export default function LandingHubPage() {
                   <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
                     <BookOpenText className="w-7 h-7 text-emerald-400" />
                   </div>
-                  <div className="w-10 h-10 rounded-full card-solid/5 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white group-hover:-rotate-45 transition-all duration-500">
-                    <ArrowRight className="w-5 h-5 text-slate-400 group-hover:text-white" />
+                  <div className="w-10 h-10 rounded-full card-solid flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-foreground group-hover:-rotate-45 transition-all duration-500">
+                    <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-foreground" />
                   </div>
                 </div>
                 
@@ -272,15 +272,15 @@ export default function LandingHubPage() {
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 mb-4 rounded-lg bg-emerald-500/20 text-emerald-300 text-xs font-bold uppercase tracking-wider border border-emerald-500/20">
                     <Lock size={12} /> Restricted Access
                   </div>
-                  <h2 className="text-2xl font-black text-white mb-3">Study Workspace</h2>
-                  <p className="text-sm text-slate-400 leading-relaxed mb-6">
+                  <h2 className="text-2xl font-black text-foreground mb-3">Study Workspace</h2>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-6">
                     Ruang kerja riset mendalam dengan Multi-Agent AI (Architect, Writer, Auditor) terintegrasi dengan Knowledge Base Anda. Menghasilkan laporan terstruktur hingga ratusan halaman.
                   </p>
                   
-                  <div className="p-4 bg-slate-950/50 rounded-xl border border-white/5 relative overflow-hidden">
+                  <div className="p-4 bg-background/50 rounded-xl border border-border relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-16 h-16 bg-emerald-500/20 blur-[20px]" />
                     <p className="text-xs font-mono text-emerald-400 mb-2">{'>'} Pipeline Eksekusi...</p>
-                    <ul className="text-xs text-slate-300 space-y-1.5">
+                    <ul className="text-xs text-muted-foreground space-y-1.5">
                       <li className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3 text-emerald-500" /> Ingestion PDF / Dokumen</li>
                       <li className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3 text-emerald-500" /> Penyusunan Outline Riset</li>
                       <li className="flex items-center gap-2"><Activity className="w-3 h-3 text-emerald-500 animate-pulse" /> Drafting & Audit (Paralel)</li>
@@ -295,7 +295,7 @@ export default function LandingHubPage() {
         </main>
         
         {/* Footer */}
-        <footer className="relative z-10 py-8 text-center border-t border-white/5 bg-[#020617]">
+        <footer className="relative z-10 py-8 text-center border-t border-border bg-[#020617]">
           <p className="text-xs font-medium text-muted-foreground">
             &copy; {new Date().getFullYear()} Omnifit.cloud Ecosystem. All rights reserved.
           </p>
