@@ -5,6 +5,7 @@ import {
   Loader2, 
   Sparkles, 
   Circle,
+  CheckCircle2,
   Lightbulb,
   ChevronDown,
   ChevronUp
@@ -27,6 +28,24 @@ export function PersonalActionPlanCopilot({
   const [isGenerating, setIsGenerating] = useState(false);
   const [actionPlan, setActionPlan] = useState<any[]>(aiResult.personalActionPlan || []);
   const [expandedTasks, setExpandedTasks] = useState<Record<string, boolean>>({});
+  const [completedTasks, setCompletedTasks] = useState<Record<string, boolean>>({});
+  const [completedSubTasks, setCompletedSubTasks] = useState<Record<string, boolean>>({});
+
+  const toggleTaskCompletion = (e: React.MouseEvent, taskId: string) => {
+    e.stopPropagation();
+    setCompletedTasks(prev => ({
+      ...prev,
+      [taskId]: !prev[taskId]
+    }));
+  };
+
+  const toggleSubTaskCompletion = (e: React.MouseEvent, subTaskId: string) => {
+    e.stopPropagation();
+    setCompletedSubTasks(prev => ({
+      ...prev,
+      [subTaskId]: !prev[subTaskId]
+    }));
+  };
 
   const handleGenerate = async () => {
     try {
@@ -100,39 +119,35 @@ export function PersonalActionPlanCopilot({
           </h3>
           <p className="text-xs text-muted-foreground">Langkah-langkah yang direkomendasikan secara khusus untuk Anda.</p>
         </div>
-        <button
-          onClick={handleGenerate}
-          disabled={isGenerating}
-          className="p-2 text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 rounded-lg transition-colors flex items-center gap-2 text-xs font-semibold"
-          title="Buat Ulang"
-        >
-          {isGenerating ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
-          <span className="hidden sm:inline">{isGenerating ? 'Memuat...' : 'Buat Ulang'}</span>
-        </button>
       </div>
 
       <div className="space-y-4">
         {actionPlan.map((task: any, index: number) => {
-          const isExpanded = expandedTasks[task.id] || false;
+          const taskId = task.id || `task-${index}`;
+          const isExpanded = expandedTasks[taskId] || false;
+          const isCompleted = completedTasks[taskId] || false;
           
           return (
-            <div key={task.id || index} className="border border-border rounded-2xl overflow-hidden transition-all card-solid">
+            <div key={taskId} className={`border border-border rounded-2xl overflow-hidden transition-all card-solid ${isCompleted ? 'opacity-80' : ''}`}>
               {/* Task Header */}
               <div 
-                className="p-4 flex items-start gap-3 cursor-pointer hover:bg-muted text-muted-foreground transition-colors"
-                onClick={() => toggleTask(task.id)}
+                className={`p-4 flex items-start gap-3 cursor-pointer transition-colors ${isCompleted ? 'bg-muted/30' : 'hover:bg-muted text-muted-foreground'}`}
+                onClick={() => toggleTask(taskId)}
               >
-                <div className="mt-0.5 text-slate-300 shrink-0">
-                  <Circle size={20} />
+                <div 
+                  className={`mt-0.5 shrink-0 transition-colors ${isCompleted ? 'text-emerald-500' : 'text-slate-300 hover:text-indigo-400'}`}
+                  onClick={(e) => toggleTaskCompletion(e, taskId)}
+                >
+                  {isCompleted ? <CheckCircle2 size={20} /> : <Circle size={20} />}
                 </div>
-                <div className="flex-1">
+                <div className={`flex-1 transition-all ${isCompleted ? 'opacity-70 line-through decoration-slate-400/50' : ''}`}>
                   <div className="flex items-center justify-between gap-2">
                     <h4 className="font-bold text-foreground text-sm leading-tight">{task.task}</h4>
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground text-muted-foreground shrink-0">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground text-muted-foreground shrink-0 no-underline">
                       {task.timeframe}
                     </span>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">{task.description}</p>
+                  <p className="text-xs text-muted-foreground mt-1 no-underline">{task.description}</p>
                 </div>
                 <div className="text-slate-400 mt-1 shrink-0">
                   {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -154,16 +169,24 @@ export function PersonalActionPlanCopilot({
                   {task.subTasks && task.subTasks.length > 0 && (
                     <div className="space-y-2 pl-1">
                       <h5 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Langkah Kecil (Micro-steps)</h5>
-                      {task.subTasks.map((sub: any, subIndex: number) => (
-                        <div key={sub.id || subIndex} className="flex items-start gap-2 group cursor-pointer">
-                          <div className="mt-0.5 text-slate-300 group-hover:text-indigo-400 transition-colors shrink-0">
-                            <Circle size={16} />
+                      {task.subTasks.map((sub: any, subIndex: number) => {
+                        const subId = sub.id || `${taskId}-sub-${subIndex}`;
+                        const isSubCompleted = completedSubTasks[subId] || false;
+                        return (
+                          <div 
+                            key={subId} 
+                            className="flex items-start gap-2 group cursor-pointer"
+                            onClick={(e) => toggleSubTaskCompletion(e, subId)}
+                          >
+                            <div className={`mt-0.5 shrink-0 transition-colors ${isSubCompleted ? 'text-emerald-500' : 'text-slate-300 group-hover:text-indigo-400'}`}>
+                              {isSubCompleted ? <CheckCircle2 size={16} /> : <Circle size={16} />}
+                            </div>
+                            <span className={`text-xs font-medium transition-colors ${isSubCompleted ? 'text-slate-400 dark:text-slate-500 line-through' : 'text-muted-foreground group-hover:text-foreground'}`}>
+                              {sub.text}
+                            </span>
                           </div>
-                          <span className="text-xs text-muted-foreground font-medium group-hover:text-foreground transition-colors">
-                            {sub.text}
-                          </span>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   )}
                   
