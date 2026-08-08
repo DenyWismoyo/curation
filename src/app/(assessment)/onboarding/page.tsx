@@ -138,9 +138,9 @@ export default function OnboardingPage() {
 
   if (completedWithoutForce) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-[#FAFAFA] to-purple-50 flex items-center justify-center px-6 py-10">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 dark:from-[#0B0F19] via-[#FAFAFA] dark:via-slate-900 to-purple-50 dark:to-[#0B0F19] flex items-center justify-center px-6 py-10">
         <div className="w-full max-w-lg card-solid rounded-3xl ring-1 ring-border p-8 text-center shadow-sm">
-          <div className="inline-flex w-16 h-16 bg-indigo-600 rounded-2xl items-center justify-center mb-4 shadow-lg shadow-indigo-500/25">
+          <div className="inline-flex w-16 h-16 bg-indigo-600 rounded-2xl items-center justify-center mb-4 shadow-lg shadow-indigo-500/25 dark:shadow-[0_4px_20px_rgba(79,70,229,0.2)]">
             <AiSparkIcon size={30} className="text-white" />
           </div>
           <h1 className="text-2xl font-black text-foreground mb-2">Onboarding Sudah Selesai</h1>
@@ -169,7 +169,7 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-[#FAFAFA] to-purple-50 flex flex-col items-center justify-center px-6 pb-10 font-sans selection:bg-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 dark:from-[#0B0F19] via-[#FAFAFA] dark:via-slate-900 to-purple-50 dark:to-[#0B0F19] flex flex-col items-center justify-center px-6 pb-10 font-sans selection:bg-indigo-100">
       <div className="w-full max-w-lg">
 
         {/* PROGRESS STEPS */}
@@ -180,7 +180,7 @@ export default function OnboardingPage() {
                 <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-black transition-all ${
                   i < step ? 'bg-indigo-600 text-white' :
                   i === step ? 'bg-indigo-600 text-white ring-4 ring-indigo-100' :
-                  'bg-slate-200 text-muted-foreground'
+                  'bg-slate-200 dark:bg-slate-800 text-muted-foreground'
                 }`}>
                   {i < step ? '✓' : i + 1}
                 </div>
@@ -188,7 +188,7 @@ export default function OnboardingPage() {
                   {label}
                 </span>
               </div>
-              {i < STEPS.length - 1 && <div className={`h-px flex-1 max-w-[40px] ${i < step ? 'bg-indigo-400' : 'bg-slate-200'}`} />}
+              {i < STEPS.length - 1 && <div className={`h-px flex-1 max-w-[40px] ${i < step ? 'bg-indigo-400 dark:bg-indigo-600' : 'bg-slate-200 dark:bg-slate-800'}`} />}
             </React.Fragment>
           ))}
         </div>
@@ -199,7 +199,7 @@ export default function OnboardingPage() {
           {step === 0 && (
             <motion.div key="step0" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
               <div className="text-center mb-8">
-                <div className="inline-flex w-16 h-16 bg-indigo-600 rounded-3xl items-center justify-center mb-4 shadow-lg shadow-indigo-500/25">
+                <div className="inline-flex w-16 h-16 bg-indigo-600 rounded-3xl items-center justify-center mb-4 shadow-lg shadow-indigo-500/25 dark:shadow-[0_4px_20px_rgba(79,70,229,0.2)]">
                   <AiSparkIcon size={32} className="text-white" />
                 </div>
                 <h1 className="text-3xl font-black text-foreground mb-2">Selamat Datang di<br/>Omnifit AI</h1>
@@ -214,8 +214,8 @@ export default function OnboardingPage() {
                     onClick={() => setPurpose(p.id)}
                     className={`w-full flex items-center gap-4 p-4 rounded-2xl ring-2 transition-all text-left ${
                       purpose === p.id
-                        ? 'ring-indigo-500 bg-indigo-50 dark:bg-indigo-500/10 shadow-md shadow-indigo-100'
-                        : 'ring-slate-200 card-solid hover:ring-indigo-200 dark:ring-indigo-500/20 hover:bg-muted text-muted-foreground'
+                        ? 'ring-indigo-500 bg-indigo-50 dark:bg-indigo-500/10 shadow-md shadow-indigo-100 dark:shadow-[0_4px_20px_rgba(79,70,229,0.2)]'
+                        : 'ring-slate-200 dark:ring-slate-800 card-solid hover:ring-indigo-200 dark:ring-indigo-500/20 hover:bg-muted text-muted-foreground'
                     }`}
                   >
                     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${
@@ -262,8 +262,8 @@ export default function OnboardingPage() {
                     onClick={() => setSector(s)}
                     className={`p-4 rounded-2xl ring-2 text-center transition-all font-bold text-sm ${
                       sector === s
-                        ? 'ring-indigo-500 bg-indigo-600 text-white shadow-md shadow-indigo-100'
-                        : 'ring-slate-200 card-solid text-slate-700 hover:ring-indigo-200 dark:ring-indigo-500/20'
+                        ? 'ring-indigo-500 bg-indigo-600 text-white shadow-md shadow-indigo-100 dark:shadow-[0_4px_20px_rgba(79,70,229,0.2)]'
+                        : 'ring-slate-200 dark:ring-slate-800 card-solid text-slate-700 hover:ring-indigo-200 dark:ring-indigo-500/20'
                     }`}
                   >
                     {s}
@@ -293,7 +293,7 @@ export default function OnboardingPage() {
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ type: 'spring', bounce: 0.5, delay: 0.1 }}
-                  className="inline-flex w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl items-center justify-center mb-4 shadow-xl shadow-indigo-500/25"
+                  className="inline-flex w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl items-center justify-center mb-4 shadow-xl shadow-indigo-500/25 dark:shadow-[0_4px_20px_rgba(79,70,229,0.2)]"
                 >
                   <AiSparkIcon size={40} className="text-white" />
                 </motion.div>
