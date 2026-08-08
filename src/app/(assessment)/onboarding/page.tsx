@@ -198,13 +198,6 @@ export default function OnboardingPage() {
           {/* STEP 0: CHOOSE PURPOSE */}
           {step === 0 && (
             <motion.div key="step0" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-              <div className="text-center mb-8">
-                <div className="inline-flex w-16 h-16 bg-indigo-600 rounded-3xl items-center justify-center mb-4 shadow-lg shadow-indigo-500/25 dark:shadow-[0_4px_20px_rgba(79,70,229,0.2)]">
-                  <AiSparkIcon size={32} className="text-white" />
-                </div>
-                <h1 className="text-3xl font-black text-foreground mb-2">Selamat Datang di<br/>Omnifit AI</h1>
-                <p className="text-muted-foreground font-medium text-sm">Bantu kami personalisasi pengalaman Anda</p>
-              </div>
 
               <div className="space-y-3">
                 <p className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-4">Apa tujuan utama Anda?</p>
