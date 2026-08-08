@@ -121,14 +121,14 @@ function AdaptiveExploreTab({ aiResult }: { aiResult: any }) {
           <div className="bg-muted text-muted-foreground rounded-2xl ring-1 ring-border/70 p-4 sm:p-5 space-y-3">
             <div className="space-y-3 max-h-[380px] overflow-y-auto pr-1">
               {messages.map((msg, idx) => (
-                <div key={`${msg.role}-${idx}`} className={`rounded-2xl p-3.5 text-sm leading-relaxed ${msg.role === 'assistant' ? 'card-solid ring-1 ring-border text-slate-700 dark:text-slate-300' : 'bg-indigo-600 text-white ml-4'}`}>
+                <div key={`${msg.role}-${idx}`} className={`rounded-2xl p-3.5 text-sm leading-relaxed ${msg.role === 'assistant' ? 'card-solid ring-1 ring-border text-slate-700 dark:text-slate-300 dark:text-slate-300' : 'bg-indigo-600 text-white ml-4'}`}>
                   {msg.text}
                   {msg.role === 'assistant' && (
                     <div className="mt-3">
                       <button
                         type="button"
                         onClick={() => addManualPlan(msg.text)}
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 transition-colors"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 transition-colors"
                       >
                         <Plus size={12} /> Tambah jadi rencana manual
                       </button>
@@ -146,7 +146,7 @@ function AdaptiveExploreTab({ aiResult }: { aiResult: any }) {
                   if (e.key === 'Enter') submitQuestion(input);
                 }}
                 placeholder="Tulis pertanyaan Anda..."
-                className="flex-1 h-11 rounded-xl border border-border card-solid px-3 text-sm text-slate-700 dark:text-slate-300 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-indigo-200 dark:ring-indigo-500/20"
+                className="flex-1 h-11 rounded-xl border border-border card-solid px-3 text-sm text-slate-700 dark:text-slate-300 dark:text-slate-300 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-indigo-200 dark:ring-indigo-500/20"
               />
               <button
                 type="button"
@@ -169,7 +169,7 @@ function AdaptiveExploreTab({ aiResult }: { aiResult: any }) {
                     <button
                       type="button"
                       onClick={() => submitQuestion(task)}
-                      className="flex-1 text-left px-3 py-2 rounded-xl bg-muted text-muted-foreground hover:bg-secondary text-secondary-foreground ring-1 ring-border text-sm font-semibold text-slate-700 dark:text-slate-300 transition-colors"
+                      className="flex-1 text-left px-3 py-2 rounded-xl bg-muted text-muted-foreground hover:bg-secondary text-secondary-foreground ring-1 ring-border text-sm font-semibold text-slate-700 dark:text-slate-300 dark:text-slate-300 transition-colors"
                     >
                       {task}
                     </button>
@@ -193,7 +193,7 @@ function AdaptiveExploreTab({ aiResult }: { aiResult: any }) {
                     if (e.key === 'Enter') addCustomTask();
                   }}
                   placeholder="Tambah task custom..."
-                  className="flex-1 h-10 rounded-xl border border-border px-3 text-sm text-slate-700 dark:text-slate-300 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-indigo-200 dark:ring-indigo-500/20"
+                  className="flex-1 h-10 rounded-xl border border-border px-3 text-sm text-slate-700 dark:text-slate-300 dark:text-slate-300 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-indigo-200 dark:ring-indigo-500/20"
                 />
                 <button
                   type="button"
@@ -212,7 +212,7 @@ function AdaptiveExploreTab({ aiResult }: { aiResult: any }) {
                   <p className="text-sm text-muted-foreground">Belum ada rencana manual. Anda bisa menambah dari jawaban AI atau input sendiri.</p>
                 ) : (
                   manualPlans.map((plan, idx) => (
-                    <div key={`${plan}-${idx}`} className="px-3 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 ring-1 ring-emerald-100 text-sm text-emerald-900 font-medium">
+                    <div key={`${plan}-${idx}`} className="px-3 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 ring-1 ring-emerald-100 text-sm text-emerald-900 dark:text-emerald-300 font-medium">
                       {plan}
                     </div>
                   ))
@@ -230,7 +230,7 @@ function AdaptiveExploreTab({ aiResult }: { aiResult: any }) {
                     }
                   }}
                   placeholder="Tambah rencana manual..."
-                  className="flex-1 h-10 rounded-xl border border-border px-3 text-sm text-slate-700 dark:text-slate-300 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-emerald-200 dark:ring-emerald-500/20"
+                  className="flex-1 h-10 rounded-xl border border-border px-3 text-sm text-slate-700 dark:text-slate-300 dark:text-slate-300 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-emerald-200 dark:ring-emerald-500/20"
                 />
                 <button
                   type="button"
@@ -296,7 +296,7 @@ export function AdaptiveAssessmentView({
       <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_0.8fr] gap-6 w-full">
         <div className="card-solid/90 backdrop-blur-sm ring-1 ring-border p-6 sm:p-8 rounded-[2rem] shadow-sm flex flex-col gap-6">
           <div className="space-y-3">
-            <p className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.28em] text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-500/10 px-3 py-1.5 rounded-full ring-1 ring-indigo-100">
+            <p className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.28em] text-indigo-700 dark:text-indigo-300 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-500/10 px-3 py-1.5 rounded-full ring-1 ring-indigo-100">
               <AiSparkIcon size={14} className="text-indigo-500" /> {reportToneLabel}
             </p>
             <h1 className="text-3xl sm:text-4xl font-black text-foreground tracking-tight text-balance">
@@ -333,19 +333,19 @@ export function AdaptiveAssessmentView({
             </div>
 
             <div className="bg-emerald-50 dark:bg-emerald-500/10 rounded-2xl p-5 ring-1 ring-emerald-100">
-              <h3 className="text-emerald-800 font-black uppercase tracking-widest text-xs flex items-center gap-2 mb-3">
+              <h3 className="text-emerald-800 dark:text-emerald-300 font-black uppercase tracking-widest text-xs flex items-center gap-2 mb-3">
                 <Sparkles size={14} className="text-emerald-600 dark:text-emerald-400" /> Kata Motivasi
               </h3>
-              <p className="text-sm text-emerald-900 font-semibold leading-relaxed">
+              <p className="text-sm text-emerald-900 dark:text-emerald-300 font-semibold leading-relaxed">
                 {motivationalQuote}
               </p>
             </div>
 
             <div className="bg-indigo-50 dark:bg-indigo-500/10 rounded-2xl p-5 ring-1 ring-indigo-100">
-              <h3 className="text-indigo-800 font-black uppercase tracking-widest text-xs flex items-center gap-2 mb-3">
+              <h3 className="text-indigo-800 dark:text-indigo-300 font-black uppercase tracking-widest text-xs flex items-center gap-2 mb-3">
                 <AiSparkIcon size={14} className="text-indigo-600 dark:text-indigo-400" /> Langkah Pertama Hari Ini
               </h3>
-              <p className="text-sm text-indigo-900 font-semibold leading-relaxed">
+              <p className="text-sm text-indigo-900 dark:text-indigo-300 font-semibold leading-relaxed">
                 {firstPracticalStep}
               </p>
             </div>
@@ -363,7 +363,7 @@ export function AdaptiveAssessmentView({
       </div>
 
       {personalRisks.length > 0 && (
-        <div className="p-6 sm:p-8 rounded-[2rem] ring-1 ring-amber-200 dark:ring-amber-500/20 bg-amber-50 dark:bg-amber-500/10/35 w-full shadow-sm">
+        <div className="p-6 sm:p-8 rounded-[2rem] ring-1 ring-amber-200 dark:ring-amber-500/20 bg-amber-50 dark:bg-amber-500/10 w-full shadow-sm">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-amber-100 text-amber-600 dark:text-amber-400 rounded-xl flex items-center justify-center shrink-0">
               <AdminShieldIcon size={20} />
@@ -376,7 +376,7 @@ export function AdaptiveAssessmentView({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {personalRisks.map((risk: string, idx: number) => (
               <div key={idx} className="flex flex-col ring-1 ring-border rounded-2xl overflow-hidden card-solid shadow-sm">
-                <div className="bg-amber-50 dark:bg-amber-500/10/60 p-4 border-b border-amber-100/60">
+                <div className="bg-amber-50 dark:bg-amber-500/10 p-4 border-b border-amber-100/60">
                   <h4 className="text-[10px] font-black uppercase tracking-widest text-amber-600 dark:text-amber-400 mb-1">Yang Perlu Diwaspadai</h4>
                   <div className="text-sm font-semibold text-foreground">
                     <TextToBullets text={risk} colorClass="text-amber-500" />

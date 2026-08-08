@@ -160,7 +160,7 @@ export const ActionPlanCopilot = ({ assessmentId }: ActionPlanCopilotProps) => {
               <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                 msg.role === 'user' 
                   ? 'bg-indigo-600 text-white rounded-tr-sm shadow-md' 
-                  : 'card-solid text-slate-700 dark:text-slate-300 rounded-tl-sm ring-1 ring-border shadow-sm'
+                  : 'card-solid text-slate-700 dark:text-slate-300 dark:text-slate-300 rounded-tl-sm ring-1 ring-border shadow-sm'
               }`}>
                 {msg.role === 'model' ? (
                   <ReactMarkdown

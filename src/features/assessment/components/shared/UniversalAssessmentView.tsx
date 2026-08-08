@@ -67,7 +67,7 @@ const InsightAccordion = ({ id, title, icon: Icon, content }: any) => {
           <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isOpen ? 'bg-indigo-100 text-indigo-600 dark:text-indigo-400' : 'bg-muted text-muted-foreground text-muted-foreground'}`}>
             <Icon size={18} />
           </div>
-          <h4 className={`text-sm font-black uppercase tracking-widest ${isOpen ? 'text-indigo-900' : 'text-slate-700 dark:text-slate-300'}`}>{title}</h4>
+          <h4 className={`text-sm font-black uppercase tracking-widest ${isOpen ? 'text-indigo-900 dark:text-indigo-300' : 'text-slate-700 dark:text-slate-300 dark:text-slate-300'}`}>{title}</h4>
         </div>
         <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
@@ -244,10 +244,10 @@ export function UniversalAssessmentView({
             </div>
             <div className="flex-1 w-full space-y-3">
               <div className="flex items-center gap-2">
-                <span className="bg-amber-100/80 text-amber-800 text-[10px] font-black px-3 py-1 rounded-md uppercase tracking-widest ring-1 ring-amber-200 dark:ring-amber-500/20">Status Laporan</span>
-                <h4 className="text-amber-900 font-black text-sm sm:text-base uppercase tracking-wider">Hasil Pemrosesan Komputasi Otomatis (AI-Generated)</h4>
+                <span className="bg-amber-100/80 text-amber-800 dark:text-amber-300 text-[10px] font-black px-3 py-1 rounded-md uppercase tracking-widest ring-1 ring-amber-200 dark:ring-amber-500/20">Status Laporan</span>
+                <h4 className="text-amber-900 dark:text-amber-300 font-black text-sm sm:text-base uppercase tracking-wider">Hasil Pemrosesan Komputasi Otomatis (AI-Generated)</h4>
               </div>
-              <p className="text-amber-800/90 text-sm font-medium leading-relaxed">Laporan analitik ini dihasilkan secara otomatis oleh sistem AI berdasarkan data mandiri pengguna. <b>Bersifat tidak mengikat sebelum divalidasi resmi.</b></p>
+              <p className="text-amber-800 dark:text-amber-300/90 text-sm font-medium leading-relaxed">Laporan analitik ini dihasilkan secara otomatis oleh sistem AI berdasarkan data mandiri pengguna. <b>Bersifat tidak mengikat sebelum divalidasi resmi.</b></p>
             </div>
           </div>
         </div>
@@ -275,7 +275,7 @@ export function UniversalAssessmentView({
               })
             ) : (
               curatorData.selectedTags.length > 0 ? curatorData.selectedTags.map((tag) => (
-                <span key={tag} className="flex items-center gap-1.5 px-4 py-1.5 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 font-bold text-xs rounded-full ring-1 ring-indigo-200 dark:ring-indigo-500/20">{tag}</span>
+                <span key={tag} className="flex items-center gap-1.5 px-4 py-1.5 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 dark:text-indigo-300 font-bold text-xs rounded-full ring-1 ring-indigo-200 dark:ring-indigo-500/20">{tag}</span>
               )) : (
                 <span className="text-xs italic text-slate-400">Tidak ada tag yang disematkan.</span>
               )
@@ -311,7 +311,7 @@ export function UniversalAssessmentView({
               )}
             </div>
           ) : (
-            <div className="bg-muted text-muted-foreground p-5 rounded-2xl ring-1 ring-border min-h-[90px] text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap font-medium leading-relaxed">
+            <div className="bg-muted text-muted-foreground p-5 rounded-2xl ring-1 ring-border min-h-[90px] text-sm text-slate-700 dark:text-slate-300 dark:text-slate-300 whitespace-pre-wrap font-medium leading-relaxed">
               {curatorData.curatorNotes || <span className="italic text-slate-400">Belum ada catatan utama dari lapangan.</span>}
             </div>
           )}
@@ -449,10 +449,10 @@ export function UniversalAssessmentView({
                   value={curatorData.metricsNotes}
                   onChange={(e) => curatorData.setMetricsNotes && curatorData.setMetricsNotes(e.target.value)}
                   placeholder="Justifikasi penyesuaian pilar matriks..."
-                  className="bg-indigo-50 dark:bg-indigo-500/10/40 border-indigo-100 text-sm min-h-[90px] rounded-xl"
+                  className="bg-indigo-50 dark:bg-indigo-500/10 border-indigo-100 text-sm min-h-[90px] rounded-xl"
                 />
               ) : (
-                <div className="bg-muted text-muted-foreground p-4 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 min-h-[60px]">
+                <div className="bg-muted text-muted-foreground p-4 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 dark:text-slate-300 min-h-[60px]">
                   {curatorData.metricsNotes || <span className="italic text-slate-400">Belum ada penyesuaian nilai pilar.</span>}
                 </div>
               )}
@@ -484,7 +484,7 @@ export function UniversalAssessmentView({
                      {block?.metrics?.map((metric: any, mIdx: number) => (
                        <div key={mIdx}>
                          <p className="text-[10px] uppercase text-slate-400 font-bold mb-1">{metric?.label}</p>
-                         <div className="text-[13px] font-medium text-slate-700 dark:text-slate-300">
+                         <div className="text-[13px] font-medium text-slate-700 dark:text-slate-300 dark:text-slate-300">
                            <TextToBullets text={metric?.value} colorClass={textColor} />
                          </div>
                        </div>
@@ -502,10 +502,10 @@ export function UniversalAssessmentView({
                           value={curatorData.customBlockNotes?.[block.title] || ''}
                           onChange={(e) => curatorData.setCustomBlockNotes && curatorData.setCustomBlockNotes(block.title, e.target.value)}
                           placeholder={`Validasi aspek ${block.title}...`}
-                          className="bg-indigo-50 dark:bg-indigo-500/10/40 border-indigo-100 text-xs h-24 rounded-xl" 
+                          className="bg-indigo-50 dark:bg-indigo-500/10 border-indigo-100 text-xs h-24 rounded-xl" 
                         />
                       ) : (
-                        <div className="bg-muted text-muted-foreground p-3 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 min-h-[60px]">
+                        <div className="bg-muted text-muted-foreground p-3 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 dark:text-slate-300 min-h-[60px]">
                           {curatorData.customBlockNotes?.[block.title] || <span className="italic text-slate-400">Belum ditanggapi.</span>}
                         </div>
                       )}
@@ -529,35 +529,35 @@ export function UniversalAssessmentView({
       {isInternal && aiResult?.swotAnalysis && (
         <div className="w-full">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <div className="bg-emerald-50 dark:bg-emerald-500/10/80 p-6 rounded-3xl ring-1 ring-emerald-200 dark:ring-emerald-500/20/60 shadow-sm">
-                <h4 className="text-emerald-900 font-black flex items-center gap-2 mb-4">
+            <div className="bg-emerald-50 dark:bg-emerald-500/10 p-6 rounded-3xl ring-1 ring-emerald-200 dark:ring-emerald-500/20 shadow-sm">
+                <h4 className="text-emerald-900 dark:text-emerald-300 font-black flex items-center gap-2 mb-4">
                   <GlobalTargetIcon size={20} /> {isCounseling ? 'Potensi Diri Sisi Unggul' : 'Strengths'}
                 </h4>
-                <ul className="list-disc list-inside text-emerald-800/80 text-sm font-medium space-y-2.5">
+                <ul className="list-disc list-inside text-emerald-800 dark:text-emerald-300/80 text-sm font-medium space-y-2.5">
                   {aiResult.swotAnalysis.strengths?.map((s: string, i: number) => <li key={i}>{renderRichText(s)}</li>)}
                 </ul>
             </div>
-            <div className="bg-rose-50 dark:bg-rose-500/10/80 p-6 rounded-3xl ring-1 ring-rose-200 dark:ring-rose-500/20/60 shadow-sm">
-                <h4 className="text-rose-900 font-black flex items-center gap-2 mb-4">
+            <div className="bg-rose-50 dark:bg-rose-500/10 p-6 rounded-3xl ring-1 ring-rose-200 dark:ring-rose-500/20 shadow-sm">
+                <h4 className="text-rose-900 dark:text-rose-300 font-black flex items-center gap-2 mb-4">
                   <AILensIcon size={20} /> {isCounseling ? 'Titik Buta / Kendala Batin' : 'Weaknesses'}
                 </h4>
-                <ul className="list-disc list-inside text-rose-800/80 text-sm font-medium space-y-2.5">
+                <ul className="list-disc list-inside text-rose-800 dark:text-rose-300/80 text-sm font-medium space-y-2.5">
                   {aiResult.swotAnalysis.weaknesses?.map((w: string, i: number) => <li key={i}>{renderRichText(w)}</li>)}
                 </ul>
             </div>
-            <div className="bg-blue-50 dark:bg-blue-500/10/80 p-6 rounded-3xl ring-1 ring-blue-200 dark:ring-blue-500/20/60 shadow-sm">
-                <h4 className="text-blue-900 font-black flex items-center gap-2 mb-4">
+            <div className="bg-blue-50 dark:bg-blue-500/10 p-6 rounded-3xl ring-1 ring-blue-200 dark:ring-blue-500/20 shadow-sm">
+                <h4 className="text-blue-900 dark:text-blue-300 font-black flex items-center gap-2 mb-4">
                   <AiSparkIcon size={20} /> {isCounseling ? 'Peluang Ruang Terapi' : 'Opportunities'}
                 </h4>
-                <ul className="list-disc list-inside text-blue-800/80 text-sm font-medium space-y-2.5">
+                <ul className="list-disc list-inside text-blue-800 dark:text-blue-300/80 text-sm font-medium space-y-2.5">
                   {aiResult.swotAnalysis.opportunities?.map((o: string, i: number) => <li key={i}>{renderRichText(o)}</li>)}
                 </ul>
             </div>
-            <div className="bg-amber-50 dark:bg-amber-500/10/80 p-6 rounded-3xl ring-1 ring-amber-200 dark:ring-amber-500/20/60 shadow-sm">
-                <h4 className="text-amber-900 font-black flex items-center gap-2 mb-4">
+            <div className="bg-amber-50 dark:bg-amber-500/10 p-6 rounded-3xl ring-1 ring-amber-200 dark:ring-amber-500/20 shadow-sm">
+                <h4 className="text-amber-900 dark:text-amber-300 font-black flex items-center gap-2 mb-4">
                   <AdminShieldIcon size={20} /> {isCounseling ? 'Faktor Pemicu Stres (Triggers)' : 'Threats'}
                 </h4>
-                <ul className="list-disc list-inside text-amber-800/80 text-sm font-medium space-y-2.5">
+                <ul className="list-disc list-inside text-amber-800 dark:text-amber-300/80 text-sm font-medium space-y-2.5">
                   {aiResult.swotAnalysis.threats?.map((t: string, i: number) => <li key={i}>{renderRichText(t)}</li>)}
                 </ul>
             </div>
@@ -573,10 +573,10 @@ export function UniversalAssessmentView({
                   value={curatorData.swotNotes}
                   onChange={(e) => curatorData.setSwotNotes && curatorData.setSwotNotes(e.target.value)}
                   placeholder="Tambahkan variabel eksternal atau dinamika khusus..."
-                  className="bg-indigo-50 dark:bg-indigo-500/10/40 border-indigo-100 text-sm min-h-[80px] rounded-xl"
+                  className="bg-indigo-50 dark:bg-indigo-500/10 border-indigo-100 text-sm min-h-[80px] rounded-xl"
                 />
               ) : (
-                <div className="bg-muted text-muted-foreground p-3 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 min-h-[50px]">
+                <div className="bg-muted text-muted-foreground p-3 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 dark:text-slate-300 min-h-[50px]">
                   {curatorData.swotNotes || <span className="italic text-slate-400">Belum ada validasi matriks SWOT.</span>}
                 </div>
               )}
@@ -588,7 +588,7 @@ export function UniversalAssessmentView({
       
       {/* TETAP DITAMPILKAN: CRITICAL RISKS MAP */}
       {aiResult?.riskAssessment?.criticalRisks && aiResult.riskAssessment.criticalRisks.length > 0 && (
-        <div className="p-6 sm:p-8 rounded-3xl ring-1 ring-rose-200 dark:ring-rose-500/20 bg-rose-50 dark:bg-rose-500/10/30 w-full">
+        <div className="p-6 sm:p-8 rounded-3xl ring-1 ring-rose-200 dark:ring-rose-500/20 bg-rose-50 dark:bg-rose-500/10 w-full">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-rose-100 text-rose-600 dark:text-rose-400 rounded-xl flex items-center justify-center shrink-0">
               <AdminShieldIcon size={20} />
@@ -598,7 +598,7 @@ export function UniversalAssessmentView({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {aiResult.riskAssessment?.criticalRisks?.map((risk: string, idx: number) => (
               <div key={idx} className="flex flex-col ring-1 ring-border rounded-2xl overflow-hidden card-solid shadow-sm hover:shadow-md transition-all">
-                <div className="bg-rose-50 dark:bg-rose-500/10/50 p-4 border-b border-rose-100/50">
+                <div className="bg-rose-50 dark:bg-rose-500/10 p-4 border-b border-rose-100/50">
                   <h4 className="text-[10px] font-black uppercase tracking-widest text-rose-600 dark:text-rose-400 mb-1">Identifikasi Hambatan Kritis</h4>
                   <div className="text-sm font-semibold text-foreground">
                     <TextToBullets text={risk} colorClass="text-rose-400" />
@@ -639,7 +639,7 @@ export function UniversalAssessmentView({
         )}
         
         <div className={`${(!aiResult?.recommendations || aiResult.recommendations.length === 0) ? 'lg:col-span-3' : 'lg:col-span-1'} flex flex-col gap-6`}>
-          <div className={`p-6 sm:p-8 rounded-3xl text-center ring-1 shadow-sm ${isHighTier ? 'bg-emerald-50 dark:bg-emerald-500/10 ring-emerald-200 dark:ring-emerald-500/20/60 text-emerald-900' : 'bg-indigo-50 dark:bg-indigo-500/10 ring-indigo-200 dark:ring-indigo-500/20/60 text-indigo-900'}`}>
+          <div className={`p-6 sm:p-8 rounded-3xl text-center ring-1 shadow-sm ${isHighTier ? 'bg-emerald-50 dark:bg-emerald-500/10 ring-emerald-200 dark:ring-emerald-500/20 text-emerald-900 dark:text-emerald-300' : 'bg-indigo-50 dark:bg-indigo-500/10 ring-indigo-200 dark:ring-indigo-500/20 text-indigo-900 dark:text-indigo-300'}`}>
             <div className="flex justify-center mb-3">
               <InfinityWorkflowIcon size={32} className={isHighTier ? 'text-emerald-500' : 'text-indigo-500'} />
             </div>
@@ -847,8 +847,8 @@ export function UniversalAssessmentView({
                 <div key={idx} className="relative pl-8 sm:pl-10">
                   <div className={`absolute -left-[11px] top-1.5 w-5 h-5 rounded-full ring-4 ${markerColor}`} />
                   <div className="bg-muted text-muted-foreground p-5 rounded-2xl ring-1 ring-border hover:card-solid hover:shadow-lg hover:shadow-indigo-500/5 transition-all">
-                    <span className="inline-block text-[11px] font-black uppercase tracking-widest px-3 py-1.5 bg-indigo-100 text-indigo-700 dark:text-indigo-300 rounded-lg mb-3">{step?.timeframe || "Timeframe"}</span>
-                    <div className="text-sm text-slate-700 dark:text-slate-300 font-bold leading-relaxed">
+                    <span className="inline-block text-[11px] font-black uppercase tracking-widest px-3 py-1.5 bg-indigo-100 text-indigo-700 dark:text-indigo-300 dark:text-indigo-300 rounded-lg mb-3">{step?.timeframe || "Timeframe"}</span>
+                    <div className="text-sm text-slate-700 dark:text-slate-300 dark:text-slate-300 font-bold leading-relaxed">
                       <TextToBullets text={step?.task} colorClass="text-indigo-400" />
                     </div>
                   </div>
@@ -891,17 +891,17 @@ export function UniversalAssessmentView({
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           {/* Desktop Tabs */}
           <TabsList className="hidden md:flex bg-secondary text-secondary-foreground/50 p-1.5 rounded-2xl h-auto gap-2 border border-border/50 w-full justify-center">
-            <TabsTrigger value="overview" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:card-solid data-[state=active]:text-indigo-700 dark:text-indigo-300 data-[state=active]:shadow-sm transition-all">1. Ikhtisar Eksekutif</TabsTrigger>
-            <TabsTrigger value="actiontimeline" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:card-solid data-[state=active]:text-indigo-700 dark:text-indigo-300 data-[state=active]:shadow-sm transition-all">Linimasa Eksekusi</TabsTrigger>
+            <TabsTrigger value="overview" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:card-solid data-[state=active]:text-indigo-700 dark:text-indigo-300 dark:text-indigo-300 data-[state=active]:shadow-sm transition-all">1. Ikhtisar Eksekutif</TabsTrigger>
+            <TabsTrigger value="actiontimeline" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:card-solid data-[state=active]:text-indigo-700 dark:text-indigo-300 dark:text-indigo-300 data-[state=active]:shadow-sm transition-all">Linimasa Eksekusi</TabsTrigger>
             {assessmentId && isPublic && (
-              <TabsTrigger value="actionplan" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:card-solid data-[state=active]:text-indigo-700 dark:text-indigo-300 data-[state=active]:shadow-sm transition-all data-[state=inactive]:text-indigo-600 dark:text-indigo-400 data-[state=inactive]:bg-indigo-50 dark:bg-indigo-500/10/50 border border-indigo-100/50">10 Langkah Strategis</TabsTrigger>
+              <TabsTrigger value="actionplan" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:card-solid data-[state=active]:text-indigo-700 dark:text-indigo-300 dark:text-indigo-300 data-[state=active]:shadow-sm transition-all data-[state=inactive]:text-indigo-600 dark:text-indigo-400 data-[state=inactive]:bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100/50">10 Langkah Strategis</TabsTrigger>
             )}
             {isInternal && aiResult?.customAnalysisBlocks?.length > 0 && (
-               <TabsTrigger value="deepdive" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:card-solid data-[state=active]:text-indigo-700 dark:text-indigo-300 data-[state=active]:shadow-sm transition-all">Analisis Tematik</TabsTrigger>
+               <TabsTrigger value="deepdive" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:card-solid data-[state=active]:text-indigo-700 dark:text-indigo-300 dark:text-indigo-300 data-[state=active]:shadow-sm transition-all">Analisis Tematik</TabsTrigger>
             )}
-            <TabsTrigger value="strategy" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:card-solid data-[state=active]:text-indigo-700 dark:text-indigo-300 data-[state=active]:shadow-sm transition-all">Risiko & Strategi</TabsTrigger>
+            <TabsTrigger value="strategy" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:card-solid data-[state=active]:text-indigo-700 dark:text-indigo-300 dark:text-indigo-300 data-[state=active]:shadow-sm transition-all">Risiko & Strategi</TabsTrigger>
             {isInternal && (
-              <TabsTrigger value="validation" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:card-solid data-[state=active]:text-indigo-700 dark:text-indigo-300 data-[state=active]:shadow-sm transition-all">Bedah & Validasi</TabsTrigger>
+              <TabsTrigger value="validation" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:card-solid data-[state=active]:text-indigo-700 dark:text-indigo-300 dark:text-indigo-300 data-[state=active]:shadow-sm transition-all">Bedah & Validasi</TabsTrigger>
             )}
           </TabsList>
 
@@ -909,7 +909,7 @@ export function UniversalAssessmentView({
           <div className="md:hidden flex items-center card-solid border border-border/80 shadow-sm rounded-2xl p-1.5 pr-4">
             <Sheet>
               <SheetTrigger asChild>
-                <button className="flex items-center justify-center w-11 h-11 bg-secondary text-secondary-foreground/80 text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-200 transition-colors shrink-0">
+                <button className="flex items-center justify-center w-11 h-11 bg-secondary text-secondary-foreground/80 text-slate-700 dark:text-slate-300 dark:text-slate-300 rounded-xl hover:bg-slate-200 transition-colors shrink-0">
                   <Menu size={20} />
                 </button>
               </SheetTrigger>
@@ -926,7 +926,7 @@ export function UniversalAssessmentView({
                   </SheetClose>
                   {assessmentId && isPublic && (
                     <SheetClose asChild>
-                      <button onClick={() => setActiveTab('actionplan')} className={`flex items-center justify-between px-4 py-3.5 rounded-xl text-sm font-bold transition-all ring-1 ring-indigo-500/30 ${activeTab === 'actionplan' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-500/20'}`}>
+                      <button onClick={() => setActiveTab('actionplan')} className={`flex items-center justify-between px-4 py-3.5 rounded-xl text-sm font-bold transition-all ring-1 ring-indigo-500/30 ${activeTab === 'actionplan' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200 dark:shadow-[0_0_15px_rgba(0,0,0,0.5)]' : 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-500/20'}`}>
                         <span>10 Langkah Strategis</span>
                         <AiSparkIcon size={16} className={activeTab === 'actionplan' ? 'text-white/80' : 'text-indigo-500'} />
                       </button>

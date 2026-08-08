@@ -144,7 +144,7 @@ export function PersonalActionPlanCopilot({
                 <div className="bg-muted text-muted-foreground p-4 border-t border-border space-y-4">
                   {/* Tips & Tricks */}
                   {task.contextualTip && (
-                    <div className="flex items-start gap-2 text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/10/50 p-3 rounded-xl border border-amber-100/50">
+                    <div className="flex items-start gap-2 text-amber-700 dark:text-amber-300 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/10 p-3 rounded-xl border border-amber-100/50">
                       <Lightbulb size={16} className="shrink-0 mt-0.5 text-amber-500" />
                       <p className="text-xs font-medium leading-relaxed">{task.contextualTip}</p>
                     </div>

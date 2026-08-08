@@ -256,8 +256,8 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
                 className="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 p-6 sm:p-8 rounded-2xl sm:rounded-[2rem] text-center mb-6 sm:mb-8 shadow-sm"
             >
                 <Trophy className="w-10 h-10 sm:w-12 sm:h-12 text-emerald-500 mx-auto mb-3 sm:mb-4" />
-                <h4 className="text-emerald-900 font-black text-lg sm:text-xl mb-2">Siklus Eksekusi Selesai!</h4>
-                <p className="text-emerald-700 dark:text-emerald-300 text-xs sm:text-sm font-medium mb-5 sm:mb-6">Anda telah menyelesaikan 10 langkah krusial awal. Pertahankan ritme Anda.</p>
+                <h4 className="text-emerald-900 dark:text-emerald-300 font-black text-lg sm:text-xl mb-2">Siklus Eksekusi Selesai!</h4>
+                <p className="text-emerald-700 dark:text-emerald-300 dark:text-emerald-300 text-xs sm:text-sm font-medium mb-5 sm:mb-6">Anda telah menyelesaikan 10 langkah krusial awal. Pertahankan ritme Anda.</p>
                 <Button className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl h-10 sm:h-12 shadow-md px-4 sm:px-6 text-sm">
                     <Sparkles className="w-4 h-4 mr-2" /> Inisiasi Fase Berikutnya
                 </Button>
@@ -329,11 +329,11 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
                       className="mt-6 pt-6 border-t border-border"
                     >
                       {item.contextualTip && (
-                        <div className="bg-indigo-50 dark:bg-indigo-500/10/50 p-5 rounded-2xl border border-indigo-100/50 flex gap-3 mb-6 shadow-sm">
+                        <div className="bg-indigo-50 dark:bg-indigo-500/10 p-5 rounded-2xl border border-indigo-100/50 flex gap-3 mb-6 shadow-sm">
                           <Sparkles className="w-5 h-5 text-indigo-500 shrink-0 mt-0.5" />
                           <div>
                             <p className="text-[10px] font-black text-indigo-500 uppercase tracking-widest mb-1.5">Panduan Eksekusi</p>
-                            <p className="text-sm font-bold text-slate-700 dark:text-slate-300 leading-relaxed">{item.contextualTip}</p>
+                            <p className="text-sm font-bold text-slate-700 dark:text-slate-300 dark:text-slate-300 leading-relaxed">{item.contextualTip}</p>
                           </div>
                         </div>
                       )}
@@ -355,7 +355,7 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
                                         <div className="w-5 h-5 rounded-full border-2 border-border group-hover:border-indigo-400 transition-colors" />
                                       )}
                                     </button>
-                                    <span className={`text-sm font-bold leading-snug ${sub.isCompleted ? 'text-slate-400 line-through decoration-slate-300' : 'text-slate-700 dark:text-slate-300'}`}>
+                                    <span className={`text-sm font-bold leading-snug ${sub.isCompleted ? 'text-slate-400 line-through decoration-slate-300' : 'text-slate-700 dark:text-slate-300 dark:text-slate-300'}`}>
                                       {sub.text}
                                     </span>
                                 </div>
@@ -365,7 +365,7 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
                       )}
 
                       {item.youtubeRecommendations && item.youtubeRecommendations.length > 0 && (
-                        <div className="bg-rose-50 dark:bg-rose-500/10/40 p-5 rounded-2xl border border-rose-100/70 mb-6">
+                        <div className="bg-rose-50 dark:bg-rose-500/10 p-5 rounded-2xl border border-rose-100/70 mb-6">
                           <p className="text-[10px] font-black text-rose-500 uppercase tracking-widest mb-3">Rekomendasi Konten YouTube</p>
                           <div className="space-y-2">
                             {item.youtubeRecommendations.map((rec, recIdx) => (
@@ -389,7 +389,7 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
                         <Button 
                           onClick={(e) => handleAddToCalendar(item.task, item.description, item.timeframe, item.contextualTip, item.subTasks, e)}
                           variant="outline" 
-                          className="flex-1 card-solid hover:bg-emerald-50 dark:bg-emerald-500/10 border-border hover:border-emerald-200 dark:border-emerald-500/20 text-slate-700 dark:text-slate-300 hover:text-emerald-700 dark:text-emerald-300 h-12 rounded-xl shadow-sm"
+                          className="flex-1 card-solid hover:bg-emerald-50 dark:bg-emerald-500/10 border-border hover:border-emerald-200 dark:border-emerald-500/20 text-slate-700 dark:text-slate-300 dark:text-slate-300 hover:text-emerald-700 dark:text-emerald-300 dark:text-emerald-300 h-12 rounded-xl shadow-sm"
                         >
                           <CalendarPlus size={16} className="mr-2 text-emerald-600 dark:text-emerald-400" /> Masukkan ke Kalender
                         </Button>
@@ -398,7 +398,7 @@ export function ActionPlanBuilder({ assessmentId, initialData, aiResult }: Actio
                           <Button 
                             onClick={(e) => openYoutubeSearch(item.searchKeyword!, e)}
                             variant="outline" 
-                            className="flex-1 card-solid hover:bg-rose-50 dark:bg-rose-500/10 border-border hover:border-rose-200 dark:border-rose-500/20 text-slate-700 dark:text-slate-300 hover:text-rose-600 dark:text-rose-400 h-12 rounded-xl shadow-sm"
+                            className="flex-1 card-solid hover:bg-rose-50 dark:bg-rose-500/10 border-border hover:border-rose-200 dark:border-rose-500/20 text-slate-700 dark:text-slate-300 dark:text-slate-300 hover:text-rose-600 dark:text-rose-400 h-12 rounded-xl shadow-sm"
                           >
                             <PlayCircle size={16} className="mr-2 text-rose-500" /> Cari Referensi Visual
                           </Button>
