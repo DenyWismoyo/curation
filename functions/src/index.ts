@@ -19,8 +19,10 @@ export { generateScenePrompt, generateFullStoryboard } from './domains/storyboar
 export { 
   saveCryptoQuizResult, 
   enrichCryptoModuleMetadata, 
-  generateCryptoModuleAssessment 
+  generateCryptoModuleAssessment,
+  refactorCryptoModuleWithStudyData
 } from './domains/crypto/agents/cryptoAcademyAgent'
+export { cryptoAcademyOrchestrator } from './domains/crypto/pipelines/orchestrator'
 export { generateCryptoCertificate } from './domains/crypto/agents/cryptoCertificateAgent'
 
 export {

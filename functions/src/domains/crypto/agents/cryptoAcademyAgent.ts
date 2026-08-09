@@ -3,9 +3,11 @@ import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { getFirestore } from 'firebase-admin/firestore';
 import { defineSecret } from "firebase-functions/params";
 import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
+import OpenAI from "openai";
 
 const getDb = () => getFirestore(admin.app(), "curation");
 const geminiApiKeySecret = defineSecret("GEMINI_API_KEY");
+const deepseekApiKeySecret = defineSecret("DEEPSEEK_API_KEY");
 
 // Definisikan XP calculation sesuai rencana
 const calculateXP = (
@@ -235,6 +237,37 @@ export const saveCryptoQuizResult = onCall({
   };
 });
 
+export const refactorCryptoModuleWithStudyData = onCall({
+  region: "asia-southeast2",
+  memory: "256MiB",
+  cors: true,
+}, async (request) => {
+  if (!request.auth) {
+    throw new HttpsError("unauthenticated", "Anda harus login.");
+  }
+  
+  const { moduleId } = request.data || {};
+  if (!moduleId) {
+    throw new HttpsError("invalid-argument", "Data moduleId harus disertakan.");
+  }
+
+  const db = getDb();
+  const moduleRef = db.collection("cryptoEducation").doc(moduleId);
+  const moduleSnap = await moduleRef.get();
+  
+  if (!moduleSnap.exists) {
+    throw new HttpsError("not-found", "Modul tidak ditemukan.");
+  }
+  
+  // Ubah status dokumen agar trigger pipeline berjalan
+  await moduleRef.update({
+    refactorStatus: "INDEXING_RESEARCH",
+    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+  });
+
+  return { success: true, async: true, message: "Pipeline Refactoring Asinkron Dimulai" };
+});
+
 export const enrichCryptoModuleMetadata = onCall({
   region: "asia-southeast2",
   memory: "256MiB",
@@ -357,6 +390,16 @@ export const generateCryptoModuleAssessment = onCall({
   
   const moduleData = moduleSnap.data()!;
   const content = moduleData.content || "";
+  const studyProjectId = moduleData.studyProjectId;
+  
+  let studyContext = "";
+  if (studyProjectId) {
+     const sourcesSnap = await db.collection("study_projects").doc(studyProjectId).collection("sources").limit(5).get();
+     const summaries = sourcesSnap.docs.map(d => d.data().summaryHint || d.data().extractedText?.substring(0, 500) || "").filter(Boolean);
+     if (summaries.length > 0) {
+        studyContext = summaries.join("\n\n");
+     }
+  }
   
   if (content.length < 50) {
     throw new HttpsError("failed-precondition", "Konten terlalu pendek untuk dianalisis.");
@@ -368,13 +411,15 @@ export const generateCryptoModuleAssessment = onCall({
 
   const prompt = `Anda adalah seorang instruktur/assessor ahli dalam materi kripto.
 Tugas Anda adalah membuat soal-soal kuis pilihan ganda yang interaktif dan berkualitas tinggi berdasarkan KONTEN MODUL yang diberikan.
-Soal harus menguji pemahaman konsep, bukan sekadar hafalan. 
-Berikan penjelasan (explanation) singkat mengapa jawaban tersebut benar untuk fitur "review".
+Soal harus menguji pemahaman konsep secara mendalam, bukan sekadar hafalan. 
+Berikan penjelasan (explanation) logis mengapa jawaban tersebut benar untuk fitur "review".
 
 KONTEN MODUL:
 """
 ${content.substring(0, 30000)}
 """
+
+${studyContext ? `FAKTA TAMBAHAN DARI SUMBER KAJIAN (Sebagai referensi pembuatan soal yang lebih berbobot):\n"""\n${studyContext.substring(0, 10000)}\n"""` : ''}
 
 INSTRUKSI:
 1. Buat persis 5 buah pertanyaan.

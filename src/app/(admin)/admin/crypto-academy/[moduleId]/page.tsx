@@ -2,9 +2,12 @@
 
 import React, { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, Save, Loader2 } from 'lucide-react'
+import { ArrowLeft, Save, Loader2, Sparkles, BrainCircuit } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { MarkdownContent } from '@/components/domain/public/MarkdownContent'
+import { functions, db } from '@/lib/firebase/firebase'
+import { httpsCallable } from 'firebase/functions'
+import { doc, onSnapshot } from 'firebase/firestore'
 
 export default function EditCryptoModulePage() {
   const params = useParams();
@@ -14,6 +17,11 @@ export default function EditCryptoModulePage() {
   
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
+  const [refactoring, setRefactoring] = useState(false);
+  const [refactorStatus, setRefactorStatus] = useState<string>("IDLE");
+  const [generatingQuiz, setGeneratingQuiz] = useState(false);
+  const [refactoredData, setRefactoredData] = useState<{title?: string, description?: string, content: string} | null>(null);
+  const [dismissedContent, setDismissedContent] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: '',
     level: 'Level 1: Pemula',
@@ -56,7 +64,49 @@ export default function EditCryptoModulePage() {
     };
     
     fetchModule();
+
+    const unsub = onSnapshot(doc(db, "cryptoEducation", moduleId), (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        if (data.refactorStatus) {
+          setRefactorStatus(data.refactorStatus);
+          
+          if (data.refactorStatus === "COMPLETED" && data.refactoredContent) {
+            setRefactoring(false);
+            setRefactoredData(prev => {
+              return prev; // Handled by separate useEffect to avoid closure staleness
+            });
+          } else if (data.refactorStatus === "FAILED") {
+            alert("Gagal melakukan refactor: " + data.refactorError);
+            setRefactoring(false);
+          } else if (data.refactorStatus !== "IDLE" && data.refactorStatus !== "COMPLETED") {
+            setRefactoring(true);
+          }
+        }
+      }
+    });
+
+    return () => unsub();
   }, [moduleId, isNew]);
+
+  // Separate effect to handle the completed content safely with latest formData
+  useEffect(() => {
+    if (refactorStatus === "COMPLETED" && !refactoring) {
+      const unsub = onSnapshot(doc(db, "cryptoEducation", moduleId), (docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          if (data.refactoredContent && data.refactoredContent !== formData.content && data.refactoredContent !== dismissedContent) {
+             setRefactoredData({
+               title: data.refactoredTitle,
+               description: data.refactoredDescription,
+               content: data.refactoredContent
+             });
+          }
+        }
+      });
+      return () => unsub();
+    }
+  }, [refactorStatus, refactoring, formData.content, dismissedContent, moduleId]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -101,6 +151,72 @@ export default function EditCryptoModulePage() {
       alert('Terjadi kesalahan saat menyimpan.');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleRefactor = async () => {
+    if (!moduleId || isNew) return;
+    setRefactoring(true);
+    setRefactorStatus("STARTING");
+    try {
+      const refactorFn = httpsCallable<{ moduleId: string }, { success: boolean; message?: string }>(functions, 'refactorCryptoModuleWithStudyData');
+      await refactorFn({ moduleId });
+      // The rest is handled by onSnapshot
+    } catch (error) {
+      console.error('Error refactoring:', error);
+      alert('Gagal memulai pipeline refactor AI.');
+      setRefactoring(false);
+      setRefactorStatus("IDLE");
+    }
+  };
+
+  const applyRefactoredContent = () => {
+    if (refactoredData) {
+      setFormData(prev => ({ 
+        ...prev, 
+        content: refactoredData.content,
+        ...(refactoredData.title ? { title: refactoredData.title } : {}),
+        ...(refactoredData.description ? { description: refactoredData.description } : {})
+      }));
+      setRefactoredData(null);
+    }
+  };
+
+  const dismissRefactoredContent = () => {
+    if (refactoredData) {
+      setDismissedContent(refactoredData.content);
+      setRefactoredData(null);
+    }
+  };
+
+  const getRefactorStatusText = () => {
+    switch (refactorStatus) {
+      case 'INDEXING_RESEARCH': return 'Agent 1: Mengumpulkan Fakta...';
+      case 'WRITING': return 'Agent 2: Menulis Draft...';
+      case 'EDITING': return 'Agent 3: Fact-Checking...';
+      case 'STARTING': return 'Memulai Pipeline...';
+      default: return 'Sempurnakan dengan AI';
+    }
+  };
+
+  const handleGenerateQuiz = async () => {
+    if (!moduleId || isNew) {
+      alert("Simpan modul terlebih dahulu sebelum generate kuis.");
+      return;
+    }
+    setGeneratingQuiz(true);
+    try {
+      const genQuizFn = httpsCallable<{ moduleId: string }, { success: boolean; templateId: string }>(functions, 'generateCryptoModuleAssessment');
+      const res = await genQuizFn({ moduleId });
+      if (res.data?.success) {
+        setFormData(prev => ({ ...prev, assessmentTemplateId: res.data.templateId }));
+        alert('Berhasil generate kuis dengan AI!');
+      }
+    } catch (error) {
+      console.error('Error generating quiz:', error);
+      alert('Gagal generate kuis.');
+    } finally {
+      setGeneratingQuiz(false);
     }
   };
 
@@ -166,24 +282,67 @@ export default function EditCryptoModulePage() {
                 />
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <label className="text-sm font-bold text-slate-700">Konten Modul (Markdown)</label>
-                  <button className="text-xs text-indigo-600 dark:text-indigo-400 font-bold hover:underline">
-                    Gunakan AI untuk Menulis
+                  <button 
+                    onClick={handleRefactor}
+                    disabled={refactoring || isNew}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-indigo-50 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300 rounded-lg hover:bg-indigo-100 dark:hover:bg-indigo-500/30 transition-colors disabled:opacity-50 border border-indigo-200 dark:border-indigo-500/30 shadow-sm"
+                  >
+                    {refactoring ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
+                    {refactoring ? getRefactorStatusText() : 'Sempurnakan dengan AI'}
                   </button>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                
+                {refactoredData && (
+                  <div className="p-4 rounded-xl border border-indigo-200 bg-indigo-50/50 dark:bg-indigo-900/10 dark:border-indigo-800 space-y-4 mb-4 shadow-inner">
+                    <div className="flex justify-between items-center pb-2 border-b border-indigo-200/50 dark:border-indigo-800/50">
+                       <span className="text-sm font-black flex items-center gap-2 text-indigo-700 dark:text-indigo-300">
+                         <Sparkles className="w-4 h-4" /> Hasil Refactor AI (Tersedia)
+                       </span>
+                       <div className="flex gap-2">
+                         <button onClick={dismissRefactoredContent} className="px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 rounded-lg transition-colors">Batal</button>
+                         <button onClick={applyRefactoredContent} className="px-3 py-1.5 text-xs font-bold bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-sm transition-colors">Terapkan Semua Hasil</button>
+                       </div>
+                    </div>
+                    
+                    {refactoredData.title && (
+                      <div className="space-y-1">
+                        <p className="text-xs font-bold text-slate-500 uppercase">Saran Judul</p>
+                        <p className="text-sm font-semibold text-indigo-900 dark:text-indigo-100">{refactoredData.title}</p>
+                      </div>
+                    )}
+                    
+                    {refactoredData.description && (
+                      <div className="space-y-1">
+                        <p className="text-xs font-bold text-slate-500 uppercase">Saran Deskripsi</p>
+                        <p className="text-sm text-slate-700 dark:text-slate-300 italic">{refactoredData.description}</p>
+                      </div>
+                    )}
+
+                    <div className="space-y-1">
+                      <p className="text-xs font-bold text-slate-500 uppercase">Saran Konten</p>
+                      <div className="max-h-[300px] overflow-y-auto text-sm text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 p-6 rounded-lg border border-slate-200 dark:border-slate-800 mt-2">
+                        <div className="prose prose-sm dark:prose-invert max-w-none prose-headings:text-indigo-900 dark:prose-headings:text-indigo-100 prose-a:text-indigo-600">
+                          <MarkdownContent content={refactoredData.content} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                <div className="flex flex-col gap-6">
                   <textarea 
                     name="content"
                     value={formData.content}
                     onChange={handleChange}
-                    rows={25}
-                    className="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none font-mono text-sm"
+                    rows={20}
+                    className="w-full px-4 py-4 rounded-xl border border-border focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none font-mono text-sm leading-relaxed"
                     placeholder="Tulis konten dengan Markdown..."
                   />
-                  <div className="w-full h-full min-h-[500px] max-h-[600px] overflow-y-auto px-6 py-4 rounded-xl border border-border bg-slate-900 text-slate-200">
-                    <div className="prose prose-invert prose-sm max-w-none prose-headings:text-white prose-a:text-indigo-400">
+                  <div className="w-full min-h-[400px] max-h-[600px] overflow-y-auto px-8 py-6 rounded-xl border border-border bg-slate-900 text-slate-200 shadow-inner">
+                    <div className="prose prose-invert prose-sm md:prose-base max-w-none prose-headings:text-white prose-a:text-indigo-400">
                       <MarkdownContent content={formData.content || '*Preview akan muncul di sini*'} />
                     </div>
                   </div>
@@ -281,9 +440,20 @@ export default function EditCryptoModulePage() {
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg shadow-slate-200/40 rounded-2xl">
+          <Card className="border-0 shadow-lg shadow-slate-200/40 rounded-2xl relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500"></div>
             <CardContent className="p-6 space-y-4">
-              <h3 className="font-bold text-foreground border-b border-border pb-2">Pengaturan Kuis</h3>
+              <div className="flex justify-between items-center border-b border-border pb-2">
+                <h3 className="font-bold text-foreground">Pengaturan Kuis</h3>
+                <button
+                  onClick={handleGenerateQuiz}
+                  disabled={generatingQuiz || isNew}
+                  className="flex items-center gap-1.5 text-xs font-bold bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-3 py-1.5 rounded-lg hover:from-indigo-700 hover:to-violet-700 transition-all shadow-md disabled:opacity-50"
+                >
+                  {generatingQuiz ? <Loader2 className="w-3 h-3 animate-spin" /> : <BrainCircuit className="w-3 h-3" />}
+                  Generate Kuis
+                </button>
+              </div>
               
               <div className="space-y-2">
                 <label className="text-xs font-bold text-muted-foreground uppercase">ID Template Assessment</label>
@@ -295,8 +465,8 @@ export default function EditCryptoModulePage() {
                   placeholder="Opsional, masukkan ID template kuis"
                   className="w-full px-3 py-2 rounded-xl border border-border text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none"
                 />
-                <p className="text-[11px] text-slate-400">
-                  Jika diisi, fitur "Mulai Kuis" akan aktif di akhir modul.
+                <p className="text-[11px] text-slate-500 leading-relaxed">
+                  Jika diisi, fitur "Mulai Kuis" akan aktif di akhir modul. Klik tombol <strong>Generate Kuis</strong> di atas untuk membuat soal mendalam menggunakan AI berdasarkan materi dan data kajian (study).
                 </p>
               </div>
             </CardContent>
