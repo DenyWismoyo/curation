@@ -56,8 +56,8 @@ export function MarkdownContent({
     <div
       className={
         isArticle
-          ? `space-y-6 text-[16px] sm:text-[18px] text-slate-700 leading-[1.85] font-medium ${className}`
-          : `space-y-5 text-[16px] text-slate-700 leading-[1.8] font-medium ${className}`
+          ? `space-y-6 text-[16px] sm:text-[18px] text-foreground leading-[1.85] font-medium ${className}`
+          : `space-y-5 text-[16px] text-foreground leading-[1.8] font-medium ${className}`
       }
     >
       {blocks.map((block, idx) => {
@@ -144,7 +144,7 @@ export function MarkdownContent({
           }
 
           return (
-            <blockquote key={idx} className="border-l-4 border-indigo-500 pl-4 py-1 italic text-muted-foreground bg-muted/30 rounded-r-lg my-6">
+            <blockquote key={idx} className="border-l-4 border-primary pl-4 py-1 italic text-muted-foreground bg-muted/50 rounded-r-lg my-6">
               {parseInlineText(joined)}
             </blockquote>
           );
@@ -157,7 +157,7 @@ export function MarkdownContent({
           return (
             <ol
               key={idx}
-              className="space-y-2 pl-5 list-decimal marker:font-black marker:text-indigo-600 dark:text-indigo-400"
+              className="space-y-2 pl-5 list-decimal marker:font-black marker:text-primary"
             >
               {items.map((item, itemIdx) => (
                 <li key={itemIdx}>
@@ -180,8 +180,8 @@ export function MarkdownContent({
               key={idx}
               className={
                 isArticle
-                  ? 'space-y-3 sm:space-y-4 my-8 bg-muted text-muted-foreground/70 p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-border'
-                  : 'space-y-2 bg-muted text-muted-foreground p-5 rounded-2xl border border-border'
+                  ? 'space-y-3 sm:space-y-4 my-8 bg-muted/50 text-muted-foreground p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-border'
+                  : 'space-y-2 bg-muted/50 text-muted-foreground p-5 rounded-2xl border border-border'
               }
             >
               {items.map((item, itemIdx) => (
@@ -196,8 +196,8 @@ export function MarkdownContent({
                   <span
                     className={
                       isArticle
-                        ? 'text-indigo-500 mt-[7px] sm:mt-[9px] shrink-0 text-[10px] sm:text-[12px]'
-                        : 'text-indigo-500 mt-[6px] text-[10px]'
+                        ? 'text-primary mt-[7px] sm:mt-[9px] shrink-0 text-[10px] sm:text-[12px]'
+                        : 'text-primary mt-[6px] text-[10px]'
                     }
                   >
                     ●

@@ -7,7 +7,7 @@ import OpenAI from "openai";
 const deepseekApiKeySecret = defineSecret("DEEPSEEK_API_KEY");
 const getDb = () => getFirestore(admin.app(), "curation");
 
-export const cryptoAcademyOrchestrator = onDocumentUpdated({
+export const runCryptoAcademyPipeline = onDocumentUpdated({
   document: "cryptoEducation/{moduleId}",
   region: "asia-southeast2",
   memory: "512MiB",

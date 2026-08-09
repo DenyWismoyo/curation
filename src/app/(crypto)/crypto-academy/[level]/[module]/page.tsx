@@ -163,7 +163,7 @@ export default function CryptoAcademyModulePage() {
   if (loading) {
     return (
       <div className="min-h-[60vh] flex flex-col justify-center items-center text-muted-foreground">
-        <Loader2 className="w-8 h-8 animate-spin mb-4 text-purple-500" />
+        <Loader2 className="w-8 h-8 animate-spin mb-4 text-primary" />
         <p className="font-bold text-xs uppercase tracking-widest text-muted-foreground">
           Memuat Modul...
         </p>
@@ -207,14 +207,16 @@ export default function CryptoAcademyModulePage() {
 
       <div className="flex flex-col lg:flex-row gap-12">
         {/* Konten Utama */}
-        <div id="module-content" className="flex-1 prose prose-invert prose-lg max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-a:text-purple-400 prose-strong:text-slate-100">
-          <MarkdownContent content={moduleData.content} />
+        <div id="module-content" className="flex-1 min-w-0 break-words prose dark:prose-invert prose-lg max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-a:text-indigo-600 dark:prose-a:text-indigo-400 prose-strong:text-foreground">
+          <MarkdownContent content={moduleData.content} variant="article" />
         </div>
         
         {/* Sidebar Table of Contents & Learning Path */}
-        <div className="hidden lg:block w-64 shrink-0 space-y-6">
-          <CryptoTableOfContents />
-          <CryptoLearningPath currentModuleId={moduleId} level={levelName} />
+        <div className="hidden lg:block w-64 shrink-0">
+          <div className="sticky top-24 space-y-8 max-h-[calc(100vh-8rem)] overflow-y-auto pr-2 pb-4 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700">
+            <CryptoTableOfContents />
+            <CryptoLearningPath currentModuleId={moduleId} level={levelName} />
+          </div>
         </div>
       </div>
 
@@ -230,7 +232,7 @@ export default function CryptoAcademyModulePage() {
                 <button
                   onClick={handleTakeQuiz}
                   disabled={marking}
-                  className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-indigo-500 text-foreground font-bold px-8 py-3 rounded-full hover:from-purple-400 hover:to-indigo-400 transition-all shadow-lg hover:shadow-purple-500/25 disabled:opacity-50"
+                  className="flex items-center gap-2 bg-primary text-primary-foreground font-bold px-8 py-3 rounded-full hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/25 disabled:opacity-50"
                 >
                   {marking ? <Loader2 className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5" />}
                   {completed ? 'Ulangi Kuis' : 'Mulai Kuis Evaluasi'}

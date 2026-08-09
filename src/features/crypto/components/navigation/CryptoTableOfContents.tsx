@@ -51,7 +51,7 @@ export function CryptoTableOfContents() {
   if (headings.length === 0) return null;
 
   return (
-    <div className="sticky top-24">
+    <div className="relative">
       <h4 className="text-sm font-semibold mb-4 text-muted-foreground uppercase tracking-wider">
         Daftar Isi
       </h4>

@@ -22,7 +22,7 @@ export {
   generateCryptoModuleAssessment,
   refactorCryptoModuleWithStudyData
 } from './domains/crypto/agents/cryptoAcademyAgent'
-export { cryptoAcademyOrchestrator } from './domains/crypto/pipelines/orchestrator'
+export { runCryptoAcademyPipeline } from './domains/crypto/pipelines/orchestrator'
 export { generateCryptoCertificate } from './domains/crypto/agents/cryptoCertificateAgent'
 
 export {

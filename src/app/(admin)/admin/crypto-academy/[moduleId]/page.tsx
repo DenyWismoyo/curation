@@ -256,35 +256,35 @@ export default function EditCryptoModulePage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          <Card className="border-0 shadow-lg shadow-slate-200/40 rounded-2xl">
+          <Card className="border border-border shadow-lg shadow-slate-200/40 dark:shadow-none rounded-2xl bg-card">
             <CardContent className="p-6 space-y-6">
               <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-700">Judul Modul</label>
+                <label className="text-sm font-bold text-foreground">Judul Modul</label>
                 <input 
                   type="text" 
                   name="title"
                   value={formData.title}
                   onChange={handleChange}
-                  className="w-full px-4 py-2.5 rounded-xl border border-border focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl border border-input bg-background text-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors"
                   placeholder="Contoh: Pengenalan Blockchain"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-700">Deskripsi Singkat (Snippet)</label>
+                <label className="text-sm font-bold text-foreground">Deskripsi Singkat (Snippet)</label>
                 <textarea 
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
                   rows={3}
-                  className="w-full px-4 py-2.5 rounded-xl border border-border focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none resize-none"
+                  className="w-full px-4 py-2.5 rounded-xl border border-input bg-background text-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none resize-none transition-colors"
                   placeholder="Ringkasan untuk kartu preview (max 200 karakter)"
                 />
               </div>
 
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <label className="text-sm font-bold text-slate-700">Konten Modul (Markdown)</label>
+                  <label className="text-sm font-bold text-foreground">Konten Modul (Markdown)</label>
                   <button 
                     onClick={handleRefactor}
                     disabled={refactoring || isNew}
@@ -338,11 +338,11 @@ export default function EditCryptoModulePage() {
                     value={formData.content}
                     onChange={handleChange}
                     rows={20}
-                    className="w-full px-4 py-4 rounded-xl border border-border focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none font-mono text-sm leading-relaxed"
+                    className="w-full px-4 py-4 rounded-xl border border-input bg-background text-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none font-mono text-sm leading-relaxed transition-colors"
                     placeholder="Tulis konten dengan Markdown..."
                   />
-                  <div className="w-full min-h-[400px] max-h-[600px] overflow-y-auto px-8 py-6 rounded-xl border border-border bg-slate-900 text-slate-200 shadow-inner">
-                    <div className="prose prose-invert prose-sm md:prose-base max-w-none prose-headings:text-white prose-a:text-indigo-400">
+                  <div className="w-full min-h-[400px] max-h-[600px] overflow-y-auto px-8 py-6 rounded-xl border border-border bg-card text-foreground shadow-inner">
+                    <div className="prose prose-sm md:prose-base dark:prose-invert max-w-none dark:prose-headings:text-white prose-a:text-indigo-600 dark:prose-a:text-indigo-400">
                       <MarkdownContent content={formData.content || '*Preview akan muncul di sini*'} />
                     </div>
                   </div>
@@ -353,7 +353,7 @@ export default function EditCryptoModulePage() {
         </div>
 
         <div className="space-y-6">
-          <Card className="border-0 shadow-lg shadow-slate-200/40 rounded-2xl">
+          <Card className="border border-border shadow-lg shadow-slate-200/40 dark:shadow-none rounded-2xl bg-card">
             <CardContent className="p-6 space-y-5">
               <h3 className="font-bold text-foreground border-b border-border pb-2 mb-4">Metadata</h3>
               
@@ -368,7 +368,7 @@ export default function EditCryptoModulePage() {
                     onChange={handleCheckboxChange}
                     className="w-4 h-4 rounded text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500"
                   />
-                  <label htmlFor="isPublished" className="text-sm font-bold text-slate-700 cursor-pointer">
+                  <label htmlFor="isPublished" className="text-sm font-bold text-foreground cursor-pointer">
                     Terbitkan ke User
                   </label>
                 </div>
@@ -380,7 +380,7 @@ export default function EditCryptoModulePage() {
                   name="level"
                   value={formData.level}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 rounded-xl border border-border text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none card-solid"
+                  className="w-full px-3 py-2 rounded-xl border border-input bg-background text-foreground text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors"
                 >
                   <option value="Level 1: Pemula">Level 1: Pemula</option>
                   <option value="Level 2: Menengah">Level 2: Menengah</option>
@@ -397,7 +397,7 @@ export default function EditCryptoModulePage() {
                     name="moduleOrder"
                     value={formData.moduleOrder}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 rounded-xl border border-border text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none"
+                    className="w-full px-3 py-2 rounded-xl border border-input bg-background text-foreground text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors"
                   />
                 </div>
                 <div className="space-y-2">
@@ -407,7 +407,7 @@ export default function EditCryptoModulePage() {
                     name="estimatedMinutes"
                     value={formData.estimatedMinutes}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 rounded-xl border border-border text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none"
+                    className="w-full px-3 py-2 rounded-xl border border-input bg-background text-foreground text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors"
                   />
                 </div>
               </div>
@@ -419,7 +419,7 @@ export default function EditCryptoModulePage() {
                     name="difficulty"
                     value={formData.difficulty}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 rounded-xl border border-border text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none card-solid"
+                    className="w-full px-3 py-2 rounded-xl border border-input bg-background text-foreground text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors"
                   >
                     <option value="beginner">Pemula (Hijau)</option>
                     <option value="intermediate">Menengah (Kuning)</option>
@@ -433,14 +433,14 @@ export default function EditCryptoModulePage() {
                     name="coverEmoji"
                     value={formData.coverEmoji}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 rounded-xl border border-border text-sm text-center text-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none"
+                    className="w-full px-3 py-2 rounded-xl border border-input bg-background text-foreground text-sm text-center text-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors"
                   />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg shadow-slate-200/40 rounded-2xl relative overflow-hidden">
+          <Card className="border border-border shadow-lg shadow-slate-200/40 dark:shadow-none rounded-2xl relative overflow-hidden bg-card">
             <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500"></div>
             <CardContent className="p-6 space-y-4">
               <div className="flex justify-between items-center border-b border-border pb-2">
@@ -463,9 +463,9 @@ export default function EditCryptoModulePage() {
                   value={formData.assessmentTemplateId}
                   onChange={handleChange}
                   placeholder="Opsional, masukkan ID template kuis"
-                  className="w-full px-3 py-2 rounded-xl border border-border text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none"
+                  className="w-full px-3 py-2 rounded-xl border border-input bg-background text-foreground text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors"
                 />
-                <p className="text-[11px] text-slate-500 leading-relaxed">
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
                   Jika diisi, fitur "Mulai Kuis" akan aktif di akhir modul. Klik tombol <strong>Generate Kuis</strong> di atas untuk membuat soal mendalam menggunakan AI berdasarkan materi dan data kajian (study).
                 </p>
               </div>

@@ -103,8 +103,8 @@ export default function CryptoAcademyAdminPage() {
         </div>
       </div>
 
-      <Card className="border-0 shadow-xl shadow-slate-200/40 rounded-2xl overflow-hidden">
-        <div className="p-4 border-b border-border flex flex-col sm:flex-row gap-4 bg-muted text-muted-foreground/50">
+      <Card className="border border-border shadow-xl shadow-slate-200/40 dark:shadow-none rounded-2xl overflow-hidden bg-card">
+        <div className="p-4 border-b border-border flex flex-col sm:flex-row gap-4 bg-muted/50 text-muted-foreground">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
             <input 
@@ -112,7 +112,7 @@ export default function CryptoAcademyAdminPage() {
               placeholder="Cari modul..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 rounded-xl border border-border text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none"
+              className="w-full pl-9 pr-4 py-2 rounded-xl border border-input bg-background text-foreground text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -120,7 +120,7 @@ export default function CryptoAcademyAdminPage() {
             <select 
               value={filterLevel}
               onChange={(e) => setFilterLevel(e.target.value)}
-              className="pl-3 pr-8 py-2 rounded-xl border border-border text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none appearance-none card-solid"
+              className="pl-3 pr-8 py-2 rounded-xl border border-input bg-background text-foreground text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none appearance-none transition-colors"
             >
               <option value="">Semua Level</option>
               {levels.map(level => (
@@ -141,7 +141,7 @@ export default function CryptoAcademyAdminPage() {
             </div>
           ) : (
             <table className="w-full text-left text-sm whitespace-nowrap">
-              <thead className="bg-muted text-muted-foreground border-b border-border text-muted-foreground font-bold uppercase tracking-wider text-[10px]">
+              <thead className="bg-muted/50 border-b border-border text-muted-foreground font-bold uppercase tracking-wider text-[10px]">
                 <tr>
                   <th className="px-6 py-4">Urutan</th>
                   <th className="px-6 py-4">Judul Modul</th>
@@ -152,20 +152,20 @@ export default function CryptoAcademyAdminPage() {
                   <th className="px-6 py-4 text-right">Aksi</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-border">
                 {filteredModules.map((module) => (
-                  <tr key={module.id} className="hover:bg-muted text-muted-foreground/50 transition-colors">
+                  <tr key={module.id} className="hover:bg-muted/50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <ArrowUpDown className="w-3 h-3 text-slate-400 cursor-move" />
-                        <span className="font-bold text-slate-700">{module.moduleOrder}</span>
+                        <ArrowUpDown className="w-3 h-3 text-muted-foreground cursor-move" />
+                        <span className="font-bold text-foreground">{module.moduleOrder}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4 font-semibold text-foreground truncate max-w-[250px]">
                       {module.title}
                     </td>
                     <td className="px-6 py-4">
-                      <Badge variant="outline" className="card-solid">
+                      <Badge variant="outline" className="bg-background text-foreground border-border">
                         {module.level}
                       </Badge>
                     </td>
@@ -182,7 +182,7 @@ export default function CryptoAcademyAdminPage() {
                       {module.assessmentTemplateId ? (
                         <Badge variant="indigo" className="bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300">Tersedia</Badge>
                       ) : (
-                        <span className="text-slate-400 text-xs">—</span>
+                        <span className="text-muted-foreground text-xs">—</span>
                       )}
                     </td>
                     <td className="px-6 py-4 text-center">
@@ -191,7 +191,7 @@ export default function CryptoAcademyAdminPage() {
                         className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold transition-colors ${
                           module.isPublished 
                             ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-500/20' 
-                            : 'bg-secondary text-secondary-foreground text-muted-foreground hover:bg-slate-200'
+                            : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
                         }`}
                       >
                         {module.isPublished ? <CheckCircle className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
@@ -202,21 +202,21 @@ export default function CryptoAcademyAdminPage() {
                       <div className="flex items-center justify-end gap-2">
                         <button 
                           onClick={() => window.open(`/crypto-academy/${encodeURIComponent(module.level)}/${module.id}`, '_blank')}
-                          className="p-1.5 text-slate-400 hover:text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:bg-indigo-500/10 rounded-lg transition-colors"
+                          className="p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
                           title="Preview"
                         >
                           <Eye className="w-4 h-4" />
                         </button>
                         <button 
                           onClick={() => router.push(`/admin/crypto-academy/${module.id}`)}
-                          className="p-1.5 text-slate-400 hover:text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:bg-indigo-500/10 rounded-lg transition-colors"
+                          className="p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
                           title="Edit"
                         >
                           <Edit className="w-4 h-4" />
                         </button>
                         <button 
                           onClick={() => handleDelete(module.id)}
-                          className="p-1.5 text-slate-400 hover:text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:bg-rose-500/10 rounded-lg transition-colors"
+                          className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
                           title="Hapus"
                         >
                           <Trash2 className="w-4 h-4" />

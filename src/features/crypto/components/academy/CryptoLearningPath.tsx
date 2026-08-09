@@ -91,17 +91,17 @@ export function CryptoLearningPath({ currentModuleId, level }: CryptoLearningPat
           return (
             <div key={mod.id} className="relative z-10 flex items-start gap-3 py-3 group">
               <div className="shrink-0 mt-0.5 relative">
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center border ring-4 ring-slate-950 transition-colors ${
-                  isCurrent ? 'bg-purple-600 border-purple-400' : 
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center border ring-4 ring-background transition-colors ${
+                  isCurrent ? 'bg-primary border-primary' : 
                   isCompleted ? 'bg-emerald-600 border-emerald-400' :
-                  'bg-secondary text-secondary-foreground border-slate-300 dark:border-slate-700'
+                  'bg-secondary text-secondary-foreground border-border'
                 }`}>
                   {isCompleted ? (
                     <CheckCircle className="w-3.5 h-3.5 text-white" />
                   ) : isLocked ? (
                     <Lock className="w-3 h-3 text-muted-foreground" />
                   ) : isCurrent ? (
-                    <BookOpen className="w-3 h-3 text-white" />
+                    <BookOpen className="w-3 h-3 text-primary-foreground" />
                   ) : (
                     <span className="text-[10px] font-bold text-slate-400">{idx + 1}</span>
                   )}
@@ -111,14 +111,14 @@ export function CryptoLearningPath({ currentModuleId, level }: CryptoLearningPat
               <div className="flex-1 min-w-0">
                 {isLocked ? (
                   <div className="block cursor-not-allowed opacity-50">
-                    <p className="text-sm font-medium text-slate-300 truncate transition-colors group-hover:whitespace-normal">
+                    <p className="text-sm font-medium text-muted-foreground truncate transition-colors group-hover:whitespace-normal">
                       {mod.title}
                     </p>
                   </div>
                 ) : (
                   <Link href={`/crypto-academy/${encodeURIComponent(level)}/${mod.id}`} className="block">
                     <p className={`text-sm font-medium truncate transition-colors group-hover:whitespace-normal ${
-                      isCurrent ? 'text-white font-bold' : 'text-slate-300 hover:text-purple-400'
+                      isCurrent ? 'text-foreground font-bold' : 'text-muted-foreground hover:text-primary'
                     }`}>
                       {mod.title}
                     </p>
