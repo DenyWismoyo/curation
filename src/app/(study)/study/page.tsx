@@ -417,9 +417,9 @@ export default function StudyWorkspacePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f5f3ee] px-4 py-8 lg:px-8">
+    <div className="min-h-screen bg-background px-4 py-8 lg:px-8">
       <div className="max-w-7xl mx-auto grid grid-cols-1 xl:grid-cols-[420px_minmax(0,1fr)] gap-6">
-        <section className="rounded-[2rem] card-solid ring-1 ring-stone-200 shadow-sm p-6 space-y-5 h-fit">
+        <section className="rounded-[2rem] card-solid ring-1 ring-border shadow-sm p-6 space-y-5 h-fit">
           {canManageProjects ? (
             <>
               <div>
@@ -453,14 +453,14 @@ export default function StudyWorkspacePage() {
                   </label>
                 </div>
 
-                <input value={title} onChange={(event) => setTitle(event.target.value)} required placeholder="Judul kajian" className="w-full h-11 rounded-xl border border-border px-3 text-sm" />
-                <textarea value={description} onChange={(event) => setDescription(event.target.value)} placeholder="Deskripsi singkat konteks kajian" className="w-full min-h-[88px] rounded-xl border border-border px-3 py-3 text-sm" />
-                <textarea value={researchQuestion} onChange={(event) => setResearchQuestion(event.target.value)} required placeholder="Pertanyaan riset utama" className="w-full min-h-[120px] rounded-xl border border-border px-3 py-3 text-sm" />
+                <input value={title} onChange={(event) => setTitle(event.target.value)} required placeholder="Judul kajian" className="w-full h-11 rounded-xl border border-border px-3 text-sm bg-transparent" />
+                <textarea value={description} onChange={(event) => setDescription(event.target.value)} placeholder="Deskripsi singkat konteks kajian" className="w-full min-h-[88px] rounded-xl border border-border px-3 py-3 text-sm bg-transparent" />
+                <textarea value={researchQuestion} onChange={(event) => setResearchQuestion(event.target.value)} required placeholder="Pertanyaan riset utama" className="w-full min-h-[120px] rounded-xl border border-border px-3 py-3 text-sm bg-transparent" />
                 
                 <div className="grid grid-cols-2 gap-3">
                   <label className="block">
                     <span className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground">Gaya Penulisan</span>
-                    <select value={writingTone} onChange={(e) => setWritingTone(e.target.value as any)} className="mt-1 w-full h-11 rounded-xl border border-border px-3 text-sm card-solid">
+                    <select value={writingTone} onChange={(e) => setWritingTone(e.target.value as any)} className="mt-1 w-full h-11 rounded-xl border border-border px-3 text-sm bg-background">
                       <option value="academic">Akademis (Formal)</option>
                       <option value="consultative">Konsultatif (Mudah Dipahami)</option>
                       <option value="investigative">Investigatif (Mendalam)</option>
@@ -468,10 +468,10 @@ export default function StudyWorkspacePage() {
                   </label>
                   <label className="block">
                     <span className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground">Target halaman</span>
-                    <input value={targetPages} onChange={(event) => setTargetPages(Number(event.target.value || 100))} min={5} max={200} type="number" className="mt-1 w-full h-11 rounded-xl border border-border px-3 text-sm" />
+                    <input value={targetPages} onChange={(event) => setTargetPages(Number(event.target.value || 100))} min={5} max={200} type="number" className="mt-1 w-full h-11 rounded-xl border border-border px-3 text-sm bg-transparent" />
                   </label>
                 </div>
-                <button type="submit" disabled={submittingProject} className="w-full h-11 rounded-xl bg-stone-900 hover:bg-amber-700 text-white font-black text-sm flex items-center justify-center gap-2 disabled:opacity-60">
+                <button type="submit" disabled={submittingProject} className="w-full h-11 rounded-xl bg-foreground hover:bg-amber-700 text-background hover:text-white font-black text-sm flex items-center justify-center gap-2 disabled:opacity-60">
                   {submittingProject ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />} Buat Project Kajian
                 </button>
               </form>
@@ -486,20 +486,20 @@ export default function StudyWorkspacePage() {
 
           {error ? <div className="rounded-xl bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-300 text-sm p-3 ring-1 ring-rose-200 dark:ring-rose-500/20">{error}</div> : null}
 
-          <div className="rounded-2xl bg-stone-50 p-4 ring-1 ring-stone-200 text-xs text-stone-600 leading-relaxed">
-            <p className="font-black uppercase tracking-[0.14em] text-stone-900 mb-2">State Machine Studi</p>
+          <div className="rounded-2xl bg-muted p-4 ring-1 ring-border text-xs text-muted-foreground leading-relaxed">
+            <p className="font-black uppercase tracking-[0.14em] text-foreground mb-2">State Machine Studi</p>
             <p>DRAFT -&gt; INDEXING_SOURCES -&gt; GENERATING_OUTLINE -&gt; REVIEWING_OUTLINE -&gt; PLANNING_CHAPTERS -&gt; WRITING_CHAPTERS -&gt; AUDITING_CHAPTERS -&gt; READY_FOR_REVIEW</p>
           </div>
         </section>
 
         <section className="space-y-6">
-          <div className="rounded-[2rem] card-solid ring-1 ring-stone-200 shadow-sm p-6">
+          <div className="rounded-[2rem] card-solid ring-1 ring-border shadow-sm p-6">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
               <div>
                 <p className="text-[11px] font-black uppercase tracking-[0.22em] text-emerald-700 dark:text-emerald-300">Study Projects</p>
                 <h2 className="text-2xl font-black text-foreground mt-2">Workspace Aktif</h2>
               </div>
-              <select value={selectedProjectId} onChange={(event) => setSelectedProjectId(event.target.value)} className="h-11 rounded-xl border border-border px-3 text-sm min-w-[240px]">
+              <select value={selectedProjectId} onChange={(event) => setSelectedProjectId(event.target.value)} className="h-11 rounded-xl border border-border px-3 text-sm min-w-[240px] bg-background">
                 <option value="">Pilih project</option>
                 {projects.map((project) => (
                   <option key={project.id} value={project.id}>{project.title}</option>
@@ -529,37 +529,37 @@ export default function StudyWorkspacePage() {
                 ) : null}
 
                 <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="rounded-2xl bg-stone-50 ring-1 ring-stone-200 p-4">
-                    <p className="text-[11px] font-black uppercase tracking-[0.18em] text-stone-500">Status</p>
+                  <div className="rounded-2xl bg-muted ring-1 ring-border p-4">
+                    <p className="text-[11px] font-black uppercase tracking-[0.18em] text-muted-foreground">Status</p>
                     <p className="text-lg font-black text-foreground mt-2">{selectedProject.status}</p>
                     <p className="text-xs text-muted-foreground mt-1">Phase: {selectedProject.orchestration?.phase || '-'}</p>
                   </div>
-                  <div className="rounded-2xl bg-stone-50 ring-1 ring-stone-200 p-4">
-                    <p className="text-[11px] font-black uppercase tracking-[0.18em] text-stone-500">Sources</p>
+                  <div className="rounded-2xl bg-muted ring-1 ring-border p-4">
+                    <p className="text-[11px] font-black uppercase tracking-[0.18em] text-muted-foreground">Sources</p>
                     <p className="text-lg font-black text-foreground mt-2">{selectedProject.sourceStats?.total || 0}</p>
                     <p className="text-xs text-muted-foreground mt-1">Indexed: {selectedProject.sourceStats?.indexed || 0}</p>
                   </div>
-                  <div className="rounded-2xl bg-stone-50 ring-1 ring-stone-200 p-4">
-                    <p className="text-[11px] font-black uppercase tracking-[0.18em] text-stone-500">Outline</p>
+                  <div className="rounded-2xl bg-muted ring-1 ring-border p-4">
+                    <p className="text-[11px] font-black uppercase tracking-[0.18em] text-muted-foreground">Outline</p>
                     <p className="text-lg font-black text-foreground mt-2">{selectedProject.outline?.chapters?.length || 0} bab</p>
                     <p className="text-xs text-muted-foreground mt-1">Review: {selectedProject.reviewStatus || 'DRAFTING'}</p>
                   </div>
                 </div>
               </>
             ) : (
-              <div className="mt-6 rounded-2xl bg-stone-50 ring-1 ring-stone-200 p-6 text-sm text-stone-600">Belum ada project dipilih.</div>
+              <div className="mt-6 rounded-2xl bg-muted ring-1 ring-border p-6 text-sm text-muted-foreground">Belum ada project dipilih.</div>
             )}
           </div>
 
           {isCurrentProjectManager ? (
-            <div className="rounded-[2rem] card-solid ring-1 ring-stone-200 shadow-sm p-6 space-y-5">
+            <div className="rounded-[2rem] card-solid ring-1 ring-border shadow-sm p-6 space-y-5">
               <div>
                 <p className="text-[11px] font-black uppercase tracking-[0.22em] text-sky-700 dark:text-sky-300">Knowledge Base</p>
                 <h2 className="text-2xl font-black text-foreground mt-2">Upload Sumber Kajian</h2>
               </div>
 
-              <textarea value={sourceNote} onChange={(event) => setSourceNote(event.target.value)} placeholder="Opsional: catatan ringkas kenapa sumber ini relevan" className="w-full min-h-[96px] rounded-xl border border-border px-3 py-3 text-sm" />
-              <label className="flex items-center justify-center gap-2 rounded-2xl border border-dashed border-border bg-stone-50 px-4 py-8 text-sm font-bold text-stone-700 cursor-pointer hover:border-amber-500 hover:text-amber-700 dark:text-amber-300 transition-colors">
+              <textarea value={sourceNote} onChange={(event) => setSourceNote(event.target.value)} placeholder="Opsional: catatan ringkas kenapa sumber ini relevan" className="w-full min-h-[96px] rounded-xl border border-border px-3 py-3 text-sm bg-transparent" />
+              <label className="flex items-center justify-center gap-2 rounded-2xl border border-dashed border-border bg-muted px-4 py-8 text-sm font-bold text-muted-foreground cursor-pointer hover:border-amber-500 hover:text-amber-700 dark:text-amber-300 transition-colors">
                 {uploadingSource ? <Loader2 className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4" />} Upload PDF/DOCX/TXT/CSV/XLSX pendukung
                 <input type="file" multiple className="hidden" onChange={handleUploadSource} disabled={!selectedProjectId || uploadingSource} />
               </label>
@@ -572,7 +572,7 @@ export default function StudyWorkspacePage() {
                     value={driveUrl} 
                     onChange={(e) => setDriveUrl(e.target.value)} 
                     placeholder="https://docs.google.com/document/d/..." 
-                    className="flex-1 h-11 rounded-xl border border-border px-3 text-sm" 
+                    className="flex-1 h-11 rounded-xl border border-border px-3 text-sm bg-transparent" 
                   />
                   <button 
                     type="button" 
@@ -594,7 +594,7 @@ export default function StudyWorkspacePage() {
                   <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-4">Daftar Sumber Kajian ({sources.length})</h3>
                   <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2">
                     {sources.map((src) => (
-                      <div key={src.id} className="flex flex-col bg-stone-50 rounded-xl border border-stone-200 p-3">
+                      <div key={src.id} className="flex flex-col bg-muted rounded-xl border border-border p-3">
                         <div className="flex flex-wrap items-center justify-between gap-2">
                           <div className="flex items-center gap-2">
                             {src.kind === 'url' ? <Globe className="w-4 h-4 text-sky-600 dark:text-sky-400 shrink-0" /> : src.kind === 'file' ? <FileUp className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" /> : <Database className="w-4 h-4 text-amber-500 shrink-0" />}
@@ -609,11 +609,11 @@ export default function StudyWorkspacePage() {
                           )}
                         </div>
                         {src.summaryHint && (
-                          <div className="mt-2 p-2 card-solid border border-stone-100 rounded-lg max-h-[80px] overflow-y-auto text-[10px] text-stone-600 font-mono line-clamp-3">
+                          <div className="mt-2 p-2 card-solid border border-border rounded-lg max-h-[80px] overflow-y-auto text-[10px] text-muted-foreground font-mono line-clamp-3">
                             {src.summaryHint}
                           </div>
                         )}
-                        <p className="text-[10px] text-stone-400 mt-2">
+                        <p className="text-[10px] text-muted-foreground mt-2">
                           {src.createdAt ? new Date(src.createdAt.toMillis ? src.createdAt.toMillis() : src.createdAt).toLocaleString() : 'Baru ditambahkan'}
                         </p>
                       </div>
@@ -625,9 +625,9 @@ export default function StudyWorkspacePage() {
           ) : null}
 
           {selectedProject?.outline?.chapters?.length ? (
-            <div className="rounded-[2rem] card-solid ring-1 ring-stone-200 shadow-sm p-6">
+            <div className="rounded-[2rem] card-solid ring-1 ring-border shadow-sm p-6">
               <div>
-                <p className="text-[11px] font-black uppercase tracking-[0.22em] text-violet-700">Generated Outline</p>
+                <p className="text-[11px] font-black uppercase tracking-[0.22em] text-violet-700 dark:text-violet-300">Generated Outline</p>
                 <div className="flex items-center justify-between mt-2">
                   <h2 className="text-2xl font-black text-foreground">Rencana Bab</h2>
                   <div className="flex items-center gap-2">
@@ -678,7 +678,7 @@ export default function StudyWorkspacePage() {
               )}
 
               {selectedProject.reviewSummary ? (
-                <div className="mt-5 rounded-2xl bg-violet-50 ring-1 ring-violet-200 p-4 text-sm text-violet-950 space-y-2">
+                <div className="mt-5 rounded-2xl bg-violet-50 dark:bg-violet-500/10 ring-1 ring-violet-200 dark:ring-violet-500/20 p-4 text-sm text-violet-950 dark:text-violet-300 space-y-2">
                   <p className="font-black uppercase tracking-[0.18em] text-[11px]">Review Summary</p>
                   <p>{selectedProject.reviewSummary.summary || 'Belum ada ringkasan review.'}</p>
                   {(selectedProject.reviewSummary.reviewerFocus || []).length > 0 ? (
@@ -696,9 +696,9 @@ export default function StudyWorkspacePage() {
 
               <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                 {selectedProject.outline.chapters.map((chapter, index) => (
-                  <div key={chapter.chapterId} className="rounded-2xl bg-stone-50 ring-1 ring-stone-200 p-4">
-                    <p className="text-[11px] font-black uppercase tracking-[0.18em] text-stone-500">Bab {index + 1}</p>
-                    <p className="text-base font-black text-foreground mt-2 flex items-start gap-2"><FileText className="w-4 h-4 mt-0.5 text-violet-700" /> {chapter.title}</p>
+                  <div key={chapter.chapterId} className="rounded-2xl bg-muted ring-1 ring-border p-4">
+                    <p className="text-[11px] font-black uppercase tracking-[0.18em] text-muted-foreground">Bab {index + 1}</p>
+                    <p className="text-base font-black text-foreground mt-2 flex items-start gap-2"><FileText className="w-4 h-4 mt-0.5 text-violet-700 dark:text-violet-400" /> {chapter.title}</p>
                   </div>
                 ))}
               </div>
