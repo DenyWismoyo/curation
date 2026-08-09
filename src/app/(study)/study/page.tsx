@@ -464,6 +464,7 @@ export default function StudyWorkspacePage() {
                       <option value="academic">Akademis (Formal)</option>
                       <option value="consultative">Konsultatif (Mudah Dipahami)</option>
                       <option value="investigative">Investigatif (Mendalam)</option>
+                      <option value="hedge_fund">Hedge Fund (Tajam & Kuantitatif)</option>
                     </select>
                   </label>
                   <label className="block">
