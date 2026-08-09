@@ -478,7 +478,7 @@ export const publishStudyToCryptoAcademy = onCall({
     throw new HttpsError("failed-precondition", "Project harus berstatus READY_FOR_REVIEW atau COMPLETED.");
   }
 
-  const chaptersSnap = await projectRef.collection("chapters").orderBy("order", "asc").get();
+  const chaptersSnap = await projectRef.collection("chapters").orderBy("chapterNumber", "asc").get();
   if (chaptersSnap.empty) {
     throw new HttpsError("failed-precondition", "Project tidak memiliki bab untuk dipublikasikan.");
   }
