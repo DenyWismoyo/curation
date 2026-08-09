@@ -119,7 +119,7 @@ export function PublicNavbar() {
       <header className="hidden md:flex fixed top-0 left-0 right-0 h-20 card-solid/80 backdrop-blur-xl border-b border-border z-50 items-center justify-between px-6 lg:px-12">
         {/* Brand */}
         <div className="flex items-center gap-6 lg:gap-8">
-          <Link href={user ? ROUTES.DASHBOARD : ROUTES.HOME} className="flex items-center gap-3 group">
+          <Link href="/assessment" className="flex items-center gap-3 group">
             <div className="w-10 h-10 rounded-xl card-solid flex items-center justify-center shadow-sm ring-1 ring-border group-hover:ring-indigo-200 dark:ring-indigo-500/20 transition-all overflow-hidden p-1">
               <SafeLogo src="/logo.png" alt="Omnifit" width={24} height={24} className="object-contain w-full h-full" />
             </div>
