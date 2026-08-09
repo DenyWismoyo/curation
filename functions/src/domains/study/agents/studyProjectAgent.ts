@@ -448,7 +448,7 @@ export const approveStudyOutline = onCall({
 const publishStudyToCryptoAcademySchema = z.object({
   projectId: z.string().trim().min(1).max(128),
   level: z.string().trim().min(1).max(128),
-  assessmentTemplateId: z.string().trim().max(128).optional(),
+  assessmentTemplateId: z.string().trim().max(128).optional().nullable().or(z.literal("")),
 });
 
 export const publishStudyToCryptoAcademy = onCall({
@@ -462,6 +462,7 @@ export const publishStudyToCryptoAcademy = onCall({
 
   const parsed = publishStudyToCryptoAcademySchema.safeParse(request.data || {});
   if (!parsed.success) {
+    console.error("publishStudyToCryptoAcademy validation failed:", parsed.error);
     throw new HttpsError("invalid-argument", "Payload persetujuan publikasi tidak valid.");
   }
 
