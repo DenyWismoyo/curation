@@ -487,6 +487,7 @@ export const publishStudyToCryptoAcademy = onCall({
   const now = admin.firestore.FieldValue.serverTimestamp();
 
   let order = 1;
+  const moduleIds: string[] = [];
   for (const doc of chaptersSnap.docs) {
     const chapterData = doc.data();
     // Gunakan revisedContent jika ada, jika tidak gunakan content biasa. Jika kosong gunakan string kosong.
@@ -519,6 +520,7 @@ export const publishStudyToCryptoAcademy = onCall({
       version: 1,
       updatedAt: now,
     });
+    moduleIds.push(moduleRef.id);
     order++;
   }
 
@@ -536,7 +538,7 @@ export const publishStudyToCryptoAcademy = onCall({
 
   await batch.commit();
 
-  return { success: true, publishedModulesCount: chaptersSnap.size };
+  return { success: true, publishedModulesCount: chaptersSnap.size, moduleIds };
 });
 
 const updateStudyChapterManualSchema = z.object({

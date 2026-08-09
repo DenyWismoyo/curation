@@ -82,6 +82,8 @@ export default function StudyWorkspacePage() {
   const [publishingToAcademy, setPublishingToAcademy] = useState(false);
   const [academyLevel, setAcademyLevel] = useState('Level 1: Pemula');
   const [academyAssessmentId, setAcademyAssessmentId] = useState('');
+  const [autoGenerateQuiz, setAutoGenerateQuiz] = useState(true);
+  const [quizGenerationProgress, setQuizGenerationProgress] = useState('');
 
   const hasStudyAccess = (role ? ALLOWED_ROLES.has(role) : false) || isPremium;
   const canManageProjects = role ? MANAGER_ROLES.has(role) : false;
@@ -335,18 +337,41 @@ export default function StudyWorkspacePage() {
     if (!selectedProjectId) return;
     setError('');
     setPublishingToAcademy(true);
+    setQuizGenerationProgress('');
 
     try {
       const callable = httpsCallable(functions, 'publishStudyToCryptoAcademy');
-      await callable({ 
+      const res = await callable({ 
         projectId: selectedProjectId,
         level: academyLevel,
         assessmentTemplateId: academyAssessmentId || undefined,
       });
-      alert('Berhasil mempublikasikan ke Crypto Academy!');
+      
+      const data = res.data as any;
+      
+      if (autoGenerateQuiz && data.moduleIds && data.moduleIds.length > 0) {
+        const generateQuizCallable = httpsCallable(functions, 'generateCryptoModuleAssessment');
+        let successCount = 0;
+        
+        for (let i = 0; i < data.moduleIds.length; i++) {
+          setQuizGenerationProgress(`Membuat kuis AI: Bab ${i+1} dari ${data.moduleIds.length}...`);
+          try {
+            await generateQuizCallable({ moduleId: data.moduleIds[i] });
+            successCount++;
+          } catch (e) {
+            console.error("Gagal generate quiz untuk bab", i+1, e);
+          }
+        }
+        alert(`Berhasil mempublikasikan ke Crypto Academy dan membuat ${successCount} kuis otomatis!`);
+      } else {
+        alert('Berhasil mempublikasikan ke Crypto Academy!');
+      }
+      
+      setQuizGenerationProgress('');
     } catch (err: unknown) {
       console.error('Gagal mempublikasikan:', err);
       setError(getErrorMessage(err, 'Gagal mempublikasikan ke Crypto Academy.'));
+      setQuizGenerationProgress('');
     } finally {
       setPublishingToAcademy(false);
     }
@@ -650,13 +675,16 @@ export default function StudyWorkspacePage() {
               </div>
 
               {(selectedProject.status === "READY_FOR_REVIEW" || selectedProject.status === "COMPLETED") && isCurrentProjectManager && (
-                <div className="mt-5 rounded-2xl bg-amber-50 dark:bg-amber-500/10 ring-1 ring-amber-200 dark:ring-amber-500/20 p-4 space-y-3">
-                  <p className="font-black uppercase tracking-[0.18em] text-[11px] text-amber-900">Publish ke Crypto Academy</p>
-                  <p className="text-sm text-amber-900">Kajian ini sudah selesai dan siap dijadikan materi Crypto Academy.</p>
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+                <div className="mt-5 rounded-2xl bg-amber-50 dark:bg-amber-500/10 ring-1 ring-amber-200 dark:ring-amber-500/20 p-4 space-y-4">
+                  <div>
+                    <p className="font-black uppercase tracking-[0.18em] text-[11px] text-amber-900">Publish ke Crypto Academy</p>
+                    <p className="text-sm text-amber-900 mt-1">Kajian ini sudah selesai dan siap dijadikan materi Crypto Academy.</p>
+                  </div>
+                  
+                  <div className="flex flex-col sm:flex-row gap-4">
                     <label className="flex-1">
                       <span className="text-[11px] font-black uppercase tracking-[0.2em] text-amber-800">Pilih Level</span>
-                      <select value={academyLevel} onChange={(e) => setAcademyLevel(e.target.value)} className="mt-1 h-10 w-full rounded-xl border border-amber-300 card-solid px-3 text-sm">
+                      <select value={academyLevel} onChange={(e) => setAcademyLevel(e.target.value)} disabled={publishingToAcademy} className="mt-1 h-10 w-full rounded-xl border border-amber-300 card-solid px-3 text-sm disabled:opacity-50">
                         <option value="Level 1: Pemula">Level 1: Pemula (Crypto 101)</option>
                         <option value="Level 2: Menengah">Level 2: Menengah (Teknikal Trader)</option>
                         <option value="Level 3: Lanjutan">Level 3: Lanjutan (SMC/ICT)</option>
@@ -665,16 +693,31 @@ export default function StudyWorkspacePage() {
                     </label>
                     <label className="flex-1">
                       <span className="text-[11px] font-black uppercase tracking-[0.2em] text-amber-800">Template Kuis (Opsional)</span>
-                      <input type="text" placeholder="ID Template Assessment" value={academyAssessmentId} onChange={(e) => setAcademyAssessmentId(e.target.value)} className="mt-1 h-10 w-full rounded-xl border border-amber-300 card-solid px-3 text-sm" />
+                      <input type="text" placeholder="ID Template Assessment" disabled={autoGenerateQuiz || publishingToAcademy} value={academyAssessmentId} onChange={(e) => setAcademyAssessmentId(e.target.value)} className="mt-1 h-10 w-full rounded-xl border border-amber-300 card-solid px-3 text-sm disabled:opacity-50" />
                     </label>
+                  </div>
+
+                  <div className="flex items-center justify-between border-t border-amber-200 dark:border-amber-500/20 pt-4">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input type="checkbox" checked={autoGenerateQuiz} disabled={publishingToAcademy} onChange={(e) => setAutoGenerateQuiz(e.target.checked)} className="rounded border-amber-300 text-amber-600 focus:ring-amber-500 disabled:opacity-50" />
+                      <span className="text-sm font-bold text-amber-900">Generate Kuis AI Otomatis (Per Bab)</span>
+                    </label>
+                    
                     <button 
                       onClick={handlePublishToAcademy}
                       disabled={publishingToAcademy}
                       className="h-10 px-6 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-black text-sm flex items-center justify-center gap-2 transition-colors disabled:opacity-60"
                     >
-                      {publishingToAcademy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />} Publish Module
+                      {publishingToAcademy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />} 
+                      {quizGenerationProgress ? "Memproses..." : "Publish Module"}
                     </button>
                   </div>
+                  
+                  {quizGenerationProgress && (
+                    <div className="flex items-center gap-2 text-xs font-bold text-amber-800 bg-amber-200/50 p-2 rounded-lg">
+                      <Loader2 className="w-3 h-3 animate-spin" /> {quizGenerationProgress}
+                    </div>
+                  )}
                 </div>
               )}
 
