@@ -438,6 +438,37 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
           )}
         </View>
 
+        {Array.isArray(aiResult?.personalActionPlan) && aiResult.personalActionPlan.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Personal Action Plan Copilot</Text>
+            {aiResult.personalActionPlan.map((task: any, idx: number) => (
+              <View key={idx} style={styles.card} wrap={false}>
+                <Text style={styles.cardTitle}>{task.title}</Text>
+                <Text style={styles.value}>{task.description}</Text>
+                
+                {task.subTasks && task.subTasks.length > 0 && (
+                  <View style={{ marginTop: 8 }}>
+                    <Text style={[styles.label, { color: '#0F172A' }]}>Micro-Steps</Text>
+                    {task.subTasks.map((sub: any, sIdx: number) => (
+                      <View key={sIdx} style={styles.bulletRow}>
+                        <Text style={[styles.bulletDot, { color: '#94A3B8' }]}>•</Text>
+                        <Text style={styles.bulletText}>{renderTextWithBoldPdf(sub.text || sub)}</Text>
+                      </View>
+                    ))}
+                  </View>
+                )}
+                
+                {task.contextualTip && (
+                  <View style={{ marginTop: 12, padding: 12, backgroundColor: '#FFFBEB', borderLeft: '2pt solid #D97706' }}>
+                    <Text style={[styles.label, { color: '#D97706', marginBottom: 4 }]}>Tips & Tricks</Text>
+                    <Text style={{ fontSize: 9, color: '#92400E', lineHeight: 1.5 }}>{task.contextualTip}</Text>
+                  </View>
+                )}
+              </View>
+            ))}
+          </View>
+        )}
+
         <PageFooter />
       </Page>
       )}

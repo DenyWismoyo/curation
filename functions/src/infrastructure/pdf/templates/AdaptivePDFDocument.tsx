@@ -73,6 +73,7 @@ const styles = StyleSheet.create({
 
   // --- CARDS (Minimalist blocks) ---
   card: { paddingBottom: 16, marginBottom: 16, borderBottom: '1pt solid #F1F5F9' },
+  cardTitle: { fontSize: 10, fontWeight: 900, color: '#0F172A', textTransform: 'uppercase', marginBottom: 8, letterSpacing: 1 },
 
   // --- FOOTER ---
   footer: { position: 'absolute', bottom: 30, left: 48, right: 48, borderTop: '1pt solid #E2E8F0', paddingTop: 16, flexDirection: 'row', justifyContent: 'space-between' },
@@ -292,6 +293,36 @@ export function AdaptivePDFDocument({ role, trackType, formData, aiResult, downl
           </View>
         )}
 
+        {Array.isArray(aiResult?.personalActionPlan) && aiResult.personalActionPlan.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Personal Action Plan Copilot</Text>
+            {aiResult.personalActionPlan.map((task: any, idx: number) => (
+              <View key={idx} style={styles.card} wrap={false}>
+                <Text style={styles.cardTitle}>{task.title}</Text>
+                <Text style={styles.value}>{task.description}</Text>
+                
+                {task.subTasks && task.subTasks.length > 0 && (
+                  <View style={{ marginTop: 8 }}>
+                    <Text style={[styles.label, { color: '#0F172A' }]}>Micro-Steps</Text>
+                    {task.subTasks.map((sub: any, sIdx: number) => (
+                      <View key={sIdx} style={styles.bulletRow}>
+                        <Text style={[styles.bulletDot, { color: '#94A3B8' }]}>•</Text>
+                        <Text style={styles.bulletText}>{renderTextWithBoldPdf(sub.text || sub)}</Text>
+                      </View>
+                    ))}
+                  </View>
+                )}
+                
+                {task.contextualTip && (
+                  <View style={{ marginTop: 12, padding: 12, backgroundColor: '#FFFBEB', borderLeft: '2pt solid #D97706' }}>
+                    <Text style={[styles.label, { color: '#D97706', marginBottom: 4 }]}>Tips & Tricks</Text>
+                    <Text style={{ fontSize: 9, color: '#92400E', lineHeight: 1.5 }}>{task.contextualTip}</Text>
+                  </View>
+                )}
+              </View>
+            ))}
+          </View>
+        )}
         <PageFooter />
       </Page>
 
