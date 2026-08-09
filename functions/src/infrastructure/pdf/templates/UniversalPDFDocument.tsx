@@ -21,8 +21,8 @@ const logoPath = path.join(__dirname, '../../../../../public/icon-192x192.png');
 
 // Gaya Modern & Elegan
 const styles = StyleSheet.create({
-  page: { padding: '48 48 64 48', fontFamily: 'Inter', backgroundColor: '#FFFFFF' },
-  coverPage: { padding: '64 48', fontFamily: 'Inter', backgroundColor: '#F8FAFC', justifyContent: 'center', alignItems: 'center' },
+  page: { padding: '48 56 64 56', fontFamily: 'Inter', backgroundColor: '#FFFFFF' },
+  coverPage: { padding: '64 56', fontFamily: 'Inter', backgroundColor: '#FFFFFF', justifyContent: 'center', alignItems: 'center' },
   
   // --- WATERMARK ---
   watermarkWrapper: {
@@ -32,61 +32,58 @@ const styles = StyleSheet.create({
   watermarkText: { color: '#0F172A', fontSize: 60, fontWeight: 900, opacity: 0.03, transform: 'rotate(-45deg)', textAlign: 'center' },
 
   // --- COVER PAGE ---
-  coverLogo: { width: 80, height: 80, marginBottom: 32 },
-  coverSubtitle: { fontSize: 12, fontWeight: 700, color: '#4F46E5', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 16 },
-  coverTitle: { fontSize: 32, fontWeight: 900, color: '#0F172A', textTransform: 'uppercase', textAlign: 'center', marginBottom: 32 },
-  coverEntityCard: { backgroundColor: '#FFFFFF', padding: 24, borderRadius: 16, border: '1pt solid #E2E8F0', width: '80%', alignItems: 'center' },
-  coverEntityName: { fontSize: 16, fontWeight: 900, color: '#0F172A', marginBottom: 8, textAlign: 'center' },
-  coverDate: { fontSize: 10, color: '#64748B', fontWeight: 500 },
+  coverLogo: { width: 80, height: 80, marginBottom: 40 },
+  coverSubtitle: { fontSize: 10, fontWeight: 500, color: '#64748B', textTransform: 'uppercase', letterSpacing: 3, marginBottom: 16 },
+  coverTitle: { fontSize: 28, fontWeight: 900, color: '#0F172A', textTransform: 'uppercase', textAlign: 'center', marginBottom: 48, letterSpacing: 1 },
+  coverEntityCard: { borderTop: '1pt solid #E2E8F0', borderBottom: '1pt solid #E2E8F0', paddingVertical: 24, width: '100%', alignItems: 'center' },
+  coverEntityName: { fontSize: 18, fontWeight: 900, color: '#0F172A', marginBottom: 8, textAlign: 'center' },
+  coverDate: { fontSize: 10, color: '#64748B', fontWeight: 500, letterSpacing: 1 },
   
   // --- DISCLAIMER ---
-  disclaimerBox: { marginTop: 32, padding: 16, borderRadius: 12, backgroundColor: '#FFFBEB', border: '1pt solid #FDE68A' },
-  disclaimerTitle: { fontSize: 10, fontWeight: 900, color: '#D97706', textTransform: 'uppercase', marginBottom: 6 },
-  disclaimerText: { fontSize: 9, color: '#92400E', lineHeight: 1.5, textAlign: 'justify', marginBottom: 8 },
+  disclaimerBox: { marginTop: 32, padding: 16, borderLeft: '3pt solid #D97706', backgroundColor: '#FFFBEB' },
+  disclaimerTitle: { fontSize: 9, fontWeight: 900, color: '#D97706', textTransform: 'uppercase', marginBottom: 6, letterSpacing: 1 },
+  disclaimerText: { fontSize: 9, color: '#92400E', lineHeight: 1.6, textAlign: 'justify', marginBottom: 8 },
 
   // --- HEADER EKSEKUTIF ---
-  headerContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', borderBottom: '1pt solid #E2E8F0', paddingBottom: 16, marginBottom: 32 },
+  headerContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', borderBottom: '1pt solid #0F172A', paddingBottom: 16, marginBottom: 32 },
   headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  headerLogo: { width: 36, height: 36 },
+  headerLogo: { width: 32, height: 32 },
   headerTitles: { justifyContent: 'center' },
-  systemTitle: { fontSize: 8, color: '#4F46E5', fontWeight: 900, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 2 },
-  docTitle: { fontSize: 16, fontWeight: 700, color: '#0F172A' },
+  systemTitle: { fontSize: 8, color: '#64748B', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 2 },
+  docTitle: { fontSize: 14, fontWeight: 900, color: '#0F172A', textTransform: 'uppercase', letterSpacing: 1 },
   headerRight: { textAlign: 'right', maxWidth: '40%' },
-  entityName: { fontSize: 10, fontWeight: 700, color: '#0F172A', marginBottom: 4 },
+  entityName: { fontSize: 9, fontWeight: 700, color: '#0F172A', marginBottom: 4 },
   dateText: { fontSize: 8, color: '#64748B', fontWeight: 500, textTransform: 'uppercase' },
   
   // --- STRUKTUR SEKSI ---
   section: { marginBottom: 32 },
-  sectionTitle: { fontSize: 12, fontWeight: 900, color: '#4F46E5', textTransform: 'uppercase', letterSpacing: 1, borderBottom: '1pt solid #E2E8F0', paddingBottom: 8, marginBottom: 16 },
+  sectionTitle: { fontSize: 11, fontWeight: 900, color: '#0F172A', textTransform: 'uppercase', letterSpacing: 1.5, borderBottom: '1pt solid #E2E8F0', paddingBottom: 8, marginBottom: 20 },
   
   // --- BLOK SKOR ---
   execBlock: { flexDirection: 'row', gap: 24, marginBottom: 16 },
-  scoreBox: { width: 140, backgroundColor: '#4F46E5', borderRadius: 16, padding: 24, justifyContent: 'center', alignItems: 'center' },
-  scoreTitle: { fontSize: 9, fontWeight: 700, color: '#E0E7FF', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8, textAlign: 'center' },
-  scoreValue: { fontSize: 48, fontWeight: 900, color: '#FFFFFF', marginBottom: 4 },
-  scoreTier: { fontSize: 10, fontWeight: 700, color: '#A5B4FC', textTransform: 'uppercase', textAlign: 'center' },
-  execSummary: { flex: 1, justifyContent: 'center', backgroundColor: '#F8FAFC', borderRadius: 16, padding: 20, border: '1pt solid #E2E8F0' },
+  scoreBox: { width: 130, backgroundColor: '#0F172A', borderRadius: 0, padding: 24, justifyContent: 'center', alignItems: 'center' },
+  scoreTitle: { fontSize: 8, fontWeight: 500, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12, textAlign: 'center' },
+  scoreValue: { fontSize: 42, fontWeight: 900, color: '#FFFFFF', marginBottom: 6 },
+  scoreTier: { fontSize: 9, fontWeight: 700, color: '#E2E8F0', textTransform: 'uppercase', textAlign: 'center', letterSpacing: 1 },
+  execSummary: { flex: 1, justifyContent: 'center', paddingLeft: 20, borderLeft: '1pt solid #E2E8F0' },
   
   // --- TIPOGRAFI & GRID ---
-  label: { fontSize: 9, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 },
+  label: { fontSize: 9, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 },
   value: { fontSize: 10, color: '#0F172A', fontWeight: 500, marginBottom: 16, lineHeight: 1.6 },
-  grid2Col: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
-  colHalf: { width: '48%', marginBottom: 16 },
-  colFull: { width: '100%', marginBottom: 16 },
   
   // --- LIST METRIK & BULLETS ---
   metricRow: { flexDirection: 'row', borderBottom: '1pt solid #F1F5F9', paddingVertical: 16, alignItems: 'flex-start' },
-  metricScoreBox: { width: 48, height: 48, backgroundColor: '#EEF2FF', borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
-  metricScore: { fontSize: 16, fontWeight: 900, color: '#4F46E5' },
+  metricScoreBox: { width: 40, height: 40, backgroundColor: '#F8FAFC', border: '1pt solid #E2E8F0', justifyContent: 'center', alignItems: 'center' },
+  metricScore: { fontSize: 14, fontWeight: 900, color: '#0F172A' },
   metricContent: { flex: 1, paddingLeft: 16 },
-  metricTitle: { fontSize: 11, fontWeight: 700, color: '#0F172A', marginBottom: 6 },
+  metricTitle: { fontSize: 11, fontWeight: 900, color: '#0F172A', marginBottom: 8 },
   bulletRow: { flexDirection: 'row', marginBottom: 8, paddingRight: 16 },
-  bulletDot: { width: 12, fontSize: 14, color: '#4F46E5', fontWeight: 900, marginTop: -2 },
+  bulletDot: { width: 12, fontSize: 14, color: '#0F172A', fontWeight: 900, marginTop: -2 },
   bulletText: { flex: 1, fontSize: 10, color: '#334155', lineHeight: 1.6, textAlign: 'justify' },
 
-  // --- CARDS ---
-  card: { backgroundColor: '#F8FAFC', borderRadius: 12, border: '1pt solid #E2E8F0', padding: 16, marginBottom: 16 },
-  cardTitle: { fontSize: 10, fontWeight: 700, color: '#0F172A', textTransform: 'uppercase', marginBottom: 8 },
+  // --- CARDS (Minimalist blocks) ---
+  card: { paddingBottom: 16, marginBottom: 16, borderBottom: '1pt solid #F1F5F9' },
+  cardTitle: { fontSize: 10, fontWeight: 900, color: '#0F172A', textTransform: 'uppercase', marginBottom: 8, letterSpacing: 1 },
 
   // --- WORKSHEET KURATOR ---
   worksheetArea: { marginTop: 12, borderTop: '1pt dashed #CBD5E1', paddingTop: 12, minHeight: 32 },
@@ -258,7 +255,7 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
             <Text style={styles.scoreTier}>{aiResult?.readinessLevel || 'Standard'}</Text>
           </View>
           <View style={styles.execSummary}>
-            <Text style={[styles.sectionTitle, { borderBottom: 'none', marginBottom: 8 }]}>Executive Summary</Text>
+            <Text style={[styles.sectionTitle, { borderBottom: 'none', marginBottom: 12 }]}>Executive Summary</Text>
             {renderBullets(aiResult?.executiveSummary || '-')}
           </View>
         </View>
@@ -278,13 +275,13 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
         {includeVerification && aiResult?.fileAnalysisInsights && (
           <View style={[styles.section, { marginTop: role === 'user' ? 32 : 0 }]} wrap={false}>
             <Text style={styles.sectionTitle}>Document Verification</Text>
-            <View style={styles.grid2Col}>
-              <View style={styles.colHalf}>
+            <View style={{ flexDirection: 'column' }}>
+              <View style={{ marginBottom: 12 }}>
                 <Text style={styles.label}>Quality Status</Text>
                 {renderBullets(aiResult.fileAnalysisInsights.documentQuality)}
               </View>
               {aiResult.fileAnalysisInsights.discrepancies && (
-                <View style={styles.colHalf}>
+                <View style={{ marginBottom: 12 }}>
                   <Text style={[styles.label, { color: '#0F172A' }]}>Data Discrepancies</Text>
                   {renderBullets(aiResult.fileAnalysisInsights.discrepancies)}
                 </View>
@@ -311,12 +308,12 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
         {isInternal && includeCustomBlocks && Array.isArray(aiResult?.customAnalysisBlocks) && aiResult.customAnalysisBlocks.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Specific Parameters</Text>
-            <View style={styles.grid2Col}>
+            <View style={{ flexDirection: 'column' }}>
               {aiResult.customAnalysisBlocks.map((block: any, bIdx: number) => (
-                <View key={bIdx} style={isCuratorWorksheet ? styles.colFull : styles.colHalf} wrap={false}>
-                  <Text style={[styles.label, { color: '#0F172A', fontSize: 10 }]}>{block.title}</Text>
+                <View key={bIdx} style={{ marginBottom: 20 }} wrap={false}>
+                  <Text style={[styles.label, { color: '#0F172A', fontSize: 10, borderBottom: '1pt solid #F1F5F9', paddingBottom: 6, marginBottom: 12 }]}>{block.title}</Text>
                   {Array.isArray(block?.metrics) && block.metrics.map((m: any, mIdx: number) => (
-                    <View key={mIdx} style={{ marginBottom: 12, marginTop: 4 }}>
+                    <View key={mIdx} style={{ marginBottom: 12 }}>
                       <Text style={styles.label}>{m.label}</Text>
                       {renderBullets(m.value)}
                     </View>
@@ -355,7 +352,7 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{getLabel('swot')}</Text>
-          <View style={styles.grid2Col}>
+          <View style={{ flexDirection: 'column' }}>
             {['strengths', 'weaknesses', 'opportunities', 'threats'].map((swotKey, idx) => {
               const items = Array.isArray(aiResult?.swotAnalysis?.[swotKey]) ? aiResult.swotAnalysis[swotKey] : [];
               if (items.length === 0) return null;
@@ -363,7 +360,7 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
               const title = swotKey === 'strengths' ? 'Strengths' : swotKey === 'weaknesses' ? 'Weaknesses' : swotKey === 'opportunities' ? 'Opportunities' : 'Threats';
               
               return (
-                <View key={idx} style={isCuratorWorksheet ? styles.colFull : styles.colHalf} wrap={false}>
+                <View key={idx} style={{ marginBottom: 20 }} wrap={false}>
                   <View style={styles.card}>
                     <Text style={styles.cardTitle}>{title}</Text>
                     {items.map((item: string, i: number) => (
@@ -412,9 +409,9 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{getLabel('roadmap')}</Text>
           
-          <View style={{ backgroundColor: '#EEF2FF', padding: 16, borderRadius: 12, marginBottom: 24, border: '1pt solid #C7D2FE' }} wrap={false}>
-            <Text style={[styles.label, { color: '#4F46E5' }]}>Recommended Incubation Route</Text>
-            <Text style={{ fontSize: 16, fontWeight: 900, color: '#312E81', marginTop: 4 }}>{aiResult?.incubationRoute}</Text>
+          <View style={{ paddingBottom: 16, marginBottom: 24, borderBottom: '1pt solid #E2E8F0' }} wrap={false}>
+            <Text style={styles.label}>Recommended Incubation Route</Text>
+            <Text style={{ fontSize: 14, fontWeight: 900, color: '#0F172A', marginTop: 4 }}>{aiResult?.incubationRoute}</Text>
           </View>
 
           {Array.isArray(aiResult?.recommendations) && aiResult.recommendations.map((rec: any, idx: number) => (
@@ -426,12 +423,12 @@ export function UniversalPDFDocument({ role, trackType, formData, aiResult, down
           
           {Array.isArray(aiResult?.nextActionSteps) && aiResult.nextActionSteps.length > 0 && (
              <View style={{ marginTop: 24 }} wrap={false}>
-               <Text style={[styles.label, { marginBottom: 16, borderBottom: '1pt solid #E2E8F0', paddingBottom: 8 }]}>{getLabel('execution')}</Text>
-               {aiResult.nextActionSteps.map((step: any, idx: number) => (
-                 <View key={idx} style={{ flexDirection: 'row', marginBottom: 16 }} wrap={false}>
-                   <View style={{ width: 80, borderRight: '2pt solid #E2E8F0', paddingRight: 12, marginRight: 12, justifyContent: 'center' }}>
-                     <Text style={{ fontSize: 9, fontWeight: 900, color: '#4F46E5', textTransform: 'uppercase' }}>{step.timeframe}</Text>
-                   </View>
+                <Text style={[styles.label, { marginBottom: 16, borderBottom: '1pt solid #F1F5F9', paddingBottom: 8 }]}>{getLabel('execution')}</Text>
+                {aiResult.nextActionSteps.map((step: any, idx: number) => (
+                  <View key={idx} style={{ flexDirection: 'row', marginBottom: 16 }} wrap={false}>
+                    <View style={{ width: 80, borderRight: '1pt solid #E2E8F0', paddingRight: 12, marginRight: 12, justifyContent: 'center' }}>
+                      <Text style={{ fontSize: 9, fontWeight: 900, color: '#0F172A', textTransform: 'uppercase' }}>{step.timeframe}</Text>
+                    </View>
                    <View style={{ flex: 1 }}>
                      {renderBullets(step.task)}
                    </View>

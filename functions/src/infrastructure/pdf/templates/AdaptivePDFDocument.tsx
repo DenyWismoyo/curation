@@ -20,8 +20,8 @@ const logoPath = path.join(__dirname, '../../../../../public/icon-192x192.png');
 
 // Gaya Modern & Elegan
 const styles = StyleSheet.create({
-  page: { padding: '48 48 64 48', fontFamily: 'Inter', backgroundColor: '#FFFFFF' },
-  coverPage: { padding: '64 48', fontFamily: 'Inter', backgroundColor: '#F8FAFC', justifyContent: 'center', alignItems: 'center' },
+  page: { padding: '48 56 64 56', fontFamily: 'Inter', backgroundColor: '#FFFFFF' },
+  coverPage: { padding: '64 56', fontFamily: 'Inter', backgroundColor: '#FFFFFF', justifyContent: 'center', alignItems: 'center' },
   
   // --- WATERMARK ---
   watermarkWrapper: {
@@ -31,51 +31,48 @@ const styles = StyleSheet.create({
   watermarkText: { color: '#0F172A', fontSize: 50, fontWeight: 900, opacity: 0.03, transform: 'rotate(-45deg)', textAlign: 'center', marginBottom: 8 },
 
   // --- COVER PAGE ---
-  coverLogo: { width: 80, height: 80, marginBottom: 32 },
-  coverSubtitle: { fontSize: 12, fontWeight: 700, color: '#4F46E5', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 16 },
-  coverTitle: { fontSize: 32, fontWeight: 900, color: '#0F172A', textTransform: 'uppercase', textAlign: 'center', marginBottom: 32 },
-  coverEntityCard: { backgroundColor: '#FFFFFF', padding: 24, borderRadius: 16, border: '1pt solid #E2E8F0', width: '80%', alignItems: 'center' },
-  coverEntityName: { fontSize: 16, fontWeight: 900, color: '#0F172A', marginBottom: 8, textAlign: 'center' },
-  coverDate: { fontSize: 10, color: '#64748B', fontWeight: 500 },
+  coverLogo: { width: 80, height: 80, marginBottom: 40 },
+  coverSubtitle: { fontSize: 10, fontWeight: 500, color: '#64748B', textTransform: 'uppercase', letterSpacing: 3, marginBottom: 16 },
+  coverTitle: { fontSize: 28, fontWeight: 900, color: '#0F172A', textTransform: 'uppercase', textAlign: 'center', marginBottom: 48, letterSpacing: 1 },
+  coverEntityCard: { borderTop: '1pt solid #E2E8F0', borderBottom: '1pt solid #E2E8F0', paddingVertical: 24, width: '100%', alignItems: 'center' },
+  coverEntityName: { fontSize: 18, fontWeight: 900, color: '#0F172A', marginBottom: 8, textAlign: 'center' },
+  coverDate: { fontSize: 10, color: '#64748B', fontWeight: 500, letterSpacing: 1 },
   
   // --- DISCLAIMER ---
-  disclaimerBox: { marginTop: 32, padding: 16, borderRadius: 12, backgroundColor: '#FFFBEB', border: '1pt solid #FDE68A' },
-  disclaimerTitle: { fontSize: 10, fontWeight: 900, color: '#D97706', textTransform: 'uppercase', marginBottom: 6 },
-  disclaimerText: { fontSize: 9, color: '#92400E', lineHeight: 1.5, textAlign: 'justify', marginBottom: 8 },
+  disclaimerBox: { marginTop: 32, padding: 16, borderLeft: '3pt solid #D97706', backgroundColor: '#FFFBEB' },
+  disclaimerTitle: { fontSize: 9, fontWeight: 900, color: '#D97706', textTransform: 'uppercase', marginBottom: 6, letterSpacing: 1 },
+  disclaimerText: { fontSize: 9, color: '#92400E', lineHeight: 1.6, textAlign: 'justify', marginBottom: 8 },
 
   // --- HEADER EKSEKUTIF ---
-  headerContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', borderBottom: '1pt solid #E2E8F0', paddingBottom: 16, marginBottom: 32 },
+  headerContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', borderBottom: '1pt solid #0F172A', paddingBottom: 16, marginBottom: 32 },
   headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  headerLogo: { width: 36, height: 36 },
+  headerLogo: { width: 32, height: 32 },
   headerTitles: { justifyContent: 'center' },
-  systemTitle: { fontSize: 8, color: '#4F46E5', fontWeight: 900, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 2 },
-  docTitle: { fontSize: 16, fontWeight: 700, color: '#0F172A' },
+  systemTitle: { fontSize: 8, color: '#64748B', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 2 },
+  docTitle: { fontSize: 14, fontWeight: 900, color: '#0F172A', textTransform: 'uppercase', letterSpacing: 1 },
   headerRight: { textAlign: 'right', maxWidth: '40%' },
-  entityName: { fontSize: 10, fontWeight: 700, color: '#0F172A', marginBottom: 4 },
+  entityName: { fontSize: 9, fontWeight: 700, color: '#0F172A', marginBottom: 4 },
   dateText: { fontSize: 8, color: '#64748B', fontWeight: 500, textTransform: 'uppercase' },
   
   // --- STRUKTUR SEKSI ---
   section: { marginBottom: 32 },
-  sectionTitle: { fontSize: 12, fontWeight: 900, color: '#4F46E5', textTransform: 'uppercase', letterSpacing: 1, borderBottom: '1pt solid #E2E8F0', paddingBottom: 8, marginBottom: 16 },
+  sectionTitle: { fontSize: 11, fontWeight: 900, color: '#0F172A', textTransform: 'uppercase', letterSpacing: 1.5, borderBottom: '1pt solid #E2E8F0', paddingBottom: 8, marginBottom: 20 },
   
   // --- TIPOGRAFI & GRID ---
-  label: { fontSize: 9, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 },
+  label: { fontSize: 9, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 },
   value: { fontSize: 10, color: '#0F172A', fontWeight: 500, marginBottom: 16, lineHeight: 1.6 },
-  grid2Col: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
-  colHalf: { width: '48%', marginBottom: 16 },
-  colFull: { width: '100%', marginBottom: 16 },
   
   // --- LIST METRIK & BULLETS ---
   bulletRow: { flexDirection: 'row', marginBottom: 8, paddingRight: 16 },
-  bulletDot: { width: 12, fontSize: 14, color: '#4F46E5', fontWeight: 900, marginTop: -2 },
+  bulletDot: { width: 12, fontSize: 14, color: '#0F172A', fontWeight: 900, marginTop: -2 },
   bulletText: { flex: 1, fontSize: 10, color: '#334155', lineHeight: 1.6, textAlign: 'justify' },
 
   // --- QUOTE BOX ---
-  quoteBox: { backgroundColor: '#EEF2FF', borderLeft: '4pt solid #4F46E5', padding: 16, borderRadius: '0 8pt 8pt 0', marginBottom: 24 },
-  quoteText: { fontSize: 11, fontStyle: 'italic', color: '#312E81', lineHeight: 1.6, fontWeight: 700 },
+  quoteBox: { borderLeft: '2pt solid #0F172A', paddingLeft: 16, marginBottom: 32 },
+  quoteText: { fontSize: 12, fontStyle: 'italic', color: '#0F172A', lineHeight: 1.6, fontWeight: 700 },
 
-  // --- CARDS ---
-  card: { backgroundColor: '#F8FAFC', borderRadius: 12, border: '1pt solid #E2E8F0', padding: 16, marginBottom: 16 },
+  // --- CARDS (Minimalist blocks) ---
+  card: { paddingBottom: 16, marginBottom: 16, borderBottom: '1pt solid #F1F5F9' },
 
   // --- FOOTER ---
   footer: { position: 'absolute', bottom: 30, left: 48, right: 48, borderTop: '1pt solid #E2E8F0', paddingTop: 16, flexDirection: 'row', justifyContent: 'space-between' },
@@ -266,7 +263,7 @@ export function AdaptivePDFDocument({ role, trackType, formData, aiResult, downl
                 {renderBullets(risk)}
                 
                 <View style={{ marginTop: 12, paddingTop: 12, borderTop: '1pt solid #F1F5F9' }}>
-                  <Text style={[styles.label, { color: '#059669' }]}>Mitigation Strategies</Text>
+                  <Text style={[styles.label, { color: '#0F172A' }]}>Mitigation Strategies</Text>
                   {renderBullets(
                     Array.isArray(aiResult.riskAssessment.mitigationStrategies) 
                     ? aiResult.riskAssessment.mitigationStrategies[idx] || '-' 
@@ -284,8 +281,8 @@ export function AdaptivePDFDocument({ role, trackType, formData, aiResult, downl
             <Text style={styles.sectionTitle}>{getLabel('execution')}</Text>
             {aiResult.nextActionSteps.map((step: any, idx: number) => (
               <View key={idx} style={{ flexDirection: 'row', marginBottom: 16 }} wrap={false}>
-                <View style={{ width: 80, borderRight: '2pt solid #E2E8F0', paddingRight: 12, marginRight: 12, justifyContent: 'center' }}>
-                  <Text style={{ fontSize: 9, fontWeight: 900, color: '#4F46E5', textTransform: 'uppercase' }}>{step.timeframe || 'TBD'}</Text>
+                <View style={{ width: 80, borderRight: '1pt solid #E2E8F0', paddingRight: 12, marginRight: 12, justifyContent: 'center' }}>
+                  <Text style={{ fontSize: 9, fontWeight: 900, color: '#000000', textTransform: 'uppercase' }}>{step.timeframe}</Text>
                 </View>
                 <View style={{ flex: 1 }}>
                   {renderBullets(step.task || '-')}
