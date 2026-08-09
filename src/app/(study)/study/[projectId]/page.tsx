@@ -95,7 +95,7 @@ export default function StudyProjectViewer() {
 
   if (loading || (!projectData && hasAccess)) {
     return (
-      <div className="min-h-screen bg-[#f5f3ee] flex items-center justify-center text-muted-foreground">
+      <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">
         <Loader2 className="w-5 h-5 animate-spin" />
       </div>
     );
@@ -103,11 +103,11 @@ export default function StudyProjectViewer() {
 
   if (!user || !hasAccess) {
     return (
-      <div className="min-h-screen bg-[#f5f3ee] flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <AlertCircle className="w-12 h-12 text-rose-500 mx-auto" />
           <h1 className="text-xl font-bold mt-4">Akses Ditolak</h1>
-          <button onClick={() => router.push('/study')} className="mt-4 px-4 py-2 bg-stone-900 text-white rounded-xl font-bold">Kembali</button>
+          <button onClick={() => router.push('/study')} className="mt-4 px-4 py-2 bg-foreground text-background rounded-xl font-bold">Kembali</button>
         </div>
       </div>
     );
@@ -238,10 +238,10 @@ export default function StudyProjectViewer() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f5f3ee] flex flex-col">
-      <header className="card-solid border-b border-stone-200 px-6 py-4 flex items-center justify-between shrink-0">
+    <div className="min-h-screen bg-background flex flex-col">
+      <header className="card-solid border-b border-border px-6 py-4 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-4">
-          <button onClick={() => router.push('/study')} className="p-2 hover:bg-stone-100 rounded-full text-stone-600 transition-colors">
+          <button onClick={() => router.push('/study')} className="p-2 hover:bg-accent rounded-full text-muted-foreground transition-colors">
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
@@ -265,9 +265,9 @@ export default function StudyProjectViewer() {
 
       <div className="flex-1 flex overflow-hidden">
         {/* Sidebar */}
-        <div className="w-80 bg-stone-50 border-r border-stone-200 flex flex-col shrink-0 overflow-y-auto">
-          <div className="p-4 border-b border-stone-200">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-500">Daftar Bab</p>
+        <div className="w-80 bg-muted border-r border-border flex flex-col shrink-0 overflow-y-auto">
+          <div className="p-4 border-b border-border">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Daftar Bab</p>
           </div>
           <div className="p-3 space-y-1">
             {projectData?.status === 'FAILED' && projectData?.orchestration?.errors && projectData.orchestration.errors.length > 0 && (
@@ -290,10 +290,10 @@ export default function StudyProjectViewer() {
               <button
                 key={chapter.id}
                 onClick={() => setActiveChapterId(chapter.id)}
-                className={`w-full text-left p-3 rounded-xl transition-all ${activeChapterId === chapter.id ? 'card-solid ring-1 ring-stone-300 shadow-sm' : 'hover:bg-stone-100 text-stone-600'}`}
+                className={`w-full text-left p-3 rounded-xl transition-all ${activeChapterId === chapter.id ? 'card-solid ring-1 ring-border shadow-sm' : 'hover:bg-accent text-muted-foreground'}`}
               >
                 <div className="flex items-start gap-2">
-                  <FileText className={`w-4 h-4 mt-0.5 shrink-0 ${activeChapterId === chapter.id ? 'text-violet-700' : 'text-stone-400'}`} />
+                  <FileText className={`w-4 h-4 mt-0.5 shrink-0 ${activeChapterId === chapter.id ? 'text-violet-700 dark:text-violet-400' : 'text-muted-foreground'}`} />
                   <div>
                     <p className={`text-sm font-bold leading-snug ${activeChapterId === chapter.id ? 'text-foreground' : ''}`}>{chapter.chapterNumber === 0 ? '' : `${chapter.chapterNumber}. `}{chapter.title}</p>
                     {chapter.currentAction ? (
@@ -320,7 +320,7 @@ export default function StudyProjectViewer() {
               </button>
             ))}
             {chapters.length === 0 && (
-              <div className="text-xs text-stone-500 text-center py-6">Belum ada bab yang dihasilkan.</div>
+              <div className="text-xs text-muted-foreground text-center py-6">Belum ada bab yang dihasilkan.</div>
             )}
           </div>
         </div>
@@ -329,13 +329,13 @@ export default function StudyProjectViewer() {
         <div className="flex-1 overflow-y-auto card-solid">
           {activeChapter ? (
             <div className="max-w-4xl mx-auto p-8 lg:p-12">
-              <div className="mb-8 pb-8 border-b border-stone-200">
+              <div className="mb-8 pb-8 border-b border-border">
                 <div className="flex items-center justify-between">
                   <h2 className="text-3xl font-black text-foreground leading-tight">{activeChapter.title}</h2>
                   <button 
                     onClick={() => setShowRevisionModal(true)}
                     disabled={['REVISING', 'REVISION_REQUESTED'].includes(activeChapter.draftStatus)}
-                    className="flex items-center gap-2 px-4 py-2 card-solid hover:bg-stone-50 text-stone-700 text-sm font-bold rounded-xl border border-stone-200 shadow-sm disabled:opacity-50"
+                    className="flex items-center gap-2 px-4 py-2 card-solid hover:bg-accent text-muted-foreground text-sm font-bold rounded-xl border border-border shadow-sm disabled:opacity-50"
                   >
                     {['REVISING', 'REVISION_REQUESTED'].includes(activeChapter.draftStatus) ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />} 
                     {['REVISING', 'REVISION_REQUESTED'].includes(activeChapter.draftStatus) ? 'Revising...' : 'Minta Revisi'}
@@ -366,33 +366,33 @@ export default function StudyProjectViewer() {
               </div>
 
               {/* Markdown Content */}
-              <div className="prose prose-slate max-w-none prose-headings:font-black prose-h1:text-3xl prose-h2:text-2xl prose-h2:mt-10 prose-h3:text-xl prose-p:text-stone-700 prose-p:leading-relaxed prose-a:text-violet-600 prose-a:font-bold prose-a:no-underline hover:prose-a:text-violet-700 hover:prose-a:underline prose-img:rounded-xl">
+              <div className="prose prose-slate dark:prose-invert max-w-none prose-headings:font-black prose-h1:text-3xl prose-h2:text-2xl prose-h2:mt-10 prose-h3:text-xl prose-p:text-muted-foreground prose-p:leading-relaxed prose-a:text-violet-600 dark:prose-a:text-violet-400 prose-a:font-bold prose-a:no-underline hover:prose-a:text-violet-700 hover:prose-a:underline prose-img:rounded-xl">
                 {activeChapter.content ? (
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
                     {processContent(activeChapter.content, activeChapter.citations)}
                   </ReactMarkdown>
                 ) : (
-                  <p className="text-stone-400 italic">Konten bab sedang ditulis atau belum tersedia.</p>
+                  <p className="text-muted-foreground italic">Konten bab sedang ditulis atau belum tersedia.</p>
                 )}
               </div>
               
               {/* Citations Footer */}
               {activeChapter.citations && activeChapter.citations.length > 0 && (
-                <div className="mt-16 pt-8 border-t border-stone-200">
-                  <h4 className="text-sm font-black uppercase tracking-widest text-stone-500 mb-6">Referensi & Sitasi yang Digunakan</h4>
+                <div className="mt-16 pt-8 border-t border-border">
+                  <h4 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-6">Referensi & Sitasi yang Digunakan</h4>
                   <div className="space-y-5">
                     {activeChapter.citations.map((cit, idx) => (
-                      <div key={idx} id={`cit-${idx}`} className="text-sm bg-stone-50 rounded-xl p-4 border border-stone-100 hover:border-stone-200 transition-colors">
+                      <div key={idx} id={`cit-${idx}`} className="text-sm bg-muted rounded-xl p-4 border border-border hover:border-primary transition-colors">
                         <div className="flex items-start gap-3">
                           <span className="shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-violet-100 text-violet-700 font-black text-xs">
                             {idx + 1}
                           </span>
                           <div>
                             <p className="font-bold text-foreground leading-snug">{cit.claim}</p>
-                            <div className="mt-2 text-stone-500 text-xs border-l-2 border-violet-200 pl-3 italic card-solid p-2 rounded-r-lg">
+                            <div className="mt-2 text-muted-foreground text-xs border-l-2 border-violet-200 dark:border-violet-800 pl-3 italic card-solid p-2 rounded-r-lg">
                               "{cit.supportingSnippet}"
                             </div>
-                            <p className="text-[10px] uppercase font-bold text-stone-400 mt-2 tracking-wider">
+                            <p className="text-[10px] uppercase font-bold text-muted-foreground mt-2 tracking-wider">
                               ID Sumber: {cit.sourceId}
                             </p>
                           </div>
