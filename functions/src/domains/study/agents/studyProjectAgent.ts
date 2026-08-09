@@ -507,7 +507,6 @@ export const publishStudyToCryptoAcademy = onCall({
       title: chapterData.title || `Modul ${order}`,
       content: content,
       assessmentTemplateId: parsed.data.assessmentTemplateId || null,
-      publishedAt: now,
       publishedByUid: uid,
       // Metadata baru untuk Crypto Academy v2
       description: "",
@@ -517,9 +516,10 @@ export const publishStudyToCryptoAcademy = onCall({
       prerequisites: [],
       coverEmoji: "📚",
       keyLearnings: [],
-      isPublished: true,
-      version: 1,
+      isPublished: false, // Disimpan sebagai draft terlebih dahulu untuk direview di /admin
+      publishedAt: null, // belum dipublish ke publik
       updatedAt: now,
+      version: 1,
     });
     moduleIds.push(moduleRef.id);
     order++;
