@@ -60,6 +60,10 @@ export default function StudyProjectViewer() {
   
   const [isExporting, setIsExporting] = useState(false);
 
+  const [isEditingManual, setIsEditingManual] = useState(false);
+  const [manualContent, setManualContent] = useState('');
+  const [savingManual, setSavingManual] = useState(false);
+
   const hasAccess = role ? ALLOWED_ROLES.has(role) : false;
 
   useEffect(() => {
@@ -135,6 +139,25 @@ export default function StudyProjectViewer() {
       setRevisionError(error.message || 'Terjadi kesalahan saat meminta revisi.');
     } finally {
       setIsSubmittingRevision(false);
+    }
+  };
+
+  const handleSaveManualEdit = async () => {
+    if (!activeChapterId) return;
+    setSavingManual(true);
+    try {
+      const updateStudyChapterManual = httpsCallable(functions, 'updateStudyChapterManual');
+      await updateStudyChapterManual({
+        projectId,
+        chapterId: activeChapterId,
+        content: manualContent,
+      });
+      setIsEditingManual(false);
+    } catch (err) {
+      console.error(err);
+      alert("Gagal menyimpan edit manual.");
+    } finally {
+      setSavingManual(false);
     }
   };
 
@@ -332,14 +355,26 @@ export default function StudyProjectViewer() {
               <div className="mb-8 pb-8 border-b border-border">
                 <div className="flex items-center justify-between">
                   <h2 className="text-3xl font-black text-foreground leading-tight">{activeChapter.title}</h2>
-                  <button 
-                    onClick={() => setShowRevisionModal(true)}
-                    disabled={['REVISING', 'REVISION_REQUESTED'].includes(activeChapter.draftStatus)}
-                    className="flex items-center gap-2 px-4 py-2 card-solid hover:bg-accent text-muted-foreground text-sm font-bold rounded-xl border border-border shadow-sm disabled:opacity-50"
-                  >
-                    {['REVISING', 'REVISION_REQUESTED'].includes(activeChapter.draftStatus) ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />} 
-                    {['REVISING', 'REVISION_REQUESTED'].includes(activeChapter.draftStatus) ? 'Revising...' : 'Minta Revisi'}
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button 
+                      onClick={() => {
+                        setIsEditingManual(!isEditingManual);
+                        if (!isEditingManual) setManualContent(activeChapter.content || "");
+                      }}
+                      className="flex items-center gap-2 px-4 py-2 card-solid hover:bg-accent text-muted-foreground text-sm font-bold rounded-xl border border-border shadow-sm disabled:opacity-50"
+                    >
+                      <FileText className="w-4 h-4" /> 
+                      {isEditingManual ? 'Batal Edit' : 'Edit Manual'}
+                    </button>
+                    <button 
+                      onClick={() => setShowRevisionModal(true)}
+                      disabled={['REVISING', 'REVISION_REQUESTED'].includes(activeChapter.draftStatus)}
+                      className="flex items-center gap-2 px-4 py-2 card-solid hover:bg-accent text-muted-foreground text-sm font-bold rounded-xl border border-border shadow-sm disabled:opacity-50"
+                    >
+                      {['REVISING', 'REVISION_REQUESTED'].includes(activeChapter.draftStatus) ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />} 
+                      {['REVISING', 'REVISION_REQUESTED'].includes(activeChapter.draftStatus) ? 'Revising...' : 'Minta Revisi'}
+                    </button>
+                  </div>
                 </div>
                 
                 {/* Audit Findings Panel */}
@@ -366,15 +401,40 @@ export default function StudyProjectViewer() {
               </div>
 
               {/* Markdown Content */}
-              <div className="prose prose-slate dark:prose-invert max-w-none prose-headings:font-black prose-h1:text-3xl prose-h2:text-2xl prose-h2:mt-10 prose-h3:text-xl prose-p:text-muted-foreground prose-p:leading-relaxed prose-a:text-violet-600 dark:prose-a:text-violet-400 prose-a:font-bold prose-a:no-underline hover:prose-a:text-violet-700 hover:prose-a:underline prose-img:rounded-xl">
-                {activeChapter.content ? (
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {processContent(activeChapter.content, activeChapter.citations)}
-                  </ReactMarkdown>
-                ) : (
-                  <p className="text-muted-foreground italic">Konten bab sedang ditulis atau belum tersedia.</p>
-                )}
-              </div>
+              {isEditingManual ? (
+                <div className="mt-6">
+                  <textarea 
+                    value={manualContent}
+                    onChange={(e) => setManualContent(e.target.value)}
+                    className="w-full min-h-[500px] p-4 rounded-xl border border-border bg-background text-foreground font-mono text-sm leading-relaxed"
+                  />
+                  <div className="mt-4 flex justify-end gap-2">
+                    <button 
+                      onClick={() => setIsEditingManual(false)}
+                      className="px-6 py-2 rounded-xl border border-border text-foreground text-sm font-bold hover:bg-accent"
+                    >
+                      Batal
+                    </button>
+                    <button 
+                      onClick={handleSaveManualEdit}
+                      disabled={savingManual}
+                      className="flex items-center gap-2 px-6 py-2 rounded-xl bg-violet-700 hover:bg-violet-800 text-white text-sm font-bold transition-colors disabled:opacity-50"
+                    >
+                      {savingManual ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />} Simpan Perubahan
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="prose prose-slate dark:prose-invert max-w-none prose-headings:font-black prose-h1:text-3xl prose-h2:text-2xl prose-h2:mt-10 prose-h3:text-xl prose-p:text-muted-foreground prose-p:leading-relaxed prose-a:text-violet-600 dark:prose-a:text-violet-400 prose-a:font-bold prose-a:no-underline hover:prose-a:text-violet-700 hover:prose-a:underline prose-img:rounded-xl">
+                  {activeChapter.content ? (
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {processContent(activeChapter.content, activeChapter.citations)}
+                    </ReactMarkdown>
+                  ) : (
+                    <p className="text-muted-foreground italic">Konten bab sedang ditulis atau belum tersedia.</p>
+                  )}
+                </div>
+              )}
               
               {/* Citations Footer */}
               {activeChapter.citations && activeChapter.citations.length > 0 && (

@@ -537,4 +537,52 @@ export const publishStudyToCryptoAcademy = onCall({
   await batch.commit();
 
   return { success: true, publishedModulesCount: chaptersSnap.size };
+});
+
+const updateStudyChapterManualSchema = z.object({
+  projectId: z.string().trim().min(1).max(128),
+  chapterId: z.string().trim().min(1).max(128),
+  content: z.string().trim().min(1),
+});
+
+export const updateStudyChapterManual = onCall({
+  region: "asia-southeast2",
+  memory: "256MiB",
+  cors: true,
+}, async (request) => {
+  if (!request.auth) {
+    throw new HttpsError("unauthenticated", "Anda harus login.");
+  }
+
+  const parsed = updateStudyChapterManualSchema.safeParse(request.data || {});
+  if (!parsed.success) {
+    throw new HttpsError("invalid-argument", "Payload update manual tidak valid.");
+  }
+
+  const uid = request.auth.uid;
+  const email = normalizeEmail(request.auth.token.email);
+  const { projectRef, projectData } = await assertStudyOperator(uid, email, parsed.data.projectId);
+  
+  if (!projectRef || !projectData) {
+    throw new HttpsError("not-found", "Project kajian tidak ditemukan.");
+  }
+
+  const chapterRef = projectRef.collection("chapters").doc(parsed.data.chapterId);
+  const chapterSnap = await chapterRef.get();
+  
+  if (!chapterSnap.exists) {
+    throw new HttpsError("not-found", "Bab kajian tidak ditemukan.");
+  }
+
+  const now = admin.firestore.FieldValue.serverTimestamp();
+
+  await chapterRef.update({
+    content: parsed.data.content,
+    revisedContent: parsed.data.content,
+    manuallyEdited: true,
+    manuallyEditedAt: now,
+    manuallyEditedBy: uid,
+  });
+
+  return { success: true };
 });
