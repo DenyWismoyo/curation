@@ -5,6 +5,7 @@ import { getFirestore } from "firebase-admin/firestore";
 import React from "react";
 import ReactPDF from "@react-pdf/renderer";
 import { UniversalPDFDocument } from "./templates/UniversalPDFDocument"; 
+import { AdaptivePDFDocument } from "./templates/AdaptivePDFDocument";
 
 export const generatePDFReport = onCall(
   {
@@ -17,7 +18,7 @@ export const generatePDFReport = onCall(
     if (!request.auth) throw new HttpsError("unauthenticated", "Anda harus login.");
 
     // Kita tambahkan assessmentId, templateVersion, dan forceRegenerate
-    const { role, payload, assessmentId, templateVersion = 1, forceRegenerate = false } = request.data as any;
+    const { role, payload, assessmentId, templateVersion = 4, forceRegenerate = false } = request.data as any;
 
     if (!role || !payload || !assessmentId) {
       throw new HttpsError("invalid-argument", "Data request PDF tidak lengkap (butuh assessmentId).");
@@ -35,7 +36,7 @@ export const generatePDFReport = onCall(
     const safeEntityName = payload?.formData?.namaUsaha 
       ? String(payload.formData.namaUsaha).replace(/[^a-zA-Z0-9]/gi, '_') 
       : assessmentId;
-    const downloadFileName = `Laporan_CSRS_${safeEntityName}_${role}.pdf`;
+    const downloadFileName = `Laporan_Omnifit_${safeEntityName}_${role}.pdf`;
 
     try {
       const docSnap = await docRef.get();
@@ -60,7 +61,13 @@ export const generatePDFReport = onCall(
 
       // 2. JIKA KOSONG / KADALUARSA / FORCE REGENERATE -> RENDER ULANG
       console.log(`[RENDERING] Membuat PDF baru untuk ${assessmentId} (${role})`);
-      const documentElement = React.createElement(UniversalPDFDocument, {
+      
+      const trackTypeStr = String(payload?.trackType || "").toLowerCase();
+      const isAdaptive = trackTypeStr.includes('adaptif') || trackTypeStr.includes('adaptive');
+
+      const PDFTemplate = isAdaptive ? AdaptivePDFDocument : UniversalPDFDocument;
+
+      const documentElement = React.createElement(PDFTemplate, {
         role: role,
         trackType: payload.trackType,
         formData: payload.formData,

@@ -1,11 +1,10 @@
 'use client';
 
 import React from 'react';
-import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
-
+import { Document, Page, Text, View, StyleSheet, Font, Image } from '@react-pdf/renderer';
 import path from 'path';
 
-// Register font
+// Register font tanpa italic untuk mencegah eror fatal di react-pdf
 Font.register({
   family: 'Inter',
   fonts: [
@@ -16,71 +15,71 @@ Font.register({
   ]
 });
 
-// Gaya Editorial (High Contrast Monochrome) + Keamanan
+// Resolusi path logo yang aman
+const logoPath = path.join(__dirname, '../../../../../public/icon-192x192.png');
+
+// Gaya Modern & Elegan
 const styles = StyleSheet.create({
   page: { padding: '48 48 64 48', fontFamily: 'Inter', backgroundColor: '#FFFFFF' },
+  coverPage: { padding: '64 48', fontFamily: 'Inter', backgroundColor: '#F8FAFC', justifyContent: 'center', alignItems: 'center' },
   
-  // --- WATERMARK KEAMANAN ---
+  // --- WATERMARK ---
   watermarkWrapper: {
-    position: 'absolute',
-    top: 0, left: 0, right: 0, bottom: 0,
-    zIndex: -1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+    zIndex: -1, justifyContent: 'center', alignItems: 'center',
   },
-  watermarkText: {
-    color: '#000000',
-    fontSize: 54,
-    fontWeight: 900,
-    opacity: 0.05, 
-    transform: 'rotate(-45deg)',
-    textAlign: 'center',
-    marginBottom: 8
-  },
+  watermarkText: { color: '#0F172A', fontSize: 50, fontWeight: 900, opacity: 0.03, transform: 'rotate(-45deg)', textAlign: 'center', marginBottom: 8 },
 
-  // --- DISCLAIMER HUKUM ---
-  disclaimerBox: {
-    marginTop: 32,
-    padding: 16,
-    borderTop: '3pt solid #000000',
-    borderBottom: '1pt solid #000000',
-    backgroundColor: '#FAFAFA',
-  },
-  disclaimerTitle: { fontSize: 10, fontWeight: 900, color: '#000000', textTransform: 'uppercase', marginBottom: 6 },
-  disclaimerText: { fontSize: 8, color: '#333333', lineHeight: 1.5, textAlign: 'justify', marginBottom: 8 },
+  // --- COVER PAGE ---
+  coverLogo: { width: 80, height: 80, marginBottom: 32 },
+  coverSubtitle: { fontSize: 12, fontWeight: 700, color: '#4F46E5', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 16 },
+  coverTitle: { fontSize: 32, fontWeight: 900, color: '#0F172A', textTransform: 'uppercase', textAlign: 'center', marginBottom: 32 },
+  coverEntityCard: { backgroundColor: '#FFFFFF', padding: 24, borderRadius: 16, border: '1pt solid #E2E8F0', width: '80%', alignItems: 'center' },
+  coverEntityName: { fontSize: 16, fontWeight: 900, color: '#0F172A', marginBottom: 8, textAlign: 'center' },
+  coverDate: { fontSize: 10, color: '#64748B', fontWeight: 500 },
+  
+  // --- DISCLAIMER ---
+  disclaimerBox: { marginTop: 32, padding: 16, borderRadius: 12, backgroundColor: '#FFFBEB', border: '1pt solid #FDE68A' },
+  disclaimerTitle: { fontSize: 10, fontWeight: 900, color: '#D97706', textTransform: 'uppercase', marginBottom: 6 },
+  disclaimerText: { fontSize: 9, color: '#92400E', lineHeight: 1.5, textAlign: 'justify', marginBottom: 8 },
 
   // --- HEADER EKSEKUTIF ---
-  headerContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', borderBottom: '2pt solid #000000', paddingBottom: 16, marginBottom: 32 },
-  headerLeft: { maxWidth: '65%' },
-  headerRight: { textAlign: 'right', maxWidth: '35%' },
-  systemTitle: { fontSize: 8, color: '#666666', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 4 },
-  docTitle: { fontSize: 24, fontWeight: 900, color: '#000000', textTransform: 'uppercase', letterSpacing: -0.5 },
-  entityName: { fontSize: 10, fontWeight: 900, color: '#000000', textTransform: 'uppercase', marginBottom: 4 },
-  dateText: { fontSize: 8, color: '#666666', fontWeight: 500, textTransform: 'uppercase' },
+  headerContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', borderBottom: '1pt solid #E2E8F0', paddingBottom: 16, marginBottom: 32 },
+  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  headerLogo: { width: 36, height: 36 },
+  headerTitles: { justifyContent: 'center' },
+  systemTitle: { fontSize: 8, color: '#4F46E5', fontWeight: 900, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 2 },
+  docTitle: { fontSize: 16, fontWeight: 700, color: '#0F172A' },
+  headerRight: { textAlign: 'right', maxWidth: '40%' },
+  entityName: { fontSize: 10, fontWeight: 700, color: '#0F172A', marginBottom: 4 },
+  dateText: { fontSize: 8, color: '#64748B', fontWeight: 500, textTransform: 'uppercase' },
   
   // --- STRUKTUR SEKSI ---
   section: { marginBottom: 32 },
-  sectionTitle: { fontSize: 11, fontWeight: 900, color: '#000000', textTransform: 'uppercase', letterSpacing: 1, borderBottom: '1pt solid #E5E5E5', paddingBottom: 8, marginBottom: 16 },
+  sectionTitle: { fontSize: 12, fontWeight: 900, color: '#4F46E5', textTransform: 'uppercase', letterSpacing: 1, borderBottom: '1pt solid #E2E8F0', paddingBottom: 8, marginBottom: 16 },
   
   // --- TIPOGRAFI & GRID ---
-  label: { fontSize: 8, fontWeight: 700, color: '#666666', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 },
-  value: { fontSize: 10, color: '#000000', fontWeight: 400, marginBottom: 16, lineHeight: 1.5 },
+  label: { fontSize: 9, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 },
+  value: { fontSize: 10, color: '#0F172A', fontWeight: 500, marginBottom: 16, lineHeight: 1.6 },
   grid2Col: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
-  colHalf: { width: '48%', marginBottom: 8 },
-  colFull: { width: '100%', marginBottom: 8 },
+  colHalf: { width: '48%', marginBottom: 16 },
+  colFull: { width: '100%', marginBottom: 16 },
   
   // --- LIST METRIK & BULLETS ---
-  bulletRow: { flexDirection: 'row', marginBottom: 6, paddingRight: 16 },
-  bulletDot: { width: 12, fontSize: 10, color: '#000000', fontWeight: 900 },
-  bulletText: { flex: 1, fontSize: 10, color: '#333333', lineHeight: 1.5, textAlign: 'justify' },
+  bulletRow: { flexDirection: 'row', marginBottom: 8, paddingRight: 16 },
+  bulletDot: { width: 12, fontSize: 14, color: '#4F46E5', fontWeight: 900, marginTop: -2 },
+  bulletText: { flex: 1, fontSize: 10, color: '#334155', lineHeight: 1.6, textAlign: 'justify' },
 
   // --- QUOTE BOX ---
-  quoteBox: { backgroundColor: '#F0F4FF', borderLeft: '4pt solid #4F46E5', padding: 16, marginBottom: 24 },
-  quoteText: { fontSize: 11, fontStyle: 'italic', color: '#1E1B4B', lineHeight: 1.5, fontWeight: 700 },
+  quoteBox: { backgroundColor: '#EEF2FF', borderLeft: '4pt solid #4F46E5', padding: 16, borderRadius: '0 8pt 8pt 0', marginBottom: 24 },
+  quoteText: { fontSize: 11, fontStyle: 'italic', color: '#312E81', lineHeight: 1.6, fontWeight: 700 },
+
+  // --- CARDS ---
+  card: { backgroundColor: '#F8FAFC', borderRadius: 12, border: '1pt solid #E2E8F0', padding: 16, marginBottom: 16 },
 
   // --- FOOTER ---
-  footer: { position: 'absolute', bottom: 30, left: 48, right: 48, borderTop: '1pt solid #E5E5E5', paddingTop: 12, flexDirection: 'row', justifyContent: 'space-between' },
-  footerText: { fontSize: 8, color: '#999999', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1 },
+  footer: { position: 'absolute', bottom: 30, left: 48, right: 48, borderTop: '1pt solid #E2E8F0', paddingTop: 16, flexDirection: 'row', justifyContent: 'space-between' },
+  footerText: { fontSize: 8, color: '#94A3B8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1 },
 });
 
 export interface ExportRole {
@@ -98,7 +97,7 @@ const renderTextWithBoldPdf = (str: string) => {
   return parts.map((part, index) => {
     if (part.startsWith('**') && part.endsWith('**')) {
       return (
-        <Text key={index} style={{ fontWeight: 700, color: '#000000' }}>
+        <Text key={index} style={{ fontWeight: 700, color: '#0F172A' }}>
           {part.slice(2, -2)}
         </Text>
       );
@@ -114,7 +113,7 @@ const renderBullets = (text: string) => {
     const cleanLine = line.replace(/^[-*\u2022]\s*/, '');
     return (
       <View key={idx} style={styles.bulletRow}>
-        <Text style={styles.bulletDot}>■</Text>
+        <Text style={styles.bulletDot}>•</Text>
         <Text style={styles.bulletText}>{renderTextWithBoldPdf(cleanLine)}</Text>
       </View>
     );
@@ -122,10 +121,47 @@ const renderBullets = (text: string) => {
 };
 
 export function AdaptivePDFDocument({ role, trackType, formData, aiResult, downloadedBy }: ExportRole) {
+  const formPurpose = aiResult?.formPurpose || 'assessment';
+  const customUiLabels = aiResult?.customUiLabels || {};
+  const isCounseling = formPurpose === 'counseling';
+  const isMonitoring = formPurpose === 'monitoring';
+  const isConsultation = formPurpose === 'consultation';
+
+  const getLabel = (key: 'score' | 'swot' | 'risk' | 'roadmap' | 'execution') => {
+    if (customUiLabels[key + 'Label']) return customUiLabels[key + 'Label'];
+    
+    switch(key) {
+      case 'score':
+        if (isCounseling) return 'Indeks Kepribadian';
+        if (isMonitoring) return 'Persentase Capaian Target';
+        if (isConsultation) return 'Tingkat Urgensi Solusi';
+        return 'AI Readiness Score';
+      case 'swot':
+        if (isCounseling) return 'Pemetaan Karakter (SWOT)';
+        if (isMonitoring) return 'Matriks Kondisi Lapangan (SWOT)';
+        return 'Capability Matrix (SWOT)';
+      case 'risk':
+        if (isCounseling) return 'Pemicu Konflik & Penanganan';
+        if (isMonitoring) return 'Hambatan & Alternatif Mitigasi';
+        return 'Critical Risks & Mitigation Map';
+      case 'roadmap':
+        if (isCounseling) return 'Rekomendasi Rencana Pendampingan';
+        if (isMonitoring) return 'Rencana Aksi Korektif Strategis';
+        return 'Rekomendasi Strategis';
+      case 'execution':
+        if (isCounseling) return 'Timeline Intervensi & Konseling';
+        if (isMonitoring) return 'Timeline Progres Kerja';
+        return 'Action Plan Timeline';
+    }
+  };
+
   const printDateObj = new Date();
   const dateStr = printDateObj.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
   const isInternal = role === 'admin_csrs' || role === 'curator';
   const isCuratorWorksheet = role === 'curator';
+
+  const systemNameText = customUiLabels?.systemTitle || 'Omnifit Assessment';
+  const systemAdaptiveName = `${systemNameText} (Adaptive)`;
 
   const SecurityWatermark = () => {
     if (role !== 'user') return null;
@@ -140,8 +176,11 @@ export function AdaptivePDFDocument({ role, trackType, formData, aiResult, downl
   const PageHeader = ({ subtitle }: { subtitle: string }) => (
     <View style={styles.headerContainer} fixed>
       <View style={styles.headerLeft}>
-        <Text style={styles.systemTitle}>CSRS Adaptive Analytics</Text>
-        <Text style={styles.docTitle}>{subtitle}</Text>
+        <Image src={logoPath} style={styles.headerLogo} />
+        <View style={styles.headerTitles}>
+          <Text style={styles.systemTitle}>{systemAdaptiveName}</Text>
+          <Text style={styles.docTitle}>{subtitle}</Text>
+        </View>
       </View>
       <View style={styles.headerRight}>
         <Text style={styles.entityName}>{formData?.namaUsaha || 'Confidential Entity'}</Text>
@@ -161,6 +200,22 @@ export function AdaptivePDFDocument({ role, trackType, formData, aiResult, downl
 
   return (
     <Document title={`${formData?.namaUsaha || 'Asesmen'}_Adaptive_Report`}>
+      {/* ================= PAGE 0: COVER PAGE ================= */}
+      <Page size="A4" style={styles.coverPage} wrap={false}>
+        <Image src={logoPath} style={styles.coverLogo} />
+        <Text style={styles.coverSubtitle}>{systemAdaptiveName} Report</Text>
+        <Text style={styles.coverTitle}>
+          {isCuratorWorksheet ? 'Field Curator\nWorksheet' : isInternal ? 'Internal Analytics\nReport' : 'Strategic Analytics\nOverview'}
+        </Text>
+        
+        <View style={styles.coverEntityCard}>
+          <Text style={styles.label}>Subject Entity</Text>
+          <Text style={styles.coverEntityName}>{formData?.namaUsaha || 'Confidential Entity'}</Text>
+          <Text style={styles.coverDate}>{trackType} • {dateStr}</Text>
+        </View>
+      </Page>
+
+      {/* ================= PAGE 1: OVERVIEW ================= */}
       <Page size="A4" style={styles.page} wrap={true}>
         <SecurityWatermark />
         <PageHeader subtitle="Adaptive Overview" />
@@ -178,9 +233,9 @@ export function AdaptivePDFDocument({ role, trackType, formData, aiResult, downl
         </View>
 
         {aiResult?.keyFocusArea && (
-          <View style={[styles.section, { paddingBottom: 16, borderBottom: '2pt solid #000000' }]} wrap={false}>
+          <View style={[styles.section, { paddingBottom: 16, borderBottom: '1pt solid #E2E8F0' }]} wrap={false}>
             <Text style={styles.label}>Key Focus Area</Text>
-            <Text style={{ fontSize: 16, fontWeight: 900, color: '#000000', marginTop: 4 }}>{aiResult.keyFocusArea}</Text>
+            <Text style={{ fontSize: 16, fontWeight: 900, color: '#0F172A', marginTop: 4 }}>{aiResult.keyFocusArea}</Text>
           </View>
         )}
 
@@ -196,6 +251,7 @@ export function AdaptivePDFDocument({ role, trackType, formData, aiResult, downl
         <PageFooter />
       </Page>
 
+      {/* ================= PAGE 2: STRATEGY & RISKS ================= */}
       <Page size="A4" style={styles.page} wrap={true}>
         <SecurityWatermark />
         <PageHeader subtitle="Strategy & Risks" />
@@ -203,14 +259,14 @@ export function AdaptivePDFDocument({ role, trackType, formData, aiResult, downl
         {/* RISK & MITIGATION MAP */}
         {Array.isArray(aiResult?.riskAssessment?.criticalRisks) && aiResult.riskAssessment.criticalRisks.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Risk & Mitigation Map</Text>
+            <Text style={styles.sectionTitle}>{getLabel('risk')}</Text>
             {aiResult.riskAssessment.criticalRisks.map((risk: string, idx: number) => (
-              <View key={idx} style={{ marginBottom: 16, paddingBottom: 16, borderBottom: '1pt solid #F5F5F5' }} wrap={false}>
+              <View key={idx} style={styles.card} wrap={false}>
                 <Text style={styles.label}>Identified Risks</Text>
                 {renderBullets(risk)}
                 
-                <View style={{ marginTop: 8 }}>
-                  <Text style={styles.label}>Mitigation Strategies</Text>
+                <View style={{ marginTop: 12, paddingTop: 12, borderTop: '1pt solid #F1F5F9' }}>
+                  <Text style={[styles.label, { color: '#059669' }]}>Mitigation Strategies</Text>
                   {renderBullets(
                     Array.isArray(aiResult.riskAssessment.mitigationStrategies) 
                     ? aiResult.riskAssessment.mitigationStrategies[idx] || '-' 
@@ -224,12 +280,12 @@ export function AdaptivePDFDocument({ role, trackType, formData, aiResult, downl
 
         {/* ACTION PLAN */}
         {Array.isArray(aiResult?.nextActionSteps) && aiResult.nextActionSteps.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Execution Timeline (Action Plan)</Text>
+          <View style={styles.section} wrap={false}>
+            <Text style={styles.sectionTitle}>{getLabel('execution')}</Text>
             {aiResult.nextActionSteps.map((step: any, idx: number) => (
-              <View key={idx} style={{ flexDirection: 'row', marginBottom: 12 }} wrap={false}>
-                <View style={{ width: 80, borderRight: '1pt solid #000000', paddingRight: 12, marginRight: 12 }}>
-                  <Text style={{ fontSize: 8, fontWeight: 900, color: '#000000', textTransform: 'uppercase' }}>{step.timeframe || 'TBD'}</Text>
+              <View key={idx} style={{ flexDirection: 'row', marginBottom: 16 }} wrap={false}>
+                <View style={{ width: 80, borderRight: '2pt solid #E2E8F0', paddingRight: 12, marginRight: 12, justifyContent: 'center' }}>
+                  <Text style={{ fontSize: 9, fontWeight: 900, color: '#4F46E5', textTransform: 'uppercase' }}>{step.timeframe || 'TBD'}</Text>
                 </View>
                 <View style={{ flex: 1 }}>
                   {renderBullets(step.task || '-')}
@@ -242,32 +298,34 @@ export function AdaptivePDFDocument({ role, trackType, formData, aiResult, downl
         <PageFooter />
       </Page>
 
-      {/* APPENDIX (INTERNAL ONLY) */}
+      {/* ================= PAGE 3: APPENDIX (INTERNAL ONLY) ================= */}
       {isInternal && (
         <Page size="A4" style={styles.page} wrap={true}>
           <PageHeader subtitle="Appendix / Raw Data" />
           
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Raw Input Data</Text>
-            {Object.entries(formData || {}).map(([key, value], idx) => {
-               if (!value || key === 'aiResult' || key === 'token') return null;
-               
-               let displayValue = '-';
-               if (Array.isArray(value)) {
-                 displayValue = value.join(', ');
-               } else if (typeof value === 'object') {
-                 try { displayValue = JSON.stringify(value); } catch(e) { displayValue = 'Object'; }
-               } else {
-                 displayValue = String(value);
-               }
+            <View style={{ backgroundColor: '#F8FAFC', borderRadius: 12, padding: 16, border: '1pt solid #E2E8F0' }}>
+              {Object.entries(formData || {}).map(([key, value], idx) => {
+                 if (!value || key === 'aiResult' || key === 'token') return null;
+                 
+                 let displayValue = '-';
+                 if (Array.isArray(value)) {
+                   displayValue = value.join(', ');
+                 } else if (typeof value === 'object') {
+                   try { displayValue = JSON.stringify(value); } catch(e) { displayValue = 'Object'; }
+                 } else {
+                   displayValue = String(value);
+                 }
 
-               return (
-                 <View key={idx} style={{ flexDirection: 'row', borderBottom: '1pt solid #F5F5F5', paddingVertical: 8 }} wrap={false}>
-                   <Text style={{ width: '40%', fontSize: 8, fontWeight: 700, color: '#666666', textTransform: 'uppercase', paddingRight: 12 }}>{key.replace(/([A-Z])/g, ' $1')}</Text>
-                   <Text style={{ width: '60%', fontSize: 9, color: '#000000', lineHeight: 1.4 }}>{displayValue}</Text>
-                 </View>
-               )
-            })}
+                 return (
+                   <View key={idx} style={{ flexDirection: 'row', borderBottom: idx === Object.keys(formData).length - 1 ? 'none' : '1pt solid #F1F5F9', paddingVertical: 8 }} wrap={false}>
+                     <Text style={{ width: '40%', fontSize: 8, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', paddingRight: 12 }}>{key.replace(/([A-Z])/g, ' $1')}</Text>
+                     <Text style={{ width: '60%', fontSize: 9, color: '#0F172A', lineHeight: 1.4, fontWeight: 500 }}>{displayValue}</Text>
+                   </View>
+                 )
+              })}
+            </View>
           </View>
           
           <PageFooter />

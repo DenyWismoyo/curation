@@ -15,7 +15,7 @@ interface PublicExportPDFProps {
   logoUrl?: string | null;
 }
 
-export function PublicExportPDF({ assessmentId, templateVersion = 1, trackType, formData, aiResult, logoUrl }: PublicExportPDFProps) {
+export function PublicExportPDF({ assessmentId, templateVersion = 4, trackType, formData, aiResult, logoUrl }: PublicExportPDFProps) {
   const { exportToPDF, isExporting } = usePDFExport();
   const { user, loginWithGoogle } = useAuth(); 
 

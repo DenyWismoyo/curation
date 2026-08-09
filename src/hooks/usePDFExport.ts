@@ -11,7 +11,7 @@ export function usePDFExport() {
     payload: any, 
     fileName: string, 
     assessmentId: string, 
-    templateVersion: number = 1, 
+    templateVersion: number = 4, 
     forceRegenerate: boolean = false
   ) => {
     setIsExporting(true);

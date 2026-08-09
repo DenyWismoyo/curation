@@ -266,7 +266,6 @@ export function AdaptiveAssessmentView({
   headerActions,
   aiPromptConfig,
 }: AdaptiveAssessmentProps) {
-  void headerActions;
 
   const isCounseling = aiResult?.formPurpose === 'counseling';
   const isMonitoring = aiResult?.formPurpose === 'monitoring';
@@ -422,14 +421,22 @@ export function AdaptiveAssessmentView({
       <div className="absolute inset-x-0 top-0 -z-10 h-80 bg-[radial-gradient(circle_at_top_left,_rgba(99,102,241,0.16),_transparent_45%),radial-gradient(circle_at_top_right,_rgba(16,185,129,0.12),_transparent_38%)] pointer-events-none" />
 
       <Tabs defaultValue="result" className="w-full">
-        <TabsList className="w-full md:w-auto card-solid/80 border border-border rounded-2xl p-1.5 h-auto gap-2">
-          <TabsTrigger value="result" className="rounded-xl px-4 py-2.5 text-sm font-bold data-[state=active]:bg-slate-900 data-[state=active]:text-white">
-            Hasil Adaptive
-          </TabsTrigger>
-          <TabsTrigger value="explore" className="rounded-xl px-4 py-2.5 text-sm font-bold data-[state=active]:bg-indigo-600 data-[state=active]:text-white gap-2">
-            <AiSparkIcon size={14} /> Ruang Eksplorasi AI
-          </TabsTrigger>
-        </TabsList>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 w-full">
+          <TabsList className="w-full md:w-auto card-solid/80 border border-border rounded-2xl p-1.5 h-auto gap-2">
+            <TabsTrigger value="result" className="rounded-xl px-4 py-2.5 text-sm font-bold data-[state=active]:bg-slate-900 data-[state=active]:text-white">
+              Hasil Adaptive
+            </TabsTrigger>
+            <TabsTrigger value="explore" className="rounded-xl px-4 py-2.5 text-sm font-bold data-[state=active]:bg-indigo-600 data-[state=active]:text-white gap-2">
+              <AiSparkIcon size={14} /> Ruang Eksplorasi AI
+            </TabsTrigger>
+          </TabsList>
+          
+          {headerActions && (
+            <div className="flex w-full sm:w-auto gap-3 flex-col sm:flex-row shrink-0">
+              {headerActions}
+            </div>
+          )}
+        </div>
 
         <TabsContent value="result" className="mt-6 space-y-6 sm:space-y-8">
           {resultContent}
