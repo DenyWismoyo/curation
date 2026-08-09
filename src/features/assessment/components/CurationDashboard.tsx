@@ -103,28 +103,14 @@ export function CurationDashboard({
   const resolvedAiResult = isAdaptive ? { ...aiResult, isAdaptiveAssessment: true } : aiResult;
 
   const headerActionsContent = (
-    <>
-      <Button variant="ghost" onClick={onRestart} className="gap-2 text-muted-foreground hover:text-foreground active:scale-95 w-full sm:w-auto">
-        <RotateCcw className="h-4 w-4" /> Mulai Ulang
-      </Button>
-      
-      <div className="flex w-full sm:w-auto gap-3 flex-col lg:flex-row">
-        {/* TOMBOL AI AUTO-DRAFT WORD (DINONAKTIFKAN SEMENTARA - TAHAP PENGEMBANGAN) */}
-        <Button 
-          disabled
-          className="gap-2 font-bold rounded-xl h-10 px-4 shadow-inner w-full sm:w-auto text-slate-400 bg-slate-200/60 border border-border cursor-not-allowed"
-        >
-          <AiSparkIcon size={16} className="grayscale opacity-50" />
-          AI Auto-Draft (Tahap Pengembangan)
-        </Button>
-        <PublicExportPDF 
-          assessmentId={assessmentId || ''} 
-          trackType={trackType} 
-          formData={formData} 
-          aiResult={resolvedAiResult} 
-        />
-      </div>
-    </>
+    <div className="flex w-full sm:w-auto">
+      <PublicExportPDF 
+        assessmentId={assessmentId || ''} 
+        trackType={trackType} 
+        formData={formData} 
+        aiResult={resolvedAiResult} 
+      />
+    </div>
   );
 
   return (

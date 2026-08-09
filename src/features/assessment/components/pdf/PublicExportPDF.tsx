@@ -54,8 +54,10 @@ export function PublicExportPDF({ assessmentId, templateVersion = 4, trackType, 
     <Button 
       onClick={handleDownload} 
       disabled={isExporting}
-      className={`w-full sm:w-auto text-white gap-2 font-bold rounded-xl h-10 px-6 shadow-sm transition-all ${
-        !user ? 'bg-slate-800 hover:bg-slate-900' : 'bg-indigo-600 hover:bg-indigo-700'
+      className={`w-full sm:w-auto text-white dark:text-white gap-2 font-bold rounded-xl h-10 px-6 shadow-sm transition-all ${
+        !user 
+          ? 'bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600' 
+          : 'bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600'
       }`}
     >
       {isExporting ? <Loader2 className="w-5 h-5 animate-spin" /> : !user ? <Lock className="w-5 h-5" /> : <Download className="w-5 h-5" />}
