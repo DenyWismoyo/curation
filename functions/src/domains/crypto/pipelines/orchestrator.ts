@@ -9,6 +9,7 @@ const getDb = () => getFirestore(admin.app(), "curation");
 
 export const runCryptoAcademyPipeline = onDocumentUpdated({
   document: "cryptoEducation/{moduleId}",
+  database: "curation",
   region: "asia-southeast2",
   memory: "512MiB",
   timeoutSeconds: 540,

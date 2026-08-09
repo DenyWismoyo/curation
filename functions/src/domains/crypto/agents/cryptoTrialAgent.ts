@@ -2,7 +2,10 @@ import * as admin from 'firebase-admin';
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { getFirestore } from 'firebase-admin/firestore';
 
-export const activateCryptoTrial = onCall(async (request) => {
+export const activateCryptoTrial = onCall({
+  region: "asia-southeast2",
+  cors: true
+}, async (request) => {
   if (!request.auth) {
     throw new HttpsError('unauthenticated', 'User harus login untuk mengaktifkan trial.');
   }

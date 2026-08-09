@@ -122,6 +122,7 @@ export {
   approveStudyOutline,
   publishStudyToCryptoAcademy,
   updateStudyChapterManual,
+  searchAndGenerateStudySource,
 } from './domains/study/agents/studyProjectAgent'
 export { requestChapterRevision, generateRevisionMaterials } from './domains/study/agents/chapterRevisionAgent'
 export { exportStudyDocument } from './domains/study/agents/exportService'

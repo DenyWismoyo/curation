@@ -67,7 +67,7 @@ export default function StudyWorkspacePage() {
   const [description, setDescription] = useState('');
   const [researchQuestion, setResearchQuestion] = useState('');
   const [targetPages, setTargetPages] = useState(100);
-  const [writingTone, setWritingTone] = useState<'academic' | 'consultative' | 'investigative'>('academic');
+  const [writingTone, setWritingTone] = useState<'academic' | 'consultative' | 'investigative' | 'hedge_fund' | 'crypto_academy'>('academic');
   const [isCryptoMode, setIsCryptoMode] = useState(false);
   
   const [submittingProject, setSubmittingProject] = useState(false);
@@ -78,6 +78,7 @@ export default function StudyWorkspacePage() {
   const [sources, setSources] = useState<any[]>([]);
   const [driveUrl, setDriveUrl] = useState('');
   const [importingDrive, setImportingDrive] = useState(false);
+  const [searchingInternet, setSearchingInternet] = useState(false);
   
   const [publishingToAcademy, setPublishingToAcademy] = useState(false);
   const [academyLevel, setAcademyLevel] = useState('Level 1: Pemula');
@@ -317,6 +318,24 @@ export default function StudyWorkspacePage() {
     }
   };
 
+  const handleSearchInternet = async () => {
+    if (!selectedProjectId) return;
+
+    setError('');
+    setSearchingInternet(true);
+
+    try {
+      const callable = httpsCallable(functions, 'searchAndGenerateStudySource');
+      await callable({ projectId: selectedProjectId });
+      alert('Pencarian internet oleh AI berhasil. Sumber baru telah ditambahkan ke daftar.');
+    } catch (err: unknown) {
+      console.error('Gagal mencari dari internet:', err);
+      setError(getErrorMessage(err, 'Gagal melakukan pencarian internet dengan AI.'));
+    } finally {
+      setSearchingInternet(false);
+    }
+  };
+
   const handleApproveOutline = async () => {
     if (!selectedProjectId) return;
     setError('');
@@ -464,7 +483,7 @@ export default function StudyWorkspacePage() {
                       if (e.target.checked) {
                         setResearchQuestion("Bagaimana cara terbaik menjelaskan [TOPIK] kepada trader crypto pemula Indonesia?");
                         setTargetPages(15);
-                        setWritingTone("consultative");
+                        setWritingTone("crypto_academy");
                       } else {
                         setResearchQuestion("");
                         setTargetPages(100);
@@ -490,6 +509,7 @@ export default function StudyWorkspacePage() {
                       <option value="consultative">Konsultatif (Mudah Dipahami)</option>
                       <option value="investigative">Investigatif (Mendalam)</option>
                       <option value="hedge_fund">Hedge Fund (Tajam & Kuantitatif)</option>
+                      <option value="crypto_academy">Crypto Academy (Engaging & Interaktif)</option>
                     </select>
                   </label>
                   <label className="block">
@@ -609,6 +629,18 @@ export default function StudyWorkspacePage() {
                     {importingDrive ? <Loader2 className="w-4 h-4 animate-spin" /> : <HardDrive className="w-4 h-4" />} Import
                   </button>
                 </div>
+              </div>
+
+              <div className="flex flex-col gap-2 mt-4 pb-4">
+                <p className="text-[11px] font-black uppercase tracking-[0.15em] text-muted-foreground">Atau Cari Langsung dari Internet</p>
+                <button 
+                  type="button" 
+                  onClick={handleSearchInternet} 
+                  disabled={searchingInternet || !selectedProjectId} 
+                  className="w-full h-11 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-black text-sm flex items-center justify-center gap-2 disabled:opacity-60 transition-colors"
+                >
+                  {searchingInternet ? <Loader2 className="w-4 h-4 animate-spin" /> : <Globe className="w-4 h-4" />} Cari dengan AI (DeepSeek v4 Pro)
+                </button>
               </div>
 
               <button type="button" onClick={handleStartPipeline} disabled={!selectedProjectId || startingPipeline} className="w-full h-11 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-black text-sm flex items-center justify-center gap-2 disabled:opacity-60">

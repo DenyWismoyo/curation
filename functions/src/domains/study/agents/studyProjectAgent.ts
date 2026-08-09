@@ -1,7 +1,11 @@
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
 import { getFirestore } from "firebase-admin/firestore";
+import { defineSecret } from "firebase-functions/params";
+import OpenAI from "openai";
 import { z } from "zod";
+
+const deepseekApiKeySecret = defineSecret("DEEPSEEK_API_KEY");
 
 type StudyRole = "user" | "assessor" | "curator" | "study_author" | "study_reviewer" | "admin_omnifit" | "admin_csrs" | "admin";
 type StudyStatus = "DRAFT" | "INDEXING_SOURCES" | "GENERATING_OUTLINE" | "PLANNING_CHAPTERS" | "WRITING_CHAPTERS" | "AUDITING_CHAPTERS" | "READY_FOR_REVIEW" | "FAILED";
@@ -15,7 +19,7 @@ const createStudyProjectSchema = z.object({
   targetPages: z.number().int().min(10).max(200).default(100),
   targetWordCount: z.number().int().min(3000).max(120000).default(25000),
   citationStyle: z.enum(["APA", "IEEE", "Harvard"]).default("APA"),
-  writingTone: z.enum(["academic", "consultative", "investigative"]).default("academic"),
+  writingTone: z.enum(["academic", "consultative", "investigative", "hedge_fund", "crypto_academy"]).default("academic"),
   reviewerIds: z.array(z.string().trim().min(1).max(128)).max(20).optional(),
   reviewerEmails: z.array(z.string().trim().email().max(200)).max(20).optional(),
 });
@@ -588,4 +592,111 @@ export const updateStudyChapterManual = onCall({
   });
 
   return { success: true };
+});
+
+const searchAndGenerateStudySourceSchema = z.object({
+  projectId: z.string().trim().min(1).max(128),
+});
+
+export const searchAndGenerateStudySource = onCall({
+  region: "asia-southeast2",
+  memory: "512MiB",
+  timeoutSeconds: 300,
+  secrets: [deepseekApiKeySecret],
+  cors: true,
+}, async (request) => {
+  if (!request.auth) {
+    throw new HttpsError("unauthenticated", "Anda harus login.");
+  }
+
+  const parsed = searchAndGenerateStudySourceSchema.safeParse(request.data || {});
+  if (!parsed.success) {
+    throw new HttpsError("invalid-argument", "Payload pencarian internet tidak valid.");
+  }
+
+  const uid = request.auth.uid;
+  const email = normalizeEmail(request.auth.token.email);
+  const { projectRef, projectData } = await assertStudyOperator(uid, email, parsed.data.projectId);
+  
+  if (!projectRef || !projectData) {
+    throw new HttpsError("not-found", "Project kajian tidak ditemukan.");
+  }
+
+  const apiKey = deepseekApiKeySecret.value();
+  if (!apiKey) {
+    throw new HttpsError("internal", "API Key DeepSeek tidak terkonfigurasi.");
+  }
+
+  const client = new OpenAI({
+    baseURL: "https://api.deepseek.com",
+    apiKey,
+  });
+
+  const prompt = `Anda adalah asisten peneliti senior (AI Web Researcher) dengan kapabilitas pencarian internet.
+Tugas Anda adalah melakukan riset virtual ekstensif terkait topik kajian berikut:
+- Judul: ${projectData.title}
+- Deskripsi: ${projectData.description || "Tidak ada deskripsi spesifik."}
+- Pertanyaan Riset: ${projectData.researchQuestion}
+
+INSTRUKSI WAJIB:
+1. Rangkum informasi terkini, temuan, metrik/data relevan, dan argumen kuat yang menjawab pertanyaan riset di atas secara komprehensif.
+2. Panjang teks minimal 1000 kata. Artikel harus padat fakta dan data.
+3. Asumsikan Anda memiliki akses ke data internet. Tulis seakan-akan ini adalah laporan hasil pencarian internet. Jika ada URL fiktif atau URL spesifik yang Anda ketahui, sebutkan di bagian bawah sebagai referensi pendukung.
+4. Jangan menulis menggunakan gaya pengantar ("Baiklah", "Tentu", dll). Langsung tulis konten risetnya.`;
+
+  try {
+    const response = await client.chat.completions.create({
+      model: "deepseek-reasoner",
+      messages: [{ role: "user", content: prompt }]
+    });
+
+    const generatedText = response.choices[0]?.message?.content || "";
+    if (!generatedText) {
+      throw new Error("Respon AI kosong.");
+    }
+
+    const sourceRef = projectRef.collection("sources").doc();
+    const now = admin.firestore.FieldValue.serverTimestamp();
+
+    await sourceRef.set({
+      sourceId: sourceRef.id,
+      projectId: parsed.data.projectId,
+      kind: "text_snippet",
+      title: "Hasil Riset AI: " + projectData.title,
+      summaryHint: "Dihasilkan otomatis oleh Agen Peneliti AI menggunakan DeepSeek Reasoner (v4 Pro).",
+      extractedText: generatedText, // Now supported via our sourceIngestionService patch
+      embeddingGenerated: false,
+      status: "PENDING",
+      uploadedByUid: uid,
+      uploadedByEmail: email,
+      uploadedAt: now,
+      indexedAt: null,
+      updatedAt: now,
+    });
+
+    await projectRef.set({
+      sourceStats: {
+        total: admin.firestore.FieldValue.increment(1),
+      },
+      updatedAt: now,
+      lastActivityAt: now,
+    }, { merge: true });
+
+    await projectRef.collection("audits").add({
+      action: "source_ai_searched",
+      actorUid: uid,
+      actorEmail: email,
+      createdAt: now,
+      details: {
+        sourceId: sourceRef.id,
+        kind: "text_snippet",
+        model: "deepseek-reasoner"
+      },
+    });
+
+    return { success: true, sourceId: sourceRef.id };
+  } catch (err: any) {
+    console.error("Gagal melakukan pencarian AI:", err);
+    throw new HttpsError("internal", "Gagal menghasilkan riset AI: " + err.message);
+  }
 });

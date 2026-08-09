@@ -35,6 +35,7 @@ const parseJson = <T>(value: string, fallback: T): T => {
 
 const getWritingToneInstruction = (tone: string): string => {
   switch(tone) {
+    case 'crypto_academy': return 'Tulis dengan gaya selevel Binance Academy Premium. Gunakan narasi SANGAT MENARIK dengan "Hook" yang kuat, dan analogi dunia nyata yang mudah dicerna. Gunakan struktur visual dengan emoji pada sub-bab (H2, H3). Jangan gunakan bab/penomoran akademis kaku. Sisipkan KOTAK ALERT (misal: `> 📝 **TL;DR:** [Rangkuman]`, `> 💡 **PRO TIP:**`). WAJIB sisipkan GLOSARIUM INTERAKTIF: cari 3-5 istilah teknis dan bungkus seperti ini `[[Istilah::Penjelasan singkat maksimal 15 kata]]`. JANGAN HANYA MERINGKAS. Lakukan SINTESIS.';
     case 'hedge_fund': return 'Tulis dengan gaya bahasa profesional, tajam, kuantitatif, dan *actionable* seperti manajer hedge fund Wall Street. Fokus pada analisis risiko (downside) dan probabilitas. JANGAN HANYA MERINGKAS. Lakukan SINTESIS.';
     case 'consultative': return 'Tulis dengan gaya bahasa yang mudah dipahami, ramah, dan konsultatif, cocok untuk pembaca awam atau pemula. Hindari jargon teknis yang berlebihan tanpa penjelasan. JANGAN HANYA MERINGKAS. Lakukan SINTESIS.';
     case 'investigative': return 'Tulis dengan gaya bahasa investigatif yang mendalam, kritis, dan berani menelusuri akar masalah. JANGAN HANYA MERINGKAS. Lakukan SINTESIS.';
@@ -83,7 +84,7 @@ EVIDENCE PACK NYATA:
 ${evidencePack || "Tidak ada evidence pack. Tulis draft konservatif dan nyatakan keterbatasan data."}
 
 ATURAN PENULISAN (SANGAT PENTING):
-1. WAJIB gunakan Markdown Headings untuk setiap bagian persis sesuai dengan penamaan dan penomoran dari Planner (misal: \`# Bab 1: Pendahuluan\`, \`## 1.1 Latar Belakang\`, \`### 1.1.1 Konteks Makro\`). JANGAN gunakan format teks biasa dengan huruf kapital semua tanpa tag markdown. Pertahankan konsistensi penomoran hierarkis.
+1. ${projectData.writingTone === 'crypto_academy' ? 'Gunakan struktur Sub-Bab bergaya artikel populer dengan emoji (misal: `### 🏦 Mengapa Bank Gagal?`). JANGAN gunakan penomoran kaku/akademis dari Planner.' : 'WAJIB gunakan Markdown Headings untuk setiap bagian persis sesuai dengan penamaan dan penomoran dari Planner (misal: `# Bab 1: Pendahuluan`, `## 1.1 Latar Belakang`, `### 1.1.1 Konteks Makro`). JANGAN gunakan format teks biasa dengan huruf kapital semua tanpa tag markdown. Pertahankan konsistensi penomoran hierarkis.'}
 2. ${getWritingToneInstruction(projectData.writingTone || 'academic')} (Hubungkan berbagai sumber menjadi satu argumen yang utuh).
 3. Cetak tebal (**bold**) istilah-istilah atau poin-poin kunci.
 4. Gunakan marker [SRC:sourceId] HANYA bila kalimat tersebut memang didukung kuat oleh bukti dari Evidence Pack. Tempatkan marker di akhir kalimat.

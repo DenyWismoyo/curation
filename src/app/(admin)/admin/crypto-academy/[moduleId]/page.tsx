@@ -206,7 +206,11 @@ export default function EditCryptoModulePage() {
     }
     setGeneratingQuiz(true);
     try {
-      const genQuizFn = httpsCallable<{ moduleId: string }, { success: boolean; templateId: string }>(functions, 'generateCryptoModuleAssessment');
+      const genQuizFn = httpsCallable<{ moduleId: string }, { success: boolean; templateId: string }>(
+        functions, 
+        'generateCryptoModuleAssessment',
+        { timeout: 300000 }
+      );
       const res = await genQuizFn({ moduleId });
       if (res.data?.success) {
         setFormData(prev => ({ ...prev, assessmentTemplateId: res.data.templateId }));

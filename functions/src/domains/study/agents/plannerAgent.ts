@@ -9,7 +9,7 @@ Untuk setiap bab di bawah ini, buat *planning draft* yang sangat terstruktur, an
 Setiap bab WAJIB mencakup:
 - objective: Sasaran akademik dari bab ini (fokus pada argumen, bukan sekadar merangkum).
 - targetWordCount: Target panjang kata.
-- suggestedSections: Daftar sub-bab. WAJIB menggunakan penomoran sub-bab hierarkis standar akademik (contoh: "1.1 Latar Belakang", "1.2 Kerangka Teori"). Pastikan nomor sub-bab sesuai dengan urutan babnya (jika ini Bab 2, maka sub-bab diawali 2.1, 2.2, dst). Gunakan *Title Case*, jangan huruf kapital semua. Susun agar bab mengalir deduktif dan tidak terasa dangkal.
+- suggestedSections: Daftar sub-bab. ${projectData.writingTone === 'crypto_academy' ? 'DILARANG menggunakan penomoran hierarkis kaku (1.1). Gunakan judul sub-bab yang *catchy* dan bergaya artikel populer (contoh: "Kenapa Tokenomics Penting?", "Bedah Kasus LUNA").' : 'WAJIB menggunakan penomoran sub-bab hierarkis standar akademik (contoh: "1.1 Latar Belakang", "1.2 Kerangka Teori"). Pastikan nomor sub-bab sesuai dengan urutan babnya (jika ini Bab 2, maka sub-bab diawali 2.1, 2.2, dst).'} Gunakan *Title Case*, jangan huruf kapital semua. Susun agar bab mengalir deduktif dan tidak terasa dangkal.
 - evidenceFocus: Aspek pembuktian spesifik yang harus ditekankan (misal: analisis klaim X menggunakan data Y).
 
 KONTEKS PROYEK:

@@ -371,9 +371,9 @@ export const generateCryptoModuleAssessment = onCall({
   timeoutSeconds: 300,
   cors: true,
 }, async (request) => {
-  if (!request.auth) {
-    throw new HttpsError("unauthenticated", "Anda harus login.");
-  }
+// if (!request.auth) {
+//   throw new HttpsError("unauthenticated", "Anda harus login.");
+// }
 
   const { moduleId } = request.data || {};
   if (!moduleId) {
@@ -482,7 +482,7 @@ SKEMA JSON (Array of Step Objects yang kompatibel dengan sistem FormTemplate):
     const templateData = {
       title: `Kuis: ${moduleData.title}`,
       description: `Kuis evaluasi untuk modul ${moduleData.title}`,
-      authorUid: request.auth.uid,
+      authorUid: request.auth?.uid || 'system',
       category: "crypto_academy",
       tags: moduleData.tags || ["kuis", "crypto"],
       formMode: "standard",

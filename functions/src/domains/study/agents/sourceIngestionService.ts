@@ -16,6 +16,7 @@ type SourceRecord = {
   summaryHint?: string;
   fileName?: string;
   contentType?: string;
+  extractedText?: string;
 };
 
 type ExtractedChunk = {
@@ -206,6 +207,7 @@ export const extractAndChunkSource = async (
 ): Promise<ExtractedSourcePayload> => {
   const fallbackText = collapseWhitespace([
     source.title || "",
+    source.extractedText || "",
     source.summaryHint || "",
     source.sourceUrl || "",
     source.fileName || "",

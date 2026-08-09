@@ -45,25 +45,39 @@ const calculateIndicators = (klinesData: any[]): Partial<CryptoMarketData> => {
   let macdResult = null;
   if (closes.length >= 26) {
     const macdData = MACD.calculate({ values: closes, fastPeriod: 12, slowPeriod: 26, signalPeriod: 9, SimpleMAOscillator: false, SimpleMASignal: false });
-    if (macdData.length > 0) macdResult = macdData[macdData.length - 1];
+    if (macdData.length > 0) {
+      const last = macdData[macdData.length - 1];
+      macdResult = {
+        MACD: last.MACD !== undefined ? last.MACD : null,
+        signal: last.signal !== undefined ? last.signal : null,
+        histogram: last.histogram !== undefined ? last.histogram : null,
+      };
+    }
   }
 
   let ema50 = null;
   if (closes.length >= 50) {
     const emaData = EMA.calculate({ values: closes, period: 50 });
-    if (emaData.length > 0) ema50 = emaData[emaData.length - 1];
+    if (emaData.length > 0) ema50 = emaData[emaData.length - 1] ?? null;
   }
 
   let ema200 = null;
   if (closes.length >= 200) {
     const emaData = EMA.calculate({ values: closes, period: 200 });
-    if (emaData.length > 0) ema200 = emaData[emaData.length - 1];
+    if (emaData.length > 0) ema200 = emaData[emaData.length - 1] ?? null;
   }
 
   let bb = null;
   if (closes.length >= 20) {
     const bbData = BollingerBands.calculate({ values: closes, period: 20, stdDev: 2 });
-    if (bbData.length > 0) bb = bbData[bbData.length - 1];
+    if (bbData.length > 0) {
+      const last = bbData[bbData.length - 1];
+      bb = {
+        lower: last.lower !== undefined ? last.lower : null,
+        middle: last.middle !== undefined ? last.middle : null,
+        upper: last.upper !== undefined ? last.upper : null,
+      };
+    }
   }
 
   let atr = null;
@@ -73,10 +87,17 @@ const calculateIndicators = (klinesData: any[]): Partial<CryptoMarketData> => {
     const low = klinesData.map(k => parseFloat(k.low));
     const close = closes;
     const atrData = ATR.calculate({ high, low, close, period: 14 });
-    if (atrData.length > 0) atr = atrData[atrData.length - 1];
+    if (atrData.length > 0) atr = atrData[atrData.length - 1] ?? null;
 
     const adxData = ADX.calculate({ high, low, close, period: 14 });
-    if (adxData.length > 0) adxResult = adxData[adxData.length - 1];
+    if (adxData.length > 0) {
+      const last = adxData[adxData.length - 1];
+      adxResult = {
+        adx: last.adx !== undefined ? last.adx : null,
+        pdi: last.pdi !== undefined ? last.pdi : null,
+        mdi: last.mdi !== undefined ? last.mdi : null,
+      };
+    }
   }
 
   return { 
