@@ -11,6 +11,7 @@ import { CurationFormData, AIResult } from '@/features/assessment/types/assessme
 import { AiSparkIcon, AILensIcon, AdminShieldIcon, InfinityWorkflowIcon, GlobalTargetIcon, DocExportIcon, TechCardIcon, BrainIcon, EcosystemIcon } from '@/components/icon';
 import { ActionPlanBuilder } from '@/features/assessment/components/result/ActionPlanBuilder';
 import { ActionPlanCopilot } from '@/features/assessment/components/ActionPlanCopilot';
+import { ScoreRing } from './ScoreRing';
 
 // ========================================================
 // 1. HELPER COMPONENTS
@@ -61,19 +62,19 @@ export const TextToBullets = ({ text, colorClass = "text-indigo-500" }: { text: 
 const InsightAccordion = ({ id, title, icon: Icon, content }: any) => {
   const [isOpen, setIsOpen] = useState(id === 'rec-0');
   return (
-    <div className="card-solid ring-1 ring-border rounded-3xl overflow-hidden shadow-sm transition-all duration-300">
-      <button onClick={() => setIsOpen(!isOpen)} className="w-full flex items-center justify-between p-5 sm:p-6 text-left card-solid hover:bg-muted text-muted-foreground transition-colors">
+    <div className="bg-card/40 backdrop-blur-md ring-1 ring-border rounded-3xl overflow-hidden shadow-sm transition-all duration-300">
+      <button onClick={() => setIsOpen(!isOpen)} className="w-full flex items-center justify-between p-5 sm:p-6 text-left hover:bg-muted/50 text-foreground transition-colors">
         <div className="flex items-center gap-4">
-          <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isOpen ? 'bg-indigo-100 text-indigo-600 dark:text-indigo-400' : 'bg-muted text-muted-foreground text-muted-foreground'}`}>
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${isOpen ? 'bg-indigo-500/10 text-indigo-500 ring-1 ring-indigo-500/30' : 'bg-muted text-muted-foreground'}`}>
             <Icon size={18} />
           </div>
-          <h4 className={`text-sm font-black uppercase tracking-widest ${isOpen ? 'text-indigo-900 dark:text-indigo-300' : 'text-slate-700 dark:text-slate-300 dark:text-slate-300'}`}>{title}</h4>
+          <h4 className={`text-sm font-black uppercase tracking-widest transition-colors ${isOpen ? 'text-indigo-600 dark:text-indigo-400' : 'text-foreground'}`}>{title}</h4>
         </div>
-        <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`w-5 h-5 text-muted-foreground transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
       <div className={`transition-all duration-300 ease-in-out ${isOpen ? 'max-h-fit opacity-100' : 'max-h-0 opacity-0'}`}>
-        <div className="p-5 sm:p-6 pt-0 text-sm font-medium text-muted-foreground border-t border-slate-50">
-          <TextToBullets text={content || "Tidak ada detail."} colorClass="text-indigo-400" />
+        <div className="p-5 sm:p-6 pt-0 text-sm font-medium text-muted-foreground border-t border-border/50">
+          <TextToBullets text={content || "Tidak ada detail."} colorClass="text-indigo-500" />
         </div>
       </div>
     </div>
@@ -234,20 +235,20 @@ export function UniversalAssessmentView({
 
       
       {isPublic && (
-        <div className="bg-gradient-to-br from-amber-50 to-orange-50/40 border border-amber-200 dark:border-amber-500/20/80 p-5 sm:p-6 rounded-3xl shadow-sm relative overflow-hidden">
-          <div className="absolute right-0 top-0 opacity-[0.03] pointer-events-none transform translate-x-6 -translate-y-6">
+        <div className="bg-amber-500/10 backdrop-blur-md border border-amber-500/20 p-5 sm:p-6 rounded-3xl shadow-sm relative overflow-hidden">
+          <div className="absolute right-0 top-0 opacity-5 pointer-events-none transform translate-x-6 -translate-y-6">
             <AdminShieldIcon size={160} />
           </div>
           <div className="flex flex-col lg:flex-row gap-4 items-start relative z-10">
-            <div className="bg-amber-100/80 p-3 rounded-2xl shrink-0 text-amber-600 dark:text-amber-400 ring-1 ring-amber-200 dark:ring-amber-500/20 shadow-inner">
+            <div className="bg-amber-500/20 p-3 rounded-2xl shrink-0 text-amber-600 dark:text-amber-400 ring-1 ring-amber-500/30 shadow-inner">
               <AdminShieldIcon size={28} />
             </div>
             <div className="flex-1 w-full space-y-3">
               <div className="flex items-center gap-2">
-                <span className="bg-amber-100/80 text-amber-800 dark:text-amber-300 text-[10px] font-black px-3 py-1 rounded-md uppercase tracking-widest ring-1 ring-amber-200 dark:ring-amber-500/20">Status Laporan</span>
-                <h4 className="text-amber-900 dark:text-amber-300 font-black text-sm sm:text-base uppercase tracking-wider">Hasil Pemrosesan Komputasi Otomatis (AI-Generated)</h4>
+                <span className="bg-amber-500/20 text-amber-700 dark:text-amber-400 text-[10px] font-black px-3 py-1 rounded-md uppercase tracking-widest ring-1 ring-amber-500/30">Status Laporan</span>
+                <h4 className="text-amber-700 dark:text-amber-400 font-black text-sm sm:text-base uppercase tracking-wider">Hasil Pemrosesan Komputasi Otomatis (AI-Generated)</h4>
               </div>
-              <p className="text-amber-800 dark:text-amber-300/90 text-sm font-medium leading-relaxed">Laporan analitik ini dihasilkan secara otomatis oleh sistem AI berdasarkan data mandiri pengguna. <b>Bersifat tidak mengikat sebelum divalidasi resmi.</b></p>
+              <p className="text-amber-700/80 dark:text-amber-400/80 text-sm font-medium leading-relaxed">Laporan analitik ini dihasilkan secara otomatis oleh sistem AI berdasarkan data mandiri pengguna. <b>Bersifat tidak mengikat sebelum divalidasi resmi.</b></p>
             </div>
           </div>
         </div>
@@ -368,20 +369,25 @@ export function UniversalAssessmentView({
         </div>
 
 
-        <div className={`w-full lg:w-[360px] shrink-0 p-8 rounded-3xl text-white relative overflow-hidden flex flex-col justify-center items-center shadow-lg ${isHighTier ? 'bg-gradient-to-br from-[#0f3d32] to-emerald-800' : 'bg-gradient-to-br from-slate-900 to-indigo-900'}`}>
-          <div className="absolute inset-0 bg-gradient-to-tr from-black/20 to-transparent opacity-30 mix-blend-overlay"></div>
+        <div className={`w-full lg:w-[360px] shrink-0 p-8 rounded-3xl relative overflow-hidden flex flex-col justify-center items-center bg-card/40 backdrop-blur-xl shadow-sm ring-1 ring-border`}>
+          <div className="absolute inset-0 bg-grid-slate-200/20 dark:bg-grid-slate-800/20 bg-[length:16px_16px] pointer-events-none opacity-50"></div>
           
-          <p className="relative z-10 text-white/70 text-xs font-black uppercase tracking-widest mb-2 flex items-center gap-2">
+          <p className="relative z-10 text-muted-foreground text-xs font-black uppercase tracking-widest mb-6 flex items-center gap-2">
             <AiSparkIcon size={16}/> {getLabel('score')}
           </p>
-          <span className="relative z-10 text-[100px] font-black leading-none tracking-tighter drop-shadow-md mb-4">{Math.min(aiScore, 100)}</span>
+          <div className="relative z-10 mb-6 drop-shadow-md">
+            <ScoreRing score={Math.min(aiScore, 100)} size={160} strokeWidth={12} />
+          </div>
           
           <div className="relative z-10 flex flex-col items-center gap-2 w-full">
-            <span className="text-sm font-black card-solid/20 backdrop-blur-md px-6 py-2 rounded-full ring-1 ring-white/30 text-center uppercase tracking-wider text-balance">
+            <span className={`text-sm font-black px-6 py-2 rounded-full ring-1 text-center uppercase tracking-wider text-balance shadow-sm ${
+              isHighTier ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 ring-emerald-200 dark:ring-emerald-500/20' : 
+              'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 ring-indigo-200 dark:ring-indigo-500/20'
+            }`}>
               {aiResult?.readinessLevel?.split('|')[0]?.trim() || "Zonasi Normal"}
             </span>
             {aiResult?.readinessLevel?.includes('|') && (
-              <span className="text-[11px] font-bold text-white/90 bg-black/20 px-4 py-1.5 rounded-full text-center text-balance leading-snug">
+              <span className="text-[11px] font-bold text-muted-foreground text-center text-balance leading-snug max-w-[200px]">
                 {aiResult.readinessLevel.split('|')[1]?.trim()}
               </span>
             )}
@@ -392,7 +398,9 @@ export function UniversalAssessmentView({
       
       {/* DISEMBUNYIKAN DARI PUBLIK: METRIK KOMPARATIF RADAR CHART */}
       {isInternal && aiResult?.metrics && aiResult.metrics.length > 0 && (
-        <div className="card-solid p-6 sm:p-8 lg:p-10 rounded-3xl ring-1 ring-border shadow-sm w-full">
+        <div className="bg-card/40 backdrop-blur-xl p-6 sm:p-8 lg:p-10 rounded-3xl ring-1 ring-border shadow-sm w-full relative overflow-hidden">
+          <div className="absolute inset-0 bg-grid-slate-200/20 dark:bg-grid-slate-800/20 bg-[length:16px_16px] pointer-events-none opacity-50"></div>
+          <div className="relative z-10">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-10 h-10 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-xl flex items-center justify-center shrink-0">
               <AILensIcon size={20} />
@@ -458,6 +466,7 @@ export function UniversalAssessmentView({
               )}
             </div>
           )}
+          </div>
         </div>
       )}
 
@@ -887,21 +896,21 @@ export function UniversalAssessmentView({
     <div ref={pdfRef} className="w-full animate-in fade-in duration-500 relative pb-20 md:pb-0">
       
       {/* Navigasi Utama Asesmen (Sticky Tabs) */}
-      <div className="sticky top-0 z-30 card-solid/95 backdrop-blur-md pt-4 pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 border-b border-border/50 mb-6">
+      <div className="sticky top-0 z-30 bg-background/80 backdrop-blur-xl pt-4 pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 border-b border-border/50 mb-6 shadow-sm">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           {/* Desktop Tabs */}
-          <TabsList className="hidden md:flex bg-secondary text-secondary-foreground/50 p-1.5 rounded-2xl h-auto gap-2 border border-border/50 w-full justify-center">
-            <TabsTrigger value="overview" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:card-solid data-[state=active]:text-indigo-700 dark:text-indigo-300 dark:text-indigo-300 data-[state=active]:shadow-sm transition-all">1. Ikhtisar Eksekutif</TabsTrigger>
-            <TabsTrigger value="actiontimeline" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:card-solid data-[state=active]:text-indigo-700 dark:text-indigo-300 dark:text-indigo-300 data-[state=active]:shadow-sm transition-all">Linimasa Eksekusi</TabsTrigger>
+          <TabsList className="hidden md:flex bg-card/40 backdrop-blur-md p-1.5 rounded-full h-auto gap-2 border border-border/50 w-full justify-center shadow-sm">
+            <TabsTrigger value="overview" className="shrink-0 rounded-full px-6 py-2.5 text-sm font-bold data-[state=active]:bg-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-indigo-600/20 transition-all text-muted-foreground hover:text-foreground">1. Ikhtisar Eksekutif</TabsTrigger>
+            <TabsTrigger value="actiontimeline" className="shrink-0 rounded-full px-6 py-2.5 text-sm font-bold data-[state=active]:bg-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-indigo-600/20 transition-all text-muted-foreground hover:text-foreground">Linimasa Eksekusi</TabsTrigger>
             {assessmentId && isPublic && (
-              <TabsTrigger value="actionplan" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:card-solid data-[state=active]:text-indigo-700 dark:text-indigo-300 dark:text-indigo-300 data-[state=active]:shadow-sm transition-all data-[state=inactive]:text-indigo-600 dark:text-indigo-400 data-[state=inactive]:bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100/50">10 Langkah Strategis</TabsTrigger>
+              <TabsTrigger value="actionplan" className="shrink-0 rounded-full px-6 py-2.5 text-sm font-bold data-[state=active]:bg-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-indigo-600/20 transition-all text-indigo-600 hover:text-indigo-700 bg-indigo-50/50 dark:bg-indigo-500/10 hover:bg-indigo-50 dark:hover:bg-indigo-500/20 border border-indigo-100/50">10 Langkah Strategis</TabsTrigger>
             )}
             {isInternal && aiResult?.customAnalysisBlocks?.length > 0 && (
-               <TabsTrigger value="deepdive" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:card-solid data-[state=active]:text-indigo-700 dark:text-indigo-300 dark:text-indigo-300 data-[state=active]:shadow-sm transition-all">Analisis Tematik</TabsTrigger>
+               <TabsTrigger value="deepdive" className="shrink-0 rounded-full px-6 py-2.5 text-sm font-bold data-[state=active]:bg-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-indigo-600/20 transition-all text-muted-foreground hover:text-foreground">Analisis Tematik</TabsTrigger>
             )}
-            <TabsTrigger value="strategy" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:card-solid data-[state=active]:text-indigo-700 dark:text-indigo-300 dark:text-indigo-300 data-[state=active]:shadow-sm transition-all">Risiko & Strategi</TabsTrigger>
+            <TabsTrigger value="strategy" className="shrink-0 rounded-full px-6 py-2.5 text-sm font-bold data-[state=active]:bg-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-indigo-600/20 transition-all text-muted-foreground hover:text-foreground">Risiko & Strategi</TabsTrigger>
             {isInternal && (
-              <TabsTrigger value="validation" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold data-[state=active]:card-solid data-[state=active]:text-indigo-700 dark:text-indigo-300 dark:text-indigo-300 data-[state=active]:shadow-sm transition-all">Bedah & Validasi</TabsTrigger>
+              <TabsTrigger value="validation" className="shrink-0 rounded-full px-6 py-2.5 text-sm font-bold data-[state=active]:bg-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-indigo-600/20 transition-all text-muted-foreground hover:text-foreground">Bedah & Validasi</TabsTrigger>
             )}
           </TabsList>
 

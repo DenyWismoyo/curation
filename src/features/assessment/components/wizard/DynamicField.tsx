@@ -103,36 +103,36 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
       case 'text':
         return (
           <div className="flex flex-col">
-            <Input type="text" placeholder={field.placeholder || 'Ketik di sini...'} value={value || ''} onChange={(e) => onChange(e.target.value)} className="h-12 bg-muted text-muted-foreground border-border focus-visible:ring-indigo-500 rounded-xl transition-all font-medium text-slate-700" />
+            <Input type="text" placeholder={field.placeholder || 'Ketik di sini...'} value={value || ''} onChange={(e) => onChange(e.target.value)} className="wizard-input text-foreground" />
             <VoiceInputRecorder onTranscription={(text) => onChange(text)} contextPrompt={`Pertanyaan: ${field.label}. Deskripsi: ${field.description || ''}`} />
           </div>
         );
       case 'number':
         return (
-          <Input type="number" placeholder={field.placeholder || '0'} value={value || ''} onChange={(e) => onChange(e.target.value)} className="h-12 bg-muted text-muted-foreground border-border focus-visible:ring-indigo-500 rounded-xl transition-all font-medium text-slate-700" />
+          <Input type="number" placeholder={field.placeholder || '0'} value={value || ''} onChange={(e) => onChange(e.target.value)} className="wizard-input text-foreground" />
         );
       case 'textarea':
         return (
           <div className="flex flex-col">
-            <Textarea placeholder={field.placeholder || 'Ketik penjelasan detail di sini...'} value={value || ''} onChange={(e) => onChange(e.target.value)} className="bg-muted text-muted-foreground border-border focus-visible:ring-indigo-500 rounded-xl min-h-[100px] resize-y transition-all font-medium text-slate-700" />
+            <Textarea placeholder={field.placeholder || 'Ketik penjelasan detail di sini...'} value={value || ''} onChange={(e) => onChange(e.target.value)} className="bg-background/60 dark:bg-slate-900/30 backdrop-blur-sm ring-1 ring-border focus:ring-indigo-400 rounded-xl min-h-[100px] resize-y transition-all text-foreground placeholder:text-muted-foreground/60 p-3" />
             <VoiceInputRecorder onTranscription={(text) => onChange(text)} contextPrompt={`Pertanyaan: ${field.label}. Deskripsi: ${field.description || ''}`} />
           </div>
         );
       case 'date':
         return (
-          <Input type="date" value={value || ''} onChange={(e) => onChange(e.target.value)} className="h-12 bg-muted text-muted-foreground border-border focus-visible:ring-indigo-500 rounded-xl transition-all font-medium text-slate-700 w-full" />
+          <Input type="date" value={value || ''} onChange={(e) => onChange(e.target.value)} className="wizard-input text-foreground w-full" />
         );
       case 'select':
         return (
           <div className="relative">
-            <select value={value || ''} onChange={(e) => onChange(e.target.value)} className="w-full h-12 bg-muted text-muted-foreground border border-border text-slate-700 font-medium rounded-xl px-4 appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all cursor-pointer">
+            <select value={value || ''} onChange={(e) => onChange(e.target.value)} className="w-full wizard-input px-4 appearance-none focus:outline-none cursor-pointer text-foreground">
               <option value="" disabled>-- Pilih salah satu opsi --</option>
               {field.options?.map((opt, idx) => {
                 const optLabel = getOptionLabel(opt);
                 return <option key={idx} value={optLabel}>{optLabel.replace(/\*/g, '')}</option>;
               })}
             </select>
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
             </div>
           </div>
@@ -143,12 +143,12 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
             {field.options?.map((opt, idx) => {
               const optLabel = getOptionLabel(opt);
               return (
-                <label key={idx} className={`flex items-start gap-3 p-3.5 rounded-xl border transition-all cursor-pointer ${value === optLabel ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-500/10/50 text-indigo-900 shadow-sm' : 'border-border card-solid hover:bg-muted text-muted-foreground text-muted-foreground'}`}>
-                  <div className={`mt-0.5 w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${value === optLabel ? 'border-indigo-600' : 'border-border'}`}>
-                    {value === optLabel && <div className="w-2.5 h-2.5 bg-indigo-600 rounded-full" />}
+                <label key={idx} className={`flex items-start gap-3 p-3.5 rounded-[1.25rem] ring-1 transition-all cursor-pointer group ${value === optLabel ? 'ring-indigo-500 bg-indigo-500/5 dark:bg-indigo-500/10 text-foreground shadow-sm' : 'ring-border bg-card/40 dark:bg-slate-900/40 backdrop-blur-sm hover:bg-muted/50 text-muted-foreground'}`}>
+                  <div className={`mt-0.5 w-5 h-5 rounded-full ring-1 flex items-center justify-center shrink-0 transition-colors ${value === optLabel ? 'ring-indigo-600 bg-white dark:bg-slate-900' : 'ring-border group-hover:ring-muted-foreground/50 bg-background/50'}`}>
+                    {value === optLabel && <div className="w-2.5 h-2.5 bg-indigo-600 rounded-full animate-in zoom-in" />}
                   </div>
                   <input type="radio" name={field.id} value={optLabel} checked={value === optLabel} onChange={(e) => onChange(e.target.value)} className="hidden" />
-                  <span className="font-medium text-sm leading-relaxed">{renderMarkdownText(optLabel)}</span>
+                  <span className={`font-medium text-sm leading-relaxed transition-colors ${value === optLabel ? 'text-foreground' : 'group-hover:text-foreground'}`}>{renderMarkdownText(optLabel)}</span>
                 </label>
               );
             })}
@@ -162,12 +162,12 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
               const optLabel = getOptionLabel(opt);
               const isChecked = checkedValues.includes(optLabel);
               return (
-                <label key={idx} className={`flex items-start gap-3 p-3.5 rounded-xl border transition-all cursor-pointer ${isChecked ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-500/10/50 text-indigo-900 shadow-sm' : 'border-border card-solid hover:bg-muted text-muted-foreground text-muted-foreground'}`}>
-                  <div className={`mt-0.5 w-5 h-5 rounded border flex items-center justify-center shrink-0 ${isChecked ? 'bg-indigo-600 border-indigo-600 text-white' : 'border-border'}`}>
-                    {isChecked && <Check size={14} strokeWidth={3} />}
+                <label key={idx} className={`flex items-start gap-3 p-3.5 rounded-[1.25rem] ring-1 transition-all cursor-pointer group ${isChecked ? 'ring-indigo-500 bg-indigo-500/5 dark:bg-indigo-500/10 text-foreground shadow-sm' : 'ring-border bg-card/40 dark:bg-slate-900/40 backdrop-blur-sm hover:bg-muted/50 text-muted-foreground'}`}>
+                  <div className={`mt-0.5 w-5 h-5 rounded ring-1 flex items-center justify-center shrink-0 transition-colors ${isChecked ? 'bg-indigo-600 ring-indigo-600 text-white' : 'ring-border group-hover:ring-muted-foreground/50 bg-background/50'}`}>
+                    {isChecked && <Check size={14} strokeWidth={3} className="animate-in zoom-in" />}
                   </div>
                   <input type="checkbox" value={optLabel} checked={isChecked} onChange={(e) => handleCheckboxChange(optLabel, e.target.checked)} className="hidden" />
-                  <span className="font-medium text-sm leading-relaxed">{renderMarkdownText(optLabel)}</span>
+                  <span className={`font-medium text-sm leading-relaxed transition-colors ${isChecked ? 'text-foreground' : 'group-hover:text-foreground'}`}>{renderMarkdownText(optLabel)}</span>
                 </label>
               );
             })}
@@ -292,15 +292,18 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
               </div>
             ) : (
               <div
-                className={`relative border-2 border-dashed rounded-2xl p-8 text-center transition-all flex flex-col items-center justify-center gap-2 ${
-                  isUploading ? 'border-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 cursor-wait' :
-                  dragActive ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-500/10 cursor-copy' : 
-                  'border-border bg-muted text-muted-foreground hover:bg-secondary text-secondary-foreground cursor-pointer'
+                className={`relative border-2 border-dashed rounded-[1.5rem] p-8 text-center transition-all flex flex-col items-center justify-center gap-3 overflow-hidden ${
+                  isUploading ? 'border-indigo-400 bg-indigo-500/10 cursor-wait' :
+                  dragActive ? 'border-indigo-500 bg-indigo-500/10 cursor-copy scale-[1.02]' : 
+                  'border-border/60 bg-card/40 backdrop-blur-sm hover:border-indigo-400/50 hover:bg-background/80 cursor-pointer group'
                 }`}
                 onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={!isUploading ? handleDrop : undefined}
                 onClick={!isUploading ? () => fileInputRef.current?.click() : undefined}
               >
-                <div className="w-12 h-12 card-solid rounded-full shadow-sm ring-1 ring-border flex items-center justify-center text-indigo-500 mb-2">
+                {/* Glow Effect */}
+                <div className="absolute inset-0 bg-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity blur-xl" />
+                
+                <div className="w-14 h-14 bg-background/80 rounded-2xl shadow-sm ring-1 ring-border/50 flex items-center justify-center text-muted-foreground group-hover:text-indigo-500 group-hover:ring-indigo-200 transition-all z-10">
                   {isUploading ? <Loader2 size={24} className="animate-spin text-indigo-500" /> : <DocExportIcon size={24} />}
                 </div>
                 <p className="text-sm font-bold text-slate-700">

@@ -114,7 +114,7 @@ export const ActionPlanCopilot = ({ assessmentId }: ActionPlanCopilotProps) => {
       </SheetTrigger>
       
       <SheetContent className="w-full sm:max-w-md border-l-0 sm:border-l sm:rounded-l-2xl flex flex-col p-0 bg-muted text-muted-foreground">
-        <SheetHeader className="flex flex-row items-center justify-between p-4 sm:p-6 border-b border-border card-solid shadow-sm z-10 space-y-0">
+        <SheetHeader className="flex flex-row items-center justify-between p-4 sm:p-6 border-b border-border bg-card/40 backdrop-blur-xl shadow-sm z-10 space-y-0">
           <SheetTitle className="flex items-center gap-3 text-indigo-950">
             <div className="p-2 bg-indigo-100 rounded-lg text-indigo-600 dark:text-indigo-400">
               <Bot size={20} />
@@ -160,7 +160,7 @@ export const ActionPlanCopilot = ({ assessmentId }: ActionPlanCopilotProps) => {
               <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                 msg.role === 'user' 
                   ? 'bg-indigo-600 text-white rounded-tr-sm shadow-md' 
-                  : 'card-solid text-slate-700 dark:text-slate-300 dark:text-slate-300 rounded-tl-sm ring-1 ring-border shadow-sm'
+                  : 'bg-card/40 backdrop-blur-md text-foreground rounded-tl-sm ring-1 ring-border shadow-sm'
               }`}>
                 {msg.role === 'model' ? (
                   <ReactMarkdown
@@ -183,7 +183,7 @@ export const ActionPlanCopilot = ({ assessmentId }: ActionPlanCopilotProps) => {
           ))}
           {isLoading && (
             <div className="flex justify-start">
-              <div className="card-solid rounded-2xl rounded-tl-sm ring-1 ring-border shadow-sm px-4 py-3 flex items-center gap-2">
+              <div className="bg-card/40 backdrop-blur-md rounded-2xl rounded-tl-sm ring-1 ring-border shadow-sm px-4 py-3 flex items-center gap-2">
                 <Loader2 size={16} className="animate-spin text-indigo-600 dark:text-indigo-400" />
                 <span className="text-xs text-muted-foreground font-medium">Copilot sedang berpikir...</span>
               </div>
@@ -207,7 +207,7 @@ export const ActionPlanCopilot = ({ assessmentId }: ActionPlanCopilotProps) => {
         )}
 
         {/* Input Area */}
-        <div className="p-4 card-solid border-t border-border">
+        <div className="p-4 bg-card/40 backdrop-blur-xl border-t border-border">
           <form onSubmit={handleSend} className="relative flex items-center">
             <Input 
               value={input}

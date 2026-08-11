@@ -16,6 +16,8 @@ import { httpsCallable } from 'firebase/functions';
 import { toast } from 'sonner';
 import { AppPageContainer } from '@/components/ui/app-layout';
 import { ContentCard, SectionLabel } from '@/components/ui/design-system';
+import { SpotlightCard } from '@/components/landing/SpotlightCard';
+import { GradientBadge } from '@/components/landing/GradientBadge';
 
 const FAQS = [
   {
@@ -122,10 +124,13 @@ export default function PremiumSubscriptionPage() {
   return (
     <LazyMotion features={domAnimation}>
       <AppPageContainer maxWidth="full" padding="md">
-        <m.div initial="hidden" animate="visible" variants={fadeIn} className="text-center max-w-4xl mx-auto mb-20 pt-10">
-          <Badge variant="outline" className="mb-6 py-1.5 px-4 rounded-full border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 uppercase tracking-widest text-xs font-bold gap-2">
-            <Sparkles size={14} /> Berhenti menebak, mulai menganalisa
-          </Badge>
+        <m.div initial="hidden" animate="visible" variants={fadeIn} className="text-center max-w-4xl mx-auto mb-20 pt-10 relative">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] sm:w-[600px] sm:h-[400px] bg-indigo-500/20 dark:bg-indigo-500/10 blur-[100px] rounded-full pointer-events-none -z-10" />
+          <div className="flex justify-center mb-6">
+            <GradientBadge variant="indigo" className="uppercase tracking-widest text-xs font-bold gap-2">
+              <Sparkles size={14} /> Berhenti menebak, mulai menganalisa
+            </GradientBadge>
+          </div>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-black mb-6 leading-tight tracking-tight text-foreground">
             Bukan Sekadar Dashboard. Ini adalah <span className="text-indigo-600 dark:text-indigo-400">AI Hedge Fund Pribadi Anda.</span>
           </h1>
@@ -133,12 +138,12 @@ export default function PremiumSubscriptionPage() {
             Dapatkan keunggulan <i>unfair advantage</i> di pasar kripto. Akses analisis sentimen real-time, pergerakan paus (smart money), dan AI Copilot yang bekerja 24/7 untuk Anda.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button onClick={() => router.push('/crypto-report')} size="lg" className="h-12 px-8 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-md shadow-indigo-200 dark:shadow-indigo-900/50">
+            <Button onClick={() => router.push('/crypto-report')} size="lg" className="h-12 px-8 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-[0_0_20px_rgba(79,70,229,0.3)] dark:shadow-[0_0_30px_rgba(79,70,229,0.2)] transition-shadow">
               Buka Dashboard Crypto <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
             <Button onClick={() => {
               document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
-            }} variant="outline" size="lg" className="h-12 px-8 rounded-xl font-bold">
+            }} variant="outline" size="lg" className="h-12 px-8 rounded-xl font-bold bg-background/50 backdrop-blur border-border dark:border-slate-800 hover:bg-muted dark:hover:bg-slate-900">
               Lihat Keanggotaan Premium
             </Button>
           </div>
@@ -154,31 +159,37 @@ export default function PremiumSubscriptionPage() {
             {[
               {
                 icon: <Brain className="text-indigo-600 dark:text-indigo-400" />, title: "Multi-Agent AI", 
-                desc: "Dua model AI bekerja bersama: Analis Kuantitatif meracik data, dan Risk Officer mengevaluasi kelayakannya sebelum sampai ke Anda."
+                desc: "Dua model AI bekerja bersama: Analis Kuantitatif meracik data, dan Risk Officer mengevaluasi kelayakannya sebelum sampai ke Anda.",
+                color: "indigo" as const
               },
               {
                 icon: <Eye className="text-emerald-600 dark:text-emerald-400" />, title: "Smart Money Tracker", 
-                desc: "Sistem pelacak paus (whale) yang memantau anomali volume, disajikan secara berkala agar Anda tahu koin apa yang sedang diakumulasi bandar."
+                desc: "Sistem pelacak paus (whale) yang memantau anomali volume, disajikan secara berkala agar Anda tahu koin apa yang sedang diakumulasi bandar.",
+                color: "emerald" as const
               },
               {
                 icon: <AlertTriangle className="text-rose-600 dark:text-rose-400" />, title: "Danger Zone Alerts", 
-                desc: "Peringatan dini terhadap aset berisiko tinggi atau potensi distribusi/dump, membantu melindungi portofolio Anda dari kerugian besar."
+                desc: "Peringatan dini terhadap aset berisiko tinggi atau potensi distribusi/dump, membantu melindungi portofolio Anda dari kerugian besar.",
+                color: "amber" as const
               }
             ].map((item, i) => (
-              <ContentCard key={i} className="text-center flex flex-col items-center p-8 border-slate-200 dark:border-slate-800">
-                <div className="w-14 h-14 bg-secondary text-secondary-foreground dark:bg-slate-900 rounded-2xl flex items-center justify-center border border-slate-200 dark:border-slate-800 mb-6">{item.icon}</div>
+              <SpotlightCard key={i} color={item.color} className="text-center flex flex-col items-center p-8">
+                <div className="w-14 h-14 bg-secondary text-secondary-foreground dark:bg-slate-900 rounded-2xl flex items-center justify-center border border-slate-200 dark:border-slate-800 mb-6 group-hover:scale-110 transition-transform duration-300">{item.icon}</div>
                 <h3 className="text-lg font-bold text-foreground mb-3">{item.title}</h3>
                 <p className="text-sm text-muted-foreground dark:text-slate-400 leading-relaxed">{item.desc}</p>
-              </ContentCard>
+              </SpotlightCard>
             ))}
           </div>
         </m.div>
 
         {/* 3. UNDER THE HOOD (Mesin Intelijen) */}
         <m.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeIn} className="mb-24">
-          <ContentCard className="p-8 md:p-12 border-indigo-100 dark:border-indigo-900/50 bg-indigo-50 dark:bg-indigo-500/10/50 dark:bg-indigo-950/20">
+          <div className="relative p-8 md:p-12 rounded-[2.5rem] bg-card/40 dark:bg-slate-900/40 backdrop-blur-xl border border-border dark:border-white/5 overflow-hidden shadow-2xl">
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/10 dark:bg-indigo-500/5 blur-[120px] rounded-full pointer-events-none -z-10" />
             <div className="text-center mb-12">
-              <Badge variant="secondary" className="mb-4">Arsitektur Cron Jobs 24/7</Badge>
+              <div className="flex justify-center mb-4">
+                <GradientBadge variant="indigo">Arsitektur Cron Jobs 24/7</GradientBadge>
+              </div>
               <h2 className="text-3xl font-black text-foreground mb-4">Bagaimana Mesin Intelijen Bekerja?</h2>
               <p className="text-muted-foreground dark:text-slate-400 max-w-2xl mx-auto">4 Agen AI Otonom kami menscan ratusan indikator di balik layar saat Anda tidur.</p>
             </div>
@@ -190,21 +201,21 @@ export default function PremiumSubscriptionPage() {
                 { icon: <Activity size={20} />, title: "Agent 3: Smart Money & Risk", tag: "Harian 07:15 WIB", desc: "Mendeteksi anomali volume raksasa dan mencatat aset dalam Danger Zone (risiko distribusi)." },
                 { icon: <Bot size={20} />, title: "Agent 4: AI Copilot", tag: "On-Demand (Chat)", desc: "Menjawab pertanyaan Anda berdasarkan konteks laporan terbaru. Tidak hanya sekadar ChatGPT." },
               ].map((agent, idx) => (
-                <div key={idx} className="flex gap-4 items-start p-5 card-solid rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                  <div className="mt-1 w-10 h-10 shrink-0 bg-secondary text-secondary-foreground rounded-xl flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                <div key={idx} className="flex gap-4 items-start p-5 rounded-2xl bg-background/50 dark:bg-slate-900/50 backdrop-blur-sm border border-border dark:border-slate-800 shadow-sm hover:border-indigo-500/30 dark:hover:border-indigo-500/30 transition-colors group">
+                  <div className="mt-1 w-10 h-10 shrink-0 bg-indigo-50 dark:bg-indigo-500/10 rounded-xl flex items-center justify-center text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition-transform duration-300 border border-indigo-100 dark:border-indigo-500/20">
                     {agent.icon}
                   </div>
                   <div>
                     <h4 className="text-foreground font-bold text-base flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
                       {agent.title} 
-                      <Badge variant="secondary" className="w-fit text-[10px]">{agent.tag}</Badge>
+                      <Badge variant="outline" className="w-fit text-[10px] bg-background dark:bg-slate-950 border-border dark:border-slate-800">{agent.tag}</Badge>
                     </h4>
                     <p className="text-sm text-muted-foreground dark:text-slate-400 leading-relaxed">{agent.desc}</p>
                   </div>
                 </div>
               ))}
             </div>
-          </ContentCard>
+          </div>
         </m.div>
 
         {/* 6. PRICING & COMPARISON */}
@@ -217,7 +228,7 @@ export default function PremiumSubscriptionPage() {
           <div className="grid lg:grid-cols-3 gap-6 items-stretch max-w-6xl mx-auto">
             {/* FREE TIER */}
             <m.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn}>
-              <ContentCard className="p-8 flex flex-col h-full border-slate-200 dark:border-slate-800 bg-background text-foreground">
+              <div className="p-8 flex flex-col h-full rounded-[2.5rem] bg-card/60 dark:bg-slate-900/60 backdrop-blur-xl border border-border dark:border-white/5 shadow-xl hover:-translate-y-1 transition-transform duration-500 relative overflow-hidden">
                 <div className="mb-8">
                   <h3 className="text-xl font-bold text-foreground mb-2">Market Explorer</h3>
                   <div className="text-4xl font-black text-foreground mb-2">Rp 0 <span className="text-lg text-muted-foreground font-medium">/ selamanya</span></div>
@@ -231,16 +242,19 @@ export default function PremiumSubscriptionPage() {
                   <div className="flex gap-3 text-sm text-slate-400"><X size={18} className="shrink-0" /> Hidden Gems Scanner (Terkunci)</div>
                   <div className="flex gap-3 text-sm text-slate-400"><X size={18} className="shrink-0" /> Smart Money & Danger Zone (Terkunci)</div>
                 </div>
-                <Button onClick={() => router.push('/crypto-report')} variant="outline" className="w-full h-12 rounded-xl border-slate-300 dark:border-slate-700">
+                <Button onClick={() => router.push('/crypto-report')} variant="outline" className="w-full h-12 rounded-xl border-border dark:border-slate-700 bg-background/50 hover:bg-muted dark:hover:bg-slate-800">
                   Buka Dashboard
                 </Button>
-              </ContentCard>
+              </div>
             </m.div>
 
             {/* TRIAL TIER */}
             <m.div initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ delay: 0.1 }} variants={fadeIn}>
-              <ContentCard variant="highlighted" className="p-8 flex flex-col h-full border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-500/10/50 dark:bg-emerald-950/20 relative">
-                <Badge className="absolute top-4 right-4 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-400 border-0 hover:bg-emerald-200">1X SEUMUR HIDUP</Badge>
+              <div className="p-8 flex flex-col h-full rounded-[2.5rem] bg-emerald-50/50 dark:bg-emerald-950/20 backdrop-blur-xl border border-emerald-200 dark:border-emerald-900/50 shadow-xl hover:-translate-y-1 transition-all duration-500 hover:shadow-[0_0_40px_rgba(16,185,129,0.1)] relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-emerald-500/10 blur-[80px] rounded-full pointer-events-none -z-10 group-hover:bg-emerald-500/20 transition-colors" />
+                <div className="absolute top-6 right-6">
+                  <GradientBadge variant="emerald">1X SEUMUR HIDUP</GradientBadge>
+                </div>
                 <div className="mb-8 mt-4">
                   <h3 className="text-xl font-bold text-emerald-600 dark:text-emerald-400 mb-2">Trial 3 Hari</h3>
                   <div className="text-4xl font-black text-foreground mb-2">Rp 0 <span className="text-lg text-muted-foreground font-medium">/ 3 hari</span></div>
@@ -256,46 +270,52 @@ export default function PremiumSubscriptionPage() {
                 </div>
                 
                 {cryptoTrialUsed ? (
-                  <Button disabled variant="outline" className="w-full h-12 rounded-xl">
+                  <Button disabled variant="outline" className="w-full h-12 rounded-xl border-border">
                     Trial Telah Digunakan
                   </Button>
                 ) : (
                   <Button 
                     onClick={handleTrial} 
                     disabled={loading || hasAccess}
-                    className="w-full h-12 rounded-xl font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-md shadow-emerald-200 dark:shadow-emerald-900/50"
+                    className="w-full h-12 rounded-xl font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-shadow"
                   >
                     {loading ? <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Memproses...</> : hasAccess ? 'Anda Sudah Premium' : 'Coba Gratis 3 Hari'}
                   </Button>
                 )}
-              </ContentCard>
+              </div>
             </m.div>
 
             {/* PREMIUM TIER */}
-            <m.div initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ delay: 0.2 }} variants={fadeIn}>
-              <ContentCard className="p-8 flex flex-col h-full border-indigo-200 dark:border-indigo-800 card-solid relative shadow-xl shadow-indigo-100 dark:shadow-none">
-                <Badge className="absolute top-4 right-4 bg-indigo-600 text-white hover:bg-indigo-700">POPULER</Badge>
+            <m.div initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ delay: 0.2 }} variants={fadeIn} className="relative group">
+              <div className="absolute -inset-[2px] rounded-[2.6rem] bg-gradient-to-b from-indigo-500 via-purple-500 to-amber-500 opacity-70 group-hover:opacity-100 blur-[2px] transition-opacity duration-500"></div>
+              <div className="absolute -inset-[2px] rounded-[2.6rem] bg-gradient-to-b from-indigo-500 via-purple-500 to-amber-500 opacity-20 group-hover:opacity-40 blur-[20px] transition-opacity duration-500 animate-pulse"></div>
+              
+              <div className="p-8 flex flex-col h-full rounded-[2.5rem] bg-card dark:bg-slate-900/90 backdrop-blur-2xl relative overflow-hidden z-10 border border-border dark:border-slate-800">
+                <div className="absolute -top-20 -right-20 w-64 h-64 bg-indigo-500/10 rounded-full blur-[60px] pointer-events-none group-hover:bg-indigo-500/20 transition-colors" />
+                <div className="absolute top-6 right-6">
+                  <GradientBadge variant="amber">POPULER</GradientBadge>
+                </div>
                 
                 <div className="mb-6 mt-4">
                   <h3 className="text-xl font-bold text-indigo-600 dark:text-indigo-400 mb-4">Premium Pass</h3>
                   
                   {/* Package Selector */}
-                  <div className="flex bg-secondary text-secondary-foreground dark:bg-background text-foreground p-1.5 rounded-xl border border-slate-200 dark:border-slate-800 mb-6 gap-1">
+                  <div className="flex bg-slate-100 dark:bg-slate-950 p-1.5 rounded-xl border border-border dark:border-slate-800 mb-6 gap-1 relative z-20">
                     <button 
                       onClick={() => setSelectedPackage('MONTHLY')}
-                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${selectedPackage === 'MONTHLY' ? 'card-solid dark:bg-slate-800 shadow text-indigo-600 dark:text-indigo-400' : 'text-muted-foreground hover:text-slate-700 dark:hover:text-slate-300'}`}
+                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${selectedPackage === 'MONTHLY' ? 'bg-white dark:bg-slate-800 shadow-sm text-indigo-600 dark:text-indigo-400' : 'text-muted-foreground hover:text-slate-700 dark:hover:text-slate-300'}`}
                     >
                       1 Bulan
                     </button>
                     <button 
                       onClick={() => setSelectedPackage('QUARTERLY')}
-                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${selectedPackage === 'QUARTERLY' ? 'card-solid dark:bg-slate-800 shadow text-indigo-600 dark:text-indigo-400' : 'text-muted-foreground hover:text-slate-700 dark:hover:text-slate-300'}`}
+                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${selectedPackage === 'QUARTERLY' ? 'bg-white dark:bg-slate-800 shadow-sm text-indigo-600 dark:text-indigo-400' : 'text-muted-foreground hover:text-slate-700 dark:hover:text-slate-300'}`}
                     >
                       3 Bulan
                     </button>
                     <button 
                       onClick={() => setSelectedPackage('YEARLY')}
-                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all relative ${selectedPackage === 'YEARLY' ? 'card-solid dark:bg-slate-800 shadow text-indigo-600 dark:text-indigo-400' : 'text-muted-foreground hover:text-slate-700 dark:hover:text-slate-300'}`}
+                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all relative ${selectedPackage === 'YEARLY' ? 'bg-white dark:bg-slate-800 shadow-sm text-indigo-600 dark:text-indigo-400' : 'text-muted-foreground hover:text-slate-700 dark:hover:text-slate-300'}`}
                     >
                       1 Tahun
                     </button>
@@ -342,15 +362,15 @@ export default function PremiumSubscriptionPage() {
                 <Button 
                   onClick={handleSubscribe} 
                   disabled={loading || (hasAccess && !isAdmin)}
-                  className="w-full h-12 rounded-xl font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-200 dark:shadow-indigo-900/50"
+                  className="w-full h-12 rounded-xl font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-[0_0_20px_rgba(79,70,229,0.3)] transition-shadow relative z-20"
                 >
                   {loading ? <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Memproses...</> : hasAccess && !isAdmin ? 'Berlangganan Aktif' : 'Ambil Harga Promo'}
                 </Button>
                 
-                <div className="mt-4 flex items-center justify-center gap-2 text-xs text-muted-foreground font-medium">
+                <div className="mt-4 flex items-center justify-center gap-2 text-xs text-muted-foreground font-medium relative z-20">
                   <ShieldCheck size={14} /> Pembayaran aman terenkripsi via Mayar.id
                 </div>
-              </ContentCard>
+              </div>
             </m.div>
           </div>
         </div>
@@ -360,26 +380,26 @@ export default function PremiumSubscriptionPage() {
           <SectionLabel icon={<HelpCircle className="w-5 h-5" />} className="justify-center mb-8">Pertanyaan Umum (FAQ)</SectionLabel>
           <div className="space-y-3">
             {FAQS.map((faq, idx) => (
-              <ContentCard key={idx} className="p-0 overflow-hidden">
+              <div key={idx} className="overflow-hidden rounded-2xl bg-card/50 dark:bg-slate-900/40 backdrop-blur-sm border border-border dark:border-white/5">
                 <button 
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                  className="w-full text-left px-6 py-4 flex items-center justify-between font-medium text-foreground dark:text-slate-100 hover:bg-muted text-muted-foreground dark:hover:card-solid/50 dark:bg-slate-900/50 transition-colors"
+                  className="w-full text-left px-6 py-4 flex items-center justify-between font-bold text-foreground hover:bg-muted/50 dark:hover:bg-slate-800/50 transition-colors"
                 >
                   {faq.q}
-                  {openFaq === idx ? <ChevronUp size={18} className="text-muted-foreground shrink-0 ml-4" /> : <ChevronDown size={18} className="text-muted-foreground shrink-0 ml-4" />}
+                  {openFaq === idx ? <ChevronUp size={18} className="text-indigo-500 shrink-0 ml-4" /> : <ChevronDown size={18} className="text-muted-foreground shrink-0 ml-4" />}
                 </button>
                 {openFaq === idx && (
-                  <div className="px-6 pb-5 pt-1 text-sm text-muted-foreground dark:text-slate-400 leading-relaxed border-t border-slate-100 dark:border-slate-800">
+                  <div className="px-6 pb-5 pt-2 text-sm text-muted-foreground leading-relaxed">
                     {faq.a}
                   </div>
                 )}
-              </ContentCard>
+              </div>
             ))}
           </div>
         </m.div>
 
         {/* 8. DISCLAIMER */}
-        <m.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn} className="max-w-4xl mx-auto pt-8 border-t border-slate-200 dark:border-slate-800 text-center">
+        <m.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn} className="max-w-4xl mx-auto pt-8 border-t border-border dark:border-slate-800 text-center">
           <Badge variant="outline" className="mb-4 text-amber-600 dark:text-amber-500 border-amber-200 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-900/10 gap-2">
             <AlertTriangle className="w-4 h-4" /> DISCLAIMER & PERINGATAN RISIKO
           </Badge>

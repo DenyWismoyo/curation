@@ -78,7 +78,7 @@ export function PersonalActionPlanCopilot({
 
   if (actionPlan.length === 0) {
     return (
-      <div className="card-solid ring-1 ring-border p-6 rounded-[2rem] shadow-sm">
+      <div className="bg-card/40 backdrop-blur-xl ring-1 ring-border p-6 rounded-[2rem] shadow-sm">
         <h3 className="text-foreground font-black uppercase tracking-widest text-xs flex items-center gap-2 mb-4">
           <Sparkles size={16} className="text-indigo-500" /> Action Plan Personal
         </h3>
@@ -111,7 +111,7 @@ export function PersonalActionPlanCopilot({
   }
 
   return (
-    <div className="card-solid ring-1 ring-border p-6 rounded-[2rem] shadow-sm">
+    <div className="bg-card/40 backdrop-blur-xl ring-1 ring-border p-6 rounded-[2rem] shadow-sm">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h3 className="text-foreground font-black uppercase tracking-widest text-xs flex items-center gap-2 mb-1">
@@ -128,7 +128,7 @@ export function PersonalActionPlanCopilot({
           const isCompleted = completedTasks[taskId] || false;
           
           return (
-            <div key={taskId} className={`border border-border rounded-2xl overflow-hidden transition-all card-solid ${isCompleted ? 'opacity-80' : ''}`}>
+            <div key={taskId} className={`border border-border rounded-2xl overflow-hidden transition-all bg-card/40 backdrop-blur-sm ${isCompleted ? 'opacity-80' : ''}`}>
               {/* Task Header */}
               <div 
                 className={`p-4 flex items-start gap-3 cursor-pointer transition-colors ${isCompleted ? 'bg-muted/30' : 'hover:bg-muted text-muted-foreground'}`}

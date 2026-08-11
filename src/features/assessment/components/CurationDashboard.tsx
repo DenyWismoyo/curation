@@ -114,26 +114,32 @@ export function CurationDashboard({
   );
 
   return (
-    <div className="min-h-screen bg-muted text-muted-foreground py-8 px-4 sm:py-12 sm:px-6 lg:px-12 animate-in fade-in duration-700">
-      {isAdaptive ? (
-        <AdaptiveAssessmentView
-          formData={formData}
-          aiResult={resolvedAiResult}
-          assessmentId={assessmentId}
-          headerActions={headerActionsContent}
-          aiPromptConfig={aiPromptConfig}
-        />
-      ) : (
-        <UniversalAssessmentView
-          mode="dashboard"
-          assessmentId={assessmentId} // KUNCI PERBAIKAN: Melemparkan ID ke Universal View
-          trackType={trackType}
-          programName={programName}
-          formData={formData}
-          aiResult={resolvedAiResult}
-          headerActions={headerActionsContent}
-        />
-      )}
+    <div className="min-h-screen bg-background text-foreground py-8 px-4 sm:py-12 sm:px-6 lg:px-12 animate-in fade-in duration-700 relative overflow-hidden">
+      {/* Ambient Background Glows */}
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-[150px] pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-emerald-500/5 rounded-full blur-[150px] pointer-events-none" />
+      
+      <div className="relative z-10 w-full max-w-7xl mx-auto">
+        {isAdaptive ? (
+          <AdaptiveAssessmentView
+            formData={formData}
+            aiResult={resolvedAiResult}
+            assessmentId={assessmentId}
+            headerActions={headerActionsContent}
+            aiPromptConfig={aiPromptConfig}
+          />
+        ) : (
+          <UniversalAssessmentView
+            mode="dashboard"
+            assessmentId={assessmentId} // KUNCI PERBAIKAN: Melemparkan ID ke Universal View
+            trackType={trackType}
+            programName={programName}
+            formData={formData}
+            aiResult={resolvedAiResult}
+            headerActions={headerActionsContent}
+          />
+        )}
+      </div>
     </div>
   );
 }

@@ -68,6 +68,8 @@ import { shareOrCopy } from '@/services/share'
 import { BundleUpsellBanner } from '@/features/payment/components/BundleUpsellBanner'
 import { DraftValidationModal } from './DraftValidationModal'
 import { MicroSimulator } from './MicroSimulator'
+import { SpotlightCard } from '@/components/landing/SpotlightCard'
+import { GradientBadge } from '@/components/landing/GradientBadge'
 
 const SystemCapabilitiesModal = dynamic(
   () =>
@@ -508,8 +510,8 @@ export function CurationLanding({
             className="pointer-events-none absolute inset-0 overflow-hidden"
             aria-hidden
           >
-            <div className="absolute -top-32 -left-32 w-[500px] h-[500px] bg-indigo-100/40 dark:hidden rounded-full blur-[120px]" />
-            <div className="absolute -bottom-20 -right-20 w-[400px] h-[400px] bg-blue-100/30 dark:hidden rounded-full blur-[100px]" />
+            <div className="absolute -top-32 -left-32 w-[500px] h-[500px] bg-indigo-500/20 dark:bg-indigo-500/10 rounded-full blur-[120px]" />
+            <div className="absolute top-1/2 right-0 -translate-y-1/2 translate-x-1/3 w-[600px] h-[600px] bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-[120px]" />
           </div>
 
           <div className="relative z-10 max-w-7xl mx-auto px-5 lg:px-10 pt-10 pb-12 lg:pt-14 lg:pb-16">
@@ -535,12 +537,11 @@ export function CurationLanding({
               </m.div>
 
               {/* Eyebrow */}
-              <m.div
-                variants={fadeUp}
-                className="inline-flex items-center gap-2 px-4 py-1.5 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 rounded-full text-[11px] font-black uppercase tracking-widest ring-1 ring-indigo-200 dark:ring-indigo-500/20/60"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
-                Platform Asesmen AI Terdepan di Indonesia
+              <m.div variants={fadeUp} className="flex justify-center mb-2">
+                <GradientBadge variant="indigo" className="gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
+                  Platform Asesmen AI Terdepan di Indonesia
+                </GradientBadge>
               </m.div>
 
               {/* Headline */}
@@ -593,14 +594,14 @@ export function CurationLanding({
               >
                 <Link
                   href={user ? '/onboarding' : '/login?next=/onboarding'}
-                  className="inline-flex items-center gap-2 h-12 px-7 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 font-bold text-sm shadow-lg shadow-indigo-600/25 transition-all"
+                  className="inline-flex items-center gap-2 h-12 px-7 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 font-bold text-sm shadow-[0_0_20px_rgba(79,70,229,0.3)] dark:shadow-[0_0_30px_rgba(79,70,229,0.2)] transition-shadow"
                 >
                   <Sparkles className="w-4 h-4" />
                   Mulai Onboarding Gratis
                 </Link>
                 <Link
                   href="/katalog"
-                  className="inline-flex items-center gap-2 h-12 px-6 rounded-xl card-solid text-slate-700 hover:text-indigo-600 dark:text-indigo-400 hover:bg-muted text-muted-foreground font-bold text-sm ring-1 ring-border shadow-sm transition-all"
+                  className="inline-flex items-center gap-2 h-12 px-6 rounded-xl bg-background/50 backdrop-blur-sm hover:bg-muted text-muted-foreground font-bold text-sm ring-1 ring-border shadow-sm transition-all"
                 >
                   <LibraryBig className="w-4 h-4" />
                   Lihat Katalog Modul
@@ -695,8 +696,9 @@ export function CurationLanding({
                         initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -8 }}
-                        className="card-solid rounded-[2rem] ring-1 ring-border shadow-sm p-6 sm:p-8 space-y-4"
+                        className="bg-card/40 dark:bg-slate-900/40 backdrop-blur-xl rounded-[2rem] ring-1 ring-border dark:ring-white/5 shadow-xl p-6 sm:p-8 space-y-4 relative overflow-hidden"
                       >
+                        <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-indigo-500/10 rounded-full blur-[80px] pointer-events-none -z-10" />
                         <div className="mb-2">
                           <p className="text-[10px] font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 mb-1">
                             Akses Platform
@@ -712,7 +714,7 @@ export function CurationLanding({
                         {/* Google CTA — primary */}
                         <button
                           onClick={onLogin}
-                          className="w-full h-12 flex items-center justify-center gap-3 rounded-xl card-solid ring-1 ring-border hover:ring-indigo-300 hover:bg-indigo-50 dark:bg-indigo-500/10 text-slate-700 hover:text-indigo-700 dark:text-indigo-300 font-bold text-sm shadow-sm transition-all"
+                          className="w-full h-12 flex items-center justify-center gap-3 rounded-xl bg-background/60 backdrop-blur-sm ring-1 ring-border hover:ring-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 text-slate-700 hover:text-indigo-700 dark:text-indigo-300 font-bold text-sm shadow-sm transition-all"
                         >
                           <GoogleIcon />
                           Masuk dengan Akun Google
@@ -750,7 +752,7 @@ export function CurationLanding({
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -8 }}
                         onSubmit={handleResetPassword}
-                        className="card-solid rounded-[2rem] ring-1 ring-border shadow-sm p-6 sm:p-8 space-y-4"
+                        className="bg-card/40 dark:bg-slate-900/40 backdrop-blur-xl rounded-[2rem] ring-1 ring-border dark:ring-white/5 shadow-xl p-6 sm:p-8 space-y-4 relative overflow-hidden"
                       >
                         <div>
                           <h2 className="text-lg font-black text-foreground">
@@ -800,7 +802,7 @@ export function CurationLanding({
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -8 }}
                         onSubmit={handleEmailAuth}
-                        className="card-solid rounded-[2rem] ring-1 ring-border shadow-sm p-6 sm:p-8 space-y-4"
+                        className="bg-card/40 dark:bg-slate-900/40 backdrop-blur-xl rounded-[2rem] ring-1 ring-border dark:ring-white/5 shadow-xl p-6 sm:p-8 space-y-4 relative overflow-hidden"
                       >
                         <div>
                           <h2 className="text-lg font-black text-foreground">
@@ -894,8 +896,9 @@ export function CurationLanding({
               {user && (
                 <m.div variants={fadeUp} className="space-y-3">
                   {/* User identity card */}
-                  <div className="flex items-center justify-between card-solid px-5 py-4 rounded-[1.5rem] ring-1 ring-border shadow-sm">
-                    <div className="flex items-center gap-3 overflow-hidden">
+                  <div className="flex items-center justify-between bg-card/60 dark:bg-slate-900/60 backdrop-blur-xl px-5 py-4 rounded-[1.5rem] ring-1 ring-border dark:ring-white/5 shadow-lg relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-indigo-500/0 group-hover:bg-indigo-500/5 transition-colors duration-500 pointer-events-none" />
+                    <div className="flex items-center gap-3 overflow-hidden relative z-10">
                       {user.photoURL ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
@@ -920,7 +923,7 @@ export function CurationLanding({
                     </div>
                     <button
                       onClick={onLogout}
-                      className="p-2 text-slate-400 hover:text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:bg-rose-500/10 rounded-xl transition-colors shrink-0"
+                      className="p-2 text-slate-400 hover:text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:bg-rose-500/10 rounded-xl transition-colors shrink-0 relative z-10"
                       title="Keluar"
                     >
                       <LogOut size={16} />
@@ -968,13 +971,13 @@ export function CurationLanding({
                   </div>
 
                   {/* Primary CTA: Token */}
-                  <Link href="/token" className="block">
+                  <Link href="/token" className="block mt-4 relative group">
+                    <div className="absolute -inset-[1px] rounded-[1.1rem] bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 opacity-30 group-hover:opacity-100 blur-[2px] transition-opacity duration-500 animate-pulse" />
                     <Button
-                      variant="brand"
-                      className="w-full h-14 rounded-2xl text-sm px-6 flex items-center justify-between group"
+                      className="w-full h-14 rounded-2xl text-sm px-6 flex items-center justify-between group bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg relative z-10 transition-transform hover:-translate-y-0.5"
                     >
                       <div className="flex items-center gap-3">
-                        <KeyRound className="w-5 h-5 text-slate-400 group-hover:text-white transition-colors" />
+                        <KeyRound className="w-5 h-5 text-indigo-200 group-hover:text-white transition-colors" />
                         Gunakan Token Akses
                       </div>
                       <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -1013,7 +1016,7 @@ export function CurationLanding({
               {/* ── Privacy & legal strip ─────────────────────────────────────── */}
               <m.div
                 variants={fadeUp}
-                className="rounded-xl card-solid ring-1 ring-border px-4 py-3 flex items-center justify-between gap-3 shadow-sm"
+                className="rounded-xl bg-card/40 backdrop-blur-xl ring-1 ring-border px-4 py-3 flex items-center justify-between gap-3 shadow-sm"
               >
                 <div className="flex items-center gap-1.5 text-muted-foreground">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
@@ -1049,27 +1052,37 @@ export function CurationLanding({
                   animate="visible"
                   className="grid grid-cols-1 sm:grid-cols-2 gap-4"
                 >
-                  {GUEST_VALUE_PROPS.map((vp, i) => (
-                    <m.div
-                      key={i}
-                      variants={cardVariant}
-                      className="card-solid p-6 rounded-[1.5rem] ring-1 ring-border shadow-sm hover:shadow-md hover:ring-indigo-200 dark:ring-indigo-500/20 transition-all flex flex-col gap-4"
-                    >
-                      <div
-                        className={`w-12 h-12 ${vp.bg} rounded-2xl flex items-center justify-center ring-1 ring-white shadow-inner`}
-                      >
-                        {vp.icon}
-                      </div>
-                      <div>
-                        <h3 className="text-sm font-black text-foreground mb-1">
-                          {vp.title}
-                        </h3>
-                        <p className="text-xs text-muted-foreground font-medium leading-relaxed">
-                          {vp.desc}
-                        </p>
-                      </div>
-                    </m.div>
-                  ))}
+                  {GUEST_VALUE_PROPS.map((vp, i) => {
+                    const colorMap: Record<number, 'indigo'|'emerald'|'amber'|'indigo'|'indigo'|'rose'> = {
+                      0: 'indigo',
+                      1: 'emerald',
+                      2: 'amber',
+                      3: 'indigo',
+                      4: 'indigo',
+                      5: 'rose',
+                    };
+                    const color = colorMap[i] || 'indigo';
+                    
+                    return (
+                      <m.div key={i} variants={cardVariant}>
+                        <SpotlightCard color={color as any} className="p-6 h-full flex flex-col gap-4">
+                          <div
+                            className={`w-12 h-12 ${vp.bg} rounded-2xl flex items-center justify-center ring-1 ring-white/50 dark:ring-white/5 shadow-inner group-hover:scale-110 transition-transform duration-300`}
+                          >
+                            {vp.icon}
+                          </div>
+                          <div>
+                            <h3 className="text-sm font-black text-foreground mb-1">
+                              {vp.title}
+                            </h3>
+                            <p className="text-xs text-muted-foreground font-medium leading-relaxed">
+                              {vp.desc}
+                            </p>
+                          </div>
+                        </SpotlightCard>
+                      </m.div>
+                    );
+                  })}
                 </m.div>
               )}
 
@@ -1104,12 +1117,13 @@ export function CurationLanding({
                 <div className="grid grid-cols-2 gap-4 mb-8">
                   <button
                     onClick={() => setIsDraftsModalOpen(true)}
-                    className="flex items-center gap-3 card-solid p-4 rounded-[1.5rem] ring-1 ring-border shadow-sm hover:ring-amber-300 transition-all"
+                    className="flex items-center gap-3 bg-card/40 dark:bg-slate-900/40 backdrop-blur-xl p-4 rounded-[1.5rem] ring-1 ring-border dark:ring-white/5 shadow-sm hover:shadow-lg hover:ring-amber-300/50 dark:hover:ring-amber-500/30 transition-all group overflow-hidden relative"
                   >
-                    <div className="w-10 h-10 bg-amber-50 dark:bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-500">
+                    <div className="absolute inset-0 bg-amber-500/0 group-hover:bg-amber-500/5 transition-colors duration-500 pointer-events-none" />
+                    <div className="w-10 h-10 bg-amber-50 dark:bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform duration-300 relative z-10">
                       <DocExportIcon className="w-5 h-5" />
                     </div>
-                    <div>
+                    <div className="text-left relative z-10">
                       <div className="text-sm font-black text-foreground">
                         Draf ({drafts.length})
                       </div>
@@ -1120,12 +1134,13 @@ export function CurationLanding({
                   </button>
                   <button
                     onClick={() => setIsHistoryModalOpen(true)}
-                    className="flex items-center gap-3 card-solid p-4 rounded-[1.5rem] ring-1 ring-border shadow-sm hover:ring-indigo-300 transition-all"
+                    className="flex items-center gap-3 bg-card/40 dark:bg-slate-900/40 backdrop-blur-xl p-4 rounded-[1.5rem] ring-1 ring-border dark:ring-white/5 shadow-sm hover:shadow-lg hover:ring-indigo-300/50 dark:hover:ring-indigo-500/30 transition-all group overflow-hidden relative"
                   >
-                    <div className="w-10 h-10 bg-indigo-50 dark:bg-indigo-500/10 rounded-xl flex items-center justify-center text-indigo-500">
+                    <div className="absolute inset-0 bg-indigo-500/0 group-hover:bg-indigo-500/5 transition-colors duration-500 pointer-events-none" />
+                    <div className="w-10 h-10 bg-indigo-50 dark:bg-indigo-500/10 rounded-xl flex items-center justify-center text-indigo-500 group-hover:scale-110 transition-transform duration-300 relative z-10">
                       <History className="w-5 h-5" />
                     </div>
-                    <div>
+                    <div className="text-left relative z-10">
                       <div className="text-sm font-black text-foreground">
                         Riwayat ({history.length})
                       </div>
@@ -1146,7 +1161,7 @@ export function CurationLanding({
                     variants={fadeUp}
                     initial="hidden"
                     animate="visible"
-                    className="card-solid rounded-[2rem] ring-1 ring-border shadow-sm p-12 text-center flex flex-col items-center gap-4"
+                    className="bg-card/40 backdrop-blur-xl rounded-[2rem] ring-1 ring-border shadow-sm p-12 text-center flex flex-col items-center gap-4"
                   >
                     <div className="w-16 h-16 bg-indigo-50 dark:bg-indigo-500/10 rounded-2xl flex items-center justify-center ring-1 ring-indigo-100">
                       <AiSparkIcon
@@ -1213,9 +1228,9 @@ export function CurationLanding({
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="fixed left-1/2 top-1/2 z-50 w-[92%] max-w-3xl max-h-[85vh] flex flex-col -translate-x-1/2 -translate-y-1/2 card-solid rounded-3xl shadow-2xl ring-1 ring-border overflow-hidden"
+              className="fixed left-1/2 top-1/2 z-50 w-[92%] max-w-3xl max-h-[85vh] flex flex-col -translate-x-1/2 -translate-y-1/2 bg-card/60 dark:bg-slate-900/60 backdrop-blur-2xl rounded-3xl shadow-2xl ring-1 ring-border dark:ring-white/10 overflow-hidden"
             >
-              <div className="p-5 md:p-6 border-b border-border flex items-center justify-between card-solid shrink-0">
+              <div className="p-5 md:p-6 border-b border-border/50 flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-amber-50 dark:bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-500">
                     <DocExportIcon className="w-5 h-5" />
@@ -1245,12 +1260,13 @@ export function CurationLanding({
                         setIsDraftsModalOpen(false)
                         handleResumeDraft(draft)
                       }}
-                      className="card-solid p-5 rounded-[1.5rem] ring-1 ring-border shadow-sm cursor-pointer group hover:ring-amber-300 hover:shadow-md transition-all flex flex-col min-h-[120px]"
+                      className="bg-card/40 dark:bg-slate-900/40 backdrop-blur-md p-5 rounded-[1.5rem] ring-1 ring-border dark:ring-white/5 shadow-sm cursor-pointer group hover:ring-amber-300/50 dark:hover:ring-amber-500/30 hover:shadow-lg transition-all flex flex-col min-h-[120px] relative overflow-hidden"
                     >
-                      <span className="text-[9px] font-black uppercase tracking-widest text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/10 px-2.5 py-1 rounded-md ring-1 ring-amber-100 w-fit mb-3">
+                      <div className="absolute inset-0 bg-amber-500/0 group-hover:bg-amber-500/5 transition-colors duration-500 pointer-events-none" />
+                      <span className="relative z-10 text-[9px] font-black uppercase tracking-widest text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/10 px-2.5 py-1 rounded-md ring-1 ring-amber-100 w-fit mb-3">
                         Tersimpan Lokal
                       </span>
-                      <h4 className="font-black text-foreground text-sm group-hover:text-amber-600 dark:text-amber-400 line-clamp-2 transition-colors flex-1 mb-3">
+                      <h4 className="relative z-10 font-black text-foreground text-sm group-hover:text-amber-600 dark:text-amber-400 line-clamp-2 transition-colors flex-1 mb-3">
                         {asSafeText(draft.trackName, 'Draft Tanpa Nama')}
                       </h4>
                       <p className="text-[11px] font-bold text-slate-400 group-hover:text-amber-500 flex items-center gap-1.5 transition-colors mt-auto">
@@ -1291,9 +1307,9 @@ export function CurationLanding({
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="fixed left-1/2 top-1/2 z-50 w-[92%] max-w-3xl max-h-[85vh] flex flex-col -translate-x-1/2 -translate-y-1/2 card-solid rounded-3xl shadow-2xl ring-1 ring-border overflow-hidden"
+              className="fixed left-1/2 top-1/2 z-50 w-[92%] max-w-3xl max-h-[85vh] flex flex-col -translate-x-1/2 -translate-y-1/2 bg-card/60 dark:bg-slate-900/60 backdrop-blur-2xl rounded-3xl shadow-2xl ring-1 ring-border dark:ring-white/10 overflow-hidden"
             >
-              <div className="p-5 md:p-6 border-b border-border flex items-center justify-between card-solid shrink-0">
+              <div className="p-5 md:p-6 border-b border-border/50 flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-indigo-50 dark:bg-indigo-500/10 rounded-xl flex items-center justify-center text-indigo-500">
                     <History className="w-5 h-5" />
@@ -1323,12 +1339,13 @@ export function CurationLanding({
                         setIsHistoryModalOpen(false)
                         onLoadHistory(item)
                       }}
-                      className="card-solid p-5 rounded-[1.5rem] ring-1 ring-border shadow-sm cursor-pointer group hover:ring-indigo-300 hover:shadow-md transition-all flex flex-col min-h-[140px]"
+                      className="bg-card/40 dark:bg-slate-900/40 backdrop-blur-md p-5 rounded-[1.5rem] ring-1 ring-border dark:ring-white/5 shadow-sm cursor-pointer group hover:ring-indigo-300/50 dark:hover:ring-indigo-500/30 hover:shadow-lg transition-all flex flex-col min-h-[140px] relative overflow-hidden"
                     >
-                      <span className="text-[9px] font-black uppercase tracking-widest text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-500/10 px-2.5 py-1 rounded-md ring-1 ring-indigo-100 w-fit mb-3">
+                      <div className="absolute inset-0 bg-indigo-500/0 group-hover:bg-indigo-500/5 transition-colors duration-500 pointer-events-none" />
+                      <span className="relative z-10 text-[9px] font-black uppercase tracking-widest text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-500/10 px-2.5 py-1 rounded-md ring-1 ring-indigo-100 w-fit mb-3">
                         {asSafeText(item.trackType, 'Evaluasi')}
                       </span>
-                      <h4 className="font-black text-foreground text-sm group-hover:text-indigo-600 dark:text-indigo-400 line-clamp-2 transition-colors flex-1 mb-4">
+                      <h4 className="relative z-10 font-black text-foreground text-sm group-hover:text-indigo-600 dark:text-indigo-400 line-clamp-2 transition-colors flex-1 mb-4">
                         {asSafeText(item.namaUsaha, 'Tanpa Nama')}
                       </h4>
                       <div className="flex items-center justify-between pt-3 border-t border-border mt-auto">

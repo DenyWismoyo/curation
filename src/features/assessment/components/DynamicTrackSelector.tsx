@@ -10,6 +10,7 @@ import { FormTemplate } from '@/features/assessment/types/assessment.types';
 import * as LucideIcons from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
+import { SpotlightCard } from '@/components/landing/SpotlightCard';
 
 // IMPORT CUSTOM ICONS
 import { 
@@ -118,30 +119,41 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
   const OutputIcons = [AILensIcon, InfinityWorkflowIcon, BrainIcon, GlobalTargetIcon];
 
   return (
-    <div className="min-h-screen bg-muted text-muted-foreground/50 py-8 px-6 lg:py-12 flex flex-col items-center">
-      <div className="max-w-[1200px] w-full space-y-8">
+    <div className="min-h-screen bg-background text-foreground py-8 px-6 lg:py-16 flex flex-col items-center relative overflow-hidden">
+      {/* Ambient Background Glows */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
+
+      <div className="max-w-[1200px] w-full space-y-12 relative z-10">
         
         {/* ================= HEADER KEMBALI & WHITE-LABELING ================= */}
-        <div className="animate-in fade-in slide-in-from-top-4 duration-500 ease-out relative z-20 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="animate-in fade-in slide-in-from-top-4 duration-500 ease-out flex flex-col md:flex-row md:items-center justify-between gap-4">
           <button 
             onClick={handleBack} 
-            className="flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-indigo-600 dark:text-indigo-400 transition-all w-fit px-4 py-2.5 -ml-4 rounded-xl hover:card-solid hover:shadow-sm ring-1 ring-transparent hover:ring-slate-200 active:scale-95"
+            className="flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-indigo-600 transition-all w-fit px-4 py-2.5 -ml-4 rounded-xl hover:bg-muted/50 ring-1 ring-transparent hover:ring-border active:scale-95"
           >
             <ChevronLeft className="h-4 w-4" /> Kembali
           </button>
           
           {activeCorporateName && activeCorporateName !== 'Omnifit' && (
-            <div className="flex items-center gap-2 bg-indigo-50 dark:bg-indigo-500/10 px-4 py-2 rounded-full ring-1 ring-indigo-200 dark:ring-indigo-500/20">
+            <div className="flex items-center gap-2 bg-indigo-50 dark:bg-indigo-500/10 px-5 py-2.5 rounded-full ring-1 ring-indigo-200 dark:ring-indigo-500/20 shadow-sm">
               <GlobalTargetIcon size={16} className="text-indigo-600 dark:text-indigo-400" />
-              <span className="text-sm font-black text-indigo-900 tracking-tight">Program: {activeCorporateName}</span>
+              <span className="text-sm font-black text-indigo-900 dark:text-indigo-100 tracking-tight">Program: {activeCorporateName}</span>
             </div>
           )}
         </div>
 
+        {/* ================= HERO TITLE ================= */}
+        <div className="text-center max-w-2xl mx-auto space-y-4">
+          <h1 className="text-3xl lg:text-4xl font-black text-foreground tracking-tight">Pilih Modul Asesmen</h1>
+          <p className="text-muted-foreground font-medium leading-relaxed">
+            Pilih modul asesmen yang paling relevan dengan kebutuhan Anda. Setiap modul dirancang khusus untuk memetakan kekuatan dan blind-spot secara komprehensif.
+          </p>
+        </div>
+
         {/* ================= GRID SECTION ================= */}
         {activeTemplates.length === 0 ? (
-          <div className="py-24 text-center text-muted-foreground card-solid ring-1 ring-border rounded-[2rem] shadow-sm animate-in zoom-in-95 duration-500">
-            {/* Menggunakan TechCardIcon untuk Empty State */}
+          <div className="py-24 text-center text-muted-foreground bg-card/40 backdrop-blur-xl ring-1 ring-border rounded-[2rem] shadow-sm animate-in zoom-in-95 duration-500">
             <TechCardIcon className="mx-auto h-16 w-16 text-slate-200 mb-6 grayscale opacity-50" />
             <p className="font-black text-2xl text-foreground mb-2">Katalog Belum Tersedia</p>
             <p className="text-base font-medium">Silakan hubungi administrator untuk menerbitkan modul asesmen.</p>
@@ -151,42 +163,57 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
             {activeTemplates.map((template, index) => {
               const IconComponent = template.trackIcon && (LucideIcons as any)[template.trackIcon] 
                                       ? (LucideIcons as any)[template.trackIcon] 
-                                      : AppModuleTealIcon; // Custom Fallback Icon
+                                      : AppModuleTealIcon;
               
               const theme = getCategoryTheme(template.trackName, template.category || '');
+              
+              // Map theme base color for SpotlightCard
+              let spotlightColor: 'indigo' | 'emerald' | 'rose' | 'amber' = 'indigo';
+              if (theme.bg.includes('emerald')) spotlightColor = 'emerald';
+              if (theme.bg.includes('amber')) spotlightColor = 'amber';
+              if (theme.bg.includes('rose')) spotlightColor = 'rose';
               
               return (
                 <div 
                   key={template.id} 
                   onClick={() => handleSelectTrack(template)}
                   style={{ animationFillMode: 'both', animationDelay: `${index * 50}ms` }}
-                  className={`animate-in fade-in slide-in-from-bottom-8 duration-500 ease-out card-solid rounded-3xl p-6 lg:p-8 ring-1 ring-border ${theme.hoverRing} flex flex-col transition-all duration-300 relative group overflow-hidden cursor-pointer hover:shadow-xl shadow-sm min-h-[280px]`}
+                  className="animate-in fade-in slide-in-from-bottom-8 duration-500 ease-out h-full"
                 >
-                  <div className={`absolute -bottom-10 -right-10 w-48 h-48 transform group-hover:scale-110 group-hover:-rotate-12 transition-all duration-700 ease-out pointer-events-none opacity-5 ${theme.text}`}>
-                    <IconComponent className="w-full h-full" strokeWidth={1} />
-                  </div>
-                  
-                  <div className="flex-1 relative z-10">
-                    <div className={`w-14 h-14 ${theme.bg} ${theme.text} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-sm ring-1 ${theme.ring}`}>
-                      <IconComponent className="w-7 h-7" />
+                  <SpotlightCard 
+                    color={spotlightColor} 
+                    className={`h-full flex flex-col p-6 lg:p-8 cursor-pointer group transition-transform hover:-translate-y-1 hover:shadow-xl ${theme.hoverRing}`}
+                  >
+                    <div className={`absolute -bottom-10 -right-10 w-48 h-48 transform group-hover:scale-110 group-hover:-rotate-12 transition-all duration-700 ease-out pointer-events-none opacity-5 ${theme.text}`}>
+                      <IconComponent className="w-full h-full" strokeWidth={1} />
                     </div>
                     
-                    <h3 className="text-xl lg:text-2xl font-black text-foreground leading-snug mb-3 pr-4">
-                      {template.trackName}
-                    </h3>
-                    <p className="text-sm text-muted-foreground font-medium leading-relaxed line-clamp-3">
-                      {template.trackDescription}
-                    </p>
-                  </div>
-
-                  <div className="relative z-10 pt-6 mt-6 flex items-center justify-between border-t border-border">
-                    <span className={`text-sm font-bold text-slate-400 transition-colors ${theme.hoverText}`}>
-                      Mulai Asesmen
-                    </span>
-                    <div className={`w-10 h-10 rounded-full bg-muted text-muted-foreground flex items-center justify-center transition-all duration-300 ${theme.hoverBg} group-hover:translate-x-1`}>
-                      <ArrowRight className={`w-5 h-5 text-slate-400 transition-colors ${theme.hoverText}`} />
+                    <div className="flex-1 relative z-10">
+                      <div className={`w-14 h-14 ${theme.bg} ${theme.text} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-sm ring-1 ${theme.ring}`}>
+                        <IconComponent className="w-7 h-7" />
+                      </div>
+                      
+                      <div className="inline-flex items-center px-2.5 py-1 rounded-md bg-muted/50 text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-3 ring-1 ring-border/50">
+                        {template.category || 'Asesmen Mandiri'}
+                      </div>
+                      
+                      <h3 className="text-xl lg:text-2xl font-black text-foreground leading-snug mb-3 pr-4 group-hover:text-foreground/90 transition-colors">
+                        {template.trackName}
+                      </h3>
+                      <p className="text-sm text-muted-foreground font-medium leading-relaxed line-clamp-3">
+                        {template.trackDescription}
+                      </p>
                     </div>
-                  </div>
+
+                    <div className="relative z-10 pt-6 mt-6 flex items-center justify-between border-t border-border/50">
+                      <span className={`text-sm font-bold text-slate-400 transition-colors ${theme.hoverText}`}>
+                        Mulai Asesmen
+                      </span>
+                      <div className={`w-10 h-10 rounded-full bg-muted flex items-center justify-center transition-all duration-300 ${theme.hoverBg} group-hover:translate-x-1 ring-1 ring-border/50 group-hover:ring-transparent`}>
+                        <ArrowRight className={`w-5 h-5 text-slate-400 transition-colors ${theme.hoverText}`} />
+                      </div>
+                    </div>
+                  </SpotlightCard>
                 </div>
               );
             })}
@@ -202,26 +229,26 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
               key="track-drawer-backdrop"
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               onClick={() => setSelectedTrack(null)}
-              className="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-[200]"
+              className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-[200]"
             />
             
             <motion.div 
               key="track-drawer-panel"
               initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 h-[100dvh] w-full max-w-md card-solid z-[210] shadow-2xl flex flex-col border-l border-border"
+              className="fixed top-0 right-0 h-[100dvh] w-full max-w-md bg-card/70 dark:bg-slate-950/80 backdrop-blur-3xl z-[210] shadow-2xl flex flex-col border-l border-white/10"
             >
               {/* Header Drawer */}
-              <div className="p-6 border-b border-border flex justify-between items-center card-solid/80 backdrop-blur-md shrink-0">
+              <div className="p-6 border-b border-white/10 flex justify-between items-center bg-card/30 shrink-0">
                 <div>
                   <h3 className="font-black text-xl text-foreground">Persiapan Asesmen</h3>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1">
                     {selectedTrack.category || 'Asesmen Mandiri'}
                   </p>
                 </div>
                 <button 
                   onClick={() => setSelectedTrack(null)} 
-                  className="p-2 bg-muted text-muted-foreground hover:bg-secondary text-secondary-foreground rounded-full text-muted-foreground transition-colors"
+                  className="p-2.5 bg-background/50 hover:bg-background ring-1 ring-border text-foreground rounded-full transition-all shadow-sm"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -243,21 +270,20 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
 
                 <div className="space-y-6">
                   
-                  {/* KOTAK EKSPEKTASI HASIL (MENGGUNAKAN CUSTOM ICON & DATA DINAMIS) */}
-                  <div className={`${drawerTheme.bg} p-6 rounded-3xl ring-1 ${drawerTheme.ring} bg-opacity-40`}>
+                  {/* KOTAK EKSPEKTASI HASIL */}
+                  <div className={`${drawerTheme.bg} p-6 rounded-3xl ring-1 ${drawerTheme.ring} bg-opacity-30 backdrop-blur-md`}>
                     <h5 className={`text-[11px] font-black ${drawerTheme.text} uppercase tracking-widest mb-5 flex items-center gap-2`}>
                       <AiSparkIcon size={14} /> Apa yang akan Anda dapatkan?
                     </h5>
                     <ul className="space-y-5">
                       {selectedTrack.expectedOutputs && selectedTrack.expectedOutputs.length > 0 ? (
-                        // Render Dinamis Berdasarkan Data Custom
                         selectedTrack.expectedOutputs.map((item, idx) => {
                           const { title, subs } = parseExpectedOutput(item);
                           const DynamicIcon = OutputIcons[idx % OutputIcons.length];
                           
                           return (
                             <li key={idx} className="flex items-start gap-3.5">
-                              <div className="w-10 h-10 rounded-2xl card-solid flex items-center justify-center shrink-0 shadow-sm text-muted-foreground ring-1 ring-border">
+                              <div className="w-10 h-10 rounded-2xl bg-background/60 flex items-center justify-center shrink-0 shadow-sm ring-1 ring-border/50">
                                 <DynamicIcon size={20} className={drawerTheme.text} />
                               </div>
                               <div>
@@ -275,8 +301,8 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
                         // Fallback Jika Kosong (Modul Lama)
                         <>
                           <li className="flex items-start gap-3.5">
-                            <div className="w-10 h-10 rounded-2xl card-solid flex items-center justify-center shrink-0 shadow-sm text-muted-foreground ring-1 ring-border">
-                              <AILensIcon size={20} />
+                            <div className="w-10 h-10 rounded-2xl bg-background/60 flex items-center justify-center shrink-0 shadow-sm ring-1 ring-border/50">
+                              <AILensIcon size={20} className={drawerTheme.text} />
                             </div>
                             <div>
                               <p className="text-sm font-bold text-foreground mb-1">Analisis Instan & Mendalam</p>
@@ -286,8 +312,8 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
                             </div>
                           </li>
                           <li className="flex items-start gap-3.5">
-                            <div className="w-10 h-10 rounded-2xl card-solid flex items-center justify-center shrink-0 shadow-sm text-muted-foreground ring-1 ring-border">
-                              <DocExportIcon size={20} />
+                            <div className="w-10 h-10 rounded-2xl bg-background/60 flex items-center justify-center shrink-0 shadow-sm ring-1 ring-border/50">
+                              <DocExportIcon size={20} className={drawerTheme.text} />
                             </div>
                             <div>
                               <p className="text-sm font-bold text-foreground mb-1">Salinan Terkirim ke Email</p>
@@ -296,30 +322,19 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
                               </p>
                             </div>
                           </li>
-                          <li className="flex items-start gap-3.5">
-                            <div className="w-10 h-10 rounded-2xl card-solid flex items-center justify-center shrink-0 shadow-sm text-muted-foreground ring-1 ring-border">
-                              <BrainIcon size={20} />
-                            </div>
-                            <div>
-                              <p className="text-sm font-bold text-foreground mb-1">Fondasi Konsultasi Lanjutan</p>
-                              <p className="text-xs text-muted-foreground font-medium leading-relaxed">
-                                Menjadi langkah awal dan <span className="italic">baseline</span> data objektif yang sangat berharga sebelum Anda melangkah ke sesi konsultasi bersama ahli.
-                              </p>
-                            </div>
-                          </li>
                         </>
                       )}
                     </ul>
                   </div>
 
-                  {/* KOTAK PANDUAN PENGISIAN (MENGGUNAKAN CUSTOM ICON) */}
-                  <div className="bg-muted text-muted-foreground p-6 rounded-3xl ring-1 ring-border">
+                  {/* KOTAK PANDUAN PENGISIAN */}
+                  <div className="bg-muted/40 backdrop-blur-md p-6 rounded-3xl ring-1 ring-border/50">
                     <h5 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-5 flex items-center gap-2">
                       <AdminShieldIcon size={14} /> Panduan Sebelum Memulai
                     </h5>
                     <ul className="space-y-5">
                       <li className="flex items-start gap-3.5">
-                        <div className="w-10 h-10 rounded-2xl card-solid flex items-center justify-center shrink-0 shadow-sm text-muted-foreground ring-1 ring-border">
+                        <div className="w-10 h-10 rounded-2xl bg-background/60 flex items-center justify-center shrink-0 shadow-sm text-muted-foreground ring-1 ring-border/50">
                           <GlobalTargetIcon size={20} />
                         </div>
                         <div>
@@ -330,7 +345,7 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
                         </div>
                       </li>
                       <li className="flex items-start gap-3.5">
-                        <div className="w-10 h-10 rounded-2xl card-solid flex items-center justify-center shrink-0 shadow-sm text-muted-foreground ring-1 ring-border">
+                        <div className="w-10 h-10 rounded-2xl bg-background/60 flex items-center justify-center shrink-0 shadow-sm text-muted-foreground ring-1 ring-border/50">
                           <AdminShieldIcon size={20} />
                         </div>
                         <div>
@@ -341,24 +356,13 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
                         </div>
                       </li>
                       <li className="flex items-start gap-3.5">
-                        <div className="w-10 h-10 rounded-2xl card-solid flex items-center justify-center shrink-0 shadow-sm text-muted-foreground ring-1 ring-border">
+                        <div className="w-10 h-10 rounded-2xl bg-background/60 flex items-center justify-center shrink-0 shadow-sm text-muted-foreground ring-1 ring-border/50">
                           <InfinityWorkflowIcon size={20} />
                         </div>
                         <div>
                           <p className="text-sm font-bold text-foreground mb-1">Progres Tersimpan Otomatis</p>
                           <p className="text-xs text-muted-foreground font-medium leading-relaxed">
                             Tidak perlu terburu-buru. Anda dapat menutup halaman kapan saja dan melanjutkannya nanti tanpa takut kehilangan data.
-                          </p>
-                        </div>
-                      </li>
-                      <li className="flex items-start gap-3.5">
-                        <div className="w-10 h-10 rounded-2xl card-solid flex items-center justify-center shrink-0 shadow-sm text-muted-foreground ring-1 ring-border">
-                          <AiSparkIcon size={20} />
-                        </div>
-                        <div>
-                          <p className="text-sm font-bold text-foreground mb-1">Nikmati Prosesnya</p>
-                          <p className="text-xs text-muted-foreground font-medium leading-relaxed">
-                            Instrumen ini dirancang interaktif layaknya berkonsultasi dengan ahlinya. Ikuti alurnya dan temukan wawasan baru.
                           </p>
                         </div>
                       </li>
@@ -369,12 +373,15 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
               </div>
 
               {/* Footer Drawer */}
-              <div className="p-6 border-t border-border card-solid shrink-0">
+              <div className="p-6 border-t border-white/10 bg-background/40 backdrop-blur-xl shrink-0">
                 <Button 
                   onClick={confirmSelection}
-                  className="w-full h-14 rounded-2xl bg-slate-900 text-white font-bold text-base hover:bg-indigo-600 shadow-xl shadow-slate-900/10 transition-all flex items-center justify-center gap-2 group"
+                  className="w-full h-14 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-base shadow-xl shadow-indigo-600/20 transition-all flex items-center justify-center gap-2 group relative overflow-hidden"
                 >
-                  Mulai Pengisian Sekarang <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity blur-md" />
+                  <span className="relative z-10 flex items-center">
+                    Mulai Pengisian Sekarang <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                  </span>
                 </Button>
               </div>
             </motion.div>

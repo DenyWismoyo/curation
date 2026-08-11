@@ -96,7 +96,7 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
       {/* ================= BLOK 1: RINGKASAN DATA ================= */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}
-        className="card-solid p-6 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] ring-1 ring-border shadow-sm"
+        className="bg-card/40 backdrop-blur-xl p-6 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] ring-1 ring-border shadow-sm"
       >
         <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-5 flex items-center gap-2">
           <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Ringkasan Pengisian Form
@@ -105,7 +105,7 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
         <div className="bg-muted text-muted-foreground/50 p-2 rounded-2xl ring-1 ring-border/80 max-h-[40vh] overflow-y-auto custom-scrollbar">
           <div className="space-y-1">
             {Object.entries(answers).map(([key, value], idx) => (
-              <div key={key} className={`p-3 sm:p-4 rounded-xl transition-colors hover:card-solid ${idx % 2 === 0 ? 'bg-transparent' : 'bg-muted text-muted-foreground/80'}`}>
+              <div key={key} className={`p-3 sm:p-4 rounded-xl transition-colors hover:bg-card/40 hover:backdrop-blur-sm ${idx % 2 === 0 ? 'bg-transparent' : 'bg-muted text-muted-foreground/80'}`}>
                 <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">{key}</span>
                 <span className="block text-sm font-semibold text-foreground leading-relaxed">
                   {/* Format baru: objek dengan downloadURL */}
@@ -137,7 +137,7 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
       {/* ================= BLOK 2: VERIFIKASI KEAMANAN & TOKEN ================= */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
-        className="card-solid p-6 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] ring-1 ring-border shadow-sm space-y-6"
+        className="bg-card/40 backdrop-blur-xl p-6 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] ring-1 ring-border shadow-sm space-y-6"
       >
         <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
           <AdminShieldIcon className="w-4 h-4 text-indigo-500" /> Autentikasi Pemrosesan
@@ -196,8 +196,8 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
 
           {/* Checkbox Konfirmasi (Full Width) */}
           <div className="md:col-span-2">
-            <label className={`flex items-start sm:items-center gap-4 p-4 sm:p-5 rounded-2xl border transition-all cursor-pointer ${isConfirmed ? 'bg-indigo-50 dark:bg-indigo-500/10/50 border-indigo-200 dark:border-indigo-500/20 ring-1 ring-indigo-100' : 'card-solid border-border hover:bg-muted text-muted-foreground'}`}>
-              <div className={`mt-0.5 sm:mt-0 w-6 h-6 rounded-md border-2 flex items-center justify-center shrink-0 transition-colors ${isConfirmed ? 'bg-indigo-600 border-indigo-600 text-white' : 'border-border card-solid'}`}>
+            <label className={`flex items-start sm:items-center gap-4 p-4 sm:p-5 rounded-2xl border transition-all cursor-pointer ${isConfirmed ? 'bg-indigo-50 dark:bg-indigo-500/10/50 border-indigo-200 dark:border-indigo-500/20 ring-1 ring-indigo-100' : 'bg-card/40 backdrop-blur-md border-border hover:bg-muted text-muted-foreground'}`}>
+              <div className={`mt-0.5 sm:mt-0 w-6 h-6 rounded-md border-2 flex items-center justify-center shrink-0 transition-colors ${isConfirmed ? 'bg-indigo-600 border-indigo-600 text-white' : 'border-border bg-card/40 backdrop-blur-sm'}`}>
                 {isConfirmed && <Check className="w-4 h-4" strokeWidth={3} />}
               </div>
               <input
@@ -269,7 +269,7 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-0 bg-slate-900/40 backdrop-blur-sm">
             <motion.div 
               initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
-              className="card-solid rounded-[2rem] shadow-2xl max-w-sm w-full ring-1 ring-border overflow-hidden relative"
+              className="bg-card/60 backdrop-blur-2xl rounded-[2rem] shadow-2xl max-w-sm w-full ring-1 ring-border overflow-hidden relative"
             >
               <div className="p-6 sm:p-8 space-y-5 text-center">
                 <div className="w-16 h-16 bg-amber-50 dark:bg-amber-500/10 text-amber-500 rounded-[1.5rem] flex items-center justify-center ring-1 ring-amber-100/50 mx-auto">
@@ -288,7 +288,7 @@ export function ReviewAndConfirm({ answers, onBack, onSubmit, isSubmitting = fal
                 <Button 
                   variant="outline" 
                   onClick={() => setShowModal(false)}
-                  className="w-full rounded-xl h-12 border-border text-muted-foreground font-bold hover:card-solid hover:text-foreground"
+                  className="w-full rounded-xl h-12 border-border text-muted-foreground font-bold hover:bg-card/40 hover:backdrop-blur-sm hover:text-foreground"
                 >
                   Batal, Cek Lagi
                 </Button>

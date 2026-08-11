@@ -184,7 +184,7 @@ export function PremiumConsultationWorkspace({ assessmentId }: { assessmentId: s
       {/* PAYWALL OVERLAY */}
       {!assessmentData.hasPaidForPremiumConsultation && (
         <div className="absolute inset-0 z-50 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="card-solid rounded-3xl max-w-lg w-full p-8 shadow-2xl text-center relative overflow-hidden">
+          <div className="bg-card/60 backdrop-blur-2xl rounded-3xl max-w-lg w-full p-8 shadow-2xl text-center relative overflow-hidden ring-1 ring-border">
             <div className="absolute right-0 top-0 opacity-5 pointer-events-none transform translate-x-10 -translate-y-10">
                <Sparkles size={160} />
             </div>
@@ -240,7 +240,7 @@ export function PremiumConsultationWorkspace({ assessmentId }: { assessmentId: s
       )}
 
       {/* LEFT PANEL: Context & Action Plan */}
-      <div className="w-full md:w-[400px] lg:w-[450px] card-solid border-r border-border flex flex-col h-[40vh] md:h-screen overflow-y-auto custom-scrollbar shrink-0">
+      <div className="w-full md:w-[400px] lg:w-[450px] bg-card/40 backdrop-blur-xl border-r border-border flex flex-col h-[40vh] md:h-screen overflow-y-auto custom-scrollbar shrink-0">
         <div className="p-6 border-b border-border bg-slate-900 text-white">
           <button 
             onClick={() => router.push(`/result/${assessmentId}`)}
@@ -254,7 +254,7 @@ export function PremiumConsultationWorkspace({ assessmentId }: { assessmentId: s
           </h2>
           <p className="text-slate-400 text-sm font-medium">Bahas hasil asesmen Anda secara intensif dengan Omni AI Expert.</p>
           <div className="mt-4 grid grid-cols-1 gap-2">
-            <div className="card-solid/10 border border-white/20 rounded-xl px-3 py-2 text-xs">
+            <div className="bg-card/20 backdrop-blur-md border border-white/20 rounded-xl px-3 py-2 text-xs">
               <p className="text-slate-300 font-semibold">DeepSeek Persona</p>
               <p className="text-white font-bold mt-0.5">
                 {persona?.personaCore?.communicationStyle || 'Sedang disiapkan saat chat pertama...'}
@@ -292,7 +292,7 @@ export function PremiumConsultationWorkspace({ assessmentId }: { assessmentId: s
             
             <div className="space-y-3">
               {assessmentData.aiResult?.nextActionSteps?.map((step: any, idx: number) => (
-                <div key={idx} className="card-solid ring-1 ring-border p-3 rounded-xl shadow-sm flex flex-col gap-2">
+                <div key={idx} className="bg-card/40 backdrop-blur-sm ring-1 ring-border p-3 rounded-xl shadow-sm flex flex-col gap-2">
                   <div className="flex items-center gap-2">
                     <CheckCircle size={14} className="text-slate-300" />
                     <p className="text-sm font-bold text-slate-700 leading-tight flex-1">{step.task}</p>
@@ -327,8 +327,8 @@ export function PremiumConsultationWorkspace({ assessmentId }: { assessmentId: s
               <h3 className="text-xl font-black text-foreground mb-2">Mulai Sesi Konsultasi</h3>
               <p className="text-muted-foreground text-sm font-medium">Saya telah mempelajari seluruh data asesmen dan anomali internal Anda. Apa yang ingin Anda diskusikan pertama kali?</p>
               <div className="flex flex-wrap justify-center gap-2 mt-6">
-                <button onClick={() => handleSendMessage("Berdasarkan data asesmen saya, apa risiko terbesar yang paling mendesak untuk diselesaikan?")} className="text-xs font-bold card-solid ring-1 ring-border px-4 py-2 rounded-full text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:bg-indigo-500/10 transition-colors">Risiko Terbesar?</button>
-                <button onClick={() => handleSendMessage("Tolong buatkan Action Plan untuk bulan depan.")} className="text-xs font-bold card-solid ring-1 ring-border px-4 py-2 rounded-full text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:bg-indigo-500/10 transition-colors">Buat Action Plan</button>
+                <button onClick={() => handleSendMessage("Berdasarkan data asesmen saya, apa risiko terbesar yang paling mendesak untuk diselesaikan?")} className="text-xs font-bold bg-card/40 backdrop-blur-sm ring-1 ring-border px-4 py-2 rounded-full text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:bg-indigo-500/10 transition-colors">Risiko Terbesar?</button>
+                <button onClick={() => handleSendMessage("Tolong buatkan Action Plan untuk bulan depan.")} className="text-xs font-bold bg-card/40 backdrop-blur-sm ring-1 ring-border px-4 py-2 rounded-full text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:bg-indigo-500/10 transition-colors">Buat Action Plan</button>
               </div>
             </div>
           )}
@@ -340,7 +340,7 @@ export function PremiumConsultationWorkspace({ assessmentId }: { assessmentId: s
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-sm ${isUser ? 'bg-slate-900 text-white' : 'bg-indigo-600 text-white'}`}>
                   {isUser ? <span className="text-xs font-bold">You</span> : <Sparkles size={14} />}
                 </div>
-                <div className={`px-5 py-4 rounded-2xl shadow-sm text-[14px] leading-relaxed ${isUser ? 'bg-slate-900 text-white rounded-tr-sm' : 'card-solid border border-border text-slate-700 rounded-tl-sm'}`}>
+                <div className={`px-5 py-4 rounded-2xl shadow-sm text-[14px] leading-relaxed ${isUser ? 'bg-slate-900 text-white rounded-tr-sm' : 'bg-card/40 backdrop-blur-md border border-border text-foreground rounded-tl-sm'}`}>
                   {renderMarkdown(msg.content)}
                 </div>
               </div>
@@ -350,7 +350,7 @@ export function PremiumConsultationWorkspace({ assessmentId }: { assessmentId: s
           {isTyping && (
             <div className="flex items-start gap-3 max-w-[85%]">
               <div className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center shrink-0 shadow-sm"><Sparkles size={14} /></div>
-              <div className="px-5 py-4 rounded-2xl card-solid border border-border rounded-tl-sm flex gap-2 items-center h-[52px]">
+              <div className="px-5 py-4 rounded-2xl bg-card/40 backdrop-blur-md border border-border rounded-tl-sm flex gap-2 items-center h-[52px]">
                 <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
                 <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
                 <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
@@ -360,7 +360,7 @@ export function PremiumConsultationWorkspace({ assessmentId }: { assessmentId: s
           <div ref={messagesEndRef} />
         </div>
 
-        <div className="p-4 card-solid border-t border-border shrink-0">
+        <div className="p-4 bg-card/40 backdrop-blur-xl border-t border-border shrink-0">
           <form onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }} className="relative max-w-4xl mx-auto flex items-center group">
             <Input
               value={inputValue}

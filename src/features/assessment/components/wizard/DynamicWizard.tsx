@@ -447,84 +447,113 @@ export function DynamicWizard({
 
   // ================= TAMPILAN WIZARD (FOCUS MODE) =================
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-background text-foreground overflow-hidden">
-      {/* ================= HEADER (FIXED TOP) ================= */}
-      <header className="card-solid border-b border-border shrink-0 relative z-20">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
-          {/* Kiri: Tombol Kembali */}
-          <button
-            onClick={() => (step > 1 ? setStep(step - 1) : onBack())}
-            disabled={isGeneratingStep}
-            className="flex items-center gap-1.5 text-muted-foreground hover:text-indigo-600 dark:text-indigo-400 transition-colors w-20 sm:w-28 disabled:opacity-50"
-          >
-            <ChevronLeft size={20} />{' '}
-            <span className="text-sm font-bold hidden sm:block">Kembali</span>
-          </button>
+    <div className="fixed inset-0 z-50 flex flex-col md:flex-row bg-background text-foreground overflow-hidden">
+      
+      {/* ================= SIDEBAR (DESKTOP) / HEADER (MOBILE) ================= */}
+      <aside className="w-full md:w-[320px] lg:w-[380px] bg-card/40 backdrop-blur-xl border-b md:border-b-0 md:border-r border-border flex flex-col relative z-20 shrink-0 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
+        <div className="p-4 sm:p-6 md:p-8 flex-1 overflow-y-auto custom-scrollbar flex flex-col">
+          
+          {/* Navigasi & Action */}
+          <div className="flex items-center justify-between mb-6 md:mb-10">
+            <button
+              onClick={() => (step > 1 ? setStep(step - 1) : onBack())}
+              disabled={isGeneratingStep}
+              className="flex items-center gap-1.5 text-muted-foreground hover:text-indigo-600 transition-colors disabled:opacity-50"
+            >
+              <ChevronLeft size={20} />
+              <span className="text-sm font-bold hidden sm:block">Kembali</span>
+            </button>
 
-          {/* Tengah: Judul Assessment & Judul Step */}
-          <div className="flex-1 flex flex-col items-center justify-center min-w-0 px-2 text-center pt-1">
-            <h1 className="text-[10px] sm:text-xs font-black text-foreground uppercase tracking-widest truncate w-full">
+            <div className="flex items-center gap-2">
+              {role === 'admin_csrs' && currentStepData && (
+                <AdminAutoFill
+                  fields={currentStepData.fields || []}
+                  onFill={(data) => setFormData((prev: any) => ({ ...prev, ...data }))}
+                />
+              )}
+              <AnimatePresence mode="wait">
+                {saveStatus && (
+                  <motion.span
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                    className="hidden sm:flex text-[10px] text-emerald-600 dark:text-emerald-400 font-bold items-center gap-1"
+                  >
+                    <Check size={12} /> {saveStatus}
+                  </motion.span>
+                )}
+              </AnimatePresence>
+              <button
+                onClick={handleClearForm}
+                disabled={isGeneratingStep}
+                className="text-[10px] font-bold text-rose-500 hover:bg-rose-500/10 px-2 py-1.5 rounded-lg transition-colors flex items-center gap-1 disabled:opacity-50"
+                title="Kosongkan Form"
+              >
+                <Trash2 size={14} />
+              </button>
+            </div>
+          </div>
+
+          {/* Judul & Step Aktif (Mobile memusatkan judul) */}
+          <div className="mb-6 md:mb-10 flex flex-col md:items-start items-center text-center md:text-left">
+            <h1 className="text-[10px] sm:text-xs font-black text-muted-foreground uppercase tracking-widest truncate w-full mb-3">
               {template.trackName}
             </h1>
             {!isGeneratingStep && currentStepData && (
               <motion.div
                 key={`header-title-${step}`}
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-center justify-center gap-1.5 mt-1"
+                initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }}
+                className="flex items-center gap-2.5"
               >
-                <StepIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-600 dark:text-indigo-400" />
-                <h2 className="text-[11px] sm:text-sm font-bold text-indigo-600 dark:text-indigo-400 truncate max-w-[200px] sm:max-w-md">
+                <div className="w-8 h-8 md:w-10 md:h-10 rounded-[10px] md:rounded-xl bg-indigo-500/10 flex items-center justify-center shrink-0 text-indigo-500">
+                  <StepIcon className="w-4 h-4 md:w-5 md:h-5" />
+                </div>
+                <h2 className="text-sm md:text-lg font-bold text-foreground leading-snug truncate max-w-[200px] md:max-w-none">
                   {renderMarkdownText(currentStepData.title)}
                 </h2>
               </motion.div>
             )}
           </div>
 
-          {/* Kanan: Kosongkan & Status Auto-Save */}
-          <div className="flex items-center justify-end gap-2 sm:gap-3">
-            {role === 'admin_csrs' && currentStepData && (
-              <AdminAutoFill
-                fields={currentStepData.fields || []}
-                onFill={(data) =>
-                  setFormData((prev: any) => ({ ...prev, ...data }))
-                }
-              />
-            )}
-            <AnimatePresence mode="wait">
-              {saveStatus && (
-                <motion.span
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="hidden sm:flex text-[10px] text-emerald-600 dark:text-emerald-400 font-bold items-center gap-1"
-                >
-                  <Check size={12} /> {saveStatus}
-                </motion.span>
-              )}
-            </AnimatePresence>
-            <button
-              onClick={handleClearForm}
-              disabled={isGeneratingStep}
-              className="text-[10px] font-bold text-rose-500 hover:bg-rose-50 dark:bg-rose-500/10 px-2 py-1.5 rounded-lg transition-colors flex items-center gap-1 disabled:opacity-50"
-              title="Kosongkan Form"
-            >
-              <Trash2 size={14} />{' '}
-              <span className="hidden sm:block">Kosongkan</span>
-            </button>
+          {/* Progress Tracker (Hanya terlihat di Desktop) */}
+          <div className="hidden md:flex flex-col gap-2 relative">
+            <div className="absolute left-[15px] top-4 bottom-4 w-px bg-border z-0"></div>
+            {localSteps.map((s, idx) => {
+              const isActive = idx + 1 === step;
+              const isPast = idx + 1 < step;
+              return (
+                <div key={idx} className="flex items-start gap-4 relative z-10 py-2.5">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ring-4 ring-background transition-all ${
+                    isActive ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20' : 
+                    isPast ? 'bg-indigo-500/10 text-indigo-500' : 'bg-muted text-muted-foreground'
+                  }`}>
+                    {isPast ? <Check size={14} strokeWidth={3} /> : idx + 1}
+                  </div>
+                  <div className="pt-1.5 overflow-hidden">
+                    <p className={`text-sm font-bold truncate transition-colors ${isActive ? 'text-foreground' : 'text-muted-foreground'}`}>
+                      {renderMarkdownText(s.title)}
+                    </p>
+                  </div>
+                </div>
+              )
+            })}
           </div>
-        </div>
 
-        {/* Progress Line */}
-        <div className="w-full h-1 bg-secondary text-secondary-foreground absolute bottom-0 left-0">
-          <motion.div
-            className="h-full bg-indigo-600 rounded-r-full"
-            initial={{ width: 0 }}
-            animate={{ width: `${(step / totalSteps) * 100}%` }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
-          />
+          {/* Mobile Progress Bar (Horizontal) */}
+          <div className="mt-auto pt-2 md:hidden w-full">
+            <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
+              <motion.div
+                className="h-full bg-indigo-600 rounded-r-full"
+                initial={{ width: 0 }}
+                animate={{ width: `${(step / totalSteps) * 100}%` }}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
+              />
+            </div>
+          </div>
+
         </div>
-      </header>
+      </aside>
+
+      {/* ================= MAIN CONTENT (SCROLLABLE) ================= */}
+      <div className="flex-1 flex flex-col min-w-0 relative z-10 bg-background/50">
 
       {/* ================= MAIN CONTENT (SCROLLABLE) ================= */}
       <main
@@ -648,7 +677,7 @@ export function DynamicWizard({
                             duration: 0.4,
                             ease: 'easeOut',
                           }}
-                          className="card-solid p-5 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] shadow-sm ring-1 ring-border transition-shadow hover:ring-indigo-200 dark:ring-indigo-500/20 hover:shadow-md"
+                          className="bg-card/40 backdrop-blur-xl p-5 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] shadow-sm ring-1 ring-border transition-shadow hover:ring-indigo-400/50 hover:shadow-md"
                         >
                           <DynamicField
                             field={field}
@@ -687,7 +716,7 @@ export function DynamicWizard({
 
       {/* ================= FOOTER (FIXED BOTTOM) ================= */}
       {!isGeneratingStep && (
-        <footer className="card-solid border-t border-border shrink-0 z-20 relative shadow-[0_-10px_20px_rgba(0,0,0,0.02)]">
+        <footer className="bg-background/80 backdrop-blur-xl border-t border-border shrink-0 z-20 relative shadow-[0_-10px_20px_rgba(0,0,0,0.02)]">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 h-20 sm:h-24 flex items-center justify-between gap-4">
             {/* Kiri: Indikator Langkah */}
             <div className="text-sm font-bold text-muted-foreground flex flex-col sm:flex-row sm:items-baseline gap-1">
@@ -738,6 +767,7 @@ export function DynamicWizard({
           </div>
         </footer>
       )}
+      </div>
     </div>
   )
 }

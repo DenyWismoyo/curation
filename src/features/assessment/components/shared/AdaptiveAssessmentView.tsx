@@ -106,7 +106,7 @@ function AdaptiveExploreTab({ aiResult }: { aiResult: any }) {
 
   return (
     <div className="space-y-6">
-      <div className="card-solid/90 backdrop-blur-sm ring-1 ring-border rounded-[2rem] p-5 sm:p-7 shadow-sm">
+      <div className="bg-card/40 backdrop-blur-xl ring-1 ring-border rounded-[2rem] p-5 sm:p-7 shadow-sm">
         <div className="flex items-center gap-3 mb-5">
           <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 ring-1 ring-indigo-100 flex items-center justify-center">
             <Sparkles size={18} />
@@ -159,7 +159,7 @@ function AdaptiveExploreTab({ aiResult }: { aiResult: any }) {
           </div>
 
           <div className="space-y-4">
-            <div className="card-solid rounded-2xl ring-1 ring-border p-4">
+            <div className="bg-card/40 backdrop-blur-xl rounded-2xl ring-1 ring-border p-4 shadow-sm">
               <h4 className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-2">
                 <MessageCircle size={14} className="text-indigo-500" /> Task Eksplorasi
               </h4>
@@ -205,7 +205,7 @@ function AdaptiveExploreTab({ aiResult }: { aiResult: any }) {
               </div>
             </div>
 
-            <div className="card-solid rounded-2xl ring-1 ring-border p-4">
+            <div className="bg-card/40 backdrop-blur-xl rounded-2xl ring-1 ring-border p-4 shadow-sm">
               <h4 className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-3">Rencana Manual</h4>
               <div className="space-y-2 mb-3 max-h-[220px] overflow-y-auto pr-1">
                 {manualPlans.length === 0 ? (
@@ -248,7 +248,7 @@ function AdaptiveExploreTab({ aiResult }: { aiResult: any }) {
         </div>
       </div>
 
-      <div className="card-solid/90 backdrop-blur-sm ring-1 ring-border rounded-[2rem] p-5 sm:p-6 shadow-sm">
+      <div className="bg-card/40 backdrop-blur-xl ring-1 ring-border rounded-[2rem] p-5 sm:p-6 shadow-sm">
         <PersonalActionPlanCopilot
           assessmentId={''}
           aiResult={aiResult}
@@ -293,7 +293,7 @@ export function AdaptiveAssessmentView({
   const resultContent = (
     <>
       <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_0.8fr] gap-6 w-full">
-        <div className="card-solid/90 backdrop-blur-sm ring-1 ring-border p-6 sm:p-8 rounded-[2rem] shadow-sm flex flex-col gap-6">
+        <div className="bg-card/40 backdrop-blur-xl ring-1 ring-border p-6 sm:p-8 rounded-[2rem] shadow-sm flex flex-col gap-6">
           <div className="space-y-3">
             <p className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.28em] text-indigo-700 dark:text-indigo-300 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-500/10 px-3 py-1.5 rounded-full ring-1 ring-indigo-100">
               <AiSparkIcon size={14} className="text-indigo-500" /> {reportToneLabel}
@@ -374,7 +374,7 @@ export function AdaptiveAssessmentView({
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {personalRisks.map((risk: string, idx: number) => (
-              <div key={idx} className="flex flex-col ring-1 ring-border rounded-2xl overflow-hidden card-solid shadow-sm">
+              <div key={idx} className="flex flex-col ring-1 ring-border rounded-2xl overflow-hidden bg-card/40 backdrop-blur-xl shadow-sm hover:shadow-md transition-shadow">
                 <div className="bg-amber-50 dark:bg-amber-500/10 p-4 border-b border-amber-100/60">
                   <h4 className="text-[10px] font-black uppercase tracking-widest text-amber-600 dark:text-amber-400 mb-1">Yang Perlu Diwaspadai</h4>
                   <div className="text-sm font-semibold text-foreground">
@@ -396,7 +396,7 @@ export function AdaptiveAssessmentView({
       )}
 
       {quickWins.length > 0 && (
-        <div className="card-solid ring-1 ring-border p-6 sm:p-8 rounded-[2rem] shadow-sm w-full">
+        <div className="bg-card/40 backdrop-blur-xl ring-1 ring-border p-6 sm:p-8 rounded-[2rem] shadow-sm w-full">
           <h3 className="text-foreground font-black uppercase tracking-widest text-sm flex items-center gap-2 mb-4">
             <BrainIcon size={20} className="text-indigo-500" /> 5 Langkah Strategis Kunci
           </h3>
@@ -422,11 +422,11 @@ export function AdaptiveAssessmentView({
 
       <Tabs defaultValue="result" className="w-full">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 w-full">
-          <TabsList className="w-full md:w-auto card-solid/80 border border-border rounded-2xl p-1.5 h-auto gap-2">
-            <TabsTrigger value="result" className="rounded-xl px-4 py-2.5 text-sm font-bold data-[state=active]:bg-slate-900 data-[state=active]:text-white">
+          <TabsList className="w-full md:w-auto bg-card/40 backdrop-blur-md border border-border/50 rounded-full p-1.5 h-auto gap-2 shadow-sm">
+            <TabsTrigger value="result" className="rounded-full px-6 py-2.5 text-sm font-bold data-[state=active]:bg-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-indigo-600/20 transition-all text-muted-foreground hover:text-foreground">
               Hasil Adaptive
             </TabsTrigger>
-            <TabsTrigger value="explore" className="rounded-xl px-4 py-2.5 text-sm font-bold data-[state=active]:bg-indigo-600 data-[state=active]:text-white gap-2">
+            <TabsTrigger value="explore" className="rounded-full px-6 py-2.5 text-sm font-bold data-[state=active]:bg-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-indigo-600/20 transition-all text-muted-foreground hover:text-foreground gap-2">
               <AiSparkIcon size={14} /> Ruang Eksplorasi AI
             </TabsTrigger>
           </TabsList>
