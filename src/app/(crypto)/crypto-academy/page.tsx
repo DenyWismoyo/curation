@@ -9,6 +9,7 @@ import { BookOpen, CheckCircle, ChevronRight, Sparkles, GraduationCap } from 'lu
 import { useRouter } from 'next/navigation'
 import { AppPageContainer } from '@/components/ui/app-layout'
 import { CryptoCard, CryptoBadge, CryptoPageHeader, CryptoLoadingState, CryptoEmptyState } from '@/features/crypto/components/ui/CryptoUIKit'
+import { useBundleLoader } from '@/hooks/useBundleLoader'
 
 interface CryptoModule {
   id: string
@@ -39,8 +40,23 @@ export default function CryptoAcademyPage() {
   const [loading, setLoading] = useState(true)
   const [progress, setProgress] = useState<UserProgress>({})
 
+  const { data: bundleModules, loading: bundleLoading, source } = useBundleLoader<CryptoModule>(
+    'bundles/crypto-academy.txt',
+    ['crypto-academy-Pemula', 'crypto-academy-Menengah', 'crypto-academy-Lanjutan', 'crypto-academy-Profesional']
+  )
+
   useEffect(() => {
-    const fetchModules = async () => {
+    if (bundleLoading) return;
+    
+    if (source === 'bundle' && bundleModules.length > 0) {
+      // Urutkan berdasarkan moduleOrder agar konsisten
+      const sorted = [...bundleModules].sort((a, b) => a.moduleOrder - b.moduleOrder)
+      setModules(sorted)
+      setLoading(false)
+      return
+    }
+
+    const fetchFallback = async () => {
       try {
         const q = query(collection(db, 'cryptoEducation'), orderBy('moduleOrder', 'asc'))
         const snapshot = await getDocs(q)
@@ -50,13 +66,13 @@ export default function CryptoAcademyPage() {
         })
         setModules(data)
       } catch (error) {
-        console.error('Error fetching modules:', error)
+        console.error('[AcademyPage] Error fetching modules fallback:', error)
       } finally {
         setLoading(false)
       }
     }
-    fetchModules()
-  }, [])
+    fetchFallback()
+  }, [bundleLoading, source, bundleModules])
 
   useEffect(() => {
     if (!user) return;
@@ -132,7 +148,10 @@ export default function CryptoAcademyPage() {
         />
       ) : (
         <div className="space-y-12">
-          {Object.entries(groupedModules).map(([level, levelModules], idx) => {
+          {['Pemula', 'Menengah', 'Lanjutan', 'Profesional']
+            .filter(level => groupedModules[level] && groupedModules[level].length > 0)
+            .map((level, idx) => {
+              const levelModules = groupedModules[level];
             return (
               <div key={level} className="relative">
                 <div className="flex items-center gap-4 mb-6">

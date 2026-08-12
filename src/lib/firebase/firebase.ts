@@ -33,6 +33,9 @@ const googleProvider = new GoogleAuthProvider();
 // Layanan sisi klien saja (App Check, Performance, Remote Config, AI Logic)
 let appCheck: any, perf: any, remoteConfig: any, vertexAI: any;
 if (typeof window !== "undefined") {
+  if (process.env.NODE_ENV === 'development') {
+    (window as any).FIREBASE_APPCHECK_DEBUG_TOKEN = process.env.NEXT_PUBLIC_APPCHECK_DEBUG_TOKEN || true;
+  }
   appCheck = initializeAppCheck(app, {
     provider: new ReCaptchaEnterpriseProvider(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''),
     isTokenAutoRefreshEnabled: true

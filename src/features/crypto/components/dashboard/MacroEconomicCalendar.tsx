@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { collection, query, where, orderBy, limit, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase/firebase";
+import { useBundleLoader } from "@/hooks/useBundleLoader";
 import { Calendar, AlertCircle, RefreshCw, BarChart2, CheckCircle2, Globe } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { CryptoCard, CryptoBadge, CryptoLoadingState, CryptoEmptyState, CryptoPageHeader } from "../ui/CryptoUIKit";
@@ -53,8 +54,31 @@ export default function MacroEconomicCalendar() {
         } else if (groupedArr.length > 0) {
           setSelectedDateStr(groupedArr[0].dateStr);
         }
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, [refreshTrigger]);
 
-        // Fetch Weekly Report for AI Summary
+  const { data: reportsData, loading: reportsLoading, source } = useBundleLoader<any>(
+    'bundles/crypto-reports.txt',
+    ['crypto-weekly-report']
+  );
+
+  useEffect(() => {
+    if (reportsLoading) return;
+    
+    if (source === 'bundle' && reportsData.length > 0) {
+      setWeeklyReport(reportsData[0]);
+      return;
+    }
+
+    // Fallback
+    const fetchWeeklyFallback = async () => {
+      try {
         const q = query(
           collection(db, "cryptoReports"),
           where("isWeekly", "==", true),
@@ -65,14 +89,13 @@ export default function MacroEconomicCalendar() {
         if (!snapshot.empty) {
           setWeeklyReport(snapshot.docs[0].data());
         }
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+      } catch (error) {
+        console.warn("Failed to fetch weekly fallback:", error);
       }
-    }
-    fetchData();
-  }, [refreshTrigger]);
+    };
+
+    fetchWeeklyFallback();
+  }, [reportsLoading, source, reportsData]);
 
   const getImpactColor = (impact: string) => {
     switch(impact.toLowerCase()) {

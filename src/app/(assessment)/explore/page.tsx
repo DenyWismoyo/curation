@@ -17,10 +17,12 @@ import {
   where,
   orderBy,
   getDocs,
+  limit,
 } from 'firebase/firestore'
 import { db } from '@/lib/firebase/firebase'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
+import { useBundleLoader } from '@/hooks/useBundleLoader'
 import { AiSparkIcon, AILensIcon, GlobalTargetIcon, BrainIcon } from '@/components/icon'
 import { shareOrCopy } from '@/services/share'
 import { Input } from '@/components/ui/input'
@@ -71,13 +73,27 @@ export default function ExplorePage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [copiedId, setCopiedId] = useState<string | null>(null)
 
+  const { data: bundleArticles, loading: bundleLoading, source } = useBundleLoader<Article>(
+    'bundles/explore-articles.txt',
+    ['explore-articles-latest']
+  )
+
   useEffect(() => {
+    if (bundleLoading) return;
+
+    if (source === 'bundle' && bundleArticles.length > 0) {
+      setArticles(bundleArticles)
+      setLoading(false)
+      return;
+    }
+
     const q = query(
       collection(db, 'articles'),
       where('isPublished', '==', true),
-      orderBy('createdAt', 'desc')
+      orderBy('createdAt', 'desc'),
+      limit(50)
     )
-    const fetchArticles = async () => {
+    const fetchArticlesFallback = async () => {
       try {
         const snapshot = await getDocs(q)
         const data: Article[] = []
@@ -86,13 +102,13 @@ export default function ExplorePage() {
         )
         setArticles(data)
       } catch (error) {
-        console.error('Error fetching articles:', error)
+        console.error('Error fetching articles fallback:', error)
       } finally {
         setLoading(false)
       }
     }
-    fetchArticles()
-  }, [])
+    fetchArticlesFallback()
+  }, [bundleLoading, source, bundleArticles])
 
   const handleCopyLink = async (
     e: React.MouseEvent,

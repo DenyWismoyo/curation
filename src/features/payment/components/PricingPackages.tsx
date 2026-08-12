@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db, functions } from '@/lib/firebase/firebase';
 import { httpsCallable } from 'firebase/functions';
+import { useBundleLoader } from '@/hooks/useBundleLoader';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as LucideIcons from 'lucide-react';
 import {
@@ -123,29 +124,19 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
     }
   }, []);
 
+  const { data: bundlePackages, loading: bundleLoading, source } = useBundleLoader<FormTemplate>(
+    'bundles/katalog-bundle.txt',
+    ['katalog-aktif']
+  );
+
   useEffect(() => {
-    if (isOpen) fetchPackages();
-  }, [isOpen]);
+    if (!isOpen) return;
+    if (bundleLoading) {
+      setLoading(true);
+      return;
+    }
 
-  const fetchPackages = async () => {
-    setLoading(true);
-    try {
-      const q = query(
-        collection(db, 'form_templates'),
-        where('isActive', '==', true),
-        where('isDisplayedOnLanding', '==', true)
-      );
-      const snap = await getDocs(q);
-      const data: FormTemplate[] = [];
-      snap.forEach(doc => data.push({ id: doc.id, ...doc.data() } as FormTemplate));
-
-      data.sort((a, b) => {
-        if (a.isBestSeller === b.isBestSeller) return (a.price || 0) - (b.price || 0);
-        return a.isBestSeller ? -1 : 1;
-      });
-
-      setPackages(data);
-
+    const handleAutoOpen = (data: FormTemplate[]) => {
       if (autoOpenPackageId) {
         if (autoOpenPackageId === 'BUNDLE_3' || autoOpenPackageId === 'BUNDLE_5') {
           const bundlePkg: any = {
@@ -183,12 +174,47 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
           }
         }
       }
-    } catch (error) {
-      console.error("Gagal memuat katalog:", error);
-    } finally {
+    };
+
+    if (source === 'bundle' && bundlePackages.length > 0) {
+      const data = [...bundlePackages];
+      data.sort((a, b) => {
+        if (a.isBestSeller === b.isBestSeller) return (a.price || 0) - (b.price || 0);
+        return a.isBestSeller ? -1 : 1;
+      });
+      setPackages(data);
+      handleAutoOpen(data);
       setLoading(false);
+      return;
     }
-  };
+
+    const fetchFallback = async () => {
+      try {
+        const q = query(
+          collection(db, 'form_templates'),
+          where('isActive', '==', true),
+          where('isDisplayedOnLanding', '==', true)
+        );
+        const snap = await getDocs(q);
+        const data: FormTemplate[] = [];
+        snap.forEach(doc => data.push({ id: doc.id, ...doc.data() } as FormTemplate));
+
+        data.sort((a, b) => {
+          if (a.isBestSeller === b.isBestSeller) return (a.price || 0) - (b.price || 0);
+          return a.isBestSeller ? -1 : 1;
+        });
+
+        setPackages(data);
+        handleAutoOpen(data);
+      } catch (error) {
+        console.error("Gagal memuat katalog fallback:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFallback();
+  }, [isOpen, bundleLoading, source, bundlePackages, autoOpenPackageId]);
 
   const handleStartDecoy = async (pkg: FormTemplate) => {
     if (!user) {

@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { getFunctions, httpsCallable } from 'firebase/functions';
-import { collection, query, where, orderBy, getDocs, addDoc, updateDoc, doc, serverTimestamp, getDoc } from 'firebase/firestore';
+import { collection, query, where, orderBy, getDocs, addDoc, updateDoc, doc, serverTimestamp, getDoc, getDocFromCache } from 'firebase/firestore';
 import { app, db } from '@/lib/firebase/firebase';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePathname, useParams } from 'next/navigation';
@@ -42,7 +42,14 @@ export default function CryptoChat({ isOpen: controlledIsOpen, onClose, reportCo
     const fetchModuleContext = async () => {
       if (pathname?.includes('/crypto-academy/') && params.module) {
         try {
-          const docSnap = await getDoc(doc(db, "cryptoEducation", params.module as string));
+          const docRef = doc(db, "cryptoEducation", params.module as string);
+          let docSnap;
+          try {
+            docSnap = await getDocFromCache(docRef);
+          } catch (e) {
+            docSnap = await getDoc(docRef);
+          }
+          
           if (docSnap.exists()) {
             const data = docSnap.data();
             setModuleContext({

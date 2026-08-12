@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { collection, query, where, orderBy, limit, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase/firebase";
+import { useBundleLoader } from "@/hooks/useBundleLoader";
 import { Calendar, ChevronRight, LayoutList } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { CryptoCard, CryptoBadge, CryptoLoadingState } from "../ui/CryptoUIKit";
@@ -13,8 +14,21 @@ export default function CryptoCalendar() {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  const { data: reportsData, loading: reportsLoading, source } = useBundleLoader<any>(
+    'bundles/crypto-reports.txt',
+    ['crypto-daily-reports']
+  );
+
   useEffect(() => {
-    async function fetchCalendarData() {
+    if (reportsLoading) return;
+    
+    if (source === 'bundle' && reportsData.length > 0) {
+      setDailyReports([...reportsData].reverse()); // Urutkan dari terlama (kiri) ke terbaru (kanan)
+      setLoading(false);
+      return;
+    }
+
+    const fetchCalendarDataFallback = async () => {
       try {
         const q = query(
           collection(db, "cryptoReports"),
@@ -26,12 +40,12 @@ export default function CryptoCalendar() {
         const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setDailyReports(data.reverse()); // Urutkan dari terlama (kiri) ke terbaru (kanan)
       } catch (error) {
-        console.error("Failed to fetch calendar data", error);
+        console.error("Failed to fetch calendar data fallback", error);
       }
       setLoading(false);
     }
-    fetchCalendarData();
-  }, []);
+    fetchCalendarDataFallback();
+  }, [reportsLoading, source, reportsData]);
 
   if (loading) {
     return <CryptoLoadingState type="spinner" />;

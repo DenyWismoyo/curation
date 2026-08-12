@@ -79,7 +79,12 @@ service firebase.storage {
       allow read, write: if isAuthenticated();
     }
     
-    // --- 10. BLOKIR SEMUA FOLDER LAINNYA ---
+    // --- 10. BUNDLES (DATA STATIS) ---
+    match /bundles/{allPaths=**} {
+      allow read: if true;
+    }
+    
+    // --- 11. BLOKIR SEMUA FOLDER LAINNYA ---
     match /{allPaths=**} {
       allow read, write: if false;
     }

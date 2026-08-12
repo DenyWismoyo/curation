@@ -6,6 +6,7 @@ import { db } from '@/lib/firebase/firebase';
 import { useAuth } from '@/contexts/AuthContext';
 import { CheckCircle, Lock, BookOpen, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { useBundleLoader } from '@/hooks/useBundleLoader';
 
 interface ModuleRef {
   id: string;
@@ -25,10 +26,23 @@ export function CryptoLearningPath({ currentModuleId, level }: CryptoLearningPat
   const [completedMap, setCompletedMap] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(true);
 
+  const { data: bundleModules, loading: bundleLoading, source } = useBundleLoader<ModuleRef>(
+    'bundles/crypto-academy.txt',
+    [`crypto-academy-${level}`]
+  );
+
   useEffect(() => {
     if (!level) return;
+    if (bundleLoading) return;
     
-    const fetchModules = async () => {
+    if (source === 'bundle' && bundleModules.length > 0) {
+      setModules(bundleModules);
+      setLoading(false);
+      return;
+    }
+
+    // Fallback ke Firestore jika bundle gagal/kosong
+    const fetchFallback = async () => {
       try {
         const q = query(
           collection(db, 'cryptoEducation'),
@@ -39,14 +53,14 @@ export function CryptoLearningPath({ currentModuleId, level }: CryptoLearningPat
         const mods = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ModuleRef));
         setModules(mods);
       } catch (error) {
-        console.error("Error fetching learning path modules:", error);
+        console.error("Error fetching learning path modules fallback:", error);
       } finally {
         setLoading(false);
       }
     };
     
-    fetchModules();
-  }, [level]);
+    fetchFallback();
+  }, [level, bundleLoading, source, bundleModules]);
 
   useEffect(() => {
     if (!user) return;

@@ -8,19 +8,25 @@ import { GoogleAIFileManager } from '@google/generative-ai/server'
 import * as os from 'os'
 import * as path from 'path'
 import * as fs from 'fs'
-import { buildAssessmentPrompt, getSystemPrompt } from './prompts/promptTemplate'
+import {
+  buildAssessmentPrompt,
+  getSystemPrompt,
+} from './prompts/promptTemplate'
 
 // ============================================================================
 // EXPORT FUNGSI MODULAR
 // ============================================================================
 export { generatePDFReport } from './infrastructure/pdf/documentGenerator'
 export { matchBusinessWithIndustry } from './infrastructure/vector/vectorService'
-export { generateScenePrompt, generateFullStoryboard } from './domains/storyboard/agents/videoPromptAgent'
-export { 
-  saveCryptoQuizResult, 
-  enrichCryptoModuleMetadata, 
+export {
+  generateScenePrompt,
+  generateFullStoryboard,
+} from './domains/storyboard/agents/videoPromptAgent'
+export {
+  saveCryptoQuizResult,
+  enrichCryptoModuleMetadata,
   generateCryptoModuleAssessment,
-  refactorCryptoModuleWithStudyData
+  refactorCryptoModuleWithStudyData,
 } from './domains/crypto/agents/cryptoAcademyAgent'
 export { runCryptoAcademyPipeline } from './domains/crypto/pipelines/orchestrator'
 export { generateCryptoCertificate } from './domains/crypto/agents/cryptoCertificateAgent'
@@ -43,13 +49,19 @@ export {
   generateTemplateSellingPoints,
   generatePromptAnchors,
 } from './domains/assessment/services/outputService'
-export { weeklyActionPlanNudge, cryptoTrialExpiryNudge } from './infrastructure/email/nudgeService'
+export {
+  weeklyActionPlanNudge,
+  cryptoTrialExpiryNudge,
+} from './infrastructure/email/nudgeService'
 export {
   generateAdaptiveQuestions,
   evaluateMacroBranching,
   manualTriggerRAGSeed,
 } from './domains/assessment/services/adaptiveValidationService'
-export { enhanceFieldLogic, enhanceStepLogic } from './domains/assessment/services/fieldEnhancerService'
+export {
+  enhanceFieldLogic,
+  enhanceStepLogic,
+} from './domains/assessment/services/fieldEnhancerService'
 // TAMBAHKAN EXPORT FUNGSI BARU DI SINI:
 export {
   generateAssessmentCacheKey,
@@ -72,7 +84,10 @@ export { syncUserClaims } from './triggers/userClaimsSync'
 // AI ASSESSMENT AGENTS
 // ============================================================================
 export { processCurationAssessment } from './domains/assessment/agents/gatewayAgent'
-export { triggerAssessmentTask, assessmentOrchestratorTask } from './domains/assessment/pipelines/orchestrator'
+export {
+  triggerAssessmentTask,
+  assessmentOrchestratorTask,
+} from './domains/assessment/pipelines/orchestrator'
 export { generateBusinessVector } from './domains/assessment/triggers/vectorTrigger'
 export { actionPlanCopilotChat } from './domains/assessment/agents/copilotAgent'
 export { adminGenerateMockData } from './domains/assessment/agents/mockDataAgent'
@@ -121,19 +136,46 @@ export {
   updateStudyChapterManual,
   searchAndGenerateStudySource,
 } from './domains/study/agents/studyProjectAgent'
-export { requestChapterRevision, generateRevisionMaterials } from './domains/study/agents/chapterRevisionAgent'
+export {
+  requestChapterRevision,
+  generateRevisionMaterials,
+} from './domains/study/agents/chapterRevisionAgent'
 export { exportStudyDocument } from './domains/study/agents/exportService'
 export { studyProjectOrchestrator } from './domains/study/pipelines/orchestrator'
 export { studyChapterOrchestrator } from './domains/study/pipelines/chapterOrchestrator'
 export { cryptoCronAgent } from './domains/crypto/agents/cryptoCronAgent'
 export { cryptoHiddenGemAgent } from './domains/crypto/agents/cryptoHiddenGemAgent'
-export { cryptoPremiumIntelligenceAgent } from "./domains/crypto/agents/cryptoPremiumIntelligenceAgent";
-export { cryptoMacroAgent } from "./domains/crypto/agents/cryptoMacroAgent";
-export { telegramWebhook } from "./domains/telegram/agents/telegramBot";
-export { cryptoCopilotChat, cryptoCopilotSuggestions } from './domains/crypto/agents/cryptoCopilotAgent'
+export { cryptoPremiumIntelligenceAgent } from './domains/crypto/agents/cryptoPremiumIntelligenceAgent'
+export { cryptoMacroAgent } from './domains/crypto/agents/cryptoMacroAgent'
+export { telegramWebhook } from './domains/telegram/agents/telegramBot'
+export {
+  cryptoCopilotChat,
+  cryptoCopilotSuggestions,
+} from './domains/crypto/agents/cryptoCopilotAgent'
 export { cryptoNewsAgent } from './domains/crypto/agents/cryptoNewsAgent'
-export { generateRealtimeScalping, generateRealtimeHiddenGem } from './domains/crypto/agents/cryptoAdminAgents'
+export {
+  generateRealtimeScalping,
+  generateRealtimeHiddenGem,
+} from './domains/crypto/agents/cryptoAdminAgents'
 export { activateCryptoTrial } from './domains/crypto/agents/cryptoTrialAgent'
+export {
+  generateAcademyBundleDaily,
+  generateAcademyBundleManual,
+} from './domains/crypto/bundles/academyBundle'
+export {
+  generateCatalogBundleDaily,
+  generateCatalogBundleManual,
+} from './domains/promo/bundles/catalogBundle'
+export {
+  generateReportsBundleDaily,
+  generateReportsBundleManual,
+  onCryptoReportWritten,
+} from './domains/crypto/bundles/reportsBundle'
+export {
+  generateArticlesBundleDaily,
+  generateArticlesBundleManual,
+  onArticleWritten,
+} from './domains/promo/bundles/articlesBundle'
 
 // ============================================================================
 // INISIALISASI FIREBASE
