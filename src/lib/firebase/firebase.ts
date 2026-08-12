@@ -6,7 +6,7 @@ import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-check";
 import { getPerformance } from "firebase/performance";
 import { getRemoteConfig } from "firebase/remote-config";
-import { getVertexAI } from "firebase/vertexai";
+import { getVertexAI } from "@firebase/vertexai";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -31,7 +31,7 @@ const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
 // Layanan sisi klien saja (App Check, Performance, Remote Config, AI Logic)
-let appCheck, perf, remoteConfig, vertexAI;
+let appCheck: any, perf: any, remoteConfig: any, vertexAI: any;
 if (typeof window !== "undefined") {
   appCheck = initializeAppCheck(app, {
     provider: new ReCaptchaEnterpriseProvider(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''),
