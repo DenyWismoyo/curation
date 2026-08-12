@@ -78,11 +78,7 @@ export { actionPlanCopilotChat } from './domains/assessment/agents/copilotAgent'
 export { adminGenerateMockData } from './domains/assessment/agents/mockDataAgent'
 export { premiumConsultationChat } from './domains/assessment/agents/premiumConsultationAgent'
 export { assessmentAnalyticsAgent } from './domains/analytics/agents/analyticsAgent'
-export {
-  generateCopywriting,
-  reviseSlidePrompt,
-  reviseCopywriting,
-} from './domains/promo/agents/copywriterAgent'
+
 export { renderSingleSlide } from './domains/promo/agents/imageRendererAgent'
 export { generateArticleFromTemplate } from './domains/promo/agents/articleAgent'
 export { batchGenerateSmartPricing } from './domains/promo/agents/pricingAgent'
