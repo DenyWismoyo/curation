@@ -13,7 +13,9 @@ import { useAuth } from '@/contexts/AuthContext';
 import { usePathname, useParams } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { m, AnimatePresence } from 'framer-motion';
 import { PremiumLockedScreen } from '@/features/crypto/components/alerts/PremiumLockedScreen';
+import { CopilotTrigger, CopilotMessage, CopilotThinking, CopilotInputWrapper, CopilotHeader, CopilotEmptyState, CopilotSuggestionList, CopilotSuggestionItem } from '@omnifit-ui/components';
 
 interface CryptoChatProps {
   isOpen?: boolean;
@@ -268,12 +270,7 @@ export default function CryptoChat({ isOpen: controlledIsOpen, onClose, reportCo
     <>
     {/* Floating Trigger Button */}
     <div className="fixed bottom-[90px] md:bottom-6 right-6 z-40">
-      <Button 
-        onClick={() => setIsOpen(true)}
-        className="w-14 h-14 rounded-full bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-500/30 flex items-center justify-center p-0 transition-transform hover:scale-110"
-      >
-        <Bot className="w-6 h-6 text-foreground" />
-      </Button>
+      <CopilotTrigger onClick={() => setIsOpen(true)} color="amber" />
     </div>
 
     <Sheet open={isOpen} onOpenChange={handleOpenChange}>
@@ -283,13 +280,12 @@ export default function CryptoChat({ isOpen: controlledIsOpen, onClose, reportCo
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
       >
-        <SheetHeader className="px-6 py-4 bg-indigo-950/50 border-b border-indigo-900/50 text-foreground space-y-0.5 relative z-10 shadow-md backdrop-blur-md">
-          <div className="flex justify-between items-start">
-            <SheetTitle className="text-foreground flex items-center gap-2 text-xl tracking-tight">
-               <Bot className="w-6 h-6 text-indigo-200" />
-               Hedge Fund Copilot
-            </SheetTitle>
-            <div className="flex items-center gap-1">
+        <CopilotHeader 
+          title="Hedge Fund Copilot"
+          icon={Bot}
+          description={view === 'chat' ? 'Tanyakan proyeksi harga atau rekomendasi *actionable*.' : 'Riwayat percakapan Anda dengan Copilot.'}
+          actions={
+            <>
                <Button variant="ghost" size="icon" className="text-foreground hover:card-solid/20 h-8 w-8 rounded-full" onClick={startNewChat} title="Chat Baru">
                   <Plus className="w-4 h-4" />
                </Button>
@@ -299,12 +295,9 @@ export default function CryptoChat({ isOpen: controlledIsOpen, onClose, reportCo
                <Button variant="ghost" size="icon" className="text-foreground hover:card-solid/20 h-8 w-8 rounded-full ml-1" onClick={() => handleOpenChange(false)}>
                   <X className="w-4 h-4" />
                </Button>
-            </div>
-          </div>
-          <SheetDescription className="text-indigo-100/80">
-            {view === 'chat' ? 'Tanyakan proyeksi harga atau rekomendasi *actionable*.' : 'Riwayat percakapan Anda dengan Copilot.'}
-          </SheetDescription>
-        </SheetHeader>
+            </>
+          }
+        />
         
         {!hasAccess ? (
           <div className="flex-1 overflow-y-auto">
@@ -340,90 +333,62 @@ export default function CryptoChat({ isOpen: controlledIsOpen, onClose, reportCo
            ) : (
              <>
                <ScrollArea className="h-full px-6 py-4" ref={scrollRef}>
-                 {messages.length === 0 ? (
-                   <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground mt-10">
-                     <div className="w-16 h-16 bg-indigo-900/50 rounded-full flex items-center justify-center mb-4">
-                        <Bot className="w-8 h-8 text-indigo-500" />
-                     </div>
-                     <h4 className="font-bold text-muted-foreground mb-1">Copilot Siap</h4>
-                     <p className="text-sm max-w-[250px] mb-8">Ketik pesan Anda di bawah atau pilih topik panas hari ini.</p>
-                     
-                     {/* Suggestions UI */}
-                     <div className="w-full max-w-sm space-y-2 mt-4 flex flex-col items-center">
-                        {loadingSuggestions ? (
-                           <div className="flex items-center text-xs text-indigo-400">
-                              <Loader2 className="w-3 h-3 animate-spin mr-2" />
-                              Menganalisa laporan untuk saran topik...
-                           </div>
-                        ) : suggestions.length > 0 ? (
-                           <>
-                             <div className="flex items-center text-xs font-semibold text-muted-foreground text-muted-foreground mb-2 w-full px-2">
-                               <Sparkles className="w-3.5 h-3.5 mr-1 text-amber-500" /> Topik Hangat
-                             </div>
-                             {suggestions.map((sug, idx) => (
-                               <button 
-                                 key={idx}
-                                 onClick={() => handleSubmit(undefined, sug)}
-                                 className="w-full text-left p-3 rounded-xl text-sm card-solid border border-slate-200 dark:border-slate-800 hover:border-indigo-400 hover:border-indigo-600 hover:shadow-sm transition-all text-muted-foreground"
-                               >
-                                 {sug}
-                               </button>
-                             ))}
-                           </>
-                        ) : null}
-                     </div>
-                   </div>
+                  {messages.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-full pb-10">
+                      <CopilotEmptyState />
+                      
+                      {/* Suggestions UI */}
+                      {(suggestions.length > 0 || loadingSuggestions) && (
+                        <CopilotSuggestionList loading={loadingSuggestions} className="mt-4">
+                          {suggestions.map((sug, idx) => (
+                            <CopilotSuggestionItem key={idx} onClick={() => handleSubmit(undefined, sug)}>
+                              {sug}
+                            </CopilotSuggestionItem>
+                          ))}
+                        </CopilotSuggestionList>
+                      )}
+                    </div>
                  ) : (
-                    <div className="space-y-6 pb-20">
-                      {messages.map((m) => (
-                        <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                          <div className={`max-w-[85%] rounded-3xl p-5 shadow-sm ${
-                            m.role === 'user' 
-                              ? 'bg-indigo-600/90 border border-indigo-500/50 text-foreground rounded-br-sm backdrop-blur-sm' 
-                              : 'bg-slate-200 dark:bg-slate-800/40 border border-slate-300 dark:border-slate-700/50 rounded-bl-sm text-slate-200 backdrop-blur-sm'
-                          }`}>
-                            <div className={`flex items-center gap-1.5 mb-3 text-[10px] uppercase font-bold tracking-wider ${m.role === 'user' ? 'text-indigo-200' : 'text-muted-foreground'}`}>
-                             {m.role === 'user' ? <User className="w-3.5 h-3.5" /> : <Bot className="w-3.5 h-3.5" />}
-                             {m.role === 'user' ? 'Anda' : 'Copilot'}
-                           </div>
-                            <div className="text-[13px]">
-                              {m.role === 'user' ? (
-                                 <div className="whitespace-pre-wrap leading-relaxed">{m.content}</div>
+                    <div className="space-y-2 pb-20">
+                      <AnimatePresence>
+                        {messages.map((m) => (
+                          <CopilotMessage 
+                            key={m.id} 
+                            role={m.role as 'user' | 'assistant'} 
+                            color="amber"
+                            content={
+                              m.role === 'user' ? (
+                                <div className="whitespace-pre-wrap leading-relaxed">{m.content}</div>
                               ) : (
-                                 <div className="prose prose-sm prose-invert max-w-none prose-p:leading-relaxed prose-pre:card-solid/50 dark:bg-slate-900/50 prose-pre:border prose-pre:border-slate-300 dark:border-slate-700/50 prose-pre:text-slate-200 prose-td:border prose-td:border-slate-300 dark:border-slate-700/50 prose-th:border prose-th:border-slate-300 dark:border-slate-700/50 prose-table:w-full prose-table:table-auto prose-th:bg-slate-200 dark:bg-slate-800/50 prose-td:p-3 prose-th:p-3 prose-li:my-0.5">
-                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                     {m.content}
-                                   </ReactMarkdown>
+                                <div className="prose prose-sm prose-invert max-w-none prose-p:leading-relaxed prose-pre:card-solid/50 dark:bg-slate-900/50 prose-pre:border prose-pre:border-slate-300 dark:border-slate-700/50 prose-pre:text-slate-200 prose-td:border prose-td:border-slate-300 dark:border-slate-700/50 prose-th:border prose-th:border-slate-300 dark:border-slate-700/50 prose-table:w-full prose-table:table-auto prose-th:bg-slate-200 dark:bg-slate-800/50 prose-td:p-3 prose-th:p-3 prose-li:my-0.5">
+                                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                    {m.content}
+                                  </ReactMarkdown>
                                 </div>
-                             )}
-                           </div>
-                         </div>
-                       </div>
-                     ))}
-                      {isLoading && (
-                        <div className="flex justify-start">
-                          <div className="bg-slate-200 dark:bg-slate-800/40 border border-slate-300 dark:border-slate-700/50 rounded-3xl rounded-bl-sm p-5 flex items-center gap-3 shadow-sm text-muted-foreground backdrop-blur-sm">
-                            <Bot className="w-4 h-4 animate-bounce text-indigo-400" /> 
-                            <span className="animate-pulse font-medium text-[13px]">Copilot sedang menganalisa...</span>
-                         </div>
-                       </div>
-                     )}
-                   </div>
+                              )
+                            }
+                          />
+                        ))}
+                        {isLoading && <CopilotThinking color="amber" />}
+                      </AnimatePresence>
+                    </div>
                  )}
                </ScrollArea>
                
                <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-slate-50 dark:from-slate-950 via-slate-950/90 to-transparent pt-10">
-                  <form onSubmit={handleSubmit} className="flex items-center gap-2 card-solid/80 dark:bg-slate-900/80 backdrop-blur-md border border-slate-300 dark:border-slate-700/50 rounded-full p-1.5 shadow-xl">
-                    <Input 
-                      value={input} 
-                      onChange={(e) => setInput(e.target.value)} 
-                      placeholder="Tanyakan sesuatu..." 
-                      className="flex-1 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-4 bg-transparent text-sm text-foreground placeholder:text-muted-foreground"
-                      disabled={isLoading}
-                    />
-                    <Button type="submit" size="icon" className="bg-indigo-600 hover:bg-indigo-700 rounded-full h-10 w-10 shrink-0 shadow-md transition-transform active:scale-95" disabled={isLoading || !input.trim()}>
-                      <Send className="w-4 h-4 ml-0.5" />
-                    </Button>
+                  <form onSubmit={handleSubmit}>
+                    <CopilotInputWrapper color="amber">
+                      <Input 
+                        value={input} 
+                        onChange={(e) => setInput(e.target.value)} 
+                        placeholder="Tanyakan sesuatu..." 
+                        className="flex-1 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-4 bg-transparent text-sm text-foreground placeholder:text-muted-foreground"
+                        disabled={isLoading}
+                      />
+                      <Button type="submit" size="icon" className="bg-amber-500 hover:bg-amber-600 text-amber-950 rounded-full h-10 w-10 shrink-0 shadow-md transition-transform active:scale-95" disabled={isLoading || !input.trim()}>
+                        <Send className="w-4 h-4 ml-0.5" />
+                      </Button>
+                    </CopilotInputWrapper>
                   </form>
                </div>
              </>

@@ -10,6 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { DarkStatCard, PulseStatCard, GlassPanel, SpotlightCard } from "@omnifit-ui/components";
 
 export default function CryptoPerformancePage() {
   const { role, loading: authLoading } = useAuth();
@@ -143,53 +144,51 @@ export default function CryptoPerformancePage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        <Card className="bg-indigo-600 border-none shadow-lg text-foreground">
-          <CardContent className="p-8">
-            <div className="text-indigo-200 text-sm font-bold uppercase tracking-wider mb-2">Win Rate</div>
-            <div className="text-5xl font-black">{winRate}%</div>
-          </CardContent>
-        </Card>
+        <PulseStatCard 
+          label="Win Rate" 
+          value={`${winRate}%`} 
+          color="indigo" 
+          icon={<Activity className="w-5 h-5" />}
+        />
         
-        <Card className="bg-emerald-50 dark:bg-emerald-500/10 bg-emerald-100 dark:bg-emerald-950/20 border-emerald-100 border-emerald-300 dark:border-emerald-900/30">
-          <CardContent className="p-8 flex flex-col justify-center h-full">
-            <div className="flex items-center gap-2 text-emerald-400 font-bold mb-2">
-               <Target className="w-5 h-5" /> Total WIN
-            </div>
-            <div className="text-4xl font-black text-foreground text-slate-100">{globalStats.totalWins} <span className="text-lg text-muted-foreground font-medium">analisis</span></div>
-          </CardContent>
-        </Card>
+        <DarkStatCard 
+          label="Total WIN"
+          value={globalStats.totalWins.toString()}
+          icon={Target}
+          accentColor="emerald"
+          subtitle="analisis"
+        />
 
-        <Card className="bg-rose-50 dark:bg-rose-500/10 bg-rose-100 dark:bg-rose-950/20 border-rose-100 border-rose-900/30">
-          <CardContent className="p-8 flex flex-col justify-center h-full">
-            <div className="flex items-center gap-2 text-rose-400 font-bold mb-2">
-               <ShieldAlert className="w-5 h-5" /> Total LOSS
-            </div>
-            <div className="text-4xl font-black text-foreground text-slate-100">{globalStats.totalLosses} <span className="text-lg text-muted-foreground font-medium">analisis</span></div>
-          </CardContent>
-        </Card>
+        <DarkStatCard 
+          label="Total LOSS"
+          value={globalStats.totalLosses.toString()}
+          icon={ShieldAlert}
+          accentColor="amber"
+          subtitle="analisis"
+        />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        <Card className="card-solid border-slate-200 dark:border-slate-800">
-          <CardContent className="p-6">
-            <div className="text-muted-foreground text-xs font-bold uppercase tracking-wider mb-2">Avg Profit</div>
-            <div className="text-3xl font-black text-emerald-400">+{avgProfit}%</div>
-          </CardContent>
-        </Card>
+        <DarkStatCard 
+          label="Avg Profit"
+          value={`+${avgProfit}%`}
+          icon={TrendingUp}
+          accentColor="emerald"
+        />
         
-        <Card className="card-solid border-slate-200 dark:border-slate-800">
-          <CardContent className="p-6">
-            <div className="text-muted-foreground text-xs font-bold uppercase tracking-wider mb-2">Avg Loss</div>
-            <div className="text-3xl font-black text-rose-400">-{avgLoss}%</div>
-          </CardContent>
-        </Card>
+        <DarkStatCard 
+          label="Avg Loss"
+          value={`-${avgLoss}%`}
+          icon={TrendingUp}
+          accentColor="amber"
+        />
 
-        <Card className="card-solid border-slate-200 dark:border-slate-800">
-          <CardContent className="p-6">
-            <div className="text-muted-foreground text-xs font-bold uppercase tracking-wider mb-2">Profit Factor</div>
-            <div className="text-3xl font-black text-indigo-400">{profitFactor}</div>
-          </CardContent>
-        </Card>
+        <DarkStatCard 
+          label="Profit Factor"
+          value={profitFactor}
+          icon={Activity}
+          accentColor="indigo"
+        />
       </div>
 
       <div className="mb-10">
@@ -203,18 +202,18 @@ export default function CryptoPerformancePage() {
                topCoins.map(([coin, stats], idx) => {
                   const coinWinRate = ((stats.win / stats.total) * 100).toFixed(0);
                   return (
-                     <Card key={idx} className="card-solid border-slate-200 dark:border-slate-800 p-4">
+                     <SpotlightCard color={parseFloat(coinWinRate) >= 60 ? 'emerald' : parseFloat(coinWinRate) >= 40 ? 'amber' : 'rose'} key={idx} className="p-4 border-0 text-center">
                         <div className="flex justify-between items-center mb-2">
                            <span className="font-black text-foreground">{coin}</span>
                            <Badge className="bg-indigo-500/10 text-indigo-400 border-0">{stats.total} Trades</Badge>
                         </div>
-                        <div className="flex items-end gap-2">
-                           <span className={`text-2xl font-black ${parseFloat(coinWinRate) >= 60 ? 'text-emerald-400' : parseFloat(coinWinRate) >= 40 ? 'text-amber-400' : 'text-rose-400'}`}>
+                        <div className="flex flex-col items-center gap-1 mt-2">
+                           <span className={`text-3xl font-black ${parseFloat(coinWinRate) >= 60 ? 'text-emerald-400' : parseFloat(coinWinRate) >= 40 ? 'text-amber-400' : 'text-rose-400'}`}>
                               {coinWinRate}%
                            </span>
-                           <span className="text-muted-foreground text-xs mb-1">Win Rate</span>
+                           <span className="text-muted-foreground text-xs font-bold uppercase tracking-widest">Win Rate</span>
                         </div>
-                     </Card>
+                     </SpotlightCard>
                   )
                })
             )}
@@ -238,20 +237,20 @@ export default function CryptoPerformancePage() {
             Belum ada riwayat evaluasi analisis.
          </div>
       ) : (
-         <div className="card-solid rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+         <GlassPanel className="overflow-hidden">
             <div className="overflow-x-auto">
                <table className="w-full text-left border-collapse">
                   <thead>
-                     <tr className="bg-slate-200 dark:bg-slate-800/50 text-muted-foreground text-xs uppercase tracking-wider">
-                        <th className="p-4 font-bold border-b border-slate-200 dark:border-slate-800">Tanggal</th>
-                        <th className="p-4 font-bold border-b border-slate-200 dark:border-slate-800">Pair</th>
-                        <th className="p-4 font-bold border-b border-slate-200 dark:border-slate-800">Status</th>
-                        <th className="p-4 font-bold border-b border-slate-200 dark:border-slate-800">Keterangan</th>
+                     <tr className="border-b border-white/5 text-muted-foreground text-xs uppercase tracking-wider">
+                        <th className="p-4 font-bold">Tanggal</th>
+                        <th className="p-4 font-bold">Pair</th>
+                        <th className="p-4 font-bold">Status</th>
+                        <th className="p-4 font-bold">Keterangan</th>
                      </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
+                  <tbody className="divide-y divide-white/5">
                      {filteredHistory.map((item, i) => (
-                        <tr key={i} className={`hover:bg-muted text-muted-foreground/50 hover:bg-secondary text-secondary-foreground/50 dark:bg-slate-900/30 transition-colors ${item.status === 'WIN' ? 'bg-emerald-100 dark:bg-emerald-950/10' : item.status === 'LOSS' ? 'bg-rose-100 dark:bg-rose-950/10' : ''}`}>
+                        <tr key={i} className={`hover:bg-white/5 transition-colors ${item.status === 'WIN' ? 'bg-emerald-500/5' : item.status === 'LOSS' ? 'bg-rose-500/5' : ''}`}>
                            <td className="p-4 text-sm text-muted-foreground whitespace-nowrap">{item.date}</td>
                            <td className="p-4 font-bold text-foreground text-slate-100">{item.symbol}</td>
                            <td className="p-4">
@@ -271,7 +270,7 @@ export default function CryptoPerformancePage() {
                   </tbody>
                </table>
             </div>
-         </div>
+         </GlassPanel>
       )}
     </div>
   );

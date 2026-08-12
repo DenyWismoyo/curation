@@ -1,9 +1,8 @@
 "use client";
 
 import React from "react";
-import { Grid, TrendingUp, TrendingDown, Clock } from "lucide-react";
-import Link from "next/link";
-import { CryptoCard } from "../ui/CryptoUIKit";
+import { Grid } from "lucide-react";
+import { HeatmapCard } from "@omnifit-ui/components";
 
 interface MarketHeatmapWidgetProps {
   marketData?: any[]; // Expecting rawScalpingData or similar with klines
@@ -55,46 +54,15 @@ export default function MarketHeatmapWidget({ marketData }: MarketHeatmapWidgetP
       </div>
       
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
-        {displayData.map((coin, idx) => {
-           const isPositive = coin.change >= 0;
-           const absChange = Math.abs(coin.change);
-           
-           // Elegant enterprise color styling
-           let cardStyle = isPositive 
-             ? "bg-emerald-50 dark:bg-emerald-500/10/50 dark:bg-emerald-500/5 border-emerald-200 dark:border-emerald-500/20/50 dark:border-emerald-500/20 hover:border-emerald-300 dark:hover:border-emerald-500/40" 
-             : "bg-rose-50 dark:bg-rose-500/10/50 dark:bg-rose-500/5 border-rose-200 dark:border-rose-500/20/50 dark:border-rose-500/20 hover:border-rose-300 dark:hover:border-rose-500/40";
-           
-           let textStyle = isPositive ? "text-emerald-700 dark:text-emerald-400" : "text-rose-700 dark:text-rose-400";
-           let changeBg = isPositive ? "bg-emerald-100 dark:bg-emerald-500/20" : "bg-rose-100 dark:bg-rose-500/20";
-           let icon = isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />;
-
-           if (absChange > 10) {
-              cardStyle = isPositive 
-                ? "bg-emerald-100/50 dark:bg-emerald-500/10 border-emerald-300/60 dark:border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.1)] hover:shadow-[0_0_20px_rgba(16,185,129,0.2)]" 
-                : "bg-rose-100/50 dark:bg-rose-500/10 border-rose-300/60 dark:border-rose-500/30 shadow-[0_0_15px_rgba(244,63,94,0.1)] hover:shadow-[0_0_20px_rgba(244,63,94,0.2)]";
-              textStyle = isPositive ? "text-emerald-800 dark:text-emerald-300 font-bold" : "text-rose-800 dark:text-rose-300 font-bold";
-              changeBg = isPositive ? "bg-emerald-200 dark:bg-emerald-500/30" : "bg-rose-200 dark:bg-rose-500/30";
-           }
-
-           return (
-             <Link href={`/crypto-report/${coin.symbol}USDT`} key={idx}>
-               <div className={`rounded-2xl p-4 flex flex-col justify-between h-[100px] transition-all duration-300 hover:-translate-y-1 relative group border ${cardStyle}`}>
-                 <div className="flex items-start justify-between">
-                    <span className="font-black text-base text-foreground dark:text-slate-100 tracking-tight">{coin.symbol}</span>
-                    <div className={`flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] font-bold ${changeBg} ${textStyle}`}>
-                       {icon} {absChange.toFixed(2)}%
-                    </div>
-                 </div>
-                 
-                 <div className="flex items-end justify-between mt-2">
-                    <span className={`text-sm font-semibold font-mono ${textStyle}`}>
-                       ${coin.price > 1 ? coin.price.toFixed(2) : coin.price.toFixed(4)}
-                    </span>
-                 </div>
-               </div>
-             </Link>
-           );
-         })}
+        {displayData.map((coin, idx) => (
+          <HeatmapCard
+            key={idx}
+            symbol={coin.symbol}
+            price={coin.price}
+            change={coin.change}
+            href={`/crypto-report/${coin.symbol}USDT`}
+          />
+        ))}
       </div>
     </div>
   );

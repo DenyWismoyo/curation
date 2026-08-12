@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { GlassPanel, SpotlightCard } from '@omnifit-ui/components';
 import { Trophy, ArrowRight, BrainCircuit, Star, Flame } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -47,8 +47,7 @@ export function CryptoLearningRecommendations({
 
       {/* Rewards Section */}
       <div className="grid grid-cols-2 gap-4">
-        <Card className="bg-background">
-          <CardContent className="p-4 flex items-center space-x-4">
+        <SpotlightCard color="amber" className="p-4 flex items-center space-x-4 bg-background">
             <div className="p-3 bg-yellow-500/20 rounded-lg">
               <Star className="w-6 h-6 text-yellow-500" />
             </div>
@@ -56,12 +55,10 @@ export function CryptoLearningRecommendations({
               <p className="text-sm text-muted-foreground">XP Didapat</p>
               <p className="text-xl font-bold">+{xpEarned} XP</p>
             </div>
-          </CardContent>
-        </Card>
+        </SpotlightCard>
         
         {newBadges.length > 0 && (
-          <Card className="bg-background">
-            <CardContent className="p-4 flex items-center space-x-4">
+          <SpotlightCard color="rose" className="p-4 flex items-center space-x-4 bg-background">
               <div className="p-3 bg-orange-500/20 rounded-lg">
                 <Flame className="w-6 h-6 text-orange-500" />
               </div>
@@ -69,20 +66,17 @@ export function CryptoLearningRecommendations({
                 <p className="text-sm text-muted-foreground">Badge Baru</p>
                 <p className="text-lg font-bold truncate">{newBadges[0]}</p>
               </div>
-            </CardContent>
-          </Card>
+          </SpotlightCard>
         )}
       </div>
 
       {/* AI Recommendations */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-lg flex items-center">
+      <GlassPanel>
+        <div className="pb-3 text-lg font-bold flex items-center border-b border-white/5 mb-4">
             <BrainCircuit className="w-5 h-5 mr-2 text-primary" />
             Rekomendasi AI
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+        </div>
+        <div>
           <ul className="space-y-3">
             {recommendations.length > 0 ? (
               recommendations.map((rec, idx) => (
@@ -99,8 +93,8 @@ export function CryptoLearningRecommendations({
               </li>
             )}
           </ul>
-        </CardContent>
-      </Card>
+        </div>
+      </GlassPanel>
 
       {/* Actions */}
       <div className="flex justify-end space-x-3 pt-4">

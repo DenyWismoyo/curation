@@ -25,6 +25,9 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@omnifit-ui/*": [
+        "./omnifit-ui/*"
       ]
     }
   },

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { GlassPanel, SpotlightCard } from '@omnifit-ui/components';
 import { Trophy, Star, Flame, Medal, Award, Zap } from 'lucide-react';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase/firebase';
@@ -42,11 +42,9 @@ export function CryptoAcademyBadges() {
 
   if (loading) return null;
   if (!stats) return (
-    <Card className="card-solid border-slate-200 dark:border-slate-800">
-      <CardContent className="p-6 text-center">
-        <p className="text-slate-400">Belum ada data pembelajaran.</p>
-      </CardContent>
-    </Card>
+    <GlassPanel className="p-6 text-center border-dashed">
+      <p className="text-slate-400">Belum ada data pembelajaran.</p>
+    </GlassPanel>
   );
 
   const nextLevelXp = Math.ceil((stats.xp + 1) / 500) * 500;
@@ -55,8 +53,7 @@ export function CryptoAcademyBadges() {
   return (
     <div className="space-y-4">
       {/* XP & Level Summary */}
-      <Card className="card-solid border-slate-200 dark:border-slate-800">
-        <CardContent className="p-6">
+      <GlassPanel className="p-6">
           <div className="flex justify-between items-center mb-4">
             <div>
               <p className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">Total XP</p>
@@ -79,33 +76,32 @@ export function CryptoAcademyBadges() {
           <p className="text-xs text-muted-foreground mt-2 text-right">
             {nextLevelXp - stats.xp} XP menuju level berikutnya
           </p>
-        </CardContent>
-      </Card>
+      </GlassPanel>
 
       {/* Badges Collection */}
-      <Card className="card-solid border-slate-200 dark:border-slate-800">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-lg font-bold text-foreground flex items-center gap-2">
+      <GlassPanel>
+        <div className="pb-4 mb-4 border-b border-white/5">
+          <div className="text-lg font-bold text-foreground flex items-center gap-2">
             <Medal className="w-5 h-5 text-purple-400" />
             Koleksi Badge
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+          </div>
+        </div>
+        <div>
           {stats.badges && stats.badges.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {stats.badges.map((badge, idx) => {
                 const config = BADGE_CONFIG[badge];
                 const Icon = config?.icon || Trophy;
                 return (
-                  <div key={idx} className="flex flex-col items-center justify-center p-4 bg-slate-200 dark:bg-slate-800/50 rounded-xl border border-slate-300 dark:border-slate-700/50 hover:bg-secondary text-secondary-foreground dark:hover:bg-secondary text-secondary-foreground transition-colors group">
-                    <div className="p-3 card-solid rounded-full mb-3 ring-1 ring-white/10 group-hover:ring-white/20 group-hover:scale-110 transition-all">
+                  <SpotlightCard key={idx} color="indigo" className="flex flex-col items-center justify-center p-4 bg-slate-200 dark:bg-slate-800/50 rounded-xl group text-center border-0">
+                    <div className="p-3 card-solid rounded-full mb-3 ring-1 ring-white/10 group-hover:ring-indigo-500/50 group-hover:scale-110 transition-all">
                       <Icon className={`w-8 h-8 ${config?.color || "text-purple-500"}`} />
                     </div>
                     <p className="font-bold text-sm text-foreground text-center mb-1">{badge}</p>
                     <p className="text-[10px] text-slate-400 text-center leading-tight">
                       {config?.desc || "Pencapaian Spesial"}
                     </p>
-                  </div>
+                  </SpotlightCard>
                 );
               })}
             </div>
@@ -116,8 +112,8 @@ export function CryptoAcademyBadges() {
               <p className="text-xs text-muted-foreground mt-1">Selesaikan kuis untuk mulai mendapatkan badge!</p>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </GlassPanel>
     </div>
   );
 }

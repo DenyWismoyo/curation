@@ -4,9 +4,8 @@ import React, { useEffect, useState } from "react";
 import { collection, query, where, orderBy, limit, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase/firebase";
 import { useBundleLoader } from "@/hooks/useBundleLoader";
-import { Calendar, AlertCircle, RefreshCw, BarChart2, CheckCircle2, Globe } from "lucide-react";
+import { Calendar, AlertCircle, RefreshCw, BarChart2, CheckCircle2, Globe, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { CryptoCard, CryptoBadge, CryptoLoadingState, CryptoEmptyState, CryptoPageHeader } from "../ui/CryptoUIKit";
 
 export default function MacroEconomicCalendar() {
   const [events, setEvents] = useState<any[]>([]);
@@ -116,26 +115,30 @@ export default function MacroEconomicCalendar() {
   };
 
   if (loading) {
-    return <CryptoLoadingState type="skeleton" rows={5} />;
+    return (
+      <div className="flex justify-center items-center p-12">
+        <Loader2 className="w-8 h-8 text-amber-500 animate-spin" />
+      </div>
+    );
   }
 
   if (error) {
     return (
-      <CryptoEmptyState 
-         icon={<AlertCircle />}
-         title="Gagal Memuat"
-         description={error}
-      />
+      <div className="flex flex-col items-center justify-center p-12 text-center border border-dashed rounded-2xl border-rose-200 dark:border-rose-800">
+         <AlertCircle className="w-8 h-8 text-rose-500 mb-4" />
+         <h3 className="text-lg font-bold text-foreground">Gagal Memuat</h3>
+         <p className="text-muted-foreground">{error}</p>
+      </div>
     );
   }
 
   if (events.length === 0) {
     return (
-      <CryptoEmptyState 
-         icon={<Globe />}
-         title="Kalender Kosong"
-         description="Tidak ada event makroekonomi yang terjadwal."
-      />
+      <div className="flex flex-col items-center justify-center p-12 text-center border border-dashed rounded-2xl border-slate-200 dark:border-slate-800">
+         <Globe className="w-8 h-8 text-muted-foreground mb-4" />
+         <h3 className="text-lg font-bold text-foreground">Kalender Kosong</h3>
+         <p className="text-muted-foreground">Tidak ada event makroekonomi yang terjadwal.</p>
+      </div>
     );
   }
 
@@ -148,28 +151,28 @@ export default function MacroEconomicCalendar() {
       <div className="flex flex-col xl:flex-row xl:items-start gap-4 pb-4">
         
         {/* AI Weekly Forecast (Compact) */}
-        <CryptoCard variant="elevated" className="flex-1 overflow-hidden relative bg-gradient-to-r from-indigo-500/10 to-indigo-500/5 dark:from-indigo-900/40 dark:to-slate-900 border-indigo-200 dark:border-indigo-800/50 p-4">
+        <div className="card-solid flex-1 overflow-hidden relative bg-gradient-to-r from-amber-500/10 to-amber-500/5 dark:from-amber-900/40 dark:to-slate-900 border-amber-200 dark:border-amber-800/50 p-4 rounded-2xl">
            <div className="absolute top-0 right-0 p-2 opacity-5">
               <BarChart2 className="w-24 h-24" />
            </div>
            <div className="relative z-10 flex flex-col sm:flex-row gap-4 items-start sm:items-center">
               <div className="flex items-center gap-3 shrink-0">
-                <div className="p-2 bg-indigo-500/20 rounded-xl border border-indigo-500/30">
-                  <Calendar className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                <div className="p-2 bg-amber-500/20 rounded-xl border border-amber-500/30">
+                  <Calendar className="w-5 h-5 text-amber-600 dark:text-amber-400" />
                 </div>
                 <div>
                   <h2 className="text-sm font-black text-foreground uppercase tracking-wider">Mingguan AI</h2>
                   <p className="text-[10px] font-bold text-muted-foreground">Macro Outlook</p>
                 </div>
               </div>
-              <div className="w-px h-10 bg-indigo-200 dark:bg-indigo-800/50 hidden sm:block"></div>
-              <p className="text-slate-700 dark:text-indigo-100/80 text-xs sm:text-sm leading-relaxed line-clamp-2">
+              <div className="w-px h-10 bg-amber-200 dark:bg-amber-800/50 hidden sm:block"></div>
+              <p className="text-slate-700 dark:text-amber-100/80 text-xs sm:text-sm leading-relaxed line-clamp-2">
                  {weeklyReport?.reportData?.weeklyMacroCalendarForecast || 
                   weeklyReport?.reportData?.weeklyStrategy ||
                   "Menunggu rilis AI mingguan terbaru pada hari Senin berikutnya."}
               </p>
            </div>
-        </CryptoCard>
+        </div>
 
         {/* Calendar Controls */}
         <div className="flex items-center gap-3 shrink-0">
@@ -200,12 +203,12 @@ export default function MacroEconomicCalendar() {
 
       {/* Calendar Table for Selected Day */}
       {selectedDayGroup && (
-        <CryptoCard variant="default" className="mt-4">
+        <div className="mt-4 card-solid rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
            {/* Day Header */}
            <div className="bg-secondary text-secondary-foreground dark:bg-slate-950/50 px-6 py-4 flex items-center justify-between border-b border-slate-200 dark:border-slate-800/50">
              <h3 className="font-bold text-slate-200">{selectedDayGroup.dateStr}</h3>
              {selectedDayGroup.rawDate.toDateString() === new Date().toDateString() && (
-               <CryptoBadge variant="info">HARI INI</CryptoBadge>
+               <span className="inline-flex items-center justify-center rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest shadow-sm bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/20">HARI INI</span>
              )}
            </div>
 
@@ -263,7 +266,7 @@ export default function MacroEconomicCalendar() {
                );
              })}
            </div>
-        </CryptoCard>
+        </div>
       )}
     </div>
   );

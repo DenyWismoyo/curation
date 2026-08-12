@@ -5,11 +5,11 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { collection, query, orderBy, getDocs, onSnapshot } from 'firebase/firestore'
 import { db } from '@/lib/firebase/firebase'
 import { useAuth } from '@/contexts/AuthContext'
-import { BookOpen, CheckCircle, ChevronRight, Sparkles, GraduationCap } from 'lucide-react'
+import { BookOpen, CheckCircle, ChevronRight, Sparkles, GraduationCap, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { AppPageContainer } from '@/components/ui/app-layout'
-import { CryptoCard, CryptoBadge, CryptoPageHeader, CryptoLoadingState, CryptoEmptyState } from '@/features/crypto/components/ui/CryptoUIKit'
 import { useBundleLoader } from '@/hooks/useBundleLoader'
+import { DataRingProgress, SpotlightCard } from '@omnifit-ui/components'
 
 interface CryptoModule {
   id: string
@@ -109,43 +109,53 @@ export default function CryptoAcademyPage() {
   return (
     <AppPageContainer maxWidth="full" padding="md" className="relative z-10 pt-8 pb-20">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-        <CryptoPageHeader 
-          title="Evolusi Menjadi Smart Trader"
-          subtitle="Pelajari fundamental kripto, analisis teknikal, hingga Smart Money Concepts. Semua materi di-generate oleh AI secara terstruktur."
-          icon={<GraduationCap />}
-          badge="Academy"
-          badgeVariant="premium"
-        />
+        <div>
+          <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center border border-amber-200 dark:border-amber-500/30">
+                <GraduationCap className="w-5 h-5" />
+              </div>
+              <span className="inline-flex items-center justify-center rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest shadow-sm bg-gradient-to-r from-amber-500 to-orange-400 text-white border-0">Academy</span>
+          </div>
+          <h1 className="text-3xl md:text-4xl font-black text-foreground tracking-tight mb-2">
+            Evolusi Menjadi Smart Trader
+          </h1>
+          <p className="text-muted-foreground text-sm md:text-base max-w-2xl leading-relaxed">
+            Pelajari fundamental kripto, analisis teknikal, hingga Smart Money Concepts. Semua materi di-generate oleh AI secara terstruktur.
+          </p>
+        </div>
 
         {totalModules > 0 && (
-          <CryptoCard variant="elevated" className="w-full md:w-64 shrink-0 p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Progress Belajar</span>
-              <span className="text-sm font-black text-emerald-400">{progressPercentage}%</span>
+          <div className="card-solid/90 dark:bg-slate-900/90 backdrop-blur-xl border-border/60 dark:border-slate-800/60 shadow-lg w-full md:w-80 shrink-0 p-5 rounded-2xl relative overflow-hidden flex items-center justify-between">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground block mb-1">Progress Belajar</span>
+              <p className="text-xs text-muted-foreground">
+                {completedModules} dari {totalModules} modul selesai
+              </p>
             </div>
-            <div className="h-2 bg-secondary text-secondary-foreground rounded-full overflow-hidden">
-              <motion.div 
-                initial={{ width: 0 }}
-                animate={{ width: `${progressPercentage}%` }}
-                transition={{ duration: 1, ease: "easeOut" }}
-                className="h-full bg-gradient-to-r from-emerald-500 to-teal-400"
-              />
-            </div>
-            <p className="text-[11px] text-muted-foreground mt-2 text-right">
-              {completedModules} dari {totalModules} modul selesai
-            </p>
-          </CryptoCard>
+            <DataRingProgress 
+              value={progressPercentage} 
+              size="lg"
+              color="emerald" 
+            />
+          </div>
         )}
       </div>
 
       {loading ? (
-        <CryptoLoadingState type="spinner" message="Menyiapkan Kurikulum..." />
+        <div className="flex flex-col items-center justify-center p-12 space-y-4">
+          <Loader2 className="w-8 h-8 text-amber-500 animate-spin" />
+          <p className="text-muted-foreground text-sm">Menyiapkan Kurikulum...</p>
+        </div>
       ) : totalModules === 0 ? (
-        <CryptoEmptyState 
-           icon={<BookOpen className="w-8 h-8" />}
-           title="Belum Ada Modul"
-           description="Materi edukasi sedang disiapkan oleh AI Agent. Silakan kembali lagi nanti."
-        />
+        <div className="flex flex-col items-center justify-center py-20 text-center px-4 max-w-md mx-auto">
+          <div className="w-16 h-16 bg-secondary text-secondary-foreground dark:bg-slate-900 rounded-full flex items-center justify-center mb-4 text-muted-foreground border border-slate-200 dark:border-slate-800">
+            <BookOpen className="w-8 h-8" />
+          </div>
+          <h3 className="text-lg font-black text-foreground mb-2">Belum Ada Modul</h3>
+          <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
+            Materi edukasi sedang disiapkan oleh AI Agent. Silakan kembali lagi nanti.
+          </p>
+        </div>
       ) : (
         <div className="space-y-12">
           {['Pemula', 'Menengah', 'Lanjutan', 'Profesional']
@@ -173,22 +183,26 @@ export default function CryptoAcademyPage() {
                         key={mod.id}
                         onClick={() => router.push(`/crypto-academy/${encodeURIComponent(level)}/${mod.id}`)}
                       >
-                        <CryptoCard 
-                          variant={isCompleted ? "subtle" : "default"}
-                          className={`p-5 cursor-pointer group ${isCompleted ? 'border-emerald-300 dark:border-emerald-900/50' : 'hover:border-slate-300 dark:border-slate-700 hover:-translate-y-1'}`}
+                        <SpotlightCard 
+                          color={isCompleted ? 'emerald' : 'amber'}
+                          className={`p-5 cursor-pointer h-full ${
+                            isCompleted 
+                            ? 'bg-muted text-muted-foreground dark:bg-slate-900/5 opacity-80' 
+                            : ''
+                          }`}
                         >
                         <div className="flex justify-between items-start mb-4">
                           <div className="flex gap-2">
-                            <CryptoBadge variant={isCompleted ? "bullish" : "neutral"}>
+                            <span className={`inline-flex items-center justify-center rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest shadow-sm ${isCompleted ? 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20' : 'bg-secondary text-secondary-foreground dark:bg-muted text-muted-foreground border border-slate-200 dark:border-slate-500/20'}`}>
                               Bab {mod.moduleOrder}
-                            </CryptoBadge>
+                            </span>
                             {mod.difficulty && (
-                              <CryptoBadge variant={
-                                mod.difficulty === 'beginner' ? 'bullish' : 
-                                mod.difficulty === 'intermediate' ? 'premium' : 'danger'
-                              }>
+                              <span className={`inline-flex items-center justify-center rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest shadow-sm ${
+                                mod.difficulty === 'beginner' ? 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20' : 
+                                mod.difficulty === 'intermediate' ? 'bg-gradient-to-r from-amber-500 to-orange-400 text-white border-0' : 'bg-rose-600 text-white border-0'
+                              }`}>
                                 {mod.difficulty}
-                              </CryptoBadge>
+                              </span>
                             )}
                           </div>
                           {isCompleted && (
@@ -197,7 +211,7 @@ export default function CryptoAcademyPage() {
                         </div>
 
                         <h3 className={`text-lg font-black leading-snug mb-2 transition-colors ${
-                          isCompleted ? 'text-muted-foreground' : 'text-slate-100 group-hover:text-indigo-400'
+                          isCompleted ? 'text-muted-foreground' : 'text-slate-100 group-hover:text-amber-400'
                         }`}>
                           {mod.title}
                         </h3>
@@ -211,14 +225,14 @@ export default function CryptoAcademyPage() {
                           <ul className="mt-3 space-y-1">
                             {mod.keyLearnings.slice(0, 2).map((learning, idx) => (
                               <li key={idx} className="text-[10px] text-muted-foreground flex items-start gap-1.5">
-                                <span className="text-indigo-500 mt-0.5">•</span>
+                                <span className="text-amber-500 mt-0.5">•</span>
                                 <span className="line-clamp-1">{learning}</span>
                               </li>
                             ))}
                           </ul>
                         )}
 
-                        <div className="mt-5 pt-4 border-t border-slate-200 dark:border-slate-800/50 flex items-center justify-between text-xs font-bold text-muted-foreground group-hover:text-indigo-400 transition-colors">
+                        <div className="mt-5 pt-4 border-t border-slate-200 dark:border-slate-800/50 flex items-center justify-between text-xs font-bold text-muted-foreground group-hover:text-amber-400 transition-colors">
                           <div className="flex items-center gap-3">
                             <span className="flex items-center gap-1.5">
                               {mod.assessmentTemplateId && <Sparkles className="w-3 h-3 text-amber-500" />}
@@ -232,7 +246,7 @@ export default function CryptoAcademyPage() {
                           </div>
                           <ChevronRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
                         </div>
-                        </CryptoCard>
+                        </SpotlightCard>
                       </motion.div>
                     )
                   })}

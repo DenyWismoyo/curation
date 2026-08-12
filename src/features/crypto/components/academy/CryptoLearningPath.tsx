@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { CheckCircle, Lock, BookOpen, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useBundleLoader } from '@/hooks/useBundleLoader';
+import { GlassPanel } from '@omnifit-ui/components';
 
 interface ModuleRef {
   id: string;
@@ -87,7 +88,7 @@ export function CryptoLearningPath({ currentModuleId, level }: CryptoLearningPat
   }
 
   return (
-    <div className="card-solid/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-xl p-4">
+    <GlassPanel className="p-4" border={false}>
       <h3 className="text-sm font-black uppercase tracking-wider text-slate-400 mb-4">
         Jalur Belajar
       </h3>
@@ -143,6 +144,6 @@ export function CryptoLearningPath({ currentModuleId, level }: CryptoLearningPat
           );
         })}
       </div>
-    </div>
+    </GlassPanel>
   );
 }

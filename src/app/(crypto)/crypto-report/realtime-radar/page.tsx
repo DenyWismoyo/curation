@@ -8,6 +8,7 @@ import { motion } from 'framer-motion'
 import { Zap, Target, LineChart, Loader2, RefreshCw } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
+import { GlassPanel } from '@omnifit-ui/components'
 
 export default function RealtimeRadarPage() {
   const { user } = useAuth()
@@ -108,7 +109,7 @@ export default function RealtimeRadarPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         
         {/* SCALPING CARD */}
-        <div className="card-solid/50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/10 rounded-2xl p-6 backdrop-blur-xl">
+        <GlassPanel className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
               <Zap className="text-yellow-400" size={20} /> Volatility Scanner
@@ -160,10 +161,10 @@ export default function RealtimeRadarPage() {
           ) : (
             <div className="text-center py-12 text-muted-foreground">Belum ada data realtime volatilitas.</div>
           )}
-        </div>
+        </GlassPanel>
 
         {/* GEMS CARD */}
-        <div className="card-solid/50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/10 rounded-2xl p-6 backdrop-blur-xl">
+        <GlassPanel className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
               <Target className="text-emerald-400" size={20} /> Hidden Gems Radar
@@ -217,7 +218,7 @@ export default function RealtimeRadarPage() {
           ) : (
             <div className="text-center py-12 text-muted-foreground">Belum ada data realtime hidden gems.</div>
           )}
-        </div>
+        </GlassPanel>
       </div>
       );
       })()}

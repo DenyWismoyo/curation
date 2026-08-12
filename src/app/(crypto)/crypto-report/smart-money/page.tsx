@@ -7,8 +7,7 @@ import { collection, query, orderBy, limit, onSnapshot } from "firebase/firestor
 import { db } from "@/lib/firebase/firebase";
 import { useAuth } from "@/contexts/AuthContext";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, ArrowLeft, Eye, Target, Activity, Clock } from "lucide-react";
-import { CryptoCard, CryptoBadge, CryptoPageHeader, CryptoLoadingState, CryptoEmptyState, CryptoButton } from "@/features/crypto/components/ui/CryptoUIKit";
+import { Loader2, ArrowLeft, Eye, Target, Activity, Clock, Zap } from "lucide-react";
 
 export default function SmartMoneyPage() {
   const router = useRouter();
@@ -73,8 +72,9 @@ export default function SmartMoneyPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-background text-foreground">
-        <CryptoLoadingState type="spinner" message="Memuat Radar Smart Money..." />
+      <div className="flex justify-center items-center min-h-screen bg-background text-foreground flex-col gap-4">
+        <Loader2 className="w-8 h-8 text-amber-500 animate-spin" />
+        <p className="text-sm font-medium text-muted-foreground">Memuat Radar Smart Money...</p>
       </div>
     );
   }
@@ -82,11 +82,15 @@ export default function SmartMoneyPage() {
   if (!user || !role?.startsWith("admin")) {
     return (
       <div className="p-8 flex justify-center items-center min-h-screen bg-background text-foreground">
-        <CryptoEmptyState 
-           icon={<Eye className="w-8 h-8" />}
-           title="Akses Ditolak"
-           description="Halaman khusus Executive. Silakan upgrade paket Anda."
-        />
+        <div className="flex flex-col items-center justify-center py-20 text-center px-4 max-w-md mx-auto">
+          <div className="w-16 h-16 bg-secondary text-secondary-foreground dark:bg-slate-900 rounded-full flex items-center justify-center mb-4 text-muted-foreground border border-slate-200 dark:border-slate-800">
+            <Eye className="w-8 h-8" />
+          </div>
+          <h3 className="text-lg font-black text-foreground mb-2">Akses Ditolak</h3>
+          <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
+            Halaman khusus Executive. Silakan upgrade paket Anda.
+          </p>
+        </div>
       </div>
     );
   }
@@ -96,17 +100,20 @@ export default function SmartMoneyPage() {
   if (!latestReport) {
     return (
       <div className="p-8 flex justify-center items-center min-h-screen bg-background text-foreground">
-        <CryptoEmptyState 
-           icon={<Eye className="w-8 h-8" />}
-           title="Belum Ada Data"
-           description="Data Smart Money Tracker belum tersedia."
-        />
+        <div className="flex flex-col items-center justify-center py-20 text-center px-4 max-w-md mx-auto">
+          <div className="w-16 h-16 bg-secondary text-secondary-foreground dark:bg-slate-900 rounded-full flex items-center justify-center mb-4 text-muted-foreground border border-slate-200 dark:border-slate-800">
+            <Eye className="w-8 h-8" />
+          </div>
+          <h3 className="text-lg font-black text-foreground mb-2">Belum Ada Data</h3>
+          <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
+            Menunggu radar Smart Money berikutnya dari AI.
+          </p>
+        </div>
       </div>
     );
   }
 
   const coins = latestReport.coins || [];
-  const createdAt = latestReport.createdAt?.toDate ? latestReport.createdAt.toDate() : new Date();
 
   return (
     <div className="w-full relative">
@@ -114,67 +121,78 @@ export default function SmartMoneyPage() {
       {/* HEADER SECTION */}
       <div className="bg-background text-foreground backdrop-blur-md border-b border-white/5 mb-6">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
-           <CryptoButton 
-               variant="ghost" 
-               size="sm" 
-               onClick={() => router.back()}
-               className="mb-6 -ml-2 text-muted-foreground hover:text-foreground"
-           >
-               <ArrowLeft className="w-4 h-4 mr-2" /> Kembali ke Laporan
-           </CryptoButton>
-           
-           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-               <CryptoPageHeader 
-                   title="Smart Money Tracker"
-                   subtitle="Melacak akumulasi paus (Whale) sebelum breakout."
-                   icon={<Eye />}
-                   badge="Live Radar"
-                   badgeVariant="premium"
-               />
-
-               <div className="flex flex-col items-end gap-2 shrink-0">
-                   <Select value={selectedReportId} onValueChange={setSelectedReportId}>
-                     <SelectTrigger className="w-[200px] h-9 text-xs card-solid/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800/80 text-muted-foreground focus:ring-0 focus:ring-offset-0 rounded-xl hover:bg-secondary text-secondary-foreground dark:hover:bg-secondary text-secondary-foreground transition-colors">
-                        <SelectValue placeholder="Pilih Waktu" />
-                     </SelectTrigger>
-                     <SelectContent className="card-solid border-slate-200 dark:border-slate-800 text-muted-foreground rounded-xl shadow-xl shadow-black/50">
-                        {reports.map(r => {
-                           const d = r.createdAt?.toDate ? r.createdAt.toDate() : new Date(r.createdAt);
-                           const isLatest = r.id === reports[0]?.id;
-                           return (
-                              <SelectItem key={r.id} value={r.id} className="text-xs cursor-pointer focus:bg-secondary text-secondary-foreground focus:text-foreground">
-                                 {d.toLocaleDateString("id-ID", { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })} WIB {isLatest && "(Terbaru)"}
-                              </SelectItem>
-                           )
-                        })}
-                     </SelectContent>
-                   </Select>
-               </div>
-           </div>
+           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+        <div>
+          <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center border border-amber-200 dark:border-amber-500/30">
+                <Target className="w-5 h-5" />
+              </div>
+              <span className="inline-flex items-center justify-center rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest shadow-sm bg-gradient-to-r from-amber-500 to-orange-400 text-white border-0">EXECUTIVE ONLY</span>
+          </div>
+          <h1 className="text-3xl md:text-4xl font-black text-foreground tracking-tight mb-2">
+            Smart Money Radar
+          </h1>
+          <p className="text-muted-foreground text-sm md:text-base max-w-2xl leading-relaxed">
+            Melacak aliran dana besar institusi dan whale. Data bersifat sangat konfidensial.
+          </p>
         </div>
+        <div className="flex items-center gap-3 shrink-0">
+          <Link href="/crypto-report">
+            <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 h-11 px-6">
+               <ArrowLeft className="w-4 h-4 mr-2" /> Kembali
+            </button>
+          </Link>
+        </div>
+      </div>
+      
+      <div className="flex flex-col items-end gap-2 shrink-0 mb-6">
+        <Select value={selectedReportId} onValueChange={setSelectedReportId}>
+            <SelectTrigger className="w-[200px] h-9 text-xs bg-slate-100/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 text-muted-foreground rounded-xl">
+            <SelectValue placeholder="Pilih Waktu" />
+            </SelectTrigger>
+            <SelectContent className="bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-muted-foreground rounded-xl shadow-xl">
+            {reports.map(r => {
+                const d = r.createdAt?.toDate ? r.createdAt.toDate() : new Date(r.createdAt);
+                const isLatest = r.id === reports[0]?.id;
+                return (
+                <SelectItem key={r.id} value={r.id} className="text-xs cursor-pointer focus:bg-slate-100 dark:focus:bg-slate-800">
+                    {d.toLocaleDateString("id-ID", { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })} WIB {isLatest && "(Terbaru)"}
+                </SelectItem>
+                )
+            })}
+            </SelectContent>
+        </Select>
+      </div>
+      
+      </div>
       </div>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 pb-24">
          
-         <div className="mb-8 p-5 rounded-2xl bg-gradient-to-r from-purple-100 dark:from-purple-900/20 to-indigo-50 dark:to-indigo-900/20 border border-purple-500/20 text-muted-foreground">
-            <h3 className="font-bold text-purple-400 mb-2 flex items-center gap-2">
-                <Eye className="w-4 h-4" /> Apa itu Smart Money Tracker?
-            </h3>
-            <p className="text-sm leading-relaxed opacity-90">
-                Fitur ini mendeteksi aset kripto yang mengalami lonjakan volume perdagangan drastis (Volume Anomaly) namun pergerakan harganya sengaja ditahan. Ini adalah indikasi kuat bahwa institusi keuangan besar atau paus sedang mengakumulasi aset secara perlahan sebelum pergerakan harga yang masif.
-            </p>
+         {/* Narrative / AI Report */}
+         <div className="mb-12">
+            <div className="flex items-center gap-2 mb-6">
+                <Target className="w-6 h-6 text-amber-500" />
+                <h2 className="text-2xl font-black text-foreground">Analisis Pergerakan Whale</h2>
+            </div>
+            <div className="p-6 sm:p-8 relative overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
+                <div className="prose prose-sm md:prose-base dark:prose-invert max-w-none text-muted-foreground leading-relaxed relative z-10 whitespace-pre-wrap font-medium">
+                    {latestReport.reportData?.smartMoneyNarrative || "Tidak ada detail narrative yang disertakan dalam laporan ini."}
+                </div>
+            </div>
          </div>
 
           <div className="space-y-6">
             {coins.map((coin: any, i: number) => (
-                <CryptoCard key={i} variant="glow-purple" className="group">
+                <div key={i} className="relative overflow-hidden group bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl">
                     <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-purple-500 to-indigo-600"></div>
                     <div className="p-6 sm:p-8">
                         <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6 pb-6 border-b border-slate-200 dark:border-slate-800">
                             <div>
                                 <div className="flex items-center gap-3 mb-2">
                                     <h2 className="text-3xl font-black text-foreground tracking-tight">{coin.symbol}</h2>
-                                    <CryptoBadge variant="bullish">WHALE DETECTED</CryptoBadge>
+                                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/10 text-rose-500 border border-rose-500/20">WHALE DETECTED</span>
                                 </div>
                                 <div className="text-2xl font-bold text-muted-foreground font-mono tracking-wider">
                                     {coin.currentPrice}
@@ -218,7 +236,7 @@ export default function SmartMoneyPage() {
                             </p>
                         </div>
                     </div>
-                </CryptoCard>
+                    </div>
             ))}
          </div>
 

@@ -13,6 +13,7 @@ import {
 } from '@/components/icon';
 import { TextToBullets } from './UniversalAssessmentView';
 import { PersonalActionPlanCopilot } from '@/features/assessment/components/PersonalActionPlanCopilot';
+import { ActivityFeed } from '@omnifit-ui/components';
 
 export interface AdaptiveAssessmentProps {
   formData: CurationFormData | any;
@@ -395,24 +396,18 @@ export function AdaptiveAssessmentView({
         </div>
       )}
 
-      {quickWins.length > 0 && (
-        <div className="bg-card/40 backdrop-blur-xl ring-1 ring-border p-6 sm:p-8 rounded-[2rem] shadow-sm w-full">
-          <h3 className="text-foreground font-black uppercase tracking-widest text-sm flex items-center gap-2 mb-4">
-            <BrainIcon size={20} className="text-indigo-500" /> 5 Langkah Strategis Kunci
-          </h3>
-          <div className="space-y-4">
-            {quickWins.map((step: any, idx: number) => (
-              <div key={idx} className="p-4 rounded-2xl bg-muted text-muted-foreground ring-1 ring-border">
-                <div className="flex items-start justify-between gap-3 mb-2">
-                  <h4 className="font-black text-foreground">{step.timeframe}</h4>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-indigo-500 bg-indigo-50 dark:bg-indigo-500/10 px-2 py-1 rounded-full">Aksi</span>
-                </div>
-                <p className="text-sm text-muted-foreground font-medium leading-relaxed">{step.task}</p>
-              </div>
-            ))}
-          </div>
+        <div className="w-full">
+          <ActivityFeed 
+            title="5 Langkah Strategis Kunci" 
+            items={quickWins.map((step: any, idx: number) => ({
+              id: idx,
+              title: "Tindakan Rekomendasi AI",
+              description: step.task,
+              time: step.timeframe,
+              color: 'indigo'
+            }))} 
+          />
         </div>
-      )}
     </>
   );
 

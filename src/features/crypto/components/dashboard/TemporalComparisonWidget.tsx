@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { History, TrendingUp, TrendingDown, Minus, ArrowRight } from "lucide-react";
-import { CryptoCard, CryptoEmptyState } from "../ui/CryptoUIKit";
+import { History } from "lucide-react";
+import { SpotlightCard } from "@omnifit-ui/components";
 
 interface TemporalComparisonWidgetProps {
   reportData?: any;
@@ -13,11 +13,11 @@ export default function TemporalComparisonWidget({ reportData }: TemporalCompari
   
   if (!temporal) {
      return (
-       <CryptoEmptyState
-         icon={<History className="w-8 h-8" />}
-         title="Belum Tersedia"
-         description="Data perbandingan temporal belum tersedia di laporan ini."
-       />
+       <div className="flex flex-col items-center justify-center p-12 text-center border border-dashed rounded-2xl border-slate-200 dark:border-slate-800">
+         <History className="w-8 h-8 text-muted-foreground mb-4" />
+         <h3 className="text-lg font-bold text-foreground">Belum Tersedia</h3>
+         <p className="text-muted-foreground">Data perbandingan temporal belum tersedia di laporan ini.</p>
+       </div>
      );
   }
 
@@ -30,37 +30,28 @@ export default function TemporalComparisonWidget({ reportData }: TemporalCompari
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
          {/* Sentiment Change */}
-         <CryptoCard className="overflow-hidden relative group">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl group-hover:bg-indigo-500/20 transition-colors"></div>
-            <div className="p-6 relative z-10">
-               <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4">Pergeseran Sentimen</div>
-               <div className="text-lg font-medium text-muted-foreground leading-relaxed group-hover:text-foreground transition-colors">
-                 {temporal.sentimentChange || "Tidak ada data sentimen."}
-               </div>
+         <SpotlightCard color="indigo" className="p-6">
+            <div className="text-xs font-bold text-indigo-500 uppercase tracking-widest mb-4">Pergeseran Sentimen</div>
+            <div className="text-lg font-medium text-foreground leading-relaxed">
+              {temporal.sentimentChange || "Tidak ada data sentimen."}
             </div>
-         </CryptoCard>
+         </SpotlightCard>
 
          {/* BTC Price Delta */}
-         <CryptoCard className="overflow-hidden relative group">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl group-hover:bg-amber-500/20 transition-colors"></div>
-            <div className="p-6 relative z-10">
-               <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4">Perubahan Harga BTC</div>
-               <div className="text-lg font-medium text-muted-foreground leading-relaxed group-hover:text-foreground transition-colors">
-                 {temporal.btcPriceDelta || "Tidak ada data perubahan harga BTC."}
-               </div>
+         <SpotlightCard color="amber" className="p-6">
+            <div className="text-xs font-bold text-amber-500 uppercase tracking-widest mb-4">Perubahan Harga BTC</div>
+            <div className="text-lg font-medium text-foreground leading-relaxed">
+              {temporal.btcPriceDelta || "Tidak ada data perubahan harga BTC."}
             </div>
-         </CryptoCard>
+         </SpotlightCard>
 
          {/* Notable Movers */}
-         <CryptoCard className="overflow-hidden relative group">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-colors"></div>
-            <div className="p-6 relative z-10">
-               <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4">Notable Movers</div>
-               <div className="text-lg font-medium text-muted-foreground leading-relaxed group-hover:text-foreground transition-colors">
-                 {temporal.notableMovers || "Tidak ada data movers yang menonjol."}
-               </div>
+         <SpotlightCard color="emerald" className="p-6">
+            <div className="text-xs font-bold text-emerald-500 uppercase tracking-widest mb-4">Notable Movers</div>
+            <div className="text-lg font-medium text-foreground leading-relaxed">
+              {temporal.notableMovers || "Tidak ada data movers yang menonjol."}
             </div>
-         </CryptoCard>
+         </SpotlightCard>
       </div>
     </div>
   );

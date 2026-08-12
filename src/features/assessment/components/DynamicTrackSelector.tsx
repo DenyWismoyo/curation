@@ -24,6 +24,7 @@ import {
   DocExportIcon,
   AiSparkIcon
 } from '@/components/icon';
+import { FilterChipGroup } from '@omnifit-ui/components';
 
 interface DynamicTrackSelectorProps {
   templates: FormTemplate[];
@@ -77,6 +78,7 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
   const router = useRouter();
   const [selectedTrack, setSelectedTrack] = useState<FormTemplate | null>(null);
   const [activeCorporateName, setActiveCorporateName] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string>('Semua');
 
   React.useEffect(() => {
     const corpName = sessionStorage.getItem('active_corporate_name');
@@ -86,6 +88,11 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
   }, []);
 
   const activeTemplates = templates.filter(t => t.isActive);
+  const categories = ['Semua', ...Array.from(new Set(activeTemplates.map(t => t.category || 'Lainnya')))];
+  
+  const filteredTemplates = activeTemplates.filter(t => 
+    activeCategory === 'Semua' || (t.category || 'Lainnya') === activeCategory
+  );
 
   const handleSelectTrack = (template: FormTemplate) => {
     setSelectedTrack(template);
@@ -152,15 +159,24 @@ export function DynamicTrackSelector({ templates, onBack }: DynamicTrackSelector
         </div>
 
         {/* ================= GRID SECTION ================= */}
-        {activeTemplates.length === 0 ? (
+        <div className="flex justify-center mb-6">
+          <FilterChipGroup 
+            chips={categories.map(c => ({ id: c, label: c }))} 
+            selectedIds={[activeCategory]} 
+            onChange={(ids) => setActiveCategory(ids[0] || 'Semua')} 
+            multiSelect={false}
+          />
+        </div>
+
+        {filteredTemplates.length === 0 ? (
           <div className="py-24 text-center text-muted-foreground bg-card/40 backdrop-blur-xl ring-1 ring-border rounded-[2rem] shadow-sm animate-in zoom-in-95 duration-500">
             <TechCardIcon className="mx-auto h-16 w-16 text-slate-200 mb-6 grayscale opacity-50" />
             <p className="font-black text-2xl text-foreground mb-2">Katalog Belum Tersedia</p>
-            <p className="text-base font-medium">Silakan hubungi administrator untuk menerbitkan modul asesmen.</p>
+            <p className="text-base font-medium">Modul untuk kategori ini belum tersedia.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
-            {activeTemplates.map((template, index) => {
+            {filteredTemplates.map((template, index) => {
               const IconComponent = template.trackIcon && (LucideIcons as any)[template.trackIcon] 
                                       ? (LucideIcons as any)[template.trackIcon] 
                                       : AppModuleTealIcon;

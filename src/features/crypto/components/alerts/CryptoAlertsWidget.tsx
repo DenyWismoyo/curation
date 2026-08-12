@@ -3,10 +3,9 @@
 import { useEffect, useState } from "react";
 import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase/firebase";
-import { BellRing, ExternalLink, Zap, X } from "lucide-react";
+import { BellRing, ExternalLink, Zap, X, Loader2 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { CryptoCard, CryptoBadge, CryptoButton, CryptoEmptyState, CryptoLoadingState } from "../ui/CryptoUIKit";
 import Link from "next/link";
 
 export default function CryptoAlertsWidget() {
@@ -75,23 +74,26 @@ export default function CryptoAlertsWidget() {
         <div className="flex-1 overflow-hidden relative">
            <ScrollArea className="h-full px-6 py-4">
              {loading ? (
-                <CryptoLoadingState type="spinner" message="Memuat Notifikasi..." />
+                <div className="flex flex-col items-center justify-center p-12 space-y-4">
+                  <Loader2 className="w-8 h-8 text-amber-500 animate-spin" />
+                  <p className="text-muted-foreground text-sm">Memuat Notifikasi...</p>
+                </div>
              ) : alerts.length === 0 ? (
-                <CryptoEmptyState 
-                  icon={<BellRing className="w-8 h-8" />} 
-                  title="Kosong" 
-                  description="Belum ada riwayat notifikasi scalping." 
-                />
+                <div className="flex flex-col items-center justify-center p-12 text-center border border-dashed rounded-2xl border-slate-200 dark:border-slate-800">
+                  <BellRing className="w-8 h-8 text-muted-foreground mb-4" />
+                  <h3 className="text-lg font-bold text-foreground">Kosong</h3>
+                  <p className="text-muted-foreground">Belum ada riwayat notifikasi scalping.</p>
+                </div>
              ) : (
                <div className="space-y-4 pb-10">
                  {alerts.map((alert) => (
-                   <CryptoCard key={alert.id} className="p-4 group">
+                   <div key={alert.id} className="card-solid relative overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 p-4 group hover:border-amber-300 dark:hover:border-amber-700 transition-colors">
                      <div className="absolute top-0 left-0 w-1 h-full bg-rose-500"></div>
                      <div className="flex justify-between items-start mb-2 pl-2">
-                       <CryptoBadge variant="danger" className="text-[9px] gap-1 px-2 py-0.5">
+                       <span className="inline-flex items-center justify-center rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest shadow-sm bg-rose-500/20 text-rose-500 border-0 gap-1">
                          <Zap className="w-3 h-3" />
                          Alert
-                       </CryptoBadge>
+                       </span>
                        <span className="text-xs text-muted-foreground font-medium">
                          {alert.createdAt?.toDate ? alert.createdAt.toDate().toLocaleDateString("id-ID", { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : ""}
                        </span>
@@ -107,12 +109,12 @@ export default function CryptoAlertsWidget() {
                            <span className="text-rose-400">SL: {alert.stopLossPrice || '-'}</span>
                         </div>
                         <Link href={`/crypto-report/${alert.symbol.replace('USDT', '')}`} onClick={() => setIsOpen(false)}>
-                           <CryptoButton variant="ghost" size="sm" className="h-8 text-indigo-400 hover:text-indigo-300">
-                              Lihat <ExternalLink className="w-3 h-3 ml-1" />
-                           </CryptoButton>
+                           <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-8 px-3 text-amber-500 hover:text-amber-400">
+                               Lihat <ExternalLink className="w-3 h-3 ml-1" />
+                           </button>
                         </Link>
                      </div>
-                   </CryptoCard>
+                   </div>
                  ))}
                </div>
              )}

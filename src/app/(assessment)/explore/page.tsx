@@ -27,7 +27,9 @@ import { AiSparkIcon, AILensIcon, GlobalTargetIcon, BrainIcon } from '@/componen
 import { shareOrCopy } from '@/services/share'
 import { Input } from '@/components/ui/input'
 import { PageShell } from '@/components/domain/public'
-
+import { SpotlightCard } from '@/components/landing/SpotlightCard'
+import { FloatingCard } from '@/components/landing/FloatingCard'
+import { FilterChipGroup } from '@omnifit-ui/components'
 interface Article {
   id: string
   title: string
@@ -150,7 +152,14 @@ export default function ExplorePage() {
   )
 
   return (
-    <PageShell size="xl" fullBleed>
+    <PageShell size="xl" fullBleed className="relative overflow-hidden">
+      {/* Premium Animated Background Blobs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="absolute -top-[20%] -left-[10%] w-[60vw] h-[60vw] bg-indigo-600/10 rounded-full blur-[120px] mix-blend-screen opacity-50 animate-pulse" />
+        <div className="absolute top-[30%] -right-[10%] w-[50vw] h-[50vw] bg-amber-500/10 rounded-full blur-[100px] mix-blend-screen opacity-50" />
+        <div className="absolute -bottom-[20%] left-[20%] w-[70vw] h-[70vw] bg-emerald-500/10 rounded-full blur-[120px] mix-blend-screen opacity-40" />
+      </div>
+
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 pb-24 relative z-10">
         <div className="flex flex-col sm:flex-row gap-4 justify-between sm:items-center mb-6">
           <div className="relative w-full sm:max-w-xs">
@@ -163,20 +172,16 @@ export default function ExplorePage() {
               className="pl-11 h-12 rounded-xl font-medium"
             />
           </div>
-          <div className="flex gap-2 overflow-x-auto custom-scrollbar card-solid p-1.5 rounded-xl border border-border w-fit max-w-full">
-            {CATEGORIES.map((category) => (
-              <button
-                key={category}
-                onClick={() => setActiveCategory(category)}
-                className={`px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap ${
-                  activeCategory === category
-                    ? 'bg-foreground text-background shadow-sm'
-                    : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
-                }`}
-              >
-                {category}
-              </button>
-            ))}
+          <div className="w-full sm:w-auto overflow-x-auto pb-2 sm:pb-0">
+            <FilterChipGroup
+              chips={CATEGORIES.map(c => ({ id: c, label: c }))}
+              selectedIds={[activeCategory]}
+              onChange={(ids) => {
+                if (ids.length > 0) setActiveCategory(ids[0]);
+              }}
+              multiSelect={false}
+              color="indigo"
+            />
           </div>
         </div>
 
@@ -205,75 +210,79 @@ export default function ExplorePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 onClick={() => router.push(`/explore/${featuredArticle.id}`)}
-                className="card-solid rounded-xl border border-border p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 group mb-12 cursor-pointer relative flex flex-col"
+                className="mb-12 cursor-pointer relative group"
               >
-                <button
-                  onClick={(e) =>
-                    handleCopyLink(e, featuredArticle.id, featuredArticle.title)
-                  }
-                  className={`absolute top-6 sm:top-8 right-6 sm:right-8 z-20 p-2.5 rounded-lg shadow-sm border transition-all ${copiedId === featuredArticle.id ? 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400' : 'card-solid border-border text-muted-foreground hover:bg-muted text-muted-foreground hover:text-foreground'}`}
-                  title="Bagikan Tautan"
-                >
-                  {copiedId === featuredArticle.id ? (
-                    <Check size={16} />
-                  ) : (
-                    <Share2 size={16} />
-                  )}
-                </button>
+                <FloatingCard>
+                  <SpotlightCard className="rounded-2xl sm:rounded-[2rem] border border-border p-4 sm:p-6 lg:p-8 shadow-md hover:shadow-xl transition-all duration-500 flex flex-col items-center bg-background">
+                    <button
+                      onClick={(e) =>
+                        handleCopyLink(e, featuredArticle.id, featuredArticle.title)
+                      }
+                      className={`absolute top-6 sm:top-8 right-6 sm:right-8 z-20 p-2.5 rounded-lg shadow-sm border transition-all ${copiedId === featuredArticle.id ? 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400' : 'card-solid border-border text-muted-foreground hover:bg-muted hover:text-foreground'}`}
+                      title="Bagikan Tautan"
+                    >
+                      {copiedId === featuredArticle.id ? (
+                        <Check size={16} />
+                      ) : (
+                        <Share2 size={16} />
+                      )}
+                    </button>
 
-                <div className="w-full aspect-[2/1] bg-muted text-muted-foreground rounded-lg relative overflow-hidden border border-border mb-6 sm:mb-8">
-                  {featuredArticle.imageUrl ? (
-                    <img
-                      src={featuredArticle.imageUrl}
-                      alt={featuredArticle.title}
-                      className="w-full h-full object-cover transform group-hover:scale-[1.02] transition-transform duration-500"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center transform group-hover:scale-[1.02] transition-transform duration-500">
-                      {getIconComponent(
-                        featuredArticle.iconName,
-                        'text-slate-300'
+                    <div className="w-full aspect-[2/1] bg-muted text-muted-foreground rounded-xl relative overflow-hidden border border-border mb-6 sm:mb-8 shadow-inner">
+                      {featuredArticle.imageUrl ? (
+                        <img
+                          src={featuredArticle.imageUrl}
+                          alt={featuredArticle.title}
+                          className="w-full h-full object-cover transform group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center transform group-hover:scale-[1.03] transition-transform duration-700 ease-out">
+                          {getIconComponent(
+                            featuredArticle.iconName,
+                            'text-slate-300'
+                          )}
+                        </div>
                       )}
                     </div>
-                  )}
-                </div>
 
-                <div className="px-2 sm:px-6 pb-4 max-w-4xl mx-auto w-full text-center">
-                  <div className="flex items-center justify-center gap-3 mb-4">
-                    <span className="px-3 py-1 bg-secondary text-secondary-foreground text-[10px] font-bold uppercase tracking-widest rounded border border-border">
-                      {featuredArticle.category}
-                    </span>
-                    <span className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-                      <Calendar size={14} />{' '}
-                      {new Date(featuredArticle.createdAt).toLocaleDateString(
-                        'id-ID',
-                        { day: 'numeric', month: 'long', year: 'numeric' }
-                      )}
-                    </span>
-                  </div>
+                    <div className="px-2 sm:px-6 pb-4 max-w-4xl mx-auto w-full text-center">
+                      <div className="flex items-center justify-center gap-3 mb-4">
+                        <span className="px-3 py-1 bg-secondary text-secondary-foreground text-[10px] font-bold uppercase tracking-widest rounded border border-border">
+                          {featuredArticle.category}
+                        </span>
+                        <span className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                          <Calendar size={14} />{' '}
+                          {new Date(featuredArticle.createdAt).toLocaleDateString(
+                            'id-ID',
+                            { day: 'numeric', month: 'long', year: 'numeric' }
+                          )}
+                        </span>
+                      </div>
 
-                  <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-foreground tracking-tight leading-[1.15] mb-4 group-hover:text-indigo-600 dark:text-indigo-400 transition-colors text-balance mx-auto">
-                    {featuredArticle.title}
-                  </h2>
+                      <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-foreground tracking-tight leading-[1.15] mb-4 group-hover:text-indigo-500 transition-colors text-balance mx-auto">
+                        {featuredArticle.title}
+                      </h2>
 
-                  <p className="text-base sm:text-lg text-muted-foreground font-medium leading-relaxed mb-8 max-w-3xl mx-auto line-clamp-3">
-                    {featuredArticle.excerpt}
-                  </p>
+                      <p className="text-base sm:text-lg text-muted-foreground font-medium leading-relaxed mb-8 max-w-3xl mx-auto line-clamp-3">
+                        {featuredArticle.excerpt}
+                      </p>
 
-                  <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 pt-6 border-t border-border w-full max-w-xl mx-auto">
-                    <span className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
-                      <Clock size={16} /> Estimasi baca{' '}
-                      {featuredArticle.readTime}
-                    </span>
-                    <span className="flex items-center gap-2 text-sm font-bold text-foreground group-hover:text-indigo-600 dark:text-indigo-400 transition-colors px-4 py-2 rounded-lg hover:bg-muted text-muted-foreground">
-                      Mulai Membaca{' '}
-                      <ArrowRight
-                        size={16}
-                        className="group-hover:translate-x-1 transition-transform"
-                      />
-                    </span>
-                  </div>
-                </div>
+                      <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 pt-6 border-t border-border w-full max-w-xl mx-auto">
+                        <span className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
+                          <Clock size={16} /> Estimasi baca{' '}
+                          {featuredArticle.readTime}
+                        </span>
+                        <span className="flex items-center gap-2 text-sm font-bold text-foreground group-hover:text-indigo-600 dark:text-indigo-400 transition-colors px-4 py-2 rounded-lg hover:bg-muted">
+                          Mulai Membaca{' '}
+                          <ArrowRight
+                            size={16}
+                            className="group-hover:translate-x-1 transition-transform"
+                          />
+                        </span>
+                      </div>
+                    </div>
+                  </SpotlightCard>
+                </FloatingCard>
               </motion.div>
             )}
 
@@ -289,66 +298,68 @@ export default function ExplorePage() {
                     transition={{ duration: 0.2, delay: idx * 0.05 }}
                     key={article.id}
                     onClick={() => router.push(`/explore/${article.id}`)}
-                    className="card-solid rounded-xl border border-border shadow-sm hover:shadow-md transition-all duration-200 group cursor-pointer flex flex-col relative overflow-hidden"
+                    className="group cursor-pointer h-full"
                   >
-                    <button
-                      onClick={(e) =>
-                        handleCopyLink(e, article.id, article.title)
-                      }
-                      className={`absolute top-3 right-3 z-20 p-2 rounded-lg shadow-sm border transition-all ${copiedId === article.id ? 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400' : 'card-solid/90 backdrop-blur-sm border-border text-muted-foreground hover:card-solid hover:text-foreground'}`}
-                      title="Bagikan Tautan"
-                    >
-                      {copiedId === article.id ? (
-                        <Check size={14} />
-                      ) : (
-                        <Share2 size={14} />
-                      )}
-                    </button>
+                    <SpotlightCard className="h-full rounded-2xl border border-border shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col relative overflow-hidden bg-background">
+                      <button
+                        onClick={(e) =>
+                          handleCopyLink(e, article.id, article.title)
+                        }
+                        className={`absolute top-3 right-3 z-20 p-2 rounded-lg shadow-sm border transition-all ${copiedId === article.id ? 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400' : 'card-solid/90 backdrop-blur-sm border-border text-muted-foreground hover:card-solid hover:text-foreground'}`}
+                        title="Bagikan Tautan"
+                      >
+                        {copiedId === article.id ? (
+                          <Check size={14} />
+                        ) : (
+                          <Share2 size={14} />
+                        )}
+                      </button>
 
-                    <div className="w-full aspect-[2/1] bg-muted text-muted-foreground relative overflow-hidden border-b border-border shrink-0">
-                      {article.imageUrl ? (
-                        <img
-                          src={article.imageUrl}
-                          alt={article.title}
-                          className="w-full h-full object-cover transform group-hover:scale-[1.03] transition-transform duration-300"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center transform group-hover:scale-[1.03] transition-transform duration-300">
-                          {getIconComponent(article.iconName, 'text-slate-300')}
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="p-4 sm:p-5 flex-1 flex flex-col">
-                      <div className="flex items-center gap-3 mb-3">
-                        <span className="px-2 py-0.5 bg-secondary text-secondary-foreground text-[10px] font-bold uppercase tracking-wider rounded border border-border">
-                          {article.category}
-                        </span>
-                      </div>
-
-                      <h3 className="text-base font-bold text-foreground tracking-tight leading-snug mb-2 group-hover:text-indigo-600 dark:text-indigo-400 transition-colors line-clamp-2 text-balance">
-                        {article.title}
-                      </h3>
-
-                      <p className="text-sm text-muted-foreground font-medium leading-relaxed mb-6 line-clamp-3">
-                        {article.excerpt}
-                      </p>
-
-                      <div className="mt-auto flex items-center justify-between border-t border-border pt-4">
-                        <span className="text-[11px] font-medium text-muted-foreground">
-                          {new Date(article.createdAt).toLocaleDateString(
-                            'id-ID',
-                            { day: 'numeric', month: 'short', year: 'numeric' }
-                          )}
-                        </span>
-                        <div className="flex items-center text-slate-400 group-hover:text-indigo-600 dark:text-indigo-400 transition-colors">
-                          <ArrowRight
-                            size={16}
-                            className="group-hover:translate-x-1 transition-transform"
+                      <div className="w-full aspect-[2/1] bg-muted text-muted-foreground relative overflow-hidden border-b border-border shrink-0 shadow-inner">
+                        {article.imageUrl ? (
+                          <img
+                            src={article.imageUrl}
+                            alt={article.title}
+                            className="w-full h-full object-cover transform group-hover:scale-[1.05] transition-transform duration-500 ease-out"
                           />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center transform group-hover:scale-[1.05] transition-transform duration-500 ease-out">
+                            {getIconComponent(article.iconName, 'text-slate-300')}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="p-4 sm:p-5 flex-1 flex flex-col">
+                        <div className="flex items-center gap-3 mb-3">
+                          <span className="px-2 py-0.5 bg-secondary text-secondary-foreground text-[10px] font-bold uppercase tracking-wider rounded border border-border">
+                            {article.category}
+                          </span>
+                        </div>
+
+                        <h3 className="text-base font-bold text-foreground tracking-tight leading-snug mb-2 group-hover:text-indigo-500 transition-colors line-clamp-2 text-balance">
+                          {article.title}
+                        </h3>
+
+                        <p className="text-sm text-muted-foreground font-medium leading-relaxed mb-6 line-clamp-3">
+                          {article.excerpt}
+                        </p>
+
+                        <div className="mt-auto flex items-center justify-between border-t border-border pt-4">
+                          <span className="text-[11px] font-medium text-muted-foreground">
+                            {new Date(article.createdAt).toLocaleDateString(
+                              'id-ID',
+                              { day: 'numeric', month: 'short', year: 'numeric' }
+                            )}
+                          </span>
+                          <div className="flex items-center text-slate-400 group-hover:text-indigo-500 transition-colors">
+                            <ArrowRight
+                              size={16}
+                              className="group-hover:translate-x-1 transition-transform"
+                            />
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    </SpotlightCard>
                   </motion.div>
                 ))}
               </AnimatePresence>

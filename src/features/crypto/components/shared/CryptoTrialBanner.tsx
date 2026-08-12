@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Clock, Zap, X } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
-import { CryptoButton } from '../ui/CryptoUIKit';
 
 export default function CryptoTrialBanner() {
   const { isTrial, trialExpiresAt } = useAuth();
@@ -60,13 +59,12 @@ export default function CryptoTrialBanner() {
       </div>
       
       <div className="flex items-center gap-4">
-        <CryptoButton 
-          variant={isWarning ? "danger" : "premium"}
-          size="sm"
+        <button 
           onClick={() => router.push('/crypto')}
+          className={`inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-2 ${isWarning ? 'bg-rose-500 text-white hover:bg-rose-600' : 'bg-amber-500 text-white hover:bg-amber-600 shadow-md shadow-amber-500/20'}`}
         >
           Upgrade Sekarang
-        </CryptoButton>
+        </button>
         <button onClick={() => setDismissed(true)} className="text-muted-foreground hover:text-foreground transition-colors">
           <X size={16} />
         </button>

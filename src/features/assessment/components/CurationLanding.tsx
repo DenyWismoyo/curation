@@ -40,6 +40,7 @@ import {
 } from '@/components/icon'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { AlertBanner } from '@omnifit-ui/components'
 import { CurationHistory } from '@/features/assessment/types/assessment.types'
 import {
   collection,
@@ -70,6 +71,7 @@ import { DraftValidationModal } from './DraftValidationModal'
 import { MicroSimulator } from './MicroSimulator'
 import { SpotlightCard } from '@/components/landing/SpotlightCard'
 import { GradientBadge } from '@/components/landing/GradientBadge'
+import { FloatingCard } from '@/components/landing/FloatingCard'
 
 const SystemCapabilitiesModal = dynamic(
   () =>
@@ -500,19 +502,19 @@ export function CurationLanding({
   // ── Render ───────────────────────────────────────────────────────────────────
   return (
     <LazyMotion features={domAnimation}>
-      <div className="w-full min-h-screen bg-background selection:bg-indigo-100 selection:text-indigo-900">
+      <div className="w-full min-h-screen bg-background selection:bg-indigo-100 selection:text-indigo-900 relative overflow-hidden">
+        
+        {/* Premium Animated Background Blobs */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+          <div className="absolute -top-[20%] -left-[10%] w-[60vw] h-[60vw] bg-indigo-600/10 rounded-full blur-[120px] mix-blend-screen opacity-50 animate-pulse" />
+          <div className="absolute top-[30%] -right-[10%] w-[50vw] h-[50vw] bg-amber-500/10 rounded-full blur-[100px] mix-blend-screen opacity-50" />
+          <div className="absolute -bottom-[20%] left-[20%] w-[70vw] h-[70vw] bg-emerald-500/10 rounded-full blur-[120px] mix-blend-screen opacity-40" />
+        </div>
+
         {/* ══════════════════════════════════════════════════════════════════════
             HERO SECTION — full-width, above the fold
         ══════════════════════════════════════════════════════════════════════ */}
-        <section className="relative overflow-hidden border-b border-border/80">
-          {/* Subtle background orbs */}
-          <div
-            className="pointer-events-none absolute inset-0 overflow-hidden"
-            aria-hidden
-          >
-            <div className="absolute -top-32 -left-32 w-[500px] h-[500px] bg-indigo-500/20 dark:bg-indigo-500/10 rounded-full blur-[120px]" />
-            <div className="absolute top-1/2 right-0 -translate-y-1/2 translate-x-1/3 w-[600px] h-[600px] bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-[120px]" />
-          </div>
+        <section className="relative border-b border-border/80 z-10">
 
           <div className="relative z-10 max-w-7xl mx-auto px-5 lg:px-10 pt-10 pb-12 lg:pt-14 lg:pb-16">
             <m.div
@@ -522,18 +524,17 @@ export function CurationLanding({
               className="flex flex-col items-center text-center gap-6"
             >
               {/* Logo */}
-              <m.div
-                variants={fadeUp}
-                className="w-16 h-16 sm:w-20 sm:h-20 card-solid rounded-2xl shadow-md ring-1 ring-border overflow-hidden flex items-center justify-center"
-              >
-                <SafeLogo
-                  src="/logo.png"
-                  alt="Omnifit"
-                  width={80}
-                  height={80}
-                  className="w-full h-full object-contain p-2"
-                  priority
-                />
+              <m.div variants={fadeUp}>
+                <FloatingCard className="w-16 h-16 sm:w-20 sm:h-20 card-solid rounded-2xl shadow-md ring-1 ring-border overflow-hidden flex items-center justify-center cursor-pointer">
+                  <SafeLogo
+                    src="/logo.png"
+                    alt="Omnifit"
+                    width={80}
+                    height={80}
+                    className="w-full h-full object-contain p-2"
+                    priority
+                  />
+                </FloatingCard>
               </m.div>
 
               {/* Eyebrow */}
@@ -986,32 +987,18 @@ export function CurationLanding({
                 </m.div>
               )}
 
-              {/* ── Onboarding nudge banner ───────────────────────────────────── */}
-              <m.div variants={fadeUp} className="card-highlight p-5">
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shrink-0 shadow-sm">
-                    <Sparkles className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-indigo-500 mb-1">
-                      Rekomendasi Adaptif
-                    </p>
-                    <h3 className="text-sm font-black leading-snug mb-1">
-                      Onboarding 2 Menit
-                    </h3>
-                    <p className="text-xs text-indigo-700 dark:text-indigo-300/70 font-medium leading-relaxed mb-3">
-                      AI menyusun 5 langkah prioritas & merekomendasikan modul
-                      yang tepat untuk Anda.
-                    </p>
-                    <Link
-                      href={user ? '/onboarding' : '/login?next=/onboarding'}
-                      className="inline-flex items-center gap-1.5 text-xs font-black text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 transition-colors"
-                    >
-                      Mulai Sekarang <ArrowRight className="w-3.5 h-3.5" />
-                    </Link>
-                  </div>
-                </div>
+              <m.div variants={fadeUp}>
+                <AlertBanner 
+                  title="Onboarding 2 Menit"
+                  description="AI menyusun 5 langkah prioritas & merekomendasikan modul yang tepat untuk Anda."
+                  variant="info"
+                  action={{
+                    label: "Mulai Sekarang",
+                    onClick: () => router.push(user ? '/onboarding' : '/login?next=/onboarding')
+                  }}
+                />
               </m.div>
+
 
               {/* ── Privacy & legal strip ─────────────────────────────────────── */}
               <m.div
@@ -1064,22 +1051,24 @@ export function CurationLanding({
                     const color = colorMap[i] || 'indigo';
                     
                     return (
-                      <m.div key={i} variants={cardVariant}>
-                        <SpotlightCard color={color as any} className="p-6 h-full flex flex-col gap-4">
-                          <div
-                            className={`w-12 h-12 ${vp.bg} rounded-2xl flex items-center justify-center ring-1 ring-white/50 dark:ring-white/5 shadow-inner group-hover:scale-110 transition-transform duration-300`}
-                          >
-                            {vp.icon}
-                          </div>
-                          <div>
-                            <h3 className="text-sm font-black text-foreground mb-1">
-                              {vp.title}
-                            </h3>
-                            <p className="text-xs text-muted-foreground font-medium leading-relaxed">
-                              {vp.desc}
-                            </p>
-                          </div>
-                        </SpotlightCard>
+                      <m.div key={i} variants={cardVariant} className="h-full">
+                        <FloatingCard className="h-full">
+                          <SpotlightCard color={color as any} className="p-6 h-full flex flex-col gap-4 cursor-pointer">
+                            <div
+                              className={`w-12 h-12 ${vp.bg} rounded-2xl flex items-center justify-center ring-1 ring-white/50 dark:ring-white/5 shadow-inner group-hover:scale-110 transition-transform duration-300`}
+                            >
+                              {vp.icon}
+                            </div>
+                            <div>
+                              <h3 className="text-sm font-black text-foreground mb-1">
+                                {vp.title}
+                              </h3>
+                              <p className="text-xs text-muted-foreground font-medium leading-relaxed">
+                                {vp.desc}
+                              </p>
+                            </div>
+                          </SpotlightCard>
+                        </FloatingCard>
                       </m.div>
                     );
                   })}
@@ -1151,6 +1140,7 @@ export function CurationLanding({
                   </button>
                 </div>
               )}
+
 
               {/* ── LOGGED IN: Empty state (no drafts, no history) ────────────── */}
               {user &&

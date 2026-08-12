@@ -288,4 +288,20 @@
   .animate-scan {
     animation: scan 3s ease-in-out infinite;
   }
+
+  /* ==========================================
+     ANALYTICS & DATA COMPONENTS UTILITIES
+     ========================================== */
+  
+  .trend-positive {
+    @apply bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400;
+  }
+  
+  .trend-negative {
+    @apply bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400;
+  }
+  
+  .chart-track {
+    @apply text-slate-100 dark:text-slate-800/50;
+  }
 }

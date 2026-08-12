@@ -11,7 +11,7 @@ import { CurationFormData, AIResult } from '@/features/assessment/types/assessme
 import { AiSparkIcon, AILensIcon, AdminShieldIcon, InfinityWorkflowIcon, GlobalTargetIcon, DocExportIcon, TechCardIcon, BrainIcon, EcosystemIcon } from '@/components/icon';
 import { ActionPlanBuilder } from '@/features/assessment/components/result/ActionPlanBuilder';
 import { ActionPlanCopilot } from '@/features/assessment/components/ActionPlanCopilot';
-import { ScoreRing } from './ScoreRing';
+import { DataRingProgress, AnalyticsDashboardGrid, GlassPanel, TrendPanel, MetricGaugeCard } from '@omnifit-ui/components';
 
 // ========================================================
 // 1. HELPER COMPONENTS
@@ -376,7 +376,7 @@ export function UniversalAssessmentView({
             <AiSparkIcon size={16}/> {getLabel('score')}
           </p>
           <div className="relative z-10 mb-6 drop-shadow-md">
-            <ScoreRing score={Math.min(aiScore, 100)} size={160} strokeWidth={12} />
+            <DataRingProgress value={Math.min(aiScore, 100)} size="lg" color={isHighTier ? "emerald" : "indigo"} showValue={true} />
           </div>
           
           <div className="relative z-10 flex flex-col items-center gap-2 w-full">
@@ -430,21 +430,21 @@ export function UniversalAssessmentView({
               </div>
             </div>
             
-            <div className="w-full lg:w-3/5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <AnalyticsDashboardGrid columns={{ sm: 2, md: 2, lg: 2 }} className="w-full lg:w-3/5 gap-4">
               {aiResult.metrics?.map((item: any, idx: number) => (
-                <div key={idx} className="bg-muted text-muted-foreground p-5 rounded-2xl ring-1 ring-border flex flex-col">
+                <GlassPanel key={idx} className="p-5 flex flex-col h-full hover:ring-indigo-500/50 transition-all">
                   <div className="flex justify-between items-start mb-3 gap-3">
                     <h4 className="text-sm font-black text-foreground leading-tight"><span className="text-indigo-600 dark:text-indigo-400 mr-1.5">D{idx + 1}.</span>{item?.label}</h4>
-                    <div className="card-solid ring-1 ring-border px-2 py-1 rounded-md shrink-0">
+                    <div className="bg-background ring-1 ring-border px-2 py-1 rounded-md shrink-0">
                       <span className={`text-base font-black ${item?.score >= 80 ? 'text-emerald-600 dark:text-emerald-400' : item?.score >= 60 ? 'text-amber-500' : 'text-rose-500'}`}>{item?.score}</span>
                     </div>
                   </div>
                   <div className="text-xs text-muted-foreground font-medium flex-1">
                     <TextToBullets text={item?.description} colorClass="text-slate-400" />
                   </div>
-                </div>
+                </GlassPanel>
               ))}
-            </div>
+            </AnalyticsDashboardGrid>
           </div>
 
           {isInternal && curatorData && (

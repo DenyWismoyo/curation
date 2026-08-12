@@ -6,13 +6,13 @@ import { useRouter } from "next/navigation";
 import { collection, query, orderBy, limit, onSnapshot } from "firebase/firestore";
 import { db } from "@/lib/firebase/firebase";
 import { useAuth } from "@/contexts/AuthContext";
-import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, ArrowLeft, Zap, Target, ShieldAlert, ChevronRight, Activity, BarChart3, Clock, AlertTriangle } from "lucide-react";
 import { PremiumLockedWrapper } from '@/features/crypto/components/alerts/PremiumLockedWrapper';
 import CryptoDisclaimer from "@/features/crypto/components/shared/CryptoDisclaimer";
+import { SpotlightCard } from "@omnifit-ui/components";
 
 export default function ScalpingRadarPage() {
   const router = useRouter();
@@ -201,7 +201,7 @@ export default function ScalpingRadarPage() {
              </div>
            ) : (
              scalps.map((scalp: any, idx: number) => (
-               <Card key={idx} className="card-solid/40 dark:bg-slate-900/40 border-slate-200 dark:border-slate-800/60 backdrop-blur-md overflow-hidden transition-all duration-500 hover:border-orange-500/30 hover:card-solid/80 dark:bg-slate-900/80 hover:shadow-[0_0_30px_rgba(249,115,22,0.05)] group">
+               <SpotlightCard color="amber" key={idx} className="p-0 border-slate-200 dark:border-slate-800/60 backdrop-blur-md overflow-hidden transition-all duration-500 group">
                  <div className="p-6 md:p-8 flex flex-col lg:flex-row gap-8">
                    
                    {/* LEFT: TARGET & PRICING */}
@@ -265,15 +265,15 @@ export default function ScalpingRadarPage() {
                          <div className="space-y-4 mb-6">
                             <div className="bg-muted text-muted-foreground dark:bg-black/40 rounded-xl p-4 border border-white/5 flex justify-between items-center">
                                <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Entry Target</span>
-                               <span className="font-mono text-lg font-bold text-foreground">${scalp.entryPrice}</span>
+                               <span className="font-mono text-lg font-bold text-foreground glow-amber-sm">${scalp.entryPrice}</span>
                             </div>
                             <div className="bg-emerald-100 dark:bg-emerald-950/20 rounded-xl p-4 border border-emerald-300 dark:border-emerald-900/30 flex justify-between items-center">
                                <span className="text-xs text-emerald-500/70 font-bold uppercase tracking-wider flex items-center gap-1.5"><Target className="w-3.5 h-3.5"/> Take Profit</span>
-                               <span className="font-mono text-lg font-bold text-emerald-400">${scalp.targetPrice}</span>
+                               <span className="font-mono text-lg font-bold text-emerald-400 glow-emerald-sm">${scalp.targetPrice}</span>
                             </div>
                             <div className="bg-rose-100 dark:bg-rose-950/20 rounded-xl p-4 border border-rose-900/30 flex justify-between items-center">
                                <span className="text-xs text-rose-500/70 font-bold uppercase tracking-wider flex items-center gap-1.5"><ShieldAlert className="w-3.5 h-3.5"/> Stop Loss</span>
-                               <span className="font-mono text-lg font-bold text-rose-400">${scalp.stopLossPrice}</span>
+                               <span className="font-mono text-lg font-bold text-rose-400 glow-rose-sm">${scalp.stopLossPrice}</span>
                             </div>
                          </div>
                       </div>
@@ -307,7 +307,7 @@ export default function ScalpingRadarPage() {
                    </div>
                    
                  </div>
-               </Card>
+               </SpotlightCard>
              ))
            )}
          </div>
