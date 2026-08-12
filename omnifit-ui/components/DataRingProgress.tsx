@@ -28,6 +28,7 @@ const colorMap: Record<OmnifitColor, { stroke: string; glow: string }> = {
   amber:  { stroke: OMNIFIT_COLORS.amber.base, glow: 'drop-shadow(0 0 8px rgba(245,158,11,0.5))' },
   emerald:{ stroke: OMNIFIT_COLORS.emerald.base, glow: 'drop-shadow(0 0 8px rgba(16,185,129,0.5))' },
   rose:   { stroke: OMNIFIT_COLORS.rose.base, glow: 'drop-shadow(0 0 8px rgba(244,63,94,0.5))' },
+  slate:  { stroke: '#64748b', glow: 'drop-shadow(0 0 8px rgba(100,116,139,0.5))' },
 };
 
 const fadeInUp: Variants = {

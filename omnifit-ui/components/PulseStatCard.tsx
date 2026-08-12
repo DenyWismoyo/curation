@@ -30,6 +30,7 @@ export function PulseStatCard({
     blue: 'bg-blue-50 dark:bg-blue-500/10 text-blue-500',
     purple: 'bg-purple-50 dark:bg-purple-500/10 text-purple-500',
     cyan: 'bg-cyan-50 dark:bg-cyan-500/10 text-cyan-500',
+    slate: 'bg-slate-50 dark:bg-slate-500/10 text-slate-500',
   };
 
   return (

@@ -18,6 +18,7 @@ const colorMap = {
   amber:  'bg-amber-500',
   emerald:'bg-emerald-500',
   rose:   'bg-rose-500',
+  slate:  'bg-slate-500',
 };
 
 export function NotificationDot({

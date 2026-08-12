@@ -46,6 +46,17 @@ export const OMNIFIT_COLORS = {
       border: 'border-rose-200 dark:border-rose-500/20',
       glow: 'shadow-[0_0_40px_-10px_rgba(244,63,94,0.4)]',
     }
+  },
+  
+  // Neutral / Background
+  slate: {
+    base: '#94a3b8',
+    classes: {
+      text: 'text-slate-500 dark:text-slate-400',
+      bg: 'bg-slate-50 dark:bg-slate-900/50',
+      border: 'border-slate-200 dark:border-slate-800',
+      glow: 'shadow-sm',
+    }
   }
 } as const;
 

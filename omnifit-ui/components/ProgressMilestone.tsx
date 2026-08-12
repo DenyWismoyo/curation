@@ -24,6 +24,7 @@ const colorActiveMap = {
   amber:  'bg-amber-500 text-white border-amber-500 shadow-[0_0_12px_rgba(245,158,11,0.5)]',
   emerald:'bg-emerald-500 text-white border-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.5)]',
   rose:   'bg-rose-500 text-white border-rose-500 shadow-[0_0_12px_rgba(244,63,94,0.5)]',
+  slate:  'bg-slate-500 text-white border-slate-500 shadow-[0_0_12px_rgba(100,116,139,0.5)]',
 };
 
 const colorCompletedMap = {
@@ -31,6 +32,7 @@ const colorCompletedMap = {
   amber:  'bg-amber-100 text-amber-600 border-amber-200 dark:bg-amber-900/50 dark:text-amber-400 dark:border-amber-700',
   emerald:'bg-emerald-100 text-emerald-600 border-emerald-200 dark:bg-emerald-900/50 dark:text-emerald-400 dark:border-emerald-700',
   rose:   'bg-rose-100 text-rose-600 border-rose-200 dark:bg-rose-900/50 dark:text-rose-400 dark:border-rose-700',
+  slate:  'bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-900/50 dark:text-slate-400 dark:border-slate-700',
 };
 
 const barColorMap = {
@@ -38,6 +40,7 @@ const barColorMap = {
   amber:  OMNIFIT_COLORS.amber.base,
   emerald:OMNIFIT_COLORS.emerald.base,
   rose:   OMNIFIT_COLORS.rose.base,
+  slate:  '#64748b',
 };
 
 export function ProgressMilestone({

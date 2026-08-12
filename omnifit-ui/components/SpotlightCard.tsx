@@ -26,6 +26,7 @@ export function SpotlightCard({
     amber: 'rgba(245, 158, 11, 0.15)',
     emerald: 'rgba(16, 185, 129, 0.15)',
     rose: 'rgba(244, 63, 94, 0.15)',
+    slate: 'rgba(100, 116, 139, 0.15)',
   }[color];
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {

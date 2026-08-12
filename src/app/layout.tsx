@@ -4,7 +4,7 @@ import { Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { UserActivityProvider } from '@/contexts/UserActivityContext';
-import { Toaster } from 'sonner';
+import { ToastContainer } from '@omnifit-ui/components';
 
 // IMPORT KOMPONEN PWA PROMPT
 import { PWAInstallPrompt } from '@/components/common/PWAInstallPrompt';;
@@ -99,7 +99,7 @@ export default function RootLayout({
             <UserActivityProvider>
               {children}
               
-              <Toaster position="top-right" richColors />
+              <ToastContainer position="top-right" richColors />
               <PWAInstallPrompt />
 
               {/* BOTTOM NAVIGATION MOBILE (PWA) */}

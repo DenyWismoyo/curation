@@ -19,6 +19,7 @@ const colorMap: Record<OmnifitColor, { line: string; fill: string; glow: string 
   amber:  { line: OMNIFIT_COLORS.amber.base,  fill: 'rgba(245,158,11,0.2)', glow: 'drop-shadow(0 -4px 8px rgba(245,158,11,0.3))' },
   emerald:{ line: OMNIFIT_COLORS.emerald.base,fill: 'rgba(16,185,129,0.2)', glow: 'drop-shadow(0 -4px 8px rgba(16,185,129,0.3))' },
   rose:   { line: OMNIFIT_COLORS.rose.base,   fill: 'rgba(244,63,94,0.2)', glow: 'drop-shadow(0 -4px 8px rgba(244,63,94,0.3))' },
+  slate:  { line: '#64748b', fill: 'rgba(100,116,139,0.2)', glow: 'drop-shadow(0 -4px 8px rgba(100,116,139,0.3))' },
 };
 
 const fadeInUp: Variants = {

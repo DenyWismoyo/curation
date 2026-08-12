@@ -24,6 +24,7 @@ export function CopilotTrigger({
     emerald:
       'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-500/30 text-white',
     rose: 'bg-rose-600 hover:bg-rose-700 shadow-rose-500/30 text-white',
+    slate: 'bg-slate-600 hover:bg-slate-700 shadow-slate-500/30 text-white',
   }
 
   return (
@@ -85,6 +86,7 @@ export function CopilotMessage({
     amber: 'bg-amber-500 text-amber-950 border-amber-400/50',
     emerald: 'bg-emerald-600 text-white border-emerald-500/50',
     rose: 'bg-rose-600 text-white border-rose-500/50',
+    slate: 'bg-slate-600 text-white border-slate-500/50',
   }
 
   return (
