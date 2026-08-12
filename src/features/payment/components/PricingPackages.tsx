@@ -58,7 +58,7 @@ const getCategoryTheme = (title: string, category: string) => {
   }
   
   // Default (Umum & Personal)
-  return { bg: 'bg-muted text-muted-foreground', text: 'text-muted-foreground', ring: 'ring-slate-200', btn: 'bg-slate-800 hover:bg-slate-900 shadow-slate-800/20 text-white', pill: 'bg-muted text-muted-foreground text-muted-foreground hover:bg-secondary text-secondary-foreground', gradient: 'from-slate-50/50 to-white dark:to-transparent' };
+  return { bg: 'bg-muted text-muted-foreground', text: 'text-muted-foreground', ring: 'ring-slate-200', btn: 'btn-primary-rich', pill: 'bg-muted text-muted-foreground text-muted-foreground hover:bg-secondary text-secondary-foreground', gradient: 'from-slate-50/50 to-white dark:to-transparent' };
 };
 
 const formatRupiah = (angka: number) => {
@@ -209,7 +209,13 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
 
         sessionStorage.setItem('active_token', data.tokenCode);
         sessionStorage.setItem('active_allowed_templates', JSON.stringify([pkg.id]));
-        window.location.href = '/assessment/select';
+        
+        // Langsung arahkan ke halaman pengisian asesmen (skip /assessment/select)
+        const slug = pkg.trackName
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/(^-|-$)+/g, '');
+        window.location.href = `/assessment/${slug}`;
         return;
       } catch (error: any) {
         toast.dismiss('redeem_process');
@@ -225,7 +231,13 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
       const autoToken = `FREE-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
       sessionStorage.setItem('active_token', autoToken);
       sessionStorage.setItem('active_allowed_templates', JSON.stringify([pkg.id]));
-      window.location.href = '/assessment/select';
+      
+      // Langsung arahkan ke halaman pengisian asesmen
+      const slug = pkg.trackName
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)+/g, '');
+      window.location.href = `/assessment/${slug}`;
     } else {
       setIsProcessingPayment(true);
       toast.loading("Mempersiapkan transaksi Anda...", { id: 'qris_process' });
@@ -499,7 +511,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                                     <Button
                                       size="sm"
                                       className={`h-10 px-5 sm:px-6 rounded-xl text-xs sm:text-sm font-bold shadow-sm transition-all group-hover:shadow-md ${priceInfo.isFree
-                                          ? 'bg-slate-900 text-white hover:bg-slate-800'
+                                          ? 'btn-outline-rich text-foreground'
                                           : theme.btn
                                         }`}
                                     >
@@ -515,7 +527,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                       </div>
 
                       {/* Banner Custom Enterprise */}
-                      <div className="mt-10 bg-slate-900 rounded-3xl p-6 sm:p-8 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl relative overflow-hidden group">
+                      <div className="mt-10 card-premium-dark rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl relative overflow-hidden group">
                         <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none transition-all group-hover:scale-150"></div>
 
                         <div className="relative z-10 flex-1 text-center md:text-left">
@@ -666,7 +678,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                         onClick={(e) => handleCopyLink(e, checkoutPackage.id, checkoutPackage.trackName)}
                         className={`h-8 px-4 rounded-lg text-xs font-bold transition-all shrink-0 ${copiedId === checkoutPackage.id
                             ? 'bg-emerald-100 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-200'
-                            : 'bg-slate-900 text-white hover:bg-indigo-600'
+                            : 'btn-primary-rich'
                           }`}
                       >
                         {copiedId === checkoutPackage.id ? (
@@ -718,7 +730,7 @@ export function PricingPackages({ isOpen, onClose, user, onLoginRequest, autoOpe
                 <Button
                   onClick={() => handleStartDecoy(checkoutPackage)}
                   disabled={isProcessingPayment}
-                  className="flex-1 h-12 rounded-xl bg-slate-900 text-white font-bold text-sm hover:bg-indigo-600 shadow-xl shadow-slate-900/10 transition-all flex items-center justify-center gap-2 group px-4"
+                  className="flex-1 h-12 rounded-xl btn-primary-rich flex items-center justify-center gap-2 group px-4"
                 >
                   {isProcessingPayment ? (
                     <><Loader2 className="w-4 h-4 animate-spin" /> Memproses...</>

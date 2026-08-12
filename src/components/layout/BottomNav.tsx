@@ -11,6 +11,7 @@ import { X, LogOut, Settings, ChevronRight } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { useUserActivity } from '@/contexts/UserActivityContext'
+import { ThemeToggleCompact } from '@/components/ui/ThemeToggleCompact'
 
 // ── Import dari config terpusat ──────────────────────────────
 import {
@@ -200,34 +201,39 @@ export function BottomNav() {
           </div>
 
           {/* User identity */}
-          <div className="px-6 pt-2 pb-4 border-b border-border">
-            {user ? (
-              <div className="flex items-center gap-3.5">
-                {user.photoURL ? (
-                  <img
-                    src={user.photoURL}
-                    alt="avatar"
-                    className="w-11 h-11 rounded-2xl object-cover ring-1 ring-border shadow-sm shrink-0"
-                    referrerPolicy="no-referrer"
-                  />
-                ) : (
-                  <div className="w-11 h-11 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-base font-black ring-1 ring-indigo-100 shadow-sm shrink-0">
-                    {user.displayName?.charAt(0).toUpperCase() || 'U'}
+          <div className="px-6 pt-2 pb-4 border-b border-border flex items-center justify-between">
+            <div className="flex-1 min-w-0">
+              {user ? (
+                <div className="flex items-center gap-3.5">
+                  {user.photoURL ? (
+                    <img
+                      src={user.photoURL}
+                      alt="avatar"
+                      className="w-11 h-11 rounded-2xl object-cover ring-1 ring-border shadow-sm shrink-0"
+                      referrerPolicy="no-referrer"
+                    />
+                  ) : (
+                    <div className="w-11 h-11 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-base font-black ring-1 ring-indigo-100 shadow-sm shrink-0">
+                      {user.displayName?.charAt(0).toUpperCase() || 'U'}
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-black text-foreground truncate">
+                      {user.displayName || 'Pengguna'}
+                    </p>
+                    <p className="text-xs text-slate-400 font-medium truncate">{user.email}</p>
                   </div>
-                )}
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-black text-foreground truncate">
-                    {user.displayName || 'Pengguna'}
-                  </p>
-                  <p className="text-xs text-slate-400 font-medium truncate">{user.email}</p>
                 </div>
-              </div>
-            ) : (
-              <div>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Navigation</p>
-                <p className="text-sm font-black text-foreground mt-0.5">Menu Utama Publik</p>
-              </div>
-            )}
+              ) : (
+                <div>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Navigation</p>
+                  <p className="text-sm font-black text-foreground mt-0.5">Menu Utama Publik</p>
+                </div>
+              )}
+            </div>
+            <div className="ml-4 shrink-0 flex items-center justify-center">
+              <ThemeToggleCompact variant="icon" />
+            </div>
           </div>
 
           {/* Nav links */}

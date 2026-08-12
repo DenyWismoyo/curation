@@ -154,8 +154,8 @@ export default function ExplorePage() {
                 onClick={() => setActiveCategory(category)}
                 className={`px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap ${
                   activeCategory === category
-                    ? 'bg-slate-900 text-white shadow-sm'
-                    : 'text-muted-foreground hover:bg-secondary text-secondary-foreground hover:text-foreground'
+                    ? 'bg-foreground text-background shadow-sm'
+                    : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
                 }`}
               >
                 {category}
@@ -224,7 +224,7 @@ export default function ExplorePage() {
 
                 <div className="px-2 sm:px-6 pb-4 max-w-4xl mx-auto w-full text-center">
                   <div className="flex items-center justify-center gap-3 mb-4">
-                    <span className="px-3 py-1 bg-secondary text-secondary-foreground text-slate-700 text-[10px] font-bold uppercase tracking-widest rounded border border-border">
+                    <span className="px-3 py-1 bg-secondary text-secondary-foreground text-[10px] font-bold uppercase tracking-widest rounded border border-border">
                       {featuredArticle.category}
                     </span>
                     <span className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
@@ -305,7 +305,7 @@ export default function ExplorePage() {
 
                     <div className="p-4 sm:p-5 flex-1 flex flex-col">
                       <div className="flex items-center gap-3 mb-3">
-                        <span className="px-2 py-0.5 bg-muted text-muted-foreground text-muted-foreground text-[10px] font-bold uppercase tracking-wider rounded border border-border">
+                        <span className="px-2 py-0.5 bg-secondary text-secondary-foreground text-[10px] font-bold uppercase tracking-wider rounded border border-border">
                           {article.category}
                         </span>
                       </div>

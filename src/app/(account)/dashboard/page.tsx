@@ -7,7 +7,7 @@ import { db } from '@/lib/firebase/firebase';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Copy, Check, Clock, FolderKanban, ArrowUpRight, Sparkles } from 'lucide-react';
+import { Copy, Check, Clock, FolderKanban, ArrowUpRight, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { TechCardIcon, DocExportIcon, InfinityWorkflowIcon, AiSparkIcon } from '@/components/icon';
@@ -52,13 +52,19 @@ const asSafeText = (value: unknown, fallback = '-'): string => {
 };
 
 export default function CustomerDashboard() {
-  const { user, loading } = useAuth();
+  const { user, loading, assessmentQuota } = useAuth();
   const router = useRouter();
 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [assessments, setAssessments] = useState<AssessmentHistory[]>([]);
   const [isFetching, setIsFetching] = useState(true);
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
+
+  // Pagination states
+  const [txPage, setTxPage] = useState(1);
+  const [assPage, setAssPage] = useState(1);
+  const TX_PER_PAGE = 4;
+  const ASS_PER_PAGE = 5;
 
   useEffect(() => {
     if (!loading && !user) {
@@ -125,6 +131,12 @@ export default function CustomerDashboard() {
     sessionStorage.setItem('active_model', 'flash');
     router.push('/assessment/select');
   };
+
+  const currentTxs = transactions.slice((txPage - 1) * TX_PER_PAGE, txPage * TX_PER_PAGE);
+  const currentAss = assessments.slice((assPage - 1) * ASS_PER_PAGE, assPage * ASS_PER_PAGE);
+  
+  const totalTxPages = Math.ceil(transactions.length / TX_PER_PAGE);
+  const totalAssPages = Math.ceil(assessments.length / ASS_PER_PAGE);
 
   if (loading || isFetching) {
     return <PageLoading message="Menyiapkan Ruang Dasbor..." />;
@@ -194,36 +206,31 @@ export default function CustomerDashboard() {
                 onAction={() => router.push('/katalog')}
               />
             ) : (
-              <div className="space-y-4">
-                {transactions.map((tx) => (
+              <div className="space-y-3">
+                {currentTxs.map((tx) => (
                   <motion.div
                     key={tx.id}
-                    initial={{ opacity: 0, y: 10 }}
+                    initial={{ opacity: 0, y: 5 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="card-solid p-6 rounded-[1.5rem] ring-1 ring-border shadow-sm hover:shadow-md hover:ring-indigo-200 dark:ring-indigo-500/20 transition-all group"
+                    className="card-solid p-4 sm:p-5 rounded-2xl ring-1 ring-border shadow-sm hover:shadow-md hover:ring-indigo-200 dark:hover:ring-indigo-500/20 transition-all group"
                   >
-                    <h3 className="text-sm font-black text-foreground leading-relaxed mb-4 group-hover:text-indigo-600 dark:text-indigo-400 transition-colors">
+                    <h3 className="text-sm font-black text-foreground mb-3 group-hover:text-indigo-600 dark:text-indigo-400 transition-colors line-clamp-1">
                       {tx.packageName}
                     </h3>
 
                     {/* TOKEN DISPLAY */}
-                    <div className="flex items-center justify-between gap-3 bg-muted text-muted-foreground p-2.5 pl-4 rounded-xl ring-1 ring-border mb-5">
-                      <div>
-                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">
-                          Akses ID
-                        </p>
-                        <p className="font-mono font-black text-foreground tracking-tight text-sm">
-                          {tx.tokenCode || (
-                            <span className="text-amber-500 animate-pulse">Memproses...</span>
-                          )}
-                        </p>
-                      </div>
+                    <div className="flex items-center justify-between gap-3 bg-muted text-muted-foreground p-2 pl-3 rounded-xl ring-1 ring-border mb-4">
+                      <p className="font-mono font-black text-foreground tracking-tight text-xs">
+                        {tx.tokenCode || (
+                          <span className="text-amber-500 animate-pulse">Memproses...</span>
+                        )}
+                      </p>
                       {tx.tokenCode && (
                         <button
                           onClick={() => handleCopy(tx.tokenCode!)}
-                          className={`h-8 w-8 flex items-center justify-center rounded-lg transition-colors ring-1 ${
+                          className={`h-7 w-7 flex items-center justify-center rounded-lg transition-colors ring-1 shrink-0 ${
                             copiedToken === tx.tokenCode
-                              ? 'bg-emerald-100 text-emerald-600 dark:text-emerald-400 ring-emerald-200 dark:ring-emerald-500/20'
+                              ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 ring-emerald-200 dark:ring-emerald-500/20'
                               : 'card-solid text-slate-400 hover:text-indigo-600 dark:text-indigo-400 ring-slate-200'
                           }`}
                         >
@@ -235,14 +242,44 @@ export default function CustomerDashboard() {
                     <Button
                       variant="brandOutline"
                       onClick={() => handleStartAssessment(tx.tokenCode!, tx.packageId)}
-                      disabled={!tx.tokenCode}
-                      className="w-full h-11 text-xs"
+                      disabled={!tx.tokenCode || (tx.packageId.startsWith('BUNDLE_') && assessmentQuota === 0)}
+                      className="w-full h-10 text-xs font-bold"
                     >
                       <AiSparkIcon size={14} className="mr-2" /> 
-                      {tx.packageId.startsWith('BUNDLE_') ? 'Tukarkan di Katalog' : tx.packageId === 'CRYPTO_PREMIUM_MONTHLY' ? 'Lihat Laporan' : 'Gunakan Sekarang'}
+                      {tx.packageId.startsWith('BUNDLE_') 
+                        ? (assessmentQuota > 0 ? 'Tukar di Katalog' : 'Kuota Habis') 
+                        : tx.packageId === 'CRYPTO_PREMIUM_MONTHLY' 
+                          ? 'Lihat Laporan' 
+                          : 'Gunakan Sekarang'}
                     </Button>
                   </motion.div>
                 ))}
+
+                {totalTxPages > 1 && (
+                  <div className="flex items-center justify-between mt-6 pt-2">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                      Hal {txPage} / {totalTxPages}
+                    </p>
+                    <div className="flex gap-1.5">
+                      <Button
+                        variant="ghost"
+                        className="h-8 w-8 p-0 rounded-lg bg-muted text-muted-foreground hover:bg-secondary text-secondary-foreground"
+                        disabled={txPage === 1}
+                        onClick={() => setTxPage(p => p - 1)}
+                      >
+                        <ChevronLeft size={16} />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        className="h-8 w-8 p-0 rounded-lg bg-muted text-muted-foreground hover:bg-secondary text-secondary-foreground"
+                        disabled={txPage === totalTxPages}
+                        onClick={() => setTxPage(p => p + 1)}
+                      >
+                        <ChevronRight size={16} />
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -261,72 +298,94 @@ export default function CustomerDashboard() {
                 description="Sistem belum mendeteksi riwayat asesmen yang diselesaikan. Silakan gunakan token untuk memulai evaluasi."
               />
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {assessments.map((ass, index) => (
+              <div className="flex flex-col space-y-3">
+                {currentAss.map((ass, index) => (
                   <motion.div
                     key={ass.id}
-                    initial={{ opacity: 0, y: 15 }}
+                    initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="card-solid p-6 rounded-[2rem] ring-1 ring-border shadow-sm hover:shadow-xl hover:shadow-indigo-500/5 hover:ring-indigo-200 dark:ring-indigo-500/20 transition-all flex flex-col h-full group"
+                    className="card-solid p-4 sm:p-5 rounded-2xl ring-1 ring-border shadow-sm hover:shadow-md hover:ring-indigo-200 dark:hover:ring-indigo-500/20 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 group"
                   >
-                    {/* TRACK + TANGGAL */}
-                    <div className="flex justify-between items-start mb-6">
-                      <span className="text-[9px] font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-2.5 py-1 rounded-md">
-                        {asSafeText(ass.trackType, 'Evaluasi')}
-                      </span>
-                      <span className="text-[10px] font-bold text-slate-400 flex items-center gap-1.5">
-                        <Clock size={12} />
-                        {ass.createdAt?.toDate
-                          ? new Intl.DateTimeFormat('id-ID', { dateStyle: 'medium' }).format(ass.createdAt.toDate())
-                          : '-'}
-                      </span>
+                    {/* Kiri: Track, Tanggal, Title */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-2 py-0.5 rounded-md shrink-0">
+                          {asSafeText(ass.trackType, 'Evaluasi')}
+                        </span>
+                        <span className="text-[10px] font-bold text-slate-400 flex items-center gap-1">
+                          <Clock size={10} />
+                          {ass.createdAt?.toDate
+                            ? new Intl.DateTimeFormat('id-ID', { dateStyle: 'medium' }).format(ass.createdAt.toDate())
+                            : '-'}
+                        </span>
+                      </div>
+                      <h3 className="text-base font-black text-foreground group-hover:text-indigo-600 dark:text-indigo-400 transition-colors line-clamp-1">
+                        {asSafeText(ass.namaUsaha, 'Asesmen Tanpa Nama')}
+                      </h3>
                     </div>
 
-                    <h3 className="text-lg font-black text-foreground mb-8 group-hover:text-indigo-600 dark:text-indigo-400 transition-colors line-clamp-2 leading-snug">
-                      {asSafeText(ass.namaUsaha, 'Asesmen Tanpa Nama')}
-                    </h3>
-
-                    {/* STAT MINI */}
-                    <div className="grid grid-cols-2 gap-3 mb-6 mt-auto">
-                      <div className="bg-muted text-muted-foreground p-4 rounded-2xl ring-1 ring-border flex flex-col justify-center">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
-                          Skor Kinerja
-                        </p>
-                        <p className="text-2xl font-black text-foreground">
-                          {asSafeText(ass.score, '0')}
-                          <span className="text-sm text-slate-400">/100</span>
+                    {/* Tengah: Skor & Status */}
+                    <div className="flex gap-4 sm:gap-6 shrink-0 w-full sm:w-auto border-t sm:border-t-0 border-border pt-3 sm:pt-0 mt-2 sm:mt-0">
+                      <div className="text-left sm:text-center flex-1 sm:flex-none">
+                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Skor</p>
+                        <p className="text-base font-black text-foreground">
+                          {asSafeText(ass.score, '0')} <span className="text-[10px] text-slate-400">/100</span>
                         </p>
                       </div>
-                      <div className="bg-muted text-muted-foreground p-4 rounded-2xl ring-1 ring-border flex flex-col justify-center">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
-                          Status Level
-                        </p>
-                        <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 leading-snug">
+                      <div className="text-left sm:text-center flex-1 sm:flex-none">
+                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Status</p>
+                        <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-1 line-clamp-1">
                           {asSafeText(ass.readinessLevel, 'Diproses')}
                         </p>
                       </div>
                     </div>
 
-                    {/* ACTIONS */}
-                    <div className="flex gap-2">
+                    {/* Kanan: Actions */}
+                    <div className="flex gap-2 shrink-0 w-full sm:w-auto">
                       <Button
-                        variant="brandOutline"
+                        variant="outline"
                         onClick={() => router.push(`/result/${ass.id}`)}
-                        className="flex-1 h-11 text-xs"
+                        className="flex-1 sm:flex-none h-9 px-3 text-xs"
                       >
                         <DocExportIcon size={14} className="mr-1.5" /> Dokumen
                       </Button>
                       <Button
                         variant="brand"
                         onClick={() => router.push('/workspace')}
-                        className="flex-1 h-11 text-xs"
+                        className="flex-1 sm:flex-none h-9 px-3 text-xs"
                       >
-                        OS <ArrowUpRight size={14} className="ml-1.5" />
+                        OS <ArrowUpRight size={14} className="ml-1" />
                       </Button>
                     </div>
                   </motion.div>
                 ))}
+
+                {totalAssPages > 1 && (
+                  <div className="flex items-center justify-between mt-6 pt-2">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                      Halaman {assPage} / {totalAssPages}
+                    </p>
+                    <div className="flex gap-1.5">
+                      <Button
+                        variant="ghost"
+                        className="h-8 w-8 p-0 rounded-lg bg-muted text-muted-foreground hover:bg-secondary text-secondary-foreground"
+                        disabled={assPage === 1}
+                        onClick={() => setAssPage(p => p - 1)}
+                      >
+                        <ChevronLeft size={16} />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        className="h-8 w-8 p-0 rounded-lg bg-muted text-muted-foreground hover:bg-secondary text-secondary-foreground"
+                        disabled={assPage === totalAssPages}
+                        onClick={() => setAssPage(p => p + 1)}
+                      >
+                        <ChevronRight size={16} />
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>

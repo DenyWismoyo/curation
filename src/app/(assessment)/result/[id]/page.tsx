@@ -33,16 +33,16 @@ function ResultProcessingView({ formData, status, isCacheHit }: { formData?: Rec
   return (
     <div className="min-h-screen bg-background text-foreground py-8 px-4 sm:py-12 sm:px-6 lg:px-12 relative overflow-hidden flex flex-col justify-center">
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[140px] pointer-events-none" />
-      <div className="max-w-3xl mx-auto w-full bg-slate-900/80 backdrop-blur-2xl ring-1 ring-slate-800 p-6 sm:p-8 rounded-3xl shadow-2xl text-center space-y-5">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/10 ring-1 ring-indigo-500/30 text-indigo-300 text-xs font-semibold uppercase tracking-wider">
+      <div className="max-w-3xl mx-auto w-full bg-card/80 dark:bg-slate-900/80 backdrop-blur-2xl ring-1 ring-border dark:ring-slate-800 p-6 sm:p-8 rounded-3xl shadow-2xl text-center space-y-5">
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-500/10 ring-1 ring-indigo-200 dark:ring-indigo-500/30 text-indigo-600 dark:text-indigo-400 text-xs font-semibold uppercase tracking-wider">
           <BrainIcon size={14} className="animate-pulse" />
           Omnifit Multi-Agent Engine
         </div>
         <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
-          Memproses Asesmen untuk <span className="text-indigo-300">{formData?.namaUsaha || 'Entitas Usaha'}</span>
+          Memproses Asesmen untuk <span className="text-indigo-600 dark:text-indigo-400">{formData?.namaUsaha || 'Entitas Usaha'}</span>
         </h1>
-        <p className="text-slate-300 font-medium">{currentLabel}</p>
-        <div className="flex items-center justify-center gap-3 text-xs text-slate-400 font-mono">
+        <p className="text-muted-foreground font-medium">{currentLabel}</p>
+        <div className="flex items-center justify-center gap-3 text-xs text-muted-foreground font-mono">
           <span>Status: {status || 'INITIATING'}</span>
           <span>•</span>
           <span>{elapsedSeconds}s</span>
@@ -141,10 +141,10 @@ export default function SharedResultPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-muted text-muted-foreground">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground">
         <div className="w-14 h-14 mb-4 relative flex items-center justify-center">
-          <div className="absolute inset-0 rounded-full border-[4px] border-indigo-100 border-t-indigo-600 animate-spin" />
-          <BrainIcon size={24} className="text-indigo-600 dark:text-indigo-400 animate-pulse" />
+          <div className="absolute inset-0 rounded-full border-[4px] border-secondary border-t-primary animate-spin" />
+          <BrainIcon size={24} className="text-primary animate-pulse" />
         </div>
         <h2 className="text-xl font-black text-foreground tracking-tight">Memuat Data Analitik...</h2>
         <p className="text-sm font-medium text-muted-foreground mt-2">Menarik data dari server aman.</p>
@@ -154,7 +154,7 @@ export default function SharedResultPage() {
 
   if (error || !data) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-muted text-muted-foreground px-6 text-center">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground px-6 text-center">
         <div className="w-20 h-20 bg-rose-50 dark:bg-rose-500/10 text-rose-500 rounded-[2rem] shadow-sm ring-1 ring-rose-100 flex items-center justify-center mb-6">
           <DocExportIcon size={36} />
         </div>
@@ -162,7 +162,7 @@ export default function SharedResultPage() {
         <p className="text-muted-foreground font-medium mb-8 max-w-md">{error}</p>
         <button 
           onClick={() => router.push('/')}
-          className="flex items-center gap-2 px-6 py-3 bg-slate-900 hover:bg-indigo-600 text-white rounded-xl font-bold shadow-xl shadow-slate-900/20 hover:shadow-indigo-600/30 transition-all"
+          className="flex items-center gap-2 px-6 py-3 btn-primary-rich transition-all"
         >
           <EcosystemIcon className="w-5 h-5 text-white" /> Kembali ke Beranda
         </button>

@@ -18,6 +18,10 @@ import { InfinityWorkflowIcon, DocExportIcon, AiSparkIcon } from '@/components/i
 import { NotificationBell } from '@/components/common/NotificationBell';
 import { AppKeyValueList, AppKeyValueItem } from '@/components/ui/app-data-display';
 import { SectionLabel, ContentCard } from '@/components/ui/design-system';
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
+import { SpotlightCard } from '@/components/landing/SpotlightCard';
+import { AnimatedCounter } from '@/components/landing/AnimatedCounter';
+import { GradientBadge } from '@/components/landing/GradientBadge';
 import {
   PageShell,
   PageHeader,
@@ -65,7 +69,7 @@ export default function ProfilPage() {
   const router = useRouter();
   const [stats, setStats] = useState<UserStats | null>(null);
   const [isFetching, setIsFetching] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview' | 'badges' | 'settings'>('overview');
+  const [activeTab, setActiveTab] = useState<'account' | 'assessment' | 'crypto'>('account');
   const [profileData, setProfileData] = useState({ phone: '', nudgeEmail: true, nudgeWhatsapp: false });
   const [isSavingProfile, setIsSavingProfile] = useState(false);
 
@@ -128,7 +132,7 @@ export default function ProfilPage() {
       const snap = await getDocs(q);
       const docs = snap.docs.map(d => d.data());
       const completed = docs.filter(d => d.status === 'COMPLETED');
-      const scores = completed.map(d => d.score || 0);
+      const scores = completed.map(d => Number(d.score)).filter(s => !isNaN(s) && s > 0);
       const allTracks = [...new Set(completed.map(d => d.trackType).filter(Boolean))];
       let completedAP = 0;
       let totalAP = 0;
@@ -197,9 +201,9 @@ export default function ProfilPage() {
             <p className="text-sm text-muted-foreground font-medium truncate">{user.email}</p>
             <div className="flex items-center gap-2 mt-2 flex-wrap">
               {stats?.hasPremium && (
-                <StatusBadge variant="premium" icon={<Award size={12}/>}>
-                  Member Premium
-                </StatusBadge>
+                <div className="mb-1">
+                  <GradientBadge variant="premium" icon={Award}>Member Premium</GradientBadge>
+                </div>
               )}
               <StatusBadge variant="success" pulse={true}>
                 Status Aktif
@@ -215,9 +219,9 @@ export default function ProfilPage() {
             onChange={(val: any) => setActiveTab(val)}
             variant="pill"
             tabs={[
-              { id: 'overview', label: 'Ringkasan' },
-              { id: 'badges', label: 'Koleksi Lencana' },
-              { id: 'settings', label: 'Pengaturan Akun' },
+              { id: 'account', label: 'Info Akun' },
+              { id: 'assessment', label: 'Assessment' },
+              { id: 'crypto', label: 'Crypto Premium' },
             ]}
           />
         </div>
@@ -227,10 +231,10 @@ export default function ProfilPage() {
       <div className="max-w-4xl mx-auto px-6 lg:px-12 py-8">
         <AnimatePresence mode="wait">
 
-          {/* TAB: OVERVIEW */}
-          {activeTab === 'overview' && (
+          {/* TAB: ASSESSMENT */}
+          {activeTab === 'assessment' && (
             <motion.div
-              key="overview"
+              key="assessment"
               initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -15 }}
               className="space-y-6"
             >
@@ -239,17 +243,17 @@ export default function ProfilPage() {
                 {[
                   {
                     label: 'Total Asesmen',
-                    value: <>{stats?.totalAssessments ?? 0}<span className="text-sm text-slate-400 font-bold ml-1">program</span></>,
+                    value: <><AnimatedCounter value={stats?.totalAssessments ?? 0} /><span className="text-sm text-slate-400 font-bold ml-1">program</span></>,
                     icon: <DocExportIcon size={20} className="text-indigo-600 dark:text-indigo-400" />,
                   },
                   {
                     label: 'Skor Tertinggi',
-                    value: <>{stats?.maxScore ?? 0}<span className="text-sm text-slate-400 font-bold ml-1">/100</span></>,
+                    value: <><AnimatedCounter value={stats?.maxScore ?? 0} /><span className="text-sm text-slate-400 font-bold ml-1">/100</span></>,
                     icon: <Star size={20} className="text-amber-500" />,
                   },
                   {
                     label: 'Rata-rata Skor',
-                    value: <>{stats?.avgScore ?? 0}<span className="text-sm text-slate-400 font-bold ml-1">/100</span></>,
+                    value: <><AnimatedCounter value={stats?.avgScore ?? 0} /><span className="text-sm text-slate-400 font-bold ml-1">/100</span></>,
                     icon: <BarChart3 size={20} className="text-emerald-600 dark:text-emerald-400" />,
                   },
                   {
@@ -272,65 +276,35 @@ export default function ProfilPage() {
                 ))}
               </div>
 
-              {/* ACTION PLAN PROGRESS */}
-              {stats && stats.totalActionItems > 0 && (
-                <ContentCard className="flex flex-col md:flex-row items-center gap-6">
-                  <div className="w-14 h-14 bg-indigo-50 dark:bg-indigo-500/10 rounded-2xl flex items-center justify-center shrink-0">
-                    <InfinityWorkflowIcon size={28} className="text-indigo-600 dark:text-indigo-400" />
-                  </div>
-                  <div className="flex-1 w-full">
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-sm font-black text-foreground">Progres Action Plan OS</h3>
-                      <span className="text-sm font-black text-indigo-600 dark:text-indigo-400">{actionPlanProgress}%</span>
-                    </div>
-                    <div className="w-full h-3 bg-secondary text-secondary-foreground rounded-full overflow-hidden mb-2">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${actionPlanProgress}%` }}
-                        transition={{ duration: 1, ease: 'easeOut' }}
-                        className="h-full bg-indigo-500 rounded-full"
-                      />
-                    </div>
-                    <p className="text-xs text-muted-foreground font-medium">
-                      Anda telah mengeksekusi{' '}
-                      <strong className="text-foreground">{stats.completedActionItems}</strong>{' '}
-                      dari total {stats.totalActionItems} tugas strategis.
-                    </p>
-                  </div>
-                </ContentCard>
-              )}
+              {/* ACTION PLAN PROGRESS DIHAPUS */}
 
               {/* QUICK ACTIONS */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 {[
-                  { label: 'Lihat Progress', desc: 'Timeline & grafik performa', href: '/progress', icon: <TrendingUp size={20} className="text-emerald-600 dark:text-emerald-400" />, ring: 'hover:ring-emerald-200 dark:ring-emerald-500/20' },
-                  { label: 'Buka Workspace', desc: 'Selesaikan Action Plan', href: '/workspace', icon: <InfinityWorkflowIcon size={20} className="text-indigo-600 dark:text-indigo-400" />, ring: 'hover:ring-indigo-200 dark:ring-indigo-500/20' },
-                  { label: 'Katalog Modul', desc: 'Cari asesmen baru', href: '/katalog', icon: <AiSparkIcon size={20} className="text-purple-500" />, ring: 'hover:ring-purple-200 dark:ring-purple-500/20' },
-                  { label: 'Portal Affiliate', desc: 'Komisi & Referral', href: '/affiliate', icon: <HandCoins size={20} className="text-amber-600 dark:text-amber-400" />, ring: 'hover:ring-amber-200 dark:ring-amber-500/20' },
+                  { label: 'Lihat Progress', desc: 'Timeline & grafik performa', href: '/progress', icon: <TrendingUp size={20} className="text-emerald-600 dark:text-emerald-400" />, color: 'emerald' },
+                  { label: 'Buka Workspace', desc: 'Selesaikan Action Plan', href: '/workspace', icon: <InfinityWorkflowIcon size={20} className="text-indigo-600 dark:text-indigo-400" />, color: 'indigo' },
+                  { label: 'Katalog Modul', desc: 'Cari asesmen baru', href: '/katalog', icon: <AiSparkIcon size={20} className="text-rose-500" />, color: 'rose' },
+                  { label: 'Portal Affiliate', desc: 'Komisi & Referral', href: '/affiliate', icon: <HandCoins size={20} className="text-amber-600 dark:text-amber-400" />, color: 'amber' },
                 ].map((a, i) => (
-                  <button
+                  <SpotlightCard
                     key={i}
+                    color={a.color as 'emerald' | 'indigo' | 'rose' | 'amber'}
                     onClick={() => router.push(a.href)}
-                    className={`card-solid p-6 rounded-[1.5rem] ring-1 ring-border shadow-sm text-left transition-all ${a.ring} group flex flex-col`}
+                    className="p-4 sm:p-6 cursor-pointer text-left flex flex-row sm:flex-col items-center sm:items-start group sm:min-h-[160px]"
                   >
-                    <div className="w-10 h-10 bg-muted text-muted-foreground rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <div className="w-10 h-10 shrink-0 bg-muted text-muted-foreground rounded-xl flex items-center justify-center mr-4 sm:mr-0 sm:mb-4 group-hover:scale-110 transition-transform relative z-10">
                       {a.icon}
                     </div>
-                    <p className="text-sm font-black text-foreground mb-1">{a.label}</p>
-                    <p className="text-xs text-muted-foreground leading-relaxed">{a.desc}</p>
-                  </button>
+                    <div className="flex-1 min-w-0 relative z-10">
+                      <p className="text-sm font-black text-foreground mb-0.5 sm:mb-1 truncate">{a.label}</p>
+                      <p className="text-[10px] sm:text-xs text-muted-foreground leading-relaxed truncate sm:whitespace-normal sm:line-clamp-2">{a.desc}</p>
+                    </div>
+                  </SpotlightCard>
                 ))}
               </div>
-            </motion.div>
-          )}
 
-          {/* TAB: BADGES */}
-          {activeTab === 'badges' && (
-            <motion.div
-              key="badges"
-              initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -15 }}
-              className="space-y-8"
-            >
+              {/* === BADGES SECTION === */}
+              <div className="pt-6 mt-8 border-t border-border">
               {earnedBadges.length === 0 ? (
                 <EmptyState
                   icon={<Trophy size={48} className="text-slate-200" />}
@@ -344,21 +318,37 @@ export default function ProfilPage() {
                   <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
                     <Award size={16} /> Lencana Diraih ({earnedBadges.length})
                   </h3>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {earnedBadges.map((badge, i) => (
-                      <motion.div
-                        key={badge.id}
-                        initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.05 }}
-                        className="card-solid p-6 rounded-[1.5rem] ring-1 ring-border shadow-sm text-center"
-                      >
-                        <div className={`w-14 h-14 ${badge.bgColor} rounded-2xl flex items-center justify-center mx-auto mb-4 ring-1 ring-white shadow-inner`}>
-                          <span className={badge.color}>{badge.icon}</span>
-                        </div>
-                        <p className="text-sm font-black text-foreground leading-tight mb-1">{badge.label}</p>
-                        <p className="text-[10px] text-muted-foreground leading-relaxed">{badge.description}</p>
-                      </motion.div>
-                    ))}
-                  </div>
+                  <TooltipProvider delayDuration={200}>
+                    <div className="flex flex-wrap gap-4">
+                      {earnedBadges.map((badge, i) => {
+                        const spotlightColor = badge.color.includes('amber') || badge.color.includes('yellow') ? 'amber' :
+                                              badge.color.includes('emerald') || badge.color.includes('teal') ? 'emerald' :
+                                              badge.color.includes('rose') || badge.color.includes('red') || badge.color.includes('purple') ? 'rose' : 'indigo';
+                        return (
+                          <Tooltip key={badge.id}>
+                            <TooltipTrigger asChild>
+                              <motion.div
+                                initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.05 }}
+                                whileHover={{ scale: 1.1, y: -4 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="cursor-help"
+                              >
+                                <SpotlightCard color={spotlightColor as 'indigo'|'amber'|'emerald'|'rose'} className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center rounded-2xl group">
+                                  <div className={`w-10 h-10 sm:w-12 sm:h-12 ${badge.bgColor} rounded-xl flex items-center justify-center ring-1 ring-white/50 dark:ring-white/10 shadow-inner group-hover:rotate-12 transition-transform duration-300 relative z-10`}>
+                                    <span className={badge.color}>{badge.icon}</span>
+                                  </div>
+                                </SpotlightCard>
+                              </motion.div>
+                            </TooltipTrigger>
+                            <TooltipContent side="top" className="max-w-[200px] text-center p-3 z-[60]">
+                              <p className="text-sm font-black text-white mb-1">{badge.label}</p>
+                              <p className="text-[10px] text-slate-300 leading-relaxed">{badge.description}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        );
+                      })}
+                    </div>
+                  </TooltipProvider>
                 </div>
               )}
 
@@ -367,26 +357,56 @@ export default function ProfilPage() {
                   <h3 className="text-xs font-black text-slate-300 uppercase tracking-widest mb-4">
                     Belum Terbuka ({lockedBadges.length})
                   </h3>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {lockedBadges.map((badge) => (
-                      <div key={badge.id} className="card-solid p-6 rounded-[1.5rem] ring-1 ring-border text-center opacity-50 grayscale">
-                        <div className="w-14 h-14 bg-secondary text-secondary-foreground rounded-2xl flex items-center justify-center mx-auto mb-4">
-                          <span className="text-slate-400">{badge.icon}</span>
-                        </div>
-                        <p className="text-sm font-bold text-muted-foreground leading-tight mb-1">{badge.label}</p>
-                        <p className="text-[10px] text-slate-400 leading-relaxed">{badge.description}</p>
-                      </div>
-                    ))}
-                  </div>
+                  <TooltipProvider delayDuration={200}>
+                    <div className="flex flex-wrap gap-4">
+                      {lockedBadges.map((badge) => (
+                        <Tooltip key={badge.id}>
+                          <TooltipTrigger asChild>
+                            <motion.div
+                              whileHover={{ scale: 1.05 }}
+                              className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl border border-dashed border-border/60 bg-card/20 flex items-center justify-center opacity-50 grayscale hover:opacity-80 transition-opacity cursor-help"
+                            >
+                              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-muted text-muted-foreground rounded-xl flex items-center justify-center">
+                                <span className="text-slate-400">{badge.icon}</span>
+                              </div>
+                            </motion.div>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" className="max-w-[200px] text-center p-3 z-[60]">
+                            <p className="text-sm font-bold text-white mb-1">{badge.label}</p>
+                            <p className="text-[10px] text-slate-400 leading-relaxed">{badge.description}</p>
+                            <p className="text-[9px] text-slate-500 mt-2 font-semibold uppercase tracking-wider">Terkunci</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      ))}
+                    </div>
+                  </TooltipProvider>
                 </div>
               )}
+              </div>
             </motion.div>
           )}
 
-          {/* TAB: SETTINGS */}
-          {activeTab === 'settings' && (
+          {/* TAB: CRYPTO */}
+          {activeTab === 'crypto' && (
             <motion.div
-              key="settings"
+              key="crypto"
+              initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -15 }}
+              className="space-y-6"
+            >
+              <EmptyState
+                icon={<Zap size={48} className="text-slate-200" />}
+                title="Crypto Premium"
+                description="Fitur portfolio dan laporan cerdas Crypto Premium akan segera hadir di sini."
+                actionLabel="Jelajahi Fitur Crypto"
+                onAction={() => router.push('/crypto')}
+              />
+            </motion.div>
+          )}
+
+          {/* TAB: ACCOUNT */}
+          {activeTab === 'account' && (
+            <motion.div
+              key="account"
               initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -15 }}
               className="space-y-6"
             >

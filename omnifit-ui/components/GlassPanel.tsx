@@ -27,7 +27,7 @@ export function GlassPanel({
   return (
     <m.div 
       className={cn(
-        'rounded-3xl overflow-hidden shadow-xl',
+        'rounded-none overflow-hidden shadow-xl',
         intensityMap[intensity],
         border && 'border border-white/20 dark:border-slate-700/50',
         className

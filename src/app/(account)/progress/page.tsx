@@ -207,7 +207,7 @@ export default function ProgressPage() {
               <div className="card-solid p-6 sm:p-8 rounded-[2rem] ring-1 ring-border shadow-sm">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-base font-black text-foreground">Grafik Performa</h3>
-                  <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-2.5 py-1 rounded-md uppercase tracking-widest ring-1 ring-indigo-100">
+                  <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-2.5 py-1 rounded-md uppercase tracking-widest ring-1 ring-indigo-100 dark:ring-indigo-500/30">
                     {scores.length} Titik Data
                   </span>
                 </div>
@@ -252,7 +252,7 @@ export default function ProgressPage() {
                       {rec.status === 'COMPLETED' && (
                         <button
                           onClick={() => router.push(`/result/${rec.id}`)}
-                          className="w-8 h-8 flex items-center justify-center rounded-xl bg-muted text-muted-foreground text-slate-400 hover:bg-indigo-50 dark:bg-indigo-500/10 hover:text-indigo-600 dark:text-indigo-400 ring-1 ring-border hover:ring-indigo-200 dark:ring-indigo-500/20 transition-all"
+                          className="w-8 h-8 flex items-center justify-center rounded-xl bg-muted text-muted-foreground hover:bg-secondary hover:text-secondary-foreground dark:hover:bg-indigo-900/30 dark:hover:text-indigo-400 ring-1 ring-border transition-all"
                         >
                           <ExternalLink size={14} />
                         </button>
@@ -265,10 +265,10 @@ export default function ProgressPage() {
 
             {/* CTA */}
             <div className="bg-indigo-50 dark:bg-indigo-500/10/50 p-8 sm:p-10 rounded-[2rem] ring-1 ring-indigo-100 text-center flex flex-col items-center">
-              <div className="w-14 h-14 card-solid text-indigo-600 dark:text-indigo-400 rounded-[1.2rem] flex items-center justify-center shadow-sm ring-1 ring-indigo-100 mb-4">
+              <div className="w-14 h-14 card-solid text-indigo-600 dark:text-indigo-400 rounded-[1.2rem] flex items-center justify-center shadow-sm ring-1 ring-indigo-100 dark:ring-indigo-800 mb-4">
                 <TrendingUp size={24} />
               </div>
-              <h3 className="font-black text-xl text-indigo-950 mb-2 tracking-tight">Siap Melampaui Batas?</h3>
+              <h3 className="font-black text-xl text-indigo-950 dark:text-indigo-50 mb-2 tracking-tight">Siap Melampaui Batas?</h3>
               <p className="text-indigo-700 dark:text-indigo-300/80 text-sm mb-6 max-w-sm leading-relaxed">
                 Lakukan asesmen berikutnya untuk memantau perkembangan dan mendapatkan rekomendasi terbaru dari AI.
               </p>

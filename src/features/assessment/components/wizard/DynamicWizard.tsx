@@ -522,8 +522,8 @@ export function DynamicWizard({
               return (
                 <div key={idx} className="flex items-start gap-4 relative z-10 py-2.5">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ring-4 ring-background transition-all ${
-                    isActive ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20' : 
-                    isPast ? 'bg-indigo-500/10 text-indigo-500' : 'bg-muted text-muted-foreground'
+                    isActive ? 'bg-primary text-primary-foreground shadow-md shadow-indigo-600/20' : 
+                    isPast ? 'bg-indigo-50 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400' : 'bg-muted text-muted-foreground'
                   }`}>
                     {isPast ? <Check size={14} strokeWidth={3} /> : idx + 1}
                   </div>
@@ -599,7 +599,7 @@ export function DynamicWizard({
                       )
                     }
                   }}
-                  className="bg-indigo-600 hover:bg-indigo-700 h-12 px-8 rounded-full shadow-lg shadow-indigo-200"
+                  className="btn-primary-rich h-12 px-8 rounded-full shadow-lg"
                 >
                   Coba Lagi (Retry)
                 </Button>
@@ -690,7 +690,7 @@ export function DynamicWizard({
                             <motion.div
                               initial={{ opacity: 0, height: 0 }}
                               animate={{ opacity: 1, height: 'auto' }}
-                              className="mt-4 inline-flex items-start gap-2 bg-indigo-50 dark:bg-indigo-500/10/60 p-3 rounded-xl border border-indigo-100/60"
+                              className="mt-4 inline-flex items-start gap-2 bg-indigo-50 dark:bg-indigo-950/40 p-3 rounded-xl border border-indigo-100 dark:border-indigo-800/60"
                             >
                               <AiSparkIcon
                                 size={16}
@@ -741,7 +741,7 @@ export function DynamicWizard({
               <Button
                 onClick={handleNext}
                 disabled={!isStepValid() && currentStepData?.fields?.length > 0}
-                className="w-full sm:w-auto h-12 sm:h-14 px-6 sm:px-10 rounded-xl sm:rounded-2xl bg-slate-900 text-white font-bold text-sm sm:text-base hover:bg-indigo-600 shadow-xl shadow-slate-900/10 transition-all flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full sm:w-auto h-12 sm:h-14 px-6 sm:px-10 rounded-xl sm:rounded-2xl btn-primary-rich transition-all flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {step < totalSteps ||
                 template.formMode === 'hybrid' ||

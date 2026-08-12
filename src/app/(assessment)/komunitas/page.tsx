@@ -244,11 +244,11 @@ export default function KomunitasPage() {
                   <div
                     className={`w-10 h-10 rounded-2xl flex items-center justify-center text-sm font-black flex-shrink-0 ${
                       i === 0
-                        ? 'bg-yellow-100 text-yellow-700'
+                        ? 'bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400'
                         : i === 1
-                          ? 'bg-secondary text-secondary-foreground text-muted-foreground'
+                          ? 'bg-secondary text-secondary-foreground'
                           : i === 2
-                            ? 'bg-amber-100 text-amber-700 dark:text-amber-300'
+                            ? 'bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300'
                             : 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
                     }`}
                   >
@@ -262,7 +262,7 @@ export default function KomunitasPage() {
                     </p>
                     {entry.trackType && (
                       <span
-                        className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md ${TRACK_COLORS[entry.trackType] || 'bg-muted text-muted-foreground text-muted-foreground'}`}
+                        className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md ${TRACK_COLORS[entry.trackType] || 'bg-muted text-muted-foreground'}`}
                       >
                         {entry.trackType}
                       </span>
@@ -276,7 +276,7 @@ export default function KomunitasPage() {
                         ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300'
                         : entry.score >= 60
                           ? 'bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-300'
-                          : 'bg-muted text-muted-foreground text-muted-foreground'
+                          : 'bg-muted text-muted-foreground'
                     }`}
                   >
                     {entry.score}
@@ -308,7 +308,7 @@ export default function KomunitasPage() {
           <button
             onClick={handleShare}
             disabled={sharing}
-            className="w-full h-12 card-solid text-indigo-700 dark:text-indigo-300 font-black rounded-2xl text-sm hover:bg-indigo-50 dark:bg-indigo-500/10 transition-colors shadow-lg flex items-center justify-center gap-2 disabled:opacity-70"
+            className="w-full h-12 card-solid text-indigo-700 dark:text-indigo-400 font-black rounded-2xl text-sm hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors shadow-lg flex items-center justify-center gap-2 disabled:opacity-70"
           >
             <Share2 size={16} />
             {sharing ? 'Membagikan...' : 'Bagikan ke Teman'}
@@ -327,7 +327,7 @@ export default function KomunitasPage() {
             </p>
             <button
               onClick={() => router.push('/assessment')}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-sm rounded-2xl transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 btn-primary-rich rounded-2xl transition-all"
             >
               Mulai Asesmen Sekarang <InfinityWorkflowIcon size={16} />
             </button>

@@ -74,7 +74,7 @@ export default function ExecutionWorkspacePage() {
                         </option>
                       ))}
                     </select>
-                    <span className="bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 text-[10px] font-black px-2 py-0.5 rounded-full ring-1 ring-indigo-100 shrink-0">
+                    <span className="bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 text-[10px] font-black px-2 py-0.5 rounded-full ring-1 ring-indigo-100 dark:ring-indigo-500/30 shrink-0">
                       {assessments.length} Asesmen
                     </span>
                   </div>
@@ -101,7 +101,7 @@ export default function ExecutionWorkspacePage() {
             className="mt-10"
           >
             <EmptyState
-              icon={<BrainIcon size={56} className="text-slate-200" />}
+              icon={<BrainIcon size={56} className="text-muted-foreground opacity-50" />}
               title="OS Belum Menerima Data"
               description="Anda membutuhkan setidaknya satu riwayat asesmen AI untuk mengaktifkan Action Plan dan Sinkronisasi Strategi."
               actionLabel="Cek Brankas Modul"

@@ -80,7 +80,7 @@ export const BOTTOM_NAV_ITEMS: NavItem[] = [
   {
     key: 'home',
     label: 'Beranda',
-    href: ROUTES.HOME,
+    href: ROUTES.ASSESSMENT.ROOT,
     icon: Home,
   },
   {
@@ -88,13 +88,6 @@ export const BOTTOM_NAV_ITEMS: NavItem[] = [
     label: 'Explore',
     href: ROUTES.EXPLORE,
     icon: Compass,
-  },
-  {
-    key: 'progress',
-    label: 'Progress',
-    href: ROUTES.PROGRESS,
-    icon: TrendingUp,
-    requiresAuth: true,
   },
   {
     key: 'komunitas',
@@ -128,14 +121,6 @@ export const DRAWER_NAV_ITEMS: NavItem[] = [
     accent: { text: 'text-blue-600', bg: 'bg-blue-50', ring: 'ring-blue-100' },
   },
   {
-    key: 'dashboard',
-    label: 'Brankas Modul',
-    href: ROUTES.DASHBOARD,
-    icon: FolderKanban,
-    accent: { text: 'text-purple-600', bg: 'bg-purple-50', ring: 'ring-purple-100' },
-    requiresAuth: true,
-  },
-  {
     key: 'token',
     label: 'Gunakan Token',
     href: ROUTES.TOKEN,
@@ -149,14 +134,6 @@ export const DRAWER_NAV_ITEMS: NavItem[] = [
     href: ROUTES.ROADMAP,
     icon: MapPinned,
     accent: { text: 'text-sky-600', bg: 'bg-sky-50', ring: 'ring-sky-100' },
-  },
-  {
-    key: 'affiliate',
-    label: 'Portal Affiliate',
-    href: ROUTES.AFFILIATE,
-    icon: HandCoins,
-    accent: { text: 'text-amber-600', bg: 'bg-amber-50', ring: 'ring-amber-100' },
-    requiresAuth: true,
   },
   // ── Role-specific
   {
@@ -240,29 +217,6 @@ export const NAVBAR_GROUPS = {
       href: ROUTES.MITRA.ROOT,
       icon: Handshake,
       accent: { text: 'text-blue-600', bg: 'bg-blue-50', ring: 'ring-blue-100' },
-    },
-    {
-      key: 'affiliate',
-      label: 'Portal Affiliate',
-      href: ROUTES.AFFILIATE,
-      icon: HandCoins,
-      accent: { text: 'text-amber-600', bg: 'bg-amber-50', ring: 'ring-amber-100' },
-    },
-    {
-      key: 'crypto',
-      label: 'Crypto Intelligence',
-      href: ROUTES.CRYPTO.ROOT,
-      icon: LineChart,
-      badge: 'Premium',
-      accent: { text: 'text-orange-600', bg: 'bg-orange-50', ring: 'ring-orange-100' },
-    },
-    {
-      key: 'study',
-      label: 'Study Workspace',
-      href: ROUTES.STUDY.ROOT,
-      icon: BookOpenText,
-      badge: 'Terbatas',
-      accent: { text: 'text-emerald-600', bg: 'bg-emerald-50', ring: 'ring-emerald-100' },
     },
   ] satisfies NavItem[],
 

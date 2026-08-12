@@ -158,7 +158,7 @@ export default function OnboardingPage() {
             </Button>
             <Button
               onClick={() => router.replace('/onboarding?force=1')}
-              className="flex-1 h-11 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold"
+              className="flex-1 h-11 rounded-xl btn-primary-rich font-bold"
             >
               Ulangi Onboarding
             </Button>
@@ -212,7 +212,7 @@ export default function OnboardingPage() {
                     }`}
                   >
                     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${
-                      purpose === p.id ? 'bg-indigo-600 text-white' : 'bg-secondary text-secondary-foreground text-muted-foreground'
+                      purpose === p.id ? 'bg-indigo-600 text-white' : 'bg-secondary text-secondary-foreground'
                     }`}>
                       {p.icon}
                     </div>
@@ -228,7 +228,7 @@ export default function OnboardingPage() {
               <Button
                 onClick={() => setStep(1)}
                 disabled={!purpose}
-                className="w-full mt-8 h-12 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-2xl text-sm disabled:opacity-40 disabled:cursor-not-allowed"
+                className="w-full mt-8 h-12 btn-primary-rich rounded-2xl text-sm disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Lanjut <ChevronRight size={16} className="ml-1" />
               </Button>
@@ -256,7 +256,7 @@ export default function OnboardingPage() {
                     className={`p-4 rounded-2xl ring-2 text-center transition-all font-bold text-sm ${
                       sector === s
                         ? 'ring-indigo-500 bg-indigo-600 text-white shadow-md shadow-indigo-100 dark:shadow-[0_4px_20px_rgba(79,70,229,0.2)]'
-                        : 'ring-slate-200 dark:ring-slate-800 card-solid text-slate-700 hover:ring-indigo-200 dark:ring-indigo-500/20'
+                        : 'ring-slate-200 dark:ring-slate-800 card-solid text-foreground hover:ring-indigo-200 dark:hover:ring-indigo-500/20'
                     }`}
                   >
                     {s}
@@ -267,7 +267,7 @@ export default function OnboardingPage() {
               <Button
                 onClick={saveAndContinue}
                 disabled={!sector || saving || generatingPlan}
-                className="w-full mt-8 h-12 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-2xl text-sm disabled:opacity-40"
+                className="w-full mt-8 h-12 btn-primary-rich rounded-2xl text-sm disabled:opacity-40"
               >
                 {saving || generatingPlan ? (
                   <span className="flex items-center gap-2"><AiSparkIcon size={16} className="animate-spin" /> Menyusun Rekomendasi Adaptif...</span>
@@ -349,7 +349,7 @@ export default function OnboardingPage() {
                     </div>
                     <Button
                       onClick={() => router.push(`/katalog?buy=${rec.moduleId}`)}
-                      className="w-full h-11 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl"
+                      className="w-full h-11 btn-primary-rich rounded-xl"
                     >
                       Pilih Modul Ini
                     </Button>

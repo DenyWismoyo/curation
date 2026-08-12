@@ -105,11 +105,11 @@ function InteractiveDashboardLoading({ formData, trackName, assessmentId }: { fo
           <span>Omnifit Multi-Agent Engine v2</span>
         </div>
 
-        <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
-          Memproses Evaluasi untuk <span className="text-indigo-400">{formData?.namaUsaha || 'Entitas Usaha'}</span>
+        <h1 className="text-2xl sm:text-4xl font-extrabold text-foreground tracking-tight">
+          Memproses Evaluasi untuk <span className="text-indigo-600 dark:text-indigo-400">{formData?.namaUsaha || 'Entitas Usaha'}</span>
         </h1>
 
-        <p className="text-slate-400 text-sm sm:text-base max-w-xl mx-auto">
+        <p className="text-muted-foreground text-sm sm:text-base max-w-xl mx-auto">
           Sistem sedang membagi tugas analisis ke dalam sirkuit multi-agent AI independen secara berkala.
         </p>
 
@@ -125,18 +125,18 @@ function InteractiveDashboardLoading({ formData, trackName, assessmentId }: { fo
       </div>
 
       {/* STEPPER MULTI-AGENT UI */}
-      <div className="max-w-3xl mx-auto w-full my-8 z-10 bg-slate-900/80 backdrop-blur-2xl ring-1 ring-slate-800 p-6 sm:p-8 rounded-3xl shadow-2xl">
+      <div className="max-w-3xl mx-auto w-full my-8 z-10 bg-card/80 dark:bg-slate-900/80 backdrop-blur-2xl ring-1 ring-border dark:ring-slate-800 p-6 sm:p-8 rounded-3xl shadow-2xl">
         <div className="flex justify-between items-center mb-6">
-          <span className="text-xs font-black uppercase tracking-widest text-slate-400">
+          <span className="text-xs font-black uppercase tracking-widest text-muted-foreground">
             KEMAJUAN KOMPUTASI AGEN AI
           </span>
-          <span className="text-xs font-mono font-medium text-indigo-400 bg-indigo-950/80 ring-1 ring-indigo-800 px-3 py-1 rounded-full">
+          <span className="text-xs font-mono font-medium text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/80 ring-1 ring-indigo-200 dark:ring-indigo-800 px-3 py-1 rounded-full">
             Waktu Berjalan: {elapsedSeconds}s
           </span>
         </div>
 
         {/* PROGRESS BAR */}
-        <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden mb-8">
+        <div className="w-full h-2 bg-muted dark:bg-slate-800 rounded-full overflow-hidden mb-8">
           <motion.div
             className="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-400 rounded-full"
             initial={{ width: '0%' }}
@@ -155,18 +155,18 @@ function InteractiveDashboardLoading({ formData, trackName, assessmentId }: { fo
               <div
                 key={step.key}
                 className={`p-4 rounded-2xl transition-all duration-300 flex items-center gap-4 ring-1 ${isCurrent
-                    ? 'bg-indigo-950/40 ring-indigo-500/50 shadow-lg shadow-indigo-950/50 scale-[1.01]'
+                    ? 'bg-indigo-50 dark:bg-indigo-950/40 ring-indigo-300 dark:ring-indigo-500/50 shadow-lg shadow-indigo-950/50 scale-[1.01]'
                     : isDone
-                      ? 'bg-slate-900/40 ring-slate-800/80 opacity-80'
-                      : 'bg-slate-950/30 ring-slate-800/40 opacity-40'
+                      ? 'bg-muted/40 dark:bg-slate-900/40 ring-border dark:ring-slate-800/80 opacity-80'
+                      : 'bg-muted/20 dark:bg-slate-950/30 ring-border/50 dark:ring-slate-800/40 opacity-40'
                   }`}
               >
                 {/* STEP STATUS ICON */}
                 <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 font-bold text-xs ${isDone
-                    ? 'bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/40'
+                    ? 'bg-emerald-50 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 ring-1 ring-emerald-200 dark:ring-emerald-500/40'
                     : isCurrent
                       ? 'bg-indigo-600 text-white ring-2 ring-indigo-400 shadow-md shadow-indigo-500/50 animate-pulse'
-                      : 'bg-slate-800 text-muted-foreground'
+                      : 'bg-muted dark:bg-slate-800 text-muted-foreground'
                   }`}>
                   {isDone ? '✓' : idx + 1}
                 </div>
@@ -174,14 +174,14 @@ function InteractiveDashboardLoading({ formData, trackName, assessmentId }: { fo
                 {/* STEP DETAILS */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
-                    <h4 className={`text-sm font-semibold truncate ${isCurrent ? 'text-white font-bold' : isDone ? 'text-slate-300' : 'text-muted-foreground'}`}>
+                    <h4 className={`text-sm font-semibold truncate ${isCurrent ? 'text-foreground font-bold' : isDone ? 'text-muted-foreground' : 'text-muted-foreground opacity-70'}`}>
                       {step.name}
                     </h4>
                     {isCurrent && (
-                      <span className="inline-block w-2 h-2 rounded-full bg-indigo-400 animate-ping shrink-0" />
+                      <span className="inline-block w-2 h-2 rounded-full bg-indigo-500 dark:bg-indigo-400 animate-ping shrink-0" />
                     )}
                   </div>
-                  <p className="text-xs text-slate-400 truncate mt-0.5">{step.desc}</p>
+                  <p className="text-xs text-muted-foreground truncate mt-0.5">{step.desc}</p>
                 </div>
               </div>
             );
@@ -194,20 +194,20 @@ function InteractiveDashboardLoading({ formData, trackName, assessmentId }: { fo
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="bg-slate-900/90 backdrop-blur-xl p-4 rounded-2xl shadow-2xl ring-1 ring-white/10 flex items-center gap-3"
+          className="bg-card/90 dark:bg-slate-900/90 backdrop-blur-xl p-4 rounded-2xl shadow-2xl ring-1 ring-border dark:ring-white/10 flex items-center gap-3"
         >
-          <div className="w-8 h-8 bg-indigo-500/20 rounded-full flex items-center justify-center shrink-0">
-            <BrainIcon size={18} className="text-indigo-400 animate-spin" />
+          <div className="w-8 h-8 bg-indigo-50 dark:bg-indigo-500/20 rounded-full flex items-center justify-center shrink-0">
+            <BrainIcon size={18} className="text-indigo-600 dark:text-indigo-400 animate-spin" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-[10px] font-black uppercase tracking-widest text-indigo-400 mb-0.5">STATUS MULTI-AGENT</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 mb-0.5">STATUS MULTI-AGENT</p>
             <AnimatePresence mode="wait">
               <motion.p
                 key={loadingText}
                 initial={{ opacity: 0, y: 3 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -3 }}
-                className="text-xs font-medium text-slate-200 truncate"
+                className="text-xs font-medium text-foreground truncate"
               >
                 {loadingText}
               </motion.p>
@@ -290,10 +290,10 @@ export default function AssessmentPage({ params }: { params: Promise<{ trackId: 
 
   if (state.isLoadingTemplates) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-muted text-muted-foreground">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground">
         <div className="w-14 h-14 mb-4 relative flex items-center justify-center">
-          <div className="absolute inset-0 rounded-full border-[4px] border-indigo-100 border-t-indigo-600 animate-spin" />
-          <BrainIcon size={24} className="text-indigo-600 dark:text-indigo-400 animate-pulse" />
+          <div className="absolute inset-0 rounded-full border-[4px] border-secondary border-t-primary animate-spin" />
+          <BrainIcon size={24} className="text-primary animate-pulse" />
         </div>
         <p className="text-muted-foreground font-medium tracking-wide">Mengkalibrasi Modul Asesmen...</p>
       </div>
@@ -338,7 +338,7 @@ export default function AssessmentPage({ params }: { params: Promise<{ trackId: 
   // LAYAR 3: WIZARD FORMULIR DINAMIS
   // ========================================================
   return (
-    <main className="min-h-screen bg-muted text-muted-foreground">
+    <main className="min-h-screen bg-background text-foreground">
       <DynamicWizard
         template={template}
         onBack={() => {

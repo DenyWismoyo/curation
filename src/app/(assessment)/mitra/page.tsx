@@ -375,7 +375,7 @@ export default function EkosistemMitraPage() {
                 Bergabunglah dengan ekosistem kami. Akses infrastruktur AI mutakhir untuk analisis data yang lebih presisi dan terukur.
               </p>
               
-              <button onClick={() => router.push('/katalog')} className="bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-4 rounded-2xl font-bold text-base transition-all shadow-lg shadow-indigo-600/20 flex items-center gap-3 mx-auto active:scale-95 group">
+              <button onClick={() => router.push('/katalog')} className="btn-primary-rich px-8 py-4 rounded-2xl font-bold text-base transition-all shadow-lg shadow-indigo-600/20 flex items-center gap-3 mx-auto active:scale-95 group">
                 Jelajahi Modul Sekarang
                 <div className="w-6 h-6 rounded-full card-solid/20 flex items-center justify-center group-hover:translate-x-1 transition-transform animate-shimmer">
                   <ArrowRight size={14} />

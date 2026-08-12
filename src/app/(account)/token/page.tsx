@@ -4,11 +4,12 @@
 
 import React, { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase/firebase';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { toast } from 'sonner';
 import { Loader2, ArrowRight, ShieldCheck, KeyRound } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
@@ -24,6 +25,11 @@ export default function TokenPage() {
   const handleValidateAndStart = async () => {
     setErrorMsg('');
     const cleanToken = tokenInput.trim().toUpperCase();
+
+    if (!user) {
+      setErrorMsg('Anda harus masuk terlebih dahulu.');
+      return;
+    }
 
     if (!cleanToken) {
       setErrorMsg('Harap masukkan kode token Anda.');
@@ -55,6 +61,18 @@ export default function TokenPage() {
       const tokenData = batchData.tokens[tokenCode] || batchData.tokens[cleanToken];
 
       if (!tokenData) {
+        // Fallback: Check if it's a BUNDLE transaction token
+        const qTx = query(collection(db, 'transactions'), where('tokenCode', '==', cleanToken), where('userId', '==', user.uid));
+        const txSnap = await getDocs(qTx);
+        if (!txSnap.empty) {
+          const txData = txSnap.docs[0].data();
+          if (txData.packageId && txData.packageId.startsWith('BUNDLE_')) {
+            toast.info('Token Bundle terdeteksi! Silakan pilih modul yang ingin Anda gunakan dari Katalog.');
+            router.push('/katalog?from_token=1');
+            return;
+          }
+        }
+
         setErrorMsg('Kode token tidak valid atau tidak terdaftar.');
         setIsValidating(false);
         return;

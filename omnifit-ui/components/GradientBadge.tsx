@@ -6,7 +6,7 @@ import { LucideIcon } from 'lucide-react';
 
 interface GradientBadgeProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
-  variant?: 'live' | 'premium' | 'default' | 'indigo' | 'emerald' | 'amber';
+  variant?: 'live' | 'premium' | 'default' | 'indigo' | 'emerald' | 'amber' | 'rose';
   icon?: LucideIcon;
 }
 
@@ -86,6 +86,21 @@ export function GradientBadge({
       <div 
         className={cn(
           "inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-500/20 dark:to-orange-500/20 text-amber-700 dark:text-amber-400 border border-amber-300 dark:border-amber-500/40 text-[10px] font-black tracking-widest uppercase shadow-[0_0_15px_rgba(245,158,11,0.2)] animate-soft-pulse",
+          className
+        )}
+        {...props}
+      >
+        {Icon && <Icon size={12} />}
+        {children}
+      </div>
+    );
+  }
+
+  if (variant === 'rose') {
+    return (
+      <div 
+        className={cn(
+          "inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/30 text-rose-700 dark:text-rose-400 text-[10px] font-black tracking-widest uppercase shadow-[0_0_15px_rgba(244,63,94,0.2)]",
           className
         )}
         {...props}

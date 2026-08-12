@@ -10,14 +10,14 @@ export default function PrivacyPage() {
           <p className="text-sm text-muted-foreground font-medium">Terakhir diperbarui: 27 Juli 2026</p>
         </header>
 
-        <section className="space-y-3 text-slate-700 leading-relaxed">
+        <section className="space-y-3 text-muted-foreground leading-relaxed">
           <p>Kami menghargai privasi Anda. Dokumen ini menjelaskan data apa yang kami kumpulkan, bagaimana data digunakan, dan hak Anda sebagai pengguna.</p>
           <p>Dengan menggunakan Omnifit, Anda menyetujui pemrosesan data sesuai kebijakan ini.</p>
         </section>
 
         <section className="space-y-2">
           <h2 className="text-xl font-black text-foreground">Data yang Kami Kumpulkan</h2>
-          <ul className="space-y-2 text-slate-700">
+          <ul className="space-y-2 text-muted-foreground">
             <li>Data akun: nama, email, dan identitas login.</li>
             <li>Data penggunaan: aktivitas asesmen, progres, dan riwayat interaksi sistem.</li>
             <li>Data teknis: perangkat, browser, dan log keamanan seperlunya.</li>
@@ -26,7 +26,7 @@ export default function PrivacyPage() {
 
         <section className="space-y-2">
           <h2 className="text-xl font-black text-foreground">Tujuan Penggunaan Data</h2>
-          <ul className="space-y-2 text-slate-700">
+          <ul className="space-y-2 text-muted-foreground">
             <li>Memberikan layanan asesmen dan personalisasi hasil.</li>
             <li>Menjaga keamanan sistem dan mencegah penyalahgunaan.</li>
             <li>Meningkatkan kualitas produk dan pengalaman pengguna.</li>
@@ -35,12 +35,12 @@ export default function PrivacyPage() {
 
         <section className="space-y-2">
           <h2 className="text-xl font-black text-foreground">Perlindungan Data</h2>
-          <p className="text-slate-700">Kami menerapkan kontrol akses, enkripsi saat transit, dan kebijakan internal untuk menjaga data Anda tetap aman.</p>
+          <p className="text-muted-foreground">Kami menerapkan kontrol akses, enkripsi saat transit, dan kebijakan internal untuk menjaga data Anda tetap aman.</p>
         </section>
 
         <section className="space-y-2">
           <h2 className="text-xl font-black text-foreground">Hak Pengguna</h2>
-          <p className="text-slate-700">Anda berhak meminta koreksi data, pembaruan informasi profil, serta penghapusan akun sesuai ketentuan layanan yang berlaku.</p>
+          <p className="text-muted-foreground">Anda berhak meminta koreksi data, pembaruan informasi profil, serta penghapusan akun sesuai ketentuan layanan yang berlaku.</p>
         </section>
       </article>
     </div>

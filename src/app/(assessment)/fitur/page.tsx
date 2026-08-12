@@ -83,7 +83,7 @@ export default function FeaturesPage() {
               Omnifit Assessment adalah <em>decision support engine</em>. Kami mengubah data dari kuesioner menjadi keputusan intervensi yang nyata dan bisa langsung Anda eksekusi.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button asChild className="rounded-xl h-14 px-8 bg-foreground hover:bg-secondary text-background font-black text-base transition-all shadow-xl hover:scale-105">
+              <Button asChild className="rounded-xl h-14 px-8 btn-primary-rich font-black text-base transition-all shadow-xl hover:scale-105">
                 <Link href="/katalog">Coba Asesmen Sekarang <ChevronRight size={18} className="ml-2" /></Link>
               </Button>
               <Button asChild variant="outline" className="rounded-xl h-14 px-8 border-border hover:bg-muted text-foreground font-bold text-base backdrop-blur-md transition-all">

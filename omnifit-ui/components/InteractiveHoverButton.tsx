@@ -17,7 +17,7 @@ export function InteractiveHoverButton({
   ...props
 }: InteractiveHoverButtonProps) {
   
-  const baseClasses = "relative overflow-hidden rounded-xl px-6 py-3 font-bold transition-all duration-300 active:scale-95";
+  const baseClasses = "relative overflow-hidden rounded-none px-6 py-3 font-bold transition-all duration-300 active:scale-95";
   
   const variantMap = {
     primary: "bg-indigo-600 text-white shadow-[0_0_20px_rgba(99,102,241,0.4)] hover:shadow-[0_0_30px_rgba(99,102,241,0.6)] hover:bg-indigo-500",

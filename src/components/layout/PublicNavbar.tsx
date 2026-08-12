@@ -252,10 +252,10 @@ export function PublicNavbar() {
                     <DropdownMenuLabel className="font-normal px-3 py-2">
                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Akun Saya</p>
                       <p className="text-sm font-bold text-foreground truncate mt-1">{user.email}</p>
-                      {assessmentQuota > 0 && (
-                        <div className="mt-3 flex items-center justify-between bg-indigo-50 dark:bg-indigo-500/10 px-3 py-2 rounded-xl ring-1 ring-indigo-200 dark:ring-indigo-500/20">
-                          <span className="text-xs font-bold text-indigo-700 dark:text-indigo-300">Sisa Kuota:</span>
-                          <span className="text-xs font-black bg-indigo-600 text-white px-2 py-0.5 rounded-md shadow-sm">
+                      {typeof assessmentQuota === 'number' && (
+                        <div className={`mt-3 flex items-center justify-between px-3 py-2 rounded-xl ring-1 ${assessmentQuota > 0 ? 'bg-indigo-50 dark:bg-indigo-500/10 ring-indigo-200 dark:ring-indigo-500/20' : 'bg-rose-50 dark:bg-rose-500/10 ring-rose-200 dark:ring-rose-500/20'}`}>
+                          <span className={`text-xs font-bold ${assessmentQuota > 0 ? 'text-indigo-700 dark:text-indigo-300' : 'text-rose-700 dark:text-rose-300'}`}>Sisa Kuota:</span>
+                          <span className={`text-xs font-black text-white px-2 py-0.5 rounded-md shadow-sm ${assessmentQuota > 0 ? 'bg-indigo-600' : 'bg-rose-600'}`}>
                             {assessmentQuota} Modul
                           </span>
                         </div>

@@ -96,12 +96,12 @@ export default function PublicRoadmapPage() {
                     {/* Ikon Status */}
                     <div className="flex items-center gap-4 sm:gap-0 z-10 shrink-0">
                       <div
-                        className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center border-[6px] border-white shadow-sm ring-1 ring-border transition-transform group-hover:scale-110 ${
+                        className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center border-[6px] border-background shadow-sm ring-1 ring-border transition-transform group-hover:scale-110 ${
                           item.status === 'completed'
-                            ? 'bg-emerald-100 text-emerald-500'
+                            ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400'
                             : item.status === 'in-progress'
-                              ? 'bg-indigo-100 text-indigo-600 dark:text-indigo-400'
-                              : 'bg-muted text-muted-foreground text-slate-400'
+                              ? 'bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400'
+                              : 'bg-muted text-muted-foreground'
                         }`}
                       >
                         {item.status === 'completed' ? (
@@ -120,8 +120,8 @@ export default function PublicRoadmapPage() {
                             item.status === 'completed'
                               ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 ring-1 ring-emerald-100'
                               : item.status === 'in-progress'
-                                ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 ring-1 ring-indigo-100'
-                                : 'bg-muted text-muted-foreground text-muted-foreground ring-1 ring-border'
+                              ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 ring-1 ring-indigo-100 dark:ring-indigo-800'
+                                : 'bg-muted text-muted-foreground ring-1 ring-border'
                           }`}
                         >
                           {item.quarter}
@@ -139,8 +139,8 @@ export default function PublicRoadmapPage() {
                           item.status === 'completed'
                             ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 ring-emerald-100'
                             : item.status === 'in-progress'
-                              ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 ring-indigo-100'
-                              : 'bg-muted text-muted-foreground text-muted-foreground ring-slate-200'
+                              ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 ring-indigo-100 dark:ring-indigo-800'
+                              : 'bg-muted text-muted-foreground ring-border'
                         }`}
                       >
                         {item.quarter}

@@ -42,7 +42,7 @@ export function SpotlightCard({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className={cn(
-        'group relative overflow-hidden rounded-[2rem] bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border border-slate-200 dark:border-slate-700/50 p-8 transition-all duration-500 hover:-translate-y-1',
+        'group relative overflow-hidden rounded-none bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border border-slate-200 dark:border-slate-700/50 p-8 transition-all duration-500 hover:-translate-y-1',
         {
           'hover:border-indigo-500/40 glow-indigo-sm': color === 'indigo',
           'hover:border-amber-500/40 glow-amber': color === 'amber',
@@ -54,7 +54,7 @@ export function SpotlightCard({
       {...props}
     >
       <m.div
-        className="pointer-events-none absolute -inset-px rounded-[2rem] opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        className="pointer-events-none absolute -inset-px rounded-none opacity-0 transition-opacity duration-300 group-hover:opacity-100"
         style={{
           background: useMotionTemplate`
             radial-gradient(

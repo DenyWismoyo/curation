@@ -111,7 +111,13 @@ export default function CheckoutQrisPage() {
         className="max-w-md w-full card-solid/90 backdrop-blur-xl p-6 sm:p-10 rounded-3xl sm:rounded-[2rem] shadow-2xl shadow-indigo-500/10 ring-1 ring-border relative z-10 text-center"
       >
         <button
-          onClick={() => router.push('/katalog')}
+          onClick={() => {
+            if (transaction?.packageId === 'CRYPTO_PREMIUM_MONTHLY') {
+              router.push('/crypto');
+            } else {
+              router.push('/katalog');
+            }
+          }}
           className="absolute top-5 left-5 sm:top-6 sm:left-6 p-2 bg-muted text-muted-foreground rounded-full text-slate-400 hover:text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:bg-indigo-500/10 transition-colors"
           title="Batal dan Kembali"
         >
@@ -196,7 +202,11 @@ export default function CheckoutQrisPage() {
               <CheckCircle2 size={32} className="sm:w-10 sm:h-10" />
             </div>
             <h2 className="text-lg sm:text-xl font-black text-foreground mb-2">Pembayaran Diterima!</h2>
-            <p className="text-xs sm:text-sm text-muted-foreground px-4">Menyiapkan ruang asesmen untuk Anda...</p>
+            <p className="text-xs sm:text-sm text-muted-foreground px-4">
+              {transaction?.packageId === 'CRYPTO_PREMIUM_MONTHLY' 
+                ? "Menyiapkan akses premium Anda..." 
+                : "Menyiapkan ruang asesmen untuk Anda..."}
+            </p>
           </motion.div>
         )}
         

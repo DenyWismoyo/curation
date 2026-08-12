@@ -35,6 +35,17 @@ export const OMNIFIT_COLORS = {
       border: 'border-emerald-200 dark:border-emerald-500/20',
       glow: 'shadow-[0_0_40px_-10px_rgba(16,185,129,0.4)]',
     }
+  },
+  
+  // Danger / High Alert
+  rose: {
+    base: '#f43f5e',
+    classes: {
+      text: 'text-rose-500 dark:text-rose-400',
+      bg: 'bg-rose-50 dark:bg-rose-950/20',
+      border: 'border-rose-200 dark:border-rose-500/20',
+      glow: 'shadow-[0_0_40px_-10px_rgba(244,63,94,0.4)]',
+    }
   }
 } as const;
 

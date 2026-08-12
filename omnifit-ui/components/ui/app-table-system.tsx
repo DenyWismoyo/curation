@@ -181,7 +181,7 @@ export function AppActionMenu({ actions }: AppActionMenuProps) {
       <DropdownMenuTrigger asChild>
         <button
           className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:bg-indigo-500/10 transition-colors"
-          onClick={(e) => e.stopPropagation()} // Prevent row click
+          onClick={(e: React.MouseEvent) => e.stopPropagation()} // Prevent row click
         >
           <MoreVertical size={16} />
         </button>
@@ -190,7 +190,7 @@ export function AppActionMenu({ actions }: AppActionMenuProps) {
         {actions.map((action, idx) => (
           <DropdownMenuItem
             key={idx}
-            onClick={(e) => {
+            onClick={(e: React.MouseEvent) => {
               e.stopPropagation();
               action.onClick();
             }}

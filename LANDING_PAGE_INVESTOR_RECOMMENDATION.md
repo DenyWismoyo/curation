@@ -112,7 +112,7 @@ Untuk setiap anggota tim inti, tampilkan:
 Rekomendasi narasi:
 
 ```
-[Nama Lengkap]
+Deny W
 Founder & CEO, Omnifit.cloud
 
 [X] tahun pengalaman di bidang [bidang relevan: teknologi/human capital/digital product].
