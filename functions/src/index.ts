@@ -72,7 +72,8 @@ export { syncUserClaims } from './triggers/userClaimsSync'
 // AI ASSESSMENT AGENTS
 // ============================================================================
 export { processCurationAssessment } from './domains/assessment/agents/gatewayAgent'
-export { assessmentOrchestrator } from './domains/assessment/pipelines/orchestrator'
+export { triggerAssessmentTask, assessmentOrchestratorTask } from './domains/assessment/pipelines/orchestrator'
+export { generateBusinessVector } from './domains/assessment/triggers/vectorTrigger'
 export { actionPlanCopilotChat } from './domains/assessment/agents/copilotAgent'
 export { adminGenerateMockData } from './domains/assessment/agents/mockDataAgent'
 export { premiumConsultationChat } from './domains/assessment/agents/premiumConsultationAgent'

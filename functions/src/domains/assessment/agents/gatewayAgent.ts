@@ -16,6 +16,7 @@ const processAssessmentSchema = z.object({
 });
 
 export const processCurationAssessment = onCall({
+  enforceAppCheck: true,
   memory: "512MiB",
   region: "asia-southeast2",
   cors: true
@@ -69,7 +70,19 @@ export const processCurationAssessment = onCall({
 
         if (corpDoc.exists) {
           const corpData = corpDoc.data();
-          const tData = (corpData?.tokens || {})[tokenCode];
+          
+          // Backward compatibility: Cek document utama dulu
+          let tData = (corpData?.tokens || {})[tokenCode];
+          let isSubcollection = false;
+          let tokenRef = corpRef.collection('tokens').doc(tokenCode);
+          
+          if (!tData) {
+            const tokenDoc = await transaction.get(tokenRef);
+            if (tokenDoc.exists) {
+              tData = tokenDoc.data();
+              isSubcollection = true;
+            }
+          }
 
           if (tData && !tData.isUsed) {
             corporateEntityName = corpData?.corporateName || tokenCorpId;
@@ -77,12 +90,23 @@ export const processCurationAssessment = onCall({
             allowedDocTemplates = corpData?.allowedDocumentTemplates || [];
             resolvedTokenUsed = tokenUsed;
 
-            transaction.update(corpRef, {
-              [`tokens.${tokenCode}.isUsed`]: true,
-              [`tokens.${tokenCode}.usedAt`]: new Date().toISOString(),
-              [`tokens.${tokenCode}.usedByNamaUsaha`]: formData.namaUsaha || 'Tanpa Nama',
-              usedCount: admin.firestore.FieldValue.increment(1)
-            });
+            if (isSubcollection) {
+              transaction.update(tokenRef, {
+                isUsed: true,
+                usedAt: new Date().toISOString(),
+                usedByNamaUsaha: formData.namaUsaha || 'Tanpa Nama'
+              });
+              transaction.update(corpRef, {
+                usedCount: admin.firestore.FieldValue.increment(1)
+              });
+            } else {
+              transaction.update(corpRef, {
+                [`tokens.${tokenCode}.isUsed`]: true,
+                [`tokens.${tokenCode}.usedAt`]: new Date().toISOString(),
+                [`tokens.${tokenCode}.usedByNamaUsaha`]: formData.namaUsaha || 'Tanpa Nama',
+                usedCount: admin.firestore.FieldValue.increment(1)
+              });
+            }
           }
         }
       }

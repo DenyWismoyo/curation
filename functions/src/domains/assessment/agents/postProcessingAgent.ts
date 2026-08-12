@@ -20,13 +20,9 @@ export const executePostProcessing = async (
     userEmail: data.formData?.email || data.userEmail
   };
 
-  // Eksekusi semua background task secara paralel
+  // Eksekusi background task yang perlu selesai cepat (PDF, Email) secara paralel.
+  // Catatan: Vector embedding telah diekstraksi ke onDocumentWritten trigger (vectorTrigger.ts)
   await Promise.allSettled([
-    (async () => {
-      if (updatedDocDataForBg.score !== undefined) {
-        await generateAndStoreVectorEmbedding(assessmentId, updatedDocDataForBg, API_KEY);
-      }
-    })(),
     (async () => {
       await Promise.all([
         generateInternalPDF(assessmentId, updatedDocDataForBg, 'user'),

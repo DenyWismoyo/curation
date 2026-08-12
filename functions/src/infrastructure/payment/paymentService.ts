@@ -7,6 +7,7 @@ import { getFirestore, FieldValue } from "firebase-admin/firestore";
 import * as crypto from "crypto";
 
 const mayarApiKey = defineSecret("MAYAR_API_KEY");
+const mayarWebhookSecret = defineSecret("MAYAR_WEBHOOK_SECRET");
 const metaPixelId = defineSecret("META_PIXEL_ID");
 const metaAccessToken = defineSecret("META_ACCESS_TOKEN");
 
@@ -263,12 +264,29 @@ export const createDynamicQris = onCall({
 export const mayarWebhook = onRequest({
     region: "asia-southeast2",
     cors: true,
-    secrets: [metaPixelId, metaAccessToken],
+    secrets: [metaPixelId, metaAccessToken, mayarWebhookSecret],
   },
   async (req, res) => {
     if (req.method !== 'POST') {
       res.status(405).send('Method Not Allowed');
       return;
+    }
+
+    // --- Webhook Signature Verification (HMAC) ---
+    const secret = mayarWebhookSecret.value();
+    if (secret) {
+      const signatureHeader = req.headers['x-mayar-signature'] || req.headers['x-webhook-signature'];
+      if (!signatureHeader) {
+        console.warn("⚠️ [WEBHOOK] Missing signature header. Proceeding without validation for now (Set strict mode later).");
+      } else {
+        const hmac = crypto.createHmac('sha256', secret);
+        const digest = hmac.update(req.rawBody).digest('hex');
+        if (signatureHeader !== digest) {
+          console.error("❌ [WEBHOOK] Invalid signature detected.");
+          res.status(401).send('Unauthorized');
+          return;
+        }
+      }
     }
     
     let payload = req.body;
@@ -446,21 +464,22 @@ export const mayarWebhook = onRequest({
         } else if (freshTxData.packageId) {
           // Paket modul individual — grant token B2C
           const b2cRef = db.collection("corporate_tokens").doc("B2C");
+          const b2cTokenRef = b2cRef.collection("tokens").doc(finalTokenCode);
+          
           trx.set(b2cRef, {
             corporateName: "Penjualan B2C (Mandiri)",
             modelType: "flash",
             totalTokens: FieldValue.increment(1),
-            createdAt: new Date().toISOString(),
-            tokens: {
-              [finalTokenCode]: {
-                isUsed: false,
-                usedAt: null,
-                usedByNamaUsaha: null,
-                allowedTemplates: [freshTxData.packageId],
-                buyerEmail: freshTxData.userEmail,
-                transactionId: freshTxData.transactionId
-              }
-            }
+            createdAt: new Date().toISOString()
+          }, { merge: true });
+
+          trx.set(b2cTokenRef, {
+            isUsed: false,
+            usedAt: null,
+            usedByNamaUsaha: null,
+            allowedTemplates: [freshTxData.packageId],
+            buyerEmail: freshTxData.userEmail,
+            transactionId: freshTxData.transactionId
           }, { merge: true });
         }
       });
@@ -514,20 +533,21 @@ export const redeemAssessmentQuota = onCall({
           assessmentQuota: FieldValue.increment(-1)
         }, { merge: true });
 
+        const b2cTokenRef = b2cRef.collection("tokens").doc(finalTokenCode);
+
         transaction.set(b2cRef, {
           corporateName: "Penjualan B2C (Mandiri)",
           modelType: "flash", 
-          totalTokens: FieldValue.increment(1),
-          tokens: {
-            [finalTokenCode]: {
-              isUsed: false,
-              usedAt: null,
-              usedByNamaUsaha: null,
-              allowedTemplates: [packageId],
-              buyerEmail: request.auth?.token?.email || "",
-              transactionId: `QUOTA-REDEEM-${Date.now()}`
-            }
-          }
+          totalTokens: FieldValue.increment(1)
+        }, { merge: true });
+
+        transaction.set(b2cTokenRef, {
+          isUsed: false,
+          usedAt: null,
+          usedByNamaUsaha: null,
+          allowedTemplates: [packageId],
+          buyerEmail: request.auth?.token?.email || "",
+          transactionId: `QUOTA-REDEEM-${Date.now()}`
         }, { merge: true });
 
         return { tokenCode: finalTokenCode };
@@ -578,7 +598,18 @@ export const checkTokenValidity = onCall({
       }
 
       const corpData = corpDoc.data();
-      const tData = (corpData?.tokens || {})[specificTokenCode];
+      
+      // Backward compatibility: Cek document utama dulu
+      let tData = (corpData?.tokens || {})[specificTokenCode];
+
+      // Jika tidak ada di document utama, cek di subcollection
+      if (!tData) {
+        const tokenRef = corpRef.collection('tokens').doc(specificTokenCode);
+        const tokenDoc = await tokenRef.get();
+        if (tokenDoc.exists) {
+          tData = tokenDoc.data();
+        }
+      }
 
       if (!tData) {
         return { isValid: false, reason: "Token tidak ditemukan." };

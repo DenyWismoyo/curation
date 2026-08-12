@@ -10,6 +10,7 @@ const deepseekApiKeySecret = defineSecret("DEEPSEEK_API_KEY");
 const geminiApiKeySecret = defineSecret("GEMINI_API_KEY");
 
 export const cryptoCopilotChat = onCall({
+  enforceAppCheck: true,
   region: "asia-southeast2",
   memory: "512MiB",
   secrets: [deepseekApiKeySecret, geminiApiKeySecret],

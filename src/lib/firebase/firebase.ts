@@ -3,6 +3,9 @@ import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import { getFunctions } from 'firebase/functions';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
+import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-check";
+import { getPerformance } from "firebase/performance";
+import { getRemoteConfig } from "firebase/remote-config";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -26,4 +29,17 @@ const functions = getFunctions(app, "asia-southeast2");
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
-export { app, db, storage, functions, auth, googleProvider };
+// Layanan sisi klien saja (App Check, Performance, Remote Config)
+let appCheck, perf, remoteConfig;
+if (typeof window !== "undefined") {
+  appCheck = initializeAppCheck(app, {
+    provider: new ReCaptchaEnterpriseProvider(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''),
+    isTokenAutoRefreshEnabled: true
+  });
+  perf = getPerformance(app);
+  
+  remoteConfig = getRemoteConfig(app);
+  remoteConfig.settings.minimumFetchIntervalMillis = 3600000; // 1 jam
+}
+
+export { app, db, storage, functions, auth, googleProvider, appCheck, perf, remoteConfig };

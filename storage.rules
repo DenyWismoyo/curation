@@ -7,7 +7,11 @@ service firebase.storage {
       return request.auth != null;
     }
     function isSuperAdmin() { 
-      return request.auth != null && request.auth.token.email == 'deny.wismoyo@gmail.com'; 
+      return request.auth != null && (
+        request.auth.token.email == 'deny.wismoyo@gmail.com' ||
+        request.auth.token.role == 'admin_omnifit' ||
+        request.auth.token.role == 'admin_csrs'
+      ); 
     }
     function isValidImage() {
       return request.resource.size < 5 * 1024 * 1024
@@ -46,7 +50,8 @@ service firebase.storage {
 
     // --- 5. FOLDER CURATION FILES ---
     match /curation_files/{allPaths=**} {
-      allow read, write: if true;
+      allow read: if true;
+      allow write: if isAuthenticated();
     }
 
     // --- 6. ARTIKEL ---

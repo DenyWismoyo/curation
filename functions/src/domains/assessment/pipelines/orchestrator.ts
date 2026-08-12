@@ -1,4 +1,6 @@
 import { onDocumentCreated } from "firebase-functions/v2/firestore";
+import { onTaskDispatched } from "firebase-functions/v2/tasks";
+import { getFunctions } from "firebase-admin/functions";
 import { defineSecret } from "firebase-functions/params";
 import * as admin from "firebase-admin";
 import { executeDomainExperts } from "../agents/domainExpertsAgent";
@@ -33,23 +35,52 @@ const stripUndefined = (value: any): any => {
   return value;
 };
 
-export const assessmentOrchestrator = onDocumentCreated({
+export const triggerAssessmentTask = onDocumentCreated({
   database: "curation",
   document: "assessments/{assessmentId}",
   region: "asia-southeast2",
-  memory: "2GiB",
-  timeoutSeconds: 540,
-  secrets: [geminiApiKeySecret, deepseekApiKeySecret, smtpEmailSecret, smtpPasswordSecret],
 }, async (event) => {
   const snapshot = event.data;
   if (!snapshot) return;
 
   const data = snapshot.data();
-  // Gateway membuat dokumen dengan status ANALYZING_METRICS atau COMPLETED (jika cache hit)
   if (data.status !== "ANALYZING_METRICS") return;
 
-  const docRef = snapshot.ref;
   const assessmentId = event.params.assessmentId;
+  const queue = getFunctions().taskQueue("assessmentOrchestratorTask");
+  
+  await queue.enqueue({
+    assessmentId: assessmentId
+  });
+  console.log(`[Trigger] Enqueued assessment task for ${assessmentId}`);
+});
+
+export const assessmentOrchestratorTask = onTaskDispatched({
+  retryConfig: { maxAttempts: 3 },
+  region: "asia-southeast2",
+  memory: "2GiB",
+  timeoutSeconds: 1800, // 30 minutes
+  secrets: [geminiApiKeySecret, deepseekApiKeySecret, smtpEmailSecret, smtpPasswordSecret],
+}, async (request) => {
+  const assessmentId = request.data.assessmentId;
+  if (!assessmentId) {
+    console.error("No assessmentId provided in task payload");
+    return;
+  }
+
+  const docRef = admin.firestore().collection("assessments").doc(assessmentId);
+  const snapshot = await docRef.get();
+  if (!snapshot.exists) {
+    console.error(`Assessment ${assessmentId} not found`);
+    return;
+  }
+
+  const data = snapshot.data() || {};
+  if (data.status !== "ANALYZING_METRICS") {
+    console.log(`Assessment ${assessmentId} has status ${data.status}, skipping processing.`);
+    return;
+  }
+
   const API_KEY = geminiApiKeySecret.value();
   
   if (!data.aiResult) data.aiResult = {};

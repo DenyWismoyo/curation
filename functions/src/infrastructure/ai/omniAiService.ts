@@ -7,6 +7,7 @@ const geminiApiKeySecret = defineSecret("GEMINI_API_KEY");
 
 export const chatWithOmniAi = onCall(
   {
+    enforceAppCheck: true,
     memory: "256MiB",
     region: "asia-southeast2",
     secrets: [geminiApiKeySecret],
